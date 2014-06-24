@@ -50,7 +50,7 @@ ${extreme1_tunnel1_name}                tunnel2-1
 ${extreme1_tunnel1_intf1}               18
 ${extreme1_tunnel1_ip}                  192.168.29.2  
 ${extreme1_tunnel1_gw}                  255.255.255.0
-
+${tunnel_loopback_1}                    ethernet41
 
 ${tunnel_sw2_name}                      tunnel2         #Tunnel Name
 ${tunnel_sw2_parent_intf}               ethernet19      #Tunnel Parent Interface
@@ -62,7 +62,7 @@ ${extreme1_tunnel2_name}                tunnel2-2
 ${extreme1_tunnel2_intf1}               19
 ${extreme1_tunnel2_ip}                  192.168.22.2  
 ${extreme1_tunnel2_gw}                  255.255.255.0
-
+${tunnel_loopback_2}                    ethernet41
 
 ### Tunnel as a delivery interface
 ${tunnel_sw3_name_delivery}             tunnel3         #Tunnel Name
@@ -72,7 +72,7 @@ ${tunnel_sw3_dip_delivery}              192.168.23.1    #Tunnel Destination IP
 ${tunnel_sw3_gip_delivery}              192.168.30.2    #Tunnel Gateway IP
 ${tunnel_sw3_mask_delivery}             255.255.255.0   #Tunnel Subnet Mask
 ${tunnel_sw3_delivery_name}             tunnel_delivery   #Tunnel Name when used as filter interface
-
+${tunnel_loopback_3}                    ethernet41
 ### BigTap Policy Configuration
 ${policy_name}                          policy_tunnel_core      #Policy Name that will use the tunnel interface
 ${policy_name_filter}                   policy_tunnel_filter    #Policy Name that will use the tunnel interface
@@ -82,18 +82,7 @@ ${policy_name_delivery}                 policy_tunnel_delivery  #Policy Name tha
 ${interswitch_link_1}                   port-channel1   #Link between Switch 2 and Switch 3
 ${interswitch_link_2}                   port-channel3   #Link between Switch 1 and Switch 3
 
-
 *Test Case
-Verify tunnel as a filter interface
-    ## Verify tunnel is up
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}      
-    Should be true  ${verify_tun_sw1}  
-    sleep  10
-    ## Verify BigTap policy is up
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_filter}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    [Tags]  filter
-
 Verify tunnel as a core interface
     ## Verify tunnel is up
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -104,60 +93,123 @@ Verify tunnel as a core interface
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    [Tags]  core
+    [Tags]    feature  sanity
+
+Verify tunnel as a filter interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}      
+    Should be true  ${verify_tun_sw1}  
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_filter}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    [Tags]  feature  sanity
 
 Verify tunnel as a delivery interface
     ## Verify tunnel is up
-    ${verify_tun_sw1}=  rest verify tunnel status  s3  ${tunnel_sw3_delivery_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s3  ${tunnel_sw3_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}      
     Should be true  ${verify_tun_sw1}  
     sleep  10
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_delivery}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    [Tags]  delivery
+    [Tags]    feature  sanity
 
-Verify L2 traffic across tunnel as a core interface
+Match on src-mac and verify L2 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    sleep  10
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream}=  L2 add  flow=a->c  frame_rate=50000  frame_size=64  name=a_c_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     clear stats    
     start traffic  ${stream}
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream} 
     tunnel traffic teardown
-    [Tags]  L2  traffic  core
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10
+    [Tags]  feature  sanity  L2  traffic  
+
+Match on dst-mac and verify L2 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream}=  L2 add  flow=a->c  frame_rate=50000  frame_size=64  name=a_c_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream} 
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10
+    [Tags]  feature  sanity  L2  traffic
+
+Match on ether-type (LLDP) and verify L2 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"sequence": 1, "ether-type": 35020}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream}=  L2 add  flow=a->c  frame_rate=100  frame_size=64  ethertype=88cc  name=a_c_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream} 
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10
+    [Tags]  feature  sanity  L2  lldp  traffic  skipped
     
-Verify L2 VLAN tagged traffic across tunnel as a core interface
+Match on VLAN and verify L2 VLAN tagged traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"vlan": 2048, "sequence": 1}
+    sleep  10    
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     #ixia initialize  tg1  init=true
     ${stream}=  L2 add  flow=a->c  frame_rate=50000  frame_size=1518  ethertype=8100  vlan_id=2048  name=a_c_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     clear stats    
     start traffic  ${stream}
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
     tunnel traffic teardown
-    [Tags]  L2  traffic  vlan  core
-    
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10    
+    [Tags]  feature  sanity  L2  traffic     
+
 Verify L2 traffic (jumbo frames) across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    sleep  10
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     #ixia initialize  tg1  init=true
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=9000  name=a_c_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     clear stats    
     start traffic  ${stream}
     sleep  40
     verify results  a  c  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
     tunnel traffic teardown
-    [Tags]  L2  traffic  jumbo  core    
-    
-Verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10 
+    [Tags]  feature  sanity  L2  traffic 
+
+Match on SRC-IP and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    sleep  10
     ## Verify BigTap policy is up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -171,12 +223,241 @@ Verify L3 traffic across tunnel as a core interface
     verify results  a  c  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
     tunnel traffic teardown
-    [Tags]  L3  traffic  core   
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
 
+Match on DST-IP and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
+
+
+Match on TCP SRC-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
+
+Match on TCP DST-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=8001  dst_port=80  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic    
+
+
+Match on TCP6 SRC-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
+
+Match on TCP6 DST-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=8001  dst_port=80  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic 
+
+Match on UDP SRC-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=8002  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
+
+Match on UDP DST-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"ether-type": 2048, "dst-tp-port": 53, "ip-proto": 17, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=8001  dst_port=53  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic    
+
+
+Match on UDP6 SRC-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic
+
+Match on UDP6 DST-PORT and verify L3 traffic across tunnel as a core interface
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"ether-type": 34525, "dst-tp-port": 53, "ip-proto": 17, "sequence": 1}
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=8001  dst_port=53  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown
+    rest add policy match  admin-view  ${policy_name_filter}  1  {"any-traffic": true, "sequence": 1}
+    sleep  10     
+    [Tags]  feature  sanity  L3  traffic        
+    
+Verify a rewrite vlan can be done on a tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}      
+    Should be true  ${verify_tun_sw1}  
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_filter}  filter    intf_nickname=${tunnel_sw1_filter_name}  rewrite_vlan=1001
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}      
+    Should be true  ${verify_tun_sw1}            
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_filter}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    [Tags]  feature  sanity
+    
+Verify a rewrite vlan can be done on a filter interface, with core interface as tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}  
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}  
+    rest add interface role  s1  ${switch1_filter_intf}    filter    intf_nickname=${switch1_filter_alias}  rewrite_vlan=1002
+    sleep  20
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}  
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}  
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->c  frame_rate=50000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_c_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    tunnel traffic teardown                          
+    [Tags]  feature  sanity    
+     
 * Keyword
 
 corsair suite setup
     base suite setup
+    rest enable feature  tunneling
     rest add switch alias  s1  ${switch1_alias}
     rest add switch alias  s2  ${switch2_alias}
     rest add switch alias  s3  ${switch3_alias}    
@@ -203,14 +484,14 @@ corsair suite setup
     rest add policy interface  admin-view  ${policy_name_filter}  ${switch1_delivery_alias}  delivery
     sleep  10
     #### Tunnel as a Core interface
-    ########Configure the extreme switch here
+    #########Configure the extreme switch here
     extreme tunnel setup  s4  ${extreme1_tunnel1_name}  ${extreme1_tunnel1_intf1}  ${extreme1_tunnel1_ip}  ${extreme1_tunnel1_gw}
     extreme tunnel setup  s4  ${extreme1_tunnel2_name}  ${extreme1_tunnel2_intf1}  ${extreme1_tunnel2_ip}  ${extreme1_tunnel2_gw}          
     Sleep  20
     ########Configure BigTap Controller with tunnel as core interface
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_loopback_1}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1}        
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}   
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_loopback_2}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}   
     Should be true  ${verify_add_tun_sw2}  
     Sleep  20
     ########Configure BigTap Policy that will use Tunnel as a core interface
@@ -224,7 +505,7 @@ corsair suite setup
     Sleep  10
     #### Tunnel as a delivery interface        
     ########Configure BigTap Controller with tunnel as delivery interface
-    ${verify_add_tun_sw1delivery}=  rest add tunnel interface  s3  ${tunnel_sw3_name_delivery}  pinterface=${tunnel_sw3_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}
+    ${verify_add_tun_sw1delivery}=  rest add tunnel interface  s3  ${tunnel_sw3_name_delivery}  loopback=${tunnel_loopback_3}  pinterface=${tunnel_sw3_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}
     Should be true  ${verify_add_tun_sw1delivery}
     Sleep  5
     ${H1}=  L3 add host  src_ip=${tunnel_sw3_gip_delivery}  gw_ip=${tunnel_sw3_sip_delivery}  port_name=d
@@ -297,5 +578,6 @@ corsair suite teardown
     config  s4  delete vlan ${extreme1_tunnel2_name}
     Sleep  2
     extreme save config  s4
-    base suite teardown                                            
+    rest disable feature  tunneling    
+    base suite teardown                  
     

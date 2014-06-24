@@ -5,16 +5,16 @@ from BsnCommon import BsnCommon as bsnCommon
 
 '''
     ::::::::::    README    ::::::::::::::
-    
-    This T5Utilities file is used to abstract the T5 utility 
+
+    This T5Utilities file is used to abstract the T5 utility
     functions. Please include any utility functions that are not
     specific to your test suites here.
-    
+
 '''
 
 
 ''' Global variables to save the state
-    Used by: fabric_integrity_checker 
+    Used by: fabric_integrity_checker
 '''
 switchList_b4 = []
 switchList_after = []
@@ -60,27 +60,27 @@ class T5Utilities(object):
 
 
     def fabric_integrity_checker(self, state):
-        '''         
+        '''
         Objective::
         -    This function will check for fabric integrity between states. For example calling this function before a state
             change (eg:HA Failover) & after a state change would compare fabric elements from both the states and list out
-            differences as warnings. 
-            Usage: 
+            differences as warnings.
+            Usage:
                     obj =  T5Utilities()
                     utilities.fabric_integrity_checker(obj,"before")
                     <do stuff>
                     utilities.fabric_integrity_checker(obj,"after")
-            
+
         Description :
         -    Checks for the fabric state differences on following component: Switch Connectivity / Fabric Links / Fabric Lags / Endpoints
 
         Inputs:
         |    state= "before" or "after"
-        
+
         Outputs:
         |    Warning Messages along with return True
-        
-        ''' 
+
+        '''
         global switchList_b4
         global switchList_after
         global slave_switchList_b4
@@ -93,7 +93,7 @@ class T5Utilities(object):
         global fabricLags_after
         global portgroups_b4
         global portgroups_after
-        
+
         global fwdARPTable_b4
         global fwdEPTable_b4
         global fwdL3CIDRTable_b4
@@ -102,7 +102,7 @@ class T5Utilities(object):
         global fwdRouterIPTable_b4
         global fwdEcmpTable_b4
         global fwdDhcpTable_b4
-        
+
         global fwdARPTable_after
         global fwdEPTable_after
         global fwdL3CIDRTable_after
@@ -111,7 +111,7 @@ class T5Utilities(object):
         global fwdRouterIPTable_after
         global fwdEcmpTable_after
         global fwdDhcpTable_after
-        
+
         global warningCount
         global fabricErrorEncounteredFlag
 
@@ -123,7 +123,7 @@ class T5Utilities(object):
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
             portgroups_b4 = self._gather_port_groups()
-            
+
             fwdARPTable_b4 = self._gather_forwarding('arp-table')
             fwdEPTable_b4 = self._gather_forwarding('ep-table')
             fwdL3CIDRTable_b4 = self._gather_forwarding('l3-cidr-table')
@@ -132,7 +132,7 @@ class T5Utilities(object):
             fwdRouterIPTable_b4 = self._gather_forwarding('router-ip-table')
             fwdEcmpTable_b4 = self._gather_forwarding('ecmp-table')
             fwdDhcpTable_b4 = self._gather_forwarding('dhcp-table')
-            
+
 
         else:
             switchList_after = self._gather_switch_connectivity()
@@ -147,7 +147,7 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
             portgroups_after = self._gather_port_groups()
             warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
-            
+
             fwdARPTable_after = self._gather_forwarding('arp-table')
             warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
             fwdEPTable_after = self._gather_forwarding('ep-table')
@@ -164,41 +164,41 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
             fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
             warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
-            
+
         if(fabricErrorEncounteredFlag):
             helpers.warn("------- Fabric Error encountered during Fabric Integrity Checks. Returning False -------")
             return False
-        if(warningCount == 0): 
+        if(warningCount == 0):
             if(state == "after"):
                 helpers.log("Switch status is intact after the state change operation")
             return True
-        else: 
-            #helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
-            #sleep(36000)
+        else:
+            # helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
+            # sleep(36000)
             return True
 
-        
-        
-        
+
+
+
     def _gather_switch_connectivity(self, node="master"):
-        ''' 
+        '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
+
         Description:
         -    Using the "show switch" command verify switches are connected to the fabric
 
         '''
         t = test.Test()
-        if(node=="master"):
+        if(node == "master"):
             c = t.controller("master")
         else:
             c = t.controller("slave")
-        url = "/api/v1/data/controller/applications/bvs/info/fabric/switch"
-        result =  c.rest.get(url)['content']
+        url = "/api/v1/data/controller/applications/bcf/info/fabric/switch"
+        result = c.rest.get(url)['content']
         switchList = []
         i = 0
-        
-        while i<len(result):
+
+        while i < len(result):
             try:
                 dpid = result[i]['dpid']
                 connected = result[i]['connected']
@@ -210,51 +210,51 @@ class T5Utilities(object):
                     key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
                 except(KeyError):
                     key = "%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown)
-                    
+
                 switchList.append(key)
                 i += 1
             except(KeyError):
                 helpers.warn("Warning: No switches are detected in the fabric")
 
         return switchList
-    
+
 
     def _gather_fabric_links(self):
-        ''' 
+        '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
+
         Description:
         -    Using the "show fabric link" command verify fabric links in the fabric
-        
+
         '''
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/info/fabric?select=link"
+        url = "/api/v1/data/controller/applications/bcf/info/fabric?select=link"
         result = c.rest.get(url)['content']
         fabricLink = []
         try:
             for i in range(0, len(result[0]['link'])):
-                src_switch  = result[0]['link'][i]['src']['interface']['name']
-                dst_switch  = result[0]['link'][i]['dst']['interface']['name']
+                src_switch = result[0]['link'][i]['src']['interface']['name']
+                dst_switch = result[0]['link'][i]['dst']['interface']['name']
                 key = "%s-%s" % (src_switch, dst_switch)
                 fabricLink.append(key)
         except(KeyError):
             helpers.warn("Warning: No fabric links are detected in the fabric")
-            
+
         return fabricLink
-        
-    
+
+
     def _gather_endpoints(self):
-        ''' 
+        '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
+
         Description:
         -    Using the "show endpoints" command verify endpoints in the fabric
-    
+
         '''
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint"
+        url = "/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint"
         result = c.rest.get(url)['content']
         endpoints = []
         try:
@@ -264,26 +264,26 @@ class T5Utilities(object):
                 segment = result[i]['segment']
                 try:
                     ip = result[i]['ip-address']
-                    key = "%s-%s-%s-%s" % (mac,ip,tenant,segment)
+                    key = "%s-%s-%s-%s" % (mac, ip, tenant, segment)
                 except(KeyError):
-                    key = "%s-%s-%s" % (mac,tenant,segment)
-                
+                    key = "%s-%s-%s" % (mac, tenant, segment)
+
                 endpoints.append(key)
-                
+
         except(KeyError):
             helpers.warn("No endpoints are detected in the fabric", 1)
-            
+
         helpers.log("endpoint list is: %s " % endpoints)
         return endpoints
-    
-           
+
+
     def _gather_fabric_lags(self):
-        ''' 
+        '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
+
         Description:
         -    Using the "show fabric lags" command verify fabric lags in the fabric
-        
+
         '''
         t = test.Test()
         c = t.controller("master")
@@ -297,7 +297,7 @@ class T5Utilities(object):
             srcInt = ""
             dstSwitch = ""
             dstInt = ""
-            
+
             try:
                 for j in range(0, len(result[i]["fabric-lag"])):
                     try:
@@ -318,30 +318,30 @@ class T5Utilities(object):
 
             except(KeyError):
                 pass
-    
+
         return fabricLags
-    
+
     def _gather_port_groups(self):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
+
         Description:
         -    Using the "show fabric lags" command verify fabric lags in the fabric
-        
+
         '''
-        
+
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/info/fabric/port-group"
+        url = "/api/v1/data/controller/applications/bcf/info/fabric/port-group"
         result = c.rest.get(url)['content']
         portgroups = []
-        
+
         try:
             for i in range(0, len(result)):
                 name = mode = switchName = interface = leafGroup = state = ""
                 name = result[i]['name']
                 mode = result[i]['mode']
-                
+
                 for k in range(0, len(result[i]['interface'])) :
                     switchName = result[i]['interface'][k]['switch-name']
                     interface = result[i]['interface'][k]['interface-name']
@@ -349,34 +349,34 @@ class T5Utilities(object):
                     state = result[i]['interface'][k]['state']
                     key = "%s-%s-%s-%s-%s-%s" % (name, mode, switchName, interface, leafGroup, state)
                     portgroups.append(key)
-                
+
         except(KeyError):
             pass
-            
+
         helpers.log("portgroup list is: %s " % portgroups)
         return portgroups
-    
+
     def _gather_forwarding(self, fwdTableName):
-        
+
         t = test.Test()
         c = t.controller("master")
-        #url = "/api/v1/data/controller/applications/bvs/info/forwarding/network?select=%s" % fwdTableName
-        url = "/api/v1/data/controller/applications/bvs/info/forwarding/network/global/%s" % fwdTableName
+        # url = "/api/v1/data/controller/applications/bcf/info/forwarding/network?select=%s" % fwdTableName
+        url = "/api/v1/data/controller/applications/bcf/info/forwarding/network/global/%s" % fwdTableName
         result = c.rest.get(url)['content']
         fwdTableList = []
-        
+
         try:
-            #fwdTable = result[0][fwdTableName]
+            # fwdTable = result[0][fwdTableName]
             fwdTable = result
             for i in range(0, len(fwdTable)):
-                
-                if(fwdTableName == 'arp-table'):    
+
+                if(fwdTableName == 'arp-table'):
                     ip = fwdTable[i]['ip']
                     mac = fwdTable[i]['mac']
                     vlanID = fwdTable[i]['vlan-id']
-                    key = "%s-%s-%s" % (ip,mac,vlanID)
+                    key = "%s-%s-%s" % (ip, mac, vlanID)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'ep-table'):
                     mac = fwdTable[i]['mac']
                     pgLagID = fwdTable[i]['port-group-lag-id']
@@ -385,7 +385,7 @@ class T5Utilities(object):
                     vlanID = fwdTable[i]['vlan-id']
                     key = "%s-%s-%s-%s-%s" % (mac, pgLagID, rackID, rackLagID, vlanID)
                     fwdTableList.append(key)
-                
+
                 if(fwdTableName == 'l3-cidr-table'):
                     ip = fwdTable[i]['ip']
                     mask = fwdTable[i]['ip-mask']
@@ -396,7 +396,7 @@ class T5Utilities(object):
                     dstVrf = fwdTable[i]['dst-vrf']
                     key = "%s-%s-%s-%s-%s-%s-%s" % (ip, mask, pgLagID, rackLagID, vlanID, vrf, dstVrf)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'l3-host-table'):
                     ip = fwdTable[i]['ip']
                     mac = fwdTable[i]['mac']
@@ -406,30 +406,30 @@ class T5Utilities(object):
                     vrf = fwdTable[i]['vrf']
                     key = "%s-%s-%s-%s-%s-%s" % (ip, mac, pgLagID, rackLagID, vlanID, vrf)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'my-station-table'):
                     vRouterMac = fwdTable[i]['mac']
                     macMask = fwdTable[i]['mac-mask']
                     key = "%s-%s" % (vRouterMac, macMask)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'router-ip-table'):
                     routerIP = fwdTable[i]['ip']
                     routerMac = fwdTable[i]['mac']
                     vlanID = fwdTable[i]['vlan-id']
                     key = "%s-%s-%s" % (routerIP, routerMac, vlanID)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'ecmp-table'):
                     ecmpGroupID = fwdTable[i]['ecmp-group-id']
                     vrf = fwdTable[i]['vrf']
                     vlanID = fwdTable[i]['vlan-id']
-                    mac =  fwdTable[i]['mac']
-                    rackLagID =  fwdTable[i]['rack-lag-id']
-                    portGroupLagID =  fwdTable[i]['port-group-lag-id']
+                    mac = fwdTable[i]['mac']
+                    rackLagID = fwdTable[i]['rack-lag-id']
+                    portGroupLagID = fwdTable[i]['port-group-lag-id']
                     key = "%s-%s-%s-%s-%s-%s" % (ecmpGroupID, vrf, vlanID, mac, rackLagID, portGroupLagID)
                     fwdTableList.append(key)
-                    
+
                 if(fwdTableName == 'dhcp-table'):
                     dhcpIp = fwdTable[i]['dhcp-ip']
                     routerIp = fwdTable[i]['router-ip']
@@ -437,17 +437,17 @@ class T5Utilities(object):
                     vlanID = fwdTable[i]['vlan-id']
                     key = "%s-%s-%s-%s" % (dhcpIp, routerIp, routerMac, vlanID)
                     fwdTableList.append(key)
-                    
+
         except(KeyError, IndexError):
             pass
-        
+
         return fwdTableList
-        
-    
+
+
     def _compare_fabric_elements(self, list_b4, list_after, fabricElement):
-        ''' 
+        '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
-    
+
         Description:
             Compare fabric element status from one list to the elements in the other list
             fabricElement can be one of the following:
@@ -456,7 +456,7 @@ class T5Utilities(object):
                 3) Fabric Endpoints
                 4) Fabric Lags
                 5) Port Groups
-                6) Show Forwarding Table 
+                6) Show Forwarding Table
         '''
         global warningCount
         global fabricErrorEncounteredFlag
@@ -464,7 +464,7 @@ class T5Utilities(object):
         helpers.log("Before State Change : %s " % list_b4)
         helpers.log("After State Change Total # of Fabric Elements: %s " % len(list_after))
         helpers.log("After State Change: %s " % list_after)
-        
+
         if(helpers.list_compare(list_b4, list_after)):
             if(fabricElement == "SwitchList"):
                 helpers.log("Switch List is intact between states")
@@ -476,7 +476,7 @@ class T5Utilities(object):
                 helpers.log("Fabric Lags are intact between states")
             if (fabricElement == "PortGroups"):
                 helpers.log("Port Groups are intact between states")
-                
+
             if (fabricElement == "fwdARPTable"):
                 helpers.log("Controller ARP Table Forwarding entries are intact between states")
             if (fabricElement == "fwdEPTable"):
@@ -493,13 +493,13 @@ class T5Utilities(object):
                 helpers.log("Controller ECMP Table Forwarding entries are intact between states")
             if (fabricElement == "fwdDhcpTable"):
                 helpers.log("Controller DHCP Table Forwarding entries are intact between states")
-                
+
             return warningCount
-        
+
         else:
-            #helpers.warn("Got List Different from helpers")
-            #helpers.log("B4 is: %s" % list_b4)
-            #helpers.log("After is: %s" % list_after)
+            # helpers.warn("Got List Different from helpers")
+            # helpers.log("B4 is: %s" % list_b4)
+            # helpers.log("After is: %s" % list_after)
             if (fabricElement == "SwitchList"):
                 helpers.warn("-----------    Switch List Discrepancies    -----------")
             if (fabricElement == "FabricLinks"):
@@ -511,7 +511,7 @@ class T5Utilities(object):
             if (fabricElement == "PortGroups"):
                 helpers.warn("-----------    Port Group Discrepancies    -----------")
 
-                
+
             if (fabricElement == "fwdARPTable"):
                 helpers.warn("-----------    FWD: ARP Table Discrepancies    -----------")
             if (fabricElement == "fwdEPTable"):
@@ -528,7 +528,7 @@ class T5Utilities(object):
                 helpers.warn("-----------    FWD: ECMP Table Discrepancies    -----------")
             if (fabricElement == "fwdDhcpTable"):
                 helpers.warn("-----------    FWD: DHCP Table Discrepancies    -----------")
-                
+
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
                     if item not in list_after:
@@ -546,7 +546,7 @@ class T5Utilities(object):
                         if (fabricElement == "PortGroups"):
                             helpers.warn("Port Group: %s is not present after the state change" % item)
                             fabricErrorEncounteredFlag = True
-                            
+
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("FWD:ARP Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdEPTable"):
@@ -563,7 +563,7 @@ class T5Utilities(object):
                             helpers.warn("FWD:ECMP Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdDhcpTable"):
                             helpers.warn("FWD:DHCP Table Entry: %s is not present after the state change" % item)
-                            
+
                         warningCount += 1
             else:
                 for item in list_after:
@@ -582,7 +582,7 @@ class T5Utilities(object):
                         if (fabricElement == "PortGroups"):
                             helpers.warn("New portgroup: %s is present after the state change" % item)
                             fabricErrorEncounteredFlag = True
-                            
+
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("New FWD:ARP Table Entry: %s is present after the state change" % item)
                         if (fabricElement == "fwdEPTable"):
@@ -600,13 +600,13 @@ class T5Utilities(object):
                         if (fabricElement == "fwdDhcpTable"):
                             helpers.warn("New FWD:Dchp Table Entry: %s is present after the state change" % item)
                         warningCount += 1
-                        
-        return warningCount 
-    
-    
-    
+
+        return warningCount
+
+
+
     def cli_get_num_nodes(self):
-        ''' 
+        '''
             Utility functions to return the number of nodes in a cluster.
             Returns:
                 1 : single node cluster
@@ -614,25 +614,25 @@ class T5Utilities(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        
-        c.cli('show controller' )
+
+        c.cli('show controller')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         num = 0
-        for line in temp:          
-            match= re.match(r'.*(active|standby).*', line)
+        for line in temp:
+            match = re.match(r'.*(active|standby).*', line)
             if match:
-                num = num+1                                      
+                num = num + 1
             else:
-                helpers.log("INFO: not for controller  %s" % line)  
-        helpers.log("INFO: There are %d of controller(s) in the cluster" % num)   
-        return num    
-           
-    
+                helpers.log("INFO: not for controller  %s" % line)
+        helpers.log("INFO: There are %d of controller(s) in the cluster" % num)
+        return num
+
+
     def start_floodlight_monitor(self):
         global floodlightMonitorFlag
-        
+
         try:
             t = test.Test()
             c1 = t.controller('c1')
@@ -640,27 +640,27 @@ class T5Utilities(object):
             c1_pidList = self.get_floodlight_monitor_pid('c1')
             c2_pidList = self.get_floodlight_monitor_pid('c2')
             for c1_pid in c1_pidList:
-                #if (re.match("^d", c1_pid)):
+                # if (re.match("^d", c1_pid)):
                     c1.sudo('kill -9 %s' % (c1_pid))
             for c2_pid in c2_pidList:
-                #if (re.match("^d", c2_pid)):
+                # if (re.match("^d", c2_pid)):
                     c2.sudo('kill -9 %s' % (c2_pid))
-            
+
             # Add rm of the file if file already exist in case of a new test
             c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
             c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c2_floodlight_dump.txt")
-            
+
             floodlightMonitorFlag = True
             return True
-        
+
         except:
             helpers.log("Exception occured while starting the floodlight monitor")
             return False
-                        
+
     def restart_floodlight_monitor(self, node):
-        
+
         global floodlightMonitorFlag
-        
+
         if(floodlightMonitorFlag):
             t = test.Test()
             c = t.controller(node)
@@ -670,13 +670,13 @@ class T5Utilities(object):
             return True
         else:
             return True
-            
-    
-    
+
+
+
     def stop_floodlight_monitor(self):
-        
+
         global floodlightMonitorFlag
-        
+
         if(floodlightMonitorFlag):
             c1_pidList = self.get_floodlight_monitor_pid('c1')
             c2_pidList = self.get_floodlight_monitor_pid('c2')
@@ -690,17 +690,17 @@ class T5Utilities(object):
             for c2_pid in c2_pidList:
                 c2.sudo('kill -9 %s' % (c2_pid))
             floodlightMonitorFlag = False
-            
+
             try:
                 helpers.log("****************    Floodlight Log From C1    ****************")
                 result = c1.sudo('cat c1_floodlight_dump.txt')
                 split = re.split('\n', result['content'])[1:-1]
                 if split:
                     helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
-                    
+
             except(AttributeError):
                 helpers.log("No Errors From Floodlight Monitor on C1")
-                
+
             try:
                 helpers.log("****************    Floodlight Log From C2    ****************")
                 result = c2.sudo('cat c2_floodlight_dump.txt')
@@ -709,20 +709,20 @@ class T5Utilities(object):
                     helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
             except(AttributeError):
                 helpers.log("No Errors From Floodlight Monitor on C2")
-            
+
             return True
-            
+
         else:
             helpers.log("FloodlightMonitorFlag is not set: Returning")
-            
-            
-        
+
+
+
     def get_floodlight_monitor_pid(self, role):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
         c_result = c.sudo('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
-        split = re.split('\n',c_result['content'])
+        split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
 
@@ -807,7 +807,7 @@ class T5Utilities(object):
             content = helpers.strip_cli_output(content)
             helpers.log("Length of contents is %s" % str(len(content)))
             if not content:
-                if flag=='True':
+                if flag == 'True':
                     helpers.log("Failure: expecting \n%s but the output is empty" % (expected, content))
                     helpers.test_failure(c.cli_content(), soft_error)
                     return False
@@ -817,10 +817,10 @@ class T5Utilities(object):
 
             helpers.log("Expected result is %s" % str(helpers.any_match(content, expected)))
 
-            if expected in content and flag=='True':
+            if expected in content and flag == 'True':
                 helpers.log("Expecting %s in \n%s \nand got it" % (expected, content))
                 return True
-            elif (expected not in content) and flag=='False':
+            elif (expected not in content) and flag == 'False':
                 helpers.log("Not expecting %s in \n%s \nand did not get it" % (expected, content))
                 return True
             else:
@@ -841,7 +841,7 @@ class T5Utilities(object):
         content = c.config("show session")['content']
         output = helpers.strip_cli_output(content)
         lines = helpers.str_to_list(output)
-        for i,line in enumerate(lines):
+        for i, line in enumerate(lines):
             if '*' in line:
                 line = line.split()
                 helpers.test_log("Session hash is %s" % line[2])
@@ -855,12 +855,12 @@ class T5Utilities(object):
         '''
         t = test.Test()
         c = t.controller("master")
-        #url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
-        #result = c.rest.patch(url,{"shutdown": True})
-        
-        #if c.rest.status_code_ok():
+        # url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        # result = c.rest.patch(url,{"shutdown": True})
+
+        # if c.rest.status_code_ok():
         #    return True
-        #else:
+        # else:
         #    return False
         try:
             c.config("switch %s" % switch)
@@ -874,18 +874,18 @@ class T5Utilities(object):
             return True
 
 
-    
+
     def rest_switch_int_noshut(self, switch, interface):
         ''' This function will no-shut the switch interface
         '''
         t = test.Test()
         c = t.controller("master")
-        #url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
-        #result = c.rest.delete(url,{})
-        
-        #if c.rest.status_code_ok():
+        # url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        # result = c.rest.delete(url,{})
+
+        # if c.rest.status_code_ok():
         #    return True
-        #else:
+        # else:
         #    return False
         try:
             c.config("switch %s" % switch)
@@ -902,8 +902,8 @@ class T5Utilities(object):
 
 
 ''' Following class will perform T5 platform related multithreading activities
-    Instantiating this class is done by functions reside in T5Platform. 
-    
+    Instantiating this class is done by functions reside in T5Platform.
+
     Extends threading.Thread
 '''
 
@@ -911,14 +911,14 @@ from threading import Thread
 import keywords.Host as Host
 
 class T5PlatformThreads(Thread):
-    
+
     def __init__(self, threadID, name, **kwargs):
             Thread.__init__(self)
             self.threadID = threadID
             self.name = name
             self.kwargs = kwargs
-            
-            
+
+
     def run(self):
         if(self.name == "switchReboot"):
             self.switch_reboot(self.kwargs.get("switch"))
@@ -930,9 +930,9 @@ class T5PlatformThreads(Thread):
             self.controller_reboot('slave')
         if(self.name == "hostPing"):
             self.host_ping(self.kwargs.get("host"), self.kwargs.get("IP"))
-            
-    
-        
+
+
+
     def switch_reboot(self, switchName):
         try:
             print ("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, switchName))
@@ -953,35 +953,35 @@ class T5PlatformThreads(Thread):
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
             print ("Failure during switch:%s reboot" % (switchName))
             return False
-        
-    def controller_failover(self):  
+
+    def controller_failover(self):
         from T5Platform import T5Platform
         platform = T5Platform()
-        print ("Starting Thread %s For Controller Failover" % (self.threadID))    
-        returnVal =  platform._cluster_election(True)
+        print ("Starting Thread %s For Controller Failover" % (self.threadID))
+        returnVal = platform._cluster_election(True)
         print ("Exiting Thread %s After Controller Failover" % (self.threadID))
         return returnVal
-        
+
     def controller_reboot(self, node):
         from T5Platform import T5Platform
         platform = T5Platform()
-        print ("Starting Thread %s For Controller Reboot for Node: " % (self.threadID), node) 
-        if (node=="master"):
+        print ("Starting Thread %s For Controller Reboot for Node: " % (self.threadID), node)
+        if (node == "master"):
             returnVal = platform.cluster_node_reboot()
         else:
             returnVal = platform.cluster_node_reboot(False)
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
-    
+
     def host_ping(self, host, IP):
-        
+
         myhost = Host.Host()
         loss = myhost.bash_ping(host, IP, count=10)
-        
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+

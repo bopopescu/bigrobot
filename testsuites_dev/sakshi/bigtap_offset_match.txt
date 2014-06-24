@@ -18,8 +18,11 @@ ${switch1_alias}                        qa-corsair-1  #Alias for switch 1
 ${switch2_alias}                        qa-corsair-2  #Alias for switch 2
 ${switch1_filter_intf_name}				ethernet26
 ${switch1_filter_alias} 				ixia-2-4
-${switch1_delivery_intf_name} 			ethernet26
+${switch2_delivery_intf_name} 			ethernet26
 ${switch2_delivery_alias}				ixia-2-3
+${switch1}								00:00:5c:16:c7:10:34:a7
+${switch2}								00:00:5c:16:c7:17:86:67
+
 
 ${bigtap_policy_name}					offset-policy
 
@@ -429,7 +432,7 @@ ${bigtap_policy_name}					offset-policy
     clear stats    
     start traffic  ${stream}
     sleep  10
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    verify false results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
 	[Tags]  feature
 	
@@ -646,7 +649,7 @@ ${bigtap_policy_name}					offset-policy
     [Tags]  feature
 
 06_With TC5 config, change action from forward to inactive. Verify policy is inactive and flows are deleted from both Switches
-     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     sleep  5
     rest add policy action  admin-view  ${bigtap_policy_name}  inactive
@@ -780,7 +783,7 @@ ${bigtap_policy_name}					offset-policy
     ...			no_arp=True  payload=2000000000000064
     clear stats
     start traffic  ${stream} 
-    sleep          10
+    sleep          30
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
  	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
@@ -794,7 +797,8 @@ ${bigtap_policy_name}					offset-policy
  	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
  	Should be True  ${return_value} 
     stop traffic  ${stream}
- 	[Tags]  new
+    
+    [Tags]  feature
 
 14_With policy installed, send matching traffic. Verify traffic statistics are reported correctly in "show bigtap policy <policy_name> delivery-interfaces"
 
@@ -841,8 +845,21 @@ ${bigtap_policy_name}					offset-policy
  	[Tags]  feature
 
 16_With policy installed. Verify CLI O/P for "show bigtap policy-flow <policy name> "
-	 ${return_value}=  cli show bigtap policy
-	 Should be true   ${return_value} 
+	 
+	${switch1_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]?select=flow-info
+     
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][0]['eth-type']}  2048 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][1]['ip-proto']}  17 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][2]['port']}  2152 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][4]['udf4']}  100
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['instruction'][0]['action'][0]['max-length']}  65535
+ 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['match-field'][0]['eth-type']}  2048 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['match-field'][1]['ip-proto']}  17 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['match-field'][2]['port']}  2152 
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['match-field'][4]['udf4']}  100
+     Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['instruction'][0]['action'][0]['max-length']}  65535
+     
 	 [Tags]  feature
 
 17_With policy installed. Verify CLI O/P for "show bigtap policy <policy name> optimized match"
@@ -856,6 +873,30 @@ ${bigtap_policy_name}					offset-policy
  	[Tags]  feature
 
 18_Verify CLI "show running-config"
+
+    ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/interface-config
+    # Verify Filter Interface
+    Should be equal as strings   ${command_dictionary[0]['interface']}  ${switch2_delivery_intf_name}
+    Should be equal as strings   ${command_dictionary[0]['name']}  ${switch2_delivery_alias}
+    Should be equal as strings   ${command_dictionary[0]['role']}  delivery
+    # Verify Delivery Interface
+    Should be equal as strings   ${command_dictionary[1]['interface']}  ${switch1_filter_intf_name}
+    Should be equal as strings   ${command_dictionary[1]['name']}  ${switch1_filter_alias}
+    Should be equal as strings   ${command_dictionary[1]['role']}  filter
+    
+    ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view?config=true
+    Should be equal as strings   ${command_dictionary[0]['delivery-interface-group'][0]['delivery-group'][0]['name']}  ${switch1_delivery_alias}
+    Should be equal as strings   ${command_dictionary[0]['filter-interface-group'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
+    Should be equal as strings   ${command_dictionary[0]['policy'][0]['action']}  forward
+    Should be equal as strings   ${command_dictionary[0]['policy'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
+    Should be equal as strings   ${command_dictionary[0]['policy'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
+    Should be equal as strings   ${command_dictionary[0]['policy'][0]['name']}  ${bigtap_policy_name}
+    Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['dst-tp-port']}  2152
+    Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['ether-type']}   2048
+    Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['gtp-v1-teid']}  100
+    Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['ip-proto']}   17
+    Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['sequence']}  1
+    [Tags]  feature
 
 19_Delete and re-add policy and verify flows get deleted and re-installed.
 
@@ -1014,25 +1055,8 @@ ${bigtap_policy_name}					offset-policy
  	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
  	Should be True  ${return_value}
     stop traffic  ${stream}
- 	[Tags]  new
-
-28_With policy installed and match on GTP TEID, send packet with GTP header and no CRC
-
-	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-	sleep  5	
-	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518  crc=False
-    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...			no_arp=True  payload=2000000000000064  
-    clear stats
-    start traffic  ${stream}
-    sleep     10
-    ${report}=  fetch port stats  stream=${stream}
-    verify false results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    stop traffic   ${stream}
  	[Tags]  feature
+
 	
 * Keyword
 
@@ -1042,7 +1066,7 @@ offset suite setup
     Should not be true   ${return_value}
     rest add switch alias  s1  ${switch1_alias}
     rest add interface role  s1  ${switch1_filter_intf_name}  filter    intf_nickname=${switch1_filter_alias} 
-    rest add interface role  s2  ${switch1_delivery_intf_name}    delivery  intf_nickname=${switch2_delivery_alias}
+    rest add interface role  s2  ${switch2_delivery_intf_name}    delivery  intf_nickname=${switch2_delivery_alias}
     rest add policy  admin-view  ${bigtap_policy_name}  forward
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}   filter
@@ -1074,9 +1098,9 @@ offset suite teardown
     ${return_value}=  rest enable feature  full-match
     Should be true   ${return_value}	
 	rest delete interface role  s1  ${switch1_filter_intf_name}       	filter 
-    rest delete interface role  s2  ${switch1_delivery_intf_name}       delivery              
+    rest delete interface role  s2  ${switch2_delivery_intf_name}       delivery              
     rest delete interface  s1  ${switch1_filter_intf_name}          
-    rest delete interface  s2  ${switch1_delivery_intf_name} 
+    rest delete interface  s2  ${switch2_delivery_intf_name} 
     rest delete switch alias  s1
     rest delete switch  s1
     rest delete switch alias  s2

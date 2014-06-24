@@ -766,14 +766,14 @@ class T5Platform(object):
         ''' Delete all the port groups in the running-config. Use as running config cleanup function. (teardown)
         '''
 
-        url = "/api/v1/data/controller/applications/bvs/port-group?config=true"
+        url = "/api/v1/data/controller/applications/bcf/port-group?config=true"
         t = test.Test()
         master = t.controller("master")
 
         result = master.rest.get(url)['content']
 
         for pg in result:
-            url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % pg['name']
+            url = '/api/v1/data/controller/applications/bcf/port-group[name="%s"]' % pg['name']
             master.rest.delete(url, {})
 
 
@@ -835,7 +835,7 @@ class T5Platform(object):
     def do_show_run_vns_verify(self, vnsName, numMembers):
         t = test.Test()
         master = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/tenant?config=true"
+        url = "/api/v1/data/controller/applications/bcf/tenant?config=true"
         result = master.rest.get(url)
         helpers.log("Show run output is: %s " % result["content"][0]['vns'][0]['port-group-membership-rules'])
         vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
@@ -1134,7 +1134,7 @@ class T5Platform(object):
         t = test.Test()
         master = t.controller("master")
 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]' % (sessionID)
 
         master.rest.put(url, {"id": sessionID})
 
@@ -1162,7 +1162,7 @@ class T5Platform(object):
 
         helpers.log("matchSpec is: %s" % matchSpec)
 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
 
         if (matchSpec):
             result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": srcSwitch, "interface-name": srcInt})
@@ -1170,7 +1170,7 @@ class T5Platform(object):
             result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
         result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
 
 
@@ -1184,7 +1184,7 @@ class T5Platform(object):
 
         t = test.Test()
         master = t.controller("master")
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]' % (sessionID)
 
         master.rest.patch(url, {"active": 'true'})
 
@@ -1198,7 +1198,7 @@ class T5Platform(object):
         t = test.Test()
         master = t.controller("master")
 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/active' % (sessionID)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]/active' % (sessionID)
 
         master.rest.delete(url)
 
@@ -1212,7 +1212,7 @@ class T5Platform(object):
 
         t = test.Test()
         master = t.controller("master")
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
+        url = '/api/v1/data/controller/applications/bcf/monitor-session[id=%s]' % (sessionID)
 
         master.rest.delete(url, {"id": sessionID})
 
@@ -1238,7 +1238,7 @@ class T5Platform(object):
         master = t.controller("master")
 
         foundSession = False
-        url = "/api/v1/data/controller/applications/bvs/monitor-session?config=true"
+        url = "/api/v1/data/controller/applications/bcf/monitor-session?config=true"
         result = master.rest.get(url)['content']
 
         try:
@@ -3559,7 +3559,7 @@ class T5Platform(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/test/path/controller-view'
+        url = '/api/v1/data/controller/applications/bcf/test/path/controller-view'
 
         if(kwargs.get('dst-segment')):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
@@ -3611,7 +3611,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
 
-        url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
+        url = '/api/v1/data/controller/applications/bcf/test/path/setup-result'
 
         if(kwargs.get('test-name')):
             url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
@@ -3678,7 +3678,7 @@ class T5Platform(object):
             pingThread.start()
             sleep(3)
 
-        url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
+        url = '/api/v1/data/controller/applications/bcf/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
 
         count = 0
@@ -3721,7 +3721,7 @@ class T5Platform(object):
 
 
         sleep(3)
-        url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
+        url = '/api/v1/data/controller/applications/bcf/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
         for hop in result[0]['physical-path']:
             try:
@@ -3759,7 +3759,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller("master")
 
-        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        url = '/api/v1/data/controller/applications/bcf/test/path/all-test'
 
         try:
             result = c.rest.get(url)['content']
@@ -3781,7 +3781,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller("master")
 
-        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        url = '/api/v1/data/controller/applications/bcf/test/path/all-test'
 
         try:
             result = c.rest.get(url)['content']
@@ -4465,3 +4465,144 @@ class T5Platform(object):
                         helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
+    def cli_reboot_switch_name(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    switch.append(data[i]['name'])
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        
+        for sw in switch:        
+            c.enable('')
+            c.send("system reboot switch %s" % sw )
+            c.expect(r'.*\(y or yes to continue\):')   
+            c.send("yes")  
+            c.expect()      
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
+                                                
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch %s " % sw)
+
+            helpers.log("Reboot switch executed successfully %s" % sw )
+        return True
+            
+    def cli_reboot_switch_ip(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+         Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    if 'inet-address' in data[i].keys() and 'ip' in data[i]['inet-address'].keys(): 
+                        switch.append(data[i]['inet-address']['ip'])
+                    else:
+                        helpers.log("ERROR:  there is no ip address for: %s" %  data[i]['name'])        
+                                        
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        for ip in switch:                 
+            c.enable("system reboot switch %s" % ip )
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch")                         
+            helpers.log("Reboot command executed successfully")
+            return True
+
+    def cli_reboot_switch_mac(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+         Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    if 'dpid' in data[i].keys(): 
+                        macs= data[i]['dpid'].split(':',2)
+                        mac = macs[2]
+                        switch.append(mac)
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        
+        for mac in switch:                 
+            c.enable('')
+            c.send("system reboot switch %s" % mac )                        
+            c.expect(r'.*\(y or yes to continue\):')   
+            c.send("yes")                  
+            c.expect()
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch")                         
+            helpers.log("Reboot command executed successfully")
+            return True
+
+    def cli_reboot_switch_all(self, node='master'):
+        """
+        Reboot switch all , switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | 
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        c.enable("system reboot switch all" )
+       
+        helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+        if "Error" in c.cli_content():
+            helpers.test_failure("Error rebooting the switch")
+        helpers.log("Reboot command executed successfully")
+         
+        return True
+
+
+
