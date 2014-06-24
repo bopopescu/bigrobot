@@ -465,8 +465,8 @@ Intra tenant L3 traffic same rack different leaf switch
     BASH ifup intf                              h6                              em2
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
-    BASH ifconfig ip address                         h5                              10.251.1.31/24          eth1
-    BASH ifconfig ip address                         h6                              10.251.2.31/24          em2
+    BASH ifconfig ip address                    h5                              10.251.1.31/24          eth1
+    BASH ifconfig ip address                    h6                              10.251.2.31/24          em2
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
@@ -2956,8 +2956,8 @@ restart ofad on leaf
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
 	BASH ifup intf								h3								bond0.1003
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0.1001
-	BASH ifconfig ip address							h3								10.251.3.11/24			bond0.1003
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0.1001
+	BASH ifconfig ip address					h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
 	sleep										5	
@@ -2987,8 +2987,8 @@ restart ofad on leaf
    	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	BASH restart process						s3								ofad
 	sleep										5
-	CLI execute command							s3								debug ofad "autoneg 24"
-	sleep										1
+#	CLI execute command							s3								debug ofad "autoneg 24"
+#	sleep										1
 	${value} = 									BASH check service status		s3						ofad
 	Should Contain								${value}						is started	
 	sleep										10
@@ -3011,14 +3011,14 @@ Verify L3 intra tenant traffic with ip options
 	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
 	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
 	REST add interface to vns					X								X2						${leaf1_a}				${ixia3}				-1
-	BASH ifconfig ip address							h5								10.251.1.11/24			bond0	
-	BASH ifconfig ip address							h6								10.251.2.11/24			bond0
+	BASH ifconfig ip address					h5								10.251.1.11/24			bond0	
+	BASH ifconfig ip address					h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										5	
-	${loss} = 									BASH ping									h5								10.251.1.1				count=10 				
+	${loss} = 									BASH ping						h5								10.251.1.1				count=10 				
 	Should Be True								${loss} < 50
-	${loss} = 									BASH ping									h6								10.251.2.1				count=10
+	${loss} = 									BASH ping						h6								10.251.2.1				count=10
 	Should Be True								${loss} < 50
 	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
