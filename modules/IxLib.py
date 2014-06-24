@@ -335,7 +335,8 @@ class Ixia(object):
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False,
                                       protocol=None, src_port=None, dst_port=None,
                                       icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None,
-                                      hex_src_mac=None, hex_dst_mac=None, synBit=False):
+                                      hex_src_mac=None, hex_dst_mac=None,
+                                      synBit=False, urgBit=False, ackBit=False, pshBit=False, rstBit=False, finBit=False):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -474,7 +475,7 @@ class Ixia(object):
                                              '-optionalEnabled', 'true', '-auto', 'false')
             if protocol == 'TCP':
                 helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl TCP..!!!' % (src_port, dst_port))
-		helpers.log('SynBit : %s' % str(synBit))
+                helpers.log('SynBit : %s' % str(synBit))
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.srcPort-1"',
                                               '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
                                              '-optionalEnabled', 'true', '-auto', 'false')
@@ -485,6 +486,31 @@ class Ixia(object):
                     helpers.log("Adding Sync Bit with TCP header...")
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.synBit-14"',
                                               '-countValue', 1, '-fieldValue', synBit, '-singleValue', synBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if urgBit:
+                    helpers.log("Adding Urgent Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.urgBit-10"',
+                                              '-countValue', 1, '-fieldValue', urgBit, '-singleValue', urgBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if ackBit:
+                    helpers.log("Adding ACK Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.ackBit-11"',
+                                              '-countValue', 1, '-fieldValue', ackBit, '-singleValue', ackBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if pshBit:
+                    helpers.log("Adding PSH Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.pshBit-12"',
+                                              '-countValue', 1, '-fieldValue', pshBit, '-singleValue', pshBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if rstBit:
+                    helpers.log("Adding RST Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.rstBit-13"',
+                                              '-countValue', 1, '-fieldValue', rstBit, '-singleValue', rstBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if finBit:
+                    helpers.log("Adding FIN Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.controlBits.finBit-15"',
+                                              '-countValue', 1, '-fieldValue', finBit, '-singleValue', finBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
 
             if protocol == 'UDP':
@@ -622,6 +648,36 @@ class Ixia(object):
                                                  '-optionalEnabled', 'true', '-auto', 'false')
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.dstPort-2"',
                                                   '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if synBit:
+                        helpers.log("Adding Sync Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.synBit-14"',
+                                                  '-countValue', 1, '-fieldValue', synBit, '-singleValue', synBit,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if urgBit:
+                        helpers.log("Adding Urgent Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.urgBit-10"',
+                                                  '-countValue', 1, '-fieldValue', urgBit, '-singleValue', urgBit,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if ackBit:
+                        helpers.log("Adding ACK Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.ackBit-11"',
+                                                  '-countValue', 1, '-fieldValue', ackBit, '-singleValue', ackBit,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if pshBit:
+                        helpers.log("Adding PSH Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.pshBit-12"',
+                                                  '-countValue', 1, '-fieldValue', pshBit, '-singleValue', pshBit,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if rstBit:
+                        helpers.log("Adding RST Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.rstBit-13"',
+                                                  '-countValue', 1, '-fieldValue', rstBit, '-singleValue', rstBit,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    if finBit:
+                        helpers.log("Adding FIN Bit with TCP header...")
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.controlBits.finBit-15"',
+                                                  '-countValue', 1, '-fieldValue', finBit, '-singleValue', finBit,
                                                  '-optionalEnabled', 'true', '-auto', 'false')
                 if protocol == 'UDP':
                     helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl UDP..!!!' % (src_port, dst_port))
@@ -891,6 +947,11 @@ class Ixia(object):
         burst_count = kwargs.get('burst_count', None)
         burst_gap = kwargs.get('burst_gap', None)
         payload = kwargs.get('payload', None)
+        urgBit = kwargs.get('urgBit', False)
+        ackBit = kwargs.get('ackBit', False)
+        pshBit = kwargs.get('pshBit', False)
+        rstBit = kwargs.get('rstBit', False)
+        finBit = kwargs.get('finBit', False)
         synBit = kwargs.get('synBit', False)
 
         crc = kwargs.get('crc', None)
@@ -1046,7 +1107,7 @@ class Ixia(object):
                                                            protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                            burst_count=burst_count, burst_gap=burst_gap,
                                                            src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, line_rate=line_rate,
-                                                           synBit=synBit)
+                                                           synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
 
                 traffic_stream1.append(traffic_stream)
             else:
@@ -1062,7 +1123,7 @@ class Ixia(object):
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
-                                                             synBit=synBit)
+                                                             synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
                 traffic_stream1.append(traffic_item)
 
             helpers.log('### Created Traffic Stream with Ip Devices ...')
@@ -1082,7 +1143,8 @@ class Ixia(object):
                                                              protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
                                                              payload=payload, src_vport=src_vport, dst_vport=dst_vport,
-                                                             hex_src_mac=src_mac, hex_dst_mac=dst_mac, synBit=synBit)
+                                                             hex_src_mac=src_mac, hex_dst_mac=dst_mac,
+                                                             synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
             traffic_stream1.append(traffic_item)
         return traffic_stream1[0]
 
