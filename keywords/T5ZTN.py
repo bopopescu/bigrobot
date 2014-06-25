@@ -1007,7 +1007,7 @@ class T5ZTN(object):
                            timeout=300)
         if options[0] == 0:  # login prompt
             s.send('admin')
-            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
             if options[0] == 0:
                 helpers.log("Logging in as admin with password %s" % password)
                 s.cli(password)
@@ -1125,7 +1125,7 @@ class T5ZTN(object):
             c.send("system reboot switch %s" % switch)
             helpers.log(c.cli_content())
             options = c.expect([r'y or yes to continue',
-                                c.get_prompt()], timeout=30) 
+                                c.get_prompt()], timeout=30)
             if options[0] == 0:
                 helpers.log("Switch has fabric role configured. Confirming")
                 c.send("yes")
