@@ -89,6 +89,91 @@ class T5ZTN(object):
         c.config("")
         return True
 
+    def bash_get_sl_version(self, image, node='master'):
+        """
+        Get SWI or Installer Versions in the controller bundle
+
+        Inputs:
+        | image | SL image - swi or installer |
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - SWI or Installer Versions, None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log("Verifying if SwitchLight manifests"
+                    " are present on node %s" % node)
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+        if image == 'installer':
+            c.bash("unzip -p /usr/share/floodlight/zerotouch/"
+                   "switchlight*installer zerotouch.json")
+            output = c.cli_content()
+            output = helpers.strip_cli_output(output)
+            installer_manifest = ast.literal_eval(output)
+            installer_release = installer_manifest['release']
+            return installer_release
+        if image == 'swi':
+            c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*swi"
+                   " zerotouch.json")
+            output = c.cli_content()
+            output = helpers.strip_cli_output(output)
+            swi_manifest = ast.literal_eval(output)
+            swi_release = swi_manifest['release']
+            return swi_release
+
+    def telnet_get_switch_sl_version(self, image, hostname):
+        """
+        Get SWI or Installer Versions in the controller bundle
+
+        Inputs:
+        | image | SL image - swi or installer |
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - SWI or Installer Versions, None in case of errors
+        """
+
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+
+        t = test.Test()
+        s = t.dev_console(hostname, modeless=True)
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+                           s.get_prompt()])
+        if options[0] == 0:  # login prompt
+            s.send('admin')
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        if options[0] == 2:  # bash mode
+            s.cli('exit')
+        output = s.cli("show version")['content']
+        output = helpers.str_to_list(output)
+
+        version = ''
+
+        if image == 'installer':
+            line1 = "SwitchLight Loader Version: "
+            line2 = "SwitchLight Loader Build: "
+        if image == 'swi':
+            line1 = "Software Image Version: "
+            line2 = "Internal Build Version: "
+        for line in output:
+            if line1 in line:
+                version = line.replace(line1, '')
+            if line2 in line:
+                line = line.replace(line2, '')
+                if ' ' in line:
+                    line = line.replace(' ', '')
+                version = version + " " + line
+        return version
+
     def bash_get_supported_platforms(self, image):
         """
         Get list of platforms supported by SWI or SwitchLight installer
@@ -120,7 +205,7 @@ class T5ZTN(object):
         manifest = ast.literal_eval(output)
         platform = manifest['platform']
         platform_list = platform.split(',')
-        c.config("enable")
+        c.config("")
         return platform_list
 
     def test_console(self, node):
