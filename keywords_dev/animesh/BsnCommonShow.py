@@ -342,9 +342,9 @@ class BsnCommonShow(object):
         c.rest.get(url)
         url = '%s/api/v1/data/controller/core/switch-config?config=true reply "[ ]"' % (c.base_url)
         c.rest.get(url)
-        url = '%s/api/v1/data/controller/applications/bvs/port-group?config=true reply "[ ]"' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/port-group?config=true reply "[ ]"' % (c.base_url)
         c.rest.get(url)
-        url = '%s/api/v1/data/controller/applications/bvs/tenant?config=true reply "[ ]"' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/tenant?config=true reply "[ ]"' % (c.base_url)
         c.rest.get(url)
         
 '''        
