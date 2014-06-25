@@ -148,6 +148,11 @@ T1.9. Verify startup config after failvoer
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 
+T1.10. Verify switches SL version
+	Verify Switch SWI Version  ${s4_alias}
+T1.11. Verify switches SL version
+	Verify Switch Installer Version  ${s4_alias}
+
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:33:44:55:66
 	${mac2}=  Set Variable  66:55:44:33:22:11
@@ -1654,6 +1659,19 @@ Reboot Standby Switch
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${switch_mac}  ${switch_alias}
 	Verify Switch Running Config  ${switch_mac}  ${switch_alias}
+
+
+Verify Switch SWI Version
+	[Arguments]  ${switch_alias}
+	${swi_version_bundle}=  Bash Get SL Version  swi
+	${swi_version_switch}=  Telnet Get Switch SL Version  swi  ${switch_alias}
+	Should Be Equal As Strings  ${swi_version_bundle}  ${swi_version_switch}
+
+Verify Switch Installer Version
+	[Arguments]  ${switch_alias}
+	${installer_version_bundle}=  Bash Get SL Version  installer
+	${installer_version_switch}=  Telnet Get Switch SL Version  installer  ${switch_alias}
+	Should Be Equal As Strings  ${installer_version_bundle}  ${installer_version_switch}
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
