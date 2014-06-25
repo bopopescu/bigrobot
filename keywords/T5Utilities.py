@@ -59,7 +59,7 @@ class T5Utilities(object):
         pass
 
 
-    def fabric_integrity_checker(self, state):
+    def fabric_integrity_checker(self, state, cluster="HA"):
         '''
         Objective::
         -    This function will check for fabric integrity between states. For example calling this function before a state
@@ -70,7 +70,13 @@ class T5Utilities(object):
                     utilities.fabric_integrity_checker(obj,"before")
                     <do stuff>
                     utilities.fabric_integrity_checker(obj,"after")
-
+            
+            If Single Node Cluster:
+                    obj =  T5Utilities()
+                    utilities.fabric_integrity_checker(obj,"before", "single")
+                    <do stuff>
+                    utilities.fabric_integrity_checker(obj,"after", "single")
+                
         Description :
         -    Checks for the fabric state differences on following component: Switch Connectivity / Fabric Links / Fabric Lags / Endpoints
 
@@ -118,7 +124,8 @@ class T5Utilities(object):
         # Switch connectivity verification
         if (state == "before"):
             switchList_b4 = self._gather_switch_connectivity()
-            slave_switchList_b4 = self._gather_switch_connectivity("slave")
+            if(cluster=="HA"):
+                slave_switchList_b4 = self._gather_switch_connectivity("slave")
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -137,8 +144,9 @@ class T5Utilities(object):
         else:
             switchList_after = self._gather_switch_connectivity()
             warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
-            slave_switchList_after = self._gather_switch_connectivity("slave")
-            warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
+            if(cluster=="HA"):
+                slave_switchList_after = self._gather_switch_connectivity("slave")
+                warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
             fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
             endpoints_after = self._gather_endpoints()
