@@ -85,8 +85,8 @@ class T5ZTN(object):
         swi_manifest_version = swi_manifest['manifest_version']
         if swi_operation != 'ztn-runtime':
             helpers.test_failure("Wrong swi operation - %s"
-                                  % installer_operation)
-        c.config("enable")
+                                  % swi_operation)
+        c.config("")
         return True
 
     def bash_get_supported_platforms(self, image):
