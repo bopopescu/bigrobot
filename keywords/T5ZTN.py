@@ -729,7 +729,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bfc/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabric role via url %s" % url)
         c.rest.get(url)
