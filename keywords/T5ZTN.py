@@ -729,7 +729,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bfc/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabric role via url %s" % url)
         c.rest.get(url)
@@ -760,7 +760,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabri connection state via url %s"
                     % url)
@@ -791,7 +791,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabri connection state via url %s"
                     % url)
@@ -823,7 +823,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch connection state  via url %s" % url)
         c.rest.get(url)
@@ -853,7 +853,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch handshake state  via url %s" % url)
         c.rest.get(url)
@@ -883,7 +883,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch IP address via url %s" % url)
         c.rest.get(url)
@@ -974,7 +974,7 @@ class T5ZTN(object):
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
 
-        s.send("\ ")
+        s.send(" ")
         helpers.sleep(1)
         s.send("abc")
         helpers.sleep(1)
@@ -987,7 +987,7 @@ class T5ZTN(object):
             s.send("admin")
             s.send("enable; config; reload now")
             s.expect("Hit any key to stop autoboot")
-            s.send("\ ")
+            s.send(" ")
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.expect(r'\=\>')
@@ -1033,11 +1033,23 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
+        c.config("")
         helpers.log("Executing 'system reboot switch %s' command"
                     " on node %s" % (switch, node))
         try:
-            c.config("system reboot switch %s" % switch, timeout=30)
+            c.send("system reboot switch %s" % switch)
+            helpers.log(c.cli_content())
+            options = c.expect([r'y or yes to continue',
+                                c.get_prompt()], timeout=30) 
+            if options[0] == 0:
+                helpers.log("Switch has fabric role configured. Confirming")
+                c.send("yes")
+                c.expect(c.get_prompt(), timeout=30)
+            if 'Error' in c.cli_content():
+                helpers.log(c.cli_content())
+                return helpers.test_failure("Error rebooting the switch")
         except:
+            helpers.log(c.cli_content())
             return helpers.test_failure("Error rebooting the switch")
 
         helpers.log("Reboot command executed successfully")
