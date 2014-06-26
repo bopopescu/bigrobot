@@ -1433,9 +1433,9 @@ def ping(host, count=10, timeout=None, loss=0, quiet=False):
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=None, quiet=quiet)
+    actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=None, quiet=quiet)
+        actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
         if actual_loss > loss:
             count -= 4
             actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
