@@ -13,6 +13,7 @@ Library        		String
 
 
 *** Variables ***
+${temp}				scp://bsn@regress:/tmp/scp
 ${scp}				scp://bsn@regress:file-management-testsuite/scp
 ${scp RC}			scp://bsn@regress:file-management-testsuite/config-RC
 ${scp file}			scp://bsn@regress:file-management-testsuite/config-file
@@ -141,7 +142,7 @@ T1.2 Copy running config to config://
 	[Tags]  Smoke
 
 T1.3 Copy running config to scp://
-	${scp_random}  Generate Random Name  ${scp}  5
+	${scp_random}  Generate Random Name  ${temp}  5
 	Cli Copy  running-config  ${scp_random}
 	Compare  running-config  ${scp_random}
 	Compare Slave  running-config  ${scp_random}
