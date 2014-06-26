@@ -409,6 +409,13 @@ def bigrobot_listener_log(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_LISTENER_LOG', new_val, default)
 
 
+def bigrobot_additional_params(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_ADDITIONAL_PARAMS', new_val, default)
+
+
 def bigrobot_suite(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -1057,6 +1064,14 @@ def is_same_file(file1, file2):
     return True if inode1 == inode2 else False
 
 
+def dict_merge(dict1, dict2):
+    """
+    Merge dict1 and dict2. If there are common keys, dict2 will overwrite
+    dict1. Return the merged dict.
+    """
+    return dict(dict1.items() + dict2.items())
+
+
 def dict_compare(dict1, dict2, ignore_keys=None):
     """
     Compare to see whether dict1 is the same as dict2. You can provide a list
@@ -1284,14 +1299,20 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
-          record_route=False, node_handle=None, mode=None, ttl=None):
+          record_route=False, node_handle=None, mode=None, ttl=None,
+          interval=0.4):
     """
     Ping options:
-      - count : -c <counter>
-      - source_inf : -I <interface>
-      - record_route : -R
-      - ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
-      - timeout : -W <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param host: (Str) ping hist host
+      :param count : (Int) number of packets to send, equivalent to -c <counter>
+      :param source_inf : -I <interface>
+      :param record_route : -R
+      :param ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
+      :param timeout : (Int) time in seconds to wait for a reply, equivalent
+             to -w <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param interval : (Real) time in seconds to wait between sending packets.
+             equivalent to -i <wait>. Interval value less than 0.2 will
+             trigger an error (not supported).
 
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
@@ -1301,6 +1322,10 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
         cmd = "%s -I %s" % (cmd, source_if)
     if record_route:
         cmd = "%s -R" % (cmd)
+    if interval:
+        if float(interval) < 0.2:
+            test_error("Ping interval cannot be less than 0.2 seconds.")
+        cmd = "%s -i %s" % (cmd, interval)
 
     # Ping initiated from the staging machine (likely is your MacBook)
     if not node_handle and platform.system() == 'Darwin':
@@ -1314,7 +1339,7 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
         if ttl:
             cmd = "%s -t %s" % (cmd, ttl)
         if timeout:
-            cmd = "%s -W %s" % (cmd, timeout)
+            cmd = "%s -w %s" % (cmd, timeout)
 
     cmd = "%s %s" % (cmd, host)
 
@@ -1398,10 +1423,9 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
 
 def ping(host, count=10, timeout=5, loss=0, quiet=False):
     """
-    Unix ping.
-    :param host: (Str) ping hist host
-    :param count: (Int) number of packets to send
-    :param timeout: (Int) time in seconds to wait for a reply
+    Unix ping. See _ping() for a complete list of options.
+    Additional arguments:
+
     :param loss: (Int) allowable loss percentage
 
     Return: (Int) loss percentage
@@ -1483,6 +1507,44 @@ def send_mail(m):
 #
 # String processing helpers
 #
+
+def params_dot_notation_to_dict(params):
+    """
+    Convert a list of strings representing parameter inputs (in dot
+    notation) into a dictionary.
+
+    :param params: List of strings as
+
+    E.g.,
+    Input:
+      params=['common.user_switch_image=/etc/hosts',
+              'common.user_abc.groupA=123',
+              'common.user_abc.groupB=999',
+              'common.user_abc.groupC=555',
+              'common.user_abc.groupD.name=Larry']
+    will produce the following output dictionary:
+      {'common': {'user_abc': {'groupA': '123',
+                               'groupB': '999',
+                               'groupC': '555',
+                               'groupD': {'name': 'Larry'}},
+                  'user_switch_image': '/etc/hosts'}}
+    """
+    new_dict = {}
+    for param in params:
+        keys = param.split('.')
+        keys[-1], value = keys[-1].split('=')
+        ref = new_dict
+        key_counter = 1
+        for key in keys:
+            if key_counter < len(keys):
+                if not key in ref:
+                    ref[key] = {}
+                ref = ref[key]
+                key_counter += 1
+            else:
+                ref[key] = value
+    return new_dict
+
 
 def openstack_convert_table_to_dict(input_str):
     """
