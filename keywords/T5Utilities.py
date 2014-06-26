@@ -59,7 +59,7 @@ class T5Utilities(object):
         pass
 
 
-    def fabric_integrity_checker(self, state):
+    def fabric_integrity_checker(self, state, cluster="HA"):
         '''
         Objective::
         -    This function will check for fabric integrity between states. For example calling this function before a state
@@ -70,7 +70,13 @@ class T5Utilities(object):
                     utilities.fabric_integrity_checker(obj,"before")
                     <do stuff>
                     utilities.fabric_integrity_checker(obj,"after")
-
+            
+            If Single Node Cluster:
+                    obj =  T5Utilities()
+                    utilities.fabric_integrity_checker(obj,"before", "single")
+                    <do stuff>
+                    utilities.fabric_integrity_checker(obj,"after", "single")
+                
         Description :
         -    Checks for the fabric state differences on following component: Switch Connectivity / Fabric Links / Fabric Lags / Endpoints
 
@@ -118,7 +124,8 @@ class T5Utilities(object):
         # Switch connectivity verification
         if (state == "before"):
             switchList_b4 = self._gather_switch_connectivity()
-            slave_switchList_b4 = self._gather_switch_connectivity("slave")
+            if(cluster=="HA"):
+                slave_switchList_b4 = self._gather_switch_connectivity("slave")
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -137,8 +144,9 @@ class T5Utilities(object):
         else:
             switchList_after = self._gather_switch_connectivity()
             warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
-            slave_switchList_after = self._gather_switch_connectivity("slave")
-            warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
+            if(cluster=="HA"):
+                slave_switchList_after = self._gather_switch_connectivity("slave")
+                warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
             fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
             endpoints_after = self._gather_endpoints()
@@ -832,6 +840,74 @@ class T5Utilities(object):
             return False
         else:
             return True
+
+
+    def cli_run_and_verify_output_length(self, node, command, length, cmd_timeout=5, user='admin', password='adminadmin', node_type='controller', soft_error=False):
+        """
+        Run given CLI command and verify that expected content is in the command output
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | command | CLI command to run |
+        | length | Expected length of the output |
+        | cmd_timeout | Timeout for given command to be executed and controller prompt to be returned |
+        | user | Username to use when logging into the node |
+        | password | Password for the user |
+        | node_type | Type of the node - controller/switch |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - True if command executed with no errors, False otherwise
+        """
+        helpers.test_log("Running command: %s on node %s" % (command, node))
+        t = test.Test()
+        if node_type == 'controller':
+            if user == 'admin':
+                c = t.controller(node)
+            else:
+                bsn_common = bsnCommon()
+                ip_addr = bsn_common.get_node_ip(node)
+                c = t.node_spawn(ip=ip_addr, user=user, password=password)
+        if node_type == 'switch':
+            c = t.switch(node)
+
+        length = int(length)
+        c.send(command)
+        options = c.expect([c.get_prompt(),
+          r'hit q to quit'],
+          timeout=cmd_timeout)
+        if options[0] == 0:
+            helpers.log(c.cli_content())
+        if options[0] == 1:
+            while options[0] == 1:
+                helpers.log(c.cli_content())
+                content = c.cli_content()
+                content = helpers.str_to_list(content)
+                helpers.log("Length of contents is %s" % str(len(content)))
+                if (len(content) != (length + 2)
+                    and len(content) != (length + 1)):
+                    helpers.log("Expected length %s not matched" 
+                                % str(length))
+                    return helpers.test_failure(c.cli_content(), soft_error)
+
+                c.send(' ')
+                options = c.expect([c.get_prompt(),
+                   r'.*hit q to quit, any character to continue'],
+                   timeout=cmd_timeout)
+                if options[0] == 0:
+                    if len(content) > (length + 2):
+                        helpers.log("Expected length %s not matched" 
+                                    % str(length))
+                        return helpers.test_failure(c.cli_content(), soft_error)
+
+        if "Error" in c.cli_content():
+            if (re.match(r'.*[\?\t]$', command)
+                and "Error: Unexpected end of command" in c.cli_content()):
+                helpers.log("We were analyzing CLI suggestions")
+            else:
+                helpers.test_failure(c.cli_content(), soft_error)
+                return False
+            
 
     def cli_get_session_hash(self):
 	''' Function that returns hash value of session id'''
