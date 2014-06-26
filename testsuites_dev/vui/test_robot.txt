@@ -245,7 +245,7 @@ Test logging
 * Keywords
 my base suite setup
     base suite setup
-    #${c1_ip}            params  node=c1  key=ip
+    #${c1_ip} =          params  node=c1  key=ip
     #set suite variable  ${LOGIN_URL}  http://${c1_ip}:8086/api/login
 
 variable assignment
