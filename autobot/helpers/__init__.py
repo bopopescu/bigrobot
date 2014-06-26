@@ -1298,7 +1298,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
+def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None,
           interval=0.4):
     """
@@ -1421,7 +1421,7 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=10, timeout=5, loss=0, quiet=False):
+def ping(host, count=10, timeout=None, loss=0, quiet=False):
     """
     Unix ping. See _ping() for a complete list of options.
     Additional arguments:
@@ -1433,9 +1433,9 @@ def ping(host, count=10, timeout=5, loss=0, quiet=False):
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=5, quiet=quiet)
+    actual_loss = _ping(host, count=count, timeout=None, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=5, quiet=quiet)
+        actual_loss = _ping(host, count=count, timeout=None, quiet=quiet)
         if actual_loss > loss:
             count -= 4
             actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
