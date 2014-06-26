@@ -71,7 +71,7 @@ class BigTap(object):
                     return content[0]['stats']['table'][1][return_value]
                 else:
                     return content[0]['stats']['table'][1]['active-count']
-                
+
     def rest_return_switch_flow(self, node, flow_index, flow_key, switch_alias=None, sw_dpid=None, soft_error=False):
         '''
             Objective: Verify flow is pushed via controller
@@ -107,8 +107,8 @@ class BigTap(object):
                 helpers.test_failure("Could not execute command")
                 return False
             else:
-                return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]          
-    
+                return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]
+
 
 # Mingtao
     def rest_show_address_group(self, group):
@@ -308,7 +308,7 @@ class BigTap(object):
 ###################################################
 # All Bigtap Verify Commands Go Here:
 ###################################################
-    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, action='forward', user="admin", password="adminadmin"):
+    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, flag=False, action='forward', user="admin", password="adminadmin"):
         '''
         Objective:
         Parse the output of cli command 'show bigtap policy <policy_name>'
@@ -389,7 +389,7 @@ class BigTap(object):
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     elif "installed to drop" in content[0]['runtime-status']:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-                    elif "inactive" in content[0]['runtime-status']:
+                    elif "inactive" in content[0]['runtime-status'] and flag is True:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     else:
                         helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
@@ -414,7 +414,7 @@ class BigTap(object):
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     elif ("installed with service(s) not on all component policies" in content[0]['detailed-status']):
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                    elif "inactive" in content[0]['detailed-status']:
+                    elif "inactive" in content[0]['detailed-status'] and flag is True:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     else:
                         helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
@@ -3619,3 +3619,7 @@ class BigTap(object):
                     if (cmd_argument in line) and (num == cmd_argument_count):
                         return True
 
+    def convert_integer_to_tcpflag(self, integer_passed):
+        binary_number = bin(int(integer_passed))[2:].zfill(6)
+        binary_number = map(int, binary_number)
+        return binary_number

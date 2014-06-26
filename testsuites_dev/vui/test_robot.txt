@@ -229,12 +229,18 @@ Display policy vars
 
 Test run commands
     [Tags]            smoke  Sanity  FEATURE
-    #[Tags]           skipped
+    [Tags]           skipped
     #manual-untested
     test run cmd
     [setup]           log  I am in my custom test case setup
     [teardown]        log  I am in my custom test case teardown
 
+Test logging
+    trace             This is a trace message
+    info              This is an info message
+#    warn              This is a warning message
+#    debug             This is a debugging message
+#    summary log       This is a summary log message
 
 * Keywords
 my base suite setup
