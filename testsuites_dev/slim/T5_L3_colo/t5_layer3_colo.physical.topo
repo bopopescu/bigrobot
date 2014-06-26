@@ -12,13 +12,13 @@ c2:
   ip: 10.210.67.137
 
 s1:
-    ip: 10.210.2.163
+    ip: 10.210.2.158
     alias: spine0
     user: root
     password: bsn
       
 s2:
-    ip: 10.210.2.16
+    ip: 10.210.2.7
     alias: spine1
     user: root
     password: bsn
@@ -30,31 +30,31 @@ s3:
     password: bsn
 
 s4:
-    ip: 10.210.193.189
+    ip: 10.210.2.151
     alias: leaf0-b
     user: root
     password: bsn
 
 s5:
-    ip: 10.210.193.190
+    ip: 10.210.2.4
     alias: leaf1-a
     user: root
     password: bsn
   
 s6:
-    ip: 10.210.193.192
+    ip: 10.210.2.169
     alias: leaf1-b
     user: root
     password: bsn
   
 s7:
-    ip: 10.210.193.193
+    ip: 10.210.2.100
     alias: leaf2-a
     user: root
     password: bsn
   
 s8:
-    ip: 10.210.193.194
+    ip: 10.210.2.67
     alias: leaf2-b
     user: root
     password: bsn
@@ -66,7 +66,7 @@ s9:
     password: bsn
   
 s10:
-    ip: 10.210.193.197
+    ip: 10.210.2.202
     alias: leaf3-b
     user: root
     password: bsn
