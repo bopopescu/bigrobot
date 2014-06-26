@@ -8,7 +8,7 @@ import traceback
 
 class T5ZTN(object):
 
-    def bash_verify_sl_images(self, node='master'):
+    def bash_verify_switchlight_images(self, node='master'):
         """
         Check if SwitchLight images are present on the controller
 
@@ -45,7 +45,7 @@ class T5ZTN(object):
 
         return True
 
-    def bash_verify_sl_manifests(self, node='master'):
+    def bash_verify_switchlight_manifests(self, node='master'):
         """
         Check if SwitchLight images are accompanied
         by appropriate manifest files
@@ -89,7 +89,7 @@ class T5ZTN(object):
         c.config("")
         return True
 
-    def bash_get_sl_version(self, image, node='master'):
+    def bash_get_switchlight_version(self, image, node='master'):
         """
         Get SWI or Installer Versions in the controller bundle
 
@@ -124,7 +124,7 @@ class T5ZTN(object):
             swi_release = swi_manifest['release']
             return swi_release
 
-    def telnet_get_switch_sl_version(self, image, hostname):
+    def telnet_get_switch_switchlight_version(self, image, hostname):
         """
         Get SWI or Installer Versions in the controller bundle
 

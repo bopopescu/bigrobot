@@ -61,12 +61,12 @@ Library		String
 *** Test Cases ***
 ### Basic image check
 T1.1. Verify that release images are present on all controllers
-	Bash Verify SL Images  node=master
-	Bash Verify SL Images  node=slave
+	Bash Verify Switchlight Images  node=master
+	Bash Verify Switchlight Images  node=slave
 
-T1.2. Verify that manifest files are included in SL image bundles
-	Bash Verify SL Manifests  node=master
-	Bash Verify SL Manifests  node=slave
+T1.2. Verify that manifest files are included in Switchlight image bundles
+	Bash Verify Switchlight Manifests  node=master
+	Bash Verify Switchlight Manifests  node=slave
 
 T1.3. Check supported platforms of SWI and installer
 	@{installer_platforms}=  Bash Get Supported Platforms  installer
@@ -148,10 +148,12 @@ T1.9. Verify startup config after failvoer
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 
-T1.10. Verify switches SL version
+T1.10. Verify switches Switchlight version
 	Verify Switch SWI Version  ${s4_alias}
-T1.11. Verify switches SL version
+T1.11. Verify switches Switchlight version
 	Verify Switch Installer Version  ${s4_alias}
+T1.12. Reset switch to factory default
+	Telnet Reset Switch to Factory Default  ${s4_alias}
 
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:33:44:55:66
@@ -550,7 +552,7 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
-	Request SL Installer Reinstall
+	Request Switchlight Installer Reinstall
 	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
@@ -1663,14 +1665,14 @@ Reboot Standby Switch
 
 Verify Switch SWI Version
 	[Arguments]  ${switch_alias}
-	${swi_version_bundle}=  Bash Get SL Version  swi
-	${swi_version_switch}=  Telnet Get Switch SL Version  swi  ${switch_alias}
+	${swi_version_bundle}=  Bash Get Switchlight Version  swi
+	${swi_version_switch}=  Telnet Get Switch Switchlight Version  swi  ${switch_alias}
 	Should Be Equal As Strings  ${swi_version_bundle}  ${swi_version_switch}
 
 Verify Switch Installer Version
 	[Arguments]  ${switch_alias}
-	${installer_version_bundle}=  Bash Get SL Version  installer
-	${installer_version_switch}=  Telnet Get Switch SL Version  installer  ${switch_alias}
+	${installer_version_bundle}=  Bash Get Switchlight Version  installer
+	${installer_version_switch}=  Telnet Get Switch Switchlight Version  installer  ${switch_alias}
 	Should Be Equal As Strings  ${installer_version_bundle}  ${installer_version_switch}
 
 Failover
