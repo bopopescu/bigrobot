@@ -1082,6 +1082,35 @@ class T5ZTN(object):
             helpers.log("U-boot shell entered")
             return True
 
+    def telnet_reset_switch_to_factory_default(self, switch):
+        """
+        Enter switch u-boot shell while switch is booting up
+        and reset environment variables to default
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully restored factory settings, False otherwise
+        """
+        t = test.Test()
+        self.telnet_reboot_switch(switch)
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        s.send("")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("env default -a")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("saveenv")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("reset")
+        s.expect("Hit any key to stop autoboot", timeout=100)
+        return True
+
     def enter_loader_shell(self, switch):
         """
         Enter Switch Light loader shell while switch is booting up
