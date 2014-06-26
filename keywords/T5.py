@@ -2122,7 +2122,7 @@ class T5(object):
         result = c.cli_content()
         return result
 
-    def cli_reboot_switch(self, switch=None):
+    def cli_controller_reboot_switch(self, switch=None):
         '''Function to reboot switch from master controllers CLI
             if switch argument is not passed reboot all switchs
         '''
