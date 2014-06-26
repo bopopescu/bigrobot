@@ -98,23 +98,21 @@ delete one of the leaf in Dual Leaf setup and verify the link
     rest verify fabric link
     
 Reboot spine switch spine1 and verify the fabric link
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  run
 	rest verify fabric link
-	cli restart switch  spine1
+	cli reboot switch  spine1
 	sleep  3
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
 Reboot leaf switch and verify fabric link
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  run
 	rest verify fabric link
-	cli restart switch  leaf0-a
+	cli reboot switch  leaf0-a
 	sleep  3
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
 	
 Add/delete a new link between spine0 and leaf0a
 	[Tags]  Fabric  feature  IronHorse

@@ -795,7 +795,9 @@ class Test(object):
         def login():
             helpers.log("Found the login prompt. Sending user name.")
             n_console.send(user)
-            match = n_console.expect(prompt=prompt_password)
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
+            match = n_console.expect(prompt=[prompt_password, prompt_device_cli])
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
@@ -1028,7 +1030,10 @@ class Test(object):
                         n.config("controller %s" % c.ip())
             n.config("copy running-config startup-config")
 
-    def setup_ztn(self, name):
+    def setup_ztn_phase1(self, name):
+        '''
+            Configure switch's on Controller for ZTN bring up of switch's and send reboot to all switchs
+        '''
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
@@ -1036,16 +1041,69 @@ class Test(object):
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
-        con = self.dev_console(name)
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+            con = self.dev_console(name, modeless=True)
+            con.send('admin')
+            helpers.sleep(2)
+            con.send('adminadmin')
+            helpers.sleep(2)
+            con.send('enable;conf;no snmp-server enable')
+            con = self.dev_console(name)
+        else:
+            fabric_role = 'leaf'
+            helpers.log("Initializaing leafs normally..")
+            con = self.dev_console(name)
         if not helpers.is_switchlight(con.platform()):
             helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
             return True
+        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
+        master = self.controller("master")
+        cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
+                'mac %s' % self.params(name, 'mac')]
+        helpers.log("Executing cmds ..%s" % str(cmds))
+        for cmd in cmds:
+            helpers.log('Executin cmd: %s' % cmd)
+            master.config(cmd)
+        master.config("show version")
+        helpers.log("Reload the switch for ZTN..")
+        con.bash("")
+        con.send('reboot')
+        helpers.log("Finish sending Reboot on switch : %s" % name)
+        return True
+
+    def setup_ztn_phase2(self, name):
+        '''
+            Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
+        '''
+        if not helpers.is_switch(name):
+            return True
+        console = self.params(name, 'console')
+        if not ('ip' in console and 'port' in console):
+            return True
+        helpers.log("ZTN setup - found switch '%s' console info" % name)
+        helpers.log("Re-Login in console of switch after reboot...")
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+            con = self.dev_console(name, modeless=True)
+            con.send('admin')
+            helpers.sleep(2)
+            con.send('adminadmin')
+            helpers.sleep(2)
+            con.send('enable;conf;no snmp-server enable')
+            con = self.dev_console(name)
+        else:
+            fabric_role = 'leaf'
+            helpers.log("Initializaing leafs normally..")
+            con = self.dev_console(name)
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
-        content = con.config("show running-config")["content"]
+        content = con.bash("ifconfig ma1")["content"]
         match = helpers.any_match(content,
-                                  r'interface ma1 ip-address (\d+\.\d+\.\d+\.\d+).*')
+                                  r'inet addr:(\d+\.\d+\.\d+\.\d+).*')
         if match and len(match) == 1:
             mgt_ip = match[0]
             helpers.log("ZTN setup - SwitchLight '%s' management IP is %s. Updating topology params." % (name, mgt_ip))
@@ -1054,6 +1112,9 @@ class Test(object):
             helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
         con.cli("")
         self.node_reconnect(name)
+        # Need to add switch connect verification..
+        return True
+
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
@@ -1074,9 +1135,16 @@ class Test(object):
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 for key in params:
-                    self.setup_ztn(key)
+                    self.setup_ztn_phase1(key)
+                helpers.log("Sleeping 2 mins..")
+                helpers.sleep(120)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
+                master = self.controller("master")
+                master.enable("show switch")
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)

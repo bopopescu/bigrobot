@@ -25,7 +25,7 @@ add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse              
 	base suite setup  
     add fabric switch
-    sleep  5
+    sleep  15
     rest verify fabric switch all
     rest verify fabric link common
    
