@@ -174,11 +174,14 @@ helpers.bigrobot_excript_debug_log_path(
       default=helpers.bigrobot_log_path_exec_instance())
 
 helpers.bigrobot_listener_log(
-      default=''.join((helpers.bigrobot_log_path_exec_instance(),
-                       '/bigrobot_listener.log')))
+      default=(helpers.bigrobot_log_path_exec_instance() +
+               '/bigrobot_listener.log'))
 helpers.bigrobot_devcmd_log(
-      default=''.join((helpers.bigrobot_log_path_exec_instance(),
-                       '/dev_commands.log')))
+      default=(helpers.bigrobot_log_path_exec_instance() +
+               '/dev_commands.log'))
+helpers.bigrobot_additional_params(
+      default=(helpers.bigrobot_log_path_exec_instance() +
+               '/additional-params.topo'))
 
 helpers.bigrobot_path()
 helpers.bigtest_path()
@@ -375,6 +378,12 @@ def version_hidden_command(*args):
           % (pversion.major, pversion.minor, pversion.micro))
 
 
+def cli_params_to_yaml_config(params, filename):
+    params_dict = helpers.params_dot_notation_to_dict(params)
+    helpers.log("Writing params arguments to file %s" % filename)
+    helpers.file_write_once(filename, helpers.to_yaml(params_dict))
+
+
 def test_command(*args):
     """
     Run tests in the test suite.
@@ -390,6 +399,9 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
+    parser.add_argument('--param', metavar=('key1=value1', 'key2=value2'),
+                        nargs='*',
+                        help='Define parameters for topology file')
     parser.add_argument('--test',
                         metavar=('name1', 'name2'), nargs='*',
                         help='Run test cases by name (must match entire string)')
@@ -425,6 +437,7 @@ def test_command(*args):
 
     include_tags = args.include
     exclude_tags = args.exclude
+    params = args.param
 
     if not exclude_tags:
         exclude_tags = []
@@ -483,6 +496,10 @@ def test_command(*args):
         pass
     else:
         create_links_to_logs()
+
+    if params:
+        cli_params_to_yaml_config(params,
+                                  helpers.bigrobot_additional_params())
 
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)

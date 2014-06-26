@@ -155,5 +155,5 @@ Test config mode
     cli      c1   show version
 
 Test REST show user
-    rest show user        c1
+    #rest show user        c1
     rest version check    c1

@@ -70,6 +70,9 @@ class Test(object):
                     helpers.info("BigTest node info:\n%s"
                                  % helpers.prettify(self._bigtest_node_info))
 
+                    # !!! FIXME: Remove this section of code at some point
+                    #            since BigTest VM resources are not used.
+
                     # BigTest node format:
                     #   'controller-c02n01-047,mininet-c02n01-047'
                     # BigTest's "bt startremotevm" is able to bring up multiple
@@ -150,16 +153,17 @@ class Test(object):
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
 
-            self.merge_params_attributes()
+            self.merge_params_attributes(helpers.bigrobot_params())
+            if helpers.file_exists(helpers.bigrobot_additional_params()):
+                self.merge_params_attributes(helpers.bigrobot_additional_params())
             self.init_alias_lookup_table()
 
             self._topology = {}
 
-        def merge_params_attributes(self):
+        def merge_params_attributes(self, params_file):
             """
             Reading from params file and merge attributes with topo file
             """
-            params_file = helpers.bigrobot_params()
             if params_file.lower() == 'none':
                 return True
 
@@ -167,11 +171,14 @@ class Test(object):
                 helpers.environment_failure("Params file '%s' does not exist"
                                             % params_file)
             self._params = self.load_topology(topo_file=params_file)
+
             for n in self._topology_params:
+                # if n not in self._params:
+                #    helpers.environment_failure("Node '%s' is not"
+                #                                " specified in params file"
+                #                                % n)
                 if n not in self._params:
-                    helpers.environment_failure("Node '%s' is not"
-                                                " specified in params file"
-                                                % n)
+                    continue
                 for key in self._params[n]:
                     if key not in self._topology_params[n]:
                         helpers.info("Node '%s' does not have attribute"
@@ -208,17 +215,20 @@ class Test(object):
                     self._node_static_aliases[alias] = node
 
                     # BSN QA convention is to name the aliases as:
+                    #   common - for settings which may be common to all nodes
+                    #            or which are not node specific
                     #   spine0, spine1, etc.
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
                     #   h1-rack1 - for hosts
                     #   h1-vm1-rack1 - for virtual hosts
-                    r = r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    r = r'^(common|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
+                                     " common")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
@@ -349,13 +359,26 @@ class Test(object):
     # Alias
     params = topology_params
 
+    def topology_params_nodes(self, **kwargs):
+        """
+        Returns the list of node params only. Ignore other params which are
+        not nodes.
+        """
+        params = dict(self.topology_params(**kwargs))
+        if 'common' in params:
+            del params['common']
+        return params
+
+    # Alias
+    params_nodes = topology_params_nodes
+
     def topology_params_authen(self, name):
         """
         Given a node name, check the params info to see whether the
         user/password is specified for the node.
         """
         authen = []
-        params = self.topology_params()
+        params = self.topology_params_nodes()
         name = self.alias(name)
         if name in params:
             node = params[name]
@@ -438,7 +461,7 @@ class Test(object):
         """
         Get the handles of all the controllers.
         """
-        return [self.controller(n) for n in self.topology_params() if re.match(r'^c\d+', n)]
+        return [self.controller(n) for n in self.topology_params_nodes() if re.match(r'^c\d+', n)]
 
     def controller(self, name='c1', resolve_mastership=False):
         """
@@ -490,7 +513,7 @@ class Test(object):
         """
         Get the handles of all the traffic generators.
         """
-        return [self.traffic_generator(n) for n in self.topology_params() if re.match(r'^tg\d+', n)]
+        return [self.traffic_generator(n) for n in self.topology_params_nodes() if re.match(r'^tg\d+', n)]
 
     def traffic_generator(self, name='tg1', *args, **kwargs):
         name = self.alias(name)
@@ -500,7 +523,7 @@ class Test(object):
         """
         Get the handles of all the switches.
         """
-        return [self.switch(n) for n in self.topology_params() if re.match(r'^s\d+', n)]
+        return [self.switch(n) for n in self.topology_params_nodes() if re.match(r'^s\d+', n)]
 
     def switch(self, name='s1', *args, **kwargs):
         name = self.alias(name)
@@ -510,7 +533,7 @@ class Test(object):
         """
         Get the handles of all the OpenStack servers.
         """
-        return [self.openstack_server(n) for n in self.topology_params() if re.match(r'^os\d+', n)]
+        return [self.openstack_server(n) for n in self.topology_params_nodes() if re.match(r'^os\d+', n)]
 
     def openstack_server(self, name='os1', *args, **kwargs):
         name = self.alias(name)
@@ -520,7 +543,7 @@ class Test(object):
         """
         Get the handles of all the hosts.
         """
-        return [self.host(n) for n in self.topology_params() if re.match(r'^h\d+', n)]
+        return [self.host(n) for n in self.topology_params_nodes() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
         name = self.alias(name)
@@ -593,7 +616,7 @@ class Test(object):
                                         % node)
 
         host = None
-        params = self.topology_params()
+        params = self.topology_params_nodes()
         if 'ip' in params[node]:
             host = params[node]['ip']
 
@@ -631,8 +654,8 @@ class Test(object):
 
             # Use the OpenFlow port defined in the controller ('c1')
             # if it's defined.
-            if 'openflow_port' in self.topology_params()['c1']:
-                openflow_port = self.topology_params()['c1']['openflow_port']
+            if 'openflow_port' in self.topology_params_nodes()['c1']:
+                openflow_port = self.topology_params_nodes()['c1']['openflow_port']
             else:
                 openflow_port = None
 
@@ -680,12 +703,12 @@ class Test(object):
 
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
-            if 'platform' not in self.topology_params()[node]:
+            if 'platform' not in self.topology_params_nodes()[node]:
                 helpers.environment_failure("Traffic generator '%s' does not"
                                             " have platform (e.g., platform:"
                                             " 'ixia', 'bigtap-ixia')"
                                             % node)
-            platform = self.topology_params()[node]['platform']
+            platform = self.topology_params_nodes()[node]['platform']
             if platform.lower() == 'ixia':
                 n = a_node.IxiaNode(node, t)
             elif platform.lower() == 'bigtap-ixia':
@@ -835,7 +858,7 @@ class Test(object):
 
         self._init_in_progress = True  # pylint: disable=W0201
 
-        params = self.topology_params()
+        params = self.topology_params_nodes()
 
         if 'c1' not in params:
             helpers.warn("A controller (c1) is not defined")
@@ -870,6 +893,10 @@ class Test(object):
         self._init_completed = True  # pylint: disable=W0201
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
+
+        helpers.debug("Final topology_params: %s" % self.topology_params())
+
+
 
     def init_completed(self):
         """
@@ -1020,8 +1047,8 @@ class Test(object):
             for controller in ('c1', 'c2'):
                 c = self.topology(controller, ignore_error=True)
                 if c:
-                    if 'openflow_port' in self.topology_params()[controller]:
-                        openflow_port = self.topology_params()[controller]['openflow_port']
+                    if 'openflow_port' in self.topology_params_nodes()[controller]:
+                        openflow_port = self.topology_params_nodes()[controller]['openflow_port']
                         n.config("controller %s port %s"
                                  % (c.ip(), openflow_port))
                     else:
@@ -1067,7 +1094,7 @@ class Test(object):
         helpers.debug("Test object setup begins.")
         self._setup_in_progress = True  # pylint: disable=W0201
 
-        params = self.topology_params()
+        params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
         if helpers.bigrobot_test_setup().lower() != 'false':
@@ -1127,7 +1154,7 @@ class Test(object):
 
     def teardown(self):
         helpers.debug("Test object teardown begins.")
-        params = self.topology_params()
+        params = self.topology_params_nodes()
         for key in params:
             if helpers.is_controller(key):
                 pass
