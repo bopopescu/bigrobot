@@ -203,59 +203,75 @@ c2:\n\
    user: %s\n\
    password: %s\n\
 s1:\n\
-  ip: 10.195.0.33\n\
+  #ip: 10.195.0.33\n\
   alias: leaf0-a\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6003\n\
 s2:\n\
-  ip: 10.195.0.34\n\
+  #ip: 10.195.0.34\n\
   alias: leaf0-b\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6004\n\
 s3:\n\
-  ip: 10.195.0.35\n\
+  #ip: 10.195.0.35\n\
   alias: leaf1-a\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6005\n\
 s4:\n\
-  ip: 10.195.0.36\n\
+  #ip: 10.195.0.36\n\
   alias: leaf1-b\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6006\n\
 s5:\n\
-  ip: 10.195.0.31\n\
+  #ip: 10.195.0.31\n\
   alias: leaf2-a\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6007\n\
 s6:\n\
-  ip: 10.195.0.32\n\
+  #ip: 10.195.0.32\n\
   alias: leaf2-b\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6008\n\
 s7:\n\
-  ip: 10.195.0.21\n\
+  #ip: 10.195.0.21\n\
   alias: spine0\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6001\n\
 s8:\n\
-  ip: 10.195.0.22\n\
+  #ip: 10.195.0.22\n\
   alias: spine1\n\
   user: admin\n\
   password: adminadmin\n\
+  set_session_ssh: false\n\
+  set_init_ping: false\n\
   console_ip: cs-rack10\n\
   console_port: 6002\n\
 h1:\n\

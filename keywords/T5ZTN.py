@@ -8,7 +8,7 @@ import traceback
 
 class T5ZTN(object):
 
-    def bash_verify_sl_images(self, node='master'):
+    def bash_verify_switchlight_images(self, node='master'):
         """
         Check if SwitchLight images are present on the controller
 
@@ -45,7 +45,7 @@ class T5ZTN(object):
 
         return True
 
-    def bash_verify_sl_manifests(self, node='master'):
+    def bash_verify_switchlight_manifests(self, node='master'):
         """
         Check if SwitchLight images are accompanied
         by appropriate manifest files
@@ -85,9 +85,94 @@ class T5ZTN(object):
         swi_manifest_version = swi_manifest['manifest_version']
         if swi_operation != 'ztn-runtime':
             helpers.test_failure("Wrong swi operation - %s"
-                                  % installer_operation)
-        c.config("enable")
+                                  % swi_operation)
+        c.config("")
         return True
+
+    def bash_get_switchlight_version(self, image, node='master'):
+        """
+        Get SWI or Installer Versions in the controller bundle
+
+        Inputs:
+        | image | SL image - swi or installer |
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - SWI or Installer Versions, None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log("Verifying if SwitchLight manifests"
+                    " are present on node %s" % node)
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+        if image == 'installer':
+            c.bash("unzip -p /usr/share/floodlight/zerotouch/"
+                   "switchlight*installer zerotouch.json")
+            output = c.cli_content()
+            output = helpers.strip_cli_output(output)
+            installer_manifest = ast.literal_eval(output)
+            installer_release = installer_manifest['release']
+            return installer_release
+        if image == 'swi':
+            c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*swi"
+                   " zerotouch.json")
+            output = c.cli_content()
+            output = helpers.strip_cli_output(output)
+            swi_manifest = ast.literal_eval(output)
+            swi_release = swi_manifest['release']
+            return swi_release
+
+    def telnet_get_switch_switchlight_version(self, image, hostname):
+        """
+        Get SWI or Installer Versions in the controller bundle
+
+        Inputs:
+        | image | SL image - swi or installer |
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - SWI or Installer Versions, None in case of errors
+        """
+
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+
+        t = test.Test()
+        s = t.dev_console(hostname, modeless=True)
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+                           s.get_prompt()])
+        if options[0] == 0:  # login prompt
+            s.send('admin')
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        if options[0] == 2:  # bash mode
+            s.cli('exit')
+        output = s.cli("show version")['content']
+        output = helpers.str_to_list(output)
+
+        version = ''
+
+        if image == 'installer':
+            line1 = "SwitchLight Loader Version: "
+            line2 = "SwitchLight Loader Build: "
+        if image == 'swi':
+            line1 = "Software Image Version: "
+            line2 = "Internal Build Version: "
+        for line in output:
+            if line1 in line:
+                version = line.replace(line1, '')
+            if line2 in line:
+                line = line.replace(line2, '')
+                if ' ' in line:
+                    line = line.replace(' ', '')
+                version = version + " " + line
+        return version
 
     def bash_get_supported_platforms(self, image):
         """
@@ -120,7 +205,7 @@ class T5ZTN(object):
         manifest = ast.literal_eval(output)
         platform = manifest['platform']
         platform_list = platform.split(',')
-        c.config("enable")
+        c.config("")
         return platform_list
 
     def test_console(self, node):
@@ -922,7 +1007,7 @@ class T5ZTN(object):
                            timeout=300)
         if options[0] == 0:  # login prompt
             s.send('admin')
-            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
             if options[0] == 0:
                 helpers.log("Logging in as admin with password %s" % password)
                 s.cli(password)
@@ -974,7 +1059,7 @@ class T5ZTN(object):
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
 
-        s.send("\ ")
+        s.send(" ")
         helpers.sleep(1)
         s.send("abc")
         helpers.sleep(1)
@@ -987,7 +1072,7 @@ class T5ZTN(object):
             s.send("admin")
             s.send("enable; config; reload now")
             s.expect("Hit any key to stop autoboot")
-            s.send("\ ")
+            s.send(" ")
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.expect(r'\=\>')
@@ -996,6 +1081,35 @@ class T5ZTN(object):
         if options[0] == 1:
             helpers.log("U-boot shell entered")
             return True
+
+    def telnet_reset_switch_to_factory_default(self, switch):
+        """
+        Enter switch u-boot shell while switch is booting up
+        and reset environment variables to default
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully restored factory settings, False otherwise
+        """
+        t = test.Test()
+        self.telnet_reboot_switch(switch)
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        s.send("")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("env default -a")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("saveenv")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("reset")
+        s.expect("Hit any key to stop autoboot", timeout=100)
+        return True
 
     def enter_loader_shell(self, switch):
         """
@@ -1033,11 +1147,23 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
+        c.config("")
         helpers.log("Executing 'system reboot switch %s' command"
                     " on node %s" % (switch, node))
         try:
-            c.config("system reboot switch %s" % switch, timeout=30)
+            c.send("system reboot switch %s" % switch)
+            helpers.log(c.cli_content())
+            options = c.expect([r'y or yes to continue',
+                                c.get_prompt()], timeout=30)
+            if options[0] == 0:
+                helpers.log("Switch has fabric role configured. Confirming")
+                c.send("yes")
+                c.expect(c.get_prompt(), timeout=30)
+            if 'Error' in c.cli_content():
+                helpers.log(c.cli_content())
+                return helpers.test_failure("Error rebooting the switch")
         except:
+            helpers.log(c.cli_content())
             return helpers.test_failure("Error rebooting the switch")
 
         helpers.log("Reboot command executed successfully")
