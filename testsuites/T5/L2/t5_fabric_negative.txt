@@ -40,12 +40,12 @@ restart ofad to verify the fabric link
 	bash execute command  leaf2-a  service ofad restart
 	sleep  2
 	rest verify fabric link common  13
-	sleep  10
+	sleep  25
 	rest verify fabric link common
 	bash execute command  leaf1-a  service ofad restart
 	sleep  2
 	rest verify fabric link common  12
-	sleep  10
+	sleep  25
 	rest verify fabric link common    
 
 Test to check all the cidr routes are created in spine and leaf switches
