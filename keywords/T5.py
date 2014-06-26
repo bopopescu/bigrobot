@@ -2122,6 +2122,58 @@ class T5(object):
         result = c.cli_content()
         return result
 
+    def cli_reboot_switch(self, switch=None):
+        '''Function to reboot switch from master controllers CLI
+            if switch argument is not passed reboot all switchs
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        params = t.topology_params()
+        if switch is None:
+            helpers.log("Executing switch reboot for all switchs from master controller")
+            c.enable('system reboot switch all', prompt=':')
+            c.enable('yes', timeout=300)
+            helpers.sleep(120)
+            helpers.log('Successfully rebooted switches from controller')
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    t.setup_ztn_phase2(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
+                master = t.controller("master")
+                master.enable("show switch")
+                helpers.log("Successfully rebooted switchs from controller and re-connected switch IP's with ssh admin account..")
+                return True
+            else:
+                helpers.log("Not ZTN ..not reconfiguring switch consoles for ssh connections..")
+        else:
+            helpers.log("Rebooting switch: %s from controller" % switch)
+            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('system reboot switch %s' % switch, prompt=':')
+            c.enable('yes', timeout=300)
+            helpers.sleep(120)
+            c.enable('show switch %s remote version | grep Uptime' % switch)
+            helpers.log("Success rebooting switch: %s from controller" % switch)
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    helpers.debug("params: \n%s" % helpers.prettify(params[key]))
+                    if re.match(r's\d+', key):
+                        if params[key]['alias'] == switch:
+                            helpers.log("Found switch: %s in params reconnecting it using console and SSH" % switch)
+                            t.setup_ztn_phase2(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
+                master = t.controller("master")
+                master.enable("show switch")
+                helpers.log("Successfully rebooted switchs from controller and re-connected switch IP's with ssh admin account..")
+                return True
+            else:
+                helpers.log("Not ZTN ..not reconfiguring switch consoles for ssh connections..")
+        return True
     def rest_verify_stats_interval(self, intf_value=60, vns_value=600):
         ''' Function to configure stats interval value for interface and vns
         Input: interface interval value and vns interval value , Default = None
