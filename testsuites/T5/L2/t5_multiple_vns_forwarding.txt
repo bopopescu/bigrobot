@@ -257,7 +257,7 @@ Spine0 reboot with multiple VNS forwarding and verify the traffic
 	verify traffic rate  tx_rate  rx_rate  e  a
 	verify traffic rate  tx_rate  rx_rate  b  f
 	verify traffic rate  tx_rate  rx_rate  f  b
-	cli controller restart switch  spine0
+	cli controller reboot switch  spine0
 	sleep  5
 	rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
 	rest verify forwarding layer2 table tag  leaf2-a  ${leaf2a_ixia_intf}  00:02:05:00:00:24
@@ -296,7 +296,7 @@ Spine1 reboot with multiple VNS forwarding and verify the traffic
 	verify traffic rate  tx_rate  rx_rate  e  a
 	verify traffic rate  tx_rate  rx_rate  b  f
 	verify traffic rate  tx_rate  rx_rate  f  b
-	cli restart switch  s7
+	cli controller reboot switch  spine1
 	sleep  5
 	rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
 	rest verify forwarding layer2 table tag  leaf2-a  ${leaf2a_ixia_intf}  00:02:05:00:00:24
