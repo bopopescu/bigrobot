@@ -100,6 +100,15 @@ class Ixia(object):
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_start_traffic_ethernet(stream)
 
+    def apply_traffic(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_apply_traffic()
 #     def stop_l3_traffic(self, stream=None, **kwargs):
 #         t = test.Test()
 #         if 'node' not in kwargs:
