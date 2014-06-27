@@ -55,34 +55,6 @@ T3 Remove interface tenant deny policy src-ip to dest-ip
 	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
 	sleep										1
 	Should Be True  							${loss} == 0
-	 
-	
-T11 Interface vns permit policy src-ip to dest-ip 
-	[Tags]
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
-	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
-	sleep										1
-	Should Be True  							${loss} == 0
-
-T12 Interface vns deny policy src-ip to dest-ip
-	[Tags]
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
-	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
-	sleep										1
-	Should Be True  							${loss} == 100
-
-T13 Remove interface vns deny policy src-ip to dest-ip
-	[Tags]
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
-	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Remove policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
-	sleep										1
-	Should Be True  							${loss} == 0
 
 
 	
