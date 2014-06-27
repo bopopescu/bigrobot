@@ -154,8 +154,11 @@ class Test(object):
                 del self._topology_params['mn']
 
             self.merge_params_attributes(helpers.bigrobot_params())
-            if helpers.file_exists(helpers.bigrobot_additional_params()):
-                self.merge_params_attributes(helpers.bigrobot_additional_params())
+            if helpers.bigrobot_additional_params() is None:
+                helpers.log("Skip merging additional params..")
+            else:
+                if helpers.file_exists(helpers.bigrobot_additional_params()):
+                    self.merge_params_attributes(helpers.bigrobot_additional_params())
             self.init_alias_lookup_table()
 
             self._topology = {}
