@@ -1147,7 +1147,17 @@ class Ixia(object):
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
             traffic_stream1.append(traffic_item)
         return traffic_stream1[0]
-
+    def ix_apply_traffic(self, **kwargs):
+        ixia_traffic_state = self._handle.getAttribute(self._handle.getRoot() + 'traffic', '-state')
+        if str(ixia_traffic_state) == 'started':
+            helpers.log("Traffic is Still Running , Stopping the Traffic before applying traffic item..")
+            self.ix_stop_traffic()
+        helpers.log("Applying Traffic as Requested ....")
+        helpers.sleep(10)
+        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+        helpers.log('###Applied traffic Config ..')
+        self._traffi_apply = True
+        return True
     def ix_start_traffic_ethernet(self, trafficHandle=None, exception=False, **kwargs):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
