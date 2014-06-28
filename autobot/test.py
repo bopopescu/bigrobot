@@ -1179,14 +1179,20 @@ class Test(object):
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
                 elif helpers.is_switch(key):
-                    self.setup_switch_pre_clean_config(key)
+                    if helpers.bigrobot_test_ztn().lower() == 'true':
+                        helpers.log("Skipping switch CLEAN configs in ZTN MODE")
+                    else:
+                        self.setup_switch_pre_clean_config(key)
             for key in params:
                 self.clean_config(key)
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_post_clean_config(key)
                 elif helpers.is_switch(key):
-                    self.setup_switch_post_clean_config(key)
+                    if helpers.bigrobot_test_ztn().lower() == 'true':
+                        helpers.log("Skipping switch CLEAN configs in ZTN MODE")
+                    else:
+                        self.setup_switch_post_clean_config(key)
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
 
@@ -1258,69 +1264,71 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
-        try:
-            c.rest.get(url_get_tenant)
-            content = c.rest.content()
-        except:
-            pass
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    url_delete_tenant = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
-                    try:
-                        c.rest.delete(url_delete_tenant, {})
-                    except:
-                        pass
-
-        helpers.log("Attempting to delete all switches")
-        url_get_switches = '/api/v1/data/controller/core/switch'
-        try:
-            c.rest.get(url_get_switches)
-            content = c.rest.content()
-        except:
-            pass
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    if 'name' in content[i]:
-                        url_delete_switch = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
-                        try:
-                            c.rest.delete(url_delete_switch, {})
-                        except:
-                            pass
-
-        helpers.log("Attempting to delete all port-groups")
-        url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
-        try:
-            c.rest.get(url_get_portgrp)
-            content = c.rest.content()
-        except:
-            pass
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    url_delete_portgrp = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
-                    try:
-                        c.rest.delete(url_delete_portgrp, {})
-                    except:
-                        pass
-
-        helpers.log("Attempting to delete QoS")
-        url_get_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos?config=true'
-        try:
-            c.rest.get(url_get_qos)
-            content = c.rest.content()
-        except:
-            pass
-        else:
-            if (content):
-                url_delete_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos'
-                try:
-                    print "url_delete_qos: %s" % url_delete_qos
-                    c.rest.delete(url_delete_qos, {})
-                except:
-                    pass
+        c.config("copy config://firstboot-config running-config")
+        c.config("show running-config")
+#         url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
+#         try:
+#             c.rest.get(url_get_tenant)
+#             content = c.rest.content()
+#         except:
+#             pass
+#         else:
+#             if (content):
+#                 for i in range (0, len(content)):
+#                     url_delete_tenant = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
+#                     try:
+#                         c.rest.delete(url_delete_tenant, {})
+#                     except:
+#                         pass
+#
+#         helpers.log("Attempting to delete all switches")
+#         url_get_switches = '/api/v1/data/controller/core/switch'
+#         try:
+#             c.rest.get(url_get_switches)
+#             content = c.rest.content()
+#         except:
+#             pass
+#         else:
+#             if (content):
+#                 for i in range (0, len(content)):
+#                     if 'name' in content[i]:
+#                         url_delete_switch = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
+#                         try:
+#                             c.rest.delete(url_delete_switch, {})
+#                         except:
+#                             pass
+#
+#         helpers.log("Attempting to delete all port-groups")
+#         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
+#         try:
+#             c.rest.get(url_get_portgrp)
+#             content = c.rest.content()
+#         except:
+#             pass
+#         else:
+#             if (content):
+#                 for i in range (0, len(content)):
+#                     url_delete_portgrp = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
+#                     try:
+#                         c.rest.delete(url_delete_portgrp, {})
+#                     except:
+#                         pass
+#
+#         helpers.log("Attempting to delete QoS")
+#         url_get_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos?config=true'
+#         try:
+#             c.rest.get(url_get_qos)
+#             content = c.rest.content()
+#         except:
+#             pass
+#         else:
+#             if (content):
+#                 url_delete_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos'
+#                 try:
+#                     print "url_delete_qos: %s" % url_delete_qos
+#                     c.rest.delete(url_delete_qos, {})
+#                 except:
+#                     pass
 
 #         helpers.log("Attempting to delete NTP configurations")
 #         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
