@@ -1166,19 +1166,6 @@ class Test(object):
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
         if helpers.bigrobot_test_setup().lower() != 'false':
-            if helpers.bigrobot_test_ztn().lower() == 'true':
-                helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
-                for key in params:
-                    self.setup_ztn_phase1(key)
-                helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
-                helpers.debug("Updated topology info:\n%s"
-                              % helpers.prettify(params))
-                master = self.controller("master")
-                master.enable("show switch")
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
@@ -1197,6 +1184,19 @@ class Test(object):
                         helpers.log("Skipping switch CLEAN configs in ZTN MODE")
                     else:
                         self.setup_switch_post_clean_config(key)
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                for key in params:
+                    self.setup_ztn_phase1(key)
+                helpers.log("Sleeping 2 mins..")
+                helpers.sleep(120)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
+                master = self.controller("master")
+                master.enable("show switch")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
 
