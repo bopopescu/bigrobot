@@ -202,7 +202,7 @@ class Test(object):
             if not topo_file:
                 topo_file = helpers.bigrobot_topology()
             if helpers.file_not_exists(topo_file):
-                helpers.warn("Topology file not specified (%s)" % topo_file)
+                helpers.debug("Topology file not specified (%s)" % topo_file)
                 topo = {}
             else:
                 topo = helpers.load_config(topo_file)
@@ -1083,6 +1083,7 @@ class Test(object):
             con = self.dev_console(name)
         else:
             fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
             helpers.log("Initializaing leafs normally..")
             con = self.dev_console(name)
         if not helpers.is_switchlight(con.platform()):
@@ -1096,6 +1097,9 @@ class Test(object):
         for cmd in cmds:
             helpers.log('Executin cmd: %s' % cmd)
             master.config(cmd)
+        if fabric_role == 'leaf':
+            helpers.log("Adding leaf group for leaf %s" % name)
+            master.config('leaf-group %s' % leaf_group)
         master.config("show version")
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
