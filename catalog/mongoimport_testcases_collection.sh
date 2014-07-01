@@ -1,14 +1,17 @@
 #!/bin/sh
 
-database=test_catalog2
+config="../configs/catalog.yaml"
+mongo_server=`python -c "import yaml; print yaml.load(open('${config}'))['db_server']"`
+mongo_port=`python -c "import yaml; print yaml.load(open('${config}'))['db_port']"`
+database=`python -c "import yaml; print yaml.load(open('${config}'))['database']"`
+
 collection=test_cases
-mongo_server=qadashboard-mongo.bigswitch.com
 
 for json_file in `echo test_cases*.json`; do
     echo "*** Mongo importing ${json_file}..."
     mongoimport \
         --host $mongo_server \
-        --port 27017 \
+        --port $mongo_port \
         --db $database \
         --collection $collection \
         --stopOnError \

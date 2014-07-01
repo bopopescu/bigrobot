@@ -1,6 +1,12 @@
 #!/bin/sh
 
-product_file=products.data
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
+RELEASE='ironhorse'
+config="../configs/catalog.yaml"
 
 phase1=1    # Find all test suites in product areas, report totals
 phase2=1    # Dry-run to generate output.xml, and generate JSON files
@@ -35,10 +41,10 @@ if [ $phase2 -eq 1 ]; then
 
     subject "Running all the test suites in dry-run mode"
 
-    for product in `cat $product_file | grep -v '^#'`; do
-        file=total_suites_by_areas.sh.${product}.suite_files
-        dryrun_out=dryrun.${file}
-        xml_logs=dryrun.${file}.output_xml.log
+    for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
+        file=raw_data.total_suites_by_areas.sh.${product}.suite_files
+        dryrun_out=${file}.dryrun
+        xml_logs=${file}.dryrun.output_xml.log
 
         if [ $phase2a -eq 1 ]; then
             subject2 "Dry run for ${file}. Dump output to $dryrun_out ..."
@@ -49,20 +55,20 @@ if [ $phase2 -eq 1 ]; then
         subject2 "Generating JSON for test results in $xml_logs ..."
         time ./parse_test_xml_output.py \
                 --input=$xml_logs \
-                --output-suites=test_suites_${product}.json \
-                --output-testcases=test_cases_${product}.json
+                --output-suites=raw_data.test_suites_${product}.json \
+                --output-testcases=raw_data.test_cases_${product}.json
     done
 fi
 
 if [ $phase3 -eq 1 ]; then
     subject2 "Total IronHorse test cases"
-    grep -i ironhorse test_cases_*.json | wc -l
+    grep -i $RELEASE raw_data.test_cases_*.json | wc -l
 
     subject2 "Total manual test cases"
-    grep -i manual test_cases_*.json | wc -l
+    grep -i manual raw_data.test_cases_*.json | wc -l
 
     subject2 "Total manual-untested test cases"
-    grep -i manual-untested test_cases_*.json | wc -l
+    grep -i manual-untested raw_data.test_cases_*.json | wc -l
 fi
 
 echo "End time: `date`"

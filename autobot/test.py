@@ -202,7 +202,7 @@ class Test(object):
             if not topo_file:
                 topo_file = helpers.bigrobot_topology()
             if helpers.file_not_exists(topo_file):
-                helpers.warn("Topology file not specified (%s)" % topo_file)
+                helpers.debug("Topology file not specified (%s)" % topo_file)
                 topo = {}
             else:
                 topo = helpers.load_config(topo_file)
