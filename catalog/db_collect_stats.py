@@ -202,11 +202,13 @@ class ReleaseStats(object):
         return total
 
 
-def print_stat(descr, val, untested=None):
-    if untested != None:
-        print("%-67s %18s  manual-untested(%s)" % (descr, val, untested))
+def print_stat(descr, val, untested=None, test_pct=None):
+    if test_pct != None:
+        print("%-74s %20s  %-22s %8.1f%%" % (descr, val, "manual-untested(%s)" % untested, test_pct))
+    elif untested != None:
+        print("%-74s %20s  %-22s" % (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-67s %18s" % (descr, val))
+        print("%-74s %20s" % (descr, val))
 
 
 def print_testcases(testcases):
@@ -237,6 +239,13 @@ def print_suites_not_executed(suites, suites_executed):
             print "\t%3d. %-15s (%3s test cases) %s" % (i, n['author'], n['total_tests'], name)
             total_tests += n['total_tests']
     print "\t%d total test cases" % total_tests
+
+
+def test_percentage(executable, total):
+    if executable == 0:
+        return 0.0  # avoid divide by zero
+    else:
+        return float(executable) / float(total) * 100.0
 
 
 def prog_args():
@@ -270,6 +279,7 @@ Display test execution stats collected for a specific build.
 def display_stats(args):
     build = args.build
     ih = ReleaseStats(args.release, build)
+    total = {}
 
     print_stat("Total of all test suites:", ih.total_testsuites())
     print_stat("Total of all test cases:", ih.total_testcases())
@@ -280,12 +290,28 @@ def display_stats(args):
     total_testsuites_in_release = ih.total_testsuites(
                release=ih.release_lowercase())
     print_stat("Total test suites:", total_testsuites_in_release)
-    print_stat("Total test cases:",
-               ih.total_testcases(release=ih.release_lowercase()))
 
-    for functionality in TestCatalog.test_types():
+    total_tc = ih.total_testcases(release=ih.release_lowercase())
+    total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
+    total_tc_pct = test_percentage(total_tc - total_tc_untested, total_tc)
+    print_stat("Total test cases:",
+               total_tc,
+               total_tc_untested,
+               total_tc_pct,
+               )
+    total['tests'] = total_tc
+
+    for functionality in TestCatalog.test_types() + ["manual", "manual-untested"]:
+        total_tc = ih.total_testcases_by_tag(functionality)[0]
+        total_tc_untested = ih.total_testcases_by_tag([functionality,
+                                                       "manual-untested"])[0]
+        test_pct = test_percentage(total_tc - total_tc_untested, total_tc)
         print_stat("Total %s tests:" % functionality,
-                   ih.total_testcases_by_tag(functionality)[0])
+                   total_tc,
+                   total_tc_untested,
+                   test_pct,
+                   )
+        total[functionality] = total_tc
 
     print_stat("Total executable test cases:",
                ih.total_executable_testcases())
@@ -309,29 +335,45 @@ def display_stats(args):
 
 
     print ""
-    print_stat("Total test cases (executed, passed, failed):",
-               ih.total_testcases_executed(build_name=build),
-               untested=ih.total_testcases_by_tag(["manual-untested"])[0])
+    total_executed = ih.total_testcases_executed(build_name=build)
+    total_untested = untested = ih.total_testcases_by_tag(["manual-untested"])[0]
+    test_pct = test_percentage(total_executed[1], total['tests'])
+    print_stat("Total test cases (total, executed, passed, failed):",
+               (total['tests'],) + total_executed,
+               total_untested,
+               test_pct
+               )
 
     for functionality in TestCatalog.test_types() + ["manual", "manual-untested"]:
-        untested = ih.total_testcases_by_tag([functionality,
-                                              "manual-untested"])[0]
-        print_stat("Total %s tests (executed, passed, failed):"
+        total_executed = ih.total_testcases_by_tag_executed(functionality)
+        total_untested = ih.total_testcases_by_tag([functionality,
+                                                    "manual-untested"])[0]
+        test_pct = test_percentage(total_executed[1], total[functionality])
+        print_stat("Total %s tests (total, executed, passed, failed):"
                    % functionality,
-                   ih.total_testcases_by_tag_executed(functionality),
-                   untested)
+                   (total[functionality],) + total_executed,
+                   total_untested,
+                   test_pct
+                   )
         if args.show_untested:
             print_testcases(ih.manual_untested_by_tag(functionality))
 
     print ""
     functionality = "feature"
     for feature in TestCatalog.features(release=ih.release_lowercase()):
+        total_tc = ih.total_testcases_by_tag([functionality, feature])[0]
+        total_executed = ih.total_testcases_by_tag_executed([functionality, feature])
         untested = ih.total_testcases_by_tag([functionality, feature,
                                               "manual-untested"])[0]
-        print_stat("Total %s+%s tests (executed, passed, failed):"
+        if total_executed[1] == 0:
+            test_pct = 0.0
+        else:
+            test_pct = float(total_executed[1]) / float(total_tc) * 100.0
+        print_stat("Total %s+%s tests (total, executed, passed, failed):"
                    % (functionality, feature),
-                   ih.total_testcases_by_tag_executed([functionality, feature]),
-                   untested)
+                   (total_tc,) + total_executed,
+                   untested,
+                   test_pct)
         if args.show_untested:
             print_testcases(ih.manual_untested_by_tag([functionality, feature]))
 
