@@ -128,7 +128,8 @@ class ReleaseStats(object):
     def manual_untested_by_tag(self, tag, collection="test_cases"):
         authors = self.suite_authors()
         tags = helpers.list_flatten([self.release_lowercase(), "manual-untested", tag])
-        query = {"tags": { "$all": tags }}
+        query = {"tags": { "$all": tags },
+                 "build_name": self._build_name}
         testcases = TestCatalog.db()[collection]
         cases = testcases.find(query)
         tests = []
@@ -337,7 +338,7 @@ def display_stats(args):
     print ""
     total_executed = ih.total_testcases_executed(build_name=build)
     total_untested = untested = ih.total_testcases_by_tag(["manual-untested"])[0]
-    test_pct = test_percentage(total_executed[1], total['tests'])
+    test_pct = test_percentage(total_executed[0], total['tests'])
     print_stat("Total test cases (total, executed, passed, failed):",
                (total['tests'],) + total_executed,
                total_untested,
@@ -348,7 +349,7 @@ def display_stats(args):
         total_executed = ih.total_testcases_by_tag_executed(functionality)
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
-        test_pct = test_percentage(total_executed[1], total[functionality])
+        test_pct = test_percentage(total_executed[0], total[functionality])
         print_stat("Total %s tests (total, executed, passed, failed):"
                    % functionality,
                    (total[functionality],) + total_executed,
@@ -365,10 +366,10 @@ def display_stats(args):
         total_executed = ih.total_testcases_by_tag_executed([functionality, feature])
         untested = ih.total_testcases_by_tag([functionality, feature,
                                               "manual-untested"])[0]
-        if total_executed[1] == 0:
+        if total_executed[0] == 0:
             test_pct = 0.0
         else:
-            test_pct = float(total_executed[1]) / float(total_tc) * 100.0
+            test_pct = float(total_executed[0]) / float(total_tc) * 100.0
         print_stat("Total %s+%s tests (total, executed, passed, failed):"
                    % (functionality, feature),
                    (total_tc,) + total_executed,
