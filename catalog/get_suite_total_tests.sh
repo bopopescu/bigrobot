@@ -13,7 +13,7 @@ if [ $# -lt 1 ]; then
 fi
 
 suite=$1
-suite=`echo $suite | sed s/.txt$//`
+suite=`echo $suite | sed -e s/.txt$// -e s/.topo$//`
 
 if [ `expr $suite : '^/.*bigrobot/testsuites/.*'` -eq 0 ]; then
     suite="../testsuites/$suite"
@@ -33,11 +33,11 @@ dir=`dirname $suite`
 
 (cd $dir; BIGROBOT_SUITE=$base gobot test --dryrun --include-manual-untested | grep "tests total")
 
-grep -q manual-untested $textfile
+grep -qi manual-untested $textfile
 if [ $? -eq 0 ]; then
     untested=`(cd $dir; BIGROBOT_SUITE=$base gobot test --dryrun --include-manual-untested --include=manual-untested | grep "tests total" | awk '{print $1}')`
-    echo "  Untested: $untested"
+    echo "  Manual-untested: $untested"
 else
-    echo "  Untested: 0"
+    echo "  Manual-untested: 0"
 fi
 
