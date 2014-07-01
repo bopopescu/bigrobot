@@ -1,0 +1,26 @@
+db_server: qadashboard-mongo.bigswitch.com
+db_port: 27017
+database: test_catalog3
+products:
+  - BigChain
+  - BigTap
+  - BigWire
+  - SwitchLight
+  - T5
+test_types:
+  - feature
+  - scaling
+  - performance
+  - solution
+  - longevity
+  - negative
+  - robustness
+features:
+  ironhorse:
+    [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
+      rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
+      singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
+      filemanagement, running-config, initialconfig, virtualip, openstack,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite
+    ]
+
