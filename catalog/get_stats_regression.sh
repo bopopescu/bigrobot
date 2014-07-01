@@ -2,10 +2,6 @@
 # 'infile': a file which contains a list of output.xml files (path included).
 #
 
-#export BUILD_NAME="bvs master #1989"
-#export BUILD_NUMBER
-#export BUILD_URL
-
 usage() {
     echo "Usage: BUILD_NAME=\"bvs master #<id>\" $0 <infile>"
     exit 0
@@ -16,6 +12,14 @@ if [ "$BUILD_NAME"x = x ]; then
 fi
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
+
+./db_chk_build_name.py
+if [ $? -eq 0 ]; then
+    echo "Baseline data for build '$BUILD_NAME' exists."
+else
+    echo "No baseline data for build '$BUILD_NAME'. Start collecting  baseline."
+    ./get_stats_dryrun.sh
+fi
 
 if [ $# -eq 0 ]; then
     # If ../testlogs exists then look for output.xml there
@@ -39,7 +43,7 @@ else
 fi
 
 progname=`basename $0`
-outfile=${progname}_output.$ts.log
+outfile=raw_data.${progname}.output.$ts.log
 
 rm -f test_suites_regression.json test_cases_regression.json
 
