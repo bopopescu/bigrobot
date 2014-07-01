@@ -20,55 +20,16 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-# import autobot.devconf as devconf
+import cat_helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
-DB_SERVER = 'qadashboard-mongo.bigswitch.com'
-DB_PORT = 27017
-
-# Normalize the Git authors. Map them to their LDAP names.
-AUTHORS = {
-           "SureshVoora": "suresh",
-           "prashanth": "padubiry",
-           "amallina": "arunamallina",
-           "Vui Le": "vui",
-           "Animesh Patcha": "animesh",
-           "songbeng": "slim",
-           "tomaszklimczyk": "tomasz",
-           "Tomasz Klimczyk": "tomasz",
-           "Mingtao Yang": "mingtao",
-           "Don Jayakody": "don",
-           "Cliff DeGuzman": "cliff",
-           "kranti": "kranti",
-           "William Tan": "wtan",
-           "fc7737": "wtan",
-           "Sakshi Kalra": "sakshikalra",
-           }
-
-def format_robot_timestamp(ts, is_datestamp=False):
-    """
-    Robot Framework uses the following timestamp format:
-        20140523 16:49:38.051
-    Concert it to UTC ISO time format:
-        2014-05-23T23:49:38.051Z
-    """
-    match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$', ts)
-    if not match:
-        helpers.environment_failure("Incorrect time format: '%s'" % ts)
-    (year, month, date, hour, minute, sec, msec) = match.groups()
-    hour = int(hour) + 7  # change PST to UTC
-    if is_datestamp:
-        s = '%s-%s-%s' % (year, month, date)
-    else:
-        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date,
-                                       hour, minute, sec, msec)
-    return s
-
-
-def format_robot_datestamp(ts):
-    return format_robot_timestamp(ts, is_datestamp=True)
+AUTHORS = cat_helpers.load_config_authors()
+CONFIGS = cat_helpers.load_config_catalog()
+DB_SERVER = CONFIGS['db_server']
+DB_PORT = CONFIGS['db_port']
+DATABASE = CONFIGS['database']
 
 
 class TestSuite(object):
@@ -76,6 +37,7 @@ class TestSuite(object):
         """
         filename: output.xml file (with path)
         """
+        self._build = {}
         self._suite = {}
         self._tests = []
         self._total_tests = 0
@@ -85,12 +47,11 @@ class TestSuite(object):
         self._is_regression = is_regression
 
         client = MongoClient(DB_SERVER, DB_PORT)
-        self._db = client.test_catalog2
+        self._db = client[DATABASE]
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
                                                       to_list=True)[1:])
-
         self._data = xmltodict.parse(self.xml_str)
 
     def db(self):
@@ -101,35 +62,15 @@ class TestSuite(object):
         count = testcases.count()
         return count
 
-    def db_insert_testcase_archive(self, rec):
-        testcases = self.db().test_cases_archive
-        tc = testcases.insert(rec)
+    def db_insert(self, rec, collection):
+        col = self.db()[collection]
+        _id = col.insert(rec)
 
         # Side effect of insert operation is that it will insert the ObjectID
         # into rec, which may cause subsequent operations to fail (e.g.,
         # to_json(). So we remove the ObjectID.
         del rec['_id']
-        return tc
-
-    def db_insert_testcase(self, rec):
-        testcases = self.db().test_cases
-        tc = testcases.insert(rec)
-
-        # Side effect of insert operation is that it will insert the ObjectID
-        # into rec, which may cause subsequent operations to fail (e.g.,
-        # to_json(). So we remove the ObjectID.
-        del rec['_id']
-        return tc
-
-    def db_insert_suite(self, rec):
-        suites = self.db().test_suites
-        suite = suites.insert(rec)
-
-        # Side effect of insert operation is that it will insert the ObjectID
-        # into rec, which may cause subsequent operations to fail (e.g.,
-        # to_json(). So we remove the ObjectID.
-        del rec['_id']
-        return suite
+        return _id
 
     def db_find_and_modify_regression_testcase(self, rec):
         testcases = self.db().test_cases_archive
@@ -175,34 +116,51 @@ class TestSuite(object):
                   % (rec['name'], rec['product_suite'], rec['build_name'],
                      rec['starttime_datestamp'], rec['status']))
 
+    def db_add_if_not_found_build(self, rec):
+        builds = self.db().builds
+
+        build = builds.find_one({ "build_name": rec['build_name'] })
+        if build:
+            print('Found build record (build_name:"%s"). Skipping insertion.'
+                  % (rec['build_name']))
+        else:
+            print('Did not find build record (build_name:"%s").'
+                  ' Inserting new record.'
+                  % (rec['build_name']))
+            self.db_insert(rec, collection="builds")
+
     def db_add_if_not_found_suite(self, rec):
         suites = self.db().test_suites
 
-        suite = suites.find_one({ "product_suite" : rec['product_suite'] })
+        suite = suites.find_one({ "product_suite" : rec['product_suite'],
+                                  "build_name": rec['build_name'],
+                                  })
         if suite:
-            print('Found suite record (name:"%s", product_suite:"%s").'
+            print('Found suite record (name:"%s", product_suite:"%s", build_name:"%s").'
                   ' Skipping insertion.'
-                  % (rec['name'], rec['product_suite']))
+                  % (rec['name'], rec['product_suite'], rec['build_name']))
         else:
-            print('Did not find suite record (name:"%s", product_suite:"%s").'
+            print('Did not find suite record (name:"%s", product_suite:"%s", build_name:"%s").'
                   ' Inserting new record.'
-                  % (rec['name'], rec['product_suite']))
-            self.db_insert_suite(rec)
+                  % (rec['name'], rec['product_suite'], rec['build_name']))
+            self.db_insert(rec, collection="test_suites")
 
     def db_add_if_not_found_testcase(self, rec):
         testcases = self.db().test_cases
 
         tc = testcases.find_one({ "name": rec['name'],
-                                  "product_suite" : rec['product_suite'], })
+                                  "product_suite": rec['product_suite'],
+                                  "build_name": rec['build_name'],
+                                   })
         if tc:
-            print('Found test case record (name:"%s", product_suite:"%s").'
+            print('Found test case record (name:"%s", product_suite:"%s", build_name:"%s").'
                   ' Skipping insertion.'
-                  % (rec['name'], rec['product_suite']))
+                  % (rec['name'], rec['product_suite'], rec['build_name']))
         else:
             print('Did not find test case record'
-                  ' (name:"%s", product_suite:"%s"). Inserting new record.'
-                  % (rec['name'], rec['product_suite']))
-            self.db_insert_testcase(rec)
+                  ' (name:"%s", product_suite:"%s", build_name:"%s"). Inserting new record.'
+                  % (rec['name'], rec['product_suite'], rec['build_name']))
+            self.db_insert(rec, collection="test_cases")
 
     def data(self):
         """
@@ -247,9 +205,18 @@ class TestSuite(object):
         return "unknown"
 
     def extract_suite_attributes(self):
+        """
+        Extract test data from XML, create test suite data structure and
+        populate it in DB.
+
+        Need to call extract_test_attributes() first to get the total_tests
+        data.
+        """
         suite = self.data()['robot']['suite']
-        timestamp = format_robot_timestamp(self.data()['robot']['@generated'])
-        datestamp = format_robot_datestamp(self.data()['robot']['@generated'])
+        timestamp = helpers.format_robot_timestamp(
+                            self.data()['robot']['@generated'])
+        datestamp = helpers.format_robot_datestamp(
+                            self.data()['robot']['@generated'])
         source = source_file = helpers.utf8(suite['@source'])
         match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
         if match:
@@ -276,9 +243,10 @@ class TestSuite(object):
                     'product': product,
                     'product_suite': product_suite,
                     'author': author,
-                    'total_tests': None,
+                    'total_tests': self.total_tests(),
                     'topo_type': topo_type,
                     'notes': None,
+                    'build_name': os.environ['BUILD_NAME'],
                     }
         if self._is_regression:
             pass
@@ -286,8 +254,14 @@ class TestSuite(object):
             # Baselining
             self.db_add_if_not_found_suite(self._suite)
 
+    def db_populate_suites(self):
+        pass
 
     def extract_test_attributes(self):
+        """
+        Extract test data from XML, create test case data structure and
+        populate it in DB.
+        """
         tests = self.data()['robot']['suite']['test']
 
         if not helpers.is_list(tests):
@@ -317,13 +291,13 @@ class TestSuite(object):
                 # Analyzing regression results which should have PASS/FAIL
                 # status.
                 status = helpers.utf8(a_test['status']['@status'])
-                starttime = format_robot_timestamp(
+                starttime = helpers.format_robot_timestamp(
                                 helpers.utf8(a_test['status']['@starttime']))
-                starttime_datestamp = format_robot_datestamp(
+                starttime_datestamp = helpers.format_robot_datestamp(
                                 helpers.utf8(a_test['status']['@starttime']))
-                endtime = format_robot_timestamp(
+                endtime = helpers.format_robot_timestamp(
                                 helpers.utf8(a_test['status']['@endtime']))
-                endtime_datestamp = format_robot_datestamp(
+                endtime_datestamp = helpers.format_robot_datestamp(
                                 helpers.utf8(a_test['status']['@endtime']))
                 executed = True
             else:
@@ -350,7 +324,7 @@ class TestSuite(object):
                     'product_suite': self._suite['product_suite'],
                     'build_number': None,
                     'build_url': None,
-                    'build_name': None,
+                    'build_name': os.environ['BUILD_NAME'],
                     'notes': None,
                     }
 
@@ -359,11 +333,9 @@ class TestSuite(object):
                     test['build_number'] = os.environ['BUILD_NUMBER']
                 if 'BUILD_URL' in os.environ:
                     test['build_url'] = os.environ['BUILD_URL']
-                if 'BUILD_NAME' in os.environ:
-                    test['build_name'] = os.environ['BUILD_NAME']
                 self.db_find_and_modify_testcase(test)
                 self.db_find_and_modify_regression_testcase(test)
-                # self.db_insert_testcase_archive(test)
+                # self.db_insert(test, collection='test_cases_archive')
             else:
                 # Baselining
                 self.db_add_if_not_found_testcase(test)
@@ -376,6 +348,19 @@ class TestSuite(object):
             helpers.debug("DB testcase count (AFTER): %s"
                           % self.db_count_testcases())
         self.total_tests()
+
+    def extract_build_attributes(self):
+        ts = helpers.ts_long()
+        self._build = {'build_name': os.environ['BUILD_NAME'],
+                       'starttime': ts,
+                       'starttime_datestamp': ts.split('T')[0],
+                        }
+        self.db_add_if_not_found_build(self._build)
+
+    def extract_attributes(self):
+        self.extract_build_attributes()
+        self.extract_suite_attributes()
+        self.extract_test_attributes()
 
     def suite_name(self):
         return self._suite['name']
@@ -437,7 +422,7 @@ class TestSuite(object):
         print("%s" % helpers.prettify_xml(self.xml_str))
 
 
-class TestCatalog(object):
+class TestCollection(object):
     def __init__(self, in_files, out_suites, out_testcases,
                  is_regression=False):
         self._suites = []
@@ -453,10 +438,9 @@ class TestCatalog(object):
             if helpers.file_not_empty(filename):
                 print("Reading %s" % filename)
                 suite = TestSuite(filename, is_regression=self._is_regression)
-                suite.extract_suite_attributes()
-                suite.extract_test_attributes()
-                suite.dump_suite_to_file(self._output_suites, to_json=True)
+                suite.extract_attributes()
                 suite.dump_tests_to_file(self._output_testcases, to_json=True)
+                suite.dump_suite_to_file(self._output_suites, to_json=True)
                 self._suites.append(suite)
 
     def suites(self):
@@ -476,14 +460,17 @@ class TestCatalog(object):
                                                  suite.total_tests())
         return tests
 
-if __name__ == '__main__':
 
+def prog_args():
     descr = """\
 Parse the Robot output.xml files to generate the collections for the
 Test Catalog (MongoDB) database.
 """
     parser = argparse.ArgumentParser(prog='parse_test_xml_output',
                                      description=descr)
+    parser.add_argument('--build',
+                        help=("Jenkins build string,"
+                              " e.g., 'bvs master #2007'"))
     parser.add_argument('--input', required=True,
                         help=("Contains a list of Robot output.xml files"
                               "  with complete pathnames"))
@@ -494,13 +481,26 @@ Test Catalog (MongoDB) database.
     parser.add_argument('--is-regression',
                         action='store_true', default=False,
                         help=("Specify this option if analyzing regression results"))
-    args = parser.parse_args()
+    _args = parser.parse_args()
 
+    # _args.build <=> env BUILD_NAME
+    if not _args.build and 'BUILD_NAME' in os.environ:
+        _args.build = os.environ['BUILD_NAME']
+    elif not _args.build:
+        helpers.error_exit("Must specify --build option or set environment variable BUILD_NAME")
+    else:
+        os.environ['BUILD_NAME'] = _args.build
+
+    return _args
+
+
+if __name__ == '__main__':
+    args = prog_args()
     input_files = helpers.file_read_once(args.input, to_list=True)
-    t = TestCatalog(in_files=input_files,
-                    out_suites=args.output_suites,
-                    out_testcases=args.output_testcases,
-                    is_regression=args.is_regression)
+    t = TestCollection(in_files=input_files,
+                       out_suites=args.output_suites,
+                       out_testcases=args.output_testcases,
+                       is_regression=args.is_regression)
     t.load_suites()
     print "Total suites: %s" % t.total_suites()
     print "Total tests: %s" % t.total_tests()

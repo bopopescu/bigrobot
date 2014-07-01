@@ -44,6 +44,7 @@ def test_and_install_package():
                 'pytz': 'pytz',
                 'ipcalc': 'ipcalc',
                 'netaddr': 'netaddr',
+                'pymongo': 'pymongo',
                 'pycrypto': 'Crypto',
                 'paramiko': 'paramiko',
                 'scp': 'scp',
@@ -270,7 +271,7 @@ def warn_if_topology_not_defined():
     Create warning log if topology is not defined.
     """
     if not is_topology_defined():
-        helpers.warn("Topology file (%s) is not defined.\n"
+        helpers.debug("Topology file (%s) is not defined.\n"
                      % helpers.bigrobot_topology(), level=None)
 
 

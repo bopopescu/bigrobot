@@ -612,8 +612,8 @@ def python_path(new_val=None, default=None):
     return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
-def bigrobot_configs_path():
-    return ''.join((get_path_autobot(), '/../configs'))
+def bigrobot_configs_path(config_path='/../configs'):
+    return ''.join((get_path_autobot(), config_path))
 
 
 def sleep(s):
@@ -963,6 +963,36 @@ def time_now():
     Return the current time.
     """
     return time.time()
+
+
+def format_robot_timestamp(timestamp, is_datestamp=False):
+    """
+    Robot Framework uses the following timestamp format:
+        20140523 16:49:38.051
+    Concert it to UTC ISO time format:
+        2014-05-23T23:49:38.051Z
+    """
+    match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$',
+                     timestamp)
+    if not match:
+        environment_failure("Incorrect time format: '%s'" % timestamp)
+    (year, month, date, hour, minute, sec, msec) = match.groups()
+    hour = int(hour) + 7  # change PST to UTC
+    if is_datestamp:
+        s = '%s-%s-%s' % (year, month, date)
+    else:
+        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date,
+                                       hour, minute, sec, msec)
+    return s
+
+
+def format_robot_datestamp(timestamp):
+    return format_robot_timestamp(timestamp, is_datestamp=True)
+
+
+#
+# String processing helpers
+#
 
 
 def file_exists(filename):
@@ -1503,10 +1533,6 @@ def send_mail(m):
     s.sendmail(m['from'], _to, msg.as_string())
     s.quit()
 
-
-#
-# String processing helpers
-#
 
 def params_dot_notation_to_dict(params):
     """
