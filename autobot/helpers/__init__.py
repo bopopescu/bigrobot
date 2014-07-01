@@ -1353,6 +1353,10 @@ def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
     if record_route:
         cmd = "%s -R" % (cmd)
     if interval:
+        # Mac OS X < 13 (Maverick) requires minimum interval of 1 second.
+        if (platform.system() == 'Darwin' and
+            int(platform.release().split('.')[0]) < 13):
+            interval = 1
         if float(interval) < 0.2:
             test_error("Ping interval cannot be less than 0.2 seconds.")
         cmd = "%s -i %s" % (cmd, interval)
