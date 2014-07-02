@@ -226,5 +226,77 @@ class  T5SwitchPlatform(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
-              
+    
+    def cli_t5_switch_show_environment_psu(self, switch, model="none", element="PSU2", element_number=1, component="none"):
+        ''' Function to return the show environment output
+            input - switch , model 
+            output - environment output for PSU 
+        '''
+        t = test.Test()
+        s1 = t.switch(switch)
+        
+        try:
+            cli_input1= "show environment"
+            s1.enable(cli_input1)
+            content1= string.split(s1.cli_content(), '\n')
+            helpers.log("value in content1 is %s"  %  (content1))
+                      
+            if ("PSU1" in element):
+                element_name= "PSU 1"
+            elif ("PSU2" in element):
+                element_name= "PSU 2"
+                
+            helpers.log("The element name is %s" % element_name)
+            elemt1= " " + str(element_name) + "\r"
+            helpers.log("The element name for index is %s" % elemt1)
+            element_index = content1.index(elemt1)
+            helpers.log("The element index is %d" % element_index)
+            
+            helpers.log("The remaining content is %s" % content1[element_index:])
+            content2 = content1[element_index:]
+            for x in range(0, len(content2)):
+                
+                psu_dict = {}
+                for i in range(0, len(content2)):                    
+                    tmp_string= content2[i].lstrip()
+                    #helpers.log("The current string is %s" % tmp_string)
+                    element_array= tmp_string.split()
+                    #helpers.log("The element array is %s" % element_array)
+                    if ('State:' in element_array):
+                        psu_dict['State'] = element_array[1]
+                    elif ('Status:' in element_array):
+                        psu_dict['Status'] = element_array[1]
+                    elif ('Model:' in element_array):
+                        psu_dict['Model'] = element_array[1]
+                    elif ('Type:' in element_array):
+                        psu_dict['Type'] = element_array[1]
+                    elif ('Vin:' in element_array):
+                        psu_dict['Vin'] = element_array[1]
+                    elif ('Vout:' in element_array):
+                        psu_dict['Vout'] = element_array[1]
+                    elif ('Iin:' in element_array):
+                        psu_dict['Iin'] = element_array[1]
+                    elif ('Iout:' in element_array):
+                        psu_dict['Iout'] = element_array[1]
+                    elif ('Pin:' in element_array):
+                        psu_dict['Pin'] = element_array[1]
+                    elif ('Pout:' in element_array):
+                        psu_dict['Pout'] = element_array[1]
+                       
+                helpers.log("The dictionary value is %s" % psu_dict)
+                helpers.log("The component require is %s" % component)
+                #helpers.log("The dict has following items %s" % psu_dict.items())
+                #helpers.log("The dict has following keys %s" % psu_dict.keys())
+                #helpers.log("The dict has following keys %s" % (psu_dict.get('Vin')))
+                componentVal =  psu_dict.get(component)
+                helpers.log("Got the value %s for the component %s" % (componentVal, component) )
+                return componentVal 
+                                        
+            else:
+                helpers.log("The element does not exist")    
+                return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False       
+                           
               
