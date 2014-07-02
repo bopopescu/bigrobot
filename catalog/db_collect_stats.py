@@ -14,7 +14,6 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-import cat_helpers
 from test_catalog import TestCatalog
 
 helpers.set_env('IS_GOBOT', 'False')
@@ -127,7 +126,8 @@ class ReleaseStats(object):
 
     def manual_untested_by_tag(self, tag, collection="test_cases"):
         authors = self.suite_authors()
-        tags = helpers.list_flatten([self.release_lowercase(), "manual-untested", tag])
+        tags = helpers.list_flatten([self.release_lowercase(),
+                                     "manual-untested", tag])
         query = {"tags": { "$all": tags },
                  "build_name": self._build_name}
         testcases = TestCatalog.db()[collection]
@@ -205,9 +205,11 @@ class ReleaseStats(object):
 
 def print_stat(descr, val, untested=None, test_pct=None):
     if test_pct != None:
-        print("%-74s %20s  %-22s %8.1f%%" % (descr, val, "manual-untested(%s)" % untested, test_pct))
+        print("%-74s %20s  %-22s %8.1f%%" %
+              (descr, val, "manual-untested(%s)" % untested, test_pct))
     elif untested != None:
-        print("%-74s %20s  %-22s" % (descr, val, "manual-untested(%s)" % untested))
+        print("%-74s %20s  %-22s" %
+              (descr, val, "manual-untested(%s)" % untested))
     else:
         print("%-74s %20s" % (descr, val))
 
@@ -221,7 +223,8 @@ def print_suites(suites):
     total_tests = 0
     for n in suites:
         i += 1
-        print "\t%3d. %-15s (%3s test cases) %s" % (i, n['author'], n['total_tests'], n['product_suite'])
+        print("\t%3d. %-15s (%3s test cases) %s" %
+              (i, n['author'], n['total_tests'], n['product_suite']))
         total_tests += n['total_tests']
     print "\t%d total test cases" % total_tests
 
@@ -237,7 +240,8 @@ def print_suites_not_executed(suites, suites_executed):
         name = n['product_suite']
         if name not in suite_executed_lookup:
             i += 1
-            print "\t%3d. %-15s (%3s test cases) %s" % (i, n['author'], n['total_tests'], name)
+            print("\t%3d. %-15s (%3s test cases) %s" %
+                  (i, n['author'], n['total_tests'], name))
             total_tests += n['total_tests']
     print "\t%d total test cases" % total_tests
 
