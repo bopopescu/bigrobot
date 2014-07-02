@@ -401,7 +401,6 @@ t5 tenant add  [Arguments]  ${vlan}
     sleep  5    
     
 t5 suite setup
-    clean configuration
     base suite setup
     rest add switch  ${switch1_name}
     ${switch1_dpid}=  rest return switch dpid from ip  s1
