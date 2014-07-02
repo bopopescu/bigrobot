@@ -30,7 +30,7 @@ for x in `cat $f`; do
 
     # Notes:
     #   We include the test cases which are tagged as 'manual-untested'
-    gobot test --dryrun --include-manual-untested
+    ../bin/gobot test --dryrun --include-manual-untested
 done
 
 find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log
