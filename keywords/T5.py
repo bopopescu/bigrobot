@@ -1266,6 +1266,9 @@ class T5(object):
 
             Returns: add the fabric switch
         '''
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN is enabled , should not be adding switch again..")
+            return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1279,6 +1282,9 @@ class T5(object):
             return True
 
     def rest_add_dpid(self, switch, dpid):
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN is enabled , should not be adding switch again..")
+            return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1292,6 +1298,10 @@ class T5(object):
             return True
 
     def rest_add_fabric_role(self, switch, role):
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN is enabled , should not be adding switch again..")
+            return True
+
         t = test.Test()
         c = t.controller('master')
 
@@ -1304,6 +1314,9 @@ class T5(object):
             return True
 
     def rest_add_leaf_group(self, switch, group):
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN is enabled , should not be adding switch again..")
+            return True
         t = test.Test()
         c = t.controller('master')
 

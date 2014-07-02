@@ -13,10 +13,10 @@ Library          keywords/Ixia.py
 Library          keywords/T5.py
 
 *Variables
-${switch1_name}      T5HA-LEAF-1
-${switch2_name}      T5HA-LEAF-2
-${switch3_name}      T5HA-SPINE-1
-${switch4_name}      T5HA-SPINE-2
+${switch1_name}      leaf0-a
+${switch2_name}      leaf0-b
+${switch3_name}      spine0
+${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS
 ${interface_1}      ethernet24
