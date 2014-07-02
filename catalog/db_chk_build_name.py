@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# Check the database collection 'builds' for a record which matches the env
+# BUILD_NAME. If found, return 0 (succcess), else return 1 (failure).
 
 import os
 import sys
 from pymongo import MongoClient
-import robot
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -19,6 +20,7 @@ import cat_helpers
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
+
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
@@ -29,32 +31,10 @@ database = configs['database']
 
 client = MongoClient(db_server, db_port)
 db = client[database]
+builds = db['builds']
+build = builds.find({"build_name": os.environ['BUILD_NAME']})
 
-
-testcases = db.test_cases
-testsuites = db.test_suites
-
-suites = testsuites.find()
-tc = testcases.find({ "build_name": os.environ['BUILD_NAME'], "tags": {"$all": ["ironhorse"]}})
-
-authors = {}
-ironhorse_suites = {}
-
-
-for x in suites:
-    product_suite = helpers.utf8(x['product_suite'])
-    authors[product_suite] = helpers.utf8(x['author'])
-
-for x in tc:
-    product_suite = helpers.utf8(x['product_suite'])
-    ironhorse_suites[product_suite] = authors[product_suite]
-
-authors_list = []
-for suite, author in ironhorse_suites.items():
-    authors_list.append("%-12s %s" % (author, suite))
-
-print "\n".join(sorted(authors_list))
-
-print ""
-print "Total suites: %s" % len(authors_list)
-
+if build.count() > 0:
+    sys.exit(0)  # Found record(s) matching build name
+else:
+    sys.exit(1)  # Build name not found

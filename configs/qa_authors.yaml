@@ -1,0 +1,18 @@
+# Test suite authors. We derive their names (keys) from the initial
+# Git check-in and map them to their LDAP names.
+#
+SureshVoora: suresh
+prashanth: padubiry
+amallina: arunamallina
+Vui Le: vui
+Animesh Patcha: animesh
+songbeng: slim
+tomaszklimczyk: tomasz
+Tomasz Klimczyk: tomasz
+Mingtao Yang: mingtao
+Don Jayakody: don
+Cliff DeGuzman: cliff
+kranti: kranti
+William Tan: wtan
+fc7737: wtan
+Sakshi Kalra: sakshikalra
