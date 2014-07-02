@@ -3,7 +3,7 @@ import re
 import xmltodict
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
-from catalog_modules.qa_authors import QaAuthors
+from catalog_modules.authors import Authors
 
 
 class TestSuite(object):
@@ -55,16 +55,16 @@ class TestSuite(object):
                 update={ "$set": rec },  # update entire record
                 upsert=True
                 )
+        arg_str = (' (name:"%s", product_suite:"%s", build_name:"%s",'
+                   ' date:"%s", status:"%s")'
+                   % (rec['name'], rec['product_suite'], rec['build_name'],
+                      rec['starttime_datestamp'], rec['status']))
         if tc:
             print('Successfully updated Regression "test_cases_archive" record'
-                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'], rec['build_name'],
-                     rec['starttime_datestamp'], rec['status']))
+                  + arg_str)
         else:
             print('Did not find Regression "test_cases_archive" record'
-                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'], rec['build_name'],
-                     rec['starttime_datestamp'], rec['status']))
+                  + arg_str)
 
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
@@ -76,28 +76,26 @@ class TestSuite(object):
                 update={ "$set": rec },
                 # upsert=True
                 )
+        arg_str = (' (name:"%s", product_suite:"%s", build_name:"%s",'
+                   ' date:"%s", status:"%s")'
+                   % (rec['name'], rec['product_suite'], rec['build_name'],
+                      rec['starttime_datestamp'], rec['status']))
         if tc:
-            print('Successfully updated "test_cases" record'
-                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'], rec['build_name'],
-                     rec['starttime_datestamp'], rec['status']))
+            print('Successfully updated "test_cases" record' + arg_str)
         else:
-            print('CRITICAL ERROR: Did not find "test_cases" record'
-                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'], rec['build_name'],
-                     rec['starttime_datestamp'], rec['status']))
+            print('CRITICAL ERROR: Did not find "test_cases" record' + arg_str)
 
     def db_add_if_not_found_build(self, rec):
         builds = self.db().builds
 
         build = builds.find_one({ "build_name": rec['build_name'] })
+        arg_str = ' (build_name:"%s")' % (rec['build_name'])
         if build:
-            print('Found build record (build_name:"%s"). Skipping insertion.'
-                  % (rec['build_name']))
+            print('Found build record'
+                  + arg_str + '. Skipping insertion.')
         else:
-            print('Did not find build record (build_name:"%s").'
-                  ' Inserting new record.'
-                  % (rec['build_name']))
+            print('Did not find build record'
+                  + arg_str + '. Inserting new record.')
             self.db_insert(rec, collection="builds")
 
     def db_add_if_not_found_suite(self, rec):
@@ -106,14 +104,15 @@ class TestSuite(object):
         suite = suites.find_one({ "product_suite" : rec['product_suite'],
                                   "build_name": rec['build_name'],
                                   })
+        arg_str = (' (name:"%s", product_suite:"%s", build_name:"%s")'
+                   % (rec['name'], rec['product_suite'], rec['build_name']))
         if suite:
-            print('Found suite record (name:"%s", product_suite:"%s", build_name:"%s").'
-                  ' Skipping insertion.'
-                  % (rec['name'], rec['product_suite'], rec['build_name']))
+            print('Found suite record'
+                  + arg_str + '. Skipping insertion.')
+
         else:
-            print('Did not find suite record (name:"%s", product_suite:"%s", build_name:"%s").'
-                  ' Inserting new record.'
-                  % (rec['name'], rec['product_suite'], rec['build_name']))
+            print('Did not find suite record'
+                  + arg_str + '. Inserting new record.')
             self.db_insert(rec, collection="test_suites")
 
     def db_add_if_not_found_testcase(self, rec):
@@ -123,14 +122,14 @@ class TestSuite(object):
                                   "product_suite": rec['product_suite'],
                                   "build_name": rec['build_name'],
                                    })
+        arg_str = (' (name:"%s", product_suite:"%s", build_name:"%s")'
+                   % (rec['name'], rec['product_suite'], rec['build_name']))
         if tc:
-            print('Found test case record (name:"%s", product_suite:"%s", build_name:"%s").'
-                  ' Skipping insertion.'
-                  % (rec['name'], rec['product_suite'], rec['build_name']))
+            print('Found test case record'
+                  + arg_str + '. Skipping insertion.')
         else:
             print('Did not find test case record'
-                  ' (name:"%s", product_suite:"%s", build_name:"%s"). Inserting new record.'
-                  % (rec['name'], rec['product_suite'], rec['build_name']))
+                  + arg_str + '. Inserting new record.')
             self.db_insert(rec, collection="test_cases")
 
     def data(self):
@@ -152,7 +151,7 @@ class TestSuite(object):
         filename = re.sub(r'.*bigrobot/', '../', filename)
         (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
         output = output.strip()
-        authors = QaAuthors.authors()
+        authors = Authors.get()
         if output in authors:
             return authors[output]
         else:

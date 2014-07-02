@@ -92,7 +92,8 @@ Display test execution stats collected for a specific build.
     if not _args.build and 'BUILD_NAME' in os.environ:
         _args.build = os.environ['BUILD_NAME']
     elif not _args.build:
-        helpers.error_exit("Must specify --build option or set environment variable BUILD_NAME")
+        helpers.error_exit("Must specify --build option or set environment"
+                           " variable BUILD_NAME")
     else:
         os.environ['BUILD_NAME'] = _args.build
 
@@ -124,7 +125,8 @@ def display_stats(args):
                )
     total['tests'] = total_tc
 
-    for functionality in TestCatalog.test_types() + ["manual", "manual-untested"]:
+    for functionality in TestCatalog.test_types() + ["manual",
+                                                     "manual-untested"]:
         total_tc = ih.total_testcases_by_tag(functionality)[0]
         total_tc_untested = ih.total_testcases_by_tag([functionality,
                                                        "manual-untested"])[0]
@@ -167,7 +169,8 @@ def display_stats(args):
                test_pct
                )
 
-    for functionality in TestCatalog.test_types() + ["manual", "manual-untested"]:
+    for functionality in TestCatalog.test_types() + ["manual",
+                                                     "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
@@ -185,7 +188,8 @@ def display_stats(args):
     functionality = "feature"
     for feature in TestCatalog.features(release=ih.release_lowercase()):
         total_tc = ih.total_testcases_by_tag([functionality, feature])[0]
-        total_executed = ih.total_testcases_by_tag_executed([functionality, feature])
+        total_executed = ih.total_testcases_by_tag_executed([functionality,
+                                                             feature])
         untested = ih.total_testcases_by_tag([functionality, feature,
                                               "manual-untested"])[0]
         if total_executed[0] == 0:
@@ -198,7 +202,8 @@ def display_stats(args):
                    untested,
                    test_pct)
         if args.show_untested:
-            print_testcases(ih.manual_untested_by_tag([functionality, feature]))
+            print_testcases(ih.manual_untested_by_tag([functionality,
+                                                       feature]))
 
 
 if __name__ == '__main__':
