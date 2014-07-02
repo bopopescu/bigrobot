@@ -18,7 +18,7 @@ if [ $? -eq 0 ]; then
     echo "Baseline data for build '$BUILD_NAME' exists."
 else
     echo "No baseline data for build '$BUILD_NAME'. Start collecting  baseline."
-    ./populate_stats_dryrun.sh
+    ./populate_db_dryrun.sh
 fi
 
 if [ $# -eq 0 ]; then
