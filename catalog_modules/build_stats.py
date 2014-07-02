@@ -70,7 +70,6 @@ class BuildStats(object):
         suites = self.testsuites(**kwargs)
         return len(suites)
 
-
     #
     # The methods below need to be refactored.
     #
@@ -183,4 +182,3 @@ class BuildStats(object):
     def total_executable_testcases_executed(self, build_name=None):
         total = self.total_testcases_executed(build_name=build_name)
         return total
-

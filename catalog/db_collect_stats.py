@@ -14,8 +14,8 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-from test_catalog import TestCatalog
-from build_stats import BuildStats
+from catalog_modules.test_catalog import TestCatalog
+from catalog_modules.build_stats import BuildStats
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
