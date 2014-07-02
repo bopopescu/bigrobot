@@ -104,6 +104,7 @@ def display_stats(args):
     build = args.build
     ih = BuildStats(args.release, build)
     total = {}
+    cat = TestCatalog()
 
     print_stat("Total of all test suites:", ih.total_testsuites())
     print_stat("Total of all test cases:", ih.total_testcases())
@@ -125,8 +126,7 @@ def display_stats(args):
                )
     total['tests'] = total_tc
 
-    for functionality in TestCatalog.test_types() + ["manual",
-                                                     "manual-untested"]:
+    for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_tc = ih.total_testcases_by_tag(functionality)[0]
         total_tc_untested = ih.total_testcases_by_tag([functionality,
                                                        "manual-untested"])[0]
@@ -169,8 +169,7 @@ def display_stats(args):
                test_pct
                )
 
-    for functionality in TestCatalog.test_types() + ["manual",
-                                                     "manual-untested"]:
+    for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
@@ -186,7 +185,7 @@ def display_stats(args):
 
     print ""
     functionality = "feature"
-    for feature in TestCatalog.features(release=ih.release_lowercase()):
+    for feature in cat.features(release=ih.release_lowercase()):
         total_tc = ih.total_testcases_by_tag([functionality, feature])[0]
         total_executed = ih.total_testcases_by_tag_executed([functionality,
                                                              feature])

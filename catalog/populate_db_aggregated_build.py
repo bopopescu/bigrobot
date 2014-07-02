@@ -19,9 +19,10 @@ if not 'BUILD_NAME' in os.environ:
 
 
 def remove_test_data():
-    suite_count = TestCatalog.remove_test_suites_matching_build(
+    cat = TestCatalog()
+    suite_count = cat.remove_test_suites_matching_build(
                         os.environ['BUILD_NAME'])
-    test_count = TestCatalog.remove_test_cases_matching_build(
+    test_count = cat.remove_test_cases_matching_build(
                         os.environ['BUILD_NAME'])
     print("Removed %s suites and %s test matching build '%s'."
           % (suite_count, test_count, os.environ['BUILD_NAME']))
