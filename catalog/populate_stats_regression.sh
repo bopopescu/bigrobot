@@ -24,7 +24,7 @@ fi
 if [ $# -eq 0 ]; then
     # If ../testlogs exists then look for output.xml there
     if [ -d ../testlogs ]; then
-        infile=input_list.$ts
+        infile=input_list.$ts.txt
         echo "Looking for output.xml files in ../testlogs/ directory."
         find ../testlogs -name output.xml > $infile
         if [ ! -s $infile ]; then
