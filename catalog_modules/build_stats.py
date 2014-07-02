@@ -1,5 +1,5 @@
 import autobot.helpers as helpers
-from test_catalog import TestCatalog
+from catalog_modules.test_catalog import TestCatalog
 
 
 class BuildStats(object):
