@@ -82,14 +82,16 @@ Test Catalog (MongoDB) database.
                         help=("JSON output file containing test cases"))
     parser.add_argument('--is-regression',
                         action='store_true', default=False,
-                        help=("Specify this option if analyzing regression results"))
+                        help=("Specify this option if analyzing regression"
+                              " results"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
     if not _args.build and 'BUILD_NAME' in os.environ:
         _args.build = os.environ['BUILD_NAME']
     elif not _args.build:
-        helpers.error_exit("Must specify --build option or set environment variable BUILD_NAME")
+        helpers.error_exit("Must specify --build option or set environment"
+                           " variable BUILD_NAME")
     else:
         os.environ['BUILD_NAME'] = _args.build
 
