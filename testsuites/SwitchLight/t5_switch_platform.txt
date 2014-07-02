@@ -42,6 +42,9 @@ ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
 ${interface10g}=   ethernet25
+${PSU1}=            PSU1
+${PSU2}=            PSU2
+${PSUnotup}=        PSU1
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -66,11 +69,11 @@ Verify ONIE Installed on Switch
 	verify onie installated on switch  s1
 	verify onie installated on switch  s2
 	verify onie installated on switch  s7
-	[Tags]  switch-platform  install  onie  feature
+	[Tags]  switch-platform  install  onie  feature  
             
 Verify the openflow aux channel count on Switch
 	Log    Step 1 - Get the OF aux channel number
-	verify openflow aux channel  s1  c1  
+	verify openflow aux channel  s1  c1
 	verify openflow aux channel  s2  c1  
 	verify openflow aux channel  s7  c1  
     [Tags]  switch-platform  ofaux  feature        
@@ -283,27 +286,51 @@ Verify the user password can have small and big cap letters alphanuric and speci
     [Tags]  switch-platform  usermanagement  feature  
     verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
     reset username password  s1  ${default_user}  ${new_password}
+
+Verify the show environment psu output for Vin 
+    [Tags]  switch-platform  environment   
+    verify show environment psu  s1  none  ${PSU2}  2  Vin
+
+Verify the show environment psu output for Vout
+    [Tags]  switch-platform  environment     
+    verify show environment psu  s1  none  ${PSU2}  2  Vout
+
+Verify the show environment psu output for Iin 
+    [Tags]  switch-platform  environment    
+    verify show environment psu  s1  none  ${PSU2}  2  Iin
+
+Verify the show environment psu output for Iout 
+    [Tags]  switch-platform  environment     
+    verify show environment psu  s1  none  ${PSU2}  2  Iout
+
+Verify the show environment psu output for Pout 
+    [Tags]  switch-platform  environment    
+    verify show environment psu  s1  none  ${PSU2}  2  Pout
+
+Verify the show environment psu output for Pin 
+    [Tags]  switch-platform  environment    
+    verify show environment psu  s1  none  ${PSU2}  2  Pin
   
            
 * Keywords
 
 T5 switch platform test setup
    base suite setup
-   rest add switch  ${switch1_name}
-   ${swDpid1}=  rest return switch dpid from ip  s1
-   rest add dpid  ${switch1_name}   ${swDpid1}
-   rest add fabric role  ${switch1_name}  leaf
-   sleep  2   
-   rest add switch  ${switch2_name}
-   ${swDpid2}=  rest return switch dpid from ip  s2
-   rest add dpid  ${switch2_name}   ${swDpid2}
-   rest add fabric role  ${switch2_name}  leaf
-   sleep  2
-   rest add switch  ${switch7_name}
-   ${swDpid7}=  rest return switch dpid from ip  s7
-   rest add dpid  ${switch7_name}   ${swDpid7}
-   rest add fabric role  ${switch7_name}  spine
-   sleep  10
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch2_name}
+   #${swDpid2}=  rest return switch dpid from ip  s2
+   #rest add dpid  ${switch2_name}   ${swDpid2}
+   #rest add fabric role  ${switch2_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   #sleep  10
                 
 T5 switch platform test teardown
    rest delete tenant  ${tenant}  
@@ -424,22 +451,6 @@ verify ip dns  [Arguments]  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${
     ${ret_value_1}=  cli verify ip dns  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
     Should Be True  ${ret_value_1}
 
-enable crc forwarding  [Arguments]  ${switch}
-    ${ret_value_1}=  cli enable crc forwarding  ${switch}
-    Should Be True  ${ret_value_1}
-
-verify crc is enabled  [Arguments]  ${switch}
-    ${ret_value_1}=  cli verify crc forwarding is enabled  ${switch}
-    Should Be True  ${ret_value_1}
-    
-verify crc is disabled  [Arguments]  ${switch}
-    ${ret_value_1}=  cli verify crc forwarding is disabled  ${switch}
-    Should Be True  ${ret_value_1}
-
-disable crc forwarding  [Arguments]  ${switch}
-    ${ret_value_1}=  cli disable crc forwarding  ${switch}
-    Should Be True  ${ret_value_1}
-
 configure ntp server  [Arguments]  ${switch}  ${ntp_server}
     ${ret_value_1}=  add ntp server  ${switch}  ${ntp_server}  
     Should Be True  ${ret_value_1}
@@ -483,5 +494,15 @@ reset username password  [Arguments]  ${switch}  ${user}  ${newpassword}
     change user password  ${switch}  ${user}  ${newpassword}  ${default_password} 
     ${ret_vlaue1}=  cli verify password change  ${switch}  ${user}  ${default_password}  ${software_version_string}
     Should Be True  ${ret_vlaue1}  
-                
+
+verify show environment psu  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component} 
+    ${componentVal}=  cli t5 switch show environment psu  ${switch}  ${model}  ${element}  ${elementnum}  ${component}         
+    Should Be True  ${componentVal}
+
+verify show environment psu notup  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum} 
+    ${retValue1}=  cli t5 switch show environment psu  ${switch}  ${model}  ${element}  ${elementnum}         
+    Should Not Be True  ${retValue1}
+     
+         
+           
     
