@@ -1124,6 +1124,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         next_hop = kwargs.get('next-hop', None)
         tenant = kwargs.get('tenant', None)
         polname = kwargs.get('polname', None)
+        #log = kwargs.get('log', None)
+        segment = kwargs.get('segment-interface', None)
 
         if (tenant is None or polname is None or seqnum is None):
             helpers.test_failure("Tenant and Polname are Null")
@@ -1137,7 +1139,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                          " dst-data = %s " \
                          " action = %s " \
                          " ip-proto = %s " \
-                         " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, next_hop))
+                         " segment-interface = %s" \
+                         " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
         if (next_hop is None and ip_proto is None):
             if (srcdata is not None and dstdata is not None):
@@ -1245,9 +1248,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is not None):
+        if (next_hop is not None and ip_proto is not None and action is "next-hop"):
             if (srcdata is not None and dstdata is not None):
-                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                
                 try:
                     c.rest.put(url, data)
 
@@ -1260,7 +1267,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (srcdata is None):
-                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                
                 try:
                     c.rest.put(url, data)
 
@@ -1273,7 +1284,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (dstdata is None):
-                data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                
                 try:
                     c.rest.put(url, data)
 
@@ -1286,7 +1301,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (dstdata is None and srcdata is None):
-                data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                if (segment is not None):
+                    data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                    
                 try:
                     c.rest.put(url,)
 
@@ -1298,9 +1317,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is None):
+        if (next_hop is not None and ip_proto is None and action is "next-hop"):
             if (srcdata is not None and dstdata is not None):
-                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                    
                 try:
                     c.rest.put(url, data)
 
@@ -1313,7 +1336,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (srcdata is None):
-                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                    
                 try:
                     c.rest.put(url, data)
 
@@ -1326,7 +1353,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (dstdata is None):
-                data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (segment is not None):
+                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                    
                 try:
                     c.rest.put(url, data)
 
@@ -1339,7 +1370,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     return True
 
             if (dstdata is None and srcdata is None):
-                data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (segment is not None):
+                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                else:
+                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                    
                 try:
                     c.rest.put(url, data)
 
