@@ -51,7 +51,7 @@ class ReleaseStats(object):
         """
         Returns a list containing product_suite, total_tests, and author.
         """
-        testsuites = TestCatalog.db()['test_suites']
+        testsuites = TestCatalog.test_suites()
         collection_suites = testsuites.find({"build_name": self._build_name},
                                             {"product_suite": 1, "author": 1,
                                              "total_tests": 1, "_id": 0})
@@ -205,13 +205,13 @@ class ReleaseStats(object):
 
 def print_stat(descr, val, untested=None, test_pct=None):
     if test_pct != None:
-        print("%-74s %20s  %-22s %8.1f%%" %
+        print("%-74s %22s  %-22s %8.1f%%" %
               (descr, val, "manual-untested(%s)" % untested, test_pct))
     elif untested != None:
-        print("%-74s %20s  %-22s" %
+        print("%-74s %22s  %-22s" %
               (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-74s %20s" % (descr, val))
+        print("%-74s %22s" % (descr, val))
 
 
 def print_testcases(testcases):
