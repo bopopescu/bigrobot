@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
 ts=`date "+%Y-%m-%d_%H%M%S"`
 dest=data.$ts
 

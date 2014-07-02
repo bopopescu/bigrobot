@@ -7,6 +7,11 @@ usage() {
     exit 0
 }
 
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
 if [ "$BUILD_NAME"x = x ]; then
     usage
 fi

@@ -24,3 +24,15 @@ features:
       dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite
     ]
 
+# For "milestone" builds under qualification (e.g., B1, B2, R1, etc), there may
+# be multiple builds which need to be aggregated. The data structure below
+# specifies which builds are part of an aggregated build.
+aggregated_builds:
+  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta1
+    [ 
+      'bvs master #2.0.0-beta1-SNAPSHOT',
+      'bvs master #beta1-22',
+      'bvs master #beta1-27',
+      'bvs master #beta1-31',
+    ]
+
