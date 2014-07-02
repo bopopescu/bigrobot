@@ -3,10 +3,10 @@ db_port: 27017
 database: test_catalog4
 products:
   - BigChain
-#  - BigTap
-#  - BigWire
-#  - SwitchLight
-#  - T5
+  - BigTap
+  - BigWire
+  - SwitchLight
+  - T5
 test_types:
   - feature
   - scaling
