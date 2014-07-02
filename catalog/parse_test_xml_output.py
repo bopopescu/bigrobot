@@ -7,7 +7,7 @@ import sys
 import re
 import xmltodict
 import argparse
-import robot
+# import robot
 from pymongo import MongoClient
 
 
@@ -20,16 +20,13 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-import cat_helpers
+import catalog_modules.cat_helpers as cat_helpers
+from catalog_modules.test_catalog import TestCatalog
+from catalog_modules.qa_authors import QaAuthors
+
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
-
-AUTHORS = cat_helpers.load_config_authors()
-CONFIGS = cat_helpers.load_config_catalog()
-DB_SERVER = CONFIGS['db_server']
-DB_PORT = CONFIGS['db_port']
-DATABASE = CONFIGS['database']
 
 
 class TestSuite(object):
@@ -42,12 +39,9 @@ class TestSuite(object):
         self._tests = []
         self._total_tests = 0
         self._filename = filename
-        self._db = None
+        self._db = TestCatalog.db()
 
         self._is_regression = is_regression
-
-        client = MongoClient(DB_SERVER, DB_PORT)
-        self._db = client[DATABASE]
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
@@ -181,11 +175,12 @@ class TestSuite(object):
         filename = re.sub(r'.*bigrobot/', '../', filename)
         (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
         output = output.strip()
-        if output in AUTHORS:
-            return AUTHORS[output]
+        authors = QaAuthors.authors()
+        if output in authors:
+            return authors[output]
         else:
             helpers.environment_failure(
-                    "AUTHORS dictionary does not contain '%s'" % output)
+                    "Author '%s' does not exist" % output)
 
     def check_topo_type(self, suite):
         """
