@@ -3,6 +3,9 @@ import catalog_modules.cat_helpers as cat_helpers
 
 
 class TestCatalog(object):
+    """
+    The data model for the test_catalog database in MongoDB.
+    """
     def __init__(self):
         self._configs = None
         self._db = None
@@ -27,13 +30,13 @@ class TestCatalog(object):
             self._connected = True
         return self._db
 
-    def test_suites(self):
+    def test_suites_collection(self):
         return self.db()['test_suites']
 
-    def test_cases(self):
+    def test_cases_collection(self):
         return self.db()['test_cases']
 
-    def test_cases_archive(self):
+    def test_cases_archive_collection(self):
         return self.db()['test_cases_archive']
 
     def test_types(self):
@@ -45,10 +48,22 @@ class TestCatalog(object):
     def aggregated_build(self, build_name):
         config = self.configs()
         if 'aggregated_builds' not in config:
-            return None
+            return {}
         if build_name not in config['aggregated_builds']:
-            return None
-        return ['aggregated_builds'][build_name]
+            return {}
+        return config['aggregated_builds'][build_name]
+
+    def find_test_cases_archive_matching_build(self, build_name):
+        query = {"build_name": build_name}
+        return self.test_cases_archive_collection().find(query)
+
+    def upsert_doc(self, collection, document, query):
+        del document['_id']
+        return self.db()[collection].find_and_modify(
+                query=query,
+                update={ "$set": document },
+                upsert=True
+                )
 
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()

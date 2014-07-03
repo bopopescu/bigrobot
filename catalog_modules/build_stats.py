@@ -37,7 +37,7 @@ class BuildStats(object):
         """
         Returns a list containing product_suite, total_tests, and author.
         """
-        testsuites = self.catalog().test_suites()
+        testsuites = self.catalog().test_suites_collection()
         collection_suites = testsuites.find({"build_name": self._build_name},
                                             {"product_suite": 1, "author": 1,
                                              "total_tests": 1, "_id": 0})
