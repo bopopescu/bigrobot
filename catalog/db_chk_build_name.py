@@ -17,7 +17,10 @@ from catalog_modules.test_catalog import TestCatalog
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-build_count = TestCatalog.db()['builds'].find({"build_name": os.environ['BUILD_NAME']}).count()
+col = TestCatalog().db()['builds']
+build_count = col.find({"build_name": os.environ['BUILD_NAME']}).count()
+print("Build_name: '%s', found %s instance(s)"
+      % (os.environ['BUILD_NAME'], build_count))
 
 if build_count > 0:
     sys.exit(0)  # Found record(s) matching build name

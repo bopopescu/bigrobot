@@ -16,7 +16,7 @@ class TestSuite(object):
         self._tests = []
         self._total_tests = 0
         self._filename = filename
-        self._db = TestCatalog.db()
+        self._db = TestCatalog().db()
 
         self._is_regression = is_regression
 

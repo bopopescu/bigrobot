@@ -7,6 +7,10 @@ class BuildStats(object):
         self._release = release
         self._build_name = build
         self._authors = {}
+        self._catalog = TestCatalog()
+
+    def catalog(self):
+        return self._catalog
 
     def release(self):
         return self._release
@@ -19,7 +23,7 @@ class BuildStats(object):
         Returns a Mongo cursor to test case documents.
         """
         collection_testcases = (collection_testcases or 'test_cases')
-        testcases = TestCatalog.db()[collection_testcases]
+        testcases = self.catalog().db()[collection_testcases]
         query = {}
         if release:
             query["tags"] = { "$all": [release] }
@@ -33,7 +37,7 @@ class BuildStats(object):
         """
         Returns a list containing product_suite, total_tests, and author.
         """
-        testsuites = TestCatalog.test_suites()
+        testsuites = self.catalog().test_suites_collection()
         collection_suites = testsuites.find({"build_name": self._build_name},
                                             {"product_suite": 1, "author": 1,
                                              "total_tests": 1, "_id": 0})
@@ -77,7 +81,7 @@ class BuildStats(object):
     def _total_testsuites_and_testcases(self, query=None):
         if query == None:
             query = {"tags": { "$all": [self.release_lowercase()] }}
-        testcases = TestCatalog.db()["test_cases_archive"]
+        testcases = self.catalog().db()["test_cases_archive"]
         cases = testcases.find(query)
         suites = {}
         total_testcases = 0
@@ -97,7 +101,7 @@ class BuildStats(object):
         return len(suites), total_testcases, total_pass, total_fail
 
     def suite_authors(self, collection="test_suites"):
-        testsuites = TestCatalog.db()[collection]
+        testsuites = self.catalog().db()[collection]
         suites = testsuites.find()
         for x in suites:
             product_suite = x['product_suite']
@@ -111,7 +115,7 @@ class BuildStats(object):
                                      "manual-untested", tag])
         query = {"tags": { "$all": tags },
                  "build_name": self._build_name}
-        testcases = TestCatalog.db()[collection]
+        testcases = self.catalog().db()[collection]
         cases = testcases.find(query)
         tests = []
         for x in cases:
@@ -131,7 +135,7 @@ class BuildStats(object):
             tags = helpers.list_flatten(tags)
         query = {"tags": { "$all": tags },
                  "build_name": self._build_name}
-        testcases = TestCatalog.db()[collection]
+        testcases = self.catalog().db()[collection]
         cases = testcases.find(query)
         total_testcases = 0
         total_pass = 0
