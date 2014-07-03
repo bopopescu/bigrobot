@@ -7,6 +7,11 @@ usage() {
     exit 0
 }
 
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
 if [ "$BUILD_NAME"x = x ]; then
     usage
 fi
@@ -18,13 +23,13 @@ if [ $? -eq 0 ]; then
     echo "Baseline data for build '$BUILD_NAME' exists."
 else
     echo "No baseline data for build '$BUILD_NAME'. Start collecting  baseline."
-    ./populate_stats_dryrun.sh
+    ./populate_db_dryrun.sh
 fi
 
 if [ $# -eq 0 ]; then
     # If ../testlogs exists then look for output.xml there
     if [ -d ../testlogs ]; then
-        infile=input_list.$ts
+        infile=input_list.$ts.txt
         echo "Looking for output.xml files in ../testlogs/ directory."
         find ../testlogs -name output.xml > $infile
         if [ ! -s $infile ]; then

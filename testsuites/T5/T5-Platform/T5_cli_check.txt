@@ -87,20 +87,24 @@ T2 Verify 'show switch' command completion
     rest delete fabric switch  switch=spine2
     ${result}=  cli walk command  show switch  11  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1
     Should be true  ${result}
+    ${result}=  cli walk command  show switch  12
+    Should not be true  ${result}
     ${result}=  cli walk command  show switch  11  cmd_argument=spine2
     Should not be true  ${result}
-    [Tags]  feature  CLI  cli-completion  skipped
+    [Tags]  feature  CLI  cli-completion  
     
 T3 Verify 'show tenant' command completion
-    ${result}=  cli walk command  show tenant  6  cmd_argument=<cr> all A  
+    ${result}=  cli walk command  show tenant  5  cmd_argument=<cr> all A  
     Should be true  ${result}
     rest add tenant  B
-    ${result}=  cli walk command  show tenant  7  cmd_argument=<cr> all A B 
+    ${result}=  cli walk command  show tenant  6  cmd_argument=<cr> all A B 
     Should be true  ${result}
     rest delete tenant  B
-    ${result}=  cli walk command  show tenant  6  cmd_argument=<cr> all A
+    ${result}=  cli walk command  show tenant  5  cmd_argument=<cr> all A
     Should be true  ${result}
-    ${result}=  cli walk command  show tenant  6  cmd_argument=B
+    ${result}=  cli walk command  show tenant  6
+    Should not be true  ${result}
+    ${result}=  cli walk command  show tenant  5  cmd_argument=B
     Should not be true  ${result}
     [Tags]  feature  CLI  cli-completion
 
@@ -113,11 +117,41 @@ T4 Verify 'show segment' command completion
     rest delete vns  A  A3
     ${result}=  cli walk command  show segment  6  cmd_argument=<cr> all A1 A2
     Should be true  ${result}
+    ${result}=  cli walk command  show segment  7
+    Should not be true  ${result}
     ${result}=  cli walk command  show segment  6  cmd_argument=A3
     Should not be true  ${result}
+    [Tags]  feature  CLI  cli-completion 
+    
+T5 Verify 'show port-group' command completion
+    ${result}=  cli walk command  show port-group  8  cmd_argument=<cr> all rack0pg1 rack0pg2 rack1pg1 rack1pg2
+    Should be true  ${result}
+    rest delete port group  rack0pg1
+    ${result}=  cli walk command  show port-group  7  cmd_argument=<cr> all rack0pg2 rack1pg1 rack1pg2
+    Should be true  ${result}
+    ${result}=  cli walk command  show port-group  8
+    Should not be true  ${result}
+    ${result}=  cli walk command  show port-group  7  cmd_argument=rack0pg1
+    Should not be true  ${result}
+    rest add port group  rack0pg1
+    rest add interface to portgroup  leaf0a  leaf0a-eth8  rack0pg1
+    rest add interface to portgroup  leaf0b  leaf0b-eth8  rack0pg1
+    ${result}=  cli walk command  show port-group  8  cmd_argument=<cr> all rack0pg1 rack0pg2 rack1pg1 rack1pg2
+    Should be true  ${result}
     [Tags]  feature  CLI  cli-completion    
- 	
- 	 	
- 
- 
-	
+    
+T6 Verify 'show endpoint' command completion
+    ${result}=  cli walk command  show endpoint  4  cmd_argument=<cr> ip mac
+    Should be true  ${result}
+    rest add endpoint  A  A1  h1
+    rest add mac endpoint  A  A1  h1  00:00:00:00:00:01
+    ${result}=  cli walk command  show endpoint  5  cmd_argument=<cr> ip mac h1
+    Should be true  ${result}
+    rest delete endpoint  A  A1  h1
+    ${result}=  cli walk command  show endpoint  4  cmd_argument=<cr> ip mac
+    Should be true  ${result}
+    ${result}=  cli walk command  show endpoint  5
+    Should not be true  ${result}
+    ${result}=  cli walk command  show endpoint  4  cmd_argument=h1
+    Should not be true  ${result}
+    [Tags]  feature  CLI  cli-completion   	

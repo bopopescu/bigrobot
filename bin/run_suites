@@ -51,7 +51,7 @@ if [ $failed_count -gt 0 ]; then
 fi
 
 mesg "Collecting test result stats for QA Dashboard database."
-(cd ../catalog; ./populate_stats_regression.sh)
+(cd ../catalog; ./populate_db_regression.sh)
 curl -i -H "Content-Type: application/json" -X POST \
     -d "{\"from\":\"${sender}\",
          \"to\":\"${receiver}\",

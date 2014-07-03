@@ -1,5 +1,10 @@
 #!/bin/sh -x
 
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
 config="../configs/catalog.yaml"
 mongo_server=`python -c "import yaml; print yaml.load(open('${config}'))['db_server']"`
 mongo_port=`python -c "import yaml; print yaml.load(open('${config}'))['db_port']"`
