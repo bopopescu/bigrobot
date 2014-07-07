@@ -77,25 +77,7 @@ Verify the openflow aux channel count on Switch
 	verify openflow aux channel  s2  c1  
 	verify openflow aux channel  s7  c1  
     [Tags]  switch-platform  ofaux  feature        
-    
-Verify console connectivity
-    Log    Step 1 - Verify access the console through telnet
-    [Tags]  switch-platform  install  feature
-    [Tags]  Manual
-    Manual passed
 
-Verify UBoot version on leaf
-    Log    Step 1 - Verify the Uboot version
-    Log    Step 2 - Verify the DRAM
-    [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
-    Manual passed
-   
-Verify environmental variables for CPU, RAM, PCI, Ethernet, EEPROM at loader 
-    Log    Step 1 - Verify the environmrntal variables 
-    [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
-    Manual passed
     
 ### SECTION B: Initial Configuration 
 
@@ -215,7 +197,6 @@ Verify after Master Controller comes back Connection reestablished
     [Tags]  Manual
     Manual Passed
 
-
     
 ### Section C : Admin/User Authentication     
 ### Section D: System Admin Operation
@@ -311,6 +292,46 @@ Verify the show environment psu output for Pin
     [Tags]  switch-platform  environment    
     verify show environment psu  s1  none  ${PSU2}  2  Pin
   
+Verify the show environment fan rpm in switch 
+    [Tags]  switch-platform  environment  test1
+    verify show environment fan status  s1  none  Fan  1  RPM 
+    verify show environment fan status  s1  none  Fan  2  RPM 
+    verify show environment fan status  s1  none  Fan  3  RPM
+    verify show environment fan status  s1  none  Fan  4  RPM
+    verify show environment fan status  s1  none  Fan  5  RPM
+
+Verify the show environment fan state in switch 
+    [Tags]  switch-platform  environment  test1
+    verify show environment fan status  s1  none  Fan  1  State
+    verify show environment fan status  s1  none  Fan  2  State
+    verify show environment fan status  s1  none  Fan  3  State
+    verify show environment fan status  s1  none  Fan  4  State
+    verify show environment fan status  s1  none  Fan  5  State 
+
+Verify the show environment fan status in switch 
+    [Tags]  switch-platform  environment  test1
+    verify show environment fan status  s1  none  Fan  1  Status
+    verify show environment fan status  s1  none  Fan  2  Status
+    verify show environment fan status  s1  none  Fan  3  Status
+    verify show environment fan status  s1  none  Fan  4  Status
+    verify show environment fan status  s1  none  Fan  5  Status
+    
+Verify the show environment fan airflow in switch 
+    [Tags]  switch-platform  environment  test1
+    verify show environment fan status  s1  none  Fan  1  Airflow
+    verify show environment fan status  s1  none  Fan  2  Airflow
+    verify show environment fan status  s1  none  Fan  3  Airflow
+    verify show environment fan status  s1  none  Fan  4  Airflow
+    verify show environment fan status  s1  none  Fan  5  Airflow
+
+Verify the show environment fan speed in switch 
+    [Tags]  switch-platform  environment  test1
+    verify show environment fan status  s1  none  Fan  1  Speed
+    verify show environment fan status  s1  none  Fan  2  Speed
+    verify show environment fan status  s1  none  Fan  3  Speed
+    verify show environment fan status  s1  none  Fan  4  Speed
+    verify show environment fan status  s1  none  Fan  5  Speed
+
            
 * Keywords
 
@@ -502,7 +523,12 @@ verify show environment psu  [Arguments]  ${switch}  ${model}  ${element}  ${ele
 verify show environment psu notup  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum} 
     ${retValue1}=  cli t5 switch show environment psu  ${switch}  ${model}  ${element}  ${elementnum}         
     Should Not Be True  ${retValue1}
-     
+
+verify show environment fan status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
+    ${componentVal}=  cli t5 switch show environment fan  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
+    Should Be True  ${componentVal}
+    
+         
          
            
     
