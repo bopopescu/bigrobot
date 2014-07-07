@@ -5,7 +5,7 @@
 
 no_error=1
 
-packages='pep8 pylint httplib2 pyyaml pytz ipcalc pycrypto paramiko scp robotframework'
+packages='pep8 pylint httplib2 pyyaml pytz ipcalc netaddr pycrypto paramiko scp robotframework pexpect pymongo'
 modules='pep8 pylint httplib2 yaml pytz ipcalc Crypto paramiko scp robot robot.api blah'
 
 sudo pip install $modules

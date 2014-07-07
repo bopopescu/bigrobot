@@ -1168,3 +1168,97 @@ class T5ZTN(object):
 
         helpers.log("Reboot command executed successfully")
         return True
+    def console_bash_switch_mode_nonztn(self, node,password='adminadmin' ):
+        """
+        Set the bootmode for switch - non ztn
+        Author- Mingtao
+        Inputs:
+        | node | Alias of the switch |
+        Return Value:  True         
+        """
+        t = test.Test()
+        s = t.dev_console(node, modeless=True)
+        s.send("\r")
+        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0: #login prompt
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        s.cli('enable')
+        s.send('debug bash')
+ 
+        s.send('cd /mnt/flash') 
+        content = s.cli('')['content']         
+        s.send('cat boot-config')         
+        content = s.cli('')['content']  
+        temp = helpers.strip_cli_output(content) 
+        helpers.log('USR OUTPUT: %s ' % temp)
+        
+        if (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)): 
+            helpers.log('The switch: %s is in ztn mode ' % node)    
+            image =  'SWI=http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release-bcf.swi'
+            sedstring = 's;^BOOTMODE.*;'+image+';'       
+            line = 'cat boot-config | sed \'' + sedstring + '\' > boot-config'
+            s.send(line)        
+            s.send('cat boot-config')         
+            helpers.log(s.cli('')['content'])         
+        elif (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)):
+            helpers.log('The switch: %s is NOT in  ztn mode ' % node)  
+        else:
+            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
+            helpers.test_failure('ERROR:  not able to figure out the boot mode')         
+         
+        s.send('exit')
+        s.send('exit')
+        s.send('exit')                  
+        return True
+
+    def console_bash_switch_mode_ztn(self, node,password='adminadmin' ):
+        """
+        Set the bootmode for switch - ztn
+        Author- Mingtao
+        Inputs:
+        | node | Alias of the switch |
+        Return Value:  True         
+        """
+        t = test.Test()
+        s = t.dev_console(node, modeless=True)
+        s.send("\r")
+        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0: #login prompt
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        s.cli('enable')
+        s.send('debug bash')
+ 
+        s.send('cd /mnt/flash') 
+        content = s.cli('')['content']         
+        s.send('cat boot-config')         
+        content = s.cli('')['content']  
+        temp = helpers.strip_cli_output(content) 
+        helpers.log('USR OUTPUT: %s ' % temp)
+        
+        if (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)): 
+            helpers.log('The switch: %s is NOT in  ztn mode, setting to ztn ' % node)    
+            bootmode =  'BOOTMODE=ztn'
+            sedstring = 's;^SWI=.*;'+bootmode+';'       
+            line = 'cat boot-config | sed \'' + sedstring + '\' > boot-config'
+            s.send(line)        
+            s.send('cat boot-config')         
+            helpers.log(s.cli('')['content'])         
+        elif (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)):
+            helpers.log('The switch: %s is in  ztn mode ' % node) 
+        else:
+            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
+            helpers.test_failure('ERROR:  not able to figure out the boot mode')         
+        s.send('exit')
+        s.send('exit')
+        s.send('exit')                  
+        return True

@@ -1,9 +1,18 @@
 #!/usr/bin/env python
+# Description:
+#   Check each test case in the production test suites to make sure that each has a proper
+#   test type defined (tag contains "feature", "scaling", "performance", "solution",
+#   "longevity", "negative", "robustness", and so on).
+#
+#   For a complete list of test types, see:
+#   https://bigswitch.atlassian.net/wiki/display/QA/Test+Case+Tagging+in+BigRobot
 
 import os
 import sys
 from pymongo import MongoClient
 import robot
+
+RELEASE = "IronHorse".lower()
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -14,25 +23,31 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-# import autobot.devconf as devconf
+import catalog_modules.cat_helpers as cat_helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
+if not 'BUILD_NAME' in os.environ:
+    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-DB_SERVER = 'qadashboard-mongo.bigswitch.com'
-DB_PORT = 27017
+configs = cat_helpers.load_config_catalog()
+db_server = configs['db_server']
+db_port = configs['db_port']
+database = configs['database']
+test_types = configs['test_types']
 
-client = MongoClient(DB_SERVER, DB_PORT)
-db = client.test_catalog2
+client = MongoClient(db_server, db_port)
+db = client[database]
 
 testcases = db.test_cases
 testsuites = db.test_suites
 
 tc = testcases.find(
-        { "$and": [
-            {"tags": {"$all": ["ironhorse"]}},
-            {"tags": {"$nin": ["feature", "scaling", "performance", "solution", "longevity", "negative", "robustness"]}}
+        { "build_name": os.environ['BUILD_NAME'],
+          "$and": [
+            {"tags": {"$all": [RELEASE]}},
+            {"tags": {"$nin": test_types}}
             ] },
         { "product_suite": 1, "name": 1, "tags": 1, "_id": 0 }
         ).sort("product")

@@ -1,27 +1,42 @@
 #!/bin/sh
-p=/Users/vui/Documents/ws/myforks/bigrobot/testsuites
-d=products.data
+# Usage:
+#   $ cd .../bigrobot/catalog
+#   $ ./total_suites_by_areas.sh
+# Description:
+#   Create data files containing the suite names for all the products defined
+#   in the catalog.yaml config.
+# Assumptions:
+#   - This script can only be executed inside the bigrobot/catalog/ directory.
 
-rm -f total_suites_by_areas.sh.*
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
 
-for x in `cat $d | grep -v '^#'`; do
+testsuite_path=`pwd | sed 's/catalog$//'`testsuites
+config="../configs/catalog.yaml"
+output=raw_data.total_suites_by_areas.sh
 
-    echo "Total text files for $x:"
+rm -f ${output}.*
 
-    files=total_suites_by_areas.sh.$x
-    text_files=$files.text_files
-    suite_files=$files.suite_files
-    resource_files=$files.resource_files
+for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
+    echo "Total text files for ${product}:"
 
-    find $p/$x -name "*.txt" | wc -l
-    find $p/$x -name "*.txt" > $text_files
+    files=${output}.$product
+    suite_files=${files}.suite_files
+    resource_files=${files}.resource_files
 
-    for y in `cat $text_files`; do
-        grep -i -e '^*' $y | grep -i -e 'testcase' -e 'test case' > /dev/null
+    find ${testsuite_path}/${product} -name "*.txt" | wc -l
+
+    for suite in `find ${testsuite_path}/${product} -name "*.txt"`; do
+        grep -i -e '^*' $suite | grep -i -e 'testcase' -e 'test case' > /dev/null
         if [ $? -eq 0 ]; then
-            echo $y >> $suite_files
+            echo $suite >> $suite_files
         else
-            echo $y >> $resource_files
+            # Text file is not a test suite (no test cases specified).
+            # It's likely a resource file.
+            #echo $suite >> $resource_files
+            : "noop"
         fi
     done
 
@@ -31,6 +46,5 @@ for x in `cat $d | grep -v '^#'`; do
     if [ -f $suite_files ]; then
         wc -l $suite_files
     fi
-
 done
 

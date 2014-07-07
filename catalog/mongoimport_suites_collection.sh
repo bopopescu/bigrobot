@@ -1,14 +1,22 @@
 #!/bin/sh
 
-database=test_catalog2
+if [ ! -x ../bin/gobot ]; then
+    echo "Error: This script must be executed in the bigrobot/catalog/ directory."
+    exit 1
+fi
+
+config="../configs/catalog.yaml"
+mongo_server=`python -c "import yaml; print yaml.load(open('${config}'))['db_server']"`
+mongo_port=`python -c "import yaml; print yaml.load(open('${config}'))['db_port']"`
+database=`python -c "import yaml; print yaml.load(open('${config}'))['database']"`
+
 collection=test_suites
-mongo_server=qadashboard-mongo.bigswitch.com
 
 for json_file in `echo test_suites*.json`; do
     echo "*** Mongo importing ${json_file}..."
     mongoimport \
         --host $mongo_server \
-        --port 27017 \
+        --port $mongo_port \
         --db $database \
         --collection $collection \
         --stopOnError \

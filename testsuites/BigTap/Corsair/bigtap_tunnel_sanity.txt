@@ -1,0 +1,1111 @@
+*Settings
+Documentation  Corsair Tunnelling Test Suite
+Suite Setup  corsair suite setup
+Suite Teardown   corsair suite teardown
+#Test Setup   base test setup
+#Test Teardown  base test teardown 
+Force Tags   Corsair  BigTap  Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}                        scale-ac5710-1  #Alias for switch 1
+${switch2_alias}                        scale-ac4600-1  #Alias for switch 4
+${switch3_alias}                        scale-ac5710-2  #Alias for switch 2
+${switch4_alias}                        scale-dc4600    #Alias for switch 5
+${switch5_alias}                        scale-ac4600-2  #Alias for switch 6
+
+### Ixia Based Filter/Delivery interfaces
+${switch1_filter_intf}                  ethernet1       #filter interface on switch scale-ac5710-1
+${switch1_filter_alias}                 ixia-4-21       #Alias for filter interface on switch scale-ac5710-1
+${switch1_delivery_intf}                ethernet2       #Delivery interface on switch scale-ac5710-1
+${switch1_delivery_alias}               ixia-4-22       #Alias for delivery interface on switch scale-ac5710-1
+
+${switch2_filter_intf}                  ethernet1       #Delivery interface on switch scale-ac4600-1
+${switch2_filter_alias}                 ixia-2-11       #Alias for delivery interface on switch scale-ac4600-1
+${switch2_delivery_intf}                ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch2_delivery_alias}               ixia-2-12       #Alias for delivery interface on switch scale-ac4600-1
+
+${switch3_delivery_intf}                ethernet1       #Delivery interface on switch scale-ac5710-2
+${switch3_delivery_alias}               ixia-4-24       #Alias for delivery interface on switch scale-ac5710-2
+
+${switch4_filter_intf}                  ethernet1       #Delivery interface on switch scale-dc4600
+${switch4_filter_alias}                 ixia-3-11       #Alias for delivery interface on switch scale-dc4600
+${switch4_delivery_intf}                ethernet1       #Delivery interface on switch scale-dc4600
+${switch4_delivery_alias}               ixia-3-15       #Alias for delivery interface on switch scale-dc4600
+
+
+
+### Tunnels across  Accton 5710 (scale-ac5710-1)
+${sw1_dummy_filter_intf}                             ethernet11
+${sw1_dummy_filter_alias}                            ac5710-1-f1
+${sw1_dummy_delivery_intf}                           ethernet12
+${sw1_dummy_delivery_alias}                          ac5710-1-d1
+
+${tunnel_sw1_name_filter}                   tunnel1                 #Tunnel Name
+${tunnel_sw1_parent_intf_filter}            ethernet18              #Tunnel Parent Interface
+${tunnel_sw1_sip_filter}                    192.168.42.1            #Tunnel Source IP
+${tunnel_sw1_dip_filter}                    192.168.42.2            #Tunnel Destination IP
+${tunnel_sw1_gip_filter}                    192.168.42.2            #Tunnel Gateway IP
+${tunnel_sw1_mask_filter}                   255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_filter_name}                   ac5710_filter           #Tunnel Name when used as filter interface
+
+${tunnel_sw1_name}                          tunnel2                 #Tunnel Name
+${tunnel_sw1_parent_intf}                   ethernet16              #Tunnel Parent Interface
+${tunnel_sw1_sip}                           192.168.43.1            #Tunnel Source IP
+${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Destination IP
+${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
+${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_loopback}                      ethernet40              #Tunnel Loopback Interface
+${extreme1_sw1_tunnel_name}                 tunnel2-1
+${extreme1_sw1_tunnel_intf1}                16
+${extreme1_sw1_tunnel_ip}                   192.168.43.2  
+${extreme1_sw1_tunnel_mask}                 255.255.255.0
+
+${tunnel_sw1_name_extra}                          tunnel30                #Tunnel Name
+${tunnel_sw1_parent_intf_extra}                   ethernet16              #Tunnel Parent Interface
+${tunnel_sw1_sip_extra}                           192.168.22.1            #Tunnel Source IP
+${tunnel_sw1_dip_extra}                           192.168.29.1            #Tunnel Destination IP
+${tunnel_sw1_gip_extra}                           192.168.22.2            #Tunnel Gateway IP
+${tunnel_sw1_mask_extra}                          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_loopback_extra}                      ethernet41              #Tunnel Loopback Interface
+${extreme1_sw1_tunnel_ip_extra}                   192.168.22.2  
+${extreme1_sw1_tunnel_mask_extra}                 255.255.255.0
+
+${tunnel_sw1_name_ixia_filter}              tunnel3                 #Tunnel Name
+${tunnel_sw1_parent_intf_ixia_filter}       ethernet1               #Tunnel Parent Interface
+${tunnel_sw1_sip_ixia_filter}               192.168.142.1           #Tunnel Source IP
+${tunnel_sw1_dip_ixia_filter}               192.168.142.2           #Tunnel Destination IP
+${tunnel_sw1_gip_ixia_filter}               192.168.142.2           #Tunnel Gateway IP
+${tunnel_sw1_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_ixia_filter_name}              ac5710_ixia_filter      #Tunnel Name when used as filter interface
+
+${tunnel_sw1_name_ixia_delivery}            tunnel4                 #Tunnel Name
+${tunnel_sw1_parent_intf_ixia_delivery}     ethernet2               #Tunnel Parent Interface
+${tunnel_sw1_sip_ixia_delivery}             192.168.143.1           #Tunnel Source IP
+${tunnel_sw1_dip_ixia_delivery}             192.168.143.2           #Tunnel Destination IP
+${tunnel_sw1_gip_ixia_delivery}             192.168.143.2           #Tunnel Gateway IP
+${tunnel_sw1_mask_ixia_delivery}            255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_ixia_delivery_name}            ac5710_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw1_loopback_ixia_delivery}        ethernet39              #Tunnel Loopback Interface
+
+
+### Tunnels across  Accton 4600 (scale-ac4600-1)
+${sw2_dummy_filter_intf}                             ethernet11
+${sw2_dummy_filter_alias}                            ac4600-1-f1
+${sw2_dummy_delivery_intf}                           ethernet12
+${sw2_dummy_delivery_alias}                          ac4600-1-d1
+
+${tunnel_sw2_name_delivery}             tunnel5             #Tunnel Name
+${tunnel_sw2_parent_intf_delivery}      ethernet28          #Tunnel Parent Interface
+${tunnel_sw2_sip_delivery}              192.168.75.1        #Tunnel Source IP
+${tunnel_sw2_dip_delivery}              192.168.75.2        #Tunnel Destination IP
+${tunnel_sw2_gip_delivery}              192.168.75.2        #Tunnel Gateway IP
+${tunnel_sw2_mask_delivery}             255.255.255.0       #Tunnel Subnet Mask
+${tunnel_sw2_delivery_name}             ac4600_delivery     #Tunnel Name when used as filter interface
+${tunnel_sw2_loopback_delivery}         ethernet29          #Tunnel Loopback Interface
+
+
+${tunnel_sw2_name}                      tunnel6          #Tunnel Name
+${tunnel_sw2_parent_intf}               ethernet27       #Tunnel Parent Interface
+${tunnel_sw2_sip}                       192.168.67.1     #Tunnel Source IP
+${tunnel_sw2_dip}                       192.168.43.1     #Tunnel Destination IP
+${tunnel_sw2_gip}                       192.168.67.2     #Tunnel Gateway IP
+${tunnel_sw2_mask}                      255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw2_loopback}                  ethernet39       #Tunnel Loopback Interface
+${extreme1_sw2_tunnel_name}             tunnel6-1
+${extreme1_sw2_tunnel_intf1}            13
+${extreme1_sw2_tunnel_ip}               192.168.67.2  
+${extreme1_sw2_tunnel_mask}             255.255.255.0
+
+${tunnel_sw2_name_extra}                      tunnel30          #Tunnel Name
+${tunnel_sw2_parent_intf_extra}               ethernet27       #Tunnel Parent Interface
+${tunnel_sw2_sip_extra}                       192.168.29.1     #Tunnel Source IP
+${tunnel_sw2_dip_extra}                       192.168.22.1     #Tunnel Destination IP
+${tunnel_sw2_gip_extra}                       192.168.29.2     #Tunnel Gateway IP
+${tunnel_sw2_mask_extra}                      255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw2_loopback_extra}                  ethernet39       #Tunnel Loopback Interface
+${extreme1_sw2_tunnel_ip_extra}               192.168.29.2  
+${extreme1_sw2_tunnel_mask_extra}             255.255.255.0
+
+${tunnel_sw2_name_ixia_filter}              tunnel7                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_filter}       ethernet1               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_filter}               192.168.175.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_filter}               192.168.175.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixia_filter}               192.168.175.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_filter_name}              ac4600_ixia_filter      #Tunnel Name when used as filter interface
+
+${tunnel_sw2_name_ixia_delivery}            tunnel8                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_delivery}     ethernet2               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_delivery}             192.168.180.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_delivery}             192.168.180.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixiadelivery}              192.168.180.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_delivery}            255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_delivery_name}            ac4600_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw2_loopback_ixia_delivery}        ethernet30              #Tunnel Loopback Interface
+
+### Tunnels across  Accton 5710 (scale-ac5710-2)
+${tunnel_sw3_name_delivery}             tunnel9          #Tunnel Name
+${tunnel_sw3_parent_intf_delivery}      ethernet19       #Tunnel Parent Interface
+${tunnel_sw3_sip_delivery}              192.168.79.1     #Tunnel Source IP
+${tunnel_sw3_dip_delivery}              192.168.79.2     #Tunnel Destination IP
+${tunnel_sw3_gip_delivery}              192.168.79.2     #Tunnel Gateway IP
+${tunnel_sw3_mask_delivery}             255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw3_delivery_name}             ac5710_delivery  #Tunnel Name when used as filter interface
+${tunnel_sw3_loopback_delivery}         ethernet26       #Tunnel Loopback Interface
+
+${tunnel_sw3_name}                      tunnel10          #Tunnel Name
+${tunnel_sw3_parent_intf}               ethernet17       #Tunnel Parent Interface
+${tunnel_sw3_sip}                       192.168.80.1     #Tunnel Source IP
+${tunnel_sw3_dip}                       192.168.81.1     #Tunnel Destination IP
+${tunnel_sw3_gip}                       192.168.80.2     #Tunnel Gateway IP
+${tunnel_sw3_mask}                      255.255.255.0    # Tunnel Subnet Mask
+${tunnel_sw3_loopback}                  ethernet25       #Tunnel Loopback Interface
+${extreme2_sw3_tunnel_name}             tunnel6-1
+${extreme2_sw3_tunnel_intf}            17
+${extreme2_sw3_tunnel_ip}               192.168.80.2  
+${extreme2_sw3_tunnel_mask}             255.255.255.0
+
+
+### Tunnels across  Accton 4600 (scale-dc4600)
+${tunnel_sw4_name_filter}               tunnel11         #Tunnel Name
+${tunnel_sw4_parent_intf_filter}        ethernet29      #Tunnel Parent Interface
+${tunnel_sw4_sip_filter}                192.168.97.1    #Tunnel Source IP
+${tunnel_sw4_dip_filter}                192.168.97.2    #Tunnel Destination IP
+${tunnel_sw4_gip_filter}                192.168.97.2    #Tunnel Gateway IP
+${tunnel_sw4_mask_filter}               255.255.255.0   #Tunnel Subnet Mask
+${tunnel_sw4_filter_name}               dc4600_filter   #Tunnel Name when used as filter interface
+
+
+${tunnel_sw4_name}                      tunnel12         #Tunnel Name
+${tunnel_sw4_parent_intf}               ethernet28      #Tunnel Parent Interface
+${tunnel_sw4_sip}                       192.168.81.1    #Tunnel Source IP
+${tunnel_sw4_dip}                       192.168.80.1    #Tunnel Destination IP
+${tunnel_sw4_gip}                       192.168.81.2    #Tunnel Gateway IP
+${tunnel_sw4_mask}                      255.255.255.0   #Tunnel Subnet Mask
+${tunnel_sw4_loopback}                  ethernet31      #Tunnel Loopback Interface
+${extreme2_sw4_tunnel_name}             tunnel8-1
+${extreme2_sw4_tunnel_intf}             16
+${extreme2_sw4_tunnel_ip}               192.168.81.2  
+${extreme2_sw4_tunnel_mask}             255.255.255.0
+
+### BigTap Policy Configuration
+${policy_name_core_ac5710}              policy_tunnel_core_ac5710       #Policy Name that will use the tunnel interface
+${policy_name_filter_ac5710}            policy_tunnel_filter_ac5710     #Policy Name that will use the tunnel interface
+${policy_name_delivery_ac5710}          policy_tunnel_delivery_ac5710   #Policy Name that will use the tunnel interface
+${policy_name_core_ac4600}              policy_tunnel_core_ac4600       #Policy Name that will use the tunnel interface
+${policy_name_filter_ac4600}            policy_tunnel_filter_ac4600     #Policy Name that will use the tunnel interface
+${policy_name_delivery_ac4600}          policy_tunnel_delivery_ac4600   #Policy Name that will use the tunnel interface
+
+${policy_name}                          tunnel_based_policy
+${tunnel_pre_service}                   tunnel_pre_service
+${tunnel_post_service}                  tunnel_post_service
+${tunnel_service_name}                  tunnel_based_service
+
+*Test Case
+
+Verify tunnel as a core interface on Accton 5710
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    [Tags]  feature
+    
+Verify tunnel as a core interface on Accton 4600      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  feature
+    
+Verify tunnel as a receive only interface on Accton 5710
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    [Tags]  feature  
+    
+Verify tunnel as a transmit only interface on Accton 5710
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw3}    
+    [Tags]  feature  
+    
+Verify tunnel as a receive only interface on Accton 4600
+    ${verify_tun_sw1}=  rest verify tunnel status  s4  ${tunnel_sw4_name_filter}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf_filter}  tunnel_direction=rx  sip=${tunnel_sw4_sip_filter}  dip=${tunnel_sw4_dip_filter}  mask=${tunnel_sw4_mask_filter}  gip=${tunnel_sw4_gip_filter}      
+    Should be true  ${verify_tun_sw1}
+    [Tags]  feature
+        
+Verify tunnel as a transmit only interface on Accton 4600      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  feature
+    
+Verify BigTap policy with tunnel as filter interface.
+    ## Configure BigTap policy
+    rest add interface role  s1  ${tunnel_sw1_name_filter}  filter    intf_nickname=${tunnel_sw1_filter_name}
+    rest add interface role  s1  ${sw1_dummy_delivery_intf}   delivery  intf_nickname=${sw1_dummy_delivery_alias}
+    sleep  10
+    rest add policy  admin-view  ${policy_name_filter_ac5710}  forward
+    rest add policy match  admin-view  ${policy_name_filter_ac5710}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_filter_ac5710}  ${tunnel_sw1_filter_name}  filter
+    rest add policy interface  admin-view  ${policy_name_filter_ac5710}  ${sw1_dummy_delivery_alias}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_filter_ac5710}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    REST delete policy  admin-view  ${policy_name_filter_ac5710}
+    rest delete interface role  s1  ${tunnel_sw1_name_filter}  filter 
+    rest delete interface role  s1  ${sw1_dummy_delivery_intf}   delivery  
+    sleep  5      
+    [Tags]  feature
+    
+Verify BigTap policy with tunnel as delivery interface.
+    ## Configure BigTap policy
+    rest add interface role  s2  ${sw2_dummy_filter_intf}  filter    intf_nickname=${sw2_dummy_filter_alias}
+    rest add interface role  s2  ${tunnel_sw2_name_delivery}   delivery  intf_nickname=${tunnel_sw2_delivery_name}
+    sleep  10
+    rest add policy  admin-view  ${policy_name_delivery_ac4600}  forward
+    rest add policy match  admin-view  ${policy_name_delivery_ac4600}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_delivery_ac4600}  ${sw2_dummy_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_delivery_ac4600}  ${tunnel_sw2_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_delivery_ac4600}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    sleep  5
+    REST delete policy  admin-view  ${policy_name_filter_ac5710}
+    rest delete interface role  s2  ${sw2_dummy_filter_intf}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_delivery}   delivery  
+    sleep  5  
+    [Tags]  feature
+     
+Verify BigTap policy with tunnel as filter and delivery interface and core as non-tunnel. 
+    ## Configure BigTap policy
+    rest add interface role  s4  ${tunnel_sw4_name_filter}  filter    intf_nickname=${tunnel_sw4_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_delivery}   delivery  intf_nickname=${tunnel_sw2_delivery_name}
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw4_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    sleep  5
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s4  ${tunnel_sw4_name_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_delivery}   delivery  
+    sleep  5 
+    [Tags]  feature
+
+Verify BigTap policy with tunnel as filter, delivery and core interfaces. 
+    ## Configure BigTap policy
+    rest add interface role  s1  ${tunnel_sw1_name_filter}  filter    intf_nickname=${tunnel_sw1_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_delivery}   delivery  intf_nickname=${tunnel_sw2_delivery_name}
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}       
+
+    ${core_interface}=  rest verify policy key  ${policy_name}  core-interface  0  interface
+    ${core_interface_as_string}=  Convert To String  ${core_interface}  
+    Should Be Equal As Strings  ${core_interface_as_string}  ${tunnel_sw1_name}   
+    ${core_interface_state}=  rest verify policy key  ${policy_name}  core-interface  0  state
+    ${core_interface_state_as_string}=  Convert To String  ${core_interface_state}
+    Should Be Equal As Strings  ${core_interface_state_as_string}  up              
+    ${core_interface}=  rest verify policy key  ${policy_name}  core-interface  1  interface
+    ${core_interface_as_string}=  Convert To String  ${core_interface}  
+    Should Be Equal As Strings  ${core_interface_as_string}  ${tunnel_sw2_name}    
+    ${core_interface_state}=  rest verify policy key  ${policy_name}  core-interface  1  state
+    ${core_interface_state_as_string}=  Convert To String  ${core_interface_state}
+    Should Be Equal As Strings  ${core_interface_state_as_string}  up         
+    sleep  10
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_delivery}   delivery  
+    sleep  5 
+    [Tags]  feature
+
+Verify BigTap policy with tunnel as filter, delivery and service interfaces. 
+    ## Configure BigTap policy
+    rest add interface role  s1  ${tunnel_sw1_name_filter}  filter    intf_nickname=${tunnel_sw1_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_delivery}   delivery  intf_nickname=${tunnel_sw2_delivery_name}
+    rest add interface role  s1  ${tunnel_sw1_name}   service  intf_nickname=${tunnel_pre_service}
+    rest add interface role  s2  ${tunnel_sw2_name}   service  intf_nickname=${tunnel_post_service}    
+    sleep  10
+    rest add service  ${tunnel_service_name}  ${tunnel_pre_service}  ${tunnel_post_service}  
+    sleep  10  
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_delivery_name}  delivery
+    rest add service to policy  admin-view  ${policy_name}  ${tunnel_service_name}  1      
+    sleep  10    
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+
+    ${service_interface}=  rest verify policy key  ${policy_name}  service-interface  0  interface
+    ${service_interface_as_string}=  Convert To String  ${service_interface}  
+    Should Be Equal As Strings  ${service_interface_as_string}  ${tunnel_sw1_name}   
+
+    ${service_interface_direction}=  rest verify policy key  ${policy_name}  service-interface  0  direction
+    ${service_interface_direction_as_string}=  Convert To String  ${service_interface_direction}  
+    Should Be Equal As Strings  ${service_interface_direction_as_string}  tx     
+
+    ${service_interface_role}=  rest verify policy key  ${policy_name}  service-interface  0  role
+    ${service_interface_role_as_string}=  Convert To String  ${service_interface_role}  
+    Should Be Equal As Strings  ${service_interface_role_as_string}  pre
+
+    ${service_interface_state}=  rest verify policy key  ${policy_name}  service-interface  0  state
+    ${service_interface_state_as_string}=  Convert To String  ${service_interface_state}  
+    Should Be Equal As Strings  ${service_interface_state_as_string}  up
+
+    ${service_name}=  rest verify policy key  ${policy_name}  service-interface  0  service-name
+    ${service_name_as_string}=  Convert To String  ${service_name}  
+    Should Be Equal As Strings  ${service_name_as_string}  ${tunnel_service_name}
+
+    ${service_interface}=  rest verify policy key  ${policy_name}  service-interface  1  interface
+    ${service_interface_as_string}=  Convert To String  ${service_interface}  
+    Should Be Equal As Strings  ${service_interface_as_string}  ${tunnel_sw2_name}   
+
+    ${service_interface_direction}=  rest verify policy key  ${policy_name}  service-interface  1  direction
+    ${service_interface_direction_as_string}=  Convert To String  ${service_interface_direction}  
+    Should Be Equal As Strings  ${service_interface_direction_as_string}  rx     
+
+    ${service_interface_role}=  rest verify policy key  ${policy_name}  service-interface  1  role
+    ${service_interface_role_as_string}=  Convert To String  ${service_interface_role}  
+    Should Be Equal As Strings  ${service_interface_role_as_string}  post
+
+    ${service_interface_state}=  rest verify policy key  ${policy_name}  service-interface  1  state
+    ${service_interface_state_as_string}=  Convert To String  ${service_interface_state}  
+    Should Be Equal As Strings  ${service_interface_state_as_string}  up    
+
+    ${service_name}=  rest verify policy key  ${policy_name}  service-interface  1  service-name
+    ${service_name_as_string}=  Convert To String  ${service_name}  
+    Should Be Equal As Strings  ${service_name_as_string}  ${tunnel_service_name}           
+    sleep  10
+    REST delete policy  admin-view  ${policy_name}
+    rest delete service  ${tunnel_service_name}  
+    rest delete interface role  s1  ${tunnel_sw1_name_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_delivery}   delivery 
+    rest delete interface role  s1  ${tunnel_sw1_name}  service 
+    rest delete interface role  s2  ${tunnel_sw2_name}  service      
+    sleep  5 
+    [Tags]  feature
+
+Verify a rewrite vlan can be done on a tunnel interface.
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw3}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}  rewrite_vlan=1001
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw1_ixia_delivery_name}    
+    sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep  2    
+    verify results  a  b  transmitted_frames  received_data_integrity_frames            
+    sleep  5
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery  
+    sleep  5       
+    [Tags]  feature
+
+
+Verify with policy level vlan rewrite and filter and delivery interfaces being tunnel interface.
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw3}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw1_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_delivery_name}  delivery
+    rest add vlan rewrite  admin-view  ${policy_name}  rewrite_vlan=1001
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #ixia initialize  tg1  init=true
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep  2    
+    verify results  a  b  transmitted_frames  received_data_integrity_frames            
+    sleep  5
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery
+    delete traffic  
+    sleep  5       
+    [Tags]  feature
+
+Match on src-mac and verify L2 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L2  traffic    
+
+Match on dst-mac and verify L2 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L2  traffic    
+
+Verify L2 traffic (jumbo frames) across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=9000  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L2  traffic   
+
+Match on VLAN and verify L2 VLAN tagged traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"vlan": 2048, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  5
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L2  traffic  jira-bt-1464  
+
+Match on SRC-IP and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+
+Match on DST-IP and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+
+Match on TCP SRC-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+
+Match on TCP DST-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic  
+                                    
+Match on TCP6 SRC-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_d_flow      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    sleep  2
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic  run
+
+Match on TCP6 DST-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=80  name=a_d_flow      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic       
+
+Match on UDP SRC-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+
+Match on UDP DST-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"ether-type": 2048, "dst-tp-port": 53, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+                                    
+Match on UDP6 SRC-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+
+Match on UDP6 DST-PORT and verify L3 traffic across tunnel interface
+    ## Verify tunnel is up
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    Should be true  ${verify_tun_sw1}    
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=203  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}      
+    Should be true  ${verify_tun_sw2}    
+    sleep  10
+    rest add interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter    intf_nickname=${tunnel_sw1_ixia_filter_name}
+    rest add interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery  intf_nickname=${tunnel_sw2_ixia_delivery_name}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"ether-type": 34525, "dst-tp-port": 53, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw1_ixia_filter_name}    filter
+    rest add policy interface  admin-view  ${policy_name}  ${tunnel_sw2_ixia_delivery_name}  delivery
+    sleep  10
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=8001  dst_port=53      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    REST delete policy  admin-view  ${policy_name}
+    rest delete interface role  s1  ${tunnel_sw1_name_ixia_filter}  filter 
+    rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
+    delete traffic  
+    [Tags]  feature  L3  traffic
+    
+* Keyword
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+    
+corsair suite setup
+    base suite setup
+    rest enable feature  tunneling
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    rest add switch alias  s3  ${switch3_alias}
+    rest add switch alias  s4  ${switch4_alias}
+    rest add switch alias  s5  ${switch5_alias}
+    #CRC packets to be dropped
+    bash  s1  ofad-ctl crc enable
+    bash  s2  ofad-ctl crc enable
+    bash  s3  ofad-ctl crc enable
+    bash  s4  ofad-ctl crc enable
+    bash  s5  ofad-ctl crc enable
+    Sleep  10
+    
+    #Setup tunnels across  Accton 5710 (scale-ac5710-1)
+    ${verify_add_tun_sw1filter}=  rest add tunnel interface  s1  ${tunnel_sw1_name_filter}  pinterface=${tunnel_sw1_parent_intf_filter}  tdirection=rx  sip=${tunnel_sw1_sip_filter}  dip=${tunnel_sw1_dip_filter}  mask=${tunnel_sw1_mask_filter}  gip=${tunnel_sw1_gip_filter}
+    Should be true  ${verify_add_tun_sw1filter}
+    Sleep  5
+    extreme tunnel setup  s6  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    Sleep  10
+    ### Across Ixia
+    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_filter}  pinterface=${tunnel_sw1_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}
+    Should be true  ${verify_add_tun_ixia_filter}
+    ${H1}=  L3 add host  src_ip=${tunnel_sw1_gip_ixia_filter}  gw_ip=${tunnel_sw1_sip_ixia_filter}  port_name=a
+    L3 start hosts  port_name=a
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${verify_add_tun_sw1delivery}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_delivery}  loopback=${tunnel_sw1_loopback_ixia_delivery}  pinterface=${tunnel_sw1_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixia_delivery}
+    Should be true  ${verify_add_tun_sw1delivery}    
+    ${H2}=  L3 add host  src_ip=${tunnel_sw1_gip_ixia_delivery}  gw_ip=${tunnel_sw1_sip_ixia_delivery}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    sleep  10      
+
+    #Setup tunnels across  Accton 4600 (scale-ac4600-1)
+    ${verify_add_tun_sw1delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
+    Should be true  ${verify_add_tun_sw1delivery}
+    Sleep  5
+    extreme tunnel setup  s6  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ### Across Ixia
+    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_filter}  pinterface=${tunnel_sw2_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw2_sip_ixia_filter}  dip=${tunnel_sw2_dip_ixia_filter}  mask=${tunnel_sw2_mask_ixia_filter}  gip=${tunnel_sw2_gip_ixia_filter}
+    Should be true  ${verify_add_tun_ixia_filter}
+    ${H3}=  L3 add host  src_ip=${tunnel_sw2_gip_ixia_filter}  gw_ip=${tunnel_sw2_sip_ixia_filter}  port_name=c
+    L3 start hosts  port_name=c
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${verify_add_tun_sw1delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixia_delivery}
+    Should be true  ${verify_add_tun_sw1delivery}    
+    ${H4}=  L3 add host  src_ip=${tunnel_sw2_gip_ixia_delivery}  gw_ip=${tunnel_sw2_sip_ixia_delivery}  port_name=d
+    L3 start hosts  port_name=d
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    sleep  10
+    #Setup tunnels across  Accton 5710 (scale-ac5710-2)
+    ${verify_add_tun_sw3delivery}=  rest add tunnel interface  s3  ${tunnel_sw3_name_delivery}  loopback=${tunnel_sw3_loopback_delivery}  pinterface=${tunnel_sw3_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw3_sip_delivery}  dip=${tunnel_sw3_dip_delivery}  mask=${tunnel_sw3_mask_delivery}  gip=${tunnel_sw3_gip_delivery}
+    Should be true  ${verify_add_tun_sw3delivery}
+    Sleep  5
+    extreme tunnel setup  s7  ${extreme2_sw3_tunnel_name}  ${extreme2_sw3_tunnel_intf}  ${extreme2_sw3_tunnel_ip}  ${extreme2_sw3_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    Should be true  ${verify_add_tun_sw3}          
+    Sleep  10   
+
+    #Setup tunnels across  Accton 4600 (scale-dc4600)
+    ${verify_add_tun_sw4filter}=  rest add tunnel interface  s4  ${tunnel_sw4_name_filter}  pinterface=${tunnel_sw4_parent_intf_filter}  tdirection=rx  sip=${tunnel_sw4_sip_filter}  dip=${tunnel_sw4_dip_filter}  mask=${tunnel_sw4_mask_filter}  gip=${tunnel_sw4_gip_filter}
+    Should be true  ${verify_add_tun_sw4filter}
+    Sleep  5
+    extreme tunnel setup  s7  ${extreme2_sw4_tunnel_name}  ${extreme2_sw4_tunnel_intf}  ${extreme2_sw4_tunnel_ip}  ${extreme2_sw4_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    Should be true  ${verify_add_tun_sw4}          
+    Sleep  30
+    
+extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${tunnel_address}  ${tunnel_mask}
+    config  ${node}  create vlan ${tunnel_name}
+    config  ${node}  configure vlan ${tunnel_name} add ports ${tunnel_port} untagged
+    config  ${node}  configure vlan ${tunnel_name} ipaddress ${tunnel_address} ${tunnel_mask}
+    config  ${node}  enable ipforwarding vlan ${tunnel_name}
+    config  ${node}  configure ip-mtu 9194 vlan ${tunnel_name} 
+    extreme save config  ${node}    
+
+tunnel teardown
+    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name_filter}  
+    Should be true  ${verify_del_tun_sw1} 
+    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
+    Should be true  ${verify_del_tun_sw1}    
+
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
+    Should be true  ${verify_del_tun_sw2} 
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name}  
+    Should be true  ${verify_del_tun_sw2}  
+    
+    ${verify_del_tun_sw3}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name_delivery}  
+    Should be true  ${verify_del_tun_sw3} 
+    ${verify_del_tun_sw3}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name}  
+    Should be true  ${verify_del_tun_sw3}  
+    
+    ${verify_del_tun_sw4}=  rest delete tunnel interface  node=s4  tunnel_name=${tunnel_sw4_name_filter}  
+    Should be true  ${verify_del_tun_sw4} 
+    ${verify_del_tun_sw4}=  rest delete tunnel interface  node=s4  tunnel_name=${tunnel_sw4_name}  
+    Should be true  ${verify_del_tun_sw4}          
+    Sleep  2
+    
+corsair suite teardown
+    tunnel teardown
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch alias  s5
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4
+    rest delete switch  s5    
+    config  s6  delete vlan ${extreme1_sw1_tunnel_name}
+    config  s6  delete vlan ${extreme1_sw2_tunnel_name}
+    config  s7  delete vlan ${extreme2_sw3_tunnel_name}
+    config  s7  delete vlan ${extreme2_sw4_tunnel_name}    
+    Sleep  2
+    extreme save config  s6
+    extreme save config  s7    
+    rest disable feature  tunneling    
+    base suite teardown  

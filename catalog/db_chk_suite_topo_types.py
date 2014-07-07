@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# Description:
+#   Check for test suites which do not have the correct topo files. E.g.,
+#     - detect suites with no topo file
+#     - detect suites with <suite>.topo (but should be 'virtual' or 'physical')
 
 import os
 import sys
@@ -15,26 +19,33 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-# import autobot.devconf as devconf
+import catalog_modules.cat_helpers as cat_helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
+if not 'BUILD_NAME' in os.environ:
+    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-DB_SERVER = 'qadashboard-mongo.bigswitch.com'
-DB_PORT = 27017
+configs = cat_helpers.load_config_catalog()
+db_server = configs['db_server']
+db_port = configs['db_port']
+database = configs['database']
+
+client = MongoClient(db_server, db_port)
+db = client[database]
+
 
 print_all = False
 print_unknown = True
 print_mv_commands = True
 
 
-client = MongoClient(DB_SERVER, DB_PORT)
-db = client.test_catalog2
-
 testsuites = db.test_suites
 
-suites = testsuites.find( {}, { "author": 1, "source": 1, "topo_type": 1, "_id": 1})
+suites = testsuites.find( {"build_name": os.environ['BUILD_NAME']},
+                          { "author": 1, "source": 1, "topo_type": 1, "_id": 1}
+                          )
 
 if print_all:
     for x in sorted(suites, key=lambda k: k['author']):
