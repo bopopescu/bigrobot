@@ -4262,6 +4262,10 @@ class T5Platform(object):
                     helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
                     num = num - 1
                     continue
+                if key == "origination" or key == "description" : 
+                    helpers.log("Ignore line - key %s" % key)
+                    num = num - 1
+                    continue
 
 
                 # for interface related commands, only iterate through "all" and one specific interface
