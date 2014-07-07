@@ -1,0 +1,1026 @@
+* Settings
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      T5 longevity suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
+Force Tags       IronHorse
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/T5Utilities.py
+
+Library          OperatingSystem
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}     120 
+
+${intravnscnt}    1
+${intervnscnt}    6
+${intertenantcnt}  6
+${intertenantvnscnt}  1
+
+${inevent}       30
+${betweenevent}  60
+
+${Tflapnum}     50
+${Vflapnum}     50
+${bigconfigsleep}   60 
+
+
+${loop}    2
+${repeat}      10
+
+
+${leaf0-a}     leaf0-a
+${leaf0-b}     leaf0-b
+${leaf1-a}     leaf1-a
+${leaf1-b}     leaf1-b
+${leaf2-a}     leaf2-a
+${leaf3-a}     leaf3-a
+${spine0}      spine0
+${spine1}      spine1
+  
+${FLAPT}   10
+${FVNS}    10
+${traffloss}      0
+ 
+
+
+ 
+* Test Case
+#####  testbed and traffic setup   
+
+T0 Set fabric switches  
+	log  ****** configure switches with the fabric role and leaf group********* 
+	rest_delete_portgroup_all	
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\   ${dpid}=   	cli_show_switch_dpid    ${sw}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+  
+ 	  
+	[Tags]     full   setup 
+	
+	
+T1 Setup the testbed 
+	log  ******** setup snmp and verify********
+	setup snmp	
+	verify snmp config	
+ 	
+	log  step 2 config syslog server	
+	
+	log  ******* config Tenants and intra vns******* 
+   
+	config intra vns        ${intravnscnt}    
+
+
+	log  ******* config Tenants and intervns******* 
+ 
+ 	
+    ${vlan}=  Set Variable   50	
+    ${ip}=   Set Variable    11.${vlan}.0.250	
+   : FOR    ${i}    IN RANGE    0    3
+   \	config inter vns        ${intervnscnt} 	 ${vlan}   V${i}N  ${ip}	 
+   \	${vlan}=  expr   ${vlan} + 1 
+   \    ${ip}=    get_next_address  ipv4    ${ip}     0.1.0.0  
+
+	log  ******* config inter Tenants ******* 
+	
+	REST add tenant		system
+    ${vlan}=  Set Variable   150	
+    ${ip}=   Set Variable    101.${vlan}.0.250	
+   : FOR    ${i}    IN RANGE    0    1
+   \	config inter tenant   ${intertenantcnt}   -1    T${i}N    ${ip}	 
+   \	${vlan}=  expr   ${vlan} + 1 
+   \    ${ip}=    get_next_address  ipv4    ${ip}     0.1.0.0 
+   \    config l3 tenant tofrom tenant system     tenantcount=6    tname=T${i}N   
+    	
+
+	log  ******* config port group for H1 and H2 ******* 
+
+	config port group      H1   leaf0   ethernet17   A0    L2V1     20
+	config port group      H2   leaf1   ethernet31   A0    L2V1     20
+ 	 	
+	sleep  ${medium}
+	
+	
+	log  ******* testall vns to test features:ecmp portgroup policys ******* 
+# 	config a Testall vns to test ecmp portgroup policys		
+	  	
+	log  config policy 
+ 
+     
+	[Tags]    full   setup 
+
+
+	
+T2 setup traffic make sure all traffic can be forwarded without loss after learning
+	log  check host to host traffic  	
+	BASH ping		h1			20.20.20.25 	count=1	
+	sleep  ${medium}
+	${loss} = 			BASH ping		h1			20.20.20.25 	count=10
+	Should Be True  	${loss} == 0	
+		
+	log  setup L2 traffic
+#    ${L2_1}=    L2 add  name=L2S1   flow=p1<->p4  vlan_id=10  frame_size=128  
+#    ...    src_mac=00:11:11:11:00:00  dst_mac=00:44:44:44:00:00   frame_rate=10000    
+#    ...    dst_cnt=50  src_cnt=50  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01
+   
+      
+#    ${L2_2}=    L2 add  name=L2S2   flow=p7<->p8  vlan_id=20  frame_size=128  
+#    ...    src_mac=00:77:77:77:00:00  dst_mac=00:88:88:88:00:00   frame_rate=10000    
+#    ...    dst_cnt=50  src_cnt=50  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01
+
+
+    ########  inter vns #########
+    ###  p1 to p4, swap all vlan 1:1 map  	 
+#    ${iVNS1}=    L3 add  name=L3S1   flow=p1<->p4   frame_size=128    frame_rate=10000  frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=3
+#    ...    src_mac=00:1c:1c:1c:00:01  src_mac_step=00:00:00:00:00:01  
+#    ...    dst_mac=00:4c:4c:4c:00:01  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.1  src_ip_step=0.1.0.0  src_cnt=3   src_gw=11.50.0.250  src_gw_step=0.1.0.0
+#    ...    dst_ip=12.50.0.1  dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=12.50.0.250  dst_gw_step=0.1.0.0
+  
+    ####### p1 to p4, many host in 1 vlan
+#   ${iVNS2}=    L3 add  name=L3S2   flow=p1<->p4   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=1
+#    ...    src_mac=00:1c:1c:1c:01:01  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:4c:4c:4c:01:01  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.50  src_ip_step=0.0.0.1  src_cnt=3   src_gw=11.50.0.250  src_gw_step=0.0.0.0
+#    ...    dst_ip=12.50.0.50  dst_ip_step=0.0.0.1  dst_cnt=3   dst_gw=12.50.0.250  dst_gw_step=0.0.0.0
+
+    ####### p1 to p7, 1 vlan to all vlam in port7     
+#    ${iVNS3}=    L3 add  name=L3S3   flow=p1<->p7   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=1
+#    ...    src_mac=00:1c:1c:1c:02:01  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:7c:7c:7c:02:00  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.100  src_cnt=1   src_gw=11.50.0.250  src_gw_step=0.0.0.0
+#    ...    dst_ip=13.50.0.100  dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=13.50.0.250  dst_gw_step=0.1.0.0
+     
+    
+    ############ inter tenant ##########
+    #### p1 to p7 swap all vlan  
+#     ${iTS1}=    L3 add  name=iT3S1   flow=p1<->p7   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=150  vlan_cnt=3
+#    ...    src_mac=00:1d:1d:1d:00:00  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:7d:7d:7d:00:00  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=101.150.0.1   src_cnt=1   src_gw=101.150.0.250  src_gw_step=0.1.0.0
+#    ...    dst_ip=103.150.0.1   dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=103.150.0.250  dst_gw_step=0.1.0.0
+    
+    #### p1 to p7 many host in 1 vlan  
+     ${iTS2}=    L3 add  name=iT3S2   flow=p1<->p7   frame_size=128    frame_rate=10000   
+    ...    src_mac=00:1d:1d:1d:00:00  src_mac_step=00:00:00:00:00:01 
+    ...    dst_mac=00:7d:7d:7d:00:00  dst_mac_step=00:00:00:00:00:01  
+    ...    src_ip=101.150.0.1   src_ip_step=0.0.0.1  src_cnt=50   src_gw=101.150.0.250  src_gw_step=0.0.0.0
+    ...    dst_ip=103.150.0.1   dst_ip_step=0.0.0.1  dst_cnt=50   dst_gw=103.150.0.250  dst_gw_step=0.0.0.0
+    
+
+	log  finishing creating the traffic
+	    
+    @{Thandle}=  Create List       ${iTS2}  
+    @{Tname}=    Create List        iT3S2
+    @{Texpect}=  Create List         100
+
+	Set Suite Variable     ${Thandle}
+	Set Suite Variable     ${Tname}
+	Set Suite Variable     ${Texpect}
+	
+ 
+	traffic endpoint learning	      1
+	
+ 	log  verify forwarding table
+# 	verify endpoint in group  	  1c:1c:1c		  50
+	verify endpoint in group  	  7d:7d:7d		  50
+	verify endpoint in group  	  1d:1d:1d		  50	
+
+	test ixia traffic      ${Thandle}   ${Tname}     ${Texpect}   5     
+     
+	[Tags]      full   setup     traffic
+ 	
+T3 take snapshot of state of the controller and switches in the system (once the system is stable)
+	${info}=  bash      c1	  top -n 1
+	Log to file    T5_log   "topinfo"   ${info}       	
+	
+	${topinfo}=  bash_top     c1		
+	log  controller - get memory 
+	${memoryused}=   Set Variable   ${topinfo['mem']['used']}	
+	log  controller memory used is ${memoryused}		
+	log  controller - get cpu 
+	${cpuidle}=   Set Variable   ${topinfo['cpu']['id']}
+	log  cpu idle is ${cpuidle}
+
+	${info}=  bash      c1	  df
+	Log to file    T5_log   "df"   ${info}       	
+	
+	log  controller - check disk space consumption
+	${result}=  get_disk_used_percentage   c1    / 		
+	log  overall disk used ${result} 	
+	${result}=  get_disk_used_percentage   c1    /var/log
+	log  log directory disk used ${result} 	
+	log  get tenant and vns info
+	${tenantinfo}=  cli  master   show tenant
+	${vnsinfo}=     cli  master   show vns 
+	 	
+	Log to file    T5_log   "tenant"   ${tenantinfo}
+	Log to file    T5_log   "vns"   ${vnsinfo}
+	       					
+	log  controller - get forwarding tables	  
+	${forwording}=  cli  master   show forwarding
+ 	Log to file    T5_log   "show forwarding"   ${forwording}
+
+    @{switches}=  Create List   spine0  spine1  leaf0-a   
+	take snapshot of the switch entries    ${switches}
+      
+	[Tags]     full     
+	
+
+######### back ground event and monitor
+T11 background monitor (every 1 minute )
+	log  controller - get memory 
+	log  controller - get cpu
+	log  controller - check disk space consumption
+	log  controller - check log Error or exception: check no floodlight restart
+	log  switch check log Error or exception, check no ofad restart
+   
+	[Tags] 	 full    traffic   backgroupcheck
+
+T12 SNMP(every 10 sec)
+	log  constant SNMP walk  
+    ${result}=  snmp cmd  master  snmpbulkwalk  public 
+	log  ${result}   
+    ${result}=  snmp cmd  master  snmpwalk  public 
+	log  ${result}   
+	 
+	[Tags] 	   full  traffic   backgroupcheck
+	   
+T13 user login/logout (every 1 hour)
+	log  user login/logout 
+	${ip}=  get_node_ip   master
+	spawn_log_in	 2
+	cli  master   show session  	
+	log  multiple user log in and not logout
+    
+	[Tags] 	   full  traffic   backgroupcheck
+
+T14 background show command (every 1 hour )
+	log  show command ? Check GUI show ver, show stats
+	 cli  master   show tenant
+	 cli  master   show vns
+	 cli  master   show forwarding
+	 cli  master   show ver
+	 
+	log  show techsupport  
+	 cli  master   support	
+	log  check ntp time
+	 cli  master   show ntp 	  
+   
+	[Tags]     full  traffic   backgroupcheck
+
+ 
+##### longevity test case
+T21 spine node down/up event
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* switch node down/up event: ${i}********   
+    \	switch node down/up event      spine0 
+    \   sleep  ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+    \	switch node down/up event      spine1  
+    \   sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+       
+	[Tags] 	full   longevity   traffic   event   
+
+
+T22 leaf node down/up event
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* switch node down/up event: ${i}********   
+    \	switch node down/up event      leaf0-a 
+    \   sleep  ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+    \	switch node down/up event      leaf0-b  
+    \   sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+       
+	[Tags] 	full   longevity   traffic   event   
+
+
+T23 controller node event failover       
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+	[Tags] 	full   longevity   traffic   event   
+
+
+T24 controller node event reboot master          
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+ 	\	clear stats in controller switch	 
+    \	clear stats
+    \	Run Keyword if   '${verifytraffic}'=='1'   start traffic   
+    \	controller node event reboot master     ${inevent}
+    \   sleep   ${inevent}
+	\	Run Keyword if   '${verifytraffic}'=='1'    stop traffic    
+	\	sleep           3
+ 	\	Run Keyword if   '${verifytraffic}'=='1'	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+                
+	[Tags] 	full   longevity   traffic   event   
+
+T25 controller node event reboot slave          
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+ 	\	clear stats in controller switch	 
+    \	clear stats
+    \	Run Keyword if   '${verifytraffic}'=='1'   start traffic   
+    \	controller node event reboot slave     ${inevent}
+    \   sleep   ${inevent}
+	\	Run Keyword if   '${verifytraffic}'=='1'    stop traffic    
+	\	sleep           3
+ 	\	Run Keyword if   '${verifytraffic}'=='1'	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+                
+	[Tags] 	full   longevity   traffic   event   
+ 		
+  	    
+	  
+T26 node power on/off event (check automation ???) 
+	log  power off/up 1 spine
+	log  power off/up all spines
+	log  power off/up 1 leaf
+	log  power off/up 1 pair of leaves
+	log  power off/up management switch
+	log  power off/up both management switch	 
+  
+	[Tags] 	full   longevity   traffic   event   
+
+
+T27 data Link down/up event between leaf and spine
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf0-a}    ${spine0} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${spine0}    ${leaf0-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-b}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf0-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-a}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf0-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}   ${leaf0-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf1-b} 	
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
+	\  sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+	   
+	[Tags] 	full   longevity   traffic   event   
+
+T28 data Link down/up event between leafs 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf0-a}    ${leaf0-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf0-b}    ${leaf0-a} 
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
+	\  sleep  ${inevent}  		
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+	log  disable/enable link from leaf to host - TBD
+	
+   
+	[Tags] 	full   longevity   traffic   event   
+
+ 
+ 
+T29 management link event 
+	log  remove/add master controller from 1 spine 	
+	log  remove/add slave controller from 1 spine
+	log  remove/add master controller from 1 leaf
+	log  remove/add master controller from 1 pair tor leaves 
+	log  remove/add slave controller from 1 leaf
+	log  remove/add slave controller from 1 pair tor  
+	log  remove/add master controller from all switches
+	log  reload 1 management switch
+  	log  reload both management switch
+    
+	[Tags] 	full  manual-untested   traffic     event
+
+T30 big configuration changes (around 500 tenants or vns change)
+ 	clear stats in controller switch	 
+    clear stats
+    start traffic   
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes ${i}******* 
+ 	\  tenant configuration add/remove      ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep}  
+ 	\  vns configuration add/remove         ${Vflapnum}               
+ 	\  sleep  ${bigconfigsleep}  
+ 	\  Log To Console   === loading config with more tenant======= 
+ 	\  enable  master  copy config://config_tenant_new running-config 
+ 	\  sleep  ${bigconfigsleep} 
+ 	\  Log To Console   === loading config with less tenant=======  	
+ 	\  enable  master  copy config://config_tenant_old running-config 
+
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+ 	
+	[Tags] 	full   longevity   traffic   event   
+
+ 
+		
+T31 quick configuration changes (non stop, less than 10 tenants or vns each change)
+  	clear stats in controller switch	 
+    clear stats
+    start traffic   
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes ${i}******* 
+ 	\  tenant configuration add/remove      10       3       
+  	\  vns configuration add/remove         10               
+  	\  Log To Console   === loading config with more tenant======= 
+ 	\  enable  master  copy config://config_tenant_new running-config 
+  	\  Log To Console   === loading config with less tenant=======  	
+ 	\  enable  master  copy config://config_tenant_old running-config 
+
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+    
+	[Tags] 	full   longevity   traffic   event   
+	
+T29 VM event
+	log  VM move - mac move within 1 pair tor
+	log  VM move - mac move between different racks
+	log  VM add - start a set of new traffic
+	log  VM delete - stop the traffic and age ou
+   
+	[Tags] 	full  event  manual-untested
+ 
+T30 table flush
+    log   not supported
+	log  placeholder for table flush: there is still no way to clean  
+    
+	[Tags] 	sanity    skipped
+
+T51 continues Event
+   	log  randomize all the event test cases from T23 to T30
+    ${loop}=  Set Variable   1	
+    : FOR   ${index}    IN RANGE    0    ${repeat}	
+	\  Log To Console   "\n========******* in continues event loop: ${index} out of 1000 ******====== " 
+	\  ${random}=	Evaluate	 random.randint(1,7)    random,sys
+	\  Log To Console   "--------random number is ${random} --------" 
+	\  Run Keyword if    ${random}==1   T21 spine node down/up event
+	\  Run Keyword if    ${random}==2   T22 leaf node down/up event       
+	\  Run Keyword if    ${random}==3   T23 controller node event failover
+ 	\  Run Keyword if    ${random}==4   T24 controller node event reboot master
+	\  Run Keyword if    ${random}==5   T25 controller node event reboot slave
+	\  Run Keyword if    ${random}==6   T27 data Link down/up event between leaf and spine      
+	\  Run Keyword if    ${random}==7   T28 data Link down/up event between leafs
+ 	\  Run Keyword if    ${random}==8   T30 big configuration changes (around 500 tenants or vns change)
+ 	\  Run Keyword if    ${random}==9   T31 quick configuration changes (non stop, less than 10 tenants or vns each change)
+ 	 	 
+  	\  sleep  ${betweenevent}
+   
+	[Tags] 	full   longevity   traffic   event   
+ 
+
+
+ 
+* Keywords
+###### setup the system
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+  rest add switch               ${node}
+  rest add dpid                 ${node}          ${dpid}  
+  rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+  rest add switch               ${node}
+  rest add dpid                 ${node}         ${dpid} 
+  rest add fabric role          ${node}         leaf
+  rest_add_leaf_group           ${node}         ${leafg} 
+  
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}   ${expect}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+  	Run Keyword if    '${expect}'=='0'	 ${tx_value}=   Set Variable   0  
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}   received_valid_frames
+    ixia verify traffic rate  ${tx_value}    ${rx_value}    ${traffloss}
+ 
+
+verify traffic forwarding status   [Arguments]   ${Thandle}     ${Tname}    ${Texpect}
+	${i}=  Set Variable   0	
+ 	: FOR    ${var}   IN   @{Thandle}   
+ 	\   ${stream}=   Set Variable   ${var}
+ 	\   ${name}=     Set Variable   ${Tname[${i}]}  
+ 	\   ${expect}=     Set Variable   ${Texpect[${i}]} 
+    \   ${report}=   fetch port stats  stream=${stream}    
+    \   verify results    transmitted_frames  received_frames    ${stream}   ${name}   ${expect}
+	\   ${i}=  expr   ${i} + 1 
+
+test ixia traffic   [Arguments]    ${Thandle}     ${Tname}     ${Texpect}  ${during}   
+	clear stats in controller switch	 
+    clear stats
+    start traffic   
+    sleep           ${during}     
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+         
+config intra vns	   [Arguments]   ${intravnscnt}  
+	rest_add_tenant_vns_scale	tenantcount=1   tname=A   vnscount=${intravnscnt}   vname=L2V  
+	rest_add_interface_to_vns     A0     L2V1     leaf0-a     ethernet1  vlan=10 
+	rest_add_interface_to_vns     A0     L2V1     leaf0-b     ethernet1  vlan=10 
+	rest_add_interface_to_vns     A0     L2V1     leaf1-a     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf1-b     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf2-a     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf3-a     ethernet1  vlan=20
+
+
+config inter vns       [Arguments]   ${intervnscnt}   ${vlan}    ${vnsname}  	${baseip}				 
+	rest_add_tenant_vns_scale   tenantcount=1   tname=B    vnscount=${intervnscnt}   vname=${vnsname}	   vns_ip=Yes  base=${baseip}   step=1.0.0.0
+	rest_add_interface_to_vns     B0     ${vnsname}1     leaf0-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}2     leaf0-b     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}3     leaf1-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}4     leaf1-b     ethernet1    ${vlan}	
+	rest_add_interface_to_vns     B0     ${vnsname}5     leaf2-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}6     leaf3-a     ethernet1    ${vlan}
+	
+  
+config inter tenant 	  [Arguments]  ${intertenantcnt}   ${vlan}     ${tname}  ${baseip}					 
+	rest_add_tenant_vns_scale   tenantcount=${intertenantcnt}   tname=${tname}   vnscount=1   vname=V  vns_ip=Yes  base=${baseip}     step=1.0.0.0	 
+	rest_add_interface_to_vns    ${tname}0   V1   leaf0-a    ethernet1   vlan=${vlan}	 			 
+	rest_add_interface_to_vns    ${tname}1   V1   leaf0-b    ethernet1   vlan=${vlan}	
+	rest_add_interface_to_vns    ${tname}2   V1   leaf1-a    ethernet1   vlan=${vlan}
+	rest_add_interface_to_vns    ${tname}3   V1   leaf1-b    ethernet1   vlan=${vlan}	 			 
+	rest_add_interface_to_vns    ${tname}4   V1   leaf2-a    ethernet1   vlan=${vlan}	
+	rest_add_interface_to_vns    ${tname}5   V1   leaf3-a    ethernet1   vlan=${vlan}
+
+config port group   	 [Arguments]   ${pg}    ${rack}  ${intf}   ${tenant}   ${vns}    ${vlan}
+	rest_add_portgroup 	              ${pg}
+	rest_add_portgroup_lacp           ${pg}
+	rest_add_interface_to_portgroup	  ${rack}-a    ${intf}     	${pg}
+	rest_add_interface_to_portgroup	  ${rack}-b    ${intf}     	${pg}	
+	rest_add_portgroup_to_vns 	      ${tenant}   ${vns}        ${pg}   ${vlan}
+		
+clear stats in controller switch
+	cli_clear_interface_statistics   s3	
+	cli_clear_interface_statistics   s4
+	cli_clear_interface_statistics   s5	
+	cli_clear_interface_statistics   s6	
+	cli_clear_interface_statistics   s7
+	cli_clear_interface_statistics   s8	
+	
+	rest_clear_vns_stats
+	rest_clear_fabric_interface_stats
+		
+verify endpoint in group  	 [Arguments]   ${pattern}   ${num}
+  	${macs}=  cli_show_endpoint_pattern    ${pattern}	 
+     Should Be Equal As Integers   ${macs}   ${num}
+ 
+
+Log to file    [Arguments]    ${File}     ${title}    ${content}
+	Append To File    ${File}    ******************* START **************************\n
+    ${time}=	Get Time    
+    Append To File    ${File}     ${time}\n	
+	Append To File    ${File}     ${title}\n  
+	Append To File    ${File}	  ${content} \n
+ 	Append To File    ${File}    ******************** END *****************************\n	
+	
+take snapshot of the switch entries   [Arguments]    ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${info}=  bash    ${sw}	top -n 1
+	\   Log to file   script_log   "------topinfo for switch ${sw}------"   ${info}     
+ 	\   ${cli}=  Catenate  show forwarding switch  ${sw}   vlan-member-table
+ 	\   ${info}=  cli    master   ${cli}
+	\    Log to file    script_log   "--------show forwarding switch ${sw}--------"   ${info}
+ 	
+config l3 tenant tofrom tenant system  [Arguments]  ${tenantcount}   ${tname}  
+	: FOR    ${i}    IN RANGE   	0		${tenantcount}
+	\  rest_add_tenant_routers_intf_to_system			${tname}${i} 	
+ 	\  rest_add_system_intf_to_tenant_routers 			${tname}${i}  
+ 	\  REST add static routes		${tname}${i}	 0.0.0.0/0		 {"tenant-name": "system"}
+ 	
+traffic endpoint learning   [Arguments]    ${during}   
+  	start traffic   
+    sleep          ${during} 
+    stop traffic    
+    sleep         3
+   
+Policy tenant interface  [Arguments]  ${Tenant}   ${Policy}   ${seq}  ${action}  ${src}  ${dst} 
+ 	REST add policy								 ${Tenant}   ${Policy}		
+ 	REST add policy item						 ${Tenant}   ${Policy}		${seq}		${action}		${src}		${dst}
+	REST apply policy on tenant					 ${Tenant}   ${Policy}
+ 
+
+Policy vns interface  [Arguments]   ${Tenant}   ${vns}   ${Policy}  ${seq}  ${action}  ${src}  ${dst} 
+ 	REST add policy								 ${Tenant}   ${Policy} 
+	REST add policy item						 ${Tenant}   ${Policy} 		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					 ${Tenant}   ${vns}         ${Policy} 
+ 
+
+verify switch interface is up	[Arguments]  ${switch}   ${intf}  
+	${info}=  rest_get_fabric_interface_info   ${switch}  ${intf}
+	Should Be Equal as Strings 		up      ${info['state']}
+
+ 	 	
+config a Testall vns to test ecmp portgroup policys		
+	rest_add_tenant     Testall
+	rest_add_vns        Testall    	 LS1
+	REST add router intf	 Testall 	LS1	
+	REST add vns ip  		 Testall    LS1			210.210.210.250				24	
+	rest_add_interface_to_vns     Testall    LS1     leaf0-a     ethernet1  vlan=4000	
+	rest_add_interface_to_vns     Testall    LS1     leaf0-b     ethernet1  vlan=4000	
+	rest_add_vns        Testall    	 LS2
+	REST add router intf	 Testall 	LS2	
+	REST add vns ip  		 Testall    LS2			210.210.211.250				24	
+	rest_add_interface_to_vns     Testall    LS2     leaf0-a     ethernet1  vlan=4001	
+	rest_add_interface_to_vns     Testall    LS2     leaf0-b     ethernet1  vlan=4001	
+	rest_add_portgroup_to_vns 	      Testall    LS1          H1   4000	
+	rest_add_portgroup_to_vns 	      Testall    LS1          H2   4000		
+		 
+	REST add tenant routers intf to system			Testall
+	REST add system intf to tenant routers 			Testall
+	REST add static routes		Testall			0.0.0.0/0		 {"tenant-name": "system"}
+	
+   : FOR    ${i}    IN RANGE    1    200
+   \	rest_add_ecmp_group    Testall    ECMP${i} 
+   \	rest_add_gw_pool_nexthop	  Testall    ECMP${i}      210.210.210.1 
+   \    rest_add_gw_pool_nexthop	  Testall    ECMP${i}      210.210.211.1
+   \    rest_add_gw_pool_nexthop	  Testall    ECMP${i}      210.210.210.40
+   \    rest_add_gw_pool_nexthop	  Testall    ECMP${i}      210.210.211.40
+   \	rest_add_static_routes        Testall    200.200.200.${i}/32    {"ecmp-group-name": "ECMP${i}"}
+   \    rest_add_static_routes        system     200.200.200.${i}/32     {"tenant-name": "Testall"}
+ 
+ 
+
+#######snmp
+setup snmp
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.192.66.230  162    
+    rest add firewall rule  service=snmp
+    Sleep  10        
+
+verify snmp config
+    ${snmp_output}=  rest show snmp
+    ${snmp_key}=  verify json key  ${snmp_output}  0  community  
+    Should Be Equal As Strings  ${snmp_key}  public
+    ${snmp_key}=  verify json key  ${snmp_output}  0  contact  
+    Should Be Equal As Strings  ${snmp_key}  Big Switch Networks        
+    ${snmp_key}=  verify json key  ${snmp_output}  0  location  
+    Should Be Equal As Strings  ${snmp_key}  Mountain View
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled  
+    Should Be True  ${snmp_key}
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  ipaddr      
+    Should Be Equal As Strings  ${new_snmp_key}  10.192.66.230
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port       
+    Should Be Equal As Integers  ${new_snmp_key}  162
+
+	
+########### event
+switch node down/up event   [Arguments]    ${node}
+	log  reload switch
+	Log To Console   ================ Rebooting ${node} ===============
+	cli_restart_switch  ${node}   yes	
+
+controller node event HA failover    [Arguments]    ${during}=30
+    Log To Console   =============HA failover ===============
+    cli_cluster_take_leader
+    sleep  ${during}    
+    clear stats in controller switch	  
+    
+controller node event reboot master    [Arguments]    ${during}=30
+    Log To Console   ================ Rebooting controller ===============
+    cli_verify_cluster_master_reboot 
+    sleep  ${during}
+ 
+controller node event reboot slave    [Arguments]    ${during}=30
+    Log To Console   ================ Rebooting controller ===============
+    cli_verify_cluster_slave_reboot 
+    sleep  ${during}
+
+
+data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
+    Log To Console   ================ data link down/up for ${node1} ${node2} ===============
+	log  disable/enable link from leaf to spine			 
+	${list}=  disable links between nodes   ${node1}    ${node2}
+	log   list is ${list} 
+ 	sleep    ${medium}  	
+	enable links between nodes 	${node1}   ${list}
+
+
+disable links between nodes    [Arguments]   ${node1}   ${node2} 
+	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
+ 	: FOR    ${int}   IN   @{list}   
+	\  	rest_disable_fabric_interface		${node1}  ${int}  
+	\   sleep  ${medium}
+ 	Return From Keyword   ${list}
+
+enable links between nodes   [Arguments]   ${node1}   ${list} 
+ 	: FOR    ${int}   IN   @{list}   
+	\  	rest_enable_fabric_interface		${node1}  ${int}  
+	\   sleep  ${medium}
+ 
+tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${sleep}=1
+    Log To Console   ================tenant configuration changes: ${Tnumber}===============
+ 	clear stats in controller switch	     
+	enable  master  copy running-config config://config_tenant_old
+	log  big scale configuration tenant add	
+	rest_add_tenant_vns_scale    tenantcount=${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	${vlan}=    Set Variable   1000
+    : FOR    ${j}    IN RANGE    0     ${Tnumber}
+    \	rest_add_interface_to_all_vns      FLAP${j}     leaf0-a    ethernet3  vlan=${vlan}	 
+    \   rest_add_l3_endpoint_to_all_vns       FLAP${j}     leaf0-a    ethernet3  vlan=${vlan}  
+    \   ${vlan}=  expr  ${vlan} + ${Vnumber}
+	\   sleep   ${sleep}
+	cli    master     show running-config tenant
+	enable  master  copy running-config config://config_tenant_new	
+	log  big scale configuration tenant delete
+	
+    : FOR    ${j}    IN RANGE    0     ${Tnumber}
+    \ 	config    master     no tenant FLAP${j}
+    
+	cli    master     show running-config tenant
+   	
+
+vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
+    Log To Console   ================ vns configuration changes: ${Vnumber}===============
+	enable  master  copy running-config config://config_vns_old
+	${vlan}=    Set Variable   1000    
+	rest_add_tenant_vns_scale    tenantcount=1   tname=FLAP    vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	rest_add_interface_to_all_vns      FLAP0     leaf0-a    ethernet3   vlan=${vlan}	
+	sleep   ${sleep}	 
+	cli    master     show running-config tenant	
+	enable  master  copy running-config config://config_vns_new
+	
+ 	log  big scale configuration tenant delete
+ 	config    master   tenant FLAP0
+	${vns}=  expr  1 + ${Vnumber}
+    : FOR    ${j}    IN RANGE    1     ${vns}
+    \ 	config    master    no segment V${j}
+	config    master   logical-router    
+    : FOR    ${j}    IN RANGE    1     ${vns}
+    \ 	config    master    no interface segment V${j}   
+	config    master    no tenant FLAP0      
+	cli    master     show running-config tenant		
+ 
+
+clear stats in controller switch
+	cli_clear_interface_statistics   s1	
+	cli_clear_interface_statistics   s2
+	cli_clear_interface_statistics   s3	
+	cli_clear_interface_statistics   s4
+	cli_clear_interface_statistics   s5	
+	cli_clear_interface_statistics   s6	
+	cli_clear_interface_statistics   s7
+#	cli_clear_interface_statistics   s8		
+#	rest_clear_vns_stats
+	rest_clear_fabric_interface_stats
+ 
+T5 longevity suite setup
+   base suite setup
+    : FOR    ${j}    IN RANGE    0     500
+    \ 	config    master     no tenant FLAP${j}
+
+T5 longevity suite teardown
+#   base suite teardown
+	sleep  1
+ 
+ 
+verify switch interface is up	[Arguments]  ${switch}   ${intf}  
+	${info}=  rest_get_fabric_interface_info   ${switch}  ${intf}
+	Should Be Equal as Strings 		up      ${info['state']}
+ 
+ 
+ 
+######## test case keyword
+T21 spine node down/up event
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* switch node down/up event: ${i}********   
+    \	switch node down/up event      spine0 
+    \   sleep  ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+    \	switch node down/up event      spine1  
+    \   sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+  
+
+T22 leaf node down/up event
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* switch node down/up event: ${i}********   
+    \	switch node down/up event      leaf0-a 
+    \   sleep  ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+    \	switch node down/up event      leaf0-b  
+    \   sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+  
+
+T23 controller node event failover       
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+ 
+
+T24 controller node event reboot master          
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+ 	\	clear stats in controller switch	 
+    \	clear stats
+    \	Run Keyword if   '${verifytraffic}'=='1'   start traffic   
+    \	controller node event reboot master     ${inevent}
+    \   sleep   ${inevent}
+	\	Run Keyword if   '${verifytraffic}'=='1'    stop traffic    
+	\	sleep           3
+ 	\	Run Keyword if   '${verifytraffic}'=='1'	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+  
+T25 controller node event reboot slave          
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node event: ${i}*******    
+ 	\	clear stats in controller switch	 
+    \	clear stats
+    \	Run Keyword if   '${verifytraffic}'=='1'   start traffic   
+    \	controller node event reboot slave     ${inevent}
+    \   sleep   ${inevent}
+	\	Run Keyword if   '${verifytraffic}'=='1'    stop traffic    
+	\	sleep           3
+ 	\	Run Keyword if   '${verifytraffic}'=='1'	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+  
+
+T27 data Link down/up event between leaf and spine
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf0-a}    ${spine0} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${spine0}    ${leaf0-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-b}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf0-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-a}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf0-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf0-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}   ${leaf0-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine0} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine0}    ${leaf1-b} 	
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
+	\  sleep  ${inevent}  
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+ 
+T28 data Link down/up event between leafs 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf0-a}    ${leaf0-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf0-b}    ${leaf0-a} 
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
+	\  sleep  ${inevent}  		
+    \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1
+    \	Run Keyword if   '${verifytraffic}'=='1'  test ixia traffic  ${Thandle}   ${Tname}  ${Texpect}   5     
+
+	log  disable/enable link from leaf to host - TBD
+	
+   
+   
+T30 big configuration changes (around 500 tenants or vns change)
+ 	clear stats in controller switch	 
+    clear stats
+    start traffic   
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes ${i}******* 
+ 	\  tenant configuration add/remove      ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep}  
+ 	\  vns configuration add/remove         ${Vflapnum}               
+ 	\  sleep  ${bigconfigsleep}  
+ 	\  Log To Console   === loading config with more tenant======= 
+ 	\  enable  master  copy config://config_tenant_new running-config 
+ 	\  sleep  ${bigconfigsleep} 
+ 	\  Log To Console   === loading config with less tenant=======  	
+ 	\  enable  master  copy config://config_tenant_old running-config 
+
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+ 	
+		
+T31 quick configuration changes (non stop, less than 10 tenants or vns each change)
+  	clear stats in controller switch	 
+    clear stats
+    start traffic   
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes ${i}******* 
+ 	\  tenant configuration add/remove      10       3       
+  	\  vns configuration add/remove         10               
+  	\  Log To Console   === loading config with more tenant======= 
+ 	\  enable  master  copy config://config_tenant_new running-config 
+  	\  Log To Console   === loading config with less tenant=======  	
+ 	\  enable  master  copy config://config_tenant_old running-config 
+
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname}     ${Texpect}
+  	
+  
+T51 continues Event
+   	log  randomize all the event test cases from T23 to T30
+    ${loop}=  Set Variable   1	
+    : FOR   ${index}    IN RANGE    0    ${repeat}	
+	\  Log To Console   "\n========******* in continues event loop: ${index} out of 1000 ******====== " 
+	\  ${random}=	Evaluate	 random.randint(1,4)    random,sys
+	\  Log To Console   "--------random number is ${random} --------" 
+	\  Run Keyword if    ${random}==1   T21 switch node down/up event
+	\  Run Keyword if    ${random}==2   T23 controller node event       
+	\  Run Keyword if    ${random}==3   T24 data Link down/up event
+ 	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
+  	\  sleep  ${betweenevent}
+  

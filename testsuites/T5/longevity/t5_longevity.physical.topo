@@ -1,0 +1,130 @@
+ # Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: dummy
+ 
+c2:
+  ip: dummy
+
+s1:
+  alias:  spine0
+  mac: 70:72:cf:ae:b3:28
+  fabric-role: spine
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6001
+  set_session_ssh: false
+  set_init_ping: false
+  
+s2:
+  alias:  spine1
+  mac: 70:72:cf:ae:b8:be
+  fabric-role: spine
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6002
+  set_session_ssh: false
+  set_init_ping: false  
+ 
+s3:
+  alias:  leaf0-a
+  mac: 70:72:cf:ab:3a:58
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6003
+  set_session_ssh: false
+  set_init_ping: false
+  
+s4:
+  alias:  leaf0-b
+  mac: 70:72:cf:ab:3b:18
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6004
+  set_session_ssh: false
+  set_init_ping: false
+
+s5:
+  alias:  leaf1-a
+  mac: 70:72:cf:b5:ef:28
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6005
+  set_session_ssh: false
+  set_init_ping: false
+  
+
+s6:
+  alias:  leaf1-b
+  mac: 70:72:cf:ab:3c:58
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6006
+  set_session_ssh: false
+  set_init_ping: false
+  
+s7:
+  alias:  leaf2-a
+  mac: 70:72:cf:b5:f7:8a
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6007
+  set_session_ssh: false
+  set_init_ping: false
+
+s8:
+  alias:  leaf3-a
+  mac: 70:72:cf:b5:f3:34
+  fabric-role: leaf
+  console:
+    ip: 10.210.112.5
+    protocol: telnet
+    port: 6008
+  set_session_ssh: false
+  set_init_ping: false
+
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.210.192.2
+  tcl_server_ip: 10.194.64.180
+  #tcl_server_port: 8009
+  #ix_version: '7.10'
+  #set_init_ping: false
+  ports:
+    p1:
+      name: 1/1
+    p2:
+      name: 1/2
+    p3:
+      name: 1/3     
+    p4:
+      name: 1/4 
+    p5:
+      name: 1/5 
+    p6:
+      name: 1/6 
+    p7:
+      name: 1/7    
+    p8:
+      name: 1/8    
+         
+
+
+ 
