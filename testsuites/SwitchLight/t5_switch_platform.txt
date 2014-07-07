@@ -332,7 +332,23 @@ Verify the show environment fan speed in switch
     verify show environment fan status  s1  none  Fan  4  Speed
     verify show environment fan status  s1  none  Fan  5  Speed
 
-           
+Verify the show environment thermal Sensor Status in switch
+    [Tags]  switch-platform  environment  
+    verify show environment thermal status  s1  none  thermal  1  Status      
+    verify show environment thermal status  s1  none  thermal  2  Status
+    verify show environment thermal status  s1  none  thermal  3  Status
+    verify show environment thermal status  s1  none  thermal  4  Status
+    verify show environment thermal status  s1  none  thermal  5  Status
+    
+Verify the show environment Thermal Sensor temperature in switch
+    [Tags]  switch-platform  environment  test1
+    verify show environment thermal status  s1  none  thermal  1  Temperature
+    verify show environment thermal status  s1  none  thermal  2  Temperature
+    verify show environment thermal status  s1  none  thermal  3  Temperature
+    verify show environment thermal status  s1  none  thermal  4  Temperature
+    verify show environment thermal status  s1  none  thermal  5  Temperature
+                    
+ 
 * Keywords
 
 T5 switch platform test setup
@@ -527,7 +543,11 @@ verify show environment psu notup  [Arguments]  ${switch}  ${model}  ${element} 
 verify show environment fan status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
     ${componentVal}=  cli t5 switch show environment fan  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
     Should Be True  ${componentVal}
-    
+
+verify show environment thermal status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
+     ${componentVal}=  cli t5 switch show environment thermal  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
+    Should Be True  ${componentVal}
+       
          
          
            
