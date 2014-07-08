@@ -4367,7 +4367,7 @@ class T5Platform(object):
                         helpers.log("***** Call the cli walk again with  --- %s" % string)
 
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
-                        # c.config('show this')
+                        c.config('show this')
                         self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
 
                     if num == 1:
