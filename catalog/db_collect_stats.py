@@ -118,6 +118,7 @@ def display_stats(args):
 
     total_tc = ih.total_testcases(release=ih.release_lowercase())
     total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
+    total_tc_manual = ih.total_testcases_by_tag(["manual"])[0]
     total_tc_pct = test_percentage(total_tc - total_tc_untested, total_tc)
     print_stat("Total test cases:",
                total_tc,
@@ -127,19 +128,42 @@ def display_stats(args):
     total['tests'] = total_tc
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
-        total_tc = ih.total_testcases_by_tag(functionality)[0]
+        total_tc_func = ih.total_testcases_by_tag(functionality)[0]
         total_tc_untested = ih.total_testcases_by_tag([functionality,
                                                        "manual-untested"])[0]
-        test_pct = test_percentage(total_tc - total_tc_untested, total_tc)
+        test_pct = test_percentage(total_tc_func - total_tc_untested, total_tc_func)
         print_stat("Total %s tests:" % functionality,
-                   total_tc,
+                   total_tc_func,
                    total_tc_untested,
                    test_pct,
                    )
         total[functionality] = total_tc
 
-    print_stat("Total executable test cases:",
-               ih.total_executable_testcases())
+    total_tc_executable = ih.total_executable_testcases()
+    print_stat("Total executable test cases:", total_tc_executable)
+
+    if False:
+        print_stat("Automation pct (executable):",
+                   "%0.1f%%" % (
+                                (float(total_tc_executable) - float(total_tc_manual))
+                                / float(total_tc_executable) * 100.0))
+
+        print_stat("Automation pct (total):",
+                   "%0.1f%%" % (
+                                (float(total_tc) - (float(total_tc_manual) + float(total_tc_untested)))
+                                / float(total_tc) * 100.0))
+
+    total_tc_automated = total_tc - total_tc_manual - total_tc_untested
+    print_stat("Total automated test cases:",
+               total_tc_automated,
+               0,
+               float(total_tc_automated) / float(total_tc) * 100.0)
+
+    total_tc_automated_executable = total_tc_executable - total_tc_manual
+    print_stat("Total automated/executable test cases:",
+               total_tc_automated_executable,
+               0,
+               float(total_tc_automated_executable) / float(total_tc_executable) * 100.0)
 
     total_testsuites_in_release_executed = ih.total_testsuites_executed(
                build_name=build)[0]
