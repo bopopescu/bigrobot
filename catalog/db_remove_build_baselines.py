@@ -8,8 +8,10 @@ import sys
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
 bigrobot_path = os.path.dirname(__file__) + '/..'
+exscript_path = bigrobot_path + '/vendors/exscript/src'
 
 sys.path.insert(0, bigrobot_path)
+sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog

@@ -1,5 +1,5 @@
 *Settings
-Documentation  Corsair Tunnelling Test Suite
+Documentation  Corsair Offset Match Test Suite
 Suite Setup  offset suite setup
 #Suite Teardown   offset suite teardown
 Test Setup   base test setup
@@ -524,11 +524,19 @@ ${bigtap_policy_name}					offset-policy
 	
 02_Match on src-mac with src-mac-mask set
 	
-	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-mac-mask": "FF:FF:FF:00:00:00", "src-mac": "00:11:00:00:00:00", "sequence": 1}
-    sleep  5
+	rest delete policy  admin-view  ${bigtap_policy_name}
+	sleep  10
+	${return_value}=  rest enable feature  full-match
+    Should be true   ${return_value}
+    sleep  10         
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-mac-mask": "FF:FF:FF:00:00:00", "src-mac": "00:11:00:00:00:00", "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}   filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch2_delivery_alias}  delivery    
+    sleep  10
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-	 ${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:00:00  dst_mac=00:11:00:00:00:22  frame_rate=10000
+	${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:00:00  dst_mac=00:11:00:00:00:22  frame_rate=10000
 	...						frame_size=1518  dst_cnt=100  src_cnt=100
 	...						dst_mac_step=00:00:00:00:00:00  src_mac_step=00:00:00:00:00:01
     clear stats
@@ -545,11 +553,11 @@ ${bigtap_policy_name}					offset-policy
 	
 03_Match on dst-mac with dst-mac-mask set
 	
-	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-mac-mask": "FF:FF:FF:00:00:00", "src-mac": "00:11:00:00:00:00", "sequence": 1}
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-mac-mask": "FF:FF:FF:00:00:00", "dst-mac": "00:11:00:00:30:00", "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-	 ${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:30:22  dst_mac=00:11:00:00:00:00  frame_rate=10000
+	 ${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:30:22  dst_mac=00:11:00:00:30:00  frame_rate=10000
 	...						frame_size=1518  dst_cnt=100  src_cnt=100
 	...						dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:00
     clear stats
@@ -566,11 +574,12 @@ ${bigtap_policy_name}					offset-policy
 ##### Offset Match Testcases
 
 01_Verify no errors are reported in CLI/Syslog while enabling offset based match via cli command "BigTap offset-match"
-
+	rest delete policy  admin-view  ${bigtap_policy_name}
+	sleep  10
 	#${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     #Should be true  ${verify_policy1}
     ${return_value}=  rest enable feature  l3-l4-offset-match
-    Should not be true   ${return_value}       
+    Should be true   ${return_value}       
     [Tags]  feature
 
 02_Verify CLI command "BigTap offset-match ?" does not contain any erroneous strings
@@ -885,7 +894,7 @@ ${bigtap_policy_name}					offset-policy
     Should be equal as strings   ${command_dictionary[1]['role']}  filter
     
     ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view?config=true
-    Should be equal as strings   ${command_dictionary[0]['delivery-interface-group'][0]['delivery-group'][0]['name']}  ${switch1_delivery_alias}
+    Should be equal as strings   ${command_dictionary[0]['delivery-interface-group'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
     Should be equal as strings   ${command_dictionary[0]['filter-interface-group'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
     Should be equal as strings   ${command_dictionary[0]['policy'][0]['action']}  forward
     Should be equal as strings   ${command_dictionary[0]['policy'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
@@ -1063,8 +1072,9 @@ ${bigtap_policy_name}					offset-policy
 offset suite setup
     base suite setup
     ${return_value}=  rest enable feature  l3-l4-offset-match
-    Should not be true   ${return_value}
+    Should be true   ${return_value}
     rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch1_alias}
     rest add interface role  s1  ${switch1_filter_intf_name}  filter    intf_nickname=${switch1_filter_alias} 
     rest add interface role  s2  ${switch2_delivery_intf_name}    delivery  intf_nickname=${switch2_delivery_alias}
     rest add policy  admin-view  ${bigtap_policy_name}  forward

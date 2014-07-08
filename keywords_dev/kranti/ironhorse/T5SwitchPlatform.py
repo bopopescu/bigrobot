@@ -255,7 +255,6 @@ class  T5SwitchPlatform(object):
             helpers.log("The remaining content is %s" % content1[element_index:])
             content2 = content1[element_index:]
             for x in range(0, len(content2)):
-                
                 psu_dict = {}
                 for i in range(0, len(content2)):                    
                     tmp_string= content2[i].lstrip()
@@ -284,12 +283,14 @@ class  T5SwitchPlatform(object):
                         psu_dict['Pout'] = element_array[1]
                        
                 helpers.log("The dictionary value is %s" % psu_dict)
+                
                 helpers.log("The component require is %s" % component)
                 #helpers.log("The dict has following items %s" % psu_dict.items())
                 #helpers.log("The dict has following keys %s" % psu_dict.keys())
                 #helpers.log("The dict has following keys %s" % (psu_dict.get('Vin')))
                 componentVal =  psu_dict.get(component)
                 helpers.log("Got the value %s for the component %s" % (componentVal, component) )
+                
                 return componentVal 
                                         
             else:
@@ -298,5 +299,122 @@ class  T5SwitchPlatform(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False       
-                           
+    
+    def cli_t5_switch_show_environment_fan(self, switch, model="none", element="Fan", element_number=1, component="none"):  
+        ''' Function to return the show environment output 
+            This will parse the fan output from the show environment 
+            input - switch , element, element_number, component 
+            output - environment output for Fan
+        '''                     
+        t = test.Test()
+        s1 = t.switch(switch)
+        
+        try:
+            cli_input1= "show environment"
+            s1.enable(cli_input1)
+            content1= string.split(s1.cli_content(), '\n')
+            #helpers.log("value of content1 is %s"  %  (content1))   
+            
+            if ("Fan" in element):
+                element_name= str(" Fan ") + element_number + str('\r')
+                helpers.log("The element_name is %s" % element_name)
+                        
+                element_index= content1.index(element_name)
+                helpers.log("The element index is %d" % element_index)
+                maxlen= element_index + 7 
+                helpers.log("The max element index is %d" % maxlen)
+               
+                fan_dict= {}
+                for i in range(element_index, maxlen):
+                    tmp_string= content1[i].lstrip()
+                    #helpers.log("The current string is %s" % tmp_string)
+                    element_array= tmp_string.split()
+                    #helpers.log("The element array is %s" % element_array)
+                    if ("State:" in element_array):
+                        fan_dict['State'] = str(element_array[1])
+                    elif ("Status:" in element_array):
+                        fan_dict['Status'] = str(element_array[1])
+                    elif ("RPM:" in element_array):
+                        fan_dict['RPM'] = element_array[1]
+                    elif ("Speed:" in element_array):
+                        tmpstring= str(element_array[1]).split("%")
+                        #helpers.log("The tmpstring for Speed is %s" % tmpstring)
+                        fan_dict['Speed'] = str(tmpstring[0])
+                    elif ("Airflow:" in element_array):
+                        fan_dict['Airflow'] = str(element_array[1])    
               
+                helpers.log("The dictionary value is %s" % fan_dict)
+                helpers.log("The component require is %s" % component)
+                componentVal =  fan_dict.get(component)
+                helpers.log("Got the value %s for the component %s" % (componentVal, component) )
+                if (component == 'State') and (componentVal == 'Present'):
+                    return True
+                elif (component == 'Status') and (componentVal == 'Running.'):    
+                    return True
+                elif (component == 'Airflow') and (componentVal == 'Front-to-Back.'):
+                    return True
+                else:
+                    return componentVal
+                
+            else:
+                helpers.log("The element does not exist")
+                return False
+            
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        
+        
+    def cli_t5_switch_show_environment_thermal(self, switch, model="none", element="thermal", element_number=1,component="none"):  
+        ''' Function to return the show environment output 
+            This will parse the Thermal temperature output from the show environment 
+            input - switch , element, element_number 
+            output - environment output for Fan
+        '''                     
+        t = test.Test()
+        s1 = t.switch(switch)
+        
+        try:
+            cli_input1= "show environment"
+            s1.enable(cli_input1)
+            content1= string.split(s1.cli_content(), '\n')
+            #helpers.log("value of content1 is %s"  %  (content1)) 
+            
+            if ("thermal" in element):
+                element_name= str(" Thermal ") + element_number + str("\r")
+                helpers.log("The element name is %s" % element_name)
+                element_index= content1.index(element_name)
+                helpers.log("The element index is %s" % element_index) 
+                maxlen= element_index + 4 
+                thermal_dict= {}
+                for i in range(element_index, maxlen):
+                    tmp_string= content1[i].lstrip()
+                    #helpers.log("The current string is %s" % tmp_string)
+                    element_array= tmp_string.split()
+                    #helpers.log("The element array is %s" % element_array)
+                    if ("Description:" in element_array):
+                        thermal_dict['Description'] = str(element_array[1])
+                    elif ("Status:" in element_array):
+                        thermal_dict['Status'] = str(element_array[1])
+                    elif ("Temperature:" in element_array):
+                        #helpers.log("The temperature string is %s" % tmp_string)
+                        #element_array= tmp_string.split()
+                        #helpers.log("The current temp info is %s" % element_array)
+                        thermal_dict['Temperature'] = str(element_array[1])
+                
+                helpers.log("The dictionary value is %s" % thermal_dict)
+                helpers.log("The component require is %s" % component)
+                componentVal =  thermal_dict.get(component)
+                helpers.log("Got the value %s for the component %s" % (componentVal, component) )
+                if (component == 'Status') and (componentVal == 'Good'):
+                    return True
+                elif (component == 'Temperature'):    
+                    return componentVal  
+                    
+            else:
+                helpers.log("The element thermal does not exist")
+                return False
+  
+        except:
+            helpers.test_failure("Could not execute command in thermal env. Please check log for errors")
+            return False      

@@ -60,7 +60,7 @@ def test_and_install_package():
 
 def set_environment():
     """
-    Look for user-defined environments BIGROBOT_PATH and BIGTEST_PATH. If they
+    Look for user-defined environments such as BIGROBOT_PATH. If they
     don't exist then assume some defaults. Add them to Python path.
     """
 
@@ -76,12 +76,12 @@ def set_environment():
     if 'BIGROBOT_PATH' not in os.environ:
         os.environ['BIGROBOT_PATH'] = ''.join((p, '/bigrobot'))
 
-    if 'BIGTEST_PATH' not in os.environ:
-        os.environ['BIGTEST_PATH'] = ''.join((p, '/bigtest'))
+    # if 'BIGTEST_PATH' not in os.environ:
+    #    os.environ['BIGTEST_PATH'] = ''.join((p, '/bigtest'))
 
     # Add paths to PYTHONPATH
     sys.path.insert(0, os.environ['BIGROBOT_PATH'])
-    sys.path.insert(1, os.environ['BIGTEST_PATH'])
+    # sys.path.insert(1, os.environ['BIGTEST_PATH'])
     exscript_path = ''.join((os.environ['BIGROBOT_PATH'],
                              '/vendors/exscript/src'))
     sys.path.insert(2, exscript_path)
@@ -99,11 +99,10 @@ def test_autobot_import():
         autobot.version.get_version()  # just to silence the "unused" warning
     except ImportError:
         sys.stderr.write(
-            "Error: Cannot find Autobot package. Please check PYTHONPATH,"
-            " BIGROBOT_PATH, and BIGTEST_PATH environment variables.\n")
-        sys.stderr.write("  BIGROBOT_PATH=%s\n" % os.environ['BIGROBOT_PATH'])
-        sys.stderr.write("  BIGTEST_PATH=%s\n" % os.environ['BIGTEST_PATH'])
+            "Error: Cannot find Autobot package. Please check PYTHONPATH"
+            " and BIGROBOT_PATH environment variables.\n")
         sys.stderr.write("  PYTHONPATH=%s" % os.environ['PYTHONPATH'])
+        sys.stderr.write("  BIGROBOT_PATH=%s\n" % os.environ['BIGROBOT_PATH'])
         sys.exit(1)
 
 
@@ -185,7 +184,7 @@ helpers.bigrobot_additional_params(
                '/additional-params.topo'))
 
 helpers.bigrobot_path()
-helpers.bigtest_path()
+# helpers.bigtest_path()
 helpers.python_path()
 helpers.bigrobot_test_setup()  # (default=True)
 helpers.bigrobot_test_postmortem()  # (default=True)
@@ -565,20 +564,20 @@ def codesize_hidden_command(*args):
     run(cmd, shell=True)
 
 
-def startremotevm_command(*args):
-    """
-    Setup remote VMs using BigTest (executes 'bt startremotevm').
-    """
-    _ = args  # unused, silent Pylint
-    run('bt startremotevm', cwd=helpers.bigtest_path())
+# def startremotevm_command(*args):
+#    """
+#    Setup remote VMs using BigTest (executes 'bt startremotevm').
+#    """
+#    _ = args  # unused, silent Pylint
+#    run('bt startremotevm', cwd=helpers.bigtest_path())
 
 
-def stopremotevm_command(*args):
-    """
-    Tear down remote VMs using BigTest (executes 'bt stopremotevm').
-    """
-    _ = args  # unused, silent Pylint
-    run('bt stopremotevm', cwd=helpers.bigtest_path())
+# def stopremotevm_command(*args):
+#    """
+#    Tear down remote VMs using BigTest (executes 'bt stopremotevm').
+#    """
+#    _ = args  # unused, silent Pylint
+#    run('bt stopremotevm', cwd=helpers.bigtest_path())
 
 
 def main(args):

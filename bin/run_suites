@@ -6,8 +6,10 @@
 #echo "Disable BVS smoke test for the interim."
 #exit 0
 
-sender="bigrobot@regress.bigswitch.com"
-receiver="vui.le@bigswitch.com, aruna.mallina@bigswitch.com"
+#sender="bigrobot@regress.bigswitch.com"
+sender="vui.le@bigswitch.com"
+#receiver="vui.le@bigswitch.com, aruna.mallina@bigswitch.com"
+receiver="bigrobot_stats_collection@bigswitch.com"
 testsuites=$1
 
 

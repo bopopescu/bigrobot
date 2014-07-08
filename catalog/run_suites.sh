@@ -16,10 +16,15 @@ fi
 
 f=$1
 
+set -x
 unset BIGROBOT_TESTBED
 unset BIGROBOT_PARAMS_INPUT
 export BIGROBOT_CI=True
-export BIGROBOT_LOG_PATH=`pwd`/bigrobot_logs
+if [ "$BIGROBOT_PATH"x = x ]; then
+    export BIGRBOT_PATH=`pwd`/..
+fi
+export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
+set +x
 
 rm -rf $BIGROBOT_LOG_PATH
 for x in `cat $f`; do

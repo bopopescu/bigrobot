@@ -4262,6 +4262,11 @@ class T5Platform(object):
                     helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
                     num = num - 1
                     continue
+                # Add check for origination and description. BVS-1959 explains why this will not work if under a sub-configuration.
+                if key == "origination" or key == "description" : 
+                    helpers.log("Ignore line - key %s" % key)
+                    num = num - 1
+                    continue
 
 
                 # for interface related commands, only iterate through "all" and one specific interface
@@ -4604,4 +4609,128 @@ class T5Platform(object):
         return True
 
 
+    def ip_to_list(self,ip):
+        helpers.test_log("Entering ==> ip to list: %s"  % ip)           
+        return  ip.split('.')
+
+    def bash_get_key(self, node='master',key='ecdsa'):
+        ''' 
+        get the public key for controller
+        Ouput: index:  directory  with all the field
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if key=='ecdsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: ECDSA key is :\n%s" % fields[1])            
+        elif key=='dsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_dsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: DSA key is :\n%s" % fields[1])            
+        elif key=='rsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: RSA key is :\n%s" % fields[1])            
+
+        return fields[1]
+
+    def rest_get_suspended_switch(self, node='master'):
+        """
+        Get fabric connection state of the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+
+        Return Value:
+        - the list of switches in suspended state
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+        helpers.log("get switch fabric connection state")         
+                  
+        c.rest.get(url)
+        data = c.rest.content()        
+        info = []  
+        if (data):
+            for i in range(0, len(data)):
+                if data[i]['connected'] == True:
+                    if 'fabric-connection-state' in data[i].keys() and data[i]['fabric-connection-state'] == "not_connected":
+                        if 'handshake-state' in data[i].keys() and data[i]['handshake-state'] == "quarantine-state":
+                            info.append( data[i]['name'])  
+        helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)                        
+        return info
+ 
+
+
+    def cli_boot_partition(self, node='master',option='alternate'):
+        '''
+          boot partition  -   
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+
+          usage:
+          output: True  - boot successfully
+                  False  -boot Not successfully
+        '''
+
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log('INFO: Entering ==> cli_boot_partition ')
+        c.config('')
+        string = 'boot partition ' + option
+ 
+        c.send(string)        
+        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        content = c.cli_content()
+        helpers.log("*****USER INFO:\n%s" % content)
+        c.send("yes")
+ 
+        try:
+            c.expect(r'[\r\n].+The system is going down for reboot NOW!')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)           
+        except:
+            helpers.log('ERROR: boot partition NOT successfully')
+            return False
+        else:
+            helpers.log('INFO: boot partition successfully')
+            return True
+        return False
+
+
+    def console_switch_config(self, node,config,password='adminadmin'):
+        """
+        config given node (switch)
+
+        Inputs:
+        | node | Alias of the node to use |
+        | config|  config string
+
+        Return Value:
+        - True
+        """
+        t = test.Test()
+        s = t.dev_console(node, modeless=True)
+        s.send("\r")
+        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0: #login prompt
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        s.cli('enable; config')
+        s.send(config)
+        helpers.log(s.cli('')['content'])
+        return True
 
