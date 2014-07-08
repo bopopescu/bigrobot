@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 """
-Service startup:
+Service startup (below example is from the production deployment on
+qa-rest.bigswitch.com, default port is 5000):
+
+  # Start a screen session
+  $ screen
+  $ cd ~bsn/workspace/bigrobot/services$
   $ ./send_mail.py --host 0.0.0.0
 
 Usage:
