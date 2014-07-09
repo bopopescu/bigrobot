@@ -5,7 +5,8 @@ c2:
 mn:
   ip: 10.192.94.34   # vui_mn1_06130817
 s1:
-  ip: 10.210.64.44   # Song's switch
+  #ip: 10.210.64.44   # Song's switch
+  ip: 10.192.75.177  # Animesh's switch
 h1:
   ip: 10.192.20.6    # jenkins-w6
   #protocol: telnet

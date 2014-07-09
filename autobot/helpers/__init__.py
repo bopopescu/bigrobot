@@ -620,7 +620,7 @@ def sleep(s):
     """
     Sleep for <s> seconds.
     """
-    time.sleep(int(s))
+    time.sleep(float(s))
 
 
 def is_controller(name):
