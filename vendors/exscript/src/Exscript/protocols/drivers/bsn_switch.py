@@ -61,7 +61,7 @@ class BsnSwitchDriver(Driver):
 
     def check_head_for_os(self, string):
         # print("string: %s" % string)
-        if 'SwitchLight' in string:
+        if 'SwitchLight' in string or 'Switch Light' in string:
             self._platform = 'switchlight'
             return 90
         if _tacacs_re.search(string):
