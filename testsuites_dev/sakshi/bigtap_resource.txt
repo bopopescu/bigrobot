@@ -72,6 +72,33 @@ ${CONTROLLER PIE PANE}			xpath=//div[@id='system_pie_charts_pane']
 ${CONTROLLER SUMMARY PANE}  	xpath=//div[@id='application_summary_pane']
 ${CONTROLLER CONFIG PANE}		xpath=//div[@id='application_configuration_pane']
 ${TOPOLOGY VIEW PANE}			xpath=//div[@id='application_visual_pane']
+${CONFIGURE SWITCHING MODE BUTTON}					xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
+${MATCH MODE EDIT POPUP}							xpath=//div[@title='Configure Switching Mode']/span[1]
+${SWITCHING MODE L3-L4 OFFSET MATCH RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
+${SWITCHING MODE L3-L4 MATCH RADIO BUTTON} 			xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
+${SWITCHING MODE FULL MATCH RADIO BUTTON}			xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input
+${SWITCHING MODE SUBMIT BUTTON}						xpath=//span[@id='dijit_form_Button_4_label']
+${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB TUNNELING}							xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@class='knob_icon']
+${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Enabling Policy Overlap']/span[1]
+${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Disabling Policy Overlap']/span[1]
+${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//div[@title='Confirm Enabling Inport Mask']/span[1]
+${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//div[@title='Confirm Disabling Inport Mask']/span[1]
+${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Enabling CRC Check']/span[1]
+${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Disabling CRC Check']/span[1]
+${CONFIRM ENABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Enabling Tunneling']/span[1]
+${CONFIRM DISABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Disabling Tunneling']/span[1]
+${ENABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Enabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
+${ENABLE INPORT MASK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
+${ENABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
+${ENABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
+${DISABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
+${DISABLE INPORT MASK SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
+${DISABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
+${DISABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
+
 
 
 
@@ -1364,15 +1391,7 @@ Associate Policy Match Rule
 
 	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
 	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
-
-	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
 	
-	#Verify Element Visible  ${action_menu_match}
-    #Click Element  ${action_menu_match}  and don't wait
-    
-    #Verify Element Visible  ${BIG TAP MATCH EDIT MENU ITEM}
-    #Click Element  ${BIG TAP MATCH EDIT MENU ITEM}  and don't wait
-
 	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
 	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
 
@@ -1735,6 +1754,50 @@ Edit Big Tap Interface from Big Tap Menu
 
     Verify Element Invisible  ${BIG TAP INTERFACES EDIT POPUP}
     Verify Page Contains Text   ${name}
+    
+    
+Edit Big Tap Interface Group from Big Tap Menu
+	[Arguments]  ${role}  ${name}  ${interface-name}
+    Go To Big Tap Interface Groups Page
+    ${action_menu}  Generate Action Menu Xpath  div[@id='interface_groups_table']  ${id}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACE GROUP EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP EDIT POPUP}
+
+    Click Element  ${BIG TAP INTERFACE GROUP CONFIGURE BUTTON}  and don't wait
+
+    Verify Page Contains Element  ${BIG TAP INTERFACE GROUP NAME FIELD}
+
+    Run Keyword Unless  '${name}'=='${EMPTY}'
+    ...		 Input Text And Verify  ${BIG TAP INTERFACE GROUP NAME FIELD}  ${name}
+
+    
+    #Verify Element Visible  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}
+    #Click Element  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}  and don't wait
+    #Verify Element Visible  ${BIG TAP ADD INTERFACE POPUP}
+    
+    Run Keyword If  '${role}'=='filter'
+    ...		 Add Filter Interface to Group   ${interface-name} 
+    
+    Run Keyword If  '${role}'=='delivery'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
+    Sleep  5
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...   	 Add Delivery Interface to Group   ${interface-name}
+    
+    Element Should Be Visible  ${INTERFACE SAVE BUTTON}
+    Click Element  ${INTERFACE SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
+    Verify Page Contains Text   ${name}
 
 
 Delete Big Tap Interface from Big Tap Menu
@@ -1849,3 +1912,135 @@ Upload IP Address List
 Configure Switch Alias Should Fail
 	[Arguments]  ${dpid}  ${alias}
   	Run Keyword And Expect Error  *  Configure Switch Alias  ${dpid}  ${alias}
+  	
+Set Switching Mode
+	[Arguments]  ${match-mode}
+	Go To Landing Page
+	Verify Page Contains Element  ${CONFIGURE SWITCHING MODE BUTTON}
+	Click Element  ${CONFIGURE SWITCHING MODE BUTTON}  and don't wait
+	Verify Element Visible  ${MATCH MODE EDIT POPUP}
+	${radio_button}  Set Variable  ${EMPTY}
+	
+	${radio_button}  Set Variable If  '${match-mode}'=='L3-L4 Offset Match'  ${SWITCHING MODE L3-L4 OFFSET MATCH RADIO BUTTON}  ${radio_button} 
+	Run Keyword If  '${match-mode}'=='L3-L4 Offset Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    ${radio_button}  Set Variable If  '${match-mode}'=='L3-L4 Match'  ${SWITCHING MODE L3-L4 MATCH RADIO BUTTON}  ${radio_button}
+    Run Keyword If  '${match-mode}'=='L3-L4 Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    ${radio_button}  Set Variable If  '${match-mode}'=='Full Match'  ${SWITCHING MODE FULL MATCH RADIO BUTTON}  ${radio_button}
+    Run Keyword If  '${match-mode}'=='Full Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    Verify Element Visible  ${SWITCHING MODE SUBMIT BUTTON}
+    Click Element  ${SWITCHING MODE SUBMIT BUTTON}  and don't wait
+    	
+  	
+Configure Match Mode
+	[Arguments]  ${match-mode}
+	Go To Landing Page
+	
+	Run Keyword If  '${match-mode}'=='Policy Overlap'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
+	Run Keyword If  '${match-mode}'=='!Policy Overlap'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 Policy_Overlap_Disabled
+
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ... 	Drag And Drop   ${LIST TYPE KNOB POLICY OVERLAP}  target=Policy_Overlap_Enabled
+    
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE POLICY OVERLAP POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ...		Click Element  ${ENABLE POLICY OVERLAP SUBMIT BUTTON}  and don't wait    
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ... 	Drag And Drop   ${LIST TYPE KNOB POLICY OVERLAP}  target=Policy_Overlap_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE POLICY OVERLAP POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ...		Click Element  ${DISABLE POLICY OVERLAP SUBMIT BUTTON}  and don't wait
+    
+    Sleep  2
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Inport_Mask_Enabled
+	Run Keyword If  '${match-mode}'=='!Inport Mask'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	  Inport_Mask_Disabled
+
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ... 	Drag And Drop   ${LIST TYPE KNOB INPORT MASK}  target=Inport_Mask_Enabled
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE INPORT MASK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ...		Click Element  ${ENABLE INPORT MASK SUBMIT BUTTON}  and don't wait  
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ... 	Drag And Drop   ${LIST TYPE KNOB INPORT MASK}  target=Inport_Mask_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE INPORT MASK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ...		Click Element  ${DISABLE INPORT MASK SUBMIT BUTTON}  and don't wait
+    
+    Sleep  2
+    
+    
+   Run Keyword If  '${match-mode}'=='CRC Check'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      CRC_Check_Enabled
+	Run Keyword If  '${match-mode}'=='!CRC Check'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 CRC_Check_Disabled
+
+    Run Keyword If  '${match-mode}'=='CRC Check'
+    ... 	Drag And Drop   ${LIST TYPE KNOB CRC CHECK}  target=CRC_Check_Enabled
+    
+     Run Keyword If  '${match-mode}'=='CRC Check'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE CRC CHECK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='CRC Check'
+    ...		Click Element  ${ENABLE CRC CHECK SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ... 	Drag And Drop   ${LIST TYPE KNOB CRC CHECK}  target=CRC_Check_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE CRC CHECK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ...		Click Element  ${DISABLE CRC CHECK SUBMIT BUTTON}  and don't wait
+    
+    Sleep  2
+    
+    Run Keyword If  '${match-mode}'=='Tunneling'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Tunneling_Enabled
+	Run Keyword If  '${match-mode}'=='!Tunneling'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	  Tunneling_Disabled
+
+    Run Keyword If  '${match-mode}'=='Tunneling'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TUNNELING}  target=Tunneling_Enabled
+    
+     Run Keyword If  '${match-mode}'=='Tunneling'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE TUNNELING POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Tunneling'
+    ...		Click Element  ${ENABLE TUNNELING SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TUNNELING}  target=Tunneling_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE TUNNELING POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ...		Click Element  ${DISABLE TUNNELING SUBMIT BUTTON}  and don't wait
+    
+    Sleep  2
+    
+	
+	
