@@ -80,26 +80,26 @@ Library       		String
 # 
 ### Configure Big Tap Interface Group from Controller Menu 
 # 		ID	 					Switch							Role				Name				Interface Name
-T3.1 Interface group with regular name filter-group		
- 	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group		filter2
-T3.2 Interface with regular name delivery-group	
- 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group		delivery2
-T3.3 Edit regular name filter					
- 	Edit Big Tap Interface from Big Tap Menu			s11-eth1				00:00:00:00:00:00:00:0b			filter				filter-new-11
-T3.4 Edit regular name-delivery					
- 	Edit Big Tap Interface from Big Tap Menu			s11-eth2				00:00:00:00:00:00:00:0b			delivery			delivery-new-11
-T3.5 Edit regular type and name1	
- 	Edit Big Tap Interface from Big Tap Menu			s11-eth1				00:00:00:00:00:00:00:0b			service				service-new-31
-T3.6 Edit regular type and name2					
- 	Edit Big Tap Interface from Big Tap Menu			s11-eth2				00:00:00:00:00:00:00:0b			service				service-new-41
-T3.7 Delete regular name-filter					
- 	Delete Big Tap Interface from Big Tap Menu			s11-eth1
-T3.8 Delete regular name-delivery				
- 	Delete Big Tap Interface from Big Tap Menu			s11-eth2
-T3.9 Delete regular name-service-1					
- 	Delete Big Tap Interface from Big Tap Menu			s12-eth1
-T3.10 Teardown
-	Delete All Big Tap Resources
+#T3.1 Interface group with regular name filter-group		
+# 	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group		filter2
+#T3.2 Interface with regular name delivery-group	
+# 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group		delivery2
+#T3.3 Edit regular name filter					
+# 	Edit Big Tap Interface from Big Tap Menu					filter				filter-group		filter3
+#T3.4 Edit regular name-delivery					
+# 	Edit Big Tap Interface from Big Tap Menu					delivery			delivery-group		delivery3
+#T3.5 Edit regular type and name1	
+# 	Edit Big Tap Interface from Big Tap Menu					filter				filter-group		filter2
+#T3.6 Edit regular type and name2					
+# 	Edit Big Tap Interface from Big Tap Menu			s11-eth2				00:00:00:00:00:00:00:0b			service				service-new-41
+#T3.7 Delete regular name-filter					
+# 	Delete Big Tap Interface from Big Tap Menu			s11-eth1
+#T3.8 Delete regular name-delivery				
+# 	Delete Big Tap Interface from Big Tap Menu			s11-eth2
+#T3.9 Delete regular name-service-1					
+# 	Delete Big Tap Interface from Big Tap Menu			s12-eth1
+#T3.10 Teardown
+#	Delete All Big Tap Resources
 # 
 # 
 # ### Configure Big Tap Service			Name	 				Pre-service				Post-service	
@@ -188,6 +188,40 @@ T3.10 Teardown
 # 	Configure Switch Alias										00:00:00:00:00:00:00:0b			${EMPTY}
 # 	Configure Switch Alias										00:00:00:00:00:00:00:0c			${EMPTY}
 
+# ### Enable Disable Match Modes								Match Mode						
+T8.1 Enable L3-L4 Offset Match	 				
+ 	Set Switching Mode											L3-L4 Offset Match		
+ 										
+T8.2 Enable L3-L4 Match	 	
+ 	Set Switching Mode											L3-L4 Match			
+
+T8.3 Enable Full Match Mode
+	Set Switching Mode											Full Match
+
+#T8.4 Enable Policy Overlap										
+#	Configure Match Mode										Policy Overlap
+		
+#T8.5 Disable Policy Overlap
+#	Configure Match Mode										!Policy Overlap
+		
+#T8.6 Enable Inport Mask
+#	Configure Match Mode										Inport Mask	
+	
+#T8.7 Disable Inport Mask
+#	Configure Match Mode										!Inport Mask
+	
+#T8.8 Enable CRC Check
+#	Configure Match Mode										CRC Check
+	
+#T8.9 Disable CRC Check
+#	Configure Match Mode										!CRC Check
+	
+#T8.10 Enable Tunneling
+#	Configure Match Mode										Tunneling
+	
+#T8.11 Disable Tunneling
+#	Configure Match Mode										!Tunneling
+	
 
 ### Configure Big Tap Policy							Policy	 			RBAC 			Filter			Delivery 		Service			ipprotocol		fg		dg		fails for only fg and dg 9.4
 #T9.1 Empty Policy
@@ -249,29 +283,29 @@ T3.10 Teardown
 #	Delete All Big Tap Resources
 
 ### Configure Big Tap Policy with offset based match for GTPv2	ipprotocol  	matchtype  	version   src-ip      dst-ip   	src-port   dst-port   VLAN Header
-T11.1 Policy with offset match on GTP v2 (Protocol UDP)	
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}	${EMPTY}		2123		${EMPTY}
+#T11.1 Policy with offset match on GTP v2 (Protocol UDP)	
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}	${EMPTY}		2123		${EMPTY}
 
-T11.2 Offset match with VLAN Header
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}	${EMPTY}		2123		100
+#T11.2 Offset match with VLAN Header
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}	${EMPTY}		2123		100
 
-T11.3 Offset match with src-ip
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  2.2.2.2	 ${EMPTY}	${EMPTY}		2123		${EMPTY}
+#T11.3 Offset match with src-ip
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  2.2.2.2	 ${EMPTY}	${EMPTY}		2123		${EMPTY}
 		
-T11.4 Offset match with dst-ip
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 1.2.3.4	${EMPTY}		2123		${EMPTY}
+#T11.4 Offset match with dst-ip
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 1.2.3.4	${EMPTY}		2123		${EMPTY}
 		
-T11.5 Offset match with src-port 
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}		2200		2123		${EMPTY}
+#T11.5 Offset match with src-port 
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}		2200		2123		${EMPTY}
 		
-T11.6 Offset match with dst-port
-		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}		${EMPTY}	2123		${EMPTY}
+#T11.6 Offset match with dst-port
+#		Associate Policy Match Rule								 	UDP (17)     	GTP		 v2		  ${EMPTY}	 ${EMPTY}		${EMPTY}	2123		${EMPTY}
 	
-T11.7 Offset match with UDP and everything
-		Associate Policy Match Rule									UDP (17)     	GTP		 v2		   1.2.3.4		2.2.2.2		23			2123		${EMPTY}
+#T11.7 Offset match with UDP and everything
+#		Associate Policy Match Rule									UDP (17)     	GTP		 v2		   1.2.3.4		2.2.2.2		23			2123		${EMPTY}
 		
-T11.8 Offset match with TCP and everything
-		Associate Policy Match Rule								 	TCP (6)     	GTP		 v2		   1.2.3.4		2.2.2.2		23			2123		${EMPTY}
+#T11.8 Offset match with TCP and everything
+#		Associate Policy Match Rule								 	TCP (6)     	GTP		 v2		   1.2.3.4		2.2.2.2		23			2123		${EMPTY}
 	
 #T11.10 Teardown
 #	Delete All Big Tap Resources
