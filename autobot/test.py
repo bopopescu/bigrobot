@@ -817,6 +817,7 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+        spine_stack_trace = r'Call Trace:'
 
         def login():
             helpers.log("Found the login prompt. Sending user name.")
@@ -828,11 +829,10 @@ class Test(object):
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
                 match = n_console.expect(prompt=prompt_device_cli)
-
         n_console.send('')
 
         # Match login or CLI prompt.
-        match = n_console.expect(prompt=[prompt_login, prompt_device_cli])
+        match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace])
         if match[0] == 0:
             login()  # Found login prompt. Attempt to authenticate.
         elif match[0] == 1:
@@ -840,6 +840,10 @@ class Test(object):
             n_console.send('logout')
             match = n_console.expect(prompt=[prompt_login])
             login()
+        elif match[0] == 2:
+                helpers.log("Found a switch Crash Needs a power cycle...")
+                helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
+                helpers.exit_robot_immediately("Needs power cycle of the switch that crashed..")
 
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
