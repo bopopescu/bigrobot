@@ -93,7 +93,7 @@ def main(*args):
     if args.netmask is None:
         args.netmask = "18"
     if args.gateway is None:
-        args.gateway = "10.192.64.1"
+        args.gateway = "10.8.0.1"
     if args.network_interface is None:
         args.network_interface = "br0"
 
