@@ -292,7 +292,7 @@ class KVMOperations(object):
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
-            gateway = kwargs.get("gateway", "10.192.64.1")
+            gateway = kwargs.get("gateway", "10.8.0.1")
             network_interface = kwargs.get("network_interface", "br0")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
