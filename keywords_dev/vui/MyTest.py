@@ -1,7 +1,7 @@
 import autobot.helpers as helpers
-import autobot.restclient as restclient
 import autobot.test as test
 import keywords.Host as Host
+import sys
 import re
 
 def testing123():
@@ -601,3 +601,16 @@ vui@Vuis-MacBook-Pro$
 
     def test_run_cmd(self):
         helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)
+
+    def test_esb(self, node):
+        esb_path = helpers.bigrobot_path() + '/esb'
+        sys.path.insert(1, esb_path)
+        from bsn_services import tasks
+
+        t = test.Test()
+        helpers.log("*** params: %s" % helpers.prettify(t.params()))
+
+        res1 = tasks.cli_show_running_config.delay(node, t.params())
+        helpers.log("*** res1: %s" % res1)
+
+

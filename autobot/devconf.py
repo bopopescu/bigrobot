@@ -616,7 +616,9 @@ class MininetDevConf(DevConf):
             self.send("screen -ls")
             self.expect(quiet=True)
             if not helpers.any_match(self.content(), r'No Sockets found'):
-                helpers.warn("There are other Mininet screen sessions running. Please close them.")
+                helpers.environment_failure(
+                    "There are other Mininet screen sessions running on %s."
+                    " Please close them." % host)
 
             # Must specify a "sensible" term type to avoid the screen error
             # "Clear screen capability required."
