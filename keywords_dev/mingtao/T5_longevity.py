@@ -64,13 +64,7 @@ class T5_longevity(object):
         return True
 
                    
-        
  
-
-
-
-
-
 
     def cli_show_tenant(self, tenant):
         '''
@@ -211,5 +205,95 @@ class T5_longevity(object):
 
         return True
 
+    def cli_upgrade_launch_break(self, breakpoint=None,node='master',option=''):
+        '''
+          upgrade launch break  -  break out of the upgrade at various point
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+                option -  revert, suspend
+                breakpoint - None:   no break
+                            proceed:  send no   when proceed is prompt
+                            upgrade:  send no   when upgrade is prompt   
+                            phase1:   send ctrl c  during phase1   
 
- 
+          usage:
+          output: True  - upgrade launched successfully
+                  False  -upgrade launched Not successfully
+        '''
+
+        t = test.Test()
+        c = t.controller(node)
+        bsn = BsnCommon.BsnCommon()
+        
+        helpers.log('INFO: Entering ==> cli_upgrade_launch ')
+        c.config('')
+        string = 'upgrade launch ' + option
+#        c.send('upgrade launch')
+        c.send(string)
+        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        content = c.cli_content()
+        helpers.log("*****USER INFO:\n%s" % content)
+        if breakpoint == 'proceed':
+            c.send('no')
+            helpers.log("USER INFO: terminate upgrade at proceed: %s" % node)            
+            return True
+        else:
+            c.send("yes")
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
+        content = c.cli_content()
+        helpers.log("USER INFO: the content:  %s" % content)
+        if options[0] == 1:
+            if breakpoint == 'upgrade':
+                c.send("no")
+                helpers.log("USER INFO: terminate upgrade at upgrade: %s" % node)                  
+                return True
+            else:
+                c.send("yes")               
+
+        if breakpoint is None:                
+            try:
+                c.expect(r'[\r\n].+[R|r]ebooting.*')
+                content = c.cli_content()
+                helpers.log("*****Output is :\n%s" % content)
+            except:
+                helpers.log('ERROR: upgrade launch NOT successfully')
+                return False
+            else:
+                helpers.log('INFO: upgrade launch  successfully')
+                return True
+        else:
+            #  need to split for master or standby 
+            if node == 'master':
+                role = 'active'
+            elif node == 'slave':
+                role = 'stand-by'
+            else:
+                role = bsn.rest_get_node_role(node)
+            if role == 'active':
+                helpers.log("USER INFO: %s is %s \n%s" % (node, role ))                                
+                c.expect(r'waiting for standby to begin \"upgrade launch\"',timeout=360)
+                c.expect(r'config updates are frozen for update',timeout=360)
+                c.expect(r'standby has begun upgrade',timeout=360)
+                c.expect(r'waiting for standby to complete switch handoff',timeout=360)
+                c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360)
+                c.expect(r'new state: phase-1-migrate',timeout=360)
+                if breakpoint == 'phase1':
+                    c.send(helpers.ctrl('c'))
+                    helpers.summary_log('Ctrl C is hit during phase-1-migrate')
+                    return True         
+                c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)                       
+                return True         
+
+            elif role == 'stand-by':
+                c.expect(r'waiting for active to begin \"upgrade launch\"',timeout=360)
+                c.expect(r'upgrader nonce',timeout=360)
+                c.expect(r'Leader->begin-upgrade-old state: begin-completed',timeout=360)
+                c.expect(r'Leader->partition state: partition-completed',timeout=360)
+                c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
+                c.expect(r'rebooting',timeout=360)
+                
+                return True
+                
+                
+              
