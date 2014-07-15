@@ -127,7 +127,7 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='10.192.4.89', jenkins_user='bsn',
+    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='jenkins', jenkins_user='bsn',
                                          jenkins_password='bsn'):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
