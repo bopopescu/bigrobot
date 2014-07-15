@@ -210,7 +210,7 @@ class KVMOperations(object):
             helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
-                helpers.log("sending bsn passoword..")
+                helpers.log("sending bsn password..")
                 helpers.log(kvm_handle.bash('bsn')['content'])
             else:
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
