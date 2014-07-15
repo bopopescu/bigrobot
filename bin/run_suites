@@ -59,7 +59,7 @@ curl -i -H "Content-Type: application/json" -X POST \
          \"to\":\"${receiver}\",
          \"subject\":\"Dashboard stats collected for '${BUILD_NAME}' - ${BUILD_URL}\",
          \"message_body\":\"testsuites:\\n${testsuites}\"}" \
-    http://qa-rest.bigswitch.com:5000/message
+    http://qa-rest.qa.bigswitch.com:5000/message
 
 
 exit $failed_count

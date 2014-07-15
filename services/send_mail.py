@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Service startup (below example is from the production deployment on
-qa-rest.bigswitch.com, default port is 5000):
+qa-rest.qa.bigswitch.com, default port is 5000):
 
   # Start a screen session
   $ screen
@@ -10,11 +10,11 @@ qa-rest.bigswitch.com, default port is 5000):
 
 Usage:
   $ curl -i -H "Content-Type: application/json" -X POST \
-       -d '{"from":"root@jenkins-w6.bigswitch.com",
+       -d '{"from":"root@qa-rest.qa.bigswitch.com",
             "to":"vui.le@bigswitch.com",
             "subject":"This is a test",
             "message_body":"Testing 1 2 3"}' \
-       http://qarest.bigswitch.com:5000/message
+       http://qa-rest.qa.bigswitch.com:5000/message
 """
 
 import os
