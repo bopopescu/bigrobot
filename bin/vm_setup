@@ -20,7 +20,7 @@ if 'BIGROBOT_TESTBED' in os.environ:
 vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/"
-kvm_host = "10.192.104.13"
+kvm_host = "10.8.0.56"
 kvm_user = "root"
 kvm_pwd = "bsn"
 current_user = getpass.getuser()

@@ -9,7 +9,7 @@ from autobot.devconf import HostDevConf
 from keywords.T5Platform import T5Platform
 
 
-KVM_SERVER = '10.192.104.13'
+KVM_SERVER = '10.8.0.56'
 KVM_USER = 'root'
 KVM_PASSWORD = 'bsn'
 LOG_BASE_PATH = '/var/log/vm_operations'
@@ -127,7 +127,7 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='10.192.4.89', jenkins_user='bsn',
+    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='jenkins.eng.bigswitch.com', jenkins_user='bsn',
                                          jenkins_password='bsn'):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
@@ -199,7 +199,7 @@ class KVMOperations(object):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
-            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins.eng.bigswitch.com:%s\" %s" % (remote_qcow_path, file_name)
             helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
