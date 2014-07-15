@@ -38,7 +38,7 @@ from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
-SMTP_SERVER = 'smtp.bigswitch.com'
+SMTP_SERVER = 'smtp.eng.bigswitch.com'
 DEFAULT_EMAIL = 'email_service@bigswitch.com'
 
 
