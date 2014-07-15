@@ -1,12 +1,14 @@
+# $ mongo qa-mongodb:27017/test_catalog3
+#
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
 database: test_catalog3
 products:
   - BigChain
-#  - BigTap
-#  - BigWire
-#  - SwitchLight
-#  - T5
+  - BigTap
+  - BigWire
+  - SwitchLight
+  - T5
 test_types:
   - feature
   - scaling

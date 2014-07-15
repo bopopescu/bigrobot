@@ -84,7 +84,10 @@ def main(*args):
     args = parser.parse_args()
     vm_name = (current_user + '_' + args.vm_name + '_'
                + datetime.datetime.now().strftime("%m%d%H%M"))
-    vm_host_name = current_user + "-bcf-1"
+    if args.cluster_ip is not None:
+        vm_host_name = current_user + "-bcf-2"
+    else:
+        vm_host_name = current_user + "-bcf-1"
     helpers.summary_log("Creating VM with Name: %s " % vm_name)
 
     if args.kvm_host is not None:
