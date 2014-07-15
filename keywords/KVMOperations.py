@@ -9,9 +9,13 @@ from autobot.devconf import HostDevConf
 from keywords.T5Platform import T5Platform
 
 
-KVM_SERVER = '10.192.104.13'
+KVM_SERVER = helpers.bigrobot_kvm_server()
 KVM_USER = 'root'
 KVM_PASSWORD = 'bsn'
+JENKINS_SERVER = helpers.bigrobot_jenkins_server()
+JENKINS_USER = 'bsn'
+JENKINS_PASSWORD = 'bsn'
+DEFAULT_GATEWAY = '10.8.0.1'
 LOG_BASE_PATH = '/var/log/vm_operations'
 
 
@@ -127,8 +131,10 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='10.192.4.89', jenkins_user='bsn',
-                                         jenkins_password='bsn'):
+    def _get_latest_jenkins_build_number(self, vm_type='bvs',
+                                         jenkins_server=JENKINS_SERVER,
+                                         jenkins_user=JENKINS_USER,
+                                         jenkins_password=JENKINS_PASSWORD):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
@@ -199,7 +205,8 @@ class KVMOperations(object):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
-            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+            scp_cmd = ('scp -o "UserKnownHostsFile=/dev/null" -o StrictHostKeyChecking=no "%s@%s:%s" %s'
+                       % (JENKINS_USER, JENKINS_SERVER, remote_qcow_path, file_name))
             helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
@@ -234,7 +241,8 @@ class KVMOperations(object):
         return topo_file
 
     def _configure_vm_first_boot(self, cluster_ip=None, ip_address=None,
-                                 netmask='18', vm_host_name=None, gateway='10.192.64.1'):
+                                 netmask='18', vm_host_name=None,
+                                 gateway=DEFAULT_GATEWAY):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
         helpers.log("Sleeping 60 sec while waiting for VM to boot up")
         time.sleep(120)

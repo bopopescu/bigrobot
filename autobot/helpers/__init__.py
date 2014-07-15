@@ -38,7 +38,7 @@ from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
-SMTP_SERVER = 'smtp.bigswitch.com'
+SMTP_SERVER = 'smtp.eng.bigswitch.com'
 DEFAULT_EMAIL = 'email_service@bigswitch.com'
 
 
@@ -503,12 +503,28 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
 
-def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
+def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is used to archive the postmortem logs.
     """
     return _env_get_and_set('BIGROBOT_LOG_ARCHIVER', new_val, default)
+
+
+def bigrobot_kvm_server(new_val=None, default='qa-tools3.qa.bigswitch.com'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is the default KVM server used by vm_setup and vm_teardown tools.
+    """
+    return _env_get_and_set('BIGROBOT_KVM_SERVER', new_val, default)
+
+
+def bigrobot_jenkins_server(new_val=None, default='jenkins.eng.bigswitch.com'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is the Jenkins server for Smoketest (Continuous Integration).
+    """
+    return _env_get_and_set('BIGROBOT_JENKINS_SERVER', new_val, default)
 
 
 def bigrobot_test_pause_on_fail(new_val=None, default='False'):
