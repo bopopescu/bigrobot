@@ -503,7 +503,7 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
 
-def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
+def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is used to archive the postmortem logs.
