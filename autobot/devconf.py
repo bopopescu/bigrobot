@@ -623,10 +623,15 @@ class MininetDevConf(DevConf):
             # Must specify a "sensible" term type to avoid the screen error
             # "Clear screen capability required."
             self.send("export TERM=vt100")
-            self.expect(quiet=True)
+            self.expect(quiet=False)
             self.send("screen")
             self.expect(r'.*Press Space or Return to end.*')
-            self.send("")
+            self.send(" ", no_cr=True)
+
+            # Important: Sleep a little big to ensure we get back the shell
+            # prompt before issuing the command to start up Mininet.
+            helpers.sleep(0.5)
+
             self.start_mininet()
 
     def is_cli(self):
@@ -720,7 +725,11 @@ class MininetDevConf(DevConf):
                         % (self.name(), new_topology))
 
         _cmd = self.mininet_cmd()
-        self.cli(_cmd, quiet=False)
+        content = self.cli(_cmd, quiet=False)['content']
+        if not helpers.any_match(content, r'Starting CLI'):
+            helpers.environment_failure("Mininet CLI did not start correctly")
+        else:
+            helpers.log("Mininet CLI started correctly")
         self.state = 'started'
 
     def stop_mininet(self):
