@@ -3,6 +3,9 @@ import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
 import autobot.utils as br_utils
 import re
+import telnetlib
+import time
+import sys
 
 
 class Test(object):
@@ -832,7 +835,7 @@ class Test(object):
         n_console.send('')
 
         # Match login or CLI prompt.
-        match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace])
+        match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace], timeout=600)
         if match[0] == 0:
             login()  # Found login prompt. Attempt to authenticate.
         elif match[0] == 1:
@@ -842,8 +845,32 @@ class Test(object):
             login()
         elif match[0] == 2:
                 helpers.log("Found a switch Crash Needs a power cycle...")
-                helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
-                helpers.exit_robot_immediately("Needs power cycle of the switch that crashed..")
+                helpers.log("Power cycling switch : %s " % node)
+                pdu_ip = self.params(node, 'pdu')['ip']
+                pdu_port = self.params(node, 'pdu')['port']
+                tn = telnetlib.Telnet(pdu_ip)
+                tn.set_debuglevel(10)
+                tn.read_until("User Name : ", 10)
+                tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+                tn.read_until("Password  : ", 10)
+                tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+                tn.read_until(">", 10)
+                tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+                time.sleep(4)
+                output = tn.read_very_eager()
+                helpers.log(output)
+                reboot_cmd = 'olReboot %s' % str(pdu_port)
+                tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+                time.sleep(4)
+                output = tn.read_very_eager()
+                helpers.log(output)
+                helpers.sleep(120)
+                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+                self.dev_console(node, modeless=True)
+
+
+#                 helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
+#                 helpers.exit_robot_immediately("Needs power cycle of the switch that crashed..")
 
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
@@ -1072,6 +1099,8 @@ class Test(object):
         if not helpers.is_switch(name):
             return True
         console = self.params(name, 'console')
+        c1_ip = self.params('c1', 'ip')
+        c2_ip = self.params('c2', 'ip')
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
@@ -1107,6 +1136,11 @@ class Test(object):
         master.config("show version")
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
+        con.send('rm -rf /mnt/flash/boot-config')
+        con.send('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+        con.send('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+        con.send('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+        con.send('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
@@ -1193,7 +1227,7 @@ class Test(object):
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
-                helpers.sleep(180)
+                helpers.sleep(60)
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
