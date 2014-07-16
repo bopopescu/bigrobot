@@ -287,18 +287,20 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             Return: true if configuration is successful, false otherwise
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.10.0.0/16"] {"next-hop": {"tenant-name": "system"}, "dest-ip-subnet": "10.10.0.0/16"}
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.192.0.0/16"] {"dest-ip-subnet": "10.192.0.0/16"}
+            REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/routes[dest-ip-subnet="10.99.0.0/24"] {"next-hop": {"next-hop-group": "AA2"}, "dest-ip-subnet": "10.99.0.0/24"}
 
         '''
 
         t = test.Test()
         c = t.controller('master')
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/routes' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/routes[dest-ip-subnet="%s"]' % (tenant, dstroute)
 
         if nexthop is not None:
             try:
                 nexthop_dict = helpers.from_json(nexthop)
-                c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
+                #c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
+                c.rest.put(url, {"next-hop": {"next-hop": nexthop_dict, "dest-ip-subnet": dstroute }})
             except:
                 helpers.test_failure(c.rest.error())
             else:
