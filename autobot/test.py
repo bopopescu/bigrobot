@@ -767,7 +767,7 @@ class Test(object):
             c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node, modeless=False):
+    def dev_console(self, node, modeless=False, ztn_boot=False):
         """
         Telnet to the console of a BSN controller or switch.
 
@@ -821,21 +821,60 @@ class Test(object):
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
         spine_stack_trace = r'Call Trace:'
+        ztn_success_message = r'Loading startup-config from ZTN...done.'
+        spine_error = r'phy device not initialized'
 
         def login():
             helpers.log("Found the login prompt. Sending user name.")
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli], timeout=600)
+            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error], timeout=600)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
-                match = n_console.expect(prompt=prompt_device_cli)
+                match = n_console.expect(prompt=[prompt_device_cli, spine_error])
+            elif match[0] == 2:
+                helpers.log("Found Spine Console Error: phy device not initialized !!!")
+                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+                con = self.dev_console(node, modeless=True)
+                con.send('admin')
+                helpers.sleep(2)
+                con.send('adminadmin')
+                helpers.sleep(2)
+                con.send('enable;conf;no snmp-server enable')
+                con = self.dev_console(node)
         n_console.send('')
+        # if ztn boot match for ztn config success
+        if ztn_boot:
+            match = n_console.expect(prompt=[ztn_success_message, spine_stack_trace, spine_error], timeout=600)
+            if match[0] == 0:
+                helpers.log("ZTN load config on switch Success !!!")
+            elif match[0] == 1:
+                helpers.log("Found a switch Crash Needs to power cycle...")
+                helpers.log("Power cycling switch : %s " % node)
+                power_cycle()
+                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+                n_console = self.dev_console(node, modeless=True)
+                n_console.send('admin')
+                helpers.sleep(2)
+                n_console.send('adminadmin')
+                helpers.sleep(2)
+                n_console.send('enable;conf;no snmp-server enable')
+                n_console = self.dev_console(node, ztn_boot=True)
+            elif match[0] == 2:
+                helpers.log("Found Spine Console Error: phy device not initialized !!!")
+                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+                con = self.dev_console(node, modeless=True)
+                con.send('admin')
+                helpers.sleep(2)
+                con.send('adminadmin')
+                helpers.sleep(2)
+                con.send('enable;conf;no snmp-server enable')
+                con = self.dev_console(node)
 
         # Match login or CLI prompt.
-        match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace], timeout=600)
+        match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error], timeout=600)
         if match[0] == 0:
             login()  # Found login prompt. Attempt to authenticate.
         elif match[0] == 1:
@@ -854,7 +893,17 @@ class Test(object):
             n_console.send('adminadmin')
             helpers.sleep(2)
             n_console.send('enable;conf;no snmp-server enable')
-            n_console = self.dev_console(node)
+            n_console = self.dev_console(node, ztn_boot=True)
+        elif match[0] == 3:
+            helpers.log("Found Spine Console Error: phy device not initialized !!!")
+            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+            con = self.dev_console(node, modeless=True)
+            con.send('admin')
+            helpers.sleep(2)
+            con.send('adminadmin')
+            helpers.sleep(2)
+            con.send('enable;conf;no snmp-server enable')
+            con = self.dev_console(node)
 
         def power_cycle():
             pdu_ip = self.params(node, 'pdu')['ip']
@@ -1179,7 +1228,7 @@ class Test(object):
         else:
             fabric_role = 'leaf'
             helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
+            con = self.dev_console(name, ztn_boot=True)
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
