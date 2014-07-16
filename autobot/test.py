@@ -866,7 +866,13 @@ class Test(object):
                 helpers.log(output)
                 helpers.sleep(120)
                 helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                self.dev_console(node, modeless=True)
+                n_console = self.dev_console(node, modeless=True)
+                n_console.send('admin')
+                helpers.sleep(2)
+                n_console.send('adminadmin')
+                helpers.sleep(2)
+                n_console.send('enable;conf;no snmp-server enable')
+                n_console = self.dev_console(node)
 
 
 #                 helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
