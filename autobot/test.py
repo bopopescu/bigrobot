@@ -836,14 +836,14 @@ class Test(object):
         if match[0] == 0:
             login()  # Found login prompt. Attempt to authenticate.
         elif match[0] == 1:
-            helpers.log("Found the device prompt. Exiting system.")
+            helpers.log("Found the BSN device prompt. Exiting system.")
             n_console.send('logout')
             match = n_console.expect(prompt=[prompt_login])
             login()
         elif match[0] == 2:
-                helpers.log("Found a switch Crash Needs a power cycle...")
-                helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
-                helpers.exit_robot_immediately("Needs power cycle of the switch that crashed..")
+            helpers.log("Found a crashed switch. Needs a power cycle.")
+            helpers.log("Exiting the tests now. Until power cycle is supported with new PDU's.")
+            helpers.exit_robot_immediately("Need to power cycle switch that crashed.")
 
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
