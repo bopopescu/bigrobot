@@ -53,6 +53,9 @@ class TestCatalog(object):
             return {}
         return config['aggregated_builds'][build_name]
 
+    def find_test_cases_archive(self, query):
+        return self.test_cases_archive_collection().find(query)
+
     def find_test_cases_archive_matching_build(self, build_name):
         query = {"build_name": build_name}
         return self.test_cases_archive_collection().find(query)

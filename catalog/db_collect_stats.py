@@ -21,8 +21,11 @@ helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 
-def print_stat(descr, val, untested=None, test_pct=None):
-    if test_pct != None:
+def print_stat(descr, val, untested=None, test_pct=None, manual=None):
+    if manual != None:
+        print("%-74s %22s  %-22s %8.1f%%  %s" %
+              (descr, val, "manual-untested(%s)" % untested, test_pct, "manual(%s)" % manual))
+    elif test_pct != None:
         print("%-74s %22s  %-22s %8.1f%%" %
               (descr, val, "manual-untested(%s)" % untested, test_pct))
     elif untested != None:
@@ -65,7 +68,7 @@ def print_suites_not_executed(suites, suites_executed):
 
 
 def test_percentage(executable, total):
-    if executable == 0:
+    if float(total) == 0.0:
         return 0.0  # avoid divide by zero
     else:
         return float(executable) / float(total) * 100.0
@@ -124,46 +127,37 @@ def display_stats(args):
                total_tc,
                total_tc_untested,
                total_tc_pct,
+               total_tc_manual,
                )
     total['tests'] = total_tc
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
-        total_tc_untested = ih.total_testcases_by_tag([functionality,
-                                                       "manual-untested"])[0]
-        test_pct = test_percentage(total_tc_func - total_tc_untested, total_tc_func)
+        total_tc_func_untested = ih.total_testcases_by_tag([functionality, "manual-untested"])[0]
+        total_tc_func_manual = ih.total_testcases_by_tag([functionality, "manual"])[0]
+        test_pct = test_percentage(total_tc_func - total_tc_func_untested, total_tc_func)
         print_stat("Total %s tests:" % functionality,
                    total_tc_func,
-                   total_tc_untested,
+                   total_tc_func_untested,
                    test_pct,
+                   total_tc_func_manual,
                    )
         total[functionality] = total_tc
 
     total_tc_executable = ih.total_executable_testcases()
     print_stat("Total executable test cases:", total_tc_executable)
 
-    if False:
-        print_stat("Automation pct (executable):",
-                   "%0.1f%%" % (
-                                (float(total_tc_executable) - float(total_tc_manual))
-                                / float(total_tc_executable) * 100.0))
-
-        print_stat("Automation pct (total):",
-                   "%0.1f%%" % (
-                                (float(total_tc) - (float(total_tc_manual) + float(total_tc_untested)))
-                                / float(total_tc) * 100.0))
-
     total_tc_automated = total_tc - total_tc_manual - total_tc_untested
     print_stat("Total automated test cases:",
                total_tc_automated,
                0,
-               float(total_tc_automated) / float(total_tc) * 100.0)
+               test_percentage(total_tc_automated, total_tc))
 
     total_tc_automated_executable = total_tc_executable - total_tc_manual
     print_stat("Total automated/executable test cases:",
                total_tc_automated_executable,
                0,
-               float(total_tc_automated_executable) / float(total_tc_executable) * 100.0)
+               test_percentage(total_tc_automated_executable, total_tc_executable))
 
     total_testsuites_in_release_executed = ih.total_testsuites_executed(
                build_name=build)[0]
@@ -215,10 +209,7 @@ def display_stats(args):
                                                              feature])
         untested = ih.total_testcases_by_tag([functionality, feature,
                                               "manual-untested"])[0]
-        if total_executed[0] == 0:
-            test_pct = 0.0
-        else:
-            test_pct = float(total_executed[0]) / float(total_tc) * 100.0
+        test_pct = test_percentage(total_executed[0], total_tc)
         print_stat("Total %s+%s tests (total, executed, passed, failed):"
                    % (functionality, feature),
                    (total_tc,) + total_executed,
