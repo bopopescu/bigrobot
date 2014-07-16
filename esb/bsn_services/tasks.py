@@ -23,7 +23,8 @@ def add(x, y):
 
     print("*** helpers.bigrobot_path: %s" % helpers.bigrobot_path())
     print("*** helpers.bigrobot_log_path: %s" % helpers.bigrobot_log_path())
-    print("*** helpers.bigrobot_log_path_exec_instance: %s" % helpers.bigrobot_log_path_exec_instance())
+    print("*** helpers.bigrobot_log_path_exec_instance: %s"
+          % helpers.bigrobot_log_path_exec_instance())
 
     return result
 
