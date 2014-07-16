@@ -14,11 +14,16 @@ Library         keywords/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library         keywords/Host.py
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_variables.txt
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+Resource		testsuites_dev/slim/T5_L3_dc/t5_layer3_dc_variables.txt
+Resource		testsuites_dev/slim/T5_L3_dc/t5_layer3_dc_resources.txt
 
 
 * Test Cases
+Basic setup test
+    Basic setup test
+    [Tags]                                  smoke               sanity              run99
+    
+
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
 	[Tags]									smoke				sanity				run
@@ -245,6 +250,11 @@ Verify clear blocked endpoint works
     
     
 * Keywords
+Basic setup test
+    
+    
+    
+
 L3 intra tenant same rack untagged with dynamic endpoints
 	${ipAddr4} = 								BASH get interface ipv4 		h4-rack0						bond0
 	Should Not Be Empty							${ipAddr4}
@@ -1355,82 +1365,43 @@ Activate and deactivate router interface
       
     
 initialize host
+	BASH delete tag										h1-rack0								bond0.1001				soft_error=${true}
+	BASH delete tag										h2-rack0								bond0.1002				soft_error=${true}
+	BASH delete tag										h3-rack0								bond0.1003				soft_error=${true}
+	BASH delete tag										h4-rack0								bond0.1004				soft_error=${true}
+	BASH delete tag										h5-rack0								bond0.1005				soft_error=${true}	
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
-	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
-	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
-	BASH delete tag										h9-rack0								bond0.1009				soft_error=${true}
-	BASH delete tag										h10-rack0								bond0.1010				soft_error=${true}	
-	BASH delete tag										h3-rack1								bond0.2003				soft_error=${true}
-	BASH delete tag										h4-rack1								bond0.2004				soft_error=${true}	
-	
-	BASH delete route									h4-rack0								10.251.2.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.251.3.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.252.0.0/16			10.251.1.1
-	BASH delete route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH delete route									h5-rack0								10.251.1.0/24			10.251.2.1
-  	BASH delete route									h5-rack0								10.251.3.0/24			10.251.2.1
-	BASH delete route									h5-rack0								10.252.0.0/16			10.251.2.1
-  	BASH delete route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH delete route									h6-rack0								10.251.1.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.251.2.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.252.0.0/16			10.251.3.1
-  	BASH delete route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH delete route									h7-rack0								10.252.2.0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.252.3/0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.251.0.0/16			10.252.1.1
-  	BASH delete route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH delete route									h8-rack0								10.252.1.0/24			10.252.2.1
-  	BASH delete route									h8-rack0								10.252.3.0/24			10.252.2.1
-	BASH delete route									h8-rack0								10.251.0.0/16			10.252.2.1
-  	BASH delete route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH delete route									h9-rack0								10.252.1.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.252.2.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.251.0.0/16			10.252.3.1
-  	BASH delete route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH delete route									h10-rack0								10.253.2.0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.253.3/0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.251.0.0/16			10.253.1.1
-  	BASH delete route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH delete route									h1-rack1								10.253.1.0/24			10.253.2.1
-  	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
-	BASH delete route									h1-rack1 								10.251.0.0/16			10.253.2.1
-  	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1	
+	BASH delete route									h1-rack0								10.251.0.0/16			10.251.1.1
+	BASH init intf								h1-rack0								bond0
+	BASH init intf								h2-rack0								bond0
+	BASH init intf								h3-rack0								bond0
 	BASH init intf								h4-rack0								bond0
 	BASH init intf								h5-rack0								bond0
 	BASH init intf								h6-rack0								bond0
-	BASH init intf								h7-rack0								bond0
-	BASH init intf								h8-rack0								bond0
-	BASH init intf								h9-rack0								bond0
-	BASH init intf								h10-rack0								bond0
-	BASH init intf								h1-rack1								bond0
-	BASH ifdown intf							h4-rack0 								bond0
+	BASH ifdown intf							h1-rack0 								bond0
+	BASH ifdown intf							h2-rack0								bond0
+	BASH ifdown intf							h3-rack0								bond0
+	BASH ifdown intf							h4-rack0								bond0
 	BASH ifdown intf							h5-rack0								bond0
 	BASH ifdown intf							h6-rack0								bond0
-	BASH ifdown intf							h7-rack0								bond0
-	BASH ifdown intf							h8-rack0								bond0
-	BASH ifdown intf							h9-rack0								bond0
-	BASH ifdown intf							h10-rack0								bond0
-	BASH ifdown intf							h1-rack1								bond0
+	BASH release dhcpv4 address					h1-rack0								bond0
+	BASH release dhcpv4 address					h2-rack0								bond0
+	BASH release dhcpv4 address					h3-rack0								bond0
 	BASH release dhcpv4 address					h4-rack0								bond0
 	BASH release dhcpv4 address					h5-rack0								bond0
 	BASH release dhcpv4 address					h6-rack0								bond0
-	BASH release dhcpv4 address					h7-rack0								bond0
-	BASH release dhcpv4 address					h8-rack0								bond0
-	BASH release dhcpv4 address					h9-rack0								bond0
-	BASH release dhcpv4 address					h10-rack0								bond0
-	BASH release dhcpv4 address					h1-rack1								bond0
+	BASH ifup intf								h1-rack0								eth2
+	BASH ifup intf								h1-rack0								eth3
+	BASH ifup intf								h2-rack0								eth2
+	BASH ifup intf								h2-rack0								eth3
+	BASH ifup intf								h3-rack0								eth2
+	BASH ifup intf								h3-rack0								eth3
 	BASH ifup intf								h4-rack0								eth2
 	BASH ifup intf								h4-rack0								eth3
 	BASH ifup intf								h5-rack0								eth2
 	BASH ifup intf								h5-rack0								eth3
 	BASH ifup intf								h6-rack0								eth2
 	BASH ifup intf								h6-rack0								eth3
-	BASH ifup intf								h7-rack0								eth2
-	BASH ifup intf								h7-rack0								eth3
-	BASH ifup intf								h8-rack0								eth2
-	BASH ifup intf								h8-rack0								eth3
-	BASH ifup intf								h9-rack0								eth2
-	BASH ifup intf								h9-rack0								eth3
 
 setup topology
 	initialize host
@@ -1472,237 +1443,15 @@ setup topology
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
 	REST add vns ip									Z							Arista30		10.99.0.2				24
 	REST add vns ip									Z							Arista29		10.98.0.2				24
-	REST add ecmp group								Z							ecmp-Arista
-	REST add gw pool nexthop						Z							ecmp-Arista		10.99.0.1
-	REST add gw pool nexthop						Z							ecmp-Arista		10.98.0.1
-	REST add static routes							Z							192.168.0.0/24						{"ecmp-group-name": "ecmp-Arista"}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}	
-	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc5_intf2}					${leaf0_pc5}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf1}					${leaf0_pc6}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc6_intf2}					${leaf0_pc6}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc7_intf1}					${leaf0_pc7}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc7_intf2}					${leaf0_pc7}
-  	REST add interface to portgroup					leaf0-a						${leaf0_pc8_intf1}					${leaf0_pc8}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc8_intf2}					${leaf0_pc8}
-  	REST add interface to portgroup					leaf0-a						${leaf0_pc9_intf1}					${leaf0_pc9}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc9_intf2}					${leaf0_pc9}  	
-  	REST add interface to portgroup					leaf0-a						${leaf0_pc10_intf1}					${leaf0_pc10}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc10_intf2}					${leaf0_pc10}
-  	REST add interface to portgroup					leaf0-a						${leaf0_pc11_intf1}					${leaf0_pc11}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc11_intf2}					${leaf0_pc11}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc3_intf1}					${leaf1_pc3}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc3_intf2}					${leaf1_pc3}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc4_intf1}					${leaf1_pc4}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc4_intf2}					${leaf1_pc4}
-	
-	REST add interface to portgroup					leaf0-a						${leaf0_arista1_intf1}				${leaf0_arista1}
-  	REST add interface to portgroup					leaf0-b						${leaf0_arista1_intf2}				${leaf0_arista1}
-	REST add interface to portgroup					leaf0-a						${leaf0_arista2_intf1}				${leaf0_arista2}
-  	REST add interface to portgroup					leaf0-b						${leaf0_arista2_intf2}				${leaf0_arista2}  	
-  	REST add interface to portgroup					leaf3-a						${leaf3a_arista29_intf1}			${leaf3a_arista2}  	
-  	REST add interface to portgroup					leaf3-a						${leaf3a_arista29_intf2}			${leaf3a_arista2}  	
-   	REST add interface to portgroup					leaf3-a						${leaf3a_arista30_intf1}			${leaf3a_arista1}  	
-   	REST add interface to portgroup					leaf3-a						${leaf3a_arista30_intf2}			${leaf3a_arista1}  	
-  	REST add interface to portgroup					leaf3-b						${leaf3b_arista29_intf1}			${leaf3b_arista2}  	
-  	REST add interface to portgroup					leaf3-b						${leaf3b_arista29_intf2}			${leaf3b_arista2}  	
-   	REST add interface to portgroup					leaf3-b						${leaf3b_arista30_intf1}			${leaf3b_arista1}  	
-   	REST add interface to portgroup					leaf3-b						${leaf3b_arista30_intf2}			${leaf3b_arista1}  	
-  	
-	REST add portgroup lacp							${leaf0_pc1}
-  	REST add portgroup lacp							${leaf0_pc2}
-  	REST add portgroup lacp							${leaf0_pc3}
-  	REST add portgroup lacp							${leaf0_pc4}
-  	REST add portgroup lacp							${leaf0_pc5}
-  	REST add portgroup lacp							${leaf0_pc6}
-  	REST add portgroup lacp							${leaf0_pc7}
-  	REST add portgroup lacp							${leaf0_pc8}
-  	REST add portgroup lacp							${leaf0_pc9}  	
-    REST add portgroup lacp							${leaf0_pc10}
-  	REST add portgroup lacp							${leaf0_pc11}  
-  	REST add portgroup lacp							${leaf1_pc1}
-  	REST add portgroup lacp							${leaf1_pc2}
-  	REST add portgroup lacp							${leaf1_pc3}
-  	REST add portgroup lacp							${leaf1_pc4}
-  	REST add portgroup lacp							${leaf0_arista1}
-  	REST add portgroup lacp							${leaf0_arista2}
-  	REST add portgroup lacp							${leaf3a_arista1}
-  	REST add portgroup lacp							${leaf3b_arista2}
-  	REST add portgroup lacp							${leaf3a_arista1}
-  	REST add portgroup lacp							${leaf3b_arista2}
-  		
-  	REST add portgroup to vns						X								X1						${leaf0_pc4}			-1
-	REST add portgroup to vns						X								X2						${leaf0_pc5}			-1
-	REST add portgroup to vns						X								X3						${leaf0_pc6}			1006
-	REST add portgroup to vns						Y								Y1						${leaf0_pc7}			1007
-	REST add portgroup to vns						Y								Y2						${leaf0_pc8}			1008
-	REST add portgroup to vns						Y								Y3						${leaf0_pc9}			1009
-	REST add portgroup to vns						Z								Z1						${leaf0_pc10}			1010
-	REST add portgroup to vns						Z								Z2						${leaf0_pc11}			-1
-#	REST add portgroup to vns						Z								Z3						${leaf0_pc12}			-1
-	REST add portgroup to vns						Z								Arista30				${leaf0_arista1} 		-1
-	REST add portgroup to vns						Z								Arista29				${leaf0_arista2} 		-1
-	REST add portgroup to vns						X								X1						${leaf1_pc1}	 		-1
-	REST add portgroup to vns						Y								Y1						${leaf1_pc2}	 		-1
-	REST add portgroup to vns						X								X2						${leaf1_pc3}	 		2003
-	REST add portgroup to vns						Y								Y2						${leaf1_pc4}	 		2004
+	REST add nexthop group                          Z                           AA1
+    REST add nexthopGroup ip                        Z                           AA1            10.99.0.1
+    REST add nexthopGroup ip                        Z                           AA1            10.98.0.1
+	REST add static routes							Z							192.168.0.0/24						{"next-hop-group": "AA1"}
 
-	BASH ifup intf									h4-rack0 								bond0
-	BASH ifup intf									h5-rack0								bond0
-	BASH ifup intf									h6-rack0								bond0
-	BASH ifup intf									h7-rack0								bond0	
-	BASH ifup intf									h8-rack0								bond0	
-	BASH ifup intf									h9-rack0								bond0	
-	BASH ifup intf									h10-rack0								bond0	
-	BASH ifup intf									h1-rack1								bond0	
-	BASH ifup intf									h2-rack1								bond0	
-	BASH ifup intf									h3-rack1								bond0	
-	BASH ifup intf									h4-rack1								bond0	
-	BASH add tag									h6-rack0								bond0					1006
-	BASH add tag									h7-rack0								bond0					1007
-	BASH add tag									h8-rack0								bond0					1008
-	BASH add tag									h9-rack0								bond0					1009
-	BASH add tag									h10-rack0								bond0					1010
-	BASH add tag									h3-rack1								bond0					2003
-	BASH add tag									h4-rack1								bond0					2004
-	BASH ifup intf									h6-rack0								bond0.1006
-	BASH ifup intf									h7-rack0								bond0.1007
-	BASH ifup intf									h8-rack0								bond0.1008
-	BASH ifup intf									h9-rack0								bond0.1009
-	BASH ifup intf									h10-rack0								bond0.1010
-	BASH ifup intf									h3-rack1								bond0.2003
-	BASH ifup intf									h4-rack1								bond0.2004
-	BASH ifconfig ip address						h4-rack0								10.251.1.11/24			bond0	
-	BASH ifconfig ip address						h5-rack0								10.251.2.11/24			bond0
-	BASH ifconfig ip address						h6-rack0								10.251.3.11/24			bond0.1006
-	BASH ifconfig ip address						h7-rack0								10.252.1.11/24			bond0.1007
-	BASH ifconfig ip address						h8-rack0								10.252.2.11/24			bond0.1008
-	BASH ifconfig ip address						h9-rack0								10.252.3.11/24			bond0.1009
-	BASH ifconfig ip address						h10-rack0								10.253.1.11/24			bond0.1010
-	BASH ifconfig ip address						h1-rack1								10.251.1.21/24			bond0
-	BASH ifconfig ip address						h3-rack1								10.251.2.23/24			bond0.2003
-	BASH add route									h4-rack0								10.251.0.0/16			10.251.1.1
-	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
-	BASH add route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH add route									h5-rack0								10.251.0.0/16			10.251.2.1
-	BASH add route									h5-rack0								10.252.0.0/16			10.251.2.1
-  	BASH add route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH add route									h6-rack0								10.251.0.0/16			10.251.3.1
-  	BASH add route									h6-rack0								10.252.0.0/16			10.251.3.1
-  	BASH add route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH add route									h7-rack0								10.251.0.0/16			10.252.1.1
-  	BASH add route									h7-rack0								10.252.0.0/16			10.252.1.1
-  	BASH add route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
-	BASH add route									h8-rack0								10.252.0.0/16			10.252.2.1
-  	BASH add route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH add route									h9-rack0								10.251.0.0/16			10.252.3.1
-  	BASH add route									h9-rack0								10.252.0.0/16			10.252.3.1
-  	BASH add route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
-  	BASH add route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH add route									h10-rack0								10.253.0.0/16			10.253.1.1
-  	BASH add route									h1-rack1								10.251.0.0/16			10.251.1.1
-  	BASH add route									h1-rack1								10.252.0.0/16			10.251.1.1
-	BASH add route									h1-rack1								10.253.0.0/16			10.251.1.1
-  	BASH add route									h3-rack1								10.251.0.0/16			10.251.2.1
-	BASH add route									h3-rack1								10.252.0.0/16			10.251.2.1
-  	BASH add route									h3-rack1								10.253.0.0/16			10.251.2.1	
-	REST add tenant routers intf to system			X
-	REST add tenant routers intf to system			Y
-	REST add tenant routers intf to system			Z
-	REST add system intf to tenant routers 			X
-	REST add system intf to tenant routers 			Y
-	REST add system intf to tenant routers 			Z
-	REST add static routes							X							0.0.0.0/0		 {"tenant-name": "system"}
-	REST add static routes							Y							0.0.0.0/0		 {"tenant-name": "system"}  	
-  	REST add static routes							Z							0.0.0.0/0		 {"tenant-name": "system"}  
   	
 teardown topology
 	delete traffic
-	REST delete vns ip  							X							X1				10.251.1.1				24	
-	REST delete vns ip  							X							X2				10.251.2.1				24	
-	REST delete vns ip  							X							X3				10.251.3.1				24	
-	REST delete vns ip  							Y							Y1				10.252.1.1				24	
-	REST delete vns ip  							Y							Y2				10.252.2.1				24	
-	REST delete vns ip  							Y							Y3				10.252.3.1				24	
-	REST delete vns ip  							Z							Z1				10.253.1.1				24	
-	REST delete vns ip  							Z							Z2				10.253.2.1				24	
-	REST delete vns ip  							Z							Z3				10.253.3.1				24	
-	REST delete vns									X							X1
-	REST delete vns									X							X2
-	REST delete vns									X							X3
-	REST delete vns									Y							Y1
-	REST delete vns									Y							Y2
-	REST delete vns									Y							Y3
-	REST delete vns									Z							Z1
-	REST delete vns									Z							Z2
-	REST delete vns									Z							Z3
-	initialize host
-    BASH delete route                               h4-rack0                                10.251.0.0/16           10.251.1.1
-    BASH delete route                               h4-rack0                                10.252.0.0/16           10.251.1.1
-    BASH delete route                               h4-rack0                                10.253.0.0/16           10.251.1.1
-    BASH delete route                               h5-rack0                                10.251.0.0/16           10.251.2.1
-    BASH delete route                               h5-rack0                                10.252.0.0/16           10.251.2.1
-    BASH delete route                               h5-rack0                                10.253.0.0/16           10.251.2.1
-    BASH delete route                               h6-rack0                                10.251.0.0/16           10.251.3.1
-    BASH delete route                               h6-rack0                                10.252.0.0/16           10.251.3.1
-    BASH delete route                               h6-rack0                                10.253.0.0/16           10.251.3.1
-    BASH delete route                               h7-rack0                                10.251.0/0/16           10.252.1.1
-    BASH delete route                               h7-rack0                                10.252.0.0/16           10.252.1.1
-    BASH delete route                               h7-rack0                                10.253.0.0/16           10.252.1.1
-    BASH delete route                               h8-rack0                                10.251.0.0/16           10.252.2.1
-    BASH delete route                               h8-rack0                                10.252.0.0/16           10.252.2.1
-    BASH delete route                               h8-rack0                                10.253.0.0/16           10.252.2.1
-    BASH delete route                               h9-rack0                                10.251.0.0/16           10.252.3.1
-    BASH delete route                               h9-rack0                                10.252.0.0/16           10.252.3.1
-    BASH delete route                               h9-rack0                                10.253.0.0/16           10.252.3.1
-    BASH delete route                               h10-rack0                               10.251.0.0/16           10.253.1.1
-    BASH delete route                               h10-rack0                               10.252.0.0/16           10.253.1.1
-    BASH delete route                               h10-rack0                               10.253.0.0/16           10.253.1.1
-    BASH delete route                               h1-rack1                                10.251.0.0/16           10.251.1.1
-    BASH delete route                               h1-rack1                                10.252.0.0/16           10.251.1.1
-    BASH delete route                               h1-rack1                                10.253.0.0/16           10.251.1.1
-    BASH delete route                               h3-rack1                                10.251.0.0/16           10.251.2.1
-    BASH delete route                               h3-rack1                                10.252.0.0/16           10.251.2.1
-    BASH delete route                               h3-rack1                                10.253.0.0/16           10.251.2.1  
-	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
-	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
-	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
-	BASH delete tag										h9-rack0								bond0.1009				soft_error=${true}
-	BASH delete tag										h10-rack0								bond0.1010				soft_error=${true}
-	BASH delete tag										h3-rack1								bond0.2003				soft_error=${true}
-	BASH delete tag										h4-rack1								bond0.2004				soft_error=${true}
-	BASH init intf										h4-rack0 								bond0
-	BASH init intf										h5-rack0								bond0
-	BASH init intf										h6-rack0								bond0
-	BASH init intf										h7-rack0								bond0	
-	BASH init intf										h8-rack0								bond0	
-	BASH init intf										h9-rack0								bond0	
-	BASH init intf										h10-rack0								bond0	
-	BASH init intf										h1-rack1								bond0	
-	BASH init intf										h3-rack1								bond0	
-	REST delete tenant routers intf to system			X
-	REST delete tenant routers intf to system			Y
-	REST delete tenant routers intf to system			Z									
-	REST delete system intf to tenant routers			X
-	REST delete system intf to tenant routers			Y
-	REST delete system intf to tenant routers			Z
-	REST delete tenant									X
-	REST delete tenant									Y
-	REST delete tenant									Z
-	
+
 
 T5 base suite setup
 	base suite setup
@@ -1744,79 +1493,10 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s9							c2
 	Should Be True									${result}
-	${result} = 									CLI verify controller       s10							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s10							c2
-	Should Be True									${result}						
-	REST add portgroup								${leaf0_pc1}
-	REST add portgroup								${leaf0_pc2}
-	REST add portgroup								${leaf0_pc3}
-	REST add portgroup								${leaf0_pc4}
-	REST add portgroup								${leaf0_pc5}
-	REST add portgroup								${leaf0_pc6}
-	REST add portgroup								${leaf0_pc7}			
-	REST add portgroup								${leaf0_pc8}	
-	REST add portgroup								${leaf0_pc9}
-	REST add portgroup								${leaf0_pc10}			
-	REST add portgroup								${leaf0_pc11}
-	REST add portgroup								${leaf1_pc1}
-	REST add portgroup								${leaf1_pc2}
-	REST add portgroup								${leaf1_pc3}
-	REST add portgroup								${leaf1_pc4}
-	REST add portgroup								${leaf0_arista1}
-	REST add portgroup								${leaf0_arista2}
-  	REST add portgroup 								${leaf3a_arista1}
-  	REST add portgroup 								${leaf3b_arista2}
-  	REST add portgroup 								${leaf3a_arista1}
-  	REST add portgroup 								${leaf3b_arista2}
-
 	
 T5 base suite teardown
-  	REST delete portgroup lacp							${leaf0_pc1}
-  	REST delete portgroup lacp							${leaf0_pc2}
-  	REST delete portgroup lacp							${leaf0_pc3}
-  	REST delete portgroup lacp							${leaf0_pc4}
-  	REST delete portgroup lacp							${leaf0_pc5}
-  	REST delete portgroup lacp							${leaf0_pc6}
-  	REST delete portgroup lacp							${leaf0_pc7}
-  	REST delete portgroup lacp							${leaf0_pc8}
-  	REST delete portgroup lacp							${leaf0_pc9}
-  	REST delete portgroup lacp							${leaf0_pc10}
-  	REST delete portgroup lacp							${leaf0_pc11}
   	REST delete portgroup								${leaf0_pc1}
-	REST delete portgroup								${leaf0_pc2}
-	REST delete portgroup								${leaf0_pc3}
-	REST delete portgroup								${leaf0_pc4}
-	REST delete portgroup								${leaf0_pc5}
-	REST delete portgroup								${leaf0_pc6}	
-	REST delete portgroup								${leaf0_pc7}
-	REST delete portgroup								${leaf0_pc8}	
-	REST delete portgroup								${leaf0_pc9}	
-	REST delete portgroup								${leaf0_pc10}
-	REST delete portgroup								${leaf0_pc11}
-	REST delete portgroup								${leaf1_pc1}
-	REST delete portgroup								${leaf1_pc2}
-	REST delete portgroup								${leaf1_pc3}
-	REST delete portgroup								${leaf1_pc4}	
-	REST delete portgroup								${leaf0_arista1}
-	REST delete portgroup								${leaf0_arista2}
-  	REST delete portgroup 								${leaf3a_arista1}
-  	REST delete portgroup 								${leaf3b_arista2}
-  	REST delete portgroup 								${leaf3a_arista1}
-  	REST delete portgroup 								${leaf3b_arista2}	
-#    BASH network restart                                h2-rack0                                timeout=60
-#    BASH network restart                                h3-rack0                                timeout=60
-#    BASH network restart                                h4-rack0                                timeout=60
-#    BASH network restart                                h5-rack0                                timeout=60
-#    BASH network restart                                h6-rack0                                timeout=60
-#    BASH network restart                                h7-rack0                                timeout=60
-#    BASH network restart                                h8-rack0                                timeout=60
-#    BASH network restart                                h9-rack0                                timeout=60
-#    BASH network restart                                h10-rack0                               timeout=60
-#    BASH network restart                                h1-rack1                                timeout=60
-#    BASH network restart                                h2-rack1                                timeout=60
-#    BASH network restart                                h3-rack1                                timeout=60
-#    BASH network restart                                h3-rack1                                timeout=60  	
+
 	delete fabric switch  
 
 
