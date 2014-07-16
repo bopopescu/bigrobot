@@ -1193,7 +1193,7 @@ class Test(object):
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
+                helpers.sleep(180)
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
