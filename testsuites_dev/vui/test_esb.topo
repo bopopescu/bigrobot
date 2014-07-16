@@ -1,0 +1,5 @@
+common:
+  user_switch_image: /etc/hosts
+c1:
+  ip: dummy
+  #http_port: 8080
