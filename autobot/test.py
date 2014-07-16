@@ -827,7 +827,7 @@ class Test(object):
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli])
+            match = n_console.expect(prompt=[prompt_password, prompt_device_cli], timeout=600)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
@@ -844,35 +844,39 @@ class Test(object):
             match = n_console.expect(prompt=[prompt_login])
             login()
         elif match[0] == 2:
-                helpers.log("Found a switch Crash Needs a power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                pdu_ip = self.params(node, 'pdu')['ip']
-                pdu_port = self.params(node, 'pdu')['port']
-                tn = telnetlib.Telnet(pdu_ip)
-                tn.set_debuglevel(10)
-                tn.read_until("User Name : ", 10)
-                tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-                tn.read_until("Password  : ", 10)
-                tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-                tn.read_until(">", 10)
-                tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-                time.sleep(4)
-                output = tn.read_very_eager()
-                helpers.log(output)
-                reboot_cmd = 'olReboot %s' % str(pdu_port)
-                tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-                time.sleep(4)
-                output = tn.read_very_eager()
-                helpers.log(output)
-                helpers.sleep(120)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
+            helpers.log("Found a switch Crash Needs to power cycle...")
+            helpers.log("Power cycling switch : %s " % node)
+            power_cycle()
+            helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+            n_console = self.dev_console(node, modeless=True)
+            n_console.send('admin')
+            helpers.sleep(2)
+            n_console.send('adminadmin')
+            helpers.sleep(2)
+            n_console.send('enable;conf;no snmp-server enable')
+            n_console = self.dev_console(node)
+
+        def power_cycle():
+            pdu_ip = self.params(node, 'pdu')['ip']
+            pdu_port = self.params(node, 'pdu')['port']
+            tn = telnetlib.Telnet(pdu_ip)
+            tn.set_debuglevel(10)
+            tn.read_until("User Name : ", 10)
+            tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+            tn.read_until("Password  : ", 10)
+            tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+            tn.read_until(">", 10)
+            tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+            time.sleep(4)
+            output = tn.read_very_eager()
+            helpers.log(output)
+            reboot_cmd = 'olReboot %s' % str(pdu_port)
+            tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+            time.sleep(4)
+            output = tn.read_very_eager()
+            helpers.log(output)
+            helpers.sleep(120)
+
 
 
 #                 helpers.log("Exiting the tests now ..Until Power cycle is added with new PDU's")
@@ -1233,7 +1237,7 @@ class Test(object):
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
-                helpers.sleep(60)
+                helpers.sleep(120)
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
@@ -1253,6 +1257,9 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
+            return
         n = self.topology(name)
 
         if not n.devconf():
