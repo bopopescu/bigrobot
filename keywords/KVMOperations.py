@@ -131,14 +131,14 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type='bvs',
+    def _get_latest_jenkins_build_number(self, vm_type='bcf',
                                          jenkins_server=JENKINS_SERVER,
                                          jenkins_user=JENKINS_USER,
                                          jenkins_password=JENKINS_PASSWORD):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
-        if vm_type == 'bvs':
+        if vm_type == 'bcf':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/t6-mininet-vm/builds | grep lastSuccessfulBuild')['content']
@@ -147,10 +147,10 @@ class KVMOperations(object):
         latest_build_number = output_lines[1].split('->')[-1]
         return latest_build_number.strip()
 
-    def _get_latest_kvm_build_number(self, vm_type='bvs', kvm_handle=None):
+    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None):
         output = None
-        if vm_type == 'bvs':
-            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
+        if vm_type == 'bcf':
+            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs | awk \'{print $9}\'')['content']
             output_lines = output.split('\n')
             latest_image = output_lines[-2]
             match = re.match(r'.*bvs-(\d+).*', latest_image)
@@ -169,7 +169,7 @@ class KVMOperations(object):
                 return 0
 
 
-    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs", build_number=None):
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bcf", build_number=None):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
@@ -194,7 +194,7 @@ class KVMOperations(object):
             latest_build_number = build_number
             latest_kvm_build_number = build_number
         file_name = None
-        if vm_type == 'bvs':
+        if vm_type == 'bcf':
             file_name = "controller-bvs-%s.qcow2" % latest_build_number
         elif vm_type == 'mininet':
             file_name = "mininet-%s.qcow2" % latest_build_number
@@ -283,7 +283,7 @@ class KVMOperations(object):
             kvm_user = kwargs.get("kvm_user", KVM_USER)
             kvm_password = kwargs.get("kvm_password", KVM_PASSWORD)
             vm_host_name = kwargs.get("vm_host_name", None)
-            vm_type = kwargs.get("vm_type", "bvs")
+            vm_type = kwargs.get("vm_type", "bcf")
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
@@ -298,8 +298,8 @@ class KVMOperations(object):
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             os.makedirs(self.log_path)
 
-            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
-            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2")
+            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
+            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
@@ -471,7 +471,7 @@ class KVMOperations(object):
 
     def create_vm_on_kvm_host(self, **kwargs):
         vm_name = kwargs.get("vm_name", None)
-        vm_type = kwargs.get("vm_type", "bvs")
+        vm_type = kwargs.get("vm_type", "bcf")
         kvm_vmdk_path = kwargs.get("qcow_path", None)
         kvm_handle = kwargs.get("kvm_handle", None)
         kvm_host = kwargs.get("kvm_host", None)
