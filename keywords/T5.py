@@ -1428,6 +1428,9 @@ class T5(object):
         return False
 
     def rest_delete_fabric_role(self, switch, role=None):
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN is enabled , should not be adding switch again..")
+            return True
         t = test.Test()
         c = t.controller('master')
 
