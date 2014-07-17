@@ -858,7 +858,7 @@ class Test(object):
         elif match[0] == 2:
             helpers.log("Found a switch Crash Needs to power cycle...")
             helpers.log("Power cycling switch : %s " % node)
-            power_cycle()
+            self.power_cycle(node)
             helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
             n_console = self.dev_console(node, modeless=True)
             n_console.send('admin')
@@ -866,7 +866,7 @@ class Test(object):
             n_console.send('adminadmin')
             helpers.sleep(2)
             n_console.send('enable;conf;no snmp-server enable')
-            n_console = self.dev_console(node, ztn_boot=True)
+            n_console = self.dev_console(node)
         elif match[0] == 3:
             helpers.log("Found Spine Console Error: phy device not initialized !!!")
             helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
@@ -878,35 +878,33 @@ class Test(object):
             con.send('enable;conf;no snmp-server enable')
             con.send('')
             con = self.dev_console(node)
-            helpers.log("Found a crashed switch. Needs a power cycle.")
-            helpers.log("Exiting the tests now. Until power cycle is supported with new PDU's.")
-            helpers.exit_robot_immediately("Need to power cycle switch that crashed.")
 
-        def power_cycle():
-            pdu_ip = self.params(node, 'pdu')['ip']
-            pdu_port = self.params(node, 'pdu')['port']
-            tn = telnetlib.Telnet(pdu_ip)
-            tn.set_debuglevel(10)
-            tn.read_until("User Name : ", 10)
-            tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-            tn.read_until("Password  : ", 10)
-            tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-            tn.read_until(">", 10)
-            tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-            time.sleep(4)
-            output = tn.read_very_eager()
-            helpers.log(output)
-            reboot_cmd = 'olReboot %s' % str(pdu_port)
-            tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-            time.sleep(4)
-            output = tn.read_very_eager()
-            helpers.log(output)
-            helpers.sleep(120)
+
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
         return n_console
 
+    def power_cycle(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olReboot %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.sleep(120)
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
