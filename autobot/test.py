@@ -1274,6 +1274,13 @@ class Test(object):
                 master.enable("copy config://ztn-base-config running-config ")
                 master.enable("show running-config")
                 master.enable("show switch")
+                helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
+                for key in params:
+                    self.setup_ztn_phase2(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
+                master = self.controller("master")
+                master.enable("show switch")
 
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
