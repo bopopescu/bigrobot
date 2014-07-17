@@ -767,7 +767,7 @@ class Test(object):
             c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node, modeless=False, ztn_boot=False):
+    def dev_console(self, node, modeless=False):
         """
         Telnet to the console of a BSN controller or switch.
 
@@ -821,7 +821,6 @@ class Test(object):
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
         spine_stack_trace = r'Call Trace:'
-        ztn_success_message = r'Loading startup-config from ZTN...done.'
         spine_error = r'phy device not initialized'
 
         def login():
@@ -843,35 +842,9 @@ class Test(object):
                 con.send('adminadmin')
                 helpers.sleep(2)
                 con.send('enable;conf;no snmp-server enable')
+                con.send('')
                 con = self.dev_console(node)
         n_console.send('')
-        # if ztn boot match for ztn config success
-        if ztn_boot:
-            match = n_console.expect(prompt=[ztn_success_message, spine_stack_trace, spine_error], timeout=600)
-            if match[0] == 0:
-                helpers.log("ZTN load config on switch Success !!!")
-            elif match[0] == 1:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                power_cycle()
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node, ztn_boot=True)
-            elif match[0] == 2:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con = self.dev_console(node)
 
         # Match login or CLI prompt.
         match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error], timeout=600)
@@ -903,6 +876,7 @@ class Test(object):
             con.send('adminadmin')
             helpers.sleep(2)
             con.send('enable;conf;no snmp-server enable')
+            con.send('')
             con = self.dev_console(node)
 
         def power_cycle():
@@ -1195,12 +1169,13 @@ class Test(object):
         master.config("show version")
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
-        con.send('rm -rf /mnt/flash/boot-config')
-        con.send('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-        con.send('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-        con.send('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-        con.send('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+        con.bash('rm -rf /mnt/flash/boot-config')
+        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
+        con.send('')
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
@@ -1228,7 +1203,7 @@ class Test(object):
         else:
             fabric_role = 'leaf'
             helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name, ztn_boot=True)
+            con = self.dev_console(name)
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
@@ -1294,8 +1269,16 @@ class Test(object):
                               % helpers.prettify(params))
                 master = self.controller("master")
                 master.enable("show switch")
+                master.enable("copy running-config config://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
+                master = self.controller("master")
+                master.enable("show switch")
+                master.enable("copy config://ztn-base-config running-config ")
+                master.enable("show running-config")
+                master.enable("show switch")
 
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
