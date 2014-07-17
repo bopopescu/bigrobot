@@ -121,6 +121,7 @@ Verify single VNS rx/tx stats between rack
     sleep  2
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
+    pause
     sleep  30
     rest verify vns rx stats  t1  v1  10000
     sleep  2

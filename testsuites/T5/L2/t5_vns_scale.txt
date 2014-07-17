@@ -122,7 +122,7 @@ Master controller node reboot with 4k vns
     Should not be True  ${result}
 
 create 4000 vns and all interface ,verify the table and forwarding
-	[Tags]  L2  scaling  IronHorse       
+	[Tags]  L2  scaling  IronHorse  run       
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns

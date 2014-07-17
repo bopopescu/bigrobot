@@ -851,7 +851,7 @@ class Test(object):
         if match[0] == 0:
             login()  # Found login prompt. Attempt to authenticate.
         elif match[0] == 1:
-            helpers.log("Found the device prompt. Exiting system.")
+            helpers.log("Found the BSN device prompt. Exiting system.")
             n_console.send('logout')
             match = n_console.expect(prompt=[prompt_login])
             login()
@@ -878,6 +878,9 @@ class Test(object):
             con.send('enable;conf;no snmp-server enable')
             con.send('')
             con = self.dev_console(node)
+            helpers.log("Found a crashed switch. Needs a power cycle.")
+            helpers.log("Exiting the tests now. Until power cycle is supported with new PDU's.")
+            helpers.exit_robot_immediately("Need to power cycle switch that crashed.")
 
         def power_cycle():
             pdu_ip = self.params(node, 'pdu')['ip']
