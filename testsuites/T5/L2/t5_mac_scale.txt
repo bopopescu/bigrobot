@@ -569,7 +569,7 @@ Add 4k static endpoints and check the forwarding
     stop traffic  ${stream}
 	    
 Add 8k static endpoints and check the forwarding
-	[Tags]  L2  scaling  IronHorse  run 
+	[Tags]  L2  scaling  IronHorse  skipped  
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  4000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  4000
 	sleep  5
@@ -582,7 +582,7 @@ Add 8k static endpoints and check the forwarding
     stop traffic  ${stream}
 
 Add 16k static endpoints and check the forwarding also check with master reboot
-	[Tags]  L2  scaling  IronHorse  run
+	[Tags]  L2  scaling  IronHorse  skipped
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  5
