@@ -50,6 +50,7 @@ def test_and_install_package():
                 'scp': 'scp',
                 'pexpect': 'pexpect',
                 'robotframework': 'robot',
+                'celery': 'celery',
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
                 }

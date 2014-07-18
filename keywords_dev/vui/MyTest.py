@@ -608,9 +608,40 @@ vui@Vuis-MacBook-Pro$
         from bsn_services import tasks
 
         t = test.Test()
-        helpers.log("*** params: %s" % helpers.prettify(t.params()))
+        helpers.log("***** params: %s" % helpers.prettify(t.params()))
 
-        res1 = tasks.cli_show_running_config.delay(node, t.params())
-        helpers.log("*** res1: %s" % res1)
+        results = []
+        result_dict = {}
 
+        results.append(tasks.cli_show_running_config.delay(node, t.params()))
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": node, "action": "show running-config" }
+
+        results.append(tasks.cli_show_version.delay(node, t.params()))
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": node, "action": "show version" }
+
+        results.append(tasks.cli_show_user.delay(node, t.params()))
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": node, "action": "show user" }
+
+        is_pending = True
+        while is_pending:
+            is_pending = False
+            helpers.sleep(1)
+            for res in results:
+                if res.ready() == False:
+                    helpers.log("****** task_id(%s) is ready" % res.task_id)
+                else:
+                    helpers.log("****** task_id(%s) is NOT ready" % res.task_id)
+                    is_pending = True
+
+        for res in results:
+            task_id = res.task_id
+            output = res.get()
+            result_dict[task_id]["result"] = output
+
+        helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
+
+        return True
 
