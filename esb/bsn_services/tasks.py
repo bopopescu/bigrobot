@@ -41,10 +41,41 @@ def json_to_dict(json_str):
 
 @app.task
 def cli_show_running_config(node, params):
-    print("*** node: %s" % node)
-    print("*** params: %s" % helpers.prettify(params))
-
+    helpers.bigrobot_esb('True')
+    helpers.bigrobot_topology_for_esb(params)
     t = test.Test()
     n = t.node(node)
-    content = n.enable("show running-configuration")['content']
+    content = n.enable("show running-config")['content']
+    return content
+
+
+@app.task
+def cli_show_version(node, params):
+    helpers.bigrobot_esb('True')
+    helpers.bigrobot_topology_for_esb(params)
+    t = test.Test()
+    n = t.node(node)
+    content = n.cli("show version")['content']
+    del t
+    return content
+
+
+def run_sub_task(node):
+    t = test.Test()
+    helpers.summary_log("**** Sub_task")
+    n = t.node(node)
+    n.bash('uname -a')
+
+
+@app.task
+def cli_show_user(node, params):
+    helpers.bigrobot_esb('True')
+    helpers.bigrobot_topology_for_esb(params)
+    t = test.Test(reset_instance=True)
+    n = t.node(node)
+
+    # helpers.summary_log("*** I am here")
+    # n = t.node_connect(node)
+    content = n.cli("show user")['content']
+    run_sub_task(node)
     return content

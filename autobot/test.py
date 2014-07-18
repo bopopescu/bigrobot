@@ -5,7 +5,6 @@ import autobot.utils as br_utils
 import re
 import telnetlib
 import time
-import sys
 
 
 class Test(object):
@@ -36,6 +35,46 @@ class Test(object):
             self._current_controller_master = None
             self._current_controller_slave = None
             self._settings = {}
+
+            # ESB environment:
+            # Per convention, the consumer will pass the params data to the
+            # producer (the worker). The params data has all the details about
+            # the test topology which the producer can use to instantiate a
+            # new test handle (an object of the Test class). The producer has
+            # to prepare the test environment using the steps below.
+            #
+            # - Save the params data, the YAML string contained in env
+            #   BIGROBOT_TOPOLOGY_FOR_ESB into a topo file
+            # - Point env BIGROBOT_TOPOLOGY to the new topo file
+            # - Unset env BIGROBOT_TESTBED (used for dynamic topology)
+            #   - Since params data already contains the expanded topo info
+            # - Unset env BIGROBOT_PARAMS_INPUT (used for dynamic topology)
+            # - Diable test setup
+            # - Disable test postmortem
+            # - Disable test clean config
+            # - Disable test ZTN
+            # - Don't ping or connect to devices during initialization
+            #   (see initialization())
+            #
+            if helpers.is_esb():
+                helpers.summary_log("Enterprise Service Bus (ESB) environment")
+
+                if helpers.bigrobot_topology_for_esb().lower() == 'none':
+                    helpers.environment_failure(
+                                    "Env BIGROBOT_TOPOLOGY_FOR_ESB must be"
+                                    " defined when running under the"
+                                    " ESB environment")
+                params_file = helpers.params_to_file(
+                                    helpers.bigrobot_topology_for_esb(),
+                                    path=helpers.bigrobot_log_path_exec_instance())
+                helpers.summary_log("ESB BIGROBOT_TOPOLOGY: %s"
+                                    % helpers.bigrobot_topology(params_file))
+                helpers.remove_env("BIGROBOT_TESTBED")
+                helpers.remove_env("BIGROBOT_PARAMS_INPUT")
+                helpers.bigrobot_test_setup("False")
+                helpers.bigrobot_test_postmortem("False")
+                helpers.bigrobot_test_clean_config("False")
+                helpers.bigrobot_test_ztn("False")
 
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
@@ -156,6 +195,9 @@ class Test(object):
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
 
+            if helpers.bigrobot_topology() == None:
+                helpers.environment_failure("Environment variable BIGROBOT_TOPOLOGY is not defined.")
+
             self.merge_params_attributes(helpers.bigrobot_params())
             if helpers.bigrobot_additional_params() is None:
                 helpers.log("Skip merging additional params..")
@@ -170,7 +212,7 @@ class Test(object):
             """
             Reading from params file and merge attributes with topo file
             """
-            if params_file.lower() == 'none':
+            if params_file == None or params_file.lower() == 'none':
                 return True
 
             if helpers.file_not_exists(params_file):
@@ -246,8 +288,13 @@ class Test(object):
             helpers.log("Node aliases:\n%s"
                         % helpers.prettify(self._node_static_aliases))
 
-    def __init__(self):
-        if Test._instance is None:
+    def __init__(self, reset_instance=False):
+        """
+        In ESB environment, we want to overwrite the singletone object
+        everytime we start a new worker task. This can be done by setting
+        reset_instance=True.
+        """
+        if Test._instance is None or reset_instance:
             Test._instance = Test.Singleton()
         self._EventHandler_instance = Test._instance
 
@@ -417,6 +464,14 @@ class Test(object):
             return node
         elif name:
             name = self.alias(name, ignore_error=ignore_error)
+
+            if name not in self._topology and name in self.params():
+                # In certain condition (e.g., ESB environment), we don't
+                # connect to the devices during Test initialization. But if
+                # the device handle is requested then call node_connect() to
+                # retrieve it.
+                self.node_connect(name)
+
             if name not in self._topology:
                 if ignore_error:
                     return None
@@ -905,6 +960,7 @@ class Test(object):
         output = tn.read_very_eager()
         helpers.log(output)
         helpers.sleep(120)
+
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
@@ -949,18 +1005,21 @@ class Test(object):
 
         helpers.debug("List of nodes (controllers must appear first): %s"
                       % list_of_nodes)
-        for key in list_of_nodes:
-            self.node_connect(key,
-                              controller_ip=controller_ip,
-                              controller_ip2=controller_ip2)
+
+        if helpers.is_esb():
+            helpers.summary_log("ESB environment - don't ping/connect to"
+                                " nodes during Test initialization")
+        else:
+            for key in list_of_nodes:
+                self.node_connect(key,
+                                  controller_ip=controller_ip,
+                                  controller_ip2=controller_ip2)
 
         self._init_completed = True  # pylint: disable=W0201
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
 
         helpers.debug("Final topology_params: %s" % self.topology_params())
-
-
 
     def init_completed(self):
         """
