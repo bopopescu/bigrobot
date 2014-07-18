@@ -1,15 +1,24 @@
 import os
 import sys
 import re
+import errno
+import datetime
 import inspect
 import getpass
+import logging
 import gobot
-from robot.api import logger
+from pytz import timezone
+from robot.api import logger as robot_logger
 
 
 class Log(object):
     """
     Singleton logger. Autobot applications should write to a common log file.
+    Use Robot Framework's logger facility if running in Robot environment
+    (env IS_GOBOT=True). Else use Python's logging facility.
+
+    If IS_GOBOT is not True, do:
+      export AUTOBOT_LOG=/path/to/bigrobot.log
     """
     log_file = None
     is_gobot = None
@@ -30,6 +39,40 @@ class Log(object):
                 Log.log_file = '/tmp/autobot_%s.log' % user
             else:
                 Log.log_file = name
+            os.environ["AUTOBOT_LOG"] = Log.log_file
+
+            # Make sure path to log file exists
+            path_name = os.path.dirname(Log.log_file)
+            self.mkdir_p(path_name)
+
+            if not gobot.is_gobot():
+                default_level = logging.DEBUG
+                logging.basicConfig(format=self.ts_logger() + " - %(levelname)s : %(message)s",
+                                    filename=Log.log_file,
+                                    level=default_level)
+
+    def ts_logger(self):
+        """
+        Return the current timestamp in local time (string format which is
+        compatible with the Robot Framework logger format)
+        e.g., 20140429 15:01:51.039
+        """
+        _TZ = timezone("America/Los_Angeles")
+        local_datetime = datetime.datetime.now(_TZ)
+        return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
+
+    def mkdir_p(self, path):
+        """
+        Works like 'mkdir -p' (create intermediate directories as required.
+        Borrowed from
+        http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
+        """
+        try:
+            os.makedirs(path)
+        except OSError as exc:  # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else: raise
 
     def _format_log(self, s, level):
         if level:
@@ -51,60 +94,49 @@ class Log(object):
         else:
             return "%s\n" % s
 
-    def _write_to_file(self, msg):
-        if Log.log_file is None:
-            # Probably impossible to reach here...
-            raise RuntimeError("You must specify an Autobot log file")
-        f = open(Log.log_file, "a")
-        f.write(msg)
-        f.close()
-
     def log(self, s, level=1, to_stderr=False, log_level='info'):
         """
         Write to INFO log by default.
         """
+        level += 1
+        log_level = log_level.lower()
+        if log_level == 'info':
+            self.info(s, level=level, also_console=to_stderr)
+        elif log_level == 'warn':
+            self.warn(s, level=level)
+        elif log_level == 'debug':
+            self.debug(s, level=level)
+        else:
+            self.trace(s, level=level)  # last resort
+
+    def info(self, s, level=1, also_console=False):
         msg = self._format_log(s, level)
         if not gobot.is_gobot():
-            # This is the log to use outside of gobot environment, such as for
-            # standalone applications.
-            if to_stderr:
+            if also_console:
                 sys.stderr.write(s + '\n')
-            self._write_to_file('INFO ' + msg)
+            logging.info(msg.strip())
         else:
-            if to_stderr:
-                # sys.stderr.write('\n' + msg)
-                logger.info(msg, also_console=True)
-
-            log_level = log_level.lower()
-            if log_level == 'info':
-                logger.info(msg)
-            elif log_level == 'warn':
-                logger.warn(msg)
-            elif log_level == 'debug':
-                logger.debug(msg)
-            else:
-                logger.trace(msg)  # last resort
-
-    # Alias
-    info = log
+            robot_logger.info(msg, also_console=also_console)
 
     def warn(self, s, level=1):
         msg = self._format_log(s, level)
         if not gobot.is_gobot():
-            self._write_to_file('WARN ' + msg)
+            logging.warn(msg.strip())
         else:
-            logger.warn(msg)
+            robot_logger.warn(msg)
 
     def debug(self, s, level=1):
         msg = self._format_log(s, level)
         if not gobot.is_gobot():
-            self._write_to_file('DEBUG ' + msg)
+            logging.debug(msg.strip())
         else:
-            logger.debug(msg)
+            robot_logger.debug(msg)
 
     def trace(self, s, level=1):
         msg = self._format_log(s, level)
         if not gobot.is_gobot():
-            self._write_to_file('TRACE ' + msg)
+            # Python logging module doesn't support trace log level, so
+            # improvise with debug.
+            logging.debug("TRACE: " + msg.strip())
         else:
-            logger.trace(msg)
+            robot_logger.trace(msg)

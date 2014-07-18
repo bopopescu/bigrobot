@@ -59,6 +59,8 @@ class Node(object):
             helpers.log("'set_init_ping' is disabled for '%s', bypassing"
                         " initial ping"
                         % name)
+        if helpers.is_esb():
+            helpers.summary_log("ESB environment - bypassing initial ping")
         else:
             self.pingable_or_die()
 

@@ -17,7 +17,7 @@ if 'BIGROBOT_TESTBED' in os.environ:
     print "Unsetting env BIGROBOT_TESTBED..."
     del os.environ['BIGROBOT_TESTBED']
 
-vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/"
 kvm_user = "root"
@@ -51,7 +51,7 @@ Example:
 $ time vm_setup c1
 Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_amallina.log
 Creating VM with Name : amallina_c1_04011013
-1. Success Copying Latest BVS VMDK to /var/lib/libvirt/images/amallina_c1_04011013.vmdk on KVM Host!!
+1. Success Copying Latest bcf VMDK to /var/lib/libvirt/images/amallina_c1_04011013.vmdk on KVM Host!!
 2. Success Creating VM with Name: amallina_c1_04011013 on KVM_Host: 10.192.104.13
 3. Success configuring first boot Controller IP : 10.192.94.230
 Success !!!
@@ -65,9 +65,9 @@ Below is adding a slave to above created VM using above IP Address:
 $ time vm_setup c2 10.192.94.230
 Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_amallina.log
 Creating VM with Name : amallina_c2_04011017
-1. Success Copying Latest BVS VMDK to /var/lib/libvirt/images/amallina_c2_04011017.vmdk on KVM Host!!
+1. Success Copying Latest bcf VMDK to /var/lib/libvirt/images/amallina_c2_04011017.vmdk on KVM Host!!
 2. Success Creating VM with Name: amallina_c2_04011017 on KVM_Host: 10.192.104.13
-Success Adding BVS VM to Cluster !
+Success Adding bcf VM to Cluster !
 3. Success configuring first boot Controller IP : 10.192.94.252
 Success !!!
 
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     parser.add_argument("--standby_ip",
                         help="This ip is used for standby vm")
     parser.add_argument("--cluster_ip",
-                        help="This ip is used as Cluster IP while configurint first boot for created bvs VM")
+                        help="This ip is used as Cluster IP while configurint first boot for created bcf VM")
     parser.add_argument("--netmask",
                         help="This netmask is used to configure both active and standby vms")
     parser.add_argument("--qcow_path",
@@ -195,7 +195,7 @@ if __name__ == '__main__':
     parser.add_argument("--active_ip",
                         help="This IP will be configured for the spawned VM")
     parser.add_argument("--vm_type",
-                        help="Please provide type as bvs/mininet")
+                        help="Please provide type as bcf/mininet")
     parser.add_argument("--build_number",
                         help="This build will be picked from jenkins")
     parser.add_argument("--gateway",

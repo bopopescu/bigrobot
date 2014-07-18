@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from celery import Celery
 
+# RabbitMQ Web GUI: http://qa-esb1.qa.bigswitch.com:15672/
 app = Celery('bsn_services',
              broker='amqp://guest@qa-esb1.qa.bigswitch.com//',
              backend='amqp://guest@qa-esb1.qa.bigswitch.com//',
