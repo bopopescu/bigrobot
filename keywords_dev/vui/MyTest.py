@@ -603,9 +603,7 @@ vui@Vuis-MacBook-Pro$
         helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)
 
     def test_esb(self, node):
-        esb_path = helpers.bigrobot_path() + '/esb'
-        sys.path.insert(1, esb_path)
-        from bsn_services import tasks
+        from bsn_services import sample_method_tasks as tasks
 
         t = test.Test()
         helpers.log("***** params: %s" % helpers.prettify(t.params()))
@@ -613,15 +611,8 @@ vui@Vuis-MacBook-Pro$
         results = []
         result_dict = {}
 
-        results.append(tasks.cli_show_running_config.delay(node, t.params()))
-        task_id = results[-1].task_id
-        result_dict[task_id] = { "node": node, "action": "show running-config" }
-
-        results.append(tasks.cli_show_version.delay(node, t.params()))
-        task_id = results[-1].task_id
-        result_dict[task_id] = { "node": node, "action": "show version" }
-
-        results.append(tasks.cli_show_user.delay(node, t.params()))
+        task = tasks.BsnCommands()
+        results.append(task.cli_show_user.delay(node, t.params()))
         task_id = results[-1].task_id
         result_dict[task_id] = { "node": node, "action": "show user" }
 
@@ -644,4 +635,3 @@ vui@Vuis-MacBook-Pro$
         helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
 
         return True
-
