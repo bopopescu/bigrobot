@@ -288,12 +288,16 @@ class Test(object):
             helpers.log("Node aliases:\n%s"
                         % helpers.prettify(self._node_static_aliases))
 
-    def __init__(self, reset_instance=False):
+    def __init__(self, reset_instance=False, esb=False, params=None):
         """
         In ESB environment, we want to overwrite the singletone object
         everytime we start a new worker task. This can be done by setting
         reset_instance=True.
         """
+        if esb:
+            reset_instance = True
+            helpers.bigrobot_esb('True')
+            helpers.bigrobot_topology_for_esb(params)
         if Test._instance is None or reset_instance:
             Test._instance = Test.Singleton()
         self._EventHandler_instance = Test._instance
