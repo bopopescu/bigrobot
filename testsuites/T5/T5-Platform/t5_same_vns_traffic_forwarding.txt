@@ -36,7 +36,6 @@ Verify ICMP Packet of death
     ...     src_mac=00:15:65:33:BA:AC  dst_mac=FF:FF:FF:FF:FF:FF
     ...     src_ip=10.41.22.248   dst_ip=10.41.22.99  name=a_b_flow
     ...     src_gw=10.41.22.99   dst_gw=10.41.22.248  no_arp=True  
-    pause
     clear stats  
     start traffic  ${stream}
     sleep  5
