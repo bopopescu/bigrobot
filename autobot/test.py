@@ -942,8 +942,8 @@ class Test(object):
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        helpers.log("Sleeping 2 minutes for the switch to come up after power Cycle...")
-        helpers.sleep(120)
+        helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
+        helpers.sleep(300)
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
