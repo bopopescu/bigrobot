@@ -714,7 +714,7 @@ T24 Interface tenant add/remove deny policy src-vns to any
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
-	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  srcdata=${src_dict}  
+	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  srcdata=${src_dict}  
 	rest apply policy on tenant					X			${tenant1_polname}
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
