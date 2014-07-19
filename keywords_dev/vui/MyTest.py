@@ -602,15 +602,72 @@ vui@Vuis-MacBook-Pro$
     def test_run_cmd(self):
         helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)
 
-    def test_esb(self, node):
-        esb_path = helpers.bigrobot_path() + '/esb'
-        sys.path.insert(1, esb_path)
-        from bsn_services import tasks
+    def test_esb(self, nodes):
+        from bsn_services import sample_method_tasks as tasks
 
         t = test.Test()
-        helpers.log("*** params: %s" % helpers.prettify(t.params()))
+        helpers.log("***** params: %s" % helpers.prettify(t.params()))
 
-        res1 = tasks.cli_show_running_config.delay(node, t.params())
-        helpers.log("*** res1: %s" % res1)
+        results = []
+        result_dict = {}
 
+        task = tasks.BsnCommands()
 
+        #
+        # Parallel execution happens below
+        #
+
+        # Task 1
+        res1 = task.cli_show_user.delay(t.params(), nodes[0])
+        results.append(res1)
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": nodes[0], "action": "show user" }
+
+        # Task 2
+        res1 = task.cli_show_running_config.delay(t.params(), nodes[1])
+        results.append(res1)
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": nodes[1], "action": "show running-config" }
+
+        # More tasks
+        for node in nodes:
+            res1 = task.cli_show_version.delay(t.params(), node)
+            results.append(res1)
+            task_id = results[-1].task_id
+            result_dict[task_id] = { "node": node, "action": "show version" }
+
+        # ...and so on...
+
+        #
+        # Check task status - are we done yet?
+        #
+        is_pending = True
+        iteration = 0
+        while is_pending:
+            is_pending = False
+            iteration += 1
+            helpers.sleep(1)
+            for res in results:
+                task_id = res.task_id
+                action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
+                if res.ready() == True:
+                    helpers.log("****** %d.READY     - task_id(%s)['%s']"
+                                % (iteration, res.task_id, action))
+                else:
+                    helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
+                                % (iteration, res.task_id, action))
+                    is_pending = True
+
+        helpers.log("*** Parallel tasks completed")
+
+        #
+        # Check task output
+        #
+        for res in results:
+            task_id = res.task_id
+            output = res.get()
+            result_dict[task_id]["result"] = output
+
+        helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
+
+        return True
