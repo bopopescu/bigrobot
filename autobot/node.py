@@ -55,12 +55,13 @@ class Node(object):
             helpers.environment_failure("IP address for '%s' is 'dummy'."
                                         " Needs to be populated."
                                         % self.name())
-        if helpers.params_is_false('set_init_ping', self.node_params):
+        if helpers.is_esb():
+            helpers.summary_log("ESB environment - bypassing initial ping")
+
+        elif helpers.params_is_false('set_init_ping', self.node_params):
             helpers.log("'set_init_ping' is disabled for '%s', bypassing"
                         " initial ping"
                         % name)
-        if helpers.is_esb():
-            helpers.summary_log("ESB environment - bypassing initial ping")
         else:
             self.pingable_or_die()
 
