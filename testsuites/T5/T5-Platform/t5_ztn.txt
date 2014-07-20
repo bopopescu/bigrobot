@@ -84,21 +84,21 @@ T1.3. Check supported platforms of SWI and installer
 
 T1.4. Check Running config for a switch
 	Cli Run  master  show run
-	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
-	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
-	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
-
+    Reboot Switches From CLI
+	Verify All Switches Running Config
 
 T1.5. Check Startup config for a switch
 	Cli Run  master  show run
-	#Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+    Reboot Switches From CLI
+	Verify All Switches Startup Config
 
 T1.6. Test switch reboot
 	#Telnet Reboot Switch  s1
+	#Sleep  5
 	Telnet Reboot Switch  s2
+	Sleep  5
 	Telnet Reboot Switch  s3
+	Sleep  5
 	Telnet Reboot Switch  s4
 
 	#Telnet Wait For Switch To Reload s1
@@ -106,16 +106,17 @@ T1.6. Test switch reboot
 	Telnet Wait For Switch To Reload  s3
 	Telnet Wait For Switch To Reload  s4
 
-T1.7. Reboot and stop at loader shell
-	Telnet Reboot Switch  s1
-	Telnet Stop Autoboot  s1
-	Telnet Reboot Switch  s1
-	[Tags]  skipped
+T1.7. Reboot all switches from CLI
+	Cli Reboot Switch  master  all
+	Cli Reboot Switch  slave  all
 
 T1.8. Reboot switches from CLI
 	#Cli Reboot Switch  master  ${s1_alias}
+	#Sleep  5
 	Cli Reboot Switch  master  ${s2_mac}
+	Sleep  5
 	Cli Reboot Switch  master  ${s3_ip}
+	Sleep  5
 	Cli Reboot Switch  master  ${s4_alias}
 
 	#Telnet Wait For Switch To Reload  s1
@@ -124,36 +125,42 @@ T1.8. Reboot switches from CLI
 	Telnet Wait For Switch To Reload  s4
 
 	Sleep  20
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
 
-	#Verify Switch Handshake State  ${s1_alias}
-	Verify Switch Handshake State  ${s2_alias}
-	Verify Switch Handshake State  ${s3_alias}
-	Verify Switch Handshake State  ${s4_alias}
-
-	Cli Run  master  show run
-	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
-	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
-	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
-	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
-
-T1.9. Verify startup config after failvoer
+T1.9. Verify startup config after failover
+    Reboot Switches From CLI
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 	Failover
+	Cli Run  master  show run
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 
-T1.10. Verify switches Switchlight version
+T1.10. Verify switches Switchlight SWI version
+	Verify Switch SWI Version  ${s1_alias}
+	Verify Switch SWI Version  ${s2_alias}
+	Verify Switch SWI Version  ${s3_alias}
 	Verify Switch SWI Version  ${s4_alias}
-T1.11. Verify switches Switchlight version
+T1.11. Verify switches Switchlight Installer version
+	Verify Switch Installer Version  ${s1_alias}
+	Verify Switch Installer Version  ${s2_alias}
+	Verify Switch Installer Version  ${s3_alias}
 	Verify Switch Installer Version  ${s4_alias}
-T1.12. Reset switch to factory default
-	Telnet Reset Switch to Factory Default  ${s4_alias}
+
+#T1.12. Reset switch to factory default
+#	Telnet Reset Switch to Factory Default  ${s4_alias}
+
+T1.13. Reboot and stop at loader shell
+	Telnet Reboot Switch  s1
+	Telnet Stop Autoboot  s1
+	Telnet Reboot Switch  s1
+	[Tags]  skipped
 
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:33:44:55:66
@@ -232,17 +239,24 @@ T0.4. Show remote
 
 # Switch in provisioned mode
 T5.3.1. Disconnect, change config, reconnect, reload
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Telnet Set MA1 State  s2  up
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify All Switches Startup Config
+	Telnet Set All MA1 State  up
+	Sleep  10
+	Verify All Switches Connected
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
 
 T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
-	Reboot Switches
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -254,16 +268,19 @@ T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.3.3. Disconnect, change config, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify All Switches Startup Config
+	Reboot Switches
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
 
 T5.3.4. Disconnect, delete, reboot
-	Reboot Switches
+	Cli Reboot Switch  master  all
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -274,18 +291,24 @@ T5.3.4. Disconnect, delete, reboot
 	[Tags]  skipped
 
 T5.3.5. Disconnect, change config, failover, reconnect, reload
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
 	Failover
+	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Telnet Set MA1 State  s2  up
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify All Switches Startup Config
+	Telnet Set All MA1 State  up
+	Sleep  10
+	Verify All Switches Connected
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
 
 T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Reboot Switches
+	Cli Reboot Switch  master  all
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -298,7 +321,8 @@ T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.3.7. Disconnect, change config, failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
@@ -320,7 +344,8 @@ T5.3.8. Disconnect, delete, failover, reboot
 	[Tags]  skipped
 
 T5.3.9. Disconnect, change config, double failover, reconnect, reload
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
@@ -347,7 +372,8 @@ T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.3.11. Disconnect, change config, double failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
@@ -396,7 +422,8 @@ T2.1.7. Verify that unconfigured switch does not receive image
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
@@ -417,7 +444,8 @@ T2.2.1. Verify that switch is successfully provisioned when no fabric role for t
 
 
 T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
@@ -439,7 +467,8 @@ T2.2.2. Verify that switch is successfully provisioned when no fabric role for t
 
 
 T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s1_alias}
 	Cli Run  master  switch ${s1_alias}
@@ -460,7 +489,8 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	[Tags]  skipped
 
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s1_alias}
 	Cli Run  master  switch ${s1_alias}
@@ -484,7 +514,8 @@ T2.2.4. Verify that switch is successfully provisioned and no flows for given sp
 
 
 T2.2.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
@@ -505,7 +536,8 @@ T2.2.5. Verify that switch is successfully provisioned and flows installed for g
 
 
 T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
@@ -528,7 +560,8 @@ T2.2.6. Verify that switch is successfully provisioned and no flows for given le
 
 
 T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not receive SWI image
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
@@ -548,7 +581,8 @@ T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not r
 	[Tags]  skipped
 
 T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not receive Installer image
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
@@ -594,7 +628,8 @@ T3.2. Verify that after ZTN configuration change (CLI, GUI, REST), admin is noti
 	[Tags]  manual-untested
 #we eventually expect to do this automatically, but this does not happen currently
 T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Copy  running-config  config://temp-config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
@@ -616,7 +651,8 @@ T3.3. Change ZTN configuration, do not reload the switch, restore old config (ch
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Randomize ZTN Configuration
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
@@ -637,7 +673,8 @@ T3.4. Change ZTN configuration, do not reload the switch, change config again (c
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
 T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Copy  running-config  config://temp-config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
@@ -659,7 +696,8 @@ T3.5. Change ZTN configuration, reload half of switches, restore old config - ve
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T3.6. Change ZTN configuration, reload half of switches, change config again - verify that all switches need to be reloaded
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Randomize ZTN Configuration
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
@@ -680,7 +718,8 @@ T3.6. Change ZTN configuration, reload half of switches, change config again - v
 
 # reload notification in GUI/Cli not (yet) supported
 T3.7. Disconnect all switches from the fabric (ma1 down) then do significant changes in fabric configuration (startup-config template, switch roles) - error should be presented, reconnect the switch - incorrect running config should be noticed by the controller and admin should be notified to take action (reload config on switch)
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Telnet Set MA1 State  s3  down
 	Telnet Set MA1 State  s2  down
 	Sleep  30
@@ -737,7 +776,8 @@ T4.9 Provision two switches, power them both off, swap MACs, power them both on
 
 # Switch in provisioned mode
 T5.1.1. Power down, change config
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
@@ -757,7 +797,8 @@ T5.1.1. Power down, change config
 	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
 T5.1.2. Power down, delete
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
@@ -768,7 +809,8 @@ T5.1.2. Power down, delete
 	[Tags]  skipped
 
 T5.1.3. Power down, change config, failover
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
@@ -790,7 +832,8 @@ T5.1.3. Power down, change config, failover
 	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
 T5.1.4. Power down, delete, failover
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Telnet Reboot Switch  s3
 	Telnet Stop Autoboot  s3
 	Sleep  30
@@ -803,7 +846,8 @@ T5.1.4. Power down, delete, failover
 
 # Switch in stand-by mode
 T5.2.1. Power down, change config
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no leaf-group rack0
@@ -826,7 +870,8 @@ T5.2.1. Power down, change config
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 T5.2.2. Power down, delete
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
@@ -836,7 +881,8 @@ T5.2.2. Power down, delete
 	[Tags]  skipped
 
 T5.2.3. Power down, change config, failover
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no leaf-group rack0
@@ -861,7 +907,8 @@ T5.2.3. Power down, change config, failover
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 T5.2.4. Power down, delete, failover
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
@@ -876,22 +923,24 @@ T5.2.4. Power down, delete, failover
 
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
-	Reboot Switches
-	Cli Run  master  enable;config
-	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
-	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
-	Telnet Set MA1 State  s3  down
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
+	Sleep  30
+	Verify All Switches Disconnected
+	Set All Switches Mode Standby
 	Randomize ZTN Configuration
+	Telnet Set All MA1 State  up
+	Sleep  10
+	Verify All Switches Connected
+	Cli Reboot Switch  master  all
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	Telnet Set MA1 State  s3  up
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify All Switches In Standby Mode
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
 
 T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
-	Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -908,7 +957,8 @@ T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.4.3. Disconnect, change config, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -922,7 +972,8 @@ T5.4.3. Disconnect, change config, reboot
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.4.4. Disconnect, delete, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -938,7 +989,8 @@ T5.4.4. Disconnect, delete, reboot
 	[Tags]  skipped
 
 T5.4.5. Disconnect, change config, failover, reconnect, reload
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -954,7 +1006,8 @@ T5.4.5. Disconnect, change config, failover, reconnect, reload
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -972,7 +1025,8 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.4.7. Disconnect, change config, failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -987,7 +1041,8 @@ T5.4.7. Disconnect, change config, failover, reboot
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.4.8. Disconnect, delete, failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -1004,7 +1059,8 @@ T5.4.8. Disconnect, delete, failover, reboot
 	[Tags]  skipped
 
 T5.4.9. Disconnect, change config, double failover, reconnect, reload
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -1021,7 +1077,8 @@ T5.4.9. Disconnect, change config, double failover, reconnect, reload
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -1040,7 +1097,8 @@ T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.4.11. Disconnect, change config, double failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -1056,7 +1114,8 @@ T5.4.11. Disconnect, change config, double failover, reboot
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.4.12. Disconnect, delete, double failover, reboot
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
@@ -1075,7 +1134,8 @@ T5.4.12. Disconnect, delete, double failover, reboot
 
 # Switch in provisioned mode
 T5.5.1. Connected, change config, flap interface, reload
-	Reboot Switches
+	Reboot Switches From CLI
+	#Reboot Switches
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
@@ -1525,15 +1585,17 @@ Suite Setup
 	@{spineList}=  Create List  ${s1_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
+	Sleep  10
 	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	Sleep  10
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
 	#Cli Run  master  snmp-server enable traps
-	Cli Run  master  ntp time-zone UTC
+	Cli Run  master  system reboot switch 10.8.67.107
 	Reboot Switches
 
-	#${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
-	#set suite variable  ${s1_ip}  ${tmp}
+	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
+	set suite variable  ${s1_ip}  ${tmp}
 	${tmp}=  Rest Get Switch Ip Address  master  ${s2_alias}
 	set suite variable  ${s2_ip}  ${tmp}
 	${tmp}=  Rest Get Switch Ip Address  master  ${s3_alias}
@@ -1598,6 +1660,37 @@ Verify Switch In Provisioned Mode
 	Verify Switch Connection State  True  ${switch_alias}
 	Verify Switch Fabric Connection State  connected  ${switch_alias}
 
+Verify All Switches Connected
+	#Verify Switch Connection State  True  ${s1_alias}
+	Verify Switch Connection State  True  ${s2_alias}
+	Verify Switch Connection State  True  ${s3_alias}
+	Verify Switch Connection State  True  ${s4_alias}
+
+Verify All Switches Disconnected
+	#Verify Switch Connection State  False  ${s1_alias}
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Connection State  False  ${s3_alias}
+	Verify Switch Connection State  False  ${s4_alias}
+
+Verify All Switches In Provisioned Mode
+	#Verify Switch In Provisioned Mode  ${s1_alias}
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Verify Switch In Provisioned Mode  ${s3_alias}
+	Verify Switch In Provisioned Mode  ${s4_alias}
+
+Verify All Switches In Standby Mode
+	#Verify Switch In Standby Mode  ${s1_alias}
+	Verify Switch In Standby Mode  ${s2_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s4_alias}
+
+Telnet Set All MA1 State
+	[Arguments]  ${state}
+	#Telnet Set MA1 State  s1  ${state}
+	Telnet Set MA1 State  s2  ${state}
+	Telnet Set MA1 State  s3  ${state}
+	Telnet Set MA1 State  s4  ${state}
+
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
 	${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
@@ -1617,6 +1710,10 @@ Generate Random GMT Timezone
 	${timezone}  Catenate  SEPARATOR=  Etc/GMT+${digit}
 	[Return]  ${timezone}
 
+Generate Random Threshold
+	${threshold}  Generate Random String  2  [NUMBERS]
+	[Return]  ${threshold}
+
 Randomize ZTN Configuration
 	Cli Run  master  enable; config
 	${contact_random}  Generate Random Name  contact  5
@@ -1627,14 +1724,21 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server community ro ${community_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
+	Cli Run  master  snmp-server enable traps
+	${threshold_random}  Generate Random Threshold
+	#Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
-	#${timezone_random}  Generate Random GMT Timezone
-	#Cli Run  master  ntp time-zone ${timezone_random}
-	#${host_random}  Generate Random IP
-	#${hostname_random}  Generate Random Name  hostname.tmk.  5
+	${timezone_random}  Generate Random GMT Timezone
+	Cli Run  master  ntp time-zone ${timezone_random}
+	${host_random}  Generate Random IP
+	${hostname_random}  Generate Random Name  hostname.tmk.  5
 	Cli Run  master  logging enable remote
 	Cli Run  master  logging remote 10.192.66.100
+	Cli Run  master  logging remote ${hostname_random}
 
 Reboot Provisioned Switch
 	[Arguments]  ${switch_id}  ${switch_mac}  ${switch_alias}
@@ -1662,6 +1766,25 @@ Reboot Standby Switch
 	Verify Switch Startup Config  ${switch_mac}  ${switch_alias}
 	Verify Switch Running Config  ${switch_mac}  ${switch_alias}
 
+Verify All Switches Startup Config
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+
+Verify All Switches Running Config
+	Cli Run  master  show run
+	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+
+Set All Switches Mode Standby
+	Cli Run  master  enable;config
+	Cli Run  master  switch spine0; no fabric-role spine
+	Cli Run  master  switch leaf0-a; no leaf-group rack0; no fabric-role leaf
+	Cli Run  master  switch leaf0-b; no leaf-group rack0; no fabric-role leaf
+	Cli Run  master  switch leaf1-a; no leaf-group rack1; no fabric-role leaf
 
 Verify Switch SWI Version
 	[Arguments]  ${switch_alias}
@@ -1678,10 +1801,10 @@ Verify Switch Installer Version
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
 	Sleep  30
-	Should Be True  ${status}
+#	Should Be True  ${status}
 
 Reboot Switches
-	#Telnet Reboot Switch  s1
+#	Telnet Reboot Switch  s1
 	#Telnet Wait For Switch To Reload  s1
 
 	Telnet Reboot Switch  s2
@@ -1705,3 +1828,15 @@ Reboot Switches
 	Verify Switch Handshake State  ${s2_alias}
 	Verify Switch Handshake State  ${s3_alias}
 	Verify Switch Handshake State  ${s4_alias}
+
+Reboot Switches From CLI
+	Cli Reboot Switch  master  ${s1_ip}
+	Cli Reboot Switch  master  ${s2_ip}
+	Cli Reboot Switch  master  ${s3_ip}
+	Cli Reboot Switch  master  ${s4_ip}
+	Sleep  100
+
+	Cli Run  master  show run
+
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
