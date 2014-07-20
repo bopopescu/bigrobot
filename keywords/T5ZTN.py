@@ -124,7 +124,8 @@ class T5ZTN(object):
             swi_release = swi_manifest['release']
             return swi_release
 
-    def telnet_get_switch_switchlight_version(self, image, hostname):
+    def telnet_get_switch_switchlight_version(self, image, hostname,
+                                              password='adminadmin'):
         """
         Get SWI or Installer Versions in the controller bundle
 
@@ -159,8 +160,8 @@ class T5ZTN(object):
         version = ''
 
         if image == 'installer':
-            line1 = "SwitchLight Loader Version: "
-            line2 = "SwitchLight Loader Build: "
+            line1 = "Loader Version: "
+            line2 = "Loader Build: "
         if image == 'swi':
             line1 = "Software Image Version: "
             line2 = "Internal Build Version: "
@@ -171,7 +172,7 @@ class T5ZTN(object):
                 line = line.replace(line2, '')
                 if ' ' in line:
                     line = line.replace(' ', '')
-                version = version + " " + line
+                version = version + " (" + line + ")"
         return version
 
     def bash_get_supported_platforms(self, image):
