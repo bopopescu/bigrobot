@@ -733,8 +733,8 @@ class T5ZTN(object):
         s = t.dev_console(hostname, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'.*@.*:',
-                           s.get_prompt()])
+        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
+                            r'[\r\n]*.*root@.*:', s.get_prompt()])
         if options[0] == 0:
             s.cli('admin')
         if options[0] == 2:
@@ -1179,12 +1179,15 @@ class T5ZTN(object):
         try:
             c.send("system reboot switch %s" % switch)
             helpers.log(c.cli_content())
-            options = c.expect([r'y or yes to continue',
-                                c.get_prompt()], timeout=30)
+            options = c.expect([r'y or yes to continue', c.get_prompt(),
+                                r'Waiting for reconnect'], timeout=30)
             if options[0] == 0:
-                helpers.log("Switch has fabric role configured. Confirming")
+                helpers.log("Switch has fabric role configured. Confirming.")
                 c.send("yes")
                 c.expect(c.get_prompt(), timeout=30)
+            if options[0] == 2:
+                helpers.log("Rebooting all switches. Waiting for CLI prompt...")
+                c.expect(c.get_prompt(), timeout=300)
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
                 return helpers.test_failure("Error rebooting the switch")
