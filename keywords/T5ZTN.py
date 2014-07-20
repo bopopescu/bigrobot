@@ -600,21 +600,6 @@ class T5ZTN(object):
         ztn_config = helpers.strip_cli_output(ztn_config)
         ztn_config = helpers.str_to_list(ztn_config)
 
-        ztn_config_temp = []
-        for ztn_config_line in ztn_config:
-            if re.match(r'snmp-server|ntp', ztn_config_line):
-                ztn_config_temp.append(ztn_config_line)
-                helpers.log("Keeping line in ztn-config: %s" % ztn_config_line)
-        ztn_config = ztn_config_temp
-        ztn_config.append("interface ma1 ip-address dhcp")
-        ztn_config.append("hostname %s" % switch_name)
-        ztn_config.append("datapath id 00:00:%s" % mac)
-        ztn_config.append("controller %s port 6653" % master_ip)
-        ztn_config.append("ssh enable")
-        ztn_config.append("logging host %s" % master_ip)
-        if not single:
-            ztn_config.append("controller %s port 6653" % slave_ip)
-            ztn_config.append("logging host %s" % slave_ip)
 
         startup_config_temp = []
         for startup_config_line in startup_config:
@@ -625,9 +610,9 @@ class T5ZTN(object):
                 if "snmp-server enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                if re.match(r'snmp-server trap', startup_config_line):
-                    helpers.log("Skipping line: %s" % startup_config_line)
-                    continue
+                #if re.match(r'snmp-server trap', startup_config_line):
+                #    helpers.log("Skipping line: %s" % startup_config_line)
+                #    continue
                 if "ntp enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
@@ -641,30 +626,70 @@ class T5ZTN(object):
 
         ztn_config_temp = []
         for ztn_config_line in ztn_config:
-            if "snmp-server host" in ztn_config_line:
-                if "snmp-server enable traps" in ztn_config:
-                    if "udp-port" in ztn_config_line:
-                        ztn_config_line = ztn_config_line.replace("udp-port",
-                                    "traps public udp-port")
+            if re.match(r'snmp-server|ntp', ztn_config_line):
+                if "snmp-server host" in ztn_config_line:
+                    if "snmp-server enable traps" in ztn_config:
+                        if "udp-port" in ztn_config_line:
+                            ztn_config_line = ztn_config_line.replace(
+                               "udp-port", "traps public udp-port")
+                        else:
+                            ztn_config_line = (ztn_config_line +
+                                               " traps public udp-port 162")
+                        helpers.log("Rearranging config line: %s"
+                                    % ztn_config_line)
                     else:
-                        ztn_config_line = (ztn_config_line +
-                                           " traps public udp-port 162")
-                    helpers.log("Rearranging config line: %s" % ztn_config_line)
-                else:
-                    helpers.log(("Skipping line - %s - because"
-                    " snmp-server traps are not enabled") % ztn_config_line)
+                        helpers.log(("Skipping line - %s - because"
+                        " snmp-server traps are not enabled") % ztn_config_line)
+                        continue
+                if "snmp-server switch trap" in ztn_config_line:
+                    helpers.log("SNMP traps enabled")
+                    if "snmp-server enable traps" in ztn_config:
+                        helpers.log("Rearranging line: %s" % ztn_config_line)
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap cpu-load",
+                           "snmp-server trap CPU_load threshold")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap mem-free",
+                           "snmp-server trap mem_total_free threshold")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap l2-flow-table-util",
+                           "snmp-server trap flow_table_l2_util threshold")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap fm-flow-table-util",
+                           "snmp-server trap flow_table_tcam_fm_util threshold")
+                        if "mem_total_free" in ztn_config_line:
+                           helpers.log("Need to divide value in %s "
+                                       "by 1024" % ztn_config_line)
+                           split = ztn_config_line.split(" ")
+                           value = split[len(split)-1]
+                           helpers.log("Value is %s" % value)
+                           new_value = int(int(value)/1024)
+                           helpers.log("New value is %s" % new_value)
+                           ztn_config_line = ztn_config_line.replace(
+                                             value, str(new_value))
+                    else:
+                        helpers.log(("Skipping line - %s - because"
+                        " snmp-server traps are not enabled") % ztn_config_line)
+                        continue
+                if "snmp-server enable traps" in ztn_config_line:
+                    helpers.log("Skipping line: %s" % ztn_config_line)
                     continue
-            # if "snmp-server enable traps" in ztn_config_line:
-            #    ztn_config[idx] = "snmp-server enable"
-            #    helpers.log("Rearranging config line: %s" % ztn_config[idx])
-            if "ntp time-zone" in ztn_config_line:
-                ztn_config_line = ztn_config_line.replace("ntp time-zone",
-                                  "timezone")
-                helpers.log("Rearranging config line: %s" % ztn_config_line)
-            helpers.log("Keeping line in ztn-config: %s"
-                        % ztn_config_line)
-            ztn_config_temp.append(ztn_config_line)
+                if "ntp time-zone" in ztn_config_line:
+                    ztn_config_line = ztn_config_line.replace("ntp time-zone",
+                                      "timezone")
+                    helpers.log("Rearranging config line: %s" % ztn_config_line)
+                ztn_config_temp.append(ztn_config_line)
+                helpers.log("Keeping line in ztn-config: %s" % ztn_config_line)
         ztn_config = ztn_config_temp
+        ztn_config.append("interface ma1 ip-address dhcp")
+        ztn_config.append("hostname %s" % switch_name)
+        ztn_config.append("datapath id 00:00:%s" % mac)
+        ztn_config.append("controller %s port 6653" % master_ip)
+        ztn_config.append("ssh enable")
+        ztn_config.append("logging host %s" % master_ip)
+        if not single:
+            ztn_config.append("controller %s port 6653" % slave_ip)
+            ztn_config.append("logging host %s" % slave_ip)
 
         for ztn_config_line in ztn_config:
             if ztn_config_line not in startup_config:
