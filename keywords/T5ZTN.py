@@ -734,7 +734,7 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
-                            r'[\r\n]*.*root@.*:', s.get_prompt()])
+                            r'[\r\n]* root@.*\#:', s.get_prompt()])
         if options[0] == 0:
             s.cli('admin')
         if options[0] == 2:
