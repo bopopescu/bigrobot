@@ -734,7 +734,7 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
-                            r'[\r\n]*.*root@.*:', s.get_prompt()])
+                            r'[\r\n]* root@.*\#:', s.get_prompt()])
         if options[0] == 0:
             s.cli('admin')
         if options[0] == 2:
@@ -743,6 +743,10 @@ class T5ZTN(object):
         s.cli('config')
         running_config = s.cli("show running-config")['content']
         running_config = helpers.str_to_list(running_config)
+        if len(running_config) < 5:
+            helpers.log("RC not parsed correctly. Trying again")
+            running_config = s.cli("show running-config")['content']
+            running_config = helpers.str_to_list(running_config)
         # skipping first line
         running_config = running_config[1:]
 
