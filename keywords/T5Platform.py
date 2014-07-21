@@ -3888,7 +3888,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
