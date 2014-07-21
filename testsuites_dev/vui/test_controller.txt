@@ -155,5 +155,12 @@ Test config mode
     cli      c1   show version
 
 Test REST show user
+    [Tags]  skipped
     #rest show user        c1
     rest version check    c1
+
+Test copy command
+    enable   master  copy controller-upgrade-SNAPSHOT.pkg image://
+    ${result}=  cli content  c1
+    log   result=${result}
+

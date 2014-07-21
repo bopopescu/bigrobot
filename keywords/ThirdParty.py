@@ -106,7 +106,28 @@ class ThirdParty(object):
         else:
             cli_input_1 = "interface " + str(interface_name)
             switch.config(cli_input_1)
-            cli_input_2 = "   mtu" + str(mtu_size)
+            cli_input_2 = "mtu " + str(mtu_size)
+            switch.config(cli_input_2)
+            return True
+
+    def cli_arista_delete_mtu_interface(self, node, interface_name, mtu_size):
+        '''Configure MTU
+        
+            Input: 
+                `interface_name`        Name of Interface
+                `mtu_size`          MTU size
+            
+            Return Value:  True on Success
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(interface_name)
+            switch.config(cli_input_1)
+            cli_input_2 = "no mtu " + str(mtu_size)
             switch.config(cli_input_2)
             return True
 
@@ -158,6 +179,41 @@ class ThirdParty(object):
                 switch.config(cli_input_4)
                 cli_input_5 = "no switchport mode access"
                 switch.config(cli_input_5)
+            return True
+
+
+    def cli_arista_add_ip_address(self, node, ip_address, mask, interface_name, speed=None):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(interface_name)
+            switch.config(cli_input_1)
+            cli_input_2 = "no switchport"
+            switch.config(cli_input_2)
+            cli_input_3 = "ip address " + str(ip_address) + "/" + str(mask)
+            switch.config(cli_input_3)
+            if speed is not None:
+                cli_input_4 = "speed " + str(speed)
+                switch.config(cli_input_4)
+            return True
+
+    def cli_arista_delete_ip_address(self, node, ip_address, mask, interface_name, speed=None):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(interface_name)
+            switch.config(cli_input_1)
+            cli_input_2 = "no ip address " + str(ip_address) + "/" + str(mask)
+            switch.config(cli_input_2)
+            if speed is not None:
+                cli_input_3 = "no speed " + str(speed)
+                switch.config(cli_input_3)
             return True
 
     def cli_arista_execute_command(self, node, command):
