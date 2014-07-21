@@ -9,7 +9,7 @@ app = Celery('template_services',
 
 # Optional configuration, see the application user guide.
 app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES=3600,  # 1 hour
+    CELERY_TASK_RESULT_EXPIRES=1800,  # 1/2 hour
 )
 
 if __name__ == '__main__':
