@@ -159,8 +159,8 @@ Reboot box and Verify the IP address through DHCP server and Ping
 Verify environmental variables for CPU, RAM, PCI, Ethernet at loader 
     Log    Step 1 - Verify the environmental variables for CPU, RAM etc. 
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 ## Installer did not install
 ## SwlIght image install fails 
@@ -290,35 +290,6 @@ Verify multiple telnet connections to Management Port
 ## Show command for controller 
 ##  Save running-config , reboot and verify 
 
-Verify one controller can be configured on switch 
-    Log    Step 1 - Verify one controller can be configured on switch
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify two controllers can be configured on switch 
-    Log    Step 1 - Verify two controllers can be configured on switch
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify that controller configuration can be removed and different controller can be added
-    Log    Step 1 - Verify that controller configuration can be deleted and added again
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify that invalid ip can not be configured for controller 
-    Log    Step 1 - Verify that invalid ip can not be configured for controller
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested 
-
-Verify the show controller command on switch 
-    Log    Step 1 - Verify the show controller command on switch 
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
 
 Verify after failure of Master Controller switch connection with backup is re established
     Log    Step 1 - Both Controller connection is present 
@@ -338,47 +309,6 @@ Verify after Master Controller comes back Connection reestablished
   
 ### Section: Admin/User Authentication 
 
-Verify user admin can be configured with password adminadmin on the box 
-    Log    Step 1 - Verify user admin can be configured with password adminadmin on the box
-    [Tags]  switch-platform  UserConfig  feature
-    [Tags]  Manual
-    Manual Passed
-    
-Verify password for user admin can be changed  
-    Log    Step 1 - Verify password for user admin can be changed
-    [Tags]  switch-platform  UserConfig  feature 
-    [Tags]  Manual
-    Manual Passed
-
-Verify password for user admin cannot be of zero length   
-    Log    Step 1 - Verify password for user admin cannot be of zero length
-    [Tags]  switch-platform  UserConfig  feature  
-    [Tags]  Manual
-    Manual passed
-        
-Verify Passwords are case sensitive   
-    Log    Step 1 - Verify Passwords are case-sensitive
-    [Tags]  switch-platform  UserConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify max length for passwords    
-    Log    Step 1 - Verify max-length for passwords
-    [Tags]  switch-platform  UserConfig  feature   
-    [Tags]  Manual-untested
-    Manual untested
-
-Verify special characters are allowed in passwords 
-    Log    Step 1 - Verify special characters are allowed in passwords
-    [Tags]  switch-platform  UserConfig  feature   
-    [Tags]  Manual
-    Manual Passed
-    
-Verify user recovery can be configured and user can login using the username password combination
-    Log    Step 1 - Verify user recovery can be configured and user can login using the username/password combination
-    [Tags]  switch-platform  UserConfig  feature   
-    [Tags]  Manual
-    Manual Passed
 
 Verify other users except admin or recovery not allowed   
     Log    Step 1 - Verify other users except admin or recovery not allowed
@@ -398,53 +328,6 @@ Restart process ofad and verify users admin and recovery can re login
 ## NTP sync 
 ## Verification in syslog - after changing timeZone 
 
-Verify that NTP server can be configured 
-    Log    Step 1 - Verify that NTP server can be configired on switch 
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify that NTP server configuration can be added and deleted 
-    Log    Step 1 - Verify that NTP server configuration can be added and deleted 
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify that inaccessible NTP server can be configured 
-    Log    Step 1 - Verify that inaccessible NTP server can be configured 
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify the valid NTP time zone settings 
-    Log    Step 1 - Verify the valid NTP time zone settings
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify that NTP sync can be executed on switch 
-    Log    Step 1 - Verify that NTP sync can be executed on switch 
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed  
-    
-Verify the show command for the NTP Server 
-    Log    Step 1 - Verify the show command for NTP server  
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed  
-
-Verify the time zone change and update in syslog  
-    Log    Step 1 - Verify that after NTP sync the logs have teh correct time zone information  
-    [Tags]  switch-platform  ntp  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-
-Verify time and date information is NOT lost after reboot
-    Log    Step 1 - Verify time and date information is NOT lost after reboot
-    [Tags]  switch-platform  ntp  feature
-    [Tags]  Manual
-    Manual passed
 
 ## DNS settings 
 ## Same set of tests 
@@ -454,125 +337,21 @@ Verify time and date information is NOT lost after reboot
 ### Show of-aux channel output 
 ### Command output for of-aux connections  
 
-verify the DNS server and domain name configuration 
-    Log    Step 1 - Verify dns server and dns domain name configuration 
-    [Tags]  switch-platform  dns  InitialConfig  feature
-    [Tags]  Manual
-    Manual passed
 
-verify the invalid DNS server and domain name configuration can be added and deleted 
-    Log    Step 1 - Verify invalid dns server and dns domain name can be configured and deleted
-    [Tags]  switch-platform  dns  InitialConfig  feature
-    [Tags]  Manual 
-    Manual passed
-
-verify the hostname configuration on the switch  
-    Log    Step 1 - Verify hostname configuration on the switch 
-    [Tags]  switch-platform  hostname  InitialConfig  feature
-    [Tags]  Manual
-    Manual passed
-
-verify the hostname configuration can be deleted and added again   
-    Log    Step 1 - verify the hostname configuration can be deleted and added again 
-    [Tags]  switch-platform  hostname  InitialConfig  feature
-    [Tags]  Manual
-    Manual passed
-
-verify the hostname configuration for the valid and supported character   
-    Log    Step 1 - verify hostname configuration for the valid and supported character  
-    [Tags]  switch-platform  hostname  InitialConfig  feature
-    [Tags]  Manual
-    Manual passed
 
 ## Mark Skip if admin save/reload not supported
-Config admin save reload operation 
-    Log    Step 1 - Config admin save/reload operation
-    [Tags]  switch-platform  SysAdminOperation  feature   
-    [Tags]  Manual  skipped
-    Manual untested
-    
-Config upload ftp reload operation 
-    Log    Step 1 - Config upload/ ftp / reload operation
-    [Tags]  switch-platform  SysAdminOperation  feature 
-    [Tags]  Manual  skipped
-    Manual untested
-    
-Config upload scp reload operation 
-    Log    Step 1 - Config upload/ scp / reload operation
-    [Tags]  switch-platform  SysAdminOperation  feature 
-    [Tags]  Manual  skipped
-    Manual untested
 
 
 ### Section:Switch Platform Environment Variables 
 ###
 
-Verify the environment information is displayed
-    Log    Step 1 - Verify the environment information is displayed
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed
 
-Verify Power Supply Status
-    Log    Step 1 - Verify Power Supply Status
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed
-
-Verify Temperatures are shown in environmental command
-    Log    Step 1 - Verify Temperatures are shown in environmental command
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual 
-    Manual passed
-
-Verify Fans speeds are reported in environmental command 
-    Log    Step 1 - Verify Fans Fans speeds are reported in environmental command
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual 
-    Manual passed
-
-Verify fans are running at higher speeds when temperature increases
-    Log    Step 1 - Verify fans are running at higher speeds when temperature increases
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested  
-    Manual untested
-
-Verify the environment shows if the fan is missing
-    Log    Step 1 - Verify environment shows if the fan is missing
-    [Tags]  switch-platform  Environment  feature 
-    [Tags]  Manual 
-    Manual passed
-
-Verify Periodic polling of Temp sensor fans
-    Log    Step 1 - Verify Periodic polling of Temp sensor fans
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested
-    Manual untested
-
-Verify if fan speed/status is updated in output of show environment 
-    Log    Step 1 - Verify if fan speed/status is updated in output of show sensors
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed
-
-Verify if temperature values and sensor status are updated in output of show environment
-    Log    Step 1 - Verify if temperature values and sensor status are updated in output of show sensors
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual 
-    Manual passed
-
-PSU failure test - Bring up , Failure back up PSU AC ,alarm , messages
+PSU failure test - Bring up , Failure back up PSU AC 
     Log    Step 1 - PSU failure test - Bring up , Failure back up PSU ,alarm , messages
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual
     Manual passed
     
-Verify power output when DUT use one AC power supply
-    Log    Step 1 - Verify power output when DUT use one power supply
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
-
 Verify power output when DUT use two AC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
@@ -593,12 +372,6 @@ Repeat previous testcase with the other AC power supply
 
 With one AC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
-    [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
-
-VErify with PSU2 with the other AC power supply
-    Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual  
     Manual passed    
@@ -661,15 +434,14 @@ Verify LED behavior when link is up and down of 1G copper link
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]   Manual jira-pan-941   
-    Manual failed 
-
+    [Tags]   Manual    
+    Manual passed 
 
 Verify LED behavior when link is disable 
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
     [Tags]  Manual  
-    Manual Failed
+    Manual passed
 
 Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
     Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
@@ -698,33 +470,7 @@ Verify that all the all network LEDs goes off when systems is halted
 ###
 ### Section H: CLI Configuration and Show commands 
 ####
-
-Verify Show version
-    Log    Step 1 - Verify Switch Show version
-    [Tags]  switch-platform  CLI  feature
-    [Tags]  Manual
-     Manual Passed
-
-Verify Show running-config
-    Log    Step 1 - Verify Switch Show running-config
-    [Tags]  switch-platform  CLI  Manual  feature  
-     Manual Passed
-     
-## MArk Skip if N/A    
-Verify Admin save partial save config allowed config load reload merge override
-    Log    Step 1 - Verify Admin save partial save config allowed config load reload merge override
-    [Tags]  Manual  feature  skipped
-    Manual 
-    
-## Mark Skip if N/A 
-  
-Verify Config commit error flag invalid config missing config part check 
-    Log    Step 1 - Verify Config commit error flag invalid config missing config part check 
-    [Tags]  Manual  feature  skipped
-    Manual untested
-    
-## Mark Skip if N/A  
- 
+   
 Verify CLI reload command option - Config persistent after save
     Log    Step 1 - Verify CLI reload command option - Config persistent after save
     [Tags]  switch-platform  CLI  Manual  feature
@@ -765,31 +511,11 @@ Verify 1G interface status after the 1G module and cable insert and the status i
     [Tags]  switch-platform  interface  feature
     Manual Passed
 
-Verify auto-negotiation configurations work as expected 
-    Log    Step 1 - Verify auto-negotiation configurations work as expected
-    [Tags]  Manual  interface  feature  skipped
-    Manual 
-
-Verify Auto- negotiation enabled on both ends of interface
-    Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
-    [Tags]  Manual  interface  feature  skipped
-    Manual
-
-Verify Speed Duplex in ports 
-    Log    Step 1 - Verify Speed/Duplex in ports
-    [Tags]  Manual  interface  feature  skipped
-    Manual 
-
 Verify interface state is reported correctly when cable is unplugged
     Log    Step 1 - Verify interface state is reported correctly when cable is unplugged 
     [Tags]  Manual  interface  feature
     Manual passed
- 
-Verify the SNMP server configuration enable and disable from the switch  
-    Log    Step 1 - Verify the SNMP server configuration enable and disable from the switch
-    [Tags]  switch-platform  Manual  SNMP  feature
-    Manual passed   
-    
+
 ## Add SNMP sections 
 ## SNMP MIB section
 ## SNMP snmpget, snmpnext , snmpwalk for supported MIBs  
@@ -830,18 +556,14 @@ Verify the SNMPget for all the supported Interface, system, environment MIB
     Log    Step 1 - Verify the SNMPget of the supported MIB
     [Tags]  switch-platform  Manual-untested  SNMP  feature
     Manual untested
-
-Verify the SNMPnext for all the supported Interface, system, environment MIB 
-    Log    Step 1 - Verify the SNMPnext of the supported MIB
-    [Tags]  switch-platform  Manual-untested  SNMP  feature
-    Manual untested
-    
+   
 Verify the SNMP traps configured and generated for link up down of switch interface 
-    Log    Step 1 - Verify the SNMP traps generated for link up down of switch interface 
+    Log   Step 1 - Configure SNMP traps for linkup down event 
+    Log    Step 1 - Verify the SNMP traps generated for link up down of switch interface     
     [Tags]  switch-platform  Manual  SNMP  feature
     Manual passed
       
-Verify the SNMP traps generated for the PSU sensor failure 
+Verify the SNMP traps generated for the PSU sensor threshold crossed 
     Log    Step 1 - Verify the SNMP traps generated for the PSU sensor failure
     [Tags]  switch-platform  Manual  SNMP  feature
     Manual Failed
@@ -880,12 +602,12 @@ Verify the DC PSU temp sensors SNMPwalk
 Verify the repeatitive snmpwalk of the interface MIB and confirm the consistent value
     Log    Step 1 - Verify repeatitive snmpwalk of the interface MIB and confirm the consistent value 
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual passed
 
 Verify after reboot the snmpwalk for the consistent IfIndex value 
     Log    Step 1 - Verify after reboot the consistent value of IfIndex  
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual passed
 
 
 ## Process stop and restart 
@@ -903,8 +625,13 @@ Verify system state after the process snmpd restart
 
 Verify system state after the process syslogd restart 
     Log    Step 1 - Verify system state after the snmpd process start  
-    [Tags]  switch-platform  Manual-untested  processStart  feature
-    Manual untested
+    [Tags]  switch-platform  Manual  processStart  feature
+    Manual passed
+
+Verify system state after the process faultd restart 
+    Log    Step 1 - Verify system state after the faultd process start  
+    [Tags]  switch-platform  Manual  processStart  feature
+    Manual passed
 
 ### Hashing traffic test cases
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic changing Src Mac 
