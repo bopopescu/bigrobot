@@ -678,3 +678,7 @@ vui@Vuis-MacBook-Pro$
         helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
 
         return True
+
+    def exit_early(self):
+        helpers.log("*** We're bailing early!!!")
+        sys.exit(1)
