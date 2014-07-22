@@ -725,7 +725,7 @@ S
 		helpers.test_failure("Fail:router interface not present in controller endpoint table")
 		return False
 	
-	def openstack_tenant_scale(self, count, name='p'):
+	def openstack_tenant_scale(self, name='p', count):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -741,7 +741,7 @@ S
 			i = i + 1
 		return True
 
-	def openstack_segment_scale(self, tenantName, subnet_firstbyte, count, name='s'):
+	def openstack_segment_scale(self, tenantName, subnet_firstbyte, name='s', count):
 		'''Function to create multiple segments in a given tenant
 		Input: tenantName , count , name starts with segment
 		Output: given number of segments created in neutron server using neutron command
