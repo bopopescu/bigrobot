@@ -4,6 +4,9 @@ from .celery_app import app
 import autobot.helpers as helpers
 import autobot.test as test
 
+from keywords.Host import Host
+
+
 class BsnCommands(object):
     @app.task(filter=task_method)
     def add(self, x, y):
@@ -32,3 +35,14 @@ class BsnCommands(object):
         n = t.node(node)
         content = n.cli("show version")['content']
         return content
+
+    @app.task(filter=task_method)
+    def bash_ping_regression_server(self, params, node):
+        t = test.Test(esb=True, params=params)
+        n = t.node(node)
+        host = Host()
+        print("***** node: %s" % node)
+        print("***** Host(): %s" % host)
+        loss_pct = host.bash_ping(node=node,
+                                  dest_ip='regress.qa.bigswitch.com')
+        return loss_pct

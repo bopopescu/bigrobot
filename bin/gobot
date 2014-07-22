@@ -111,6 +111,7 @@ set_environment()
 test_autobot_import()
 
 import autobot.helpers as helpers
+import autobot.monitor as monitor
 
 #
 # Gobot initialization
@@ -501,9 +502,13 @@ def test_command(*args):
         cli_params_to_yaml_config(params,
                                   helpers.bigrobot_additional_params())
 
+    # test_monitor = monitor.Monitor("gobot", init_delay=20, timer=10)
+
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
+
+    # test_monitor.off()
 
     # if helpers.bigrobot_continuous_integration().lower() == 'True':
     #    print("Inside continuous integration environment. Return code"

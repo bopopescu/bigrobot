@@ -603,7 +603,8 @@ vui@Vuis-MacBook-Pro$
         helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)
 
     def test_esb(self, nodes):
-        from bsn_services import sample_method_tasks as tasks
+        # from bsn_services import sample_method_tasks as tasks
+        from template_services import tasks as tasks
 
         t = test.Test()
         helpers.log("***** params: %s" % helpers.prettify(t.params()))
@@ -628,6 +629,12 @@ vui@Vuis-MacBook-Pro$
         results.append(res1)
         task_id = results[-1].task_id
         result_dict[task_id] = { "node": nodes[1], "action": "show running-config" }
+
+        # Task 3
+        res1 = task.bash_ping_regression_server.delay(t.params(), nodes[1])
+        results.append(res1)
+        task_id = results[-1].task_id
+        result_dict[task_id] = { "node": nodes[1], "action": "ping regression server" }
 
         # More tasks
         for node in nodes:
@@ -671,3 +678,7 @@ vui@Vuis-MacBook-Pro$
         helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
 
         return True
+
+    def exit_early(self):
+        helpers.log("*** We're bailing early!!!")
+        sys.exit(1)

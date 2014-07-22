@@ -2032,7 +2032,7 @@ class T5Platform(object):
           input:  node  - controller
                            c1 c2
           usage:
-          output: active or stand-by
+          output: active or standby
           fails if there is no domain-leader for the cluster
         '''
         t = test.Test()
@@ -2054,7 +2054,7 @@ class T5Platform(object):
                 if local_id == leader_id:
                     return 'active'
                 else:
-                    return 'stand-by'
+                    return 'standby'
 
             else:
                 helpers.log("ERROR: there is no domain-leader")
@@ -2075,13 +2075,13 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_get_node_role ')
-        c.cli('show cluster')
+        c.cli('show controller')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         for line in temp:
             helpers.log("INFO: line is - %s" % line)
-            match = re.match(r'.*(active|stand-by).* Current', line)
+            match = re.match(r'.* \* (active|standby).* connected', line)
             if match:
                 helpers.log("INFO: role is: %s" % match.group(1))
                 return  match.group(1)

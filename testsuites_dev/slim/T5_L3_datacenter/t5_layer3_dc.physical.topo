@@ -16,73 +16,98 @@ s1:
         ip: cs-120
         port: 7001
     alias: spine0
-    user: root
-    password: bsn
+    set_session_ssh: false
+    set_init_ping: false
+    user: admin
+    password: adminadmin
       
 s2:
     console:
         ip: cs-120
         port: 7002
+    set_session_ssh: false
+    set_init_ping: false
     alias: spine1
-    user: root
-    password: bsn
+    user: admin
+    password: adminadmin
      
 s3:
     console:
         ip: cs-120
         port: 7003
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack0
     alias: leaf0-a
-    user: root
-    password: bsn
-
+    user: admin
+    password: adminadmin
+    
 s4:
     console:
         ip: cs-120
         port: 7004
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack0       
     alias: leaf0-b
-    user: root
-    password: bsn
+    user: admin
+    password: adminadmin
 
 s5:
     console:
         ip: cs-120
         port: 7005
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack1        
     alias: leaf1-a
-    user: root
-    password: bsn
-  
+    user: admin
+    password: adminadmin
+
 s6:
     console:
         ip: cs-120
         port: 7006
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack1        
     alias: leaf1-b
-    user: root
-    password: bsn
+    user: admin
+    password: adminadmin
   
 s7:
     console:
         ip: cs-120
         port: 7007
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack2        
     alias: leaf2-a
-    user: root
-    password: bsn
-  
+    user: admin
+    password: adminadmin
+      
 s8:
     console:
         ip: cs-120
         port: 7008
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack2        
     alias: leaf2-b
-    user: root
-    password: bsn
-    
+    user: admin
+    password: adminadmin
+        
 s9:
     console:
         ip: cs-120
         port: 7019
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack3
     alias: leaf3-a
-    user: root
-    password: bsn
-
+    user: admin
+    password: adminadmin
+    
 h1:
    ip: 10.8.24.31
    alias: h1-rack0
