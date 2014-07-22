@@ -1,3 +1,0 @@
-machine qa-bsn-10.qa.bigswitch.com
-login songbeng 
-password Bigbird1
