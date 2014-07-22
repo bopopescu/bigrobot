@@ -81,11 +81,10 @@ def set_environment():
     #    os.environ['BIGTEST_PATH'] = ''.join((p, '/bigtest'))
 
     # Add paths to PYTHONPATH
-    sys.path.insert(0, os.environ['BIGROBOT_PATH'])
-    # sys.path.insert(1, os.environ['BIGTEST_PATH'])
-    exscript_path = ''.join((os.environ['BIGROBOT_PATH'],
-                             '/vendors/exscript/src'))
-    sys.path.insert(2, exscript_path)
+    bigrobot_path = os.environ['BIGROBOT_PATH']
+    sys.path.insert(0, bigrobot_path + '/vendors/exscript/src')
+    sys.path.insert(0, bigrobot_path + '/esb')
+    sys.path.insert(0, bigrobot_path)
 
     # (Re-)export PYTHONPATH environment
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
@@ -112,6 +111,7 @@ set_environment()
 test_autobot_import()
 
 import autobot.helpers as helpers
+import autobot.monitor as monitor
 
 #
 # Gobot initialization
@@ -502,9 +502,13 @@ def test_command(*args):
         cli_params_to_yaml_config(params,
                                   helpers.bigrobot_additional_params())
 
+    # test_monitor = monitor.Monitor("gobot", init_delay=20, timer=10)
+
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
+
+    # test_monitor.off()
 
     # if helpers.bigrobot_continuous_integration().lower() == 'True':
     #    print("Inside continuous integration environment. Return code"

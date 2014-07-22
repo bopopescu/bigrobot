@@ -512,7 +512,7 @@ class BigTap(object):
             else:
                 if(c.rest.content()):
                     content = c.rest.content()
-                    return content[index][key]
+                    return content[int(index)][str(key)]
                 else:
                     helpers.test_log("ERROR Policy %s does not exist. Error seen: %s" % (str(policy_name), c.rest.result_json()))
                     return False

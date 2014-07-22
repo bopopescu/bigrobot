@@ -1,0 +1,2393 @@
+*Settings
+Documentation  Corsair Tunnelling Test Suite
+Suite Setup  corsair suite setup
+Suite Teardown   corsair suite teardown
+#Test Setup   base test setup
+#Test Teardown  base test teardown 
+Force Tags   Corsair  BigTap  Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+Library  keywords/ThirdParty.py
+
+* Variable
+${switch1_alias}                        app-ac4600-1  #Alias for switch 1
+${switch2_alias}                        app-ac4600-2  #Alias for switch 2
+${switch3_alias}                        app-ac5710-4  #Alias for switch 3
+${switch4_alias}                        app-ac6700-1  #Alias for switch 4
+${switch8_alias}                        app-ac5610-2  #Alias for switch 8
+
+## Switch 1: app-ac4600-1
+${switch1_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch1_filter_alias}                     ixia-2-1        #Alias for filter interface on switch scale-ac4600-1
+${switch1_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch1_delivery_alias}                   ixia-2-2        #Alias for delivery interface on switch scale-ac4600-1
+
+${tunnel_sw1_name}                          tunnel1                 #Tunnel Name
+${tunnel_sw1_parent_intf}                   ethernet5               #Tunnel Parent Interface
+${tunnel_sw1_sip}                           192.168.43.1            #Tunnel Source IP
+${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Destination IP
+${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
+${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_loopback}                      ethernet52              #Tunnel Loopback Interface
+${extreme1_sw1_tunnel_name}                 tunnel1
+${extreme1_sw1_tunnel_intf1}                5
+${extreme1_sw1_tunnel_ip}                   192.168.43.2  
+${extreme1_sw1_tunnel_mask}                 255.255.255.0
+
+${tunnel_sw1_name_ixia_filter}              tunnel2                 #Tunnel Name
+${tunnel_sw1_parent_intf_ixia_filter}       ethernet1               #Tunnel Parent Interface
+${tunnel_sw1_sip_ixia_filter}               192.168.142.1           #Tunnel Source IP
+${tunnel_sw1_dip_ixia_filter}               192.168.142.2           #Tunnel Destination IP
+${tunnel_sw1_gip_ixia_filter}               192.168.142.2           #Tunnel Gateway IP
+${tunnel_sw1_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_ixia_filter_name}              ac4600_1_ixia_filter    #Tunnel Name when used as filter interface
+
+${tunnel_sw1_name_ixia_delivery}            tunnel3                  #Tunnel Name
+${tunnel_sw1_parent_intf_ixia_delivery}     ethernet2                #Tunnel Parent Interface
+${tunnel_sw1_sip_ixia_delivery}             192.168.143.1            #Tunnel Source IP
+${tunnel_sw1_dip_ixia_delivery}             192.168.143.2            #Tunnel Destination IP
+${tunnel_sw1_gip_ixia_delivery}             192.168.143.2            #Tunnel Gateway IP
+${tunnel_sw1_mask_ixia_delivery}            255.255.255.0            #Tunnel Subnet Mask
+${tunnel_sw1_ixia_delivery_name}            ac4600_1_ixia_delivery   #Tunnel Name when used as filter interface
+${tunnel_sw1_loopback_ixia_delivery}        ethernet4                #Tunnel Loopback Interface
+
+## Switch 2: app-ac4600-2
+${switch2_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch2_filter_alias}                     ixia-2-5        #Alias for filter interface on switch scale-ac4600-1
+${switch2_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch2_delivery_alias}                   ixia-2-6        #Alias for delivery interface on switch scale-ac4600-1
+
+${tunnel_sw2_name}                      tunnel4          #Tunnel Name
+${tunnel_sw2_parent_intf}               ethernet9        #Tunnel Parent Interface
+${tunnel_sw2_sip}                       192.168.67.1     #Tunnel Source IP
+${tunnel_sw2_dip}                       192.168.43.1     #Tunnel Destination IP
+${tunnel_sw2_gip}                       192.168.67.2     #Tunnel Gateway IP
+${tunnel_sw2_mask}                      255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw2_loopback}                  ethernet3        #Tunnel Loopback Interface
+${extreme1_sw2_tunnel_name}             tunnel4
+${extreme1_sw2_tunnel_intf1}            9
+${extreme1_sw2_tunnel_ip}               192.168.67.2  
+${extreme1_sw2_tunnel_mask}             255.255.255.0
+
+${tunnel_sw2_name_ixia_filter}              tunnel5                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_filter}       ethernet1               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_filter}               192.168.175.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_filter}               192.168.175.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixia_filter}               192.168.175.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_filter_name}              ac4600_ixia_filter      #Tunnel Name when used as filter interface
+
+${tunnel_sw2_name_ixia_delivery}            tunnel6                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_delivery}     ethernet2               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_delivery}             192.168.180.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_delivery}             192.168.180.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixiadelivery}              192.168.180.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_delivery}            255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_delivery_name}            ac4600_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw2_loopback_ixia_delivery}        ethernet4               #Tunnel Loopback Interface
+
+## Switch 3: app-ac5710-4
+${switch3_filter_intf}                  ethernet1       #filter interface on switch scale-ac4600-1
+${switch3_filter_alias}                 ixia-1-5        #Alias for filter interface on switch scale-ac4600-1
+${switch3_delivery_intf}                ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch3_delivery_alias}               ixia-1-6        #Alias for delivery interface on switch scale-ac4600-1
+${core_interface_as5710}                ethernet49       #Core interface between app-ac5710-4 and app-ac6700-1
+
+${tunnel_sw3_name}                      tunnel7          #Tunnel Name
+${tunnel_sw3_parent_intf}               ethernet51       #Tunnel Parent Interface
+${tunnel_sw3_sip}                       192.168.22.1     #Tunnel Source IP
+${tunnel_sw3_dip}                       192.168.29.1     #Tunnel Destination IP
+${tunnel_sw3_gip}                       192.168.22.2     #Tunnel Gateway IP
+${tunnel_sw3_mask}                      255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw3_loopback}                  ethernet3        #Tunnel Loopback Interface
+${arista1_sw3_tunnel_name}              tunnel7
+${arista1_sw3_tunnel_intf1}             Et51/1
+${arista1_sw3_tunnel_ip}                192.168.22.2  
+${arista1_sw3_tunnel_mask}              255.255.255.0
+
+${tunnel_sw3_name_ixia_filter}              tunnel8                   #Tunnel Name
+${tunnel_sw3_parent_intf_ixia_filter}       ethernet1                 #Tunnel Parent Interface
+${tunnel_sw3_sip_ixia_filter}               192.168.82.1              #Tunnel Source IP
+${tunnel_sw3_dip_ixia_filter}               192.168.82.2              #Tunnel Destination IP
+${tunnel_sw3_gip_ixia_filter}               192.168.82.2              #Tunnel Gateway IP
+${tunnel_sw3_mask_ixia_filter}              255.255.255.0             #Tunnel Subnet Mask
+${tunnel_sw3_ixia_filter_name}              ac5710_4_ixia_filter      #Tunnel Name when used as filter interface
+
+${tunnel_sw3_name_ixia_delivery}            tunnel9                   #Tunnel Name
+${tunnel_sw3_parent_intf_ixia_delivery}     ethernet2                 #Tunnel Parent Interface
+${tunnel_sw3_sip_ixia_delivery}             192.168.81.1              #Tunnel Source IP
+${tunnel_sw3_dip_ixia_delivery}             192.168.81.2              #Tunnel Destination IP
+${tunnel_sw3_gip_ixiadelivery}              192.168.81.2              #Tunnel Gateway IP
+${tunnel_sw3_mask_ixia_delivery}            255.255.255.0             #Tunnel Subnet Mask
+${tunnel_sw3_ixia_delivery_name}            ac5710_4_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw3_loopback_ixia_delivery}        ethernet4                 #Tunnel Loopback Interface
+
+## Switch 4: app-ac6700-1
+
+${tunnel_sw4_name}                      tunnel10         #Tunnel Name
+${tunnel_sw4_parent_intf}               ethernet5        #Tunnel Parent Interface
+${tunnel_sw4_sip}                       192.168.29.1     #Tunnel Source IP
+${tunnel_sw4_dip}                       192.168.22.1     #Tunnel Destination IP
+${tunnel_sw4_gip}                       192.168.29.2     #Tunnel Gateway IP
+${tunnel_sw4_mask}                      255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw4_loopback}                  ethernet10       #Tunnel Loopback Interface
+${arista1_sw4_tunnel_name}              tunnel7
+${arista1_sw4_tunnel_intf1}             Et49/1
+${arista1_sw4_tunnel_ip}                192.168.29.2  
+${arista1_sw4_tunnel_mask}              255.255.255.0
+
+## Switch 8: app-ac5610-2
+${switch8_filter_intf}                  ethernet1       #filter interface on switch scale-ac4600-1
+${switch8_filter_alias}                 ixia-1-7        #Alias for filter interface on switch scale-ac4600-1
+${switch8_delivery_intf}                ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch8_delivery_alias}               ixia-1-8        #Alias for delivery interface on switch scale-ac4600-1
+
+
+${policy_name}                          tunnel_based_policy_as4600
+${policy_name_1}                        tunnel_based_policy_as5710_as6700
+${tunnel_pre_service}                   tunnel_pre_service
+${tunnel_post_service}                  tunnel_post_service
+${tunnel_service_name}                  tunnel_based_service
+
+${policy_overlap_1}                     P1
+${policy_overlap_2}                     ZP1
+${policy_overlap}                       _ZP1_o_P1
+
+*Test Case
+
+AS4600:Verify bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  feature
+
+AS5710:Verify bidirectional tunnel interface
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    [Tags]  feature
+    
+AS6700:Verify bidirectional tunnel interface   
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    [Tags]  feature  
+
+AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L2  traffic    
+
+AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=64  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L2  traffic
+    
+AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L2  traffic    
+
+AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=64  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L2  traffic
+        
+AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=9000  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L2  traffic        
+
+AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=9000  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L2  traffic
+    
+AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"vlan": 2048, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L2  traffic        
+
+
+AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"vlan": 2048, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L2  traffic
+    
+AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4    
+    
+AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4 
+    
+AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001:2004:0:0:0:0:0:c4", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_d_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001:2004:0:0:0:0:0:c4", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=e_i_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6    
+    
+AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-ip": "2001:2004:0:0:0:0:0:c3", "sequence": 1, "dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_d_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip": "2001:2004:0:0:0:0:0:c3", "sequence": 1, "dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=e_i_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6       
+
+AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4
+
+AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6
+
+AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 80, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 80, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4
+
+AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 80, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 80, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6
+
+
+AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4
+
+AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6
+
+AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4        
+
+
+AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4
+
+AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 53, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6        
+
+
+AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 53, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6
+             
+
+AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"tcp-flags": 32, "ether-type": 2048, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  flags        
+
+
+AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": 32, "ether-type": 2048, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  flags
+             
+
+AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"tcp-flags": 32, "ether-type": 34525, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  flags        
+
+
+AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": 32, "ether-type": 34525, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  flags
+
+AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L2  traffic  txrx
+
+
+AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=64  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L2  traffic  txrx
+    
+AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L2  traffic  txrx    
+
+AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=64  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L2  traffic  txrx
+        
+AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=9000  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L2  traffic  txrx        
+
+AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:02:03:04:05:07", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=9000  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L2  traffic  txrx
+    
+AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"vlan": 2048, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L2  traffic  txrx        
+
+
+AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"vlan": 2048, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L2 add  flow=e->i  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  frame_cnt=100000  name=e_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}
+    change tunnel direction to bidir    
+    sleep  5
+    delete traffic        
+    [Tags]  feature  L2  traffic  txrx
+
+    
+AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx    
+    
+AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx 
+    
+AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001:2004:0:0:0:0:0:c4", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_d_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001:2004:0:0:0:0:0:c4", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=e_i_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx    
+    
+AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-ip": "2001:2004:0:0:0:0:0:c3", "sequence": 1, "dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_d_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip": "2001:2004:0:0:0:0:0:c3", "sequence": 1, "dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "ether-type": 34525}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=e_i_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx       
+
+AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx
+
+AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx
+
+AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 80, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 80, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx
+
+AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 80, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    sleep  5
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 80, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx
+
+
+AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx
+
+AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=8002
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx
+
+AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  txrx        
+
+
+AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  txrx
+
+AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"dst-tp-port": 53, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  txrx        
+
+
+AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port": 53, "ether-type": 34525, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  txrx
+             
+
+AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"tcp-flags": 32, "ether-type": 2048, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv4  flags  txrx        
+
+
+AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": 32, "ether-type": 2048, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv4  flags  txrx
+             
+
+AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add policy match  admin-view  ${policy_name}  1  {"tcp-flags": 32, "ether-type": 34525, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_d_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    change tunnel direction to bidir    
+    delete traffic  
+    [Tags]  feature  L3  traffic  ipv6  flags  txrx        
+
+
+AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
+    ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
+    cli disable interface  s3  ${core_interface_as5710}
+    change tunnel direction to txrx
+    sleep  20
+    ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    Should be true  ${verify_tun_sw3}
+    ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    Should be true  ${verify_tun_sw4}
+    rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": 32, "ether-type": 34525, "tcp-flags-mask": 32, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    ## Verify BigTap policy is up
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    delete traffic
+    sleep  10
+    ${stream}=  L3 add  flow=e->i  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=e_i_flow  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  urgBit=1
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream} 
+    sleep  2    
+    verify results  e  i  transmitted_frames  received_data_integrity_frames            
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    cli enable interface  s3  ${core_interface_as5710}    
+    change tunnel direction to bidir    
+    delete traffic        
+    [Tags]  feature  L3  traffic  ipv6  flags  txrx
+
+                          
+* Keyword
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+    
+extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${tunnel_address}  ${tunnel_mask}
+    config  ${node}  create vlan ${tunnel_name}
+    config  ${node}  configure vlan ${tunnel_name} add ports ${tunnel_port} untagged
+    config  ${node}  configure vlan ${tunnel_name} ipaddress ${tunnel_address} ${tunnel_mask}
+    config  ${node}  enable ipforwarding vlan ${tunnel_name}
+    config  ${node}  configure ip-mtu 9194 vlan ${tunnel_name} 
+    extreme save config  ${node}  
+
+change tunnel direction to txrx
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    Should be true  ${verify_add_tun_sw3}          
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    Should be true  ${verify_add_tun_sw4}          
+    sleep  10
+
+change tunnel direction to bidir
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    Should be true  ${verify_add_tun_sw3}          
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    Should be true  ${verify_add_tun_sw4}          
+    sleep  10
+
+    
+corsair suite setup
+    base suite setup
+    rest enable feature  tunneling
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    rest add switch alias  s3  ${switch3_alias}
+    rest add switch alias  s4  ${switch4_alias}
+    rest add switch alias  s8  ${switch8_alias}    
+    #CRC packets to be dropped
+    bash  s1  ofad-ctl crc enable
+    bash  s2  ofad-ctl crc enable
+    bash  s3  ofad-ctl crc enable
+    bash  s4  ofad-ctl crc enable    
+    #Add ip address to 40G ports on arista
+    cli arista add ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    cli arista add ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull                      
+    cli arista add mtu interface  s7  Ethernet49/1  9212
+    cli arista add mtu interface  s7  Ethernet51/1  9212     
+    Sleep  10    
+    #Setup tunnels across  Accton 4600 (app-ac4600-1)
+    #### CORE IS TUNNEL
+    extreme tunnel setup  s6  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    Sleep  5     
+    #Setup tunnels across  Accton 4600 (app-ac4600-2)
+    #### CORE IS TUNNEL
+    extreme tunnel setup  s6  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  5
+    
+    #Setup tunnels across Accton 5710 (app-ac5710-4)
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    Should be true  ${verify_add_tun_sw3}          
+    Sleep  5      
+    
+    #Setup tunnels across Accton 6700 (app-ac6700-1)
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    Should be true  ${verify_add_tun_sw4}          
+    Sleep  5
+
+        
+    ## Configure BigTap policy 
+    rest add interface role  s1  ${switch1_filter_intf}     filter    intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery  intf_nickname=${switch2_delivery_alias}
+    rest add interface role  s3  ${switch3_filter_intf}     filter    intf_nickname=${switch3_filter_alias}
+    rest add interface role  s8  ${switch8_delivery_intf}   delivery  intf_nickname=${switch8_delivery_alias}    
+    sleep  10
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias}  delivery
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch3_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch8_delivery_alias}  delivery    
+    sleep  10    
+
+tunnel teardown
+    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
+    Should be true  ${verify_del_tun_sw1}    
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name}  
+    Should be true  ${verify_del_tun_sw2}  
+    ${verify_del_tun_sw3}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name}  
+    Should be true  ${verify_del_tun_sw3}    
+    ${verify_del_tun_sw4}=  rest delete tunnel interface  node=s4  tunnel_name=${tunnel_sw4_name}  
+    Should be true  ${verify_del_tun_sw4}      
+    Sleep  2
+    
+corsair suite teardown
+    tunnel teardown
+    #Delete previously added ip address to 40G ports on arista
+    cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
+    cli arista delete mtu interface  s7  Ethernet49/1  9212
+    cli arista delete mtu interface  s7  Ethernet51/1  9212    
+    REST delete policy  admin-view  ${policy_name}
+    REST delete policy  admin-view  ${policy_name_1}
+    rest delete interface role  s1  ${switch1_filter_intf}  filter 
+    rest delete interface role  s2  ${switch2_delivery_intf}   delivery    
+    rest delete interface role  s3  ${switch3_filter_intf}  filter 
+    rest delete interface role  s8  ${switch8_delivery_intf}   delivery    
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch alias  s8    
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4
+    rest delete switch  s8    
+    config  s6  delete vlan ${extreme1_sw1_tunnel_name}
+    config  s6  delete vlan ${extreme1_sw2_tunnel_name}
+    Sleep  2
+    extreme save config  s6
+    rest disable feature  tunneling    
+    base suite teardown        

@@ -5,7 +5,8 @@ from celery import Celery
 app = Celery('bsn_services',
              broker='amqp://guest@qa-esb1.qa.bigswitch.com//',
              backend='amqp://guest@qa-esb1.qa.bigswitch.com//',
-             include=['bsn_services.tasks'])
+             include=['bsn_services.sample_method_tasks',
+                      'bsn_services.controller_upgrade'])
 
 # Optional configuration, see the application user guide.
 app.conf.update(

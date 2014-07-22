@@ -615,6 +615,28 @@ def bigrobot_syslog_level(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
 
 
+def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_TIMER',
+                            new_val, default)
+
+
+def bigrobot_monitor_reauth_init_timer(new_val=None, default=480):  # 8 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    The initial time (in seconds) to wait before executing a task for the
+    first time.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_INIT_TIMER',
+                            new_val, default)
+
+
 def bigrobot_debug(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.

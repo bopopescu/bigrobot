@@ -5,7 +5,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import time
 import re
-from autobot.devconf import HostDevConf
+from autobot.devconf import HostDevConf, ControllerDevConf
 from keywords.T5Platform import T5Platform
 
 
@@ -296,6 +296,7 @@ class KVMOperations(object):
             network_interface = kwargs.get("network_interface", "br0")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
+            helpers.summary_log("Creating log_path %s" % self.log_path)
             os.makedirs(self.log_path)
 
             # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
@@ -344,9 +345,9 @@ class KVMOperations(object):
             result['kvm_host'] = kvm_host
             result['image_path'] = qcow_vm_path
             result['vm_ip'] = ip
-            result['content'] = helpers.file_read_once("%s/%s.log"
-                                                       % (self.log_path,
-                                                          vm_name))
+#             result['content'] = helpers.file_read_once("%s/%s.log"
+#                                                        % (self.log_path,
+#                                                           vm_name))
 
             if vm_type == 'mininet':
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
@@ -363,6 +364,9 @@ class KVMOperations(object):
                                                             netmask=netmask,
                                                             vm_host_name=vm_host_name,
                                                             gateway=gateway)
+#             controller_handle = ControllerDevConf(host=result['vm_ip'], user='admin', password='admiandmin')
+#             controller_handle.config("copy running-config config://firstboot-config")
+#             helpers.summary_log("Success saving firstboot-config")
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
