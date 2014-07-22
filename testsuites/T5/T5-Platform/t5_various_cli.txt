@@ -396,7 +396,11 @@ T21 Escaping special characters in quoted strings
 	...  snmp-server location 'Location \\n \\r \\n """"'
 	[Tags]  BSC-5011
 
-T22 Placeholder
+T22 Localhost helptext
+	Cli Run and Verify Output  master
+	...  show controller ?
+	...  Show controller stats
+	[Tags]  BSC-5742
 	Cli Run  master  show run
 
 T23 Placeholder
