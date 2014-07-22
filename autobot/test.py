@@ -1372,7 +1372,7 @@ class Test(object):
                 master = self.controller("master")
                 master.config("show switch")
                 master.config("show running-config")
-                master.config("copy running-config config://ztn-base-config")
+                master.config("enable; copy running-config config://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
