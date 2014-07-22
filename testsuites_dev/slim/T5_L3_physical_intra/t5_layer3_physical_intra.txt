@@ -15,7 +15,7 @@ Library         Collections.py
 Library         keywords/Ixia.py
 Library         keywords/SwitchLight.py
 Resource        testsuites_dev/slim/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
-Resource        testsuites_dev/slim/t5_dualleaf_three_rack_physical_resource.txt
+Resource        testsuites_dev/slim/T5_L3_physical_intra/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
