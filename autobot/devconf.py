@@ -3,6 +3,7 @@ from Exscript.protocols import SSH2, Telnet
 from Exscript.protocols.Exception import LoginFailure, TimeoutException
 import autobot.helpers as helpers
 import autobot.utils as br_utils
+import autobot.monitor as monitor
 import sys
 import socket
 import re
@@ -36,6 +37,7 @@ class DevConf(object):
         self.last_result = None
         self._mode = 'cli'
         self.is_prompt_changed = False
+        self._lock = False
 
         self._timeout = timeout if timeout else 30  # default timeout
 
@@ -140,6 +142,25 @@ class DevConf(object):
     def name(self):
         return self._name
 
+    def is_locked(self):
+        """
+        DevConf _simple_ lock mechanism - in the multithreading case, it
+        checks if there's a command execution in progress.
+        """
+        if self._lock:
+            print("!!!!!!! DEVCONF_LOCK: %s is locked" % self.name())
+        return self._lock
+
+    def set_lock(self):
+        self._lock = True
+        # print("!!!!!!! DEVCONF_LOCK: %s set lock" % self.name())
+        return self._lock
+
+    def clear_lock(self):
+        self._lock = False
+        # print("!!!!!!! DEVCONF_LOCK: %s clear lock" % self.name())
+        return self._lock
+
     def send(self, cmd, no_cr=False, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
@@ -151,11 +172,15 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#send
         """
+        if self.is_locked():
+            helpers.sleep(3)
+        self.set_lock()
         if not quiet:
             helpers.log("Send command: '%s'" % cmd, level=level)
         if no_cr is False:
             cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
+        self.clear_lock()
 
     def prompt_str(self, prompt):
         prompt_str_list = []
@@ -198,6 +223,10 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
+        if self.is_locked():
+            helpers.sleep(3)
+        self.set_lock()
+
         if prompt is None:
             helpers.debug("Reset prompt to default")
             self.conn.set_prompt()
@@ -228,6 +257,8 @@ class DevConf(object):
 
         helpers.log("Expect prompt matched (%s, '%s')"
                     % (ret_val[0], helpers.re_match_str(ret_val[1])))
+
+        self.clear_lock()
         return ret_val
 
     def waitfor(self, prompt, timeout=None, quiet=False, level=4):
@@ -240,6 +271,10 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#waitfor
         """
+        if self.is_locked():
+            helpers.sleep(3)
+        self.set_lock()
+
         if prompt is None:
             # User might have changed the prompt. So be sure to set it back
             # to default prompt first.
@@ -275,11 +310,17 @@ class DevConf(object):
 
         helpers.log("Expect prompt matched (%s, '%s')"
                     % (ret_val[0], helpers.re_match_str(ret_val[1])))
+
+        self.clear_lock()
         return ret_val
 
 
     def cmd(self, cmd, quiet=False, mode=None, prompt=None,
             timeout=None, level=5):
+        if self.is_locked():
+            helpers.sleep(3)
+        self.set_lock()
+
         if timeout:
             self.timeout(timeout)
         else:
@@ -310,6 +351,7 @@ class DevConf(object):
 
         if timeout: self.timeout()
 
+        self.clear_lock()
         return self.result()
 
     # Alias
@@ -347,7 +389,8 @@ class DevConf(object):
         return self.result()['content']
 
     def close(self):
-        helpers.log("Closing device %s" % self._host)
+        helpers.log("Closing DevConf '%s' (%s)" % (self.name(), self._host))
+        self.conn.close(force=True)
 
 
 class BsnDevConf(DevConf):
@@ -386,7 +429,8 @@ class BsnDevConf(DevConf):
 
         if helpers.is_extreme(self.platform()):
             if mode != 'config':
-                helpers.test_error("For Extreme Networks switch, only config mode is supported")
+                helpers.test_error("For Extreme Networks switch, only"
+                                   " config mode is supported")
         # Check to make sure we're in the right mode prior to executing command
         elif mode == 'cli':
             if self.is_bash():
@@ -542,6 +586,7 @@ class BsnDevConf(DevConf):
                         prompt=prompt, timeout=timeout, level=level)
 
     def close(self):
+        helpers.log("Closing BsnDevConf '%s' (%s)" % (self.name(), self._host))
         super(BsnDevConf, self).close()
         # !!! FIXME: Need to close the controller connection
 
@@ -549,6 +594,35 @@ class BsnDevConf(DevConf):
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
         super(ControllerDevConf, self).__init__(*args, **kwargs)
+        init_timer = helpers.bigrobot_monitor_reauth_init_timer()
+        timer = helpers.bigrobot_monitor_reauth_timer()
+
+        helpers.log("Test Monitor '%s' init_timer: %s, timer:%s"
+                    % (self.name(), init_timer, timer))
+        self.test_monitor = monitor.Monitor(
+                    self.name(),
+                    init_timer=init_timer,
+                    timer=timer,
+                    callback_task=self.monitor_action)
+
+    def monitor_action(self):
+        """
+        This callback method is called by autobot.monitor.Monitor().
+        A side effect is that helpers.log() doesn't work - Robot Framework
+        logger is a bit funky. Workaround is to simply print to stdout.
+        """
+        self.send("")
+        self.expect()
+        content = self.content()
+        print("Test Monitor for ControllerDevConf '%s' - triggered session"
+              " keepalive to avoid reauth (output=%s)"
+              % (self.name(), repr(content)))
+
+    def close(self):
+        self.test_monitor.off()
+        helpers.log("Closing ControllerDevConf '%s' (%s)"
+                    % (self.name(), self._host))
+        super(ControllerDevConf, self).close()
 
 
 class SwitchDevConf(BsnDevConf):
@@ -562,8 +636,8 @@ class SwitchDevConf(BsnDevConf):
             # Remove first line, which contains 'show version'
             out = helpers.text_processing_str_remove_header(out, 1)
             # Remove line starting with 'Uptime is xxxxxx' to the end of string
-            out = helpers.text_processing_str_remove_to_end(out,
-                                                            line_marker=r'^Uptime is')
+            out = helpers.text_processing_str_remove_to_end(
+                                out, line_marker=r'^Uptime is')
             out_dict = helpers.from_yaml(out)
             self._info = helpers.snake_case_key(out_dict)
             helpers.log("Switch info:\n%s" % helpers.prettify(self._info))
