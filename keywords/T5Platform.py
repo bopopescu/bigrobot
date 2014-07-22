@@ -4076,7 +4076,7 @@ class T5Platform(object):
                     continue
 
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -4312,6 +4312,11 @@ class T5Platform(object):
 
                 if re.match(r'.*member port-group.*vlan.*', string):
                     helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r' clear session session-id', string):
+                    helpers.log("Ignoring line as it may effect the script execution..")
                     num = num - 1
                     continue
 
