@@ -3857,7 +3857,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4018,7 +4018,7 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
