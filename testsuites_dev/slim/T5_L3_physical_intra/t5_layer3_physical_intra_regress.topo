@@ -1,21 +1,21 @@
 c1:
- ip: 10.8.24.101
+ ip: 10.9.16.210
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
-# console: 
-#   ip: regress
-#   libvirt_vm_name: amallina_ztn-c1_06251549
-#   user: root
-#   password: bsn
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_ztn-c1_06251549
+   user: root
+   password: bsn
 c2:
- ip: 10.8.24.102
+ ip: 10.9.16.211
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
-# console: 
-#   ip: regress
-#   libvirt_vm_name: amallina_snt-c2_06251553
-#   user: root
-#   password: bsn
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_snt-c2_06251553
+   user: root
+   password: bsn
 s1:
   ip: 10.9.16.118
   alias: leaf0-a
