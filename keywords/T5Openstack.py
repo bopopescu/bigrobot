@@ -724,3 +724,60 @@ S
 				return True
 		helpers.test_failure("Fail:router interface not present in controller endpoint table")
 		return False
+	
+	def openstack_tenant_scale(self, count, name='p'):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			tenant = name
+			tenant += str(i)
+			os1.bash("keystone tenant-create --name %s" % (tenant))
+			i = i + 1
+		return True
+
+	def openstack_segment_scale(self, tenantName, subnet_firstbyte, count, name='s'):
+		'''Function to create multiple segments in a given tenant
+		Input: tenantName , count , name starts with segment
+		Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		j = 0
+		k = 0
+		while (i <= count):
+			netName = name
+			netName += str(i)
+			tenantId = self.openstack_show_tenant(tenantName)
+			try:
+				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
+			except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+			ipaddr = "%d.%d.%d.0" % (subnet_firstbyte, j, k)
+			subnet_ip = ipaddr + "/" + 24
+			try:
+				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
+			except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+			k = k + 1
+			if k == 254:
+				j = j + 1
+				k = 0
+			else:
+				continue
+			i = i + 1
+		return True
+			
+	
+	
