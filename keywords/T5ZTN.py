@@ -1233,44 +1233,29 @@ class T5ZTN(object):
         | node | Alias of the switch |
         Return Value:  True         
         """
-        t = test.Test()
-        s = t.dev_console(node, modeless=True)
-        s.send("\r")
-        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
-                           timeout=300)
-        if options[0] == 0: #login prompt
-            s.send('admin')
-            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
-            if options[0] == 0:
-                helpers.log("Logging in as admin with password %s" % password)
-                s.cli(password)
-        s.cli('enable')
-        s.send('debug bash')
- 
-        s.send('cd /mnt/flash') 
-        content = s.cli('')['content']         
-        s.send('cat boot-config')         
-        content = s.cli('')['content']  
+        
+        t = test.Test()        
+        s = t.dev_console(node)
+        content = s.bash('cat /mnt/flash/boot-config')['content'] 
         temp = helpers.strip_cli_output(content) 
+        
         helpers.log('USR OUTPUT: %s ' % temp)
         
         if (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)): 
-            helpers.log('The switch: %s is in ztn mode ' % node)    
+            helpers.log('The switch: %s is in ZTN mode ' % node)    
             image =  'SWI=http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release-bcf.swi'
             sedstring = 's;^BOOTMODE.*;'+image+';'       
-            line = 'cat boot-config | sed \'' + sedstring + '\' > boot-config'
-            s.send(line)        
-            s.send('cat boot-config')         
-            helpers.log(s.cli('')['content'])         
+            line = 'cat /mnt/flash/boot-config | sed \'' + sedstring + '\' > /mnt/flash/boot-config'
+            s.bash(line)        
+            s.bash('cat /mnt/flash/boot-config')         
+            helpers.log(s.bash('')['content'])                              
         elif (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)):
             helpers.log('The switch: %s is NOT in  ztn mode ' % node)  
         else:
             helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
             helpers.test_failure('ERROR:  not able to figure out the boot mode')         
          
-        s.send('exit')
-        s.send('exit')
-        s.send('exit')                  
+        s.cli('')                  
         return True
 
     def console_bash_switch_mode_ztn(self, node,password='adminadmin' ):
@@ -1281,41 +1266,86 @@ class T5ZTN(object):
         | node | Alias of the switch |
         Return Value:  True         
         """
-        t = test.Test()
-        s = t.dev_console(node, modeless=True)
-        s.send("\r")
-        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
-                           timeout=300)
-        if options[0] == 0: #login prompt
-            s.send('admin')
-            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
-            if options[0] == 0:
-                helpers.log("Logging in as admin with password %s" % password)
-                s.cli(password)
-        s.cli('enable')
-        s.send('debug bash')
- 
-        s.send('cd /mnt/flash') 
-        content = s.cli('')['content']         
-        s.send('cat boot-config')         
-        content = s.cli('')['content']  
-        temp = helpers.strip_cli_output(content) 
+        t = test.Test()        
+        s = t.dev_console(node)
+        content = s.bash('cat /mnt/flash/boot-config')['content'] 
+        temp = helpers.strip_cli_output(content)         
         helpers.log('USR OUTPUT: %s ' % temp)
-        
+                
         if (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)): 
             helpers.log('The switch: %s is NOT in  ztn mode, setting to ztn ' % node)    
             bootmode =  'BOOTMODE=ztn'
             sedstring = 's;^SWI=.*;'+bootmode+';'       
-            line = 'cat boot-config | sed \'' + sedstring + '\' > boot-config'
-            s.send(line)        
-            s.send('cat boot-config')         
-            helpers.log(s.cli('')['content'])         
+            line = 'cat /mnt/flash/boot-config | sed \'' + sedstring + '\' > /mnt/flash/boot-config'
+            s.bash(line) 
+            s.bash('cat /mnt/flash/boot-config') 
+            helpers.log(s.bash('')['content'])            
         elif (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)):
             helpers.log('The switch: %s is in  ztn mode ' % node) 
         else:
             helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
             helpers.test_failure('ERROR:  not able to figure out the boot mode')         
-        s.send('exit')
-        s.send('exit')
-        s.send('exit')                  
+        s.cli('')                  
         return True
+
+    def console_bash_switch_add_ztnserver(self, node,ztnserver, password='adminadmin' ):
+        """
+        add ztn server to switch
+        Author- Mingtao
+        Inputs:
+            node  -  Alias of the switch  
+            ztnserver  - ztnservers
+        
+        Return Value:  True         
+        """
+        t = test.Test()        
+        s = t.dev_console(node)
+        content = s.bash('cat /mnt/flash/boot-config')['content'] 
+        temp = helpers.strip_cli_output(content) 
+        helpers.log('USR OUTPUT: %s ' % temp)                       
+        if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
+            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
+            line= 'cat /mnt/flash/boot-config |sed \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'            
+            helpers.log('the sed line is:  %s'  % line)
+            s.bash(line) 
+            s.bash('cat /mnt/flash/boot-config') 
+            helpers.log(s.bash('')['content'])            
+              
+        else:
+            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)                            
+        helpers.log('Adding ZTNSERVER  %s to switch %s' % (ztnserver,node)) 
+        line='echo ' +'\"ZTNSERVERS='+ ztnserver + '\"' + " >> " + '/mnt/flash/boot-config'            
+        s.bash(line) 
+        s.bash('cat /mnt/flash/boot-config')         
+        helpers.log(s.bash('')['content'])                       
+        
+        s.cli('')                  
+        return True
+    
+    def console_bash_switch_delete_ztnserver(self, node, password='adminadmin' ):
+        """
+        remove ztn server to switch
+        Author- Mingtao
+        Inputs:
+            node  -  Alias of the switch  
+                    
+        Return Value:  True         
+        """
+        t = test.Test()
+        
+        s = t.dev_console(node)
+        content = s.bash('cat /mnt/flash/boot-config')['content'] 
+        temp = helpers.strip_cli_output(content) 
+        helpers.log('USR OUTPUT: %s ' % temp)                       
+        if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
+            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
+            line= 'cat /mnt/flash/boot-config |sed \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'            
+            helpers.log('the sed line is:  %s'  % line)
+            s.bash(line) 
+            s.bash('cat /mnt/flash/boot-config')         
+            helpers.log(s.bash('')['content'])                       
+        else:
+            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)                            
+        s.cli('')                  
+        return True
+

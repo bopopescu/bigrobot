@@ -3,6 +3,8 @@ import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
 import autobot.utils as br_utils
 import re
+import telnetlib
+import time
 
 
 class Test(object):
@@ -33,6 +35,46 @@ class Test(object):
             self._current_controller_master = None
             self._current_controller_slave = None
             self._settings = {}
+
+            # ESB environment:
+            # Per convention, the consumer will pass the params data to the
+            # producer (the worker). The params data has all the details about
+            # the test topology which the producer can use to instantiate a
+            # new test handle (an object of the Test class). The producer has
+            # to prepare the test environment using the steps below.
+            #
+            # - Save the params data, the YAML string contained in env
+            #   BIGROBOT_TOPOLOGY_FOR_ESB into a topo file
+            # - Point env BIGROBOT_TOPOLOGY to the new topo file
+            # - Unset env BIGROBOT_TESTBED (used for dynamic topology)
+            #   - Since params data already contains the expanded topo info
+            # - Unset env BIGROBOT_PARAMS_INPUT (used for dynamic topology)
+            # - Diable test setup
+            # - Disable test postmortem
+            # - Disable test clean config
+            # - Disable test ZTN
+            # - Don't ping or connect to devices during initialization
+            #   (see initialization())
+            #
+            if helpers.is_esb():
+                helpers.summary_log("Enterprise Service Bus (ESB) environment")
+
+                if helpers.bigrobot_topology_for_esb().lower() == 'none':
+                    helpers.environment_failure(
+                                    "Env BIGROBOT_TOPOLOGY_FOR_ESB must be"
+                                    " defined when running under the"
+                                    " ESB environment")
+                params_file = helpers.params_to_file(
+                                    helpers.bigrobot_topology_for_esb(),
+                                    path=helpers.bigrobot_log_path_exec_instance())
+                helpers.summary_log("ESB BIGROBOT_TOPOLOGY: %s"
+                                    % helpers.bigrobot_topology(params_file))
+                helpers.remove_env("BIGROBOT_TESTBED")
+                helpers.remove_env("BIGROBOT_PARAMS_INPUT")
+                helpers.bigrobot_test_setup("False")
+                helpers.bigrobot_test_postmortem("False")
+                helpers.bigrobot_test_clean_config("False")
+                helpers.bigrobot_test_ztn("False")
 
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
@@ -153,6 +195,9 @@ class Test(object):
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
 
+            if helpers.bigrobot_topology() == None:
+                helpers.environment_failure("Environment variable BIGROBOT_TOPOLOGY is not defined.")
+
             self.merge_params_attributes(helpers.bigrobot_params())
             if helpers.bigrobot_additional_params() is None:
                 helpers.log("Skip merging additional params..")
@@ -167,7 +212,7 @@ class Test(object):
             """
             Reading from params file and merge attributes with topo file
             """
-            if params_file.lower() == 'none':
+            if params_file == None or params_file.lower() == 'none':
                 return True
 
             if helpers.file_not_exists(params_file):
@@ -243,8 +288,17 @@ class Test(object):
             helpers.log("Node aliases:\n%s"
                         % helpers.prettify(self._node_static_aliases))
 
-    def __init__(self):
-        if Test._instance is None:
+    def __init__(self, reset_instance=False, esb=False, params=None):
+        """
+        In ESB environment, we want to overwrite the singletone object
+        everytime we start a new worker task. This can be done by setting
+        reset_instance=True.
+        """
+        if esb:
+            reset_instance = True
+            helpers.bigrobot_esb('True')
+            helpers.bigrobot_topology_for_esb(params)
+        if Test._instance is None or reset_instance:
             Test._instance = Test.Singleton()
         self._EventHandler_instance = Test._instance
 
@@ -414,6 +468,14 @@ class Test(object):
             return node
         elif name:
             name = self.alias(name, ignore_error=ignore_error)
+
+            if name not in self._topology and name in self.params():
+                # In certain condition (e.g., ESB environment), we don't
+                # connect to the devices during Test initialization. But if
+                # the device handle is requested then call node_connect() to
+                # retrieve it.
+                self.node_connect(name)
+
             if name not in self._topology:
                 if ignore_error:
                     return None
@@ -817,34 +879,130 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+        spine_stack_trace = r'Call Trace:'
+        spine_error = r'phy device not initialized'
+        reboot_needed = r'Fixing recursive fault but reboot is needed!'
+        n_console.send('')
 
         def login():
             helpers.log("Found the login prompt. Sending user name.")
+            n_console = n.console()
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli])
+            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error, reboot_needed], timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
-                match = n_console.expect(prompt=prompt_device_cli)
+                match = n_console.expect(prompt=[prompt_device_cli, spine_error])
+            elif match[0] == 2:
+                helpers.log("Found Spine Console Error: phy device not initialized !!!")
+                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+                con = self.dev_console(node, modeless=True)
+                con.send('admin')
+                helpers.sleep(2)
+                con.send('adminadmin')
+                helpers.sleep(2)
+                con.send('enable;conf;no snmp-server enable')
+                con.send('')
+                con = self.dev_console(node)
+            elif match[0] == 3:
+                helpers.log("Found a switch Crash Needs to power cycle...")
+                helpers.log("Power cycling switch : %s " % node)
+                self.power_cycle(node)
+                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+                n_console = self.dev_console(node, modeless=True)
+                n_console.send('admin')
+                helpers.sleep(2)
+                n_console.send('adminadmin')
+                helpers.sleep(2)
+                n_console.send('enable;conf;no snmp-server enable')
+                n_console = self.dev_console(node)
 
-        n_console.send('')
-
-        # Match login or CLI prompt.
-        match = n_console.expect(prompt=[prompt_login, prompt_device_cli])
-        if match[0] == 0:
-            login()  # Found login prompt. Attempt to authenticate.
-        elif match[0] == 1:
-            helpers.log("Found the device prompt. Exiting system.")
-            n_console.send('logout')
-            match = n_console.expect(prompt=[prompt_login])
-            login()
-
+        try:
+            # Match login or CLI prompt.
+            match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error, reboot_needed], timeout=60)
+            if match[0] == 0:
+                login()  # Found login prompt. Attempt to authenticate.
+            elif match[0] == 1:
+                helpers.log("Found the BSN device prompt. Exiting system.")
+                n_console.send('logout')
+                match = n_console.expect(prompt=[prompt_login])
+                login()
+            elif match[0] == 2:
+                helpers.log("Found a switch Crash Needs to power cycle...")
+                helpers.log("Power cycling switch : %s " % node)
+                self.power_cycle(node)
+                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+                n_console = self.dev_console(node, modeless=True)
+                n_console.send('admin')
+                helpers.sleep(2)
+                n_console.send('adminadmin')
+                helpers.sleep(2)
+                n_console.send('enable;conf;no snmp-server enable')
+                n_console = self.dev_console(node)
+            elif match[0] == 3:
+                helpers.log("Found Spine Console Error: phy device not initialized !!!")
+                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+                con = self.dev_console(node, modeless=True)
+                con.send('admin')
+                helpers.sleep(2)
+                con.send('adminadmin')
+                helpers.sleep(2)
+                con.send('enable;conf;no snmp-server enable')
+                con.send('')
+                con = self.dev_console(node)
+            elif match[0] == 4:
+                helpers.log("Found a switch Crash Needs to power cycle...")
+                helpers.log("Power cycling switch : %s " % node)
+                self.power_cycle(node)
+                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+                n_console = self.dev_console(node, modeless=True)
+                n_console.send('admin')
+                helpers.sleep(2)
+                n_console.send('adminadmin')
+                helpers.sleep(2)
+                n_console.send('enable;conf;no snmp-server enable')
+                n_console = self.dev_console(node)
+        except:
+            helpers.log("This Expect error may be due to Spine got Stuck Already in with Kernel ..Crash")
+            helpers.log("Trying Power Cycle and check any activity on Console...")
+            helpers.log("Power cycling switch : %s " % node)
+            self.power_cycle(node)
+            helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+            n_console = self.dev_console(node, modeless=True)
+            n_console.send('admin')
+            helpers.sleep(2)
+            n_console.send('adminadmin')
+            helpers.sleep(2)
+            n_console.send('enable;conf;no snmp-server enable')
+            n_console = self.dev_console(node)
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
         return n_console
+
+    def power_cycle(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olReboot %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
+        helpers.sleep(300)
 
     def initialize(self):
         """
@@ -890,18 +1048,21 @@ class Test(object):
 
         helpers.debug("List of nodes (controllers must appear first): %s"
                       % list_of_nodes)
-        for key in list_of_nodes:
-            self.node_connect(key,
-                              controller_ip=controller_ip,
-                              controller_ip2=controller_ip2)
+
+        if helpers.is_esb():
+            helpers.summary_log("ESB environment - don't ping/connect to"
+                                " nodes during Test initialization")
+        else:
+            for key in list_of_nodes:
+                self.node_connect(key,
+                                  controller_ip=controller_ip,
+                                  controller_ip2=controller_ip2)
 
         self._init_completed = True  # pylint: disable=W0201
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
 
         helpers.debug("Final topology_params: %s" % self.topology_params())
-
-
 
     def init_completed(self):
         """
@@ -1068,29 +1229,17 @@ class Test(object):
         if not helpers.is_switch(name):
             return True
         console = self.params(name, 'console')
-        if not ('ip' in console and 'port' in console):
-            return True
-        helpers.log("ZTN setup - found switch '%s' console info" % name)
+
+        c1_ip = self.params('c1', 'ip')
+        c2_ip = self.params('c2', 'ip')
+        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
+        master = self.controller("master")
         if re.match(r'.*spine.*', self.params(name, 'alias')):
             fabric_role = 'spine'
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
         else:
             fabric_role = 'leaf'
             leaf_group = self.params(name, 'leaf-group')
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
-        if not helpers.is_switchlight(con.platform()):
-            helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
-            return True
-        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
-        master = self.controller("master")
+
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
@@ -1100,10 +1249,35 @@ class Test(object):
         if fabric_role == 'leaf':
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
-        master.config("show version")
+
+        if not ('ip' in console and 'port' in console):
+            return True
+        helpers.log("ZTN setup - found switch '%s' console info" % name)
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+            con = self.dev_console(name, modeless=True)
+            con.send('admin')
+            helpers.sleep(2)
+            con.send('adminadmin')
+            helpers.sleep(2)
+            con.send('enable;conf;no snmp-server enable')
+            con = self.dev_console(name)
+        else:
+            helpers.log("Initializaing leafs normally..")
+            con = self.dev_console(name)
+        if not helpers.is_switchlight(con.platform()):
+            helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
+            return True
+
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
+        con.bash('rm -rf /mnt/flash/boot-config')
+        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
+        con.send('')
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
@@ -1196,9 +1370,25 @@ class Test(object):
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master = self.controller("master")
-                master.enable("show switch")
+                master.config("show switch")
+                master.config("show running-config")
+                master.config("enable; copy running-config config://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
+            if helpers.bigrobot_test_ztn().lower() == 'true':
+                helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
+                master = self.controller("master")
+                master.enable("show switch")
+                master.enable("copy config://ztn-base-config running-config ")
+                master.enable("show running-config")
+                master.enable("show switch")
+                helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
+                for key in params:
+                    self.setup_ztn_phase2(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
+                master = self.controller("master")
+                master.enable("show switch")
 
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
@@ -1209,6 +1399,9 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
+            return
         n = self.topology(name)
 
         if not n.devconf():
@@ -1270,174 +1463,5 @@ class Test(object):
         helpers.log("Attempting to delete all tenants")
         c.config("copy config://firstboot-config running-config")
         c.config("show running-config")
-#         url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
-#         try:
-#             c.rest.get(url_get_tenant)
-#             content = c.rest.content()
-#         except:
-#             pass
-#         else:
-#             if (content):
-#                 for i in range (0, len(content)):
-#                     url_delete_tenant = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
-#                     try:
-#                         c.rest.delete(url_delete_tenant, {})
-#                     except:
-#                         pass
-#
-#         helpers.log("Attempting to delete all switches")
-#         url_get_switches = '/api/v1/data/controller/core/switch'
-#         try:
-#             c.rest.get(url_get_switches)
-#             content = c.rest.content()
-#         except:
-#             pass
-#         else:
-#             if (content):
-#                 for i in range (0, len(content)):
-#                     if 'name' in content[i]:
-#                         url_delete_switch = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
-#                         try:
-#                             c.rest.delete(url_delete_switch, {})
-#                         except:
-#                             pass
-#
-#         helpers.log("Attempting to delete all port-groups")
-#         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
-#         try:
-#             c.rest.get(url_get_portgrp)
-#             content = c.rest.content()
-#         except:
-#             pass
-#         else:
-#             if (content):
-#                 for i in range (0, len(content)):
-#                     url_delete_portgrp = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
-#                     try:
-#                         c.rest.delete(url_delete_portgrp, {})
-#                     except:
-#                         pass
-#
-#         helpers.log("Attempting to delete QoS")
-#         url_get_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos?config=true'
-#         try:
-#             c.rest.get(url_get_qos)
-#             content = c.rest.content()
-#         except:
-#             pass
-#         else:
-#             if (content):
-#                 url_delete_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos'
-#                 try:
-#                     print "url_delete_qos: %s" % url_delete_qos
-#                     c.rest.delete(url_delete_qos, {})
-#                 except:
-#                     pass
-
-#         helpers.log("Attempting to delete NTP configurations")
-#         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
-#         try:
-#             c.rest.get(url_get_ntpservers)
-#             content = c.rest.content()
-#         except:
-#             pass
-#         else:
-#             try:
-#                 if (content[0]['ntp-server']):
-#                     ntp_list = content[0]['ntp-server']
-#                     for i in range (0, len(ntp_list)):
-#                         ntp_list.pop(0)
-#                         url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-#                         try:
-#                             c.rest.put(url_ntp_delete, ntp_list)
-#                         except:
-#                             pass
-#                         else:
-#                             helpers.log("NTP configuration successfully deleted")
-#             except:
-#                 pass
-#
-#         helpers.log("Attempting to delete SNMP Configurations")
-#         # Delete SNMP location
-#         url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
-#         try:
-#             c.rest.delete(url_delete_snmp_location, {})
-#         except:
-#             pass
-#         else:
-#             helpers.log("SNMP Location configuration successfully deleted")
-#         # Delete SNMP Contact
-#         url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
-#         try:
-#             c.rest.delete(url_delete_snmp_contact, {})
-#         except:
-#             pass
-#         else:
-#             helpers.log("SNMP Contact configuration successfully deleted")
-#         # Disable SNMP Trap
-#         url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
-#         try:
-#             c.rest.delete(url_delete_snmp_trap, {})
-#         except:
-#             pass
-#         else:
-#             helpers.log("SNMP Trap configuration successfully deleted")
-#         # Delete SNMP community
-#         url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
-#         try:
-#             c.rest.delete(url_delete_snmp_community, {})
-#         except:
-#             pass
-#         else:
-#             helpers.log("SNMP Community configuration successfully deleted")
-#         # Delete SNMP Trap Hosts
-#         url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
-#         try:
-#             c.rest.get(url_get_snmphost)
-#         except:
-#             pass
-#         else:
-#             helpers.log("SNMP GET configuration successful")
-#             content = c.rest.content()
-#             if(content):
-#                 if ('trap-host' in content[0]):
-#                     for i in range (0, len(content[0]['trap-host'])):
-#                         url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
-#                         try:
-#                             c.rest.delete(url_delete_trap, {})
-#                         except:
-#                             pass
-#                         else:
-#                             url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
-#                             try:
-#                                 c.rest.delete(url_delete_trap, {})
-#                             except:
-#                                 pass
-#                             else:
-#                                 helpers.log("SNMP Trap configuration successfully deleted")
-#
-#         helpers.log("Attempting to delete logging server configurations")
-#         url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
-#         c.rest.get(url_get_logging)
-#         content = c.rest.content()
-#         if(content):
-#             if ('logging-server' in content[0]):
-#                 for i in range (0, len(content[0]['logging-server'])):
-#                     url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
-#                     try:
-#                         c.rest.delete(url_delete_logserver, {})
-#                     except:
-#                         pass
-#                     else:
-#                         helpers.log("Logging server configuration successfully deleted")
-#
-#         helpers.log("Attempting to disable remote logging")
-#         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
-#         try:
-#             c.rest.delete(url_disable_remotelog, {})
-#         except:
-#             pass
-#         else:
-#             helpers.log("Remote logging successfully deleted")
 
         return True

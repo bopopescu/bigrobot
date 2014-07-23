@@ -1933,7 +1933,7 @@ class T5Platform(object):
 
 
 
-    def cli_upgrade_launch(self, node='master',option=''):
+    def cli_upgrade_launch(self, node='master', option=''):
         '''
           upgrade launch  -  2 step of upgrade
           Author: Mingtao
@@ -2032,7 +2032,7 @@ class T5Platform(object):
           input:  node  - controller
                            c1 c2
           usage:
-          output: active or stand-by
+          output: active or standby
           fails if there is no domain-leader for the cluster
         '''
         t = test.Test()
@@ -2054,7 +2054,7 @@ class T5Platform(object):
                 if local_id == leader_id:
                     return 'active'
                 else:
-                    return 'stand-by'
+                    return 'standby'
 
             else:
                 helpers.log("ERROR: there is no domain-leader")
@@ -2075,13 +2075,13 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_get_node_role ')
-        c.cli('show cluster')
+        c.cli('show controller')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         for line in temp:
             helpers.log("INFO: line is - %s" % line)
-            match = re.match(r'.*(active|stand-by).* Current', line)
+            match = re.match(r'.* \* (active|standby).* connected', line)
             if match:
                 helpers.log("INFO: role is: %s" % match.group(1))
                 return  match.group(1)
@@ -2579,9 +2579,9 @@ class T5Platform(object):
                            dhcp='no',
                            ip_address=None,
                            netmask='18',
-                           gateway='10.192.64.1',
-                           dns_server='10.192.3.1',
-                           dns_search='bigswitch.com',
+                           gateway='10.8.0.1',
+                           dns_server='10.3.0.4',
+                           dns_search='qa.bigswitch.com',
                            hostname='MY-T5-C',
                             ):
         """
@@ -3532,7 +3532,7 @@ class T5Platform(object):
             dfinfo[fields[5]]['usedpercent'] = fields[4]
         helpers.log("USER INFO: dfinfo is :\n%s" % dfinfo)
         return dfinfo
-    
+
 
 
     def get_disk_used_percentage(self, node, directory):
@@ -3857,7 +3857,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -3888,7 +3888,8 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
+                re.match(r' clear session session-id', string) or re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -3929,6 +3930,12 @@ class T5Platform(object):
 
             # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options
             if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # skip 'topic related commands' (PR BVS-2046)
+            if (re.match(r' topic .*', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -4018,7 +4025,7 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4075,8 +4082,16 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
+            # Ignorning below cmd as it is effecting the script execution
+            if (re.match(r' clear switch all.*', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or \
+                re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string) or \
+                re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -4264,7 +4279,7 @@ class T5Platform(object):
                     num = num - 1
                     continue
                 # Add check for origination and description. BVS-1959 explains why this will not work if under a sub-configuration.
-                if key == "origination" or key == "description" : 
+                if key == "origination" or key == "description" :
                     helpers.log("Ignore line - key %s" % key)
                     num = num - 1
                     continue
@@ -4312,6 +4327,11 @@ class T5Platform(object):
 
                 if re.match(r'.*member port-group.*vlan.*', string):
                     helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r' clear session session-id', string):
+                    helpers.log("Ignoring line as it may effect the script execution..")
                     num = num - 1
                     continue
 
@@ -4483,33 +4503,33 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        
+
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
-            helpers.log("get switch fabric connection state")         
-                  
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            helpers.log("get switch fabric connection state")
+
             c.rest.get(url)
-            data = c.rest.content()        
-            switch =[]       
+            data = c.rest.content()
+            switch = []
             if (data):
                 for i in range(0, len(data)):
                     switch.append(data[i]['name'])
-        helpers.log("USER INFO - switches are:  %s" % switch)         
-        
-        for sw in switch:        
+        helpers.log("USER INFO - switches are:  %s" % switch)
+
+        for sw in switch:
             c.enable('')
-            c.send("system reboot switch %s" % sw )
-            c.expect(r'.*\(y or yes to continue\):')   
-            c.send("yes")  
-            c.expect()      
-            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
-                                                
+            c.send("system reboot switch %s" % sw)
+            c.expect(r'.*\(y or yes to continue\):')
+            c.send("yes")
+            c.expect()
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
+
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch %s " % sw)
 
-            helpers.log("Reboot switch executed successfully %s" % sw )
+            helpers.log("Reboot switch executed successfully %s" % sw)
         return True
-            
+
     def cli_reboot_switch_ip(self, node='master', switch=None):
         """
         Reboot switch, switches from controller's CLI
@@ -4523,27 +4543,27 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        
+
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
-            helpers.log("get switch fabric connection state")         
-                  
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            helpers.log("get switch fabric connection state")
+
             c.rest.get(url)
-            data = c.rest.content()        
-            switch =[]       
+            data = c.rest.content()
+            switch = []
             if (data):
                 for i in range(0, len(data)):
-                    if 'inet-address' in data[i].keys() and 'ip' in data[i]['inet-address'].keys(): 
+                    if 'inet-address' in data[i].keys() and 'ip' in data[i]['inet-address'].keys():
                         switch.append(data[i]['inet-address']['ip'])
                     else:
-                        helpers.log("ERROR:  there is no ip address for: %s" %  data[i]['name'])        
-                                        
-        helpers.log("USER INFO - switches are:  %s" % switch)         
-        for ip in switch:                 
-            c.enable("system reboot switch %s" % ip )
-            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
+                        helpers.log("ERROR:  there is no ip address for: %s" % data[i]['name'])
+
+        helpers.log("USER INFO - switches are:  %s" % switch)
+        for ip in switch:
+            c.enable("system reboot switch %s" % ip)
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
-                helpers.test_failure("Error rebooting the switch")                         
+                helpers.test_failure("Error rebooting the switch")
             helpers.log("Reboot command executed successfully")
             return True
 
@@ -4561,29 +4581,29 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
-            helpers.log("get switch fabric connection state")         
-                  
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            helpers.log("get switch fabric connection state")
+
             c.rest.get(url)
-            data = c.rest.content()        
-            switch =[]       
+            data = c.rest.content()
+            switch = []
             if (data):
                 for i in range(0, len(data)):
-                    if 'dpid' in data[i].keys(): 
-                        macs= data[i]['dpid'].split(':',2)
+                    if 'dpid' in data[i].keys():
+                        macs = data[i]['dpid'].split(':', 2)
                         mac = macs[2]
                         switch.append(mac)
-        helpers.log("USER INFO - switches are:  %s" % switch)         
-        
-        for mac in switch:                 
+        helpers.log("USER INFO - switches are:  %s" % switch)
+
+        for mac in switch:
             c.enable('')
-            c.send("system reboot switch %s" % mac )                        
-            c.expect(r'.*\(y or yes to continue\):')   
-            c.send("yes")                  
+            c.send("system reboot switch %s" % mac)
+            c.expect(r'.*\(y or yes to continue\):')
+            c.send("yes")
             c.expect()
-            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
-                helpers.test_failure("Error rebooting the switch")                         
+                helpers.test_failure("Error rebooting the switch")
             helpers.log("Reboot command executed successfully")
             return True
 
@@ -4593,52 +4613,52 @@ class T5Platform(object):
 
         Inputs:
         | node | reference to controller as defined in .topo file |
-        | 
+        |
 
         Return Value:
         - True if successfully executed reboot command, False otherwise
         """
         t = test.Test()
         c = t.controller(node)
-        c.enable("system reboot switch all" )
-       
-        helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+        c.enable("system reboot switch all")
+
+        helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
         if "Error" in c.cli_content():
             helpers.test_failure("Error rebooting the switch")
         helpers.log("Reboot command executed successfully")
-         
+
         return True
 
 
-    def ip_to_list(self,ip):
-        helpers.test_log("Entering ==> ip to list: %s"  % ip)           
+    def ip_to_list(self, ip):
+        helpers.test_log("Entering ==> ip to list: %s" % ip)
         return  ip.split('.')
 
-    def bash_get_key(self, node='master',key='ecdsa'):
-        ''' 
+    def bash_get_key(self, node='master', key='ecdsa'):
+        '''
         get the public key for controller
         Ouput: index:  directory  with all the field
         '''
         t = test.Test()
         n = t.node(node)
-        if key=='ecdsa':
+        if key == 'ecdsa':
             content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub')['content']
             line = helpers.strip_cli_output(content)
             line = line.lstrip()
             fields = line.split()
-            helpers.log("USER INFO: ECDSA key is :\n%s" % fields[1])            
-        elif key=='dsa':
+            helpers.log("USER INFO: ECDSA key is :\n%s" % fields[1])
+        elif key == 'dsa':
             content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_dsa_key.pub')['content']
             line = helpers.strip_cli_output(content)
             line = line.lstrip()
             fields = line.split()
-            helpers.log("USER INFO: DSA key is :\n%s" % fields[1])            
-        elif key=='rsa':
+            helpers.log("USER INFO: DSA key is :\n%s" % fields[1])
+        elif key == 'rsa':
             content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub')['content']
             line = helpers.strip_cli_output(content)
             line = line.lstrip()
             fields = line.split()
-            helpers.log("USER INFO: RSA key is :\n%s" % fields[1])            
+            helpers.log("USER INFO: RSA key is :\n%s" % fields[1])
 
         return fields[1]
 
@@ -4654,26 +4674,26 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
-        helpers.log("get switch fabric connection state")         
-                  
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+        helpers.log("get switch fabric connection state")
+
         c.rest.get(url)
-        data = c.rest.content()        
-        info = []  
+        data = c.rest.content()
+        info = []
         if (data):
             for i in range(0, len(data)):
                 if data[i]['connected'] == True:
                     if 'fabric-connection-state' in data[i].keys() and data[i]['fabric-connection-state'] == "not_connected":
                         if 'handshake-state' in data[i].keys() and data[i]['handshake-state'] == "quarantine-state":
-                            info.append( data[i]['name'])  
-        helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)                        
+                            info.append(data[i]['name'])
+        helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)
         return info
- 
 
 
-    def cli_boot_partition(self, node='master',option='alternate'):
+
+    def cli_boot_partition(self, node='master', option='alternate'):
         '''
-          boot partition  -   
+          boot partition  -
           Author: Mingtao
           input:  node  - controller
                           master, slave, c1 c2
@@ -4688,17 +4708,17 @@ class T5Platform(object):
         helpers.log('INFO: Entering ==> cli_boot_partition ')
         c.config('')
         string = 'boot partition ' + option
- 
-        c.send(string)        
+
+        c.send(string)
         c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
- 
+
         try:
             c.expect(r'[\r\n].+The system is going down for reboot NOW!')
             content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)           
+            helpers.log("*****Output is :\n%s" % content)
         except:
             helpers.log('ERROR: boot partition NOT successfully')
             return False
@@ -4708,7 +4728,7 @@ class T5Platform(object):
         return False
 
 
-    def console_switch_config(self, node,config,password='adminadmin'):
+    def console_switch_config(self, node, config, password='adminadmin'):
         """
         config given node (switch)
 
@@ -4724,7 +4744,7 @@ class T5Platform(object):
         s.send("\r")
         options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
                            timeout=300)
-        if options[0] == 0: #login prompt
+        if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([ r'[Pp]assword:', s.get_prompt()])
             if options[0] == 0:

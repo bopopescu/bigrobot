@@ -5,13 +5,17 @@ import autobot.helpers as helpers
 import autobot.test as test
 import time
 import re
-from autobot.devconf import HostDevConf
+from autobot.devconf import HostDevConf, ControllerDevConf
 from keywords.T5Platform import T5Platform
 
 
-KVM_SERVER = '10.192.104.13'
+KVM_SERVER = helpers.bigrobot_kvm_server()
 KVM_USER = 'root'
 KVM_PASSWORD = 'bsn'
+JENKINS_SERVER = helpers.bigrobot_jenkins_server()
+JENKINS_USER = 'bsn'
+JENKINS_PASSWORD = 'bsn'
+DEFAULT_GATEWAY = '10.8.0.1'
 LOG_BASE_PATH = '/var/log/vm_operations'
 
 
@@ -127,12 +131,14 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='10.192.4.89', jenkins_user='bsn',
-                                         jenkins_password='bsn'):
+    def _get_latest_jenkins_build_number(self, vm_type='bcf',
+                                         jenkins_server=JENKINS_SERVER,
+                                         jenkins_user=JENKINS_USER,
+                                         jenkins_password=JENKINS_PASSWORD):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
-        if vm_type == 'bvs':
+        if vm_type == 'bcf':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/t6-mininet-vm/builds | grep lastSuccessfulBuild')['content']
@@ -141,10 +147,10 @@ class KVMOperations(object):
         latest_build_number = output_lines[1].split('->')[-1]
         return latest_build_number.strip()
 
-    def _get_latest_kvm_build_number(self, vm_type='bvs', kvm_handle=None):
+    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None):
         output = None
-        if vm_type == 'bvs':
-            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
+        if vm_type == 'bcf':
+            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs | awk \'{print $9}\'')['content']
             output_lines = output.split('\n')
             latest_image = output_lines[-2]
             match = re.match(r'.*bvs-(\d+).*', latest_image)
@@ -163,7 +169,7 @@ class KVMOperations(object):
                 return 0
 
 
-    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs", build_number=None):
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bcf", build_number=None):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
@@ -188,7 +194,7 @@ class KVMOperations(object):
             latest_build_number = build_number
             latest_kvm_build_number = build_number
         file_name = None
-        if vm_type == 'bvs':
+        if vm_type == 'bcf':
             file_name = "controller-bvs-%s.qcow2" % latest_build_number
         elif vm_type == 'mininet':
             file_name = "mininet-%s.qcow2" % latest_build_number
@@ -199,11 +205,12 @@ class KVMOperations(object):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
-            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+            scp_cmd = ('scp -o "UserKnownHostsFile=/dev/null" -o StrictHostKeyChecking=no "%s@%s:%s" %s'
+                       % (JENKINS_USER, JENKINS_SERVER, remote_qcow_path, file_name))
             helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
-                helpers.log("sending bsn passoword..")
+                helpers.log("sending bsn password..")
                 helpers.log(kvm_handle.bash('bsn')['content'])
             else:
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
@@ -234,7 +241,8 @@ class KVMOperations(object):
         return topo_file
 
     def _configure_vm_first_boot(self, cluster_ip=None, ip_address=None,
-                                 netmask='18', vm_host_name=None, gateway='10.192.64.1'):
+                                 netmask='18', vm_host_name=None,
+                                 gateway=DEFAULT_GATEWAY):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
         helpers.log("Sleeping 60 sec while waiting for VM to boot up")
         time.sleep(120)
@@ -275,7 +283,7 @@ class KVMOperations(object):
             kvm_user = kwargs.get("kvm_user", KVM_USER)
             kvm_password = kwargs.get("kvm_password", KVM_PASSWORD)
             vm_host_name = kwargs.get("vm_host_name", None)
-            vm_type = kwargs.get("vm_type", "bvs")
+            vm_type = kwargs.get("vm_type", "bcf")
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
@@ -284,14 +292,15 @@ class KVMOperations(object):
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
-            gateway = kwargs.get("gateway", "10.192.64.1")
+            gateway = kwargs.get("gateway", "10.8.0.1")
             network_interface = kwargs.get("network_interface", "br0")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
+            helpers.summary_log("Creating log_path %s" % self.log_path)
             os.makedirs(self.log_path)
 
-            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
-            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2")
+            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
+            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
@@ -336,9 +345,9 @@ class KVMOperations(object):
             result['kvm_host'] = kvm_host
             result['image_path'] = qcow_vm_path
             result['vm_ip'] = ip
-            result['content'] = helpers.file_read_once("%s/%s.log"
-                                                       % (self.log_path,
-                                                          vm_name))
+#             result['content'] = helpers.file_read_once("%s/%s.log"
+#                                                        % (self.log_path,
+#                                                           vm_name))
 
             if vm_type == 'mininet':
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
@@ -355,6 +364,9 @@ class KVMOperations(object):
                                                             netmask=netmask,
                                                             vm_host_name=vm_host_name,
                                                             gateway=gateway)
+#             controller_handle = ControllerDevConf(host=result['vm_ip'], user='admin', password='admiandmin')
+#             controller_handle.config("copy running-config config://firstboot-config")
+#             helpers.summary_log("Success saving firstboot-config")
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
@@ -463,7 +475,7 @@ class KVMOperations(object):
 
     def create_vm_on_kvm_host(self, **kwargs):
         vm_name = kwargs.get("vm_name", None)
-        vm_type = kwargs.get("vm_type", "bvs")
+        vm_type = kwargs.get("vm_type", "bcf")
         kvm_vmdk_path = kwargs.get("qcow_path", None)
         kvm_handle = kwargs.get("kvm_handle", None)
         kvm_host = kwargs.get("kvm_host", None)

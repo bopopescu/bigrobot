@@ -14,11 +14,13 @@ Library         keywords/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library         keywords/Host.py
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_variables.txt
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+Resource		testsuites_dev/slim/T5_L3_dc/t5_layer3_dc_variables.txt
+Resource		testsuites_dev/slim/T5_L3_dc/t5_layer3_dc_resources.txt
 
 
 * Test Cases
+
+
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
 	[Tags]									smoke				sanity				run

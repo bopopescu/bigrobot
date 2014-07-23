@@ -6,154 +6,142 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.210.67.143
+  ip: 10.8.24.101
 
 c2:
-  ip: 10.210.67.137
+  ip: 10.8.24.102
 
 s1:
-    ip: 10.210.2.158
+    console:
+        ip: cs-120
+        port: 7001
     alias: spine0
     user: root
     password: bsn
       
 s2:
-    ip: 10.210.2.7
+    console:
+        ip: cs-120
+        port: 7002
     alias: spine1
     user: root
     password: bsn
      
 s3:
-    ip: 10.210.2.148
+    console:
+        ip: cs-120
+        port: 7003
     alias: leaf0-a
     user: root
     password: bsn
 
 s4:
-    ip: 10.210.2.151
+    console:
+        ip: cs-120
+        port: 7004
     alias: leaf0-b
     user: root
     password: bsn
 
 s5:
-    ip: 10.210.2.4
+    console:
+        ip: cs-120
+        port: 7005
     alias: leaf1-a
     user: root
     password: bsn
   
 s6:
-    ip: 10.210.2.169
+    console:
+        ip: cs-120
+        port: 7006
     alias: leaf1-b
     user: root
     password: bsn
   
 s7:
-    ip: 10.210.2.100
+    console:
+        ip: cs-120
+        port: 7007
     alias: leaf2-a
     user: root
     password: bsn
   
 s8:
-    ip: 10.210.2.67
+    console:
+        ip: cs-120
+        port: 7008
     alias: leaf2-b
     user: root
     password: bsn
     
 s9:
-    ip: 10.210.2.190
+    console:
+        ip: cs-120
+        port: 7019
     alias: leaf3-a
     user: root
     password: bsn
-  
-s10:
-    ip: 10.210.2.202
-    alias: leaf3-b
-    user: root
-    password: bsn
-  
+
+h1:
+   ip: 10.8.24.31
+   alias: h1-rack0
+   user: root
+   password: bsn
+
 h2:
-   ip: 10.210.64.30
+   ip: 10.8.24.32
    alias: h2-rack0
    user: root
    password: bsn
 
 h3:
-   ip: 10.210.64.29
+   ip: 10.8.24.33
    alias: h3-rack0
    user: root
    password: bsn
 
 h4:
-   ip: 10.210.64.28
+   ip: 10.8.24.34
    alias: h4-rack0
    user: root
    password: bsn
      
 h5:
-   ip: 10.210.64.27
+   ip: 10.8.24.35
    alias: h5-rack0
    user: root
    password: bsn
   
 h6:
-   ip: 10.210.64.26
+   ip: 10.8.24.36
    alias: h6-rack0
    user: root
    password: bsn
    
 h7:
-   ip: 10.210.64.25
+   ip: 10.8.24.37
    alias: h7-rack0
    user: root
    password: bsn
      
 h8:
-   ip: 10.210.64.24
+   ip: 10.8.24.38
    alias: h8-rack0
    user: root
    password: bsn
     
 h9:
-   ip: 10.210.64.23
+   ip: 10.8.24.39
    alias: h9-rack0
    user: root
    password: bsn
 
 h10:
-   ip: 10.210.64.22
+   ip: 10.8.24.40
    alias: h10-rack0
    user: root
    password: bsn
-
-h11:
-   ip: 10.210.64.21
-   alias: h11-rack0
-   user: root
-   password: bsn  
-
-h12:
-   ip: 10.210.65.31
-   alias: h1-rack1
-   user: root
-   password: bsn   
- 
-h13:
-   ip: 10.210.65.30
-   alias: h2-rack1
-   user: root
-   password: bsn   
- 
-h14:
-   ip: 10.210.65.29
-   alias: h3-rack1
-   user: root
-   password: bsn   
- 
-h15:
-   ip: 10.210.65.28
-   alias: h4-rack1
-   user: root
-   password: bsn   
     
 tg1:
   platform: 'ixia'

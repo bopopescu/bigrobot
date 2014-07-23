@@ -148,12 +148,26 @@ Trigger InvalidCommandException
     bash  c1  echo 'command is not found'
 
 Test config mode
-    [Tags]  skipped
-    config   c1   show user
+    #[Tags]  skipped
+    #config   c1   show user
     #config   c1   bvssetting
     #config   c1   exit
     cli      c1   show version
+    #exit early
+
+    #: for  ${index}  in range  1  30
+    #\  log  ${index}
+    #\  sleep  1
+    #cli      c1   show version
 
 Test REST show user
+    [Tags]  skipped
     #rest show user        c1
     rest version check    c1
+
+Test copy command
+    [Tags]  skipped
+    enable   master  copy controller-upgrade-SNAPSHOT.pkg image://
+    ${result}=  cli content  c1
+    log   result=${result}
+

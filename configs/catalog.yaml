@@ -1,4 +1,6 @@
-db_server: qadashboard-mongo.bigswitch.com
+# $ mongo qa-mongodb:27017/test_catalog3
+#
+db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
 database: test_catalog3
 products:
@@ -28,11 +30,18 @@ features:
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
 aggregated_builds:
-  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta1
+  'bvs master #beta1-vui':
     [ 
       'bvs master #2.0.0-beta1-SNAPSHOT',
       'bvs master #beta1-22',
       'bvs master #beta1-27',
       'bvs master #beta1-31',
     ]
-
+  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta1
+    [ 
+      'bvs master #2.0.0-beta1-SNAPSHOT',
+      'bvs master #beta1-22',
+      'bvs master #beta1-27',
+      'bvs master #beta1-31',
+      'bvs master #2502',
+    ]

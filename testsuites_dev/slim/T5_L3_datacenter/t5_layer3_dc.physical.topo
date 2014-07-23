@@ -1,0 +1,171 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.8.24.101
+
+c2:
+  ip: 10.8.24.102
+
+s1:
+    console:
+        ip: cs-120
+        port: 7001
+    alias: spine0
+    set_session_ssh: false
+    set_init_ping: false
+    user: admin
+    password: adminadmin
+      
+s2:
+    console:
+        ip: cs-120
+        port: 7002
+    set_session_ssh: false
+    set_init_ping: false
+    alias: spine1
+    user: admin
+    password: adminadmin
+     
+s3:
+    console:
+        ip: cs-120
+        port: 7003
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack0
+    alias: leaf0-a
+    user: admin
+    password: adminadmin
+    
+s4:
+    console:
+        ip: cs-120
+        port: 7004
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack0       
+    alias: leaf0-b
+    user: admin
+    password: adminadmin
+
+s5:
+    console:
+        ip: cs-120
+        port: 7005
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack1        
+    alias: leaf1-a
+    user: admin
+    password: adminadmin
+
+s6:
+    console:
+        ip: cs-120
+        port: 7006
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack1        
+    alias: leaf1-b
+    user: admin
+    password: adminadmin
+  
+s7:
+    console:
+        ip: cs-120
+        port: 7007
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack2        
+    alias: leaf2-a
+    user: admin
+    password: adminadmin
+      
+s8:
+    console:
+        ip: cs-120
+        port: 7008
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack2        
+    alias: leaf2-b
+    user: admin
+    password: adminadmin
+        
+s9:
+    console:
+        ip: cs-120
+        port: 7019
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack3
+    alias: leaf3-a
+    user: admin
+    password: adminadmin
+    
+h1:
+   ip: 10.8.24.31
+   alias: h1-rack0
+   user: root
+   password: bsn
+
+h2:
+   ip: 10.8.24.32
+   alias: h2-rack0
+   user: root
+   password: bsn
+
+h3:
+   ip: 10.8.24.33
+   alias: h3-rack0
+   user: root
+   password: bsn
+
+h4:
+   ip: 10.8.24.34
+   alias: h4-rack0
+   user: root
+   password: bsn
+     
+h5:
+   ip: 10.8.24.35
+   alias: h5-rack0
+   user: root
+   password: bsn
+  
+h6:
+   ip: 10.8.24.36
+   alias: h6-rack0
+   user: root
+   password: bsn
+   
+h7:
+   ip: 10.8.24.37
+   alias: h7-rack0
+   user: root
+   password: bsn
+     
+h8:
+   ip: 10.8.24.38
+   alias: h8-rack0
+   user: root
+   password: bsn
+    
+h9:
+   ip: 10.8.24.39
+   alias: h9-rack0
+   user: root
+   password: bsn
+
+h10:
+   ip: 10.8.24.40
+   alias: h10-rack0
+   user: root
+   password: bsn
+    
+

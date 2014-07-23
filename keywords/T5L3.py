@@ -287,18 +287,23 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             Return: true if configuration is successful, false otherwise
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.10.0.0/16"] {"next-hop": {"tenant-name": "system"}, "dest-ip-subnet": "10.10.0.0/16"}
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.192.0.0/16"] {"dest-ip-subnet": "10.192.0.0/16"}
+            REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/routes[dest-ip-subnet="10.99.0.0/24"] {"next-hop": {"next-hop-group": "AA2"}, "dest-ip-subnet": "10.99.0.0/24"}
+            {"next-hop": {"tenant-name": "system"}, "dest-ip-subnet": "0.0.0.0/0"}
 
         '''
 
         t = test.Test()
         c = t.controller('master')
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/routes' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/routes[dest-ip-subnet="%s"]' % (tenant, dstroute)
 
         if nexthop is not None:
             try:
+
                 nexthop_dict = helpers.from_json(nexthop)
-                c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
+                # nexthop_dict["dest-ip-subnet"] = dstroute
+                # c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
+                c.rest.put(url, {"next-hop": nexthop_dict, "dest-ip-subnet": dstroute})
             except:
                 helpers.test_failure(c.rest.error())
             else:
@@ -411,9 +416,56 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()
 
+    def rest_add_nexthop_group(self, tenant, groupName):
+        '''Add nexthop group in tenant"
+
+            Input:
+                `tenant`          tenant name
+                `groupName`        next hop group name
+            Return: true if configuration is successful, false otherwise
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"] {"name": "AA1"}
+
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s groupName = %s" % (tenant, groupName))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]' % (tenant, groupName)
+        try:
+            c.rest.put(url, {"name": groupName})
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+
+    def rest_delete_nexthop_group(self, tenant, groupName):
+        '''Delete nexthop group in tenant"
+
+            Input:
+                `tenant`          tenant name
+                `groupName`        next hop group name
+            Return: true if configuration is successful, false otherwise
+            REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"] {}
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s groupName = %s" % (tenant, groupName))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]' % (tenant, groupName)
+        try:
+            c.rest.delete(url, {})
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+
 
     def rest_add_gw_pool_nexthop(self, tenant, ecmpgroup, nexthop):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Add nexthop groups aks gateway pool in tenant"
 
             Input:
                 `tenant`         tenant name
@@ -430,6 +482,55 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         try:
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.post(url, {"ip-address": nexthop})
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+
+    def rest_add_nexthopGroup_ip(self, tenant, groupName, nexthop):
+        '''Add nexthop IP to nexthop groups"
+
+            Input:
+                `tenant`         tenant name
+                `groupName`      nexthop group name
+                `nexthop`        nexthop IP address
+            Return: true if configuration is successful, false otherwise
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {"ip-address": "10.99.0.1"}
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        try:
+#            c.rest.put(url, {"ip-address": nexthop})
+            c.rest.post(url, {"ip-address": nexthop})
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+
+
+    def rest_delete_nexthopGroup_ip(self, tenant, groupName, nexthop):
+        '''Delete nexthop IP in nexthop group"
+            Input:
+                `tenant`         tenant name
+                `groupName`      nexthop group name
+                `nexthop`        nexthop IP address
+            Return: true if configuration is successful, false otherwise
+          REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {}
+      '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        try:
+#            c.rest.put(url, {"ip-address": nexthop})
+            c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
         else:
@@ -1124,7 +1225,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         next_hop = kwargs.get('next-hop', None)
         tenant = kwargs.get('tenant', None)
         polname = kwargs.get('polname', None)
-        #log = kwargs.get('log', None)
+        # log = kwargs.get('log', None)
         segment = kwargs.get('segment-interface', None)
 
         if (tenant is None or polname is None or seqnum is None):
@@ -1254,7 +1355,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
-                
+
                 try:
                     c.rest.put(url, data)
 
@@ -1271,7 +1372,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
-                
+
                 try:
                     c.rest.put(url, data)
 
@@ -1288,7 +1389,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
-                
+
                 try:
                     c.rest.put(url, data)
 
@@ -1305,7 +1406,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
-                    
+
                 try:
                     c.rest.put(url,)
 
@@ -1323,7 +1424,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
-                    
+
                 try:
                     c.rest.put(url, data)
 
@@ -1340,7 +1441,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
-                    
+
                 try:
                     c.rest.put(url, data)
 
@@ -1357,7 +1458,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
-                    
+
                 try:
                     c.rest.put(url, data)
 
@@ -1374,7 +1475,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
                 else:
                     data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
-                    
+
                 try:
                     c.rest.put(url, data)
 

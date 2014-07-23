@@ -38,7 +38,7 @@ Documentation   This suite is my sandbox for experimentation.
 ...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
 Force Tags      Vui
 Suite Setup     my base suite setup
-Suite Teardown  base suite teardown
+Suite Teardown  my base suite teardown
 Test Setup      base test setup
 Test Teardown   base test teardown
 #Library         Reserve
@@ -75,9 +75,10 @@ Test process python dictionary
     process a dictionary  ${result}
 
 Robot loop test
-    [Tags]           skipped
-    : for  ${index}  in range  1  3
+    #[Tags]           skipped
+    : for  ${index}  in range  1  60
     \  log  ${index}
+    \  sleep  1
     
 Openstack user id
     [Tags]           skipped
@@ -236,6 +237,7 @@ Test run commands
     [teardown]        log  I am in my custom test case teardown
 
 Test logging
+    [Tags]           skipped
     trace             This is a trace message
     info              This is an info message
 #    warn              This is a warning message
@@ -247,6 +249,10 @@ my base suite setup
     base suite setup
     #${c1_ip} =          params  node=c1  key=ip
     #set suite variable  ${LOGIN_URL}  http://${c1_ip}:8086/api/login
+    #should be true      ${false}
+
+my base suite teardown
+    should be true       ${true}
 
 variable assignment
     [Arguments]     ${input}

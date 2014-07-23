@@ -1,5 +1,6 @@
 import os
 import sys
+import errno
 import json
 import yaml
 import datetime
@@ -38,7 +39,7 @@ from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
-SMTP_SERVER = 'smtp.bigswitch.com'
+SMTP_SERVER = 'smtp.eng.bigswitch.com'
 DEFAULT_EMAIL = 'email_service@bigswitch.com'
 
 
@@ -82,7 +83,7 @@ def info(s, level=2, log_level="info"):
     """
     Info log.
     """
-    Log().info(s, level, log_level=log_level)
+    Log().log(s, level=level, log_level=log_level)
 
 
 # Alias
@@ -94,7 +95,7 @@ def summary_log(s, level=2):
     """
     Similar to Info log, but also write the message to stderr as well.
     """
-    Log().info(s, level, to_stderr=True)
+    Log().info(s, level, also_console=True)
 
 
 def analyze(s, level=3):
@@ -114,7 +115,7 @@ def prettify_xml(xml_str):
     """
     with tempfile.NamedTemporaryFile() as f:
         filename = f.name
-        print "**** filename: %s" % filename
+        # print "**** filename: %s" % filename
         f.write(xml_str)
         f.flush()
         x = xml.dom.minidom.parse(filename)
@@ -444,8 +445,31 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
 def bigrobot_topology(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    This env points to the topology file.
     """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
+
+
+def bigrobot_topology_for_esb(new_val=None, default='None'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This env is a YAML topology string which is passed to the ESB
+    (Enterprise Service Bus).
+
+    Check whether value is a Python dictionary and convert it to YAML if so.
+    """
+    if is_dict(new_val): new_val = to_yaml(new_val)
+    if is_dict(default): default = to_yaml(default)
+    return _env_get_and_set('BIGROBOT_TOPOLOGY_FOR_ESB', new_val, default)
+
+
+def bigrobot_esb(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' when running inside the Enterprise Service Bus (ESB)
+    environment.
+    """
+    return _env_get_and_set('BIGROBOT_ESB', new_val, default)
 
 
 def bigrobot_continuous_integration(new_val=None, default='False'):
@@ -503,12 +527,28 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
 
-def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
+def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is used to archive the postmortem logs.
     """
     return _env_get_and_set('BIGROBOT_LOG_ARCHIVER', new_val, default)
+
+
+def bigrobot_kvm_server(new_val=None, default='qa-tools3.qa.bigswitch.com'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is the default KVM server used by vm_setup and vm_teardown tools.
+    """
+    return _env_get_and_set('BIGROBOT_KVM_SERVER', new_val, default)
+
+
+def bigrobot_jenkins_server(new_val=None, default='jenkins.eng.bigswitch.com'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is the Jenkins server for Smoketest (Continuous Integration).
+    """
+    return _env_get_and_set('BIGROBOT_JENKINS_SERVER', new_val, default)
 
 
 def bigrobot_test_pause_on_fail(new_val=None, default='False'):
@@ -575,6 +615,28 @@ def bigrobot_syslog_level(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
 
 
+def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_TIMER',
+                            new_val, default)
+
+
+def bigrobot_monitor_reauth_init_timer(new_val=None, default=480):  # 8 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    The initial time (in seconds) to wait before executing a task for the
+    first time.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_INIT_TIMER',
+                            new_val, default)
+
+
 def bigrobot_debug(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -621,6 +683,10 @@ def sleep(s):
     Sleep for <s> seconds.
     """
     time.sleep(float(s))
+
+
+def is_esb():
+    return bigrobot_esb().lower() == 'true'
 
 
 def is_controller(name):
@@ -951,7 +1017,7 @@ def ts_long_local():
 def ts_logger():
     """
     Return the current timestamp in local time (string format which is
-    compatible with the logger timestamp)
+    compatible with the Robot Framework logger format)
     e.g., 20140429 15:01:51.039
     """
     local_datetime = datetime.datetime.now(_TZ)
@@ -1092,6 +1158,20 @@ def is_same_file(file1, file2):
     inode2 = os.stat(file2)[1]
 
     return True if inode1 == inode2 else False
+
+
+def mkdir_p(path):
+    """
+    Works like 'mkdir -p' (create intermediate directories as required.
+    Borrowed from
+    http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
+    """
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
 
 
 def dict_merge(dict1, dict2):
@@ -1501,6 +1581,18 @@ def params_is_false(k, params_dict):
         return True
     else:
         return False
+
+
+def params_to_file(params_dict, path='/tmp', prefix='bigrobot_params_',
+                   suffix='.topo'):
+    """
+    Write the params structure (dict) to a YAML file.
+    Return the file name.
+    """
+    yaml_str = to_yaml(params_dict) if is_dict(params_dict) else params_dict
+    _, filename = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=path)
+    file_write_once(filename, yaml_str)
+    return filename
 
 
 def snake_case_key(in_dict):
