@@ -637,14 +637,14 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip-address="%s"]' % (mac)
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
-            if str(data[0]["attach-point-state"]) == "learned" and data[0]["ip-state"] == "learned":
+            if str(data[0]["attach-point-state"]) == "learned":
                 helpers.log("Expected endpoint states are showing learned")
                 return True
-            elif str(data[0]["attach-point-state"]) == "unknown" and data[0]["ip-state"] == "unknown":
+            elif str(data[0]["attach-point-state"]) == "unknown":
                 helpers.log("Expected endpoint states are unknown")
                 return True
             else:
@@ -654,6 +654,33 @@ class T5(object):
             helpers.log("Given mac address not known to the system MAC=%s" % mac)
             return False
 
+    def rest_verify_endpoint_ip_state(self, tenant, segment, ip, mac, vlan, state):
+        '''Verify Dynamic Endpoint entry ip state
+
+            Input: ip, vlan , states (Valid states are: learned , unknown)
+
+            Return: true if it matches Value specified
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["segment"] == segment and data[0]["tenant"] == tenant:
+            if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
+                for i in range(0, len(data[0]["ip-address"])):
+                    if str(data[0]["ip-address"][i]["ip-address"]) == str(ip) and str(data[0]["ip-address"][i]["ip-state"]) == "learned":
+                        helpers.log("Expected endpoint states are showing learned")
+                        return True
+                    else:
+                        continue
+            else:
+                helpers.log("Given mac address not known to the system MAC=%s" % mac)
+                return False
+        else:
+            helpers.log("Given segment does not match in the controller")
+            return False
+   
     def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
         '''Verify Static Endpoint entry
 
