@@ -619,6 +619,12 @@ class T5ZTN(object):
                 if "timezone UTC" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             startup_config_line):
+                    temp_line = startup_config_line.replace("\"", "")
+                    startup_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
+                    continue
                 startup_config_temp.append(startup_config_line)
                 helpers.log("Keeping line in startup-config: %s"
                             % startup_config_line)
@@ -673,6 +679,12 @@ class T5ZTN(object):
                         continue
                 if "snmp-server enable traps" in ztn_config_line:
                     helpers.log("Skipping line: %s" % ztn_config_line)
+                    continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             ztn_config_line):
+                    temp_line = ztn_config_line.replace("\'", "")
+                    ztn_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
                     continue
                 if "ntp time-zone" in ztn_config_line:
                     ztn_config_line = ztn_config_line.replace("ntp time-zone",
@@ -768,6 +780,12 @@ class T5ZTN(object):
                     startup_config_temp.append(temp_line)
                     helpers.log("Rearranging line: %s" % startup_config_line)
                     continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             startup_config_line):
+                    temp_line = startup_config_line.replace("\"", "")
+                    startup_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
+                    continue
                 if re.match(r'controller .* port 6653', startup_config_line):
                     helpers.log("Skipping port number in %s" %
                                 startup_config_line)
@@ -805,6 +823,12 @@ class T5ZTN(object):
                 if re.match(r'snmp-server community ro public$',
                             running_config_line):
                     helpers.log("Skipping line: %s" % running_config_line)
+                    continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             running_config_line):
+                    temp_line = running_config_line.replace("\'", "")
+                    running_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
                     continue
                 running_config_temp.append(running_config_line)
                 helpers.log("Keeping line in running-config: %s"
@@ -1188,7 +1212,7 @@ class T5ZTN(object):
             if options[0] == 0:
                 helpers.log("Switch has fabric role configured. Confirming.")
                 c.send("yes")
-                c.expect(c.get_prompt(), timeout=30)
+                c.expect(c.get_prompt(), timeout=300)
             if options[0] == 2:
                 helpers.log("Rebooting all switches. Waiting for CLI prompt...")
                 c.expect(c.get_prompt(), timeout=300)
