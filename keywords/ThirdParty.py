@@ -216,6 +216,32 @@ class ThirdParty(object):
                 switch.config(cli_input_3)
             return True
 
+    def cli_arista_enable_disable_interface(self, node, interface_name, disable=True):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(interface_name)
+            switch.config(cli_input_1)
+            if disable == True:
+                switch.config("shutdown")
+                return True
+            else:
+                switch.config("no shutdown")
+                return True
+            return False
+
+    def cli_arista_reboot_switch(self, node):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.enable("reload now", prompt="Broadcast message from root@app-arista")
+
     def cli_arista_execute_command(self, node, command):
         try:
             t = test.Test()
