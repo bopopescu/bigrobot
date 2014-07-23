@@ -12,21 +12,21 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch1_alias}                          arista5               #Alias for switch 1
+${switch1_alias}                          app-arista               #Alias for switch 1
 
 ### Ixia Ports
-${switch1_filter_intf_1}                  ethernet1             #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-4-7              #Alias for filter interface on switch 1
-${switch1_delivery_intf_1}                ethernet2             #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-4-8              #Alias for delivery interface on switch 1
-${switch1_filter_intf_2}                  Ethernet27            #filter interface on switch 1
-${switch1_filter_alias_2}                 filter-arista5-1      #Alias for filter interface on switch 1
-${switch1_delivery_intf_2}                Ethernet28            #Delivery interface on switch 1
-${switch1_delivery_alias_2}               delivery-arista5-1    #Alias for delivery interface on switch 1
-${switch1_filter_intf_3}                  Ethernet29            #filter interface on switch 1
-${switch1_filter_alias_3}                 filter-arista5-2      #Alias for filter interface on switch 1
-${switch1_delivery_intf_3}                Ethernet30            #Delivery interface on switch 1
-${switch1_delivery_alias_3}               delivery-arista5-2    #Alias for delivery interface on switch 1
+${switch1_filter_intf_1}                  Ethernet13            #filter interface on switch 1
+${switch1_filter_alias_1}                 leaf1-F1              #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                Ethernet14            #Delivery interface on switch 1
+${switch1_delivery_alias_1}               leaf1-D1              #Alias for delivery interface on switch 1
+${switch1_filter_intf_2}                  Ethernet15            #filter interface on switch 1
+${switch1_filter_alias_2}                 leaf1-F2              #Alias for filter interface on switch 1
+${switch1_delivery_intf_2}                Ethernet16            #Delivery interface on switch 1
+${switch1_delivery_alias_2}               leaf1-D2              #Alias for delivery interface on switch 1
+${switch1_filter_intf_3}                  Ethernet17            #filter interface on switch 1
+${switch1_filter_alias_3}                 leaf1-F3              #Alias for filter interface on switch 1
+${switch1_delivery_intf_3}                Ethernet18            #Delivery interface on switch 1
+${switch1_delivery_alias_3}               leaf1-D3              #Alias for delivery interface on switch 1
 
 
 ### BigTap Policy Configuration
@@ -379,7 +379,7 @@ Verify multiple filter interface groups can be added to a policy
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
     clean configuration   
-    [Tags]  feature  jira-bt-1367
+    [Tags]  feature  jira-bt-1367  skipped
 
 Verify multiple delivery interface groups can be added to a policy
     clean configuration 
@@ -403,7 +403,7 @@ Verify multiple delivery interface groups can be added to a policy
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy1}
     clean configuration          
-    [Tags]  feature  jira-bt-1367
+    [Tags]  feature  jira-bt-1367  skipped
     
 Verify filter and delivery interface-groups can have all lower-case alphabet names
     clean configuration 
