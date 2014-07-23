@@ -401,10 +401,12 @@ T22 Localhost helptext
 	...  show controller ?
 	...  Show controller stats
 	[Tags]  BSC-5742
-	Cli Run  master  show run
 
-T23 Placeholder
-	Cli Run  master  show run
+T23 show controller localhost
+	Cli Run and Verify Output  master
+	...  show controller localhost
+	...  Cpu user Percentage
+	[Tags]  BSC-5863
 
 T24 Chinese characters in commands
 	Cli Run  master  banner \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
