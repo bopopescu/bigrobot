@@ -83,8 +83,6 @@ class Log(object):
             file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(formatter)
             Log.autobot_logger.addHandler(file_handler)
-
-            print("****** AUTOLOG_LOG: Created log file: %s" % Log.log_file)
         elif has_changed_filename:
             # We want to send logs to a new file. With Python logging module,
             # you have to reassign the log handler. See:
@@ -99,8 +97,6 @@ class Log(object):
             file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(formatter)
             Log.autobot_logger.addHandler(file_handler)
-
-            print("****** AUTOLOG_LOG: Changed the log file: %s" % Log.log_file)
 
     def ts_logger(self):
         """
