@@ -197,6 +197,9 @@ class Node(object):
         # raise NotImplementedError()
         return None
 
+    def close(self):
+        self.devconf().close()
+
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
