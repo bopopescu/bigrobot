@@ -1,5 +1,5 @@
 *Settings
-Documentation  Feature: Overlapping Policies: Release:Augusta
+Documentation  Feature: Overlapping Policies: Release:Augusta  Hardware:Arista
 Suite Setup  overlap suite setup
 Suite Teardown   overlap suite teardown
 Test Setup   base test setup
@@ -9,37 +9,55 @@ Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 Library  keywords/SwitchLight.py
+Library  keywords/ThirdParty.py
 Library  Collections.py
 
+
 * Variable
-${switch_1_alias}  AF1
-${switchlight_version}  SwitchLight 2.0.0
-${netmask}  18
-${gateway}  10.192.64.1
-${dns_server}  10.192.3.1
-${dns_domain}  bigswitch.com
-${filter_1}  ethernet1  
-${filter_nick_1}  F1
-${filter_2}  ethernet1  
-${filter_nick_2}  F2
-${delivery_1}  ethernet2  
-${delivery_nick_1}  D1
-${delivery_2}  ethernet2  
-${delivery_nick_2}  D2
-${service_pre_1}  ethernet47  
-${service_prenick_1}  S1PRE
-${service_post_1}  ethernet48  
-${service_postnick_1}  S1POST
-${service_pre_2}  ethernet31 
-${service_prenick_2}  S5PRE
-${service_post_2}  ethernet32  
-${service_postnick_2}  S5POST
+${switch_1_alias}  arista-leaf-1
+${switch_2_alias}  arista-leaf-2
+${switch_3_alias}  arista-core
+
+${filter_1}  Ethernet13  
+${filter_nick_1}  leaf1-F1
+${filter_2}  Ethernet13  
+${filter_nick_2}  leaf2-F1
+
+${delivery_1}  Ethernet14  
+${delivery_nick_1}  leaf1-D1
+${delivery_2}  Ethernet14  
+${delivery_nick_2}  leaf2-D1
+
+${service_pre_1}  Ethernet17  
+${service_prenick_1}  pre-leaf1
+${service_post_1}  Ethernet18  
+${service_postnick_1}  post-leaf1
+${service_name_1}   leaf1-service
+
+${service_pre_2}  Ethernet17 
+${service_prenick_2}  pre-leaf2
+${service_post_2}  Ethernet18  
+${service_postnick_2}  post-leaf2
+${service_name_2}   leaf2-service
+
+${service_pre_3}  Ethernet45 
+${service_prenick_3}  pre-core
+${service_post_3}  Ethernet46  
+${service_postnick_3}  post-core
+${service_name_3}   core-service
+
 
 *Test Case
-verify configuration is successful
-    verify config
-    [Tags]  bigtap  overlap
 
+verify config
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ZP1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  bigtap  
+    
 Delete match condition in P1 and verify overlap goes away
     rest delete policy match  admin-view  P1  1
     sleep  3
@@ -107,95 +125,97 @@ Add vlan re-write to both policies and verify overlap stays
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}        
     [Tags]  bigtap  overlap  vlan
-    
+
 Create two policies with different filter and delivery interfaces and verify overlap goes away
-    rest delete policy interface  admin-view  P1  F1  filter
-    rest add policy interface  admin-view  P1  F2  filter
+    rest delete policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${filter_nick_2}   filter
     sleep  3    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     rest update policy action  admin-view  P1  inactive
     rest update policy action  admin-view  ZP1  inactive    
     sleep  3        
-    rest delete policy interface  admin-view  P1  F2  filter
-    rest add policy interface  admin-view  P1  F1  filter
+    rest delete policy interface  admin-view  P1  ${filter_nick_2}   filter
+    rest add policy interface  admin-view  P1  ${filter_nick_1}   filter
     sleep  3     
     rest update policy action  admin-view  P1  forward
     rest update policy action  admin-view  ZP1  forward      
     sleep  20    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  bigtap  overlap  unique
-    
+    [Tags]  bigtap  overlap  unique    
+
 Add a service to P1 and verify overlap policy goes away
-    rest add service to policy  admin-view  P1  SERVICE1  1
+    rest add service to policy  admin-view  P1   ${service_name_1}  1
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}    
-    rest delete service from policy  admin-view  P1  SERVICE1
+    rest delete service from policy  admin-view  P1   ${service_name_1}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  service1
 
+
 Create two policies with different filter but same delivery interface and verify overlap policy is not created          
-    rest delete policy interface  admin-view  P1  F1  filter
-    rest delete policy interface  admin-view  ZP1  D2  delivery
+    rest delete policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest delete policy interface  admin-view  ZP1  ${delivery_nick_2}  delivery
     sleep  3
-    rest add policy interface  admin-view  P1  F2  filter
-    rest add policy interface  admin-view  ZP1  D1  delivery
+    rest add policy interface  admin-view  P1  ${filter_nick_2}  filter
+    rest add policy interface  admin-view  ZP1   ${delivery_nick_1}  delivery
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}    
-    rest delete service from policy  admin-view  P1  SERVICE1
+    rest delete service from policy  admin-view  P1  ${service_name_1}
     sleep  3    
-    rest delete policy interface  admin-view  P1  F2  filter
-    rest delete policy interface  admin-view  ZP1  D1  delivery
+    rest delete policy interface  admin-view  P1  ${filter_nick_2}   filter
+    rest delete policy interface  admin-view  ZP1  ${delivery_nick_1}  delivery
     sleep  3
-    rest add policy interface  admin-view  P1  F1  filter
-    rest add policy interface  admin-view  ZP1  D2  delivery
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ZP1  ${delivery_nick_2}  delivery
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  sameDelivery
 
 Add a service to both policies and verify overlap policy is created. Bring down pre-service interface, verify overlap goes away
-    rest add service to policy  admin-view  P1  SERVICE5  1
-    rest add service to policy  admin-view  ZP1  SERVICE5  1    
+    rest add service to policy  admin-view  P1  ${service_name_3}  1
+    rest add service to policy  admin-view  ZP1  ${service_name_3}  1    
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    cli disable interface  s5  ${service_pre_2}
+    cli arista enable disable interface  s3  ${service_pre_3}  disable=${True}
     sleep  3    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}    
-    cli enable interface  s5  ${service_pre_2}
+    cli arista enable disable interface  s3  ${service_pre_3}  disable=${False}
     sleep  3
-    rest delete service from policy  admin-view  P1  SERVICE5
-    rest delete service from policy  admin-view  ZP1  SERVICE5
+    rest delete service from policy  admin-view  P1  ${service_name_3}
+    rest delete service from policy  admin-view  ZP1  ${service_name_3}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  service
 
 Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
-    rest add service to policy  admin-view  P1  SERVICE5  1
-    rest add service to policy  admin-view  ZP1  SERVICE5  1    
+    rest add service to policy  admin-view  P1  ${service_name_3}  1
+    rest add service to policy  admin-view  ZP1  ${service_name_3}  1    
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    cli disable interface  s5  ${service_post_2}
-    sleep  3    
+    cli arista enable disable interface  s3  ${service_post_3}  disable=${True}
+    sleep  10    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}    
-    cli enable interface  s5  ${service_post_2}
-    sleep  3
-    rest delete service from policy  admin-view  P1  SERVICE5
-    rest delete service from policy  admin-view  ZP1  SERVICE5
-    sleep  3
+    cli arista enable disable interface  s3  ${service_post_3}  disable=${False}
+    sleep  10
+    rest delete service from policy  admin-view  P1  ${service_name_3}
+    rest delete service from policy  admin-view  ZP1  ${service_name_3}
+    sleep  10
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  bigtap  overlap  service
+    [Tags]  bigtap  overlap  service  run
+
 
 Protocol TCP: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  protocol=6  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=80  src_port=1234  ip_tos=1  vlan=100  
@@ -222,6 +242,7 @@ L2: All possible matches. Configure two policies with common filter and differen
     verify protocol matches  ${generate_protocol_matches}                    
     [Tags]  bigtap  overlap  l2  protocolmatches
 
+
 Verify overlap is not created when P1 and ZP1 have different protocols 
     rest delete policy match  admin-view  P1  1
     rest delete policy match  admin-view  ZP1  1
@@ -237,6 +258,7 @@ Verify overlap is not created when P1 and ZP1 have different protocols
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  diffmatch
+
 
 Disable overlap knob and verify overlapping policies are deleted
     rest disable feature  overlap
@@ -271,32 +293,33 @@ Change configuration execute HA Failback and verify overlapping policies still e
     [Tags]  bigtap  overlap  ha  
 
 Shutdown filter interface and verify overlapping policy goes away
-    cli disable interface  s1  ${filter_1}
+    cli arista enable disable interface  s1  ${filter_1}  disable=${True}
     sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Re-enable previously shut filter interface and verify overlapping policy is re-created
-    cli enable interface  s1  ${filter_1}
+    cli arista enable disable interface  s1  ${filter_1}  disable=${False}
     sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Shutdown delivery interface and verify overlapping policy goes away
-    cli disable interface  s2  ${delivery_2}
+    cli arista enable disable interface  s2  ${delivery_2}  disable=${True}
     sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Re-enable previously shut delivery interface and verify overlapping policy is re-created
-    cli enable interface  s2  ${delivery_2}
+    cli arista enable disable interface  s2  ${delivery_2}  disable=${False}
     sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
+
 
 Delete and re-create policies P1 and ZP1 and verify overlap polices are deleted and re-created
     rest delete policy  admin-view  P1
@@ -306,79 +329,75 @@ Delete and re-create policies P1 and ZP1 and verify overlap polices are deleted 
     Should not be true  ${verify_overlap}
     rest add policy  admin-view  P1  forward
     rest add policy match  admin-view  P1  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  P1  F1  filter
-    rest add policy interface  admin-view  P1  D1  delivery 
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery 
     Sleep  45  
     rest add policy  admin-view  ZP1  forward
     rest add policy match  admin-view  ZP1  1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  ZP1  F1  filter
-    rest add policy interface  admin-view  ZP1  D2  delivery
+    rest add policy interface  admin-view  ZP1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ZP1  ${delivery_nick_2}  delivery
     sleep  45  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  bigtap  overlap  delPol 
+    [Tags]  bigtap  overlap  delPol     
+
 
 Reboot filter switch and verify overlapping policies still exist
-    cli restart switch  s1
-    Sleep  60
+    cli arista reboot switch  s1
+    Sleep  180
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
     [Tags]  bigtap  overlap  rebootSwitch
 
 Reboot delivery switch and verify overlapping policies still exist
-    cli restart switch  s2
-    Sleep  60    
+    cli arista reboot switch  s2
+    Sleep  180    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
     [Tags]  bigtap  overlap  rebootSwitch 
 
 Reboot core switch and verify overlapping policies still exist
-    cli restart switch  s5
-    Sleep  60        
+    cli arista reboot switch  s3
+    Sleep  180        
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
-    [Tags]  bigtap  overlap  rebootSwitch                                                  
+    [Tags]  bigtap  overlap  rebootSwitch  
+
 * Keywords
+
 
 overlap suite setup
     base suite setup
-    rest add switch alias  s1  APP-REGRESS-1
-    rest add switch alias  s2  APP-REGRESS-2
-    rest add switch alias  s3  APP-REGRESS-3
-    rest add switch alias  s4  APP-REGRESS-4      
-    rest add switch alias  s5  APP-REGRESS-5
-    rest add switch alias  s6  APP-REGRESS-6  
-    rest add switch alias  s7  APP-REGRESS-7        
+    rest add switch alias  s1  ${switch_1_alias}
+    rest add switch alias  s2  ${switch_2_alias}
+    rest add switch alias  s3  ${switch_3_alias}
     rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
     rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}          
     rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
     rest add interface role  s2  ${delivery_2}  delivery  ${delivery_nick_2}
+
     rest add interface role  s1  ${service_pre_1}   service  ${service_prenick_1}
     rest add interface role  s1  ${service_post_1}  service  ${service_postnick_1}
-    rest add service  SERVICE1  ${service_prenick_1}  ${service_postnick_1} 
-    rest add interface role  s5  ${service_pre_2}   service  ${service_prenick_2}
-    rest add interface role  s5  ${service_post_2}  service  ${service_postnick_2}
-    rest add service  SERVICE5  ${service_prenick_2}  ${service_postnick_2}
+    rest add service  ${service_name_1}  ${service_prenick_1}  ${service_postnick_1} 
+    rest add interface role  s2  ${service_pre_2}   service  ${service_prenick_2}
+    rest add interface role  s2  ${service_post_2}  service  ${service_postnick_2}
+    rest add service  ${service_name_2}  ${service_prenick_2}  ${service_postnick_2}
+    rest add interface role  s3  ${service_pre_3}   service  ${service_prenick_3}
+    rest add interface role  s3  ${service_post_3}  service  ${service_postnick_3}
+    rest add service  ${service_name_3}  ${service_prenick_3}  ${service_postnick_3}
                 
     Sleep  5
     rest add policy  admin-view  P1  forward
     rest add policy match  admin-view  P1  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  P1  F1  filter
-    rest add policy interface  admin-view  P1  D1  delivery 
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery 
     Sleep  5  
     rest add policy  admin-view  ZP1  forward
     rest add policy match  admin-view  ZP1  1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  ZP1  F1  filter
-    rest add policy interface  admin-view  ZP1  D2  delivery
+    rest add policy interface  admin-view  ZP1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ZP1  ${delivery_nick_2}  delivery
     Sleep  5
 
-verify config
-    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ZP1  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
-    Should be true  ${verify_policy12}
 
 verify protocol matches  [Arguments]  ${match_dictionary}
     ${length}=  Get Length  ${match_dictionary}
@@ -389,21 +408,25 @@ verify protocol matches  [Arguments]  ${match_dictionary}
     \    rest delete policy match  admin-view  P1  1
     \    rest delete policy match  admin-view  ZP1  1
     \    Sleep  3
-    \    rest add policy match  admin-view  P1  1  ${match_dictionary[${INDEX}]}  flag=True
-    \    rest add policy match  admin-view  ZP1  1  ${match_dictionary[${NINDEX}]}  flag=True
+    \    rest add policy match  admin-view  P1  1  ${match_dictionary[${INDEX}]}  flag=${True}
+    \    rest add policy match  admin-view  ZP1  1  ${match_dictionary[${NINDEX}]}  flag=${True}
     \    Sleep  3
     \    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     \    Should be true  ${verify_overlap} 
+ 
 
 overlap suite teardown
     rest delete policy  admin-view  P1
     rest delete policy  admin-view  ZP1
-    rest delete service  SERVICE1
-    rest delete service  SERVICE5
+    rest delete service  ${service_name_1}
+    rest delete service  ${service_name_2}
+    rest delete service  ${service_name_3}
     rest delete interface role  s1  ${service_pre_1}   service
     rest delete interface role  s1  ${service_post_1}   service
-    rest delete interface role  s5  ${service_pre_2}   service
-    rest delete interface role  s5  ${service_post_2}   service              
+    rest delete interface role  s2  ${service_pre_2}   service
+    rest delete interface role  s2  ${service_post_2}   service
+    rest delete interface role  s3  ${service_pre_3}   service
+    rest delete interface role  s3  ${service_post_3}   service                  
     rest delete interface role  s1  ${filter_1}    filter          
     rest delete interface role  s2  ${filter_2}    filter        
     rest delete interface role  s1  ${delivery_1}    delivery
@@ -415,15 +438,7 @@ overlap suite teardown
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch alias  s3
-    rest delete switch alias  s4
-    rest delete switch alias  s5
-    rest delete switch alias  s6
-    rest delete switch alias  s7
     rest delete switch  s1
     rest delete switch  s2
     rest delete switch  s3
-    rest delete switch  s4      
-    rest delete switch  s5      
-    rest delete switch  s6     
-    rest delete switch  s7                                        
-    base suite teardown    
+    base suite teardown      
