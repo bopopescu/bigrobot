@@ -796,6 +796,28 @@ class Test(object):
                            br_utils.end_of_output_marker()))
         return n
 
+    def node_disconnect(self, node=None):
+        """
+        Disconnect the node's SSH/Telnet sessions.
+        If node name is not specified, disconnect all the nodes. If node name
+        is specified (either as 'c1' or as a list ['c1', 'c2', 's1'], only
+        disconnect those nodes.
+        """
+        node_handles = []
+        if node:
+            if helpers.is_list(node):
+                for n in node:
+                    node_handles.append(self.topology(n))
+            else:
+                node_handles.append(self.topology(node))
+        else:
+            for _, handle in self.topology().items():
+                node_handles.append(handle)
+        for h in node_handles:
+            helpers.log("**** Disconnecting node '%s'" % h.name())
+            h.close()
+            del self._topology[h.name()]
+
     def node_reconnect(self, node, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
