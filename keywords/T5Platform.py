@@ -3857,7 +3857,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -3888,7 +3888,8 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
+                re.match(r' clear session session-id', string) or re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -3929,6 +3930,12 @@ class T5Platform(object):
 
             # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options
             if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # skip 'topic related commands' (PR BVS-2046)
+            if (re.match(r' topic .*', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -4018,7 +4025,7 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands:":
+            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4075,8 +4082,16 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
+            # Ignorning below cmd as it is effecting the script execution
+            if (re.match(r' clear switch all.*', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or \
+                re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string) or \
+                re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -4312,6 +4327,11 @@ class T5Platform(object):
 
                 if re.match(r'.*member port-group.*vlan.*', string):
                     helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r' clear session session-id', string):
+                    helpers.log("Ignoring line as it may effect the script execution..")
                     num = num - 1
                     continue
 
