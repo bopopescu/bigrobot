@@ -13,17 +13,17 @@ Library        		String
 
 
 *** Variables ***
-${scp}				scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/scp
-${scp RC}			scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-RC
-${scp file}			scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-file
-${scp config}		scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-config-scp
-${scp double}		scp://scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp
-${scp location}		bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp
-${scp inexistent}   	scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/inexistent
-${scp switch}		scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/scp-config-large
-${scp image}		scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
-${scp image corrupted}		scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
-${scp image bigtap}		scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
+${scp}				scp://bsn@10.9.16.52:file-management-testsuite/scp
+${scp RC}			scp://bsn@10.9.16.52:file-management-testsuite/config-RC
+${scp file}			scp://bsn@10.9.16.52:file-management-testsuite/config-file
+${scp config}		scp://bsn@10.9.16.52:file-management-testsuite/config-config-scp
+${scp double}		scp://scp://bsn@10.9.16.52:file-management-testsuite/config-scp
+${scp location}		bsn@10.9.16.52:file-management-testsuite/config-scp
+${scp inexistent}   	scp://bsn@10.9.16.52:file-management-testsuite/inexistent
+${scp switch}		scp://bsn@10.9.16.52:file-management-testsuite/scp-config-large
+${scp image}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
+${scp image corrupted}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
+${scp image bigtap}		scp://bsn@10.9.16.52:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
@@ -36,94 +36,94 @@ ${image double}		image://image://image-file
 
 *** Test Cases ***
 T0.1 Extensive config and file compare locally
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  config://extensive-config
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  extensive-file
 	Compare  extensive-file  config://extensive-config
 
 T0.2 Extensive config remote copy
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Compare  config://extensive-config  running-config
 	[Tags]  BSC-5370
 
 T0.3 Extensive file remote copy
 	Rest Delete Tenant  TenantTest12345
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  running-config
 	Compare  config://extensive-config  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  extensive-file
 	Compare  extensive-file  running-config
 
 T0.4 Extensive config remote replace
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config-start
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
 	...  running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config-start
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
 	...  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config-start
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
 	...  config://extensive-config-start
 	Compare  config://extensive-config-start  running-config
 
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Compare  config://extensive-config  running-config
 	[Tags]  BSC-5370  BSC-5488
 
 T0.5 Extensive config local copy
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Cli Copy  config://extensive-config  running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config
 	[Tags]  BSC-5488
 
 T0.6 Extensive file local copy
 	Rest Delete Tenant  TenantTest12345
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  extensive-file
 	Cli Copy  extensive-file  running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-file
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  running-config
 	Compare  extensive-file  running-config
 
 T0.7 Extensive config local replace
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config-start
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
 	...  config://extensive-config-start
 	Cli Copy  config://extensive-config-start  running-config
 	Cli Run  master  show running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config-start
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
 	...  running-config
 	Compare  config://extensive-config-start  running-config
 
 	Sleep  10
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Cli Copy  config://extensive-config  running-config
 	Cli Run  master  show running-config
 	Sleep  10
-	Compare  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/extensive-config
+	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config
 	[Tags]  BSC-5488
@@ -444,9 +444,9 @@ T6.2.4 Verify config:// name containing _
 	[Tags]  Filename
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
-	Cli Copy  running-config  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/test#test
-	Compare  running-config  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/test#test
-	Cli Copy  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/test#test   running-config
+	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/test#test
+	Compare  running-config  scp://bsn@10.9.16.52:file-management-testsuite/test#test
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/test#test   running-config
 	[Tags]  Filename  SCP
 
 T6.4 Verify empty file name is not allowed
@@ -536,9 +536,9 @@ T7.6 Verify comparison function between file and scp://
 	Compare  ${file}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  file-new
-	Cli Copy  running-config  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp-new
+	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
 	Compare Negative  file-new  ${scp}
-	Compare Negative  ${file}  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp-new
+	Compare Negative  ${file}  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
 	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
@@ -556,8 +556,8 @@ T7.8 Verify comparison function between scp:// and config://
 	Compare  ${config}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  config://config-new
-	Cli Copy  running-config  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp-new
-	Compare  config://config-new  scp://bsn@regress.qa.bigswitch.com:file-management-testsuite/config-scp-new
+	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
+	Compare  config://config-new  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
 	Compare Negative  config://config-new  ${scp}
 	Compare Negative  config://config-new  ${config}
 	[Tags]  SCP
