@@ -6,14 +6,16 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.192.97.100
-  openflow_port:  6633  
+  ip: 10.8.30.5
+  openflow_port:  6633 
 
 c2:
-  ip: 10.192.97.101
-  openflow_port:  6633  
-
+  ip: 10.8.30.6
+  openflow_port:  6633 
+  
 s1:
-  ip: 10.192.81.115
+  ip: 10.9.19.26
+  console_ip: 10.1.8.97
+  console_port: 6026
   user: admin
   password: arastra
