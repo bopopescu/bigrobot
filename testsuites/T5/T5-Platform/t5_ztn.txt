@@ -126,6 +126,7 @@ T1.8. Reboot switches from CLI
 	Sleep  20
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
+	Tags  [skipped]
 
 T1.9. Verify startup config after failover
     Reboot Switches From CLI
