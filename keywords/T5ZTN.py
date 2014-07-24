@@ -323,15 +323,15 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        s = t.dev_console(node, modeless=True)
-        s.send(helpers.ctrl('c'))
-        s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
-                           timeout=300)
-        if options[0] == 0:  # login prompt
-            s.cli('admin')
-        if options[0] == 1:  # bash mode
-            s.cli('exit')
+        s = t.dev_console(node)
+        #s.send(helpers.ctrl('c'))
+        #s.send("\x03")
+        #options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
+        #                   timeout=300)
+        #if options[0] == 0:  # login prompt
+        #    s.cli('admin')
+        #if options[0] == 1:  # bash mode
+        #    s.cli('exit')
         s.cli('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
@@ -619,6 +619,12 @@ class T5ZTN(object):
                 if "timezone UTC" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             startup_config_line):
+                    temp_line = startup_config_line.replace("\"", "")
+                    startup_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
+                    continue
                 startup_config_temp.append(startup_config_line)
                 helpers.log("Keeping line in startup-config: %s"
                             % startup_config_line)
@@ -673,6 +679,12 @@ class T5ZTN(object):
                         continue
                 if "snmp-server enable traps" in ztn_config_line:
                     helpers.log("Skipping line: %s" % ztn_config_line)
+                    continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             ztn_config_line):
+                    temp_line = ztn_config_line.replace("\'", "")
+                    ztn_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
                     continue
                 if "ntp time-zone" in ztn_config_line:
                     ztn_config_line = ztn_config_line.replace("ntp time-zone",
@@ -730,15 +742,15 @@ class T5ZTN(object):
         missing_startup = []
         extra_startup = []
 
-        s = t.dev_console(hostname, modeless=True)
-        s.send(helpers.ctrl('c'))
-        s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
-                            r'[\r\n]* root@.*\#:', s.get_prompt()])
-        if options[0] == 0:
-            s.cli('admin')
-        if options[0] == 2:
-            s.cli('exit')
+        s = t.dev_console(hostname)
+        #s.send(helpers.ctrl('c'))
+        #s.send("\x03")
+        #options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
+        #                    r'[\r\n]* root@.*\#:', s.get_prompt()])
+        #if options[0] == 0:
+        #    s.cli('admin')
+        #if options[0] == 2:
+        #    s.cli('exit')
         s.cli('enable')
         s.cli('config')
         running_config = s.cli("show running-config")['content']
@@ -756,9 +768,9 @@ class T5ZTN(object):
                 if "ntp sync" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                # if "snmp-server enable" in startup_config_line:
-                #    helpers.log("Skipping line: %s" % startup_config_line)
-                #    continue
+                if "snmp-server enable" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
                 # temp override BSC-5629
                 if re.match(r'snmp-server trap', startup_config_line):
                     helpers.log("Skipping line %s" % startup_config_line)
@@ -767,6 +779,12 @@ class T5ZTN(object):
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
                     startup_config_temp.append(temp_line)
                     helpers.log("Rearranging line: %s" % startup_config_line)
+                    continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             startup_config_line):
+                    temp_line = startup_config_line.replace("\"", "")
+                    startup_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
                     continue
                 if re.match(r'controller .* port 6653', startup_config_line):
                     helpers.log("Skipping port number in %s" %
@@ -802,9 +820,19 @@ class T5ZTN(object):
                 if "snmp-server contact 'Not set'" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
+                if "snmp-server enable" in running_config_line:
+                    helpers.log("Skipping line: %s" % running_config_line)
+                    continue
+                # temp override BSC-5629
                 if re.match(r'snmp-server community ro public$',
                             running_config_line):
                     helpers.log("Skipping line: %s" % running_config_line)
+                    continue
+                if re.match(r'snmp-server contact|snmp-server location',
+                             running_config_line):
+                    temp_line = running_config_line.replace("\'", "")
+                    running_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % temp_line)
                     continue
                 running_config_temp.append(running_config_line)
                 helpers.log("Keeping line in running-config: %s"
@@ -1188,7 +1216,7 @@ class T5ZTN(object):
             if options[0] == 0:
                 helpers.log("Switch has fabric role configured. Confirming.")
                 c.send("yes")
-                c.expect(c.get_prompt(), timeout=30)
+                c.expect(c.get_prompt(), timeout=300)
             if options[0] == 2:
                 helpers.log("Rebooting all switches. Waiting for CLI prompt...")
                 c.expect(c.get_prompt(), timeout=300)
@@ -1325,3 +1353,16 @@ class T5ZTN(object):
         s.cli('')                  
         return True
 
+    def power_cycle_switch(self, switch):
+        """
+        Power cycle a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully power cycled the switch, False otherwise
+        """
+        t = test.Test()
+        t.power_cycle(switch)
+        return True
