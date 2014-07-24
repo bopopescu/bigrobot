@@ -1211,7 +1211,7 @@ class T5ZTN(object):
         try:
             c.send("system reboot switch %s" % switch)
             helpers.log(c.cli_content())
-            options = c.expect([r'y or yes to continue', c.get_prompt(),
+            options = c.expect([r'to continue', c.get_prompt(),
                                 r'Waiting for reconnect'], timeout=30)
             if options[0] == 0:
                 helpers.log("Switch has fabric role configured. Confirming.")
