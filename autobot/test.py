@@ -814,7 +814,6 @@ class Test(object):
             for _, handle in self.topology().items():
                 node_handles.append(handle)
         for h in node_handles:
-            helpers.log("**** Disconnecting node '%s'" % h.name())
             h.close()
             del self._topology[h.name()]
 
