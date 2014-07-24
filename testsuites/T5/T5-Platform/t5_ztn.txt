@@ -145,17 +145,17 @@ T1.9. Verify startup config after failover
 	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 
 T1.10. Verify switches Switchlight SWI version
-	#Verify Switch SWI Version  ${s1_alias}
+	Verify Switch SWI Version  ${s1_alias}
 	Verify Switch SWI Version  ${s2_alias}
 	Verify Switch SWI Version  ${s3_alias}
 	Verify Switch SWI Version  ${s4_alias}
-	#Verify Switch SWI Version  ${s5_alias}
+	Verify Switch SWI Version  ${s5_alias}
 T1.11. Verify switches Switchlight Installer version
-	#Verify Switch Installer Version  ${s1_alias}
+	Verify Switch Installer Version  ${s1_alias}
 	Verify Switch Installer Version  ${s2_alias}
 	Verify Switch Installer Version  ${s3_alias}
 	Verify Switch Installer Version  ${s4_alias}
-	#Verify Switch Installer Version  ${s5_alias}
+	Verify Switch Installer Version  ${s5_alias}
 
 #T1.12. Reset switch to factory default
 #	Telnet Reset Switch to Factory Default  ${s4_alias}
@@ -431,7 +431,7 @@ T2.1.7. Verify that unconfigured switch does not receive image
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Power Cycle All Switches
+	#Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable; config
