@@ -92,41 +92,46 @@ T1.5. Check Startup config for a switch
 	Verify All Switches Startup Config
 
 T1.6. Test switch reboot
-	#Telnet Reboot Switch  s1
-	#Sleep  5
+	Telnet Reboot Switch  s1
+	Sleep  5
 	Telnet Reboot Switch  s2
 	Sleep  5
 	Telnet Reboot Switch  s3
 	Sleep  5
 	Telnet Reboot Switch  s4
+	Sleep  5
+	Telnet Reboot Switch  s5
 
-	#Telnet Wait For Switch To Reload s1
+	Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s2
 	Telnet Wait For Switch To Reload  s3
 	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
 
 T1.7. Reboot all switches from CLI
 	Cli Reboot Switch  master  all
 	Cli Reboot Switch  slave  all
 
 T1.8. Reboot switches from CLI
-	#Cli Reboot Switch  master  ${s1_alias}
-	#Sleep  5
+	Cli Reboot Switch  master  ${s1_alias}
+	Sleep  5
 	Cli Reboot Switch  master  ${s2_mac}
 	Sleep  5
 	Cli Reboot Switch  master  ${s3_ip}
 	Sleep  5
 	Cli Reboot Switch  master  ${s4_alias}
+	Sleep  5
+	Cli Reboot Switch  master  ${s5_mac}
 
-	#Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s2
 	Telnet Wait For Switch To Reload  s3
 	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
 
 	Sleep  20
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
-	Tags  [skipped]
 
 T1.9. Verify startup config after failover
     Reboot Switches From CLI
@@ -168,6 +173,7 @@ T1.13. Reboot and stop at loader shell
 
 T1.14. Power cycle switches
 	Power Cycle All Switches
+	[Tags]  skipped
 
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:33:44:55:66
