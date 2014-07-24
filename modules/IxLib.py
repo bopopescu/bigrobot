@@ -1469,7 +1469,7 @@ class Ixia(object):
             self.ix_stop_hosts(topo)
             helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
         helpers.log('Sleeps 3 sec for Hosts to be Stopped')
-        time.sleep(10)  # Increase the time for hosts to be stopped, need FIX by checking from IXnetwork.
+        time.sleep(20)  # Increase the time for hosts to be stopped, need FIX by checking from IXnetwork.
         for topo in self._topology.values():
             handle.remove(topo)
             handle.commit()
