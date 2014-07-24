@@ -430,6 +430,7 @@ T2.1.7. Verify that unconfigured switch does not receive image
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable; config
@@ -613,6 +614,7 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
+	Power Cycle All Switches
 	${mac1}=  Set Variable  12:22:33:44:55:66
 	${mac2}=  Set Variable  66:55:44:33:22:11
 	${name1}=  Set Variable  test1
@@ -784,6 +786,7 @@ T4.9 Provision two switches, power them both off, swap MACs, power them both on
 
 # Switch in provisioned mode
 T5.1.1. Power down, change config
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  show run
@@ -854,6 +857,7 @@ T5.1.4. Power down, delete, failover
 
 # Switch in stand-by mode
 T5.2.1. Power down, change config
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable;config
@@ -1033,6 +1037,7 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.4.7. Disconnect, change config, failover, reboot
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable;config
