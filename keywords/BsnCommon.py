@@ -1782,6 +1782,13 @@ class BsnCommon(object):
         n = t.node(node)
         return n.rest_result_json(*args, **kwargs)
 
+    def node_disconnect(self, node):
+        """
+        Disconnect the devconf session (SSH/Telnet) on the specified node.
+        """
+        t = test.Test()
+        t.node_disconnect(node)
+
     def get_node_name(self, node):
         """
         Get the name of a node
