@@ -12,4 +12,5 @@ fi
 pwd=`pwd`
 app=`basename $pwd`
 set -x
+#(cd ..; celery -A $app worker --app $app.celery_app:app --loglevel info -n $app -Q template_services)
 (cd ..; celery -A $app worker --app $app.celery_app:app --loglevel info -n $app)

@@ -389,7 +389,7 @@ class DevConf(object):
         return self.result()['content']
 
     def close(self):
-        helpers.log("Closing DevConf '%s' (%s)" % (self.name(), self._host))
+        # helpers.log("Closing DevConf '%s' (%s)" % (self.name(), self._host))
         self.conn.close(force=True)
 
 
@@ -586,9 +586,9 @@ class BsnDevConf(DevConf):
                         prompt=prompt, timeout=timeout, level=level)
 
     def close(self):
-        helpers.log("Closing BsnDevConf '%s' (%s)" % (self.name(), self._host))
+        # helpers.log("Closing BsnDevConf '%s' (%s)"
+        #            % (self.name(), self._host))
         super(BsnDevConf, self).close()
-        # !!! FIXME: Need to close the controller connection
 
 
 class ControllerDevConf(BsnDevConf):
@@ -611,8 +611,8 @@ class ControllerDevConf(BsnDevConf):
         A side effect is that helpers.log() doesn't work - Robot Framework
         logger is a bit funky. Workaround is to simply print to stdout.
         """
-        self.send("")
-        self.expect()
+        self.send("", quiet=True)
+        self.expect(quiet=True)
         content = self.content()
         print("Test Monitor for ControllerDevConf '%s' - triggered session"
               " keepalive to avoid reauth (output=%s)"
@@ -655,6 +655,11 @@ class SwitchDevConf(BsnDevConf):
             self.enable('')
         super(SwitchDevConf, self).bash(*args, **kwargs)
         return self.result()
+
+    def close(self):
+        helpers.log("Closing SwitchDevConf '%s' (%s)"
+                    % (self.name(), self._host))
+        super(SwitchDevConf, self).close()
 
 
 class MininetDevConf(DevConf):
@@ -822,7 +827,6 @@ class MininetDevConf(DevConf):
         self.start_mininet(new_topology)
 
     def close(self):
-        super(MininetDevConf, self).close()
         if helpers.bigrobot_preserve_mininet_screen_session().lower() == 'true':
             helpers.log("Env BIGROBOT_PRESERVE_MININET_SCREEN_SESSION"
                         " is 'True'. Preserving Mininet screen session.")
@@ -837,9 +841,9 @@ class MininetDevConf(DevConf):
                 raise
         else:
             self.send('exit', quiet=True)  # terminate screen session
-            self.conn.close(force=True)
-            helpers.log("Mininet - force closed the device connection '%s'."
-                    % self.name())
+            helpers.log("Closing MininetDevConf '%s' (%s)"
+                        % (self.name(), self._host))
+            super(MininetDevConf, self).close()
 
 
 class T6MininetDevConf(MininetDevConf):
@@ -864,6 +868,12 @@ class T6MininetDevConf(MininetDevConf):
         else:
             return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
                     % (self.controller, self.openflow_port, self.topology))
+
+    def close(self):
+        # helpers.log("Closing T6MininetDevConf '%s' (%s)"
+        #            % (self.name(), self._host))
+        super(T6MininetDevConf, self).close()
+
 
 
 class HostDevConf(DevConf):
@@ -914,5 +924,6 @@ class HostDevConf(DevConf):
                          timeout=timeout, level=level)
 
     def close(self):
+        helpers.log("Closing HostDevConf '%s' (%s)"
+                    % (self.name(), self._host))
         super(HostDevConf, self).close()
-        # !!! FIXME: Need to close the controller connection

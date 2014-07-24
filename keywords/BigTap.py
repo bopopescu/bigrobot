@@ -1048,19 +1048,26 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
+
+                # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    data = {"filter-intf-group": str(group_name)}
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/filter-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
+                    # data = {"filter-intf-group": str(group_name)}
+                    data = {"name": str(group_name)}
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    data = {"delivery-intf-group": str(group_name)}
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/delivery-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
+                    data = {"name": str(group_name)}
+                    # data = {"delivery-intf-group": str(group_name)}
                 else:
                     return False
                 if "admin" not in user:
                     c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    c_user.rest.patch(url, data)
+                    # c_user.rest.patch(url, data)
+                    c_user.rest.put(url, data)
                     t.node_reconnect(node='master')
                 else:
-                    c.rest.patch(url, data)
+                    # c.rest.patch(url, data)
+                    c.rest.put(url, data)
             except:
                 helpers.test_log(c.rest.error())
                 return False

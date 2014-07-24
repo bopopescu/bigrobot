@@ -649,21 +649,25 @@ vui@Vuis-MacBook-Pro$
         # Check task status - are we done yet?
         #
         is_pending = True
-        iteration = 0
-        while is_pending:
+        iterations = 0
+        max_tries = 10
+        while is_pending and iterations <= max_tries:
             is_pending = False
-            iteration += 1
+            iterations += 1
             helpers.sleep(1)
             for res in results:
                 task_id = res.task_id
                 action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
                 if res.ready() == True:
                     helpers.log("****** %d.READY     - task_id(%s)['%s']"
-                                % (iteration, res.task_id, action))
+                                % (iterations, res.task_id, action))
                 else:
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
-                                % (iteration, res.task_id, action))
+                                % (iterations, res.task_id, action))
                     is_pending = True
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrielve results from ESB")
+            return False
 
         helpers.log("*** Parallel tasks completed")
 
@@ -682,3 +686,18 @@ vui@Vuis-MacBook-Pro$
     def exit_early(self):
         helpers.log("*** We're bailing early!!!")
         sys.exit(1)
+
+    def my_enable_commands(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.enable("show switch")
+        n.enable("show running-config")
+        n.enable("show user")
+
+    def my_config_commands(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.config("show switch")
+        n.config("show running-config")
+        n.config("show user")
+
