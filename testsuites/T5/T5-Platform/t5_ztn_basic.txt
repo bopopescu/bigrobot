@@ -1,0 +1,138 @@
+*** Settings ***
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
+Test Setup		Test Setup
+Test Teardown	Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
+Library  		keywords/BsnCommon.py
+Library		keywords/T5Platform.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		String
+
+
+
+*** Variables ***
+@{supported_installer_platforms}  powerpc-quanta-lb9-r0  powerpc-quanta-ly2-r0
+	...  powerpc-dni-7448-r0  powerpc-as6700-32x-r0  powerpc-as5710-54x-r0a
+	...  powerpc-as5710-54x-r0b
+@{supported_swi_platforms}  powerpc-quanta-ly2-r0  powerpc-as6700-32x-r0
+	...  powerpc-as5710-54x-r0a  powerpc-as5710-54x-r0b
+${spine_mac}      22:22:22:22:22:22
+${leaf_mac}       44:44:44:44:44:44
+${spine_alias}    switch_spine
+${leaf_alias}     switch_leaf
+
+
+*** Test Cases ***
+### Basic image check
+T1.1. Verify that release images are present on all controllers
+	Bash Verify Switchlight Images  node=master
+	Bash Verify Switchlight Images  node=slave
+
+T1.2. Verify that manifest files are included in Switchlight image bundles
+	Bash Verify Switchlight Manifests  node=master
+	Bash Verify Switchlight Manifests  node=slave
+
+T1.3. Check supported platforms of SWI and installer
+	@{installer_platforms}=  Bash Get Supported Platforms  installer
+	@{swi_platforms}=  Bash Get Supported Platforms  swi
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[0]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[1]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[2]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[3]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[4]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[5]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[0]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[1]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[2]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
+
+T1.4. Check Startup config for a switch
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${spine_mac}  ${spine_alias}
+	Verify Switch Startup Config  ${leaf_mac}  ${leaf_alias}
+	[Tags]  Smoke
+
+T1.5. Verify startup config after failvoer
+	Verify Switch Startup Config  ${spine_mac}  ${spine_alias}
+	Verify Switch Startup Config  ${leaf_mac}  ${leaf_alias}
+	Failover
+	Verify Switch Startup Config  ${spine_mac}  ${spine_alias}
+	Verify Switch Startup Config  ${leaf_mac}  ${leaf_alias}
+
+*** Keywords ***
+Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://startup-config  node=slave
+
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${spine_alias}; mac ${spine_mac}; fabric-role spine
+	Cli Run  master  switch ${leaf_alias}; mac ${leaf_mac}; fabric-role leaf
+	Randomize ZTN Configuration
+
+Suite Teardown
+	Cli Copy  config://startup-config  running-config
+	Base Suite Teardown
+
+Test Setup
+	Base Test Setup
+	Cli Run  master  show run
+	Cli Run  master  show switch
+	Cli Run  slave  show switch
+	Cli Copy  running-config  config://test-config
+	Cli Copy  running-config  config://test-config  node=slave
+
+Test Teardown
+	Cli Copy  config://test-config  running-config
+	Base Test Teardown
+
+Generate Random Name
+	[Arguments]  ${prefix}  ${suffix_len}
+	${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
+	${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
+	[Return]  ${name}
+
+Generate Random IP
+	${oct1}  Generate Random String  2  [NUMBERS]
+	${oct2}  Generate Random String  2  [NUMBERS]
+	${oct3}  Generate Random String  2  [NUMBERS]
+	${oct4}  Generate Random String  2  [NUMBERS]
+	${ip}  Catenate  SEPARATOR=.  1${oct1}  1${oct2}  1${oct3}  1${oct4}
+	[Return]  ${ip}
+
+Generate Random GMT Timezone
+	${digit}  Generate Random String  1  [NUMBERS]
+	${timezone}  Catenate  SEPARATOR=  Etc/GMT+${digit}
+	[Return]  ${timezone}
+
+Generate Random Threshold
+	${threshold}  Generate Random String  2  [NUMBERS]
+	[Return]  ${threshold}
+
+Randomize ZTN Configuration
+	Cli Run  master  enable; config
+	${contact_random}  Generate Random Name  contact  5
+	Cli Run  master  snmp-server contact ${contact_random}
+	${location_random}  Generate Random Name  location  5
+	Cli Run  master  snmp-server location ${location_random}
+	${community_random}  Generate Random Name  community  5
+	Cli Run  master  snmp-server community ro ${community_random}
+	${host_random}  Generate Random IP
+	Cli Run  master  snmp-server host ${host_random}
+	Cli Run  master  snmp-server enable traps
+	${threshold_random}  Generate Random Threshold
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
+	${host_random}  Generate Random IP
+	Cli Run  master  ntp server ${host_random}
+	${timezone_random}  Generate Random GMT Timezone
+	Cli Run  master  ntp time-zone ${timezone_random}
+	${host_random}  Generate Random IP
+	${hostname_random}  Generate Random Name  hostname.tmk.  5
+	Cli Run  master  logging enable remote
+	Cli Run  master  logging remote 10.192.66.100
+	Cli Run  master  logging remote ${hostname_random}

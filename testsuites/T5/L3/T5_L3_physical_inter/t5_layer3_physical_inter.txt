@@ -750,7 +750,9 @@ Add and delete more specific route on tenant over existing static route
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h3                      10.252.1.1
     Should Be True                              ${value} 
-    REST add static routes                      X                               10.252.1.0/24           {"ip-address": "10.251.2.11"}
+#    REST add static routes                      X                               10.252.1.0/24           {"ip-address": "10.251.2.11"}
+    REST add nexthopGroup ip                    X                               AA1                     10.251.2.11
+    REST add static routes                      X                               10.252.1.0/24           {"next-hop-group": "AA1"}
     sleep                                       1
     ${returnVal} =                              verify ping with tcpdump        h1                      10.252.1.11            h2      bond0       ICMP echo request   
     Should Be True                              ${returnVal}    
@@ -759,6 +761,7 @@ Add and delete more specific route on tenant over existing static route
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
     Should Be True                              ${loss} == 100
     REST delete static routes                   X                               10.252.1.0/24
+    REST delete nexthop group                   X                               AA1
     sleep                                       1
     REST show l3 host table
     REST show l3 cidr table

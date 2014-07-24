@@ -1,8 +1,2 @@
-Server
-======
-$ celery worker -app bsn_services --loglevel INFO
-
-Client
-======
-See sample codes in examples/ directory.
+See BigRobot ESB guide at https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=51511500 .
 

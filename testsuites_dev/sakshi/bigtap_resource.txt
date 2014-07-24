@@ -303,7 +303,7 @@ ${BIGTAP POLICY SERVICES FIELD}									xpath=//input[@id='dijit_form_FilteringS
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}						xpath=//input[@id='dijit_form_NumberSpinner_1']
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitUpArrowButton')]
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN} 						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[@class='dijitReset dijitButtonNode dijitSpinnerButtonContainer']/descendant::div[contains(@class, 'dijitDownArrowButton')]
-${BIGTAP POLICY MATCHES BUTTON}									xpath=//div[@class='step_text' and contains(text(), '2. Rule Groups & Rules')]
+${BIGTAP POLICY MATCHES BUTTON}									xpath=//div[@class='step_text' and contains(text(), '2. Rules')]
 ${FILTER CHECKB}													xpath=//div[@class='bsn_ellipsis' and contains(text(), 'filter2')]
 ${fc}   														xpath=//div[text()='filter2']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
 ${dc}   														xpath=//div[text()='delivery2']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
@@ -321,7 +321,7 @@ ${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}					xpath=//div[@title='
 ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACE GROUP BUTTON}		xpath=//span[@id='dijit_form_Button_29_label']
 ${filter_group_checkbox}												xpath=//div[text()='filter-group']/parent::td/preceding-sibling::td/child::div/child::div/input
 ${delivery_group_checkbox}												xpath=//div[text()='delivery-group']/parent::td/preceding-sibling::td/child::div/child::div/input
-
+${VXLAN VNI FIELD}														xpath=//input[@id='dijit_form_NumberSpinner_15']
 ### Big Tap Interfaces Page
 ${BIG TAP INTERFACES PLUS BUTTON}						xpath=//div[@class='icon_node plus']
 ${BIG TAP INTERFACES CONFIGURE POPUP}					xpath=//div[@title='Create Interface']
@@ -1497,6 +1497,8 @@ Associate Policy Match Rule
     ...		${OFFSET MATCH TYPE LIST}  
     ... 	${OFFSET MATCH TYPE FIELD}
     ... 	${matchtype}
+    Run Keyword If  '${matchtype}'=='VXLAN'
+    ...   Configure VXLAN Match    ${ipprotocol}
     
     Verify Page Contains Element  ${GTP VERSION DROPDOWN BUTTON} 
     Run Keyword Unless  '${version}'=='${EMPTY}'
@@ -1517,8 +1519,8 @@ Associate Policy Match Rule
 	  
 	Click Element  ${GTP PROTOCOL TYPE FIELD}  and don't wait
 
-    #Run Keyword If  '${version}' == 'v1'
-    Run Keyword Unless  '${version}' == 'v2'
+    Run Keyword If  '${version}' == 'v1'
+    #Run Keyword Unless  '${version}' == 'v2'
     ...		Select From List And Verify  
     ... 	${GTP PROTOCOL TYPE DROPDOWN BUTTON}
     ...		${GTP PROTOCOL TYPE LIST}  
@@ -1534,6 +1536,12 @@ Associate Policy Match Rule
     Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
     #Verify Page Contains Text   ${policy}
     Sleep   10
+    
+Configure VXLAN Match
+	[Arguments]   ${ipprotocol} 
+    Click Element  ${VXLAN VNI FIELD}  and don't wait
+	Input Text And Verify  ${VXLAN VNI FIELD}  100
+	Sleep  5
 
 Configure Switch Alias
 	[Arguments]  ${dpid}  ${alias}
@@ -1935,12 +1943,13 @@ Set Switching Mode
     
     Verify Element Visible  ${SWITCHING MODE SUBMIT BUTTON}
     Click Element  ${SWITCHING MODE SUBMIT BUTTON}  and don't wait
+    Sleep  5
     	
   	
 Configure Match Mode
 	[Arguments]  ${match-mode}
 	Go To Landing Page
-	
+	Sleep  5
 	Run Keyword If  '${match-mode}'=='Policy Overlap'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
 	Run Keyword If  '${match-mode}'=='!Policy Overlap'

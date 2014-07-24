@@ -11,11 +11,12 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test dummy
-    [Tags]     skipped
+    #[Tags]     skipped
     [Tags]     smoke  sanity  T5
     cli         c1   show user
 
 Test get all [$nodes]
+    [Tags]     skipped
     test get all
     base test postmortem
     #bash       c1    echo $COLUMNS

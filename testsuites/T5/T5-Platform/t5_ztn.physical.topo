@@ -6,18 +6,21 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.192.103.30
+  ip: 10.8.67.113
 c2:
-  ip: 10.192.103.31
+  ip: 10.8.67.114
 
 s1:
   alias:  spine0
   mac: 70:72:cf:ae:b6:34
   fabric-role: spine
   console:
-    ip: cs-rack09
+    ip: 10.1.8.183
     protocol: telnet
-    port: 6020
+    port: 6001
+  pdu:
+    ip: pdu-114-b
+    port: 15
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -25,9 +28,12 @@ s2:
   mac: 70:72:cf:b5:f4:5c
   fabric-role: leaf
   console:
-    ip: cs-rack09
+    ip: 10.1.8.183
     protocol: telnet
-    port: 6021
+    port: 6002
+  pdu:
+    ip: pdu-114-b
+    port: 14
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -35,9 +41,12 @@ s3:
   mac: 70:72:cf:b5:f4:a6
   fabric-role: leaf
   console:
-    ip: cs-rack09
+    ip: 10.1.8.183
     protocol: telnet
-    port: 6022
+    port: 6003
+  pdu:
+    ip: pdu-114-b
+    port: 13
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -45,8 +54,24 @@ s4:
   mac: 70:72:cf:bc:c4:c4
   fabric-role: leaf
   console:
-    ip: cs-rack04
+    ip: 10.1.8.183
     protocol: telnet
-    port: 7020
+    port: 6004
+  pdu:
+    ip: pdu-114-b
+    port: 12
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+  alias:  spine1
+  mac: 70:72:cf:bd:58:34
+  fabric-role: spine
+  console:
+    ip: 10.1.8.183
+    protocol: telnet
+    port: 6005
+  pdu:
+    ip: pdu-114-b
+    port: 17
   set_session_ssh: false
   set_init_ping: false

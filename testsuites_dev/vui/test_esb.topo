@@ -1,0 +1,6 @@
+common:
+  user_switch_image: /etc/hosts
+c1:
+  ip: dummy
+c2:
+  ip: dummy

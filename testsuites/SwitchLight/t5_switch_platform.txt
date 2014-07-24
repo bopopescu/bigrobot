@@ -1,7 +1,7 @@
 * Settings
 Documentation     switch-platform Platform Test suite- Iron Horse
-Suite Setup       T5 switch platform test setup
-Suite Teardown    T5 switch platform test teardown
+#Suite Setup       T5 switch platform test setup
+#Suite Teardown    T5 switch platform test teardown
 Force Tags        T5  IronHorse
 ...             
 ...            
@@ -19,10 +19,10 @@ Library         String
 *Variables
 ${switchlight_version}  SwitchLight
 ${netmask}  18
-${gateway}  10.192.64.1
+${gateway}  10.8.0.1
 ${gateway1}  10.192.60.1
-${dns_server}  10.192.3.1
-${dns_domain}  bigswitch.com
+${dns_server}  10.3.0.4
+${dns_domain}  qa.bigswitch.com
 ${j}    1
 ${switch1_name}=  leaf0-a
 ${switch2_name}=  leaf0-b
@@ -293,7 +293,7 @@ Verify the show environment psu output for Pin
     verify show environment psu  s1  none  ${PSU2}  2  Pin
   
 Verify the show environment fan rpm in switch 
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment fan status  s1  none  Fan  1  RPM 
     verify show environment fan status  s1  none  Fan  2  RPM 
     verify show environment fan status  s1  none  Fan  3  RPM
@@ -301,7 +301,7 @@ Verify the show environment fan rpm in switch
     verify show environment fan status  s1  none  Fan  5  RPM
 
 Verify the show environment fan state in switch 
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment fan status  s1  none  Fan  1  State
     verify show environment fan status  s1  none  Fan  2  State
     verify show environment fan status  s1  none  Fan  3  State
@@ -309,7 +309,7 @@ Verify the show environment fan state in switch
     verify show environment fan status  s1  none  Fan  5  State 
 
 Verify the show environment fan status in switch 
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment fan status  s1  none  Fan  1  Status
     verify show environment fan status  s1  none  Fan  2  Status
     verify show environment fan status  s1  none  Fan  3  Status
@@ -317,7 +317,7 @@ Verify the show environment fan status in switch
     verify show environment fan status  s1  none  Fan  5  Status
     
 Verify the show environment fan airflow in switch 
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment fan status  s1  none  Fan  1  Airflow
     verify show environment fan status  s1  none  Fan  2  Airflow
     verify show environment fan status  s1  none  Fan  3  Airflow
@@ -325,7 +325,7 @@ Verify the show environment fan airflow in switch
     verify show environment fan status  s1  none  Fan  5  Airflow
 
 Verify the show environment fan speed in switch 
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment fan status  s1  none  Fan  1  Speed
     verify show environment fan status  s1  none  Fan  2  Speed
     verify show environment fan status  s1  none  Fan  3  Speed
@@ -341,7 +341,7 @@ Verify the show environment thermal Sensor Status in switch
     verify show environment thermal status  s1  none  thermal  5  Status
     
 Verify the show environment Thermal Sensor temperature in switch
-    [Tags]  switch-platform  environment  test1
+    [Tags]  switch-platform  environment  
     verify show environment thermal status  s1  none  thermal  1  Temperature
     verify show environment thermal status  s1  none  thermal  2  Temperature
     verify show environment thermal status  s1  none  thermal  3  Temperature
@@ -386,8 +386,8 @@ verify ofaux channel on controller  [Arguments]  ${controller}  ${switch_alias}
 	Should be True  ${retval1}  
 	         
 verify onie installated on switch  [Arguments]  ${switch}    
-#    ${result1}=  bash execute command  ${switch}  cat /proc/mtd
-	${result1}=  bash  s1  cat /proc/mtd  
+    ${result1}=  bash execute command  ${switch}  cat /proc/mtd
+#	${result1}=  bash  s1  cat /proc/mtd  
     Should contain  ${result1['content']}  onie 
     
 

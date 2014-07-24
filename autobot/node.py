@@ -55,7 +55,10 @@ class Node(object):
             helpers.environment_failure("IP address for '%s' is 'dummy'."
                                         " Needs to be populated."
                                         % self.name())
-        if helpers.params_is_false('set_init_ping', self.node_params):
+        if helpers.is_esb():
+            helpers.summary_log("ESB environment - bypassing initial ping")
+
+        elif helpers.params_is_false('set_init_ping', self.node_params):
             helpers.log("'set_init_ping' is disabled for '%s', bypassing"
                         " initial ping"
                         % name)
@@ -193,6 +196,13 @@ class Node(object):
         """
         # raise NotImplementedError()
         return None
+
+    def close(self):
+        if self.devconf() == None:
+            helpers.log("Devconf is undefined for '%s' (%s) - no disconnect"
+                        % self.name())
+        else:
+            self.devconf().close()
 
 
 class ControllerNode(Node):
@@ -744,6 +754,10 @@ class IxiaNode(Node):
 
     def console(self, driver=None):
         helpers.environment_failure("Console is currently not supported for Ixia node.")
+
+    def close(self): pass
+        # There's no SSH/Telnet session for Ixia node, so no need to call
+        # close() in base class (Node).
 
 
 class BigTapIxiaNode(IxiaNode):
