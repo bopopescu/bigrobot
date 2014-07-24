@@ -142,18 +142,18 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
-        s = t.dev_console(hostname, modeless=True)
-        s.send(helpers.ctrl('c'))
-        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
-                           s.get_prompt()])
-        if options[0] == 0:  # login prompt
-            s.send('admin')
-            options = s.expect([r'[Pp]assword:', s.get_prompt()])
-            if options[0] == 0:
-                helpers.log("Logging in as admin with password %s" % password)
-                s.cli(password)
-        if options[0] == 2:  # bash mode
-            s.cli('exit')
+        s = t.dev_console(hostname)
+        #s.send(helpers.ctrl('c'))
+        #options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+        #                   s.get_prompt()])
+        #if options[0] == 0:  # login prompt
+        #    s.send('admin')
+        #    options = s.expect([r'[Pp]assword:', s.get_prompt()])
+        #    if options[0] == 0:
+        #        helpers.log("Logging in as admin with password %s" % password)
+        #        s.cli(password)
+        #if options[0] == 2:  # bash mode
+        #    s.cli('exit')
         output = s.cli("show version")['content']
         output = helpers.str_to_list(output)
 
