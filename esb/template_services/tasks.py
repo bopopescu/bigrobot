@@ -20,6 +20,7 @@ class BsnCommands(object):
         t = test.Test(esb=True, params=params)
         n = t.node(node)
         content = n.cli("show user")['content']
+        t.node_disconnect()
         return content
 
     @app.task(filter=task_method)
@@ -27,6 +28,7 @@ class BsnCommands(object):
         t = test.Test(esb=True, params=params)
         n = t.node(node)
         content = n.enable("show running-config")['content']
+        t.node_disconnect()
         return content
 
     @app.task(filter=task_method)
@@ -34,6 +36,7 @@ class BsnCommands(object):
         t = test.Test(esb=True, params=params)
         n = t.node(node)
         content = n.cli("show version")['content']
+        t.node_disconnect()
         return content
 
     @app.task(filter=task_method)
@@ -41,8 +44,7 @@ class BsnCommands(object):
         t = test.Test(esb=True, params=params)
         n = t.node(node)
         host = Host()
-        print("***** node: %s" % node)
-        print("***** Host(): %s" % host)
         loss_pct = host.bash_ping(node=node,
                                   dest_ip='regress.qa.bigswitch.com')
+        t.node_disconnect()
         return loss_pct

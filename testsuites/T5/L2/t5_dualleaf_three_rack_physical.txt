@@ -142,8 +142,8 @@ T5 base test setup
    add a vns  A  A
          
 T5 base test teardown
-   delete a tenant  A
    base test teardown
+   delete a tenant  A
    sleep  5
          
 add a tenant  [Arguments]  ${tenant} 

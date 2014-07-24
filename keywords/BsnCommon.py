@@ -44,12 +44,9 @@ class BsnCommon(object):
 
     def base_suite_teardown(self):
         t = test.Test()
-        for node in t.topology():
-            n = t.node(node)
-            if helpers.is_controller(node) or helpers.is_mininet(node):
-                helpers.log("Closing device connection for node '%s'" % node)
-                n.devconf().close()
         t.teardown()
+        helpers.log("Closing all device connections")
+        t.node_disconnect()
 
     def base_test_setup(self):
         test.Test()

@@ -796,6 +796,27 @@ class Test(object):
                            br_utils.end_of_output_marker()))
         return n
 
+    def node_disconnect(self, node=None):
+        """
+        Disconnect the node's SSH/Telnet sessions.
+        If node name is not specified, disconnect all the nodes. If node name
+        is specified (either as 'c1' or as a list ['c1', 'c2', 's1'], only
+        disconnect those nodes.
+        """
+        node_handles = []
+        if node:
+            if helpers.is_list(node):
+                for n in node:
+                    node_handles.append(self.topology(n))
+            else:
+                node_handles.append(self.topology(node))
+        else:
+            for _, handle in self.topology().items():
+                node_handles.append(handle)
+        for h in node_handles:
+            h.close()
+            del self._topology[h.name()]
+
     def node_reconnect(self, node, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
@@ -1370,9 +1391,9 @@ class Test(object):
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master = self.controller("master")
-                master.enable("show switch")
-                master.enable("show running-config")
-                master.enable("copy running-config config://ztn-base-config")
+                master.config("show switch")
+                master.config("show running-config")
+                master.config("enable; copy running-config config://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':

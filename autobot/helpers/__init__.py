@@ -98,6 +98,14 @@ def summary_log(s, level=2):
     Log().info(s, level, also_console=True)
 
 
+def autobot_logger():
+    """
+    The autobot logging handle may need to be passed to another API so API
+    messages can be written to the same logging handle (if they use the same
+    logging API).
+    """
+    return Log().autobot_logger
+
 def analyze(s, level=3):
     info(s, level)
 
@@ -613,6 +621,28 @@ def bigrobot_syslog_level(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
+
+
+def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_TIMER',
+                            new_val, default)
+
+
+def bigrobot_monitor_reauth_init_timer(new_val=None, default=480):  # 8 minutes
+    """
+    Category: Get/set environment variables for BigRobot.
+    Monitor for timer-based tasks to work around BSN reauth timeout. The
+    values in seconds.
+    The initial time (in seconds) to wait before executing a task for the
+    first time.
+    """
+    return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_INIT_TIMER',
+                            new_val, default)
 
 
 def bigrobot_debug(new_val=None, default=None):
@@ -1671,7 +1701,21 @@ def openstack_convert_table_to_dict(input_str):
         | id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
         +----------------------+--------------------------------------+
 
-    This function converts the table to a Python dictionary.
+    This function converts the table to a Python dictionary-of-dictionaries.
+    Each field in the first column is used as a dictionary keys which points
+    to a dictionary containing values from the other columns. E.g.,
+
+    { 'OS-EXT-IMG-SIZE:size':
+                  {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
+      'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'minDisk':  {'property': 'minDisk',  'value': '0'},
+      'minRam':   {'property': 'minRam',   'value': '0'},
+      'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},
+      'progress': {'property': 'progress', 'value': '100'},
+      'status':   {'property': 'status',   'value': 'ACTIVE'},
+      'updated':  {'property': 'updated',  'value': '2014-01-03T06:51:26Z'}
+    }
 
     Return dictionary.
     """

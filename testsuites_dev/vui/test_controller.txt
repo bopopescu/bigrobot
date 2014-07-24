@@ -149,10 +149,16 @@ Trigger InvalidCommandException
 
 Test config mode
     [Tags]  skipped
-    config   c1   show user
+    #config   c1   show user
     #config   c1   bvssetting
     #config   c1   exit
     cli      c1   show version
+    #exit early
+
+    #: for  ${index}  in range  1  30
+    #\  log  ${index}
+    #\  sleep  1
+    #cli      c1   show version
 
 Test REST show user
     [Tags]  skipped
@@ -160,7 +166,12 @@ Test REST show user
     rest version check    c1
 
 Test copy command
+    [Tags]  skipped
     enable   master  copy controller-upgrade-SNAPSHOT.pkg image://
     ${result}=  cli content  c1
     log   result=${result}
 
+Test enable commands
+    #[Tags]  skipped
+    #my enable commands  c1
+    my config commands  c1
