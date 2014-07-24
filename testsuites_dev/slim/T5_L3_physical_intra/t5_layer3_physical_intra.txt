@@ -462,12 +462,12 @@ L3 intra tenant across rack tagged with dynamic endpoints
 
 Intra tenant L3 traffic same rack different leaf switch
 ### Host on board nic is 1gig interface, switch does not support autoneg at 1gig so test is failing
-    BASH init intf                              h5                              bond0
-    BASH init intf                              h6                              bond0
+#    BASH init intf                              h5                              bond0
+#    BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
     BASH ifup intf                              h6                              em2
-    BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+#    BASH init intf                              h5                              eth1
+#    BASH init intf                              h6                              em2
     BASH ifconfig ip address                    h5                              10.251.1.31/24          eth1
     BASH ifconfig ip address                    h6                              10.251.2.31/24          em2
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
@@ -493,8 +493,8 @@ Intra tenant L3 traffic same rack different leaf switch
     REST show endpoints     
     ${loss} =                                   BASH ping                       h5                      10.251.2.31             count=10
     Should Be True                              ${loss} < 20        
-    BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+#    BASH init intf                              h5                              eth1
+#    BASH init intf                              h6                              em2
     
 
 Activate and deactivate router interface
@@ -637,7 +637,7 @@ Verify host with same IP as vrf is having L2 service only
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     ${state} =                                  Set Variable                    ${result[0]['state']}   
     Should Contain                              ${state}                        Active    
-    BASH init intf                              h5                              bond0
+#    BASH init intf                              h5                              bond0
 
 L3 intra tenant same rack untagged with static endpoints
     BASH ifup intf                              h1                              bond0
@@ -891,8 +891,8 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -943,8 +943,8 @@ L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -988,8 +988,8 @@ L3 intra tenant dhcp relay on same rack
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1038,8 +1038,8 @@ L3 intra tenant dhcp relay with circuit id on same rack
     BASH ifdown intf                            h2                              bond0
     BASH ifdown intf                            h3                              bond0
     BASH ifdown intf                            h4                              bond0   
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1085,8 +1085,8 @@ L3 intra tenant dhcp relay across rack
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1144,8 +1144,8 @@ L3 intra tenant dhcp relay with circuit id across rack
     BASH ifdown intf                            h2                              bond0
     BASH ifdown intf                            h3                              bond0
     BASH ifdown intf                            h4                              bond0   
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1198,8 +1198,8 @@ L3 dhcp request without dhcp relay enabled
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1273,8 +1273,8 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1340,8 +1340,8 @@ Verify dhcp host is not being aged out
     BASH ifdown intf                            h2                              bond0
     BASH ifdown intf                            h3                              bond0
     BASH ifdown intf                            h4                              bond0   
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1400,8 +1400,8 @@ Dhcp relay with static dhcp server endpoint
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1455,8 +1455,8 @@ Verify add and delete of dhcp server config works
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -1515,12 +1515,12 @@ Verify add and delete of dhcp server config works
 
 
 L3 add and delete untagged endpoints with existing host
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
-    BASH init intf                              h3                              bond0
-    BASH init intf                              h4                              bond0   
-    BASH init intf                              h5                              bond0
-    BASH init intf                              h6                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
+#    BASH init intf                              h3                              bond0
+#    BASH init intf                              h4                              bond0   
+#    BASH init intf                              h5                              bond0
+#    BASH init intf                              h6                              bond0
     sleep                                       1
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
@@ -1628,12 +1628,12 @@ L3 add and delete tagged endpoints with existing host
 
 
 L3 change endpoint from untagged to tagged and back
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
-    BASH init intf                              h3                              bond0
-    BASH init intf                              h4                              bond0   
-    BASH init intf                              h5                              bond0
-    BASH init intf                              h6                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
+#    BASH init intf                              h3                              bond0
+#    BASH init intf                              h4                              bond0   
+#    BASH init intf                              h5                              bond0
+#    BASH init intf                              h6                              bond0
     sleep                                       1
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
@@ -2442,8 +2442,8 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -3047,8 +3047,8 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
@@ -3116,8 +3116,8 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
     BASH ifdown intf                            h4                              bond0   
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0       
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
+#    BASH init intf                              h1                              bond0
+#    BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
     BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
