@@ -382,6 +382,8 @@ T5.3.11. Disconnect, change config, double failover, reboot
 	#Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
+	Sleep  30
+	Cli Run  master  show switch all details
 	Randomize ZTN Configuration
 	Failover
 	Failover
@@ -1603,7 +1605,8 @@ Suite Setup
 	Randomize ZTN Configuration
 	#Reboot Switches From CLI
 	#Reboot Switches
-	Power Cycle All Switches
+	#Power Cycle All Switches
+	Cli Run  master  show switch
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -1674,11 +1677,11 @@ Verify Switch In Provisioned Mode
 	Verify Switch Fabric Connection State  connected  ${switch_alias}
 
 Verify All Switches Connected
-	#Verify Switch Connection State  True  ${s1_alias}
+	Verify Switch Connection State  True  ${s1_alias}
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Connection State  True  ${s3_alias}
 	Verify Switch Connection State  True  ${s4_alias}
-	#Verify Switch Connection State  True  ${s5_alias}
+	Verify Switch Connection State  True  ${s5_alias}
 
 Verify All Switches Disconnected
 	#Verify Switch Connection State  False  ${s1_alias}
@@ -1793,11 +1796,11 @@ Verify All Switches Startup Config
 
 Verify All Switches Running Config
 	Cli Run  master  show run
-	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
-	#Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
 
 Set All Switches Mode Standby
 	Cli Run  master  enable;config
@@ -1857,6 +1860,7 @@ Reboot Switches
 	#Verify Switch Handshake State  ${s5_alias}
 
 Reboot Switches From CLI
+    Verify All Switches Connected
 	Cli Reboot Switch  master  ${s1_ip}
 	Cli Reboot Switch  master  ${s2_ip}
 	Cli Reboot Switch  master  ${s3_ip}
@@ -1871,8 +1875,8 @@ Reboot Switches From CLI
 	Verify All Switches In Provisioned Mode
 
 Power Cycle All Switches
-	Power Cycle  s1
-	Power Cycle  s2
-	Power Cycle  s3
-	Power Cycle  s4
-	Power Cycle  s5
+	Power Cycle Switch  s1
+	Power Cycle Switch  s5
+	Power Cycle Switch  s2
+	Power Cycle Switch  s3
+	Power Cycle Switch  s4
