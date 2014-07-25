@@ -3729,7 +3729,7 @@ class T5Platform(object):
                 newPktInCount = int(hop["pktin-counter"].strip('[]'))
 
                 if(newFlowCount > int(currentFlowCount[hop["hop-name"]])):
-                    helpers.log("Hop: %s passing @ newFlowCount" % hop["hop-name"])
+                    helpers.log("Hop: %s passing @ newTcamCount" % hop["hop-name"])
                     pass
                 elif(newPktInCount > int(currentPktInCount[hop["hop-name"]])):
                     helpers.log("Hop: %s passing @ newPktInCount" % hop["hop-name"])
