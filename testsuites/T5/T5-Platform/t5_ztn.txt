@@ -89,40 +89,45 @@ T1.4. Check Running config for a switch
 
 T1.5. Check Startup config for a switch
 	Cli Run  master  show run
-    Reboot Switches From CLI
 	Verify All Switches Startup Config
 
 T1.6. Test switch reboot
-	#Telnet Reboot Switch  s1
-	#Sleep  5
+	Telnet Reboot Switch  s1
+	Sleep  5
 	Telnet Reboot Switch  s2
 	Sleep  5
 	Telnet Reboot Switch  s3
 	Sleep  5
 	Telnet Reboot Switch  s4
+	Sleep  5
+	Telnet Reboot Switch  s5
 
-	#Telnet Wait For Switch To Reload s1
+	Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s2
 	Telnet Wait For Switch To Reload  s3
 	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
 
 T1.7. Reboot all switches from CLI
 	Cli Reboot Switch  master  all
 	Cli Reboot Switch  slave  all
 
 T1.8. Reboot switches from CLI
-	#Cli Reboot Switch  master  ${s1_alias}
-	#Sleep  5
+	Cli Reboot Switch  master  ${s1_alias}
+	Sleep  5
 	Cli Reboot Switch  master  ${s2_mac}
 	Sleep  5
 	Cli Reboot Switch  master  ${s3_ip}
 	Sleep  5
 	Cli Reboot Switch  master  ${s4_alias}
+	Sleep  5
+	Cli Reboot Switch  master  ${s5_mac}
 
-	#Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s2
 	Telnet Wait For Switch To Reload  s3
 	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
 
 	Sleep  20
 	Verify All Switches Running Config
@@ -135,23 +140,27 @@ T1.9. Verify startup config after failover
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 	Failover
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 
 T1.10. Verify switches Switchlight SWI version
 	Verify Switch SWI Version  ${s1_alias}
 	Verify Switch SWI Version  ${s2_alias}
 	Verify Switch SWI Version  ${s3_alias}
 	Verify Switch SWI Version  ${s4_alias}
+	Verify Switch SWI Version  ${s5_alias}
 T1.11. Verify switches Switchlight Installer version
 	Verify Switch Installer Version  ${s1_alias}
 	Verify Switch Installer Version  ${s2_alias}
 	Verify Switch Installer Version  ${s3_alias}
 	Verify Switch Installer Version  ${s4_alias}
+	Verify Switch Installer Version  ${s5_alias}
 
 #T1.12. Reset switch to factory default
 #	Telnet Reset Switch to Factory Default  ${s4_alias}
@@ -160,6 +169,10 @@ T1.13. Reboot and stop at loader shell
 	Telnet Reboot Switch  s1
 	Telnet Stop Autoboot  s1
 	Telnet Reboot Switch  s1
+	[Tags]  skipped
+
+T1.14. Power cycle switches
+	Power Cycle All Switches
 	[Tags]  skipped
 
 T0.1. BSC-5430
@@ -376,6 +389,8 @@ T5.3.11. Disconnect, change config, double failover, reboot
 	#Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
+	Sleep  30
+	Cli Run  master  show switch all details
 	Randomize ZTN Configuration
 	Failover
 	Failover
@@ -422,6 +437,7 @@ T2.1.7. Verify that unconfigured switch does not receive image
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+	#Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable; config
@@ -605,6 +621,7 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
+	Power Cycle All Switches
 	${mac1}=  Set Variable  12:22:33:44:55:66
 	${mac2}=  Set Variable  66:55:44:33:22:11
 	${name1}=  Set Variable  test1
@@ -776,6 +793,7 @@ T4.9 Provision two switches, power them both off, swap MACs, power them both on
 
 # Switch in provisioned mode
 T5.1.1. Power down, change config
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  show run
@@ -846,6 +864,7 @@ T5.1.4. Power down, delete, failover
 
 # Switch in stand-by mode
 T5.2.1. Power down, change config
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable;config
@@ -1025,6 +1044,7 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	[Tags]  skipped
 
 T5.4.7. Disconnect, change config, failover, reboot
+	Power Cycle All Switches
 	Reboot Switches From CLI
 	#Reboot Switches
 	Cli Run  master  enable;config
@@ -1567,6 +1587,8 @@ Suite Setup
 	set suite variable  ${s3_mac}  ${tmp}
 	${tmp}  params  node=s4  key=mac
 	set suite variable  ${s4_mac}  ${tmp}
+	${tmp}  params  node=s5  key=mac
+	set suite variable  ${s5_mac}  ${tmp}
 
 	${tmp}  params  node=s1  key=alias
 	set suite variable  ${s1_alias}  ${tmp}
@@ -1576,13 +1598,16 @@ Suite Setup
 	set suite variable  ${s3_alias}  ${tmp}
 	${tmp}  params  node=s4  key=alias
 	set suite variable  ${s4_alias}  ${tmp}
+	${tmp}  params  node=s5  key=alias
+	set suite variable  ${s5_alias}  ${tmp}
 
 	set suite variable  ${s1_dpid}  00:00:${s1_mac}
 	set suite variable  ${s2_dpid}  00:00:${s2_mac}
 	set suite variable  ${s3_dpid}  00:00:${s3_mac}
 	set suite variable  ${s4_dpid}  00:00:${s4_mac}
+	set suite variable  ${s5_dpid}  00:00:${s5_mac}
 
-	@{spineList}=  Create List  ${s1_dpid}
+	@{spineList}=  Create List  ${s1_dpid}  ${s5_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	Sleep  10
@@ -1590,9 +1615,10 @@ Suite Setup
 	Sleep  10
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	#Cli Run  master  snmp-server enable traps
-	Cli Run  master  system reboot switch 10.8.67.107
-	Reboot Switches
+	#Reboot Switches From CLI
+	#Reboot Switches
+	#Power Cycle All Switches
+	Cli Run  master  show switch
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -1602,6 +1628,8 @@ Suite Setup
 	set suite variable  ${s3_ip}  ${tmp}
 	${tmp}=  Rest Get Switch Ip Address  master  ${s4_alias}
 	set suite variable  ${s4_ip}  ${tmp}
+	${tmp}=  Rest Get Switch Ip Address  master  ${s5_alias}
+	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
 	Cli Copy  config://startup-config  running-config
@@ -1661,28 +1689,32 @@ Verify Switch In Provisioned Mode
 	Verify Switch Fabric Connection State  connected  ${switch_alias}
 
 Verify All Switches Connected
-	#Verify Switch Connection State  True  ${s1_alias}
+	Verify Switch Connection State  True  ${s1_alias}
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Connection State  True  ${s3_alias}
 	Verify Switch Connection State  True  ${s4_alias}
+	Verify Switch Connection State  True  ${s5_alias}
 
 Verify All Switches Disconnected
 	#Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Connection State  False  ${s3_alias}
 	Verify Switch Connection State  False  ${s4_alias}
+	#Verify Switch Connection State  False  ${s5_alias}
 
 Verify All Switches In Provisioned Mode
 	#Verify Switch In Provisioned Mode  ${s1_alias}
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Verify Switch In Provisioned Mode  ${s3_alias}
 	Verify Switch In Provisioned Mode  ${s4_alias}
+	#Verify Switch In Provisioned Mode  ${s5_alias}
 
 Verify All Switches In Standby Mode
 	#Verify Switch In Standby Mode  ${s1_alias}
 	Verify Switch In Standby Mode  ${s2_alias}
 	Verify Switch In Standby Mode  ${s3_alias}
 	Verify Switch In Standby Mode  ${s4_alias}
+	#Verify Switch In Standby Mode  ${s5_alias}
 
 Telnet Set All MA1 State
 	[Arguments]  ${state}
@@ -1690,6 +1722,7 @@ Telnet Set All MA1 State
 	Telnet Set MA1 State  s2  ${state}
 	Telnet Set MA1 State  s3  ${state}
 	Telnet Set MA1 State  s4  ${state}
+	#Telnet Set MA1 State  s5  ${state}
 
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
@@ -1717,9 +1750,9 @@ Generate Random Threshold
 Randomize ZTN Configuration
 	Cli Run  master  enable; config
 	${contact_random}  Generate Random Name  contact  5
-	Cli Run  master  snmp-server contact ${contact_random}
+	Cli Run  master  snmp-server contact "the ${contact_random}"
 	${location_random}  Generate Random Name  location  5
-	Cli Run  master  snmp-server location ${location_random}
+	Cli Run  master  snmp-server location "the ${location_random}"
 	${community_random}  Generate Random Name  community  5
 	Cli Run  master  snmp-server community ro ${community_random}
 	${host_random}  Generate Random IP
@@ -1771,13 +1804,15 @@ Verify All Switches Startup Config
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 
 Verify All Switches Running Config
 	Cli Run  master  show run
-	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
 
 Set All Switches Mode Standby
 	Cli Run  master  enable;config
@@ -1804,17 +1839,22 @@ Failover
 #	Should Be True  ${status}
 
 Reboot Switches
+	Cli Reboot Switch  master  10.8.67.107
 #	Telnet Reboot Switch  s1
 	#Telnet Wait For Switch To Reload  s1
 
 	Telnet Reboot Switch  s2
+	Telnet Reboot Switch  s3
+	Telnet Reboot Switch  s4
 	Telnet Wait For Switch To Reload  s2
 
-	Telnet Reboot Switch  s3
 	Telnet Wait For Switch To Reload  s3
 
-	Telnet Reboot Switch  s4
 	Telnet Wait For Switch To Reload  s4
+
+	Cli Reboot Switch  master  10.8.67.119
+#	Telnet Reboot Switch  s5
+	#Telnet Wait For Switch To Reload  s5
 
 	Sleep  100
 
@@ -1823,20 +1863,32 @@ Reboot Switches
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	#Verify Switch Running Config  ${s5_mac}  ${s5_alias}
 
 	#Verify Switch Handshake State  ${s1_alias}
 	Verify Switch Handshake State  ${s2_alias}
 	Verify Switch Handshake State  ${s3_alias}
 	Verify Switch Handshake State  ${s4_alias}
+	#Verify Switch Handshake State  ${s5_alias}
 
 Reboot Switches From CLI
+    Verify All Switches Connected
 	Cli Reboot Switch  master  ${s1_ip}
 	Cli Reboot Switch  master  ${s2_ip}
 	Cli Reboot Switch  master  ${s3_ip}
 	Cli Reboot Switch  master  ${s4_ip}
+	Cli Reboot Switch  master  ${s5_ip}
 	Sleep  100
 
 	Cli Run  master  show run
 
 	Verify All Switches Running Config
+	Verify All Switches Startup Config
 	Verify All Switches In Provisioned Mode
+
+Power Cycle All Switches
+	Power Cycle Switch  s1
+	Power Cycle Switch  s5
+	Power Cycle Switch  s2
+	Power Cycle Switch  s3
+	Power Cycle Switch  s4

@@ -98,6 +98,14 @@ def summary_log(s, level=2):
     Log().info(s, level, also_console=True)
 
 
+def autobot_logger():
+    """
+    The autobot logging handle may need to be passed to another API so API
+    messages can be written to the same logging handle (if they use the same
+    logging API).
+    """
+    return Log().autobot_logger
+
 def analyze(s, level=3):
     info(s, level)
 
@@ -1693,7 +1701,21 @@ def openstack_convert_table_to_dict(input_str):
         | id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
         +----------------------+--------------------------------------+
 
-    This function converts the table to a Python dictionary.
+    This function converts the table to a Python dictionary-of-dictionaries.
+    Each field in the first column is used as a dictionary keys which points
+    to a dictionary containing values from the other columns. E.g.,
+
+    { 'OS-EXT-IMG-SIZE:size':
+                  {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
+      'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'minDisk':  {'property': 'minDisk',  'value': '0'},
+      'minRam':   {'property': 'minRam',   'value': '0'},
+      'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},
+      'progress': {'property': 'progress', 'value': '100'},
+      'status':   {'property': 'status',   'value': 'ACTIVE'},
+      'updated':  {'property': 'updated',  'value': '2014-01-03T06:51:26Z'}
+    }
 
     Return dictionary.
     """

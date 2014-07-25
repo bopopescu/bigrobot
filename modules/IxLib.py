@@ -1444,6 +1444,20 @@ class Ixia(object):
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
+        for vport in self._vports:
+            helpers.log("Checking Connection Stat of Vport: %s" % str(vport))
+            vport_state = handle.getAttribute(vport, '-isConnected')
+            helpers.log("Connection State: %s" % str(vport_state))
+            if vport_state == "false":
+                helpers.log("IXIA BUG / Network issue ports got Disconnected.. Reconnecting:")
+                handle.execute('connectPorts', vport)
+                helpers.log("waiting  5 secs..")
+                helpers.sleep(5)
+                vport_state = handle.getAttribute(vport, '-isConnected')
+                helpers.log("Vport State after connecting back : %s" % str(vport_state))
+            else:
+                helpers.log("Ports still connected ..No IXIA connection issues")
+
         ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
         if str(ixia_traffic_state) == 'started':
             helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
@@ -1469,7 +1483,7 @@ class Ixia(object):
             self.ix_stop_hosts(topo)
             helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
         helpers.log('Sleeps 3 sec for Hosts to be Stopped')
-        time.sleep(3)
+        time.sleep(20)  # Increase the time for hosts to be stopped, need FIX by checking from IXnetwork.
         for topo in self._topology.values():
             handle.remove(topo)
             handle.commit()
