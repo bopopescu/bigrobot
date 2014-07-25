@@ -436,9 +436,25 @@ class BigTap(object):
             if not c.rest.status_code_ok():
                 helpers.test_failure(c.rest.error())
             content = c.rest.content()
-            service_nodes = re.split(' ', service_name)
-            service_pre_interface_name = re.split(' ', service_pre_interface)
-            service_post_interface_name = re.split(' ', service_post_interface)
+
+
+            if ' ' in (service_name.strip()):
+                service_nodes = re.split(' ', service_name)
+            else:
+                service_nodes = [service_name]
+
+            if service_pre_interface is not None:
+                if ' ' in (service_pre_interface.strip()):
+                    service_pre_interface_name = re.split(' ', service_pre_interface)
+                else:
+                    service_pre_interface_name = [service_pre_interface]
+
+            if service_post_interface is not None:
+                if ' ' in (service_post_interface.strip()):
+                    service_post_interface_name = re.split(' ', service_post_interface)
+                else:
+                    service_post_interface_name = [service_post_interface]
+
             for x in range(0, len(content)):
                 if content[x]['switch'] == AppCommon.rest_return_switch_dpid_from_ip(node):
                     helpers.log("Policy correctly shows switch dpid for service")
@@ -459,24 +475,26 @@ class BigTap(object):
                 if service_fail == len(service_nodes):
                     helpers.log("Service Name %s was not found in Policy" % service_name)
                     return False
-                service_fail = 0
-                for y in range(0, len(service_pre_interface_name)):
-                    if content[x]['service-name'] == service_pre_interface_name[y]:
-                        helpers.log("Policy correctly shows Service Name")
-                    else:
-                        service_fail = service_fail + 1
-                if service_fail == len(service_nodes):
-                    helpers.log("Service Name %s was not found in Policy" % service_pre_interface)
-                    return False
-                service_fail = 0
-                for y in range(0, len(service_post_interface_name)):
-                    if content[x]['service-name'] == service_post_interface_name[y]:
-                        helpers.log("Policy correctly shows Service Name")
-                    else:
-                        service_fail = service_fail + 1
-                if service_fail == len(service_nodes):
-                    helpers.log("Service Name %s was not found in Policy" % service_post_interface)
-                    return False
+                if service_pre_interface is not None:
+                    service_fail = 0
+                    for y in range(0, len(service_pre_interface_name)):
+                        if content[x]['direction'] == "tx" and content[x]['bigtapinterface'] == service_pre_interface_name[y]:
+                            helpers.log("Policy correctly shows Pre Service Name")
+                        else:
+                            service_fail = service_fail + 1
+                    if service_fail == len(content):
+                        helpers.log("Service Name %s was not found in Policy" % service_pre_interface)
+                        return False
+                if service_post_interface is not None:
+                    service_fail = 0
+                    for y in range(0, len(service_post_interface_name)):
+                        if content[x]['direction'] == "rx" and content[x]['bigtapinterface'] == service_post_interface_name[y]:
+                            helpers.log("Policy correctly shows Post Service Name")
+                        else:
+                            service_fail = service_fail + 1
+                    if service_fail == len(content):
+                        helpers.log("Service Name %s was not found in Policy" % service_post_interface)
+                        return False
                 return True
 
     def rest_verify_policy_key(self, policy_name, method, index, key):
@@ -2611,82 +2629,111 @@ class BigTap(object):
                 url = '/api/v1/data/controller/core/switch[dpid="%s"][interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (str(switch_dpid), str(tunnel_name), str(switch_dpid), str(tunnel_name))
                 c.rest.get(url)
                 content = c.rest.content()
-                if content[0]['interface'][0]['name'] == str(tunnel_name):
-                    helpers.test_log("Tunnel Name is correctly reported as : %s" % content[0]['interface'][0]['name'])
-                else:
-                    helpers.test_error("Tunnel Name is not correctly reported as  : %s" % content[0]['interface'][0]['name'], soft_error)
+                if content[0]['interface'][0] == None:
                     return False
-
-                if content[0]['dpid'] == str(switch_dpid):
-                    helpers.test_log("Switch DPID is corretcly reported as : %s" % content[0]['dpid'])
                 else:
-                    helpers.test_error("Switch DPID is not corretcly reported as  : %s" % content[0]['dpid'], soft_error)
-                    return False
-
-                if tunnel_number is not None:
-                    if int(content[0]['interface'][0]['number']) == int(tunnel_number):
-                        helpers.test_log("Tunnel Number is corretcly reported as : %s" % content[0]['interface'][0]['number'])
+                    if content[0]['interface'][0]['name'] == str(tunnel_name):
+                        helpers.test_log("Tunnel Name is correctly reported as : %s" % content[0]['interface'][0]['name'])
                     else:
-                        helpers.test_error("Tunnel Number is not corretcly reported as  : %s" % content[0]['interface'][0]['number'], soft_error)
+                        helpers.test_log("Tunnel Name is not correctly reported as  : %s" % content[0]['interface'][0]['name'], soft_error)
                         return False
 
-                if runtime_state is not None:
-                    if content[0]['interface'][0]['runtime-state'] == str(runtime_state):
-                        helpers.test_log("Runtime State is corretcly reported as : %s" % content[0]['interface'][0]['runtime-state'])
+                    if content[0]['dpid'] == str(switch_dpid):
+                        helpers.test_log("Switch DPID is corretcly reported as : %s" % content[0]['dpid'])
                     else:
-                        helpers.test_error("Runtime State is not corretcly reported as  : %s" % content[0]['interface'][0]['runtime-state'], soft_error)
+                        helpers.test_log("Switch DPID is not corretcly reported as  : %s" % content[0]['dpid'], soft_error)
                         return False
 
-                if parent_interface is not None:
-                    if content[0]['interface'][0]['parent-interface'] == str(parent_interface):
-                        helpers.test_log("Parent Interface is corretcly reported as : %s" % content[0]['interface'][0]['parent-interface'])
-                    else:
-                        helpers.test_error("Parent Interface is not corretcly reported as  : %s" % content[0]['interface'][0]['parent-interface'], soft_error)
-                        return False
+                    if tunnel_number is not None:
+                        if 'number' not in content[0]['interface'][0]:
+                            return False
+                        else:
+                            if int(content[0]['interface'][0]['number']) == int(tunnel_number):
+                                helpers.test_log("Tunnel Number is corretcly reported as : %s" % content[0]['interface'][0]['number'])
+                            else:
+                                helpers.test_log("Tunnel Number is not corretcly reported as  : %s" % content[0]['interface'][0]['number'], soft_error)
+                                return False
 
-                if tunnel_direction is not None:
-                    if (tunnel_direction == 'bidir') or (tunnel_direction == 'bidirectional'):
-                        direction = 'bidirectional'
-                    elif (tunnel_direction == 'tx') or (tunnel_direction == 'transmit-only'):
-                        direction = 'transmit-only'
-                    elif (tunnel_direction == 'rx') or (tunnel_direction == 'receive-only'):
-                        direction = 'receive-only'
-                    else:
-                        helpers.log("Incorrect tunnel-direction value was passed. Please check your txt file")
-                        return False
-                    if content[0]['interface'][0]['direction'] == str(direction):
-                        helpers.test_log("Tunnel direction is  corretcly reported as : %s" % content[0]['interface'][0]['direction'])
-                    else:
-                        helpers.test_error("Tunnel direction is not corretcly reported as  : %s" % content[0]['interface'][0]['direction'], soft_error)
-                        return False
+                    if runtime_state is not None:
+                        if content[0]['interface'][0]['runtime-state'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['runtime-state'] == str(runtime_state):
+                                helpers.test_log("Runtime State is corretcly reported as : %s" % content[0]['interface'][0]['runtime-state'])
+                            else:
+                                helpers.test_log("Runtime State is not corretcly reported as  : %s" % content[0]['interface'][0]['runtime-state'], soft_error)
+                                return False
 
-                if sip is not None:
-                    if content[0]['interface'][0]['ip-config']['source-ip'] == str(sip):
-                        helpers.test_log("Source IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['source-ip'])
-                    else:
-                        helpers.test_error("Source IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['source-ip'], soft_error)
-                        return False
 
-                if dip is not None:
-                    if content[0]['interface'][0]['ip-config']['destination-ip'] == str(dip):
-                        helpers.test_log("Destinantion IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['destination-ip'])
-                    else:
-                        helpers.test_error("Destinantion IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['destination-ip'], soft_error)
-                        return False
+                    if parent_interface is not None:
+                        if content[0]['interface'][0]['parent-interface'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['parent-interface'] == str(parent_interface):
+                                helpers.test_log("Parent Interface is corretcly reported as : %s" % content[0]['interface'][0]['parent-interface'])
+                            else:
+                                helpers.test_log("Parent Interface is not corretcly reported as  : %s" % content[0]['interface'][0]['parent-interface'], soft_error)
+                                return False
 
-                if gip is not None:
-                    if content[0]['interface'][0]['ip-config']['gateway-ip'] == str(gip):
-                        helpers.test_log("Gateway IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'])
-                    else:
-                        helpers.test_error("Gateway IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'], soft_error)
-                        return False
+                    if tunnel_direction is not None:
+                        if (tunnel_direction == 'bidir') or (tunnel_direction == 'bidirectional'):
+                            direction = 'bidirectional'
+                        elif (tunnel_direction == 'tx') or (tunnel_direction == 'transmit-only'):
+                            direction = 'transmit-only'
+                        elif (tunnel_direction == 'rx') or (tunnel_direction == 'receive-only'):
+                            direction = 'receive-only'
+                        else:
+                            helpers.log("Incorrect tunnel-direction value was passed. Please check your txt file")
+                            return False
+                        if content[0]['interface'][0]['direction'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['direction'] == str(direction):
+                                helpers.test_log("Tunnel direction is  corretcly reported as : %s" % content[0]['interface'][0]['direction'])
+                            else:
+                                helpers.test_log("Tunnel direction is not corretcly reported as  : %s" % content[0]['interface'][0]['direction'], soft_error)
+                                return False
 
-                if mask is not None:
-                    if content[0]['interface'][0]['ip-config']['ip-mask'] == str(mask):
-                        helpers.test_log("IP Mask is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['ip-mask'])
-                    else:
-                        helpers.test_error("IP Mask is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['ip-mask'], soft_error)
-                        return False
+                    if sip is not None:
+                        if content[0]['interface'][0]['ip-config']['source-ip'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['ip-config']['source-ip'] == str(sip):
+                                helpers.test_log("Source IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['source-ip'])
+                            else:
+                                helpers.test_log("Source IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['source-ip'], soft_error)
+                                return False
+
+                    if dip is not None:
+                        if content[0]['interface'][0]['ip-config']['destination-ip'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['ip-config']['destination-ip'] == str(dip):
+                                helpers.test_log("Destinantion IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['destination-ip'])
+                            else:
+                                helpers.test_log("Destinantion IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['destination-ip'], soft_error)
+                                return False
+
+
+                    if gip is not None:
+                        if content[0]['interface'][0]['ip-config']['gateway-ip']  is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['ip-config']['gateway-ip'] == str(gip):
+                                helpers.test_log("Gateway IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'])
+                            else:
+                                helpers.test_log("Gateway IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'], soft_error)
+                                return False
+
+                    if mask is not None:
+                        if content[0]['interface'][0]['ip-config']['ip-mask'] is None :
+                            return False
+                        else:
+                            if content[0]['interface'][0]['ip-config']['ip-mask'] == str(mask):
+                                helpers.test_log("IP Mask is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['ip-mask'])
+                            else:
+                                helpers.test_log("IP Mask is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['ip-mask'], soft_error)
+                                return False
 
                 return True
 
