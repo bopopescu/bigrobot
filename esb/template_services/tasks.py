@@ -17,10 +17,18 @@ class BsnCommands(object):
 
     @app.task(filter=task_method)
     def cli_show_user(self, params, node):
+        log_file = helpers.bigrobot_log_path_exec_instance() + '/' + '99999'
+        helpers.autobot_log_send_to_file(log_file)
+        helpers.log("Starting task...")
+
         t = test.Test(esb=True, params=params)
         n = t.node(node)
         content = n.cli("show user")['content']
+        n.get('/api/v1/data/controller/core/aaa/local-user')
         t.node_disconnect()
+
+        helpers.log("Ending task...")
+        helpers.autobot_log_send_to_file(log_file, close=True)
         return content
 
     @app.task(filter=task_method)

@@ -223,6 +223,7 @@ class T5Utilities(object):
                 i += 1
             except(KeyError):
                 helpers.warn("Warning: No switches are detected in the fabric")
+                break
 
         return switchList
 
