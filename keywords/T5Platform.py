@@ -4102,6 +4102,18 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
+            if (re.match(r' clear tenant .* logical-router applied-policy counters', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2069")
+                num = num - 1
+                continue
+
+            if (re.match(r' show vft', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                num = num - 1
+                continue
+
             # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4340,6 +4352,18 @@ class T5Platform(object):
 
                 if re.match(r' clear session session-id', string):
                     helpers.log("Ignoring line as it may effect the script execution..")
+                    num = num - 1
+                    continue
+
+                if (re.match(r' show vft', string)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                    num = num - 1
+                    continue
+
+                if (re.match(r'enable-endpoint-flap-protection', key)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2071")
                     num = num - 1
                     continue
 
