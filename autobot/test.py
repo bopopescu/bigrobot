@@ -930,6 +930,8 @@ class Test(object):
             elif match[0] == 3:
                 helpers.log("Found a switch Crash Needs to power cycle...")
                 helpers.log("Power cycling switch : %s " % node)
+                helpers.log("Exiting ...")
+                helpers.exit_robot_immediately("SPINE CRASH !!!!")
                 self.power_cycle(node)
                 helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
                 n_console = self.dev_console(node, modeless=True)
@@ -953,6 +955,8 @@ class Test(object):
             elif match[0] == 2:
                 helpers.log("Found a switch Crash Needs to power cycle...")
                 helpers.log("Power cycling switch : %s " % node)
+                helpers.log("Exiting ...")
+                helpers.exit_robot_immediately("SPINE CRASH !!!!")
                 self.power_cycle(node)
                 helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
                 n_console = self.dev_console(node, modeless=True)
@@ -976,6 +980,8 @@ class Test(object):
             elif match[0] == 4:
                 helpers.log("Found a switch Crash Needs to power cycle...")
                 helpers.log("Power cycling switch : %s " % node)
+                helpers.log("Exiting ...")
+                helpers.exit_robot_immediately("SPINE CRASH !!!!")
                 self.power_cycle(node)
                 helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
                 n_console = self.dev_console(node, modeless=True)
@@ -989,6 +995,8 @@ class Test(object):
             helpers.log("This Expect error may be due to Spine got Stuck Already in with Kernel ..Crash")
             helpers.log("Trying Power Cycle and check any activity on Console...")
             helpers.log("Power cycling switch : %s " % node)
+            helpers.log("Exiting ...")
+            helpers.exit_robot_immediately("SPINE CRASH !!!!")
             self.power_cycle(node)
             helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
             n_console = self.dev_console(node, modeless=True)
