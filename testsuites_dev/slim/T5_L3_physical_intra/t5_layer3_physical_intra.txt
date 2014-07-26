@@ -3281,7 +3281,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            1003
     REST add portgroup to vns                   X                               X2                      ${leaf1_pc2}            1004
-    
+    REST enable endpoint flap protection
     BASH add tag                                h1                              bond0                   1001
     BASH add tag                                h3                              bond0                   1003
     BASH add tag                                h4                              bond0                   1004
@@ -3341,6 +3341,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
+    REST disable endpoint flap protection
 
 Verify clear blocked endpoint works
     BASH ifup intf                              h1                              bond0
@@ -3349,6 +3350,7 @@ Verify clear blocked endpoint works
     BASH ifup intf                              h4                              bond0
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0   
+    REST enable endpoint flap protection
     REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            1003
     BASH add tag                                h1                              bond0                   1001
@@ -3405,6 +3407,7 @@ Verify clear blocked endpoint works
     BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
+    REST disable endpoint flap protection
     
 
 Verify blocked endpoint should be automatically cleared
@@ -3414,6 +3417,7 @@ Verify blocked endpoint should be automatically cleared
     BASH ifup intf                              h4                              bond0
     BASH ifup intf                              h5                              bond0
     BASH ifup intf                              h6                              bond0   
+    REST enable endpoint flap protection
     REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            1003
     BASH add tag                                h1                              bond0                   1001
@@ -3468,6 +3472,7 @@ Verify blocked endpoint should be automatically cleared
     BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
+    REST disable endpoint flap protection
         
     
     
