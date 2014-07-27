@@ -1879,7 +1879,6 @@ Reboot Switches
 	Verify Switch Handshake State  ${s5_alias}
 
 Reboot Switches From CLI
-    Verify All Switches Connected
 	${status}=  Cli Reboot Switch  master  ${s1_ip}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
 	${status}=  Cli Reboot Switch  master  ${s2_ip}
