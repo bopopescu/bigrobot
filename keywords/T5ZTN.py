@@ -1225,10 +1225,12 @@ class T5ZTN(object):
                 c.expect(c.get_prompt(), timeout=300)
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
-                return helpers.test_failure("Error rebooting the switch")
+                helpers.log("Error rebooting the switch")
+                return False
         except:
             helpers.log(c.cli_content())
-            return helpers.test_failure("Error rebooting the switch")
+            helpers.log("Error rebooting the switch")
+            return False
 
         helpers.log("Reboot command executed successfully")
         return True
