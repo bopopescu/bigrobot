@@ -176,8 +176,8 @@ T1.14. Power cycle switches
 	[Tags]  skipped
 
 T0.1. BSC-5430
-	${mac1}=  Set Variable  12:22:33:44:55:66
-	${mac2}=  Set Variable  66:55:44:33:22:11
+	${mac1}=  Set Variable  12:22:22:44:55:66
+	${mac2}=  Set Variable  66:55:22:33:22:11
 	${name}=  Set Variable  test1
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${name}
@@ -207,7 +207,7 @@ T0.2. BSC-5550
 	[Tags]  BSC-5550
 
 T0.3. BSC-5568
-	${mac1}=  Set Variable  12:22:33:44:55:66
+	${mac1}=  Set Variable  44:aa:bb:cc:dd:ee
 	${name}=  Set Variable  test
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${name}
@@ -230,25 +230,30 @@ T0.3. BSC-5568
 	[Tags]  BSC-5568
 
 T0.4. Show remote
-	#Cli Run  master  show switch ${s1_alias} remote environment
-	#Cli Run  master  show switch ${s1_alias} remote version
-	#Cli Run  master  show switch ${s1_alias} remote controller
-	#Cli Run  master  show switch ${s1_alias} remote inventory
+	Cli Run  master  show switch ${s1_alias} environment
+	Cli Run  master  show switch ${s1_alias} version
+	#Cli Run  master  show switch ${s1_alias} controller
+	Cli Run  master  show switch ${s1_alias} inventory
 
-	Cli Run  master  show switch ${s2_alias} remote environment
-	Cli Run  master  show switch ${s2_alias} remote version
-	Cli Run  master  show switch ${s2_alias} remote controller
-	Cli Run  master  show switch ${s2_alias} remote inventory
+	Cli Run  master  show switch ${s2_alias} environment
+	Cli Run  master  show switch ${s2_alias} version
+	#Cli Run  master  show switch ${s2_alias} controller
+	Cli Run  master  show switch ${s2_alias} inventory
 
-	Cli Run  master  show switch ${s3_alias} remote environment
-	Cli Run  master  show switch ${s3_alias} remote version
-	Cli Run  master  show switch ${s3_alias} remote controller
-	Cli Run  master  show switch ${s3_alias} remote inventory
+	Cli Run  master  show switch ${s3_alias} environment
+	Cli Run  master  show switch ${s3_alias} version
+	#Cli Run  master  show switch ${s3_alias} controller
+	Cli Run  master  show switch ${s3_alias} inventory
 
-	Cli Run  master  show switch ${s4_alias} remote environment
-	Cli Run  master  show switch ${s4_alias} remote version
-	Cli Run  master  show switch ${s4_alias} remote controller
-	Cli Run  master  show switch ${s4_alias} remote inventory
+	Cli Run  master  show switch ${s4_alias} environment
+	Cli Run  master  show switch ${s4_alias} version
+	#Cli Run  master  show switch ${s4_alias} controller
+	Cli Run  master  show switch ${s4_alias} inventory
+
+	Cli Run  master  show switch ${s5_alias} environment
+	Cli Run  master  show switch ${s5_alias} version
+	#Cli Run  master  show switch ${s5_alias} controller
+	Cli Run  master  show switch ${s5_alias} inventory
 
 # Switch in provisioned mode
 T5.3.1. Disconnect, change config, reconnect, reload
@@ -621,9 +626,8 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
-	Power Cycle All Switches
-	${mac1}=  Set Variable  12:22:33:44:55:66
-	${mac2}=  Set Variable  66:55:44:33:22:11
+	${mac1}=  Set Variable  12:33:33:44:55:66
+	${mac2}=  Set Variable  66:33:44:33:22:11
 	${name1}=  Set Variable  test1
 	${name2}=  Set Variable  test2
 	Cli Run  master  enable; config
@@ -953,6 +957,8 @@ T5.4.1. Disconnect, change config, reconnect, reload
 	Telnet Set All MA1 State  up
 	Sleep  10
 	Verify All Switches Connected
+	Cli Run  master  show switch all
+	Cli Run  master  show zerotouch devices
 	Cli Reboot Switch  master  all
 	Cli Run  master  show run
 	Verify All Switches In Standby Mode
@@ -982,7 +988,7 @@ T5.4.3. Disconnect, change config, reboot
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
 	Cli Run  master  show run
@@ -1014,7 +1020,7 @@ T5.4.5. Disconnect, change config, failover, reconnect, reload
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
 	Failover
@@ -1051,7 +1057,7 @@ T5.4.7. Disconnect, change config, failover, reboot
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
 	Failover
@@ -1085,7 +1091,7 @@ T5.4.9. Disconnect, change config, double failover, reconnect, reload
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack1
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
 	Failover
@@ -1101,7 +1107,7 @@ T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1121,9 +1127,9 @@ T5.4.11. Disconnect, change config, double failover, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby  Mode  ${s3_alias}
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
 	Failover
@@ -1138,7 +1144,7 @@ T5.4.12. Disconnect, delete, double failover, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1165,7 +1171,7 @@ T5.5.1. Connected, change config, flap interface, reload
 	#Add state validation here
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	Reboot Provisioned Switch  ${s3_alias}
+	Reboot Provisioned Switch  s3  ${s3_mac}  ${s3_alias}
 
 T5.5.2. Connected, delete, flap interface, reload (reboot?)
 	Manual Untested
@@ -1640,6 +1646,7 @@ Test Setup
 	Cli Run  master  show run
 	Cli Run  master  show switch
 	Cli Run  slave  show switch
+	Cli Run  master  show zerotouch devices
 	Cli Copy  running-config  config://test-config
 	Cli Copy  running-config  config://test-config  node=slave
 
