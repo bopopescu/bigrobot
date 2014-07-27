@@ -906,18 +906,18 @@ class Test(object):
                 con.send('enable;conf;no snmp-server enable')
                 con.send('')
                 con = self.dev_console(node)
-            elif match[0] == 3:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
+#            elif match[0] == 3:
+#                helpers.log("Found a switch Crash Needs to power cycle...")
+#                helpers.log("Power cycling switch : %s " % node)
+#                self.power_cycle(node)
+#                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+#                n_console = self.dev_console(node, modeless=True)
+#                n_console.send('admin')
+#                helpers.sleep(2)
+#                n_console.send('adminadmin')
+#                helpers.sleep(2)
+#                n_console.send('enable;conf;no snmp-server enable')
+#                n_console = self.dev_console(node)
 
         try:
             # Match login or CLI prompt.
