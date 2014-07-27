@@ -109,8 +109,10 @@ T1.6. Test switch reboot
 	Telnet Wait For Switch To Reload  s5
 
 T1.7. Reboot all switches from CLI
-	Cli Reboot Switch  master  all
-	Cli Reboot Switch  slave  all
+	${status}=  Cli Reboot Switch  master  all
+	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	${status}=  Cli Reboot Switch  slave  all
+	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
 
 T1.8. Reboot switches from CLI
 	Cli Reboot Switch  master  ${s1_alias}
@@ -298,7 +300,8 @@ T5.3.3. Disconnect, change config, reboot
 	Verify All Switches Running Config
 
 T5.3.4. Disconnect, delete, reboot
-	Cli Reboot Switch  master  all
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -326,7 +329,8 @@ T5.3.5. Disconnect, change config, failover, reconnect, reload
 	Verify All Switches Running Config
 
 T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Cli Reboot Switch  master  all
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -959,7 +963,8 @@ T5.4.1. Disconnect, change config, reconnect, reload
 	Verify All Switches Connected
 	Cli Run  master  show switch all
 	Cli Run  master  show zerotouch devices
-	Cli Reboot Switch  master  all
+	Reboot Switches From CLI
+	#Cli Reboot Switch  master  all
 	Cli Run  master  show run
 	Verify All Switches In Standby Mode
 	Verify All Switches Startup Config
@@ -1875,11 +1880,16 @@ Reboot Switches
 
 Reboot Switches From CLI
     Verify All Switches Connected
-	Cli Reboot Switch  master  ${s1_ip}
-	Cli Reboot Switch  master  ${s2_ip}
-	Cli Reboot Switch  master  ${s3_ip}
-	Cli Reboot Switch  master  ${s4_ip}
-	Cli Reboot Switch  master  ${s5_ip}
+	${status}=  Cli Reboot Switch  master  ${s1_ip}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
+	${status}=  Cli Reboot Switch  master  ${s2_ip}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
+	${status}=  Cli Reboot Switch  master  ${s3_ip}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
+	${status}=  Cli Reboot Switch  master  ${s4_ip}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
+	${status}=  Cli Reboot Switch  master  ${s5_ip}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
 	Sleep  100
 
 	Cli Run  master  show run
