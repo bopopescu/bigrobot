@@ -526,8 +526,8 @@ Generate Random Name
 
 Various Suite Setup
 	Base Suite Setup
-	Cli Copy  running-config  config://startup-config
-	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Copy  running-config  snapshot://startup-config
+	Cli Copy  running-config  snapshot://startup-config  node=slave
 
 Various Suite Teardown
 	Base Suite Teardown
@@ -543,5 +543,5 @@ Teardown
 	Cli Run  master  config
 	Cli Run  master  reauth admin adminadmin
 	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Base Test Teardown

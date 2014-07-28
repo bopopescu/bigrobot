@@ -1407,7 +1407,7 @@ class T5Platform(object):
 
         Examples:
         | Cli Compare | slave | test-file | scp://bsn@regress:path-to-file/file
-        | Cli Compare | master | test-file | config://test-config
+        | Cli Compare | master | test-file | snapshot://test-config
         | Cli Compare | master | running-config |  test-file
 
         Return Value:
@@ -1571,7 +1571,7 @@ class T5Platform(object):
 
     def cli_compare_running_config_with_config_line_by_line(self, filename):
         ''' Function to compare current running config with
-        config saved in config://, via CLI line by line
+        config saved in snapshot://, via CLI line by line
         Input: Filename
         Output: True if successful, False otherwise
         '''
@@ -1622,17 +1622,17 @@ class T5Platform(object):
         if re.match(r'image://.*', filename):
             name = re.split(r'image://', filename)
             cmd = "delete image %s" % name[1]
-        elif re.match(r'config://.*', filename):
-            name = re.split(r'config://', filename)
-            cmd = "delete config %s" % name[1]
+        elif re.match(r'snapshot://.*', filename):
+            name = re.split(r'snapshot://', filename)
+            cmd = "delete snapshot %s" % name[1]
         else:
             cmd = "delete file %s" % filename
 
         helpers.test_log("Running command:\n%s" % cmd)
         t = test.Test()
         c = t.controller('master')
-        if re.match(r'config://.*', filename) or re.match(r'image://.*', filename) :
-            helpers.test_log("Deleting config:// or image://, expecting confirmation prompt")
+        if re.match(r'snapshot://.*', filename) or re.match(r'image://.*', filename) :
+            helpers.test_log("Deleting snapshot:// or image://, expecting confirmation prompt")
             c.config("config")
             c.send(cmd)
             c.expect(r'[\r\n].+continue+.*|Error.*')
@@ -4102,6 +4102,18 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
+            if (re.match(r' clear tenant .* logical-router applied-policy counters', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2069")
+                num = num - 1
+                continue
+
+            if (re.match(r' show vft', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                num = num - 1
+                continue
+
             # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4340,6 +4352,18 @@ class T5Platform(object):
 
                 if re.match(r' clear session session-id', string):
                     helpers.log("Ignoring line as it may effect the script execution..")
+                    num = num - 1
+                    continue
+
+                if (re.match(r' show vft', string)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                    num = num - 1
+                    continue
+
+                if (re.match(r'enable-endpoint-flap-protection', key)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2071")
                     num = num - 1
                     continue
 
