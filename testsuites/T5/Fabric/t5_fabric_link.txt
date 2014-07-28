@@ -100,7 +100,7 @@ delete one of the leaf in Dual Leaf setup and verify the link
 Reboot spine switch spine1 and verify the fabric link
 	[Tags]  Fabric  feature  IronHorse  run
 	rest verify fabric link
-	cli reboot switch  spine1
+	cli controller reboot switch  spine1
 	sleep  3
 	rest verify fabric link
 	sleep  10
@@ -108,7 +108,7 @@ Reboot spine switch spine1 and verify the fabric link
 Reboot leaf switch and verify fabric link
 	[Tags]  Fabric  feature  IronHorse  run
 	rest verify fabric link
-	cli reboot switch  leaf0-a
+	cli controller reboot switch  leaf0-a
 	sleep  3
 	rest verify fabric link
 	sleep  10
