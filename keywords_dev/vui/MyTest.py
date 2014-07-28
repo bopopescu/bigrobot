@@ -701,3 +701,38 @@ vui@Vuis-MacBook-Pro$
         n.config("show running-config")
         n.config("show user")
 
+    def parse_table(self):
+        output = """+--------------------------------------+------+-------------------+-----------------------------------------------------------------------------------+
+| id                                   | name | mac_address       | fixed_ips                                                                         |
++--------------------------------------+------+-------------------+-----------------------------------------------------------------------------------+
+| e5999f23-1974-4cd9-ab45-8f0e61955a96 |      | fa:16:3e:55:c2:2f | {"subnet_id": "ad7148b3-0fee-4b89-a912-1792f75596a7", "ip_address": "100.0.2.12"} |
+| fe363bd8-868f-4e29-b848-2e3a6f3b9b35 |      | fa:16:3e:76:57:a0 | {"subnet_id": "d5926f6b-d848-429c-b9b0-3b82600ce195", "ip_address": "20.0.0.1"}   |
++--------------------------------------+------+-------------------+-----------------------------------------------------------------------------------+
+"""
+        output2 = """
++----------------------+--------------------------------------+
+| Property             | Value                                |
++----------------------+--------------------------------------+
+| status               | ACTIVE                               |
+| updated              | 2014-01-03T06:51:26Z                 |
+| name                 | Ubuntu.13.10                         |
+| created              | 2014-01-03T06:50:55Z                 |
+| minDisk              | 0                                    |
+| progress             | 100                                  |
+| minRam               | 0                                    |
+| OS-EXT-IMG-SIZE:size | 243662848                            |
+| id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
++----------------------+--------------------------------------+
+prompt>
+"""
+        table = helpers.openstack_convert_table_to_dict(output)
+        helpers.debug("**** table:\n%s" % helpers.prettify(table))
+
+        """
+        for key, value in table.items():
+            # Parse the fixed_ips column to get IP address
+            fixed_ips_str = value['fixed_ips']
+            fixed_ips_dict = helpers.from_json(fixed_ips_str)
+            helpers.log("ID:%s  ip_address:%s" % (key, fixed_ips_dict['ip_address']))
+        """
+        return True

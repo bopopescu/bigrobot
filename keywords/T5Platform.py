@@ -1407,7 +1407,7 @@ class T5Platform(object):
 
         Examples:
         | Cli Compare | slave | test-file | scp://bsn@regress:path-to-file/file
-        | Cli Compare | master | test-file | config://test-config
+        | Cli Compare | master | test-file | snapshot://test-config
         | Cli Compare | master | running-config |  test-file
 
         Return Value:
@@ -1571,7 +1571,7 @@ class T5Platform(object):
 
     def cli_compare_running_config_with_config_line_by_line(self, filename):
         ''' Function to compare current running config with
-        config saved in config://, via CLI line by line
+        config saved in snapshot://, via CLI line by line
         Input: Filename
         Output: True if successful, False otherwise
         '''
@@ -1622,17 +1622,17 @@ class T5Platform(object):
         if re.match(r'image://.*', filename):
             name = re.split(r'image://', filename)
             cmd = "delete image %s" % name[1]
-        elif re.match(r'config://.*', filename):
-            name = re.split(r'config://', filename)
-            cmd = "delete config %s" % name[1]
+        elif re.match(r'snapshot://.*', filename):
+            name = re.split(r'snapshot://', filename)
+            cmd = "delete snapshot %s" % name[1]
         else:
             cmd = "delete file %s" % filename
 
         helpers.test_log("Running command:\n%s" % cmd)
         t = test.Test()
         c = t.controller('master')
-        if re.match(r'config://.*', filename) or re.match(r'image://.*', filename) :
-            helpers.test_log("Deleting config:// or image://, expecting confirmation prompt")
+        if re.match(r'snapshot://.*', filename) or re.match(r'image://.*', filename) :
+            helpers.test_log("Deleting snapshot:// or image://, expecting confirmation prompt")
             c.config("config")
             c.send(cmd)
             c.expect(r'[\r\n].+continue+.*|Error.*')
@@ -4102,6 +4102,18 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
+            if (re.match(r' clear tenant .* logical-router applied-policy counters', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2069")
+                num = num - 1
+                continue
+
+            if (re.match(r' show vft', string)):
+                helpers.log("Ignoring line - %s" % string)
+                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                num = num - 1
+                continue
+
             # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4170,11 +4182,14 @@ class T5Platform(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_enable(string, file_name, padding)
 
-    def cli_walk_config(self, string='', file_name=None, padding='', config_submode=False, exec_mode_done=False):
+    def cli_walk_config(self, string='', file_name=None, padding='', config_submode=False, exec_mode_done=False, base_hierarchy=None):
         t = test.Test()
         c = t.controller('master')
-        c.config('')
-        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
+        if base_hierarchy:
+            c.config(base_hierarchy)
+        else:
+            c.config('')
+        helpers.log("********* Entering CLI show  walk with ----> string: '%s', file name: '%s'" % (string, file_name))
         if string == '':
             cli_string = '?'
         else:
@@ -4205,11 +4220,11 @@ class T5Platform(object):
         c.expect()
         c.config('')
         string_c = string
-        helpers.log("string for this level is: %s" % string_c)
-        helpers.log("The length of string: %d" % len(temp))
+        helpers.log("string for this level is: '%s'" % string_c)
+        helpers.log("The length of string: '%d'" % len(temp))
 
         if file_name:
-            helpers.log("opening file: %s" % file_name)
+            helpers.log("opening file: '%s'" % file_name)
             fo = open(file_name, 'a')
             lines = []
             lines.append((padding + string))
@@ -4227,14 +4242,19 @@ class T5Platform(object):
         padding = "   " + padding
         for line in temp:
             string = string_c
-            helpers.log(" NUM IS - %s" % num)
-            helpers.log(" line is - %s" % line)
+            helpers.log(" NUM IS - '%s'" % num)
+            helpers.log(" line is - '%s'" % line)
             line = line.lstrip()
-            helpers.log(" line: %s" % line)
+            helpers.log(" line: '%s'" % line)
             keys = line.split(' ')
             key = keys.pop(0)
-            helpers.log("*** string is - %s" % string)
-            helpers.log("*** key is - %s" % key)
+            helpers.log("*** string is - '%s'" % string)
+            helpers.log("*** key is - '%s'" % key)
+
+            if re.match(r'Related config commands', line):
+                helpers.log("Ignoring line - '%s'" % line)
+                num = num - 1
+                continue
 
             # If done iterating over enable commands, set exec_mode_done = True
             if re.match(r'.*Commands:.*', line):
@@ -4245,42 +4265,42 @@ class T5Platform(object):
 
             # Don't iterate over enable commands again if looping through this via a subconfig mode
             if config_submode and not exec_mode_done:
-                helpers.log("Ignoring EXEC MODE command - %s" % line)
+                helpers.log("Ignoring EXEC MODE command - '%s'" % line)
                 continue
             else:
 
                 if re.match(r'For', line):
-                    helpers.log("Ignoring line - %s" % line)
+                    helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
 
                 if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
-                    helpers.log("Ignoring line - %s" % line)
+                    helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
                 if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
-                    helpers.log("Ignore line %s" % line)
+                    helpers.log("Ignore line '%s'" % line)
                     num = num - 1
                     continue
                 if re.match(r'.*session.*', string) and key == "session" :
-                    helpers.log("Ignore line - %s" % string)
+                    helpers.log("Ignore line - '%s'" % string)
                     num = num - 1
                     continue
                 if re.match(r'.*session.*', string) and key != "<cr>" :
-                    helpers.log("Ignore line - string %s, key %s" % (string, key))
+                    helpers.log("Ignore line - string '%s', key '%s'" % (string, key))
                     num = num - 1
                     continue
                 if re.match(r'.*password.*', string) and key == "<cr>" :
-                    helpers.log("Ignore line - %s" % string)
+                    helpers.log("Ignore line - '%s'" % string)
                     num = num - 1
                     continue
                 if re.match(r'.*core-switch.*', string) and key == "<cr>" :
-                    helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
+                    helpers.log("Ignore line due to bug BSC-4903 - '%s'" % string)
                     num = num - 1
                     continue
                 # Add check for origination and description. BVS-1959 explains why this will not work if under a sub-configuration.
                 if key == "origination" or key == "description" :
-                    helpers.log("Ignore line - key %s" % key)
+                    helpers.log("Ignore line - key '%s'" % key)
                     num = num - 1
                     continue
 
@@ -4288,45 +4308,45 @@ class T5Platform(object):
                 # for interface related commands, only iterate through "all" and one specific interface
                 if (re.match(r' (.*)interface(.*)', string)):
                     if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
-                        helpers.log("Ignoring line - %s" % string)
+                        helpers.log("Ignoring line - '%s'" % string)
                         num = num - 1
                         continue
 
                 # for switch related commands, only iterate through "all" and one specific switch
                 if (re.match(r' (.*)switch(.*)', string)):
                     if key != 'leaf0a' and key != 'all' and key != '<cr>':
-                        helpers.log("Ignoring line - %s" % string)
+                        helpers.log("Ignoring line - '%s'" % string)
                         num = num - 1
                         continue
 
                 # for tenant related commands, only iterate through "all" and one specific tenant
                 if (re.match(r' (.*)tenant(.*)', string)):
                     if key != 'A' and key != 'all' and key != '<cr>':
-                        helpers.log("Ignoring line - %s" % string)
+                        helpers.log("Ignoring line - '%s'" % string)
                         num = num - 1
                         continue
 
                 # for vns related commands, only iterate through "all" and one specific vns
                 if (re.match(r' (.*)vns(.*)', string)):
                     if key != 'A1' and key != 'all' and key != '<cr>':
-                        helpers.log("Ignoring line - %s" % string)
+                        helpers.log("Ignoring line - '%s'" % string)
                         num = num - 1
                         continue
 
                 # for lag related commands, only iterate through "any_leaf"
                 if (re.match(r' (.*)lag(.*)', string)):
                     if key != 'any_leaf' and key != '<cr>':
-                        helpers.log("Ignoring line - %s" % string)
+                        helpers.log("Ignoring line - '%s'" % string)
                         num = num - 1
                         continue
 
                 if re.match(r'.*shutdown.*', string) and re.match(r'.*controller.*', key):
-                    helpers.log("Ignore line  - %s %s" % (string, key))
+                    helpers.log("Ignore line  - '%s' '%s'" % (string, key))
                     num = num - 1
                     continue
 
                 if re.match(r'.*member port-group.*vlan.*', string):
-                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
+                    helpers.log("Ignoring line due to PR BVS-1623 - '%s'" % string)
                     num = num - 1
                     continue
 
@@ -4335,13 +4355,25 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
+                if (re.match(r' show vft', string)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
+                    num = num - 1
+                    continue
+
+                if (re.match(r'enable-endpoint-flap-protection', key)):
+                    helpers.log("Ignoring line - %s" % string)
+                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2071")
+                    num = num - 1
+                    continue
+
                 if re.match(r'.*internal.*', key):
-                    helpers.log("Ignore line  - %s" % string)
+                    helpers.log("Ignore line  - '%s'" % string)
                     num = num - 1
                     continue
 
                 if re.match(r'All', line):
-                    helpers.log("Don't need to loop through exec commands- %s" % line)
+                    helpers.log("Don't need to loop through exec commands- '%s'" % line)
                     num = num - 1
                     continue
 
@@ -4385,7 +4417,7 @@ class T5Platform(object):
                     # Compare prompts.
                     if prompt1 != prompt2:
                         newstring = ''
-                        helpers.log("***** Call the cli walk again with  --- %s" % string)
+                        helpers.log("***** Call the cli walk again with  --- '%s'" % string)
 
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
                         c.config('show this')
@@ -4395,7 +4427,7 @@ class T5Platform(object):
                         return string
                 else:
                     string = string + ' ' + key
-                    helpers.log("***** Call the cli walk again with  --- %s" % string)
+                    helpers.log("***** Call the cli walk again with  --- '%s'" % string)
                     self.cli_walk_config(string, file_name, padding)
 
     def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):

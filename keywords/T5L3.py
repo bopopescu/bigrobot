@@ -1515,3 +1515,42 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
+  
+    def rest_disable_endpoint_flap_protection(self):
+        '''Disable endpoint flap protection
+         REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection {}
+                Return: true if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = 'api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection' 
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+            # helpers.test_failure(c.rest.error())
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
+
+    def rest_enable_endpoint_flap_protection(self):
+        '''Enable endpoint flap protection
+         REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"enable-endpoint-flap-protection": true}
+                Return: true if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = 'api/v1/data/controller/applications/bcf/global-setting' 
+        try:
+            c.rest.patch(url, {"enable-endpoint-flap-protection": True})
+        except:
+            return False
+            # helpers.test_failure(c.rest.error())
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
+

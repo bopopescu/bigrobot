@@ -54,7 +54,7 @@ T1.4. Check Startup config for a switch
 	Verify Switch Startup Config  ${leaf_mac}  ${leaf_alias}
 	[Tags]  Smoke
 
-T1.5. Verify startup config after failvoer
+T1.5. Verify startup config after failover
 	Verify Switch Startup Config  ${spine_mac}  ${spine_alias}
 	Verify Switch Startup Config  ${leaf_mac}  ${leaf_alias}
 	Failover
@@ -127,6 +127,11 @@ Randomize ZTN Configuration
 	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
 	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
+	${threshold_random}  Generate Random Threshold
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone
@@ -136,3 +141,8 @@ Randomize ZTN Configuration
 	Cli Run  master  logging enable remote
 	Cli Run  master  logging remote 10.192.66.100
 	Cli Run  master  logging remote ${hostname_random}
+
+Failover
+    ${status}=  Cli Cluster Take Leader
+    Sleep  30
+	Should Be True  ${status}

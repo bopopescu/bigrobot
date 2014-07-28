@@ -172,6 +172,12 @@ Test copy command
     log   result=${result}
 
 Test enable commands
-    #[Tags]  skipped
+    [Tags]  skipped
     #my enable commands  c1
     my config commands  c1
+
+Test node disconnect/reconnect
+    #[Tags]  skipped
+    config            c1   show user
+    node disconnect   c1
+    cli               c1   show version

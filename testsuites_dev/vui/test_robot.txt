@@ -75,7 +75,7 @@ Test process python dictionary
     process a dictionary  ${result}
 
 Robot loop test
-    #[Tags]           skipped
+    [Tags]           skipped
     : for  ${index}  in range  1  60
     \  log  ${index}
     \  sleep  1
@@ -243,6 +243,10 @@ Test logging
 #    warn              This is a warning message
 #    debug             This is a debugging message
 #    summary log       This is a summary log message
+
+Test openstack convert table to dict
+    #[Tags]           skipped
+    parse table
 
 * Keywords
 my base suite setup
