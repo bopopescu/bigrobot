@@ -190,7 +190,7 @@ class T5Platform(object):
         try:
             if(masterNode):
                 ipAddr = master.ip()
-                master.enable("system reboot", prompt="Confirm \(yes to continue\)")
+                master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
                 # sleep(90)
@@ -198,7 +198,7 @@ class T5Platform(object):
             else:
                 slave = t.controller("slave")
                 ipAddr = slave.ip()
-                slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
+                slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
                 # sleep(90)
