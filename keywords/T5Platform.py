@@ -1571,7 +1571,7 @@ class T5Platform(object):
 
     def cli_compare_running_config_with_config_line_by_line(self, filename):
         ''' Function to compare current running config with
-        config saved in snapshot://, via CLI line by line
+        config saved in config://, via CLI line by line
         Input: Filename
         Output: True if successful, False otherwise
         '''
@@ -1773,16 +1773,29 @@ class T5Platform(object):
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
-            helpers.log("*****Output list   is :\n%s" % temp)
+            helpers.log("USR INFO:   list   is :\n%s" % temp)
             line = temp[-1]
+            helpers.log("USR INFO:  line is :\n%s" % line)            
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
                     return False
                 else:
                     helpers.test_failure("Error: %s" % line)
+            elif re.match(r'Image added:.* build: (\d+)', line):
+                helpers.log("image added" )                
+                match = re.match(r'Image added:.* build: (\d+)', line)
+                helpers.log("USR INFO: image is: %s" % match.group(1))              
+                image = match.group(1)
+            elif  re.match(r'.*already exists.*', line):
+                helpers.log("image already exists" )
+                match = re.match(r'.* (\d+):.* already exists.*', line)
+                helpers.log("USR INFO: image is : %s" % match.group(1))                      
+                image = match.group(1)               
+                
             else:
-                image = self.cli_check_image(node)
+                (num, images) = self.cli_check_image(node)
+                image = max(images)
 
         return image
 
@@ -1957,7 +1970,7 @@ class T5Platform(object):
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
 
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("yes" or "y" to continue\):'])
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
         if options[0] == 1:
@@ -4787,3 +4800,67 @@ class T5Platform(object):
         helpers.log(s.cli('')['content'])
         return True
 
+    def cli_upgrade_launch_HA(self, node='master', option=''):
+        '''
+          upgrade launch  -  2 step of upgrade
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+
+          usage:
+          output: True  - upgrade launched successfully
+                  False  -upgrade launched Not successfully
+        ''' 
+
+        t = test.Test()
+        c = t.controller(node)        
+        helpers.log('INFO: Entering ==> cli_upgrade_launch_HA ')
+        role = self.cli_get_node_role(node=node)
+        helpers.log("USER INFO: current controller:  %s  is :  %s" %(node, role))    
+                
+        c.config('')
+        string = 'upgrade launch ' + option
+        c.send(string)
+        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        content = c.cli_content()
+        helpers.log("*****USER INFO:\n%s" % content)
+        c.send("yes")
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
+        if options[0] == 1:
+            c.send("yes")        
+                                
+        if role == 'active':
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                                
+            c.expect(r'waiting for standby to begin \"upgrade launch\"',timeout=360)
+#            c.expect(r'config updates are frozen for update',timeout=360)
+#            c.expect(r'standby has begun upgrade',timeout=360)
+#            c.expect(r'waiting for standby to complete switch handoff',timeout=360)
+#            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360)
+#            c.expect(r'new state: phase-1-migrate',timeout=360)
+      
+#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)   
+#            c.expect(r'new state: phase-2-migrate',timeout=360)
+        
+#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)   
+            c.expect(r'The system is going down for reboot NOW!',timeout=600)
+            
+            content = c.cli_content()
+            helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+                                                 
+            return True         
+ 
+        elif role == 'standby':
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                  
+            c.expect(r'waiting for active to begin \"upgrade launch\"',timeout=360) 
+#            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
+#            c.expect(r'Leader->partition state: partition-completed',timeout=360)
+#            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
+            c.expect(r'[R|r]ebooting',timeout=600)
+            content = c.cli_content()
+            helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+            
+            return True
+        else:
+            helpers.test_failure("ERROR: can not determine the role of the controller")
+            return False
+            
