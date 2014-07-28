@@ -1393,14 +1393,14 @@ class Test(object):
                 master = self.controller("master")
                 master.config("show switch")
                 master.config("show running-config")
-                master.config("enable; copy running-config config://ztn-base-config")
+                master.config("enable; config; copy running-config snapshot://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
-                master.enable("copy config://ztn-base-config running-config ")
+                master.enable("copy snapshot://ztn-base-config running-config ")
                 master.enable("show running-config")
                 master.enable("show switch")
                 helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
@@ -1482,7 +1482,7 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        c.config("copy config://firstboot-config running-config")
+        c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True
