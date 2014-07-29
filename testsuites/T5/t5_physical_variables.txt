@@ -1,11 +1,11 @@
 * Variables
 ${spine0_dpid}	 00:00:70:72:cf:a8:07:50
 ${spine1_dpid}	 00:00:70:72:cf:a8:09:50
-${leaf0a_dpid}	 00:00:70:72:cf:bc:c7:5e
-${leaf0b_dpid}	 00:00:70:72:cf:bc:c4:7a
-${leaf1a_dpid}	 00:00:70:72:cf:b7:6d:5c
-${leaf1b_dpid}	 00:00:70:72:cf:b6:01:f2
-${leaf2a_dpid}	 00:00:70:72:cf:b5:ff:0e
+${leaf0a_dpid}	 00:00:70:72:cf:b5:ff:0e
+${leaf0b_dpid}	 00:00:70:72:cf:b7:6d:5c
+${leaf1a_dpid}	 00:00:70:72:cf:bc:c7:5e
+${leaf1b_dpid}	 00:00:70:72:cf:bc:c4:7a
+${leaf2a_dpid}	 00:00:70:72:cf:b6:01:f2
 ${leaf2b_dpid}	 00:00:70:72:cf:b7:6e:3a
 ${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39

@@ -296,6 +296,56 @@ Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
     [Tags]          solution            dhcp-relay  
                     
+Add and delete nexthop group
+    Add and delete nexthop group
+    [Tags]          manual              feature            
+
+Add and delete nexthop group in system
+    Add and delete nexthop group in system
+    [Tags]          manual              feature     negative             
+
+Add and delete nexthop group IP 
+    Add and delete nexthop group IP
+    [Tags]          manual              feature            
+                    
+Add and delete route pointing to nexthop group in tenant
+    Add and delete route pointing to nexthop group in tenant
+    [Tags]          manual              feature            
+                    
+Add and delete route pointing to nexthop group in system
+    Add and delete route pointing to nexthop group in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to nexthop group in system
+    Add and delete route pointing to nexthop group in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to different nexthop group in system
+    Add and delete route pointing to different nexthop group in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to nexthop group in system
+    Add and delete route pointing to nexthop group in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to unknown nexthop group in system
+    Add and delete route pointing to unknown nexthop group in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to nexthop group defined in other tenant in system
+    Add and delete route pointing to nexthop group defined in other tenant in system
+    [Tags]          manual              feature            
+
+Add and delete route pointing to nexthop group defined in tenantX in tenantY
+    Add and delete route pointing to nexthop group defined in tenantX in tenantY
+    [Tags]          manual              feature            
+
+Verify nexthop group config is still applied on HA failover
+    Verify nexthop group config is still applied on HA failover
+    [Tags]          manual              feature            HA
+    
+
+
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints

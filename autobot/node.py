@@ -197,6 +197,13 @@ class Node(object):
         # raise NotImplementedError()
         return None
 
+    def close(self):
+        if self.devconf() == None:
+            helpers.log("Devconf is undefined for '%s' (%s) - no disconnect"
+                        % self.name())
+        else:
+            self.devconf().close()
+
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
@@ -747,6 +754,10 @@ class IxiaNode(Node):
 
     def console(self, driver=None):
         helpers.environment_failure("Console is currently not supported for Ixia node.")
+
+    def close(self): pass
+        # There's no SSH/Telnet session for Ixia node, so no need to call
+        # close() in base class (Node).
 
 
 class BigTapIxiaNode(IxiaNode):

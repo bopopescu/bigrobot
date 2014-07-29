@@ -14,14 +14,17 @@ from robot.api import logger as robot_logger
 class Log(object):
     """
     Singleton logger. Autobot applications should write to a common log file.
-    Use Robot Framework's logger facility if running in Robot environment
-    (env IS_GOBOT=True). Else use Python's logging facility.
 
-    If IS_GOBOT is not True, do:
+    Use Robot Framework's logger facility if running in Robot environment
+    (env IS_GOBOT=True). The log file is specified via the 'outputdir'
+    parameter in Robot's interface - robot.run().
+
+    Otherwise use Python's logging facility if IS_GOBOT is not True.
+    User should set the env AUTOBOT_LOG as followed:
       export AUTOBOT_LOG=/path/to/bigrobot.log
     """
     log_file = None
-    is_gobot = None
+    autobot_logger = None
 
     def __init__(self, name=None):
         """
@@ -30,36 +33,8 @@ class Log(object):
           else from name argument if exists,
           else assign default: /tmp/autobot_<user>.log.
         """
-        if os.environ.has_key("AUTOBOT_LOG"):
-            Log.log_file = os.environ["AUTOBOT_LOG"]
-
-        if Log.log_file is None:
-            if name is None:
-                user = getpass.getuser()
-                Log.log_file = '/tmp/autobot_%s.log' % user
-            else:
-                Log.log_file = name
-            os.environ["AUTOBOT_LOG"] = Log.log_file
-
-            # Make sure path to log file exists
-            path_name = os.path.dirname(Log.log_file)
-            self.mkdir_p(path_name)
-
-            if not gobot.is_gobot():
-                default_level = logging.DEBUG
-                logging.basicConfig(format=self.ts_logger() + " - %(levelname)s : %(message)s",
-                                    filename=Log.log_file,
-                                    level=default_level)
-
-    def ts_logger(self):
-        """
-        Return the current timestamp in local time (string format which is
-        compatible with the Robot Framework logger format)
-        e.g., 20140429 15:01:51.039
-        """
-        _TZ = timezone("America/Los_Angeles")
-        local_datetime = datetime.datetime.now(_TZ)
-        return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
+        if gobot.is_gobot() == False:
+            self.set_autobot_log(name)
 
     def mkdir_p(self, path):
         """
@@ -73,6 +48,65 @@ class Log(object):
             if exc.errno == errno.EEXIST and os.path.isdir(path):
                 pass
             else: raise
+
+    def create_log_dir(self, path):
+        # Make sure path to log file exists
+        self.mkdir_p(os.path.dirname(path))
+
+
+    def set_autobot_log(self, name=None):
+        has_changed_filename = False
+        init_state = True
+        if Log.log_file:
+            init_state = False
+        if os.environ.has_key("AUTOBOT_LOG"):
+            if Log.log_file != os.environ["AUTOBOT_LOG"]:
+                Log.log_file = os.environ["AUTOBOT_LOG"]
+                has_changed_filename = True
+        elif name:
+            if Log.log_file != name:
+                Log.log_file = name
+                has_changed_filename = True
+        else:
+            user = getpass.getuser()
+            Log.log_file = '/tmp/autobot_%s.log' % user
+            has_changed_filename = True
+
+        if init_state:
+            self.create_log_dir(Log.log_file)
+
+            Log.autobot_logger = logging.getLogger()
+            Log.autobot_logger.setLevel(logging.DEBUG)
+
+            formatter = logging.Formatter(self.ts_logger() + " - %(levelname)s : %(message)s")
+            file_handler = logging.FileHandler(Log.log_file)
+            file_handler.setLevel(logging.DEBUG)
+            file_handler.setFormatter(formatter)
+            Log.autobot_logger.addHandler(file_handler)
+        elif has_changed_filename:
+            # We want to send logs to a new file. With Python logging module,
+            # you have to reassign the log handler. See:
+            # http://stackoverflow.com/questions/5296130/restart-logging-to-a-new-file-python
+            self.create_log_dir(Log.log_file)
+
+            Log.autobot_logger.handlers[0].stream.close()
+            Log.autobot_logger.removeHandler(Log.autobot_logger.handlers[0])
+
+            formatter = logging.Formatter(self.ts_logger() + " - %(levelname)s : %(message)s")
+            file_handler = logging.FileHandler(Log.log_file)
+            file_handler.setLevel(logging.DEBUG)
+            file_handler.setFormatter(formatter)
+            Log.autobot_logger.addHandler(file_handler)
+
+    def ts_logger(self):
+        """
+        Return the current timestamp in local time (string format which is
+        compatible with the Robot Framework logger format)
+        e.g., 20140429 15:01:51.039
+        """
+        _TZ = timezone("America/Los_Angeles")
+        local_datetime = datetime.datetime.now(_TZ)
+        return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
 
     def _format_log(self, s, level):
         if level:
@@ -111,7 +145,8 @@ class Log(object):
 
     def info(self, s, level=1, also_console=False):
         msg = self._format_log(s, level)
-        if not gobot.is_gobot():
+        if gobot.is_gobot() == False:
+            self.set_autobot_log()
             if also_console:
                 sys.stderr.write(s + '\n')
             logging.info(msg.strip())
@@ -120,21 +155,24 @@ class Log(object):
 
     def warn(self, s, level=1):
         msg = self._format_log(s, level)
-        if not gobot.is_gobot():
+        if gobot.is_gobot() == False:
+            self.set_autobot_log()
             logging.warn(msg.strip())
         else:
             robot_logger.warn(msg)
 
     def debug(self, s, level=1):
         msg = self._format_log(s, level)
-        if not gobot.is_gobot():
+        if gobot.is_gobot() == False:
+            self.set_autobot_log()
             logging.debug(msg.strip())
         else:
             robot_logger.debug(msg)
 
     def trace(self, s, level=1):
         msg = self._format_log(s, level)
-        if not gobot.is_gobot():
+        if gobot.is_gobot() == False:
+            self.set_autobot_log()
             # Python logging module doesn't support trace log level, so
             # improvise with debug.
             logging.debug("TRACE: " + msg.strip())

@@ -19,3 +19,17 @@ s1:
   console_port: 6026
   user: admin
   password: arastra
+      
+s2:
+  ip: 10.9.19.43
+  console_ip: 10.1.8.186
+  console_port: 6003
+  user: admin
+  password: arastra
+    
+s3:
+  ip: 10.9.19.3
+  console_ip: 10.1.8.97
+  console_port: 6003
+  user: admin
+  password: arastra

@@ -396,24 +396,17 @@ T21 Escaping special characters in quoted strings
 	...  snmp-server location 'Location \\n \\r \\n """"'
 	[Tags]  BSC-5011
 
-T22 no debug rest in config-session submode
-	${session_id} =  Cli Get Session Hash
-	Cli Run  master  enable
-	Cli Run  master  config
-	Cli Run  master  session ${session_id}
+T22 Localhost helptext
 	Cli Run and Verify Output  master
-	...  no debug rest
-	...  Warning: submode exited due to deleted object
-	...  flag=False
-	[Tags]  BSC-5116  session
+	...  show controller ?
+	...  Show controller stats
+	[Tags]  BSC-5742
 
-T23 show this in config-session submode
-	${session_id} =  Cli Get Session Hash
-	Cli Run  master  enable
-	Cli Run  master  config
-	Cli Run  master  session ${session_id}
-	Cli Run  master  show this
-	[Tags]  BSC-5115  session
+T23 show controller localhost
+	Cli Run and Verify Output  master
+	...  show controller localhost
+	...  Cpu user Percentage
+	[Tags]  BSC-5863
 
 T24 Chinese characters in commands
 	Cli Run  master  banner \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
@@ -433,7 +426,7 @@ T26 Route and Router help texts
 	Cli Run  master  tenant test
 	Cli Run  master  logical-router
 	Cli Run and Verify Output  master
-	...  route? 0.0.0.0/32 next-hop ip 0.0.0.0
+	...  route? 0.0.0.0/32 next-hop tenant-test
 	...  route Add an IP subnet route on the logical router
 	Cli Run and Verify Output  master
 	...  logical-route?r
@@ -489,7 +482,7 @@ T32 Show running config when cookie session expired
 	${name}=    BsnCommon.get node name    master
 	Cli Run  ${name}  enable
 	Cli Run  ${name}  config
-	Run Keyword and Ignore Error  Cli Run  ${name}  no session ${session_id}
+	Run Keyword and Ignore Error  Cli Run  ${name}  clear session session-id ${session_id}
 	Cli Run and Verify Output  master
 	...  show running-config
 	...  Warning: Running config incomplete due to expired authentication token
@@ -533,8 +526,8 @@ Generate Random Name
 
 Various Suite Setup
 	Base Suite Setup
-	Cli Copy  running-config  config://startup-config
-	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Copy  running-config  snapshot://startup-config
+	Cli Copy  running-config  snapshot://startup-config  node=slave
 
 Various Suite Teardown
 	Base Suite Teardown
@@ -550,5 +543,5 @@ Teardown
 	Cli Run  master  config
 	Cli Run  master  reauth admin adminadmin
 	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Base Test Teardown

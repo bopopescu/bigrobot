@@ -34,7 +34,10 @@ def strip_cruds_after_table_ends(input_list):
         if re.match(r'^[\+-]+$', s):
             break
         i += 1
-    return input_list[:-i]
+    if i == 0:
+        return input_list
+    else:
+        return input_list[:-i]
 
 
 def strip_table_row_dividers(input_list):

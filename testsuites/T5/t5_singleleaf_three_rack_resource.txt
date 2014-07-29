@@ -8,13 +8,13 @@ add fabric switch
   rest add dpid  spine1  00:00:70:72:cf:a8:09:50
   rest add fabric role  spine1  spine
   rest add switch  leaf0
-  rest add dpid  leaf0  00:00:70:72:cf:bc:c7:5e
+  rest add dpid  leaf0  00:00:70:72:cf:b5:ff:0e
   rest add fabric role  leaf0  leaf
   rest add switch  leaf1
-  rest add dpid  leaf1  00:00:70:72:cf:b7:6d:5c
+  rest add dpid  leaf1  00:00:70:72:cf:bc:c7:5e
   rest add fabric role  leaf1  leaf
   rest add switch  leaf2
-  rest add dpid  leaf2  00:00:70:72:cf:b5:ff:0e
+  rest add dpid  leaf2  00:00:70:72:cf:b6:01:f2
   rest add fabric role  leaf2  leaf
   
 delete fabric switch  
