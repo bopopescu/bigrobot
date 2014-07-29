@@ -1,7 +1,7 @@
 * Setting
 Documentation   This suite is my sandbox for experimentation.
 Suite Setup     base suite setup
-Suite Teardown  base suite teardown
+Suite Teardown  my base suite teardown
 Test Setup      base test setup
 Test Teardown   base test teardown
 Force Tags      Vui
@@ -9,6 +9,8 @@ Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords_dev/vui/MyTest.py
 
+* Variables
+${node}         s1
 
 * Test Case
 Test host
@@ -39,9 +41,25 @@ Test directory listing
     bash             h1   find /tmp
 
 Test switch
+    [Tags]  skipped
+    #cli                   ${node}   show version
+    config                ${node}   show version
+    #config                 ${node}   create vlan tunnel7
+    #extreme save config    ${node}
+    #config                 ${node}   show configuration
+
+Test connect and disconnect
     #[Tags]  skipped
-    #cli                   s1   show version
-    config                s1   show version
-    #config                 s1   create vlan tunnel7
-    #extreme save config    s1
-    #config                 s1   show configuration
+    : for  ${index}  in range  1  10
+    #\   config                ${node}   show version
+    \   config                ${node}   create vlan tunnel1
+    \   config                ${node}   configure vlan tunnel1 add ports 5 untagged
+    \   config                ${node}   configure vlan tunnel1 ipaddress 192.168.43.2 255.255.255.0
+    \   config                ${node}   enable ipforwarding vlan tunnel1
+    \   config                ${node}   configure ip-mtu 9194 vlan tunnel1
+    \   node disconnect       ${node}
+    \   sleep                 1
+
+* Keywords
+my base suite teardown
+    config                ${node}   show version

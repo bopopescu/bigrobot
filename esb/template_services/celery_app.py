@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 from celery import Celery
 from kombu import Exchange, Queue
+import autobot.helpers as helpers
+
+
+helpers.load_config(helpers.bigrobot_configs_path() + '/bsn.yaml')
 
 # RabbitMQ Web GUI: http://qa-esb1.qa.bigswitch.com:15672/
 app = Celery('template_services',
@@ -12,7 +16,6 @@ queue_name = 'template_services'
 # Optional configuration, see the application user guide.
 app.conf.update(
     CELERY_TASK_RESULT_EXPIRES=1800,  # 1/2 hour
-    CELERY_ACCEPT_CONTENT=['pickle', 'json', 'msgpack', 'yaml'],
     CELERY_QUEUES=(
         Queue(queue_name,
               Exchange(queue_name),
