@@ -40,7 +40,7 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #              See https://bigswitch.atlassian.net/browse/PAN-772
 
 # 2014-05-23 This prompt can use some cleanup. It was inherited from Cisco => BSN switch => Extreme
-# Extreme config pronmpt:
+# Extreme config prompt:
 #             (Beta) X460-24t.1 #
 #             (Private) X460-24t.1 #
 #             * (Private) X460-24t.1 #   <=== '* ' when there's config change
@@ -49,13 +49,12 @@ _prompt_re = [re.compile(r'[\r\n]\s?(\*\s)?(\(\w+\)\s)?\[?(\w+(-?\w+)?\s?@?)?[\-
 
 
 # Extreme switch errors:
-#  Error: Invalid argument: Invalid datapath id (64-bit hex value): 11:22:GG:33:44
-_error_re = [re.compile(r'%Error'),
-             re.compile(r'invalid argument', re.I),
-             re.compile(r'invalid input', re.I),
-             re.compile(r'(?:incomplete|ambiguous) command', re.I),
-             re.compile(r'connection timed out', re.I),
-             re.compile(r'[^\r\n]+ not found', re.I)]
+#   Error: Can't change primary IP Address. Please unconfig the Primary IP address on VLAN first
+#   %% Invalid name detected at '^' marker.
+#
+_error_re = [re.compile(r'Error: '),
+             re.compile(r'% Invalid name ', re.I),
+            ]
 
 
 class ExtremeSwitchDriver(Driver):

@@ -98,6 +98,11 @@ def summary_log(s, level=2):
     Log().info(s, level, also_console=True)
 
 
+def log_task_output(task_id):
+    info("Task output - http://%s/bigrobot_esb/%s.log.gz"
+         % (bigrobot_log_archiver(), task_id))
+
+
 def autobot_logger():
     """
     The autobot logging handle may need to be passed to another API so API
@@ -105,6 +110,22 @@ def autobot_logger():
     logging API).
     """
     return Log().autobot_logger
+
+
+def autobot_log_level(level):
+    """
+    Default autobot log level is logging.DEBUG from Python 'logging' module.
+    """
+    Log().set_autobot_log_level(level)
+
+
+def autobot_log_send_to_file(filename, close=False):
+    """
+    In addition to writing log messages to autobot logger, also write to
+    the specified file. If close=True, stop writing and close file.
+    """
+    Log().autobot_log_send_to_file(filename, close)
+
 
 def analyze(s, level=3):
     info(s, level)
@@ -480,6 +501,14 @@ def bigrobot_esb(new_val=None, default='False'):
     return _env_get_and_set('BIGROBOT_ESB', new_val, default)
 
 
+def bigrobot_esb_broker(new_val=None,
+                        default='amqp://guest@qa-esb1.qa.bigswitch.com//'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Defines the URI of the ESB broker.
+    """
+    return _env_get_and_set('BIGROBOT_ESB_BROKER', new_val, default)
+
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -555,6 +584,7 @@ def bigrobot_jenkins_server(new_val=None, default='jenkins.eng.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is the Jenkins server for Smoketest (Continuous Integration).
+    http://qa-tools1.qa.bigswitch.com/regression_logs/
     """
     return _env_get_and_set('BIGROBOT_JENKINS_SERVER', new_val, default)
 
@@ -911,6 +941,8 @@ def load_config(yaml_file):
     """
     Load a configuration file which is in YAML format. Result is Python dict.
     """
+    if file_not_exists(yaml_file):
+        environment_failure("File %s does not exist" % yaml_file)
     stream = open(yaml_file, 'r')
     return yaml.load(stream)
 
