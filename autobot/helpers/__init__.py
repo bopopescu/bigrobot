@@ -106,6 +106,22 @@ def autobot_logger():
     """
     return Log().autobot_logger
 
+
+def autobot_log_level(level):
+    """
+    Default autobot log level is logging.DEBUG from Python 'logging' module.
+    """
+    Log().set_autobot_log_level(level)
+
+
+def autobot_log_send_to_file(filename, close=False):
+    """
+    In addition to writing log messages to autobot logger, also write to
+    the specified file. If close=True, stop writing and close file.
+    """
+    Log().autobot_log_send_to_file(filename, close)
+
+
 def analyze(s, level=3):
     info(s, level)
 
@@ -555,6 +571,7 @@ def bigrobot_jenkins_server(new_val=None, default='jenkins.eng.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is the Jenkins server for Smoketest (Continuous Integration).
+    http://qa-tools1.qa.bigswitch.com/regression_logs/
     """
     return _env_get_and_set('BIGROBOT_JENKINS_SERVER', new_val, default)
 
@@ -911,6 +928,8 @@ def load_config(yaml_file):
     """
     Load a configuration file which is in YAML format. Result is Python dict.
     """
+    if file_not_exists(yaml_file):
+        environment_failure("File %s does not exist" % yaml_file)
     stream = open(yaml_file, 'r')
     return yaml.load(stream)
 
