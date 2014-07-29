@@ -31,6 +31,7 @@ if len(sys.argv) < 2:
     usage()
 
 SUITE_FILE = sys.argv[1]
+TEST_TYPE = sys.argv[2]
 
 ARGS = ''
 
@@ -150,14 +151,18 @@ if not os.path.exists(get_env('BIGROBOT_SUITE') + '.txt'):
 
 run_cmd_spaces(get_env('BIGROBOT_BIN') + "/gobot", "version")
 run_cmd_spaces(get_env('BIGROBOT_BIN') + "/gobot", "env")
-#run_cmd(get_env('BIGROBOT_BIN') + "/gobot version")
-#run_cmd(get_env('BIGROBOT_BIN') + "/gobot env")
+# run_cmd(get_env('BIGROBOT_BIN') + "/gobot version")
+# run_cmd(get_env('BIGROBOT_BIN') + "/gobot env")
 
 print("\n============== BigRobot smoke: Start test  ==============")
-#status = run_cmd(get_env('BIGROBOT_BIN') +
+# status = run_cmd(get_env('BIGROBOT_BIN') +
 #                  "/gobot test --include=smoke %s" % ' '.join(ARGS))
-status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
-                 "/gobot", "test")
+if TEST_TYPE is not None:
+    status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
+                 "/gobot", "test", "--include=%s" % TEST_TYPE)
+else:
+    status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
+                     "/gobot", "test")
 
 print "Status: %s" % status
 
