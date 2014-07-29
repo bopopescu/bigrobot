@@ -1,6 +1,8 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import string
+import telnetlib
+
 
 class  T5SwitchPlatform(object):
 
@@ -417,4 +419,139 @@ class  T5SwitchPlatform(object):
   
         except:
             helpers.test_failure("Could not execute command in thermal env. Please check log for errors")
-            return False      
+            return False   
+        
+        
+    def cli_t5_switch_add_dhcp_ip(self, node):
+        '''
+        Objective:
+        - Configure static IP address configuration on switch.
+
+        Inputs:
+        | console_ip | IP Address of Console Server |
+        | console_port | Console Port Number |
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format |
+        | gateway | IP address of default gateway |
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+        '''
+        try:
+            t = test.Test()
+            user = "admin"
+            password = "adminadmin"
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            tn.read_until("login: ", 3)
+            tn.write(user + "\r\n")
+            tn.read_until("Password: ", 3)
+            tn.write(password + "\r\n")
+            tn.read_until('')
+            tn.write("enable \r\n")
+            tn.write("conf t \r\n")
+            tn.write("interface ma1 ip-address dhcp \r\n")
+            helpers.sleep(10)
+            tn.read_until(">")
+            tn.write("exit \r\n")
+            tn.write("exit \r\n")
+            tn.close()
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_t5_switch_delete_dhcp_ip(self, node):
+        '''
+        Objective:
+         - Delete DHCP IP address configuration on switch.
+
+        Inputs:
+        | console_ip | IP Address of Console Server |
+        | console_port | Console Port Number |
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format |
+        | gateway | IP address of default gateway |
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+        '''
+        try:
+            t = test.Test()
+            user = "admin"
+            password = "adminadmin"
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            tn.read_until("login: ", 3)
+            tn.write(user + "\r\n")
+            tn.read_until("Password: ", 3)
+            tn.write(password + "\r\n")
+            tn.read_until('')
+            tn.write("\r\n" + "no interface ma1 ip-address dhcp \r\n")
+#            tn.write("\r\n" + "no interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
+#            tn.write("\r\n" + "no ip default-gateway " + str(gateway) + " \r\n")
+            tn.write("exit" + "\r\n")
+            tn.write("exit" + "\r\n")
+            tn.close()
+            return True
+        except:
+            helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+            return False
+        
+        
+    def rest_get_switch_output_from_controller(self, switch, field=None):
+        '''
+            Objective:
+            - get the switch output from the controller.
+
+            Inputs:
+            | node | switch name  |
+    
+            Return Value:
+            - Return the value of the field [Model, version, image ] 
+        
+        '''
+        t = test.Test()
+        #switch = t.switch(switch)
+        switch_alias = t.switch(switch)
+        helpers.log("The switch alias is %s"  % switch)
+        c = t.controller('master')
+        url = ('/api/v1/data/controller/core/proxy/version[name="%s"]' % switch )
+        helpers.log("Getting the switch %s info from controller %s" % (switch, url) )
+        try:
+            helpers.log("Getting the switch %s info from controller %s" % (switch, url) )
+            c.rest.get(url)
+            data = c.rest.content()
+            helpers.log("The output is %s" % data)
+            t1 = data[0]
+            helpers.log("The t1 output is %s" % (t1))
+            t2 = data[0]["name"]
+            helpers.log("The t2 output is %s" % (t2))
+            t3 = data[0]["response"]
+            helpers.log("The t3 output is %s" % (t3))
+            if ("Model: AS5710" in t3):
+                helpers.log("The value of model is found")
+                return True
+            #t4 = data[0]["response"]["Model"]
+            #helpers.log("The t4 output is %s" % (t4))
+            #t5 = data[0]["response"]["System Information"]
+            #helpers.log("The t5 output is %s" % (t5))
+            
+            if field is None:
+                helpers.log("Got the switch version from controller")
+                return True
+            elif field is "model":
+                helpers.log("getting the switch Model from output")
+                model = data[0]["response"][0]["Model"]
+                helpers.log("Model is found as %s" % model )
+                return model 
+        except:
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return False
+                
+                
+                    
