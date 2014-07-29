@@ -98,6 +98,11 @@ def summary_log(s, level=2):
     Log().info(s, level, also_console=True)
 
 
+def log_task_output(task_id):
+    info("Task output - http://%s/bigrobot_esb/%s.log.gz"
+         % (bigrobot_log_archiver(), task_id))
+
+
 def autobot_logger():
     """
     The autobot logging handle may need to be passed to another API so API
@@ -495,6 +500,14 @@ def bigrobot_esb(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_ESB', new_val, default)
 
+
+def bigrobot_esb_broker(new_val=None,
+                        default='amqp://guest@qa-esb1.qa.bigswitch.com//'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Defines the URI of the ESB broker.
+    """
+    return _env_get_and_set('BIGROBOT_ESB_BROKER', new_val, default)
 
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
