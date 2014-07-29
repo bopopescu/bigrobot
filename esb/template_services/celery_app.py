@@ -6,12 +6,10 @@ import autobot.helpers as helpers
 
 helpers.load_config(helpers.bigrobot_configs_path() + '/bsn.yaml')
 
-# RabbitMQ Web GUI: http://qa-esb1.qa.bigswitch.com:15672/
-app = Celery('template_services',
-             broker='amqp://guest@qa-esb1.qa.bigswitch.com//',
-             backend='amqp://guest@qa-esb1.qa.bigswitch.com//',
-             include=['template_services.tasks'])
 queue_name = 'template_services'
+broker = helpers.bigrobot_esb_broker()
+app = Celery(queue_name, broker=broker, backend=broker,
+             include=[queue_name + '.tasks'])
 
 # Optional configuration, see the application user guide.
 app.conf.update(
@@ -25,6 +23,7 @@ app.conf.update(
     CELERY_DEFAULT_EXCHANGE_TYPE='direct',
     CELERY_DEFAULT_ROUTING_KEY=queue_name,
 )
+
 
 if __name__ == '__main__':
     app.start()

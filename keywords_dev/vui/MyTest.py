@@ -681,24 +681,28 @@ vui@Vuis-MacBook-Pro$
         # Task 1
         res1 = task.cli_show_user.delay(t.params(), nodes[0])
         task_id = res1.task_id
+        helpers.log("Task_id: %s" % task_id)
         results.append(res1)
         result_dict[task_id] = { "node": nodes[0], "action": "show user" }
 
         # Task 2
         res1 = task.cli_show_running_config.delay(t.params(), nodes[1])
         task_id = res1.task_id
+        helpers.log("Task_id: %s" % task_id)
         results.append(res1)
         result_dict[task_id] = { "node": nodes[1], "action": "show running-config" }
 
         # Task 3
         res1 = task.bash_ping_regression_server.delay(t.params(), nodes[1])
         task_id = res1.task_id
+        helpers.log("Task_id: %s" % task_id)
         results.append(res1)
         result_dict[task_id] = { "node": nodes[1], "action": "ping regression server" }
 
         # More tasks
         for node in nodes:
             res1 = task.cli_show_version.delay(t.params(), node)
+            task_id = res1.task_id
             helpers.log("Task_id: %s" % task_id)
             results.append(res1)
             result_dict[task_id] = { "node": node, "action": "show version" }
@@ -730,6 +734,9 @@ vui@Vuis-MacBook-Pro$
             return False
 
         helpers.log("*** Parallel tasks completed")
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)  # display URL of task output
 
         #
         # Check task output
