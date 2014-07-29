@@ -489,7 +489,7 @@ class T5ZTN(object):
             single = True
 
         if not single:
-            url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
+            url = ("http://%s/ztn/switch/%s/startup_config"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave controller does not provide"
                         " any startup-config for the switch")
@@ -511,7 +511,7 @@ class T5ZTN(object):
             except:
                 return helpers.test_failure("Other error connecting to Slave")
 
-            url = ("http://%s/ztn/switch/%s/startup_config?proxy=1&internal=1"
+            url = ("http://%s/ztn/switch/%s/startup_config?internal=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave can compute startup config"
                         " for us if internal=1 flag attached")
@@ -526,7 +526,7 @@ class T5ZTN(object):
                 helpers.log(traceback.print_exc())
                 return helpers.test_failure("Other error connecting to Slave")
 
-        url = ("http://%s/ztn/switch/%s/startup_config?proxy=1&internal=1"
+        url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
                % (str(master_ip), str(mac)))
         helpers.log("Trying to get switch startup config at %s" % url)
         try:
@@ -795,6 +795,7 @@ class T5ZTN(object):
                 startup_config_temp.append(startup_config_line)
                 helpers.log("Keeping line in startup-config: %s"
                             % startup_config_line)
+        startup_config_temp.append("username recovery")
         startup_config = startup_config_temp
 
         running_config_temp = []
@@ -812,7 +813,9 @@ class T5ZTN(object):
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
                 if "username recovery" in running_config_line:
-                    helpers.log("Skipping line: %s" % running_config_line)
+                    running_config_line = "username recovery"
+                    running_config_temp.append(running_config_line)
+                    helpers.log("Rearranging line: %s" % running_config_line)
                     continue
                 if "snmp-server location 'Not set'" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
@@ -1222,10 +1225,12 @@ class T5ZTN(object):
                 c.expect(c.get_prompt(), timeout=300)
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
-                return helpers.test_failure("Error rebooting the switch")
+                helpers.log("Error rebooting the switch")
+                return False
         except:
             helpers.log(c.cli_content())
-            return helpers.test_failure("Error rebooting the switch")
+            helpers.log("Error rebooting the switch")
+            return False
 
         helpers.log("Reboot command executed successfully")
         return True
