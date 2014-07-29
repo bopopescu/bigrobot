@@ -23,15 +23,15 @@ ${short}  1
 ${medium}  10
 ${long}   30
 ${verylong}    120 
-${gw}           10.192.64.1
-${dns}          10.192.3.1
-${domain}       bigswitch.com 
-${mask}	        18
-${VIP1}         10.192.105.150
-${VIP2}         10.192.105.151
+${gw}           10.9.16.1
+${dns}          10.3.0.4
+${domain}       qa.bigswitch.com 
+${mask}	        23
+${VIP1}         10.9.16.19
+${VIP2}         10.9.16.20
 ${namec1}       MY-T5-C10
 ${namec2}       MY-T5-C11
-${ipcno}        10.192.105.255
+${ipcno}        10.192.105.25
 
 * Test Case
 
