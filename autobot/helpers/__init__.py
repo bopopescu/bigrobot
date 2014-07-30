@@ -1075,7 +1075,7 @@ def format_robot_timestamp(timestamp, is_datestamp=False):
     """
     Robot Framework uses the following timestamp format:
         20140523 16:49:38.051
-    Concert it to UTC ISO time format:
+    Convert it to UTC ISO time format:
         2014-05-23T23:49:38.051Z
     """
     match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$',

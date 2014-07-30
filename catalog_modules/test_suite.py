@@ -206,8 +206,9 @@ class TestSuite(object):
 
         self._suite = {
                     'source': source,
-                    'timestamp': helpers.utf8(timestamp),
-                    'datestamp': helpers.utf8(datestamp),
+                    'createtime': helpers.ts_long(),
+                    'starttime': helpers.utf8(timestamp),
+                    'starttime_datestamp': helpers.utf8(datestamp),
                     'github_link': github_link,
                     'name_actual': name_actual,
                     'name': helpers.utf8(suite['@name']),
@@ -272,10 +273,10 @@ class TestSuite(object):
                                 helpers.utf8(a_test['status']['@endtime']))
                 executed = True
             else:
-                status = starttime = endtime = endtime_datestamp = None
+                status = starttime = starttime_datestamp = endtime = endtime_datestamp = None
                 executed = False
-                starttime_datestamp = self._suite['datestamp']
-                # starttime_datestamp = '2014-05-28'
+                # starttime_datestamp = self._suite['starttime_datestamp']
+                #   starttime_datestamp = '2014-05-28'
 
             # This should contain the complete list of attributes. Some may
             # be populated by the Script Catalog while others may be populated
@@ -285,6 +286,7 @@ class TestSuite(object):
                     'tags': tags,
                     'executed': executed,
                     'status': status,
+                    'createtime': helpers.ts_long(),
                     'starttime': starttime,
                     'starttime_datestamp': starttime_datestamp,
                     'endtime': endtime,
