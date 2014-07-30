@@ -364,9 +364,11 @@ class KVMOperations(object):
                                                             netmask=netmask,
                                                             vm_host_name=vm_host_name,
                                                             gateway=gateway)
-#             controller_handle = ControllerDevConf(host=result['vm_ip'], user='admin', password='admiandmin')
-#             controller_handle.config("copy running-config config://firstboot-config")
-#             helpers.summary_log("Success saving firstboot-config")
+            helpers.summary_log("Copying firstboot-config on New Controller: %s" % result['vm_ip'])
+            helpers.sleep(10)
+            bvs = ControllerDevConf(host=result['vm_ip'], user="admin", password="adminadmin", name="test-bvs")
+            bvs.config("copy running-config snapshot://firstboot-config")
+            helpers.summary_log("Success saving firstboot-config")
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
