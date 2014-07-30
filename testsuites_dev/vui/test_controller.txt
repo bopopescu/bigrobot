@@ -7,6 +7,7 @@ Test Teardown   base test teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords/T5.py
+Library         keywords/T5Platform.py
 Library         keywords/Host.py
 Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
@@ -177,7 +178,11 @@ Test enable commands
     my config commands  c1
 
 Test node disconnect/reconnect
-    #[Tags]  skipped
+    [Tags]  skipped
     config            c1   show user
     node disconnect   c1
     cli               c1   show version
+
+Test cli walk
+    #[Tags]  skipped
+    cli walk config   base_hierarchy=fabric-setting

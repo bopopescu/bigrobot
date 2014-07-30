@@ -11,7 +11,7 @@ sender="vui.le@bigswitch.com"
 #receiver="vui.le@bigswitch.com, aruna.mallina@bigswitch.com"
 receiver="bigrobot_stats_collection@bigswitch.com"
 testsuites=$1
-
+test_type=$2
 
 mesg() {
     ts=$(date "+%Y-%m-%d %H:%M:%S")
@@ -34,7 +34,7 @@ if [ ! -x "./gobot" ]; then
 fi
 
 for suite in `echo $testsuites`; do
-    ./bigrobot_sanity_wrapper.py "$suite"
+    ./bigrobot_sanity_wrapper.py "$suite" "$test_type"
 done
 
 # Generate BigRobot log/report.
