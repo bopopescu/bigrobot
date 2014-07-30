@@ -655,11 +655,11 @@ T3.2. Verify that after ZTN configuration change (CLI, GUI, REST), admin is noti
 T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
 	Reboot Switches From CLI
 	#Reboot Switches
-	Cli Copy  running-config  config://temp-config
+	Cli Copy  running-config  snapshot://temp-config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Cli Copy  config://temp-config  running-config
+	Cli Copy  snapshot://temp-config  running-config
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Telnet Reboot Switch  s2
@@ -700,13 +700,13 @@ T3.4. Change ZTN configuration, do not reload the switch, change config again (c
 T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
 	Reboot Switches From CLI
 	#Reboot Switches
-	Cli Copy  running-config  config://temp-config
+	Cli Copy  running-config  snapshot://temp-config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-	Cli Copy  config://temp-config  running-config
+	Cli Copy  snapshot://temp-config  running-config
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
@@ -761,7 +761,7 @@ T3.7. Disconnect all switches from the fabric (ma1 down) then do significant cha
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
-T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
+T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (snapshot://, scp://, file) to running config, watch the fabric come up.
 	Manual Untested
 	[Tags]  manual-untested
 
@@ -1588,8 +1588,8 @@ T9.8. ? Verify that admin can view all images stored on flash at given switch
 *** Keywords ***
 Suite Setup
 	Base Suite Setup
-	Cli Copy  running-config  config://startup-config
-	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Copy  running-config  snapshot://startup-config
+	Cli Copy  running-config  snapshot://startup-config  node=slave
 	${tmp}  params  node=s1  key=mac
 	set suite variable  ${s1_mac}  ${tmp}
 	${tmp}  params  node=s2  key=mac
@@ -1643,7 +1643,7 @@ Suite Setup
 	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Base Suite Teardown
 
 Test Setup
@@ -1652,11 +1652,11 @@ Test Setup
 	Cli Run  master  show switch
 	Cli Run  slave  show switch
 	Cli Run  master  show zerotouch devices
-	Cli Copy  running-config  config://test-config
-	Cli Copy  running-config  config://test-config  node=slave
+	Cli Copy  running-config  snapshot://test-config
+	Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	Cli Copy  config://test-config  running-config
+	Cli Copy  snapshot://test-config  running-config
 	Base Test Teardown
 
 Verify Switch Handshake State
