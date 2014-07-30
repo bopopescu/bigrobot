@@ -98,15 +98,17 @@ class DevConf(object):
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
         except LoginFailure:
             helpers.warn("Login failure: Check the user name and password"
-                         " for device %s (user:%s, password:%s). Also try"
+                         " for device %s (user:%s, password:%s). Try to log"
                          " to log in manually to see what the error is."
                          % (self._host, self._user, self._password))
             self.expect_exception(None, "Login failure", soft_error=True)
             raise
         except TimeoutException:
             helpers.warn("Login failure: Timed out during '%s' connect"
-                         " to device %s. Try to log in manually to see"
-                         " what the error is." % (self._protocol, self._host))
+                         " to device %s (user:%s, password:%s). Try to log"
+                         " in manually to see what the error is."
+                         % (self._protocol, self._host,
+                            self._user, self._password))
             self.expect_exception(None, "Login timed out")
         except:
             if hasattr(self.conn, 'buffer'):
@@ -607,9 +609,28 @@ class ControllerDevConf(BsnDevConf):
 
     def monitor_action(self):
         """
-        This callback method is called by autobot.monitor.Monitor().
-        A side effect is that helpers.log() doesn't work - Robot Framework
-        logger is a bit funky. Workaround is to simply print to stdout.
+        This callback method is a workaround for the infamous 'reauth' issue.
+        When in enable/config mode and idled for longer than 10 minutes, the
+        system will kick you back to cli mode. E.g.,
+
+        controller> enable
+        controller#
+        Timeout: exiting 'enable' mode to 'login' mode
+        controller>
+
+        standby controller> enable
+        standby controller# config
+        standby controller(config)#
+        Timeout: exiting 'config' mode to 'login' mode
+        standby controller>
+
+        controller(config-fabricsetting)#
+        Timeout: exiting 'config-fabricsetting' mode to 'login' mode
+        controller>
+
+        This method is called by autobot.monitor.Monitor(). A side effect
+        is that helpers.log() doesn't work - Robot Framework logger is a
+        bit funky. Workaround is to simply print to stdout.
         """
         self.send("", quiet=True)
         self.expect(quiet=True)

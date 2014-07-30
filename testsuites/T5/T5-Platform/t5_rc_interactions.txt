@@ -220,19 +220,19 @@ Suite Setup
 	Base Suite Setup
 	Config  master  no aaa accounting exec default start-stop local group tacacs+
 	Config  master  no aaa authentication login default group tacacs+ local
-	Cli Copy  running-config  config://startup-config
-	Cli Copy  running-config  config://startup-config  node=slave
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  config://extensive-config
+	Cli Copy  running-config  snapshot://startup-config
+	Cli Copy  running-config  snapshot://startup-config  node=slave
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
-	Compare  extensive-file  config://extensive-config
+	#Compare  extensive-file  snapshot://extensive-config
 	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
-	#Compare  config://extensive-config  running-config
+	#Compare  snapshot://extensive-config  running-config
 	#Compare  extensive-file  running-config
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
-	Compare  config://extensive-config  running-config
+	#Compare  snapshot://extensive-config  running-config
 	Compare  extensive-file  running-config
-	Cli Copy  running-config  config://test-config
+	Cli Copy  running-config  snapshot://test-config
 
 Test Setup
 	Base Test Setup
@@ -240,13 +240,13 @@ Test Setup
 
 Test Teardown
 	Bash Clear Known Hosts
-	Cli Copy  config://test-config  running-config
-	Compare  config://extensive-config  running-config
+	Cli Copy  snapshot://test-config  running-config
+	#Compare  snapshot://extensive-config  running-config
 	Compare  extensive-file  running-config
 	Base Test Teardown
 
 Suite Teardown
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Base Suite Teardown
 

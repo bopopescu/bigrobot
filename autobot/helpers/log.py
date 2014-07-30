@@ -25,6 +25,8 @@ class Log(object):
     """
     log_file = None
     autobot_logger = None
+    autobot_log_level = logging.DEBUG
+    log_files = {}
 
     def __init__(self, name=None):
         """
@@ -53,6 +55,19 @@ class Log(object):
         # Make sure path to log file exists
         self.mkdir_p(os.path.dirname(path))
 
+    def autobot_log_send_to_file(self, filename, close=False):
+        # In addition to writing log messages to autobot logger, also write to
+        # the specified file.
+        # If close=True, stop writing and close file.
+        if close and filename in Log.log_files:
+            del Log.log_files[filename]
+        else:
+            Log.log_files[filename] = True
+
+    def set_autobot_log_level(self, level=None):
+        if level:
+            Log.autobot_log_level = level
+        Log.autobot_logger.setLevel(Log.autobot_log_level)
 
     def set_autobot_log(self, name=None):
         has_changed_filename = False
@@ -76,11 +91,12 @@ class Log(object):
             self.create_log_dir(Log.log_file)
 
             Log.autobot_logger = logging.getLogger()
-            Log.autobot_logger.setLevel(logging.DEBUG)
+            self.set_autobot_log_level()
 
-            formatter = logging.Formatter(self.ts_logger() + " - %(levelname)s : %(message)s")
+            formatter = logging.Formatter(self.ts_logger()
+                                          + " - %(levelname)s : %(message)s")
             file_handler = logging.FileHandler(Log.log_file)
-            file_handler.setLevel(logging.DEBUG)
+            file_handler.setLevel(Log.autobot_log_level)
             file_handler.setFormatter(formatter)
             Log.autobot_logger.addHandler(file_handler)
         elif has_changed_filename:
@@ -92,9 +108,10 @@ class Log(object):
             Log.autobot_logger.handlers[0].stream.close()
             Log.autobot_logger.removeHandler(Log.autobot_logger.handlers[0])
 
-            formatter = logging.Formatter(self.ts_logger() + " - %(levelname)s : %(message)s")
+            formatter = logging.Formatter(self.ts_logger()
+                                          + " - %(levelname)s : %(message)s")
             file_handler = logging.FileHandler(Log.log_file)
-            file_handler.setLevel(logging.DEBUG)
+            file_handler.setLevel(Log.autobot_log_level)
             file_handler.setFormatter(formatter)
             Log.autobot_logger.addHandler(file_handler)
 
@@ -128,6 +145,14 @@ class Log(object):
         else:
             return "%s\n" % s
 
+    def _write_file(self, msg, level):
+        if Log.log_files:
+            formatted_msg = self.ts_logger() + ' - ' + level + ' - ' + msg
+            for filename in Log.log_files:
+                f = open(filename, 'a')
+                f.write(formatted_msg)
+                f.close()
+
     def log(self, s, level=1, to_stderr=False, log_level='info'):
         """
         Write to INFO log by default.
@@ -150,6 +175,7 @@ class Log(object):
             if also_console:
                 sys.stderr.write(s + '\n')
             logging.info(msg.strip())
+            self._write_file(msg, 'INFO')
         else:
             robot_logger.info(msg, also_console=also_console)
 
@@ -158,6 +184,7 @@ class Log(object):
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             logging.warn(msg.strip())
+            self._write_file(msg, 'WARN')
         else:
             robot_logger.warn(msg)
 
@@ -166,6 +193,7 @@ class Log(object):
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             logging.debug(msg.strip())
+            self._write_file(msg, 'DEBUG')
         else:
             robot_logger.debug(msg)
 
@@ -176,5 +204,6 @@ class Log(object):
             # Python logging module doesn't support trace log level, so
             # improvise with debug.
             logging.debug("TRACE: " + msg.strip())
+            self._write_file(msg, 'TRACE')
         else:
             robot_logger.trace(msg)

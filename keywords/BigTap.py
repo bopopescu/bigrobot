@@ -1406,6 +1406,7 @@ class BigTap(object):
                     data_dict = helpers.from_json(data)
                 else:
                     data_dict = data
+                helpers.log("Input dictionary is %s" % data_dict)
                 if "admin" not in user:
                     c_user = t.node_reconnect(node='master', user=str(user), password=password)
                     c_user.rest.put(url, data_dict)
@@ -3677,3 +3678,23 @@ class BigTap(object):
         binary_number = bin(int(integer_passed))[2:].zfill(6)
         binary_number = map(int, binary_number)
         return binary_number
+
+    def rest_add_bigtap_udf(self, udf_number, udf_anchor, udf_offset, soft_error=False):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            if "l3" in udf_anchor:
+                anchor = str("l3-start")
+            else:
+                anchor = str("l4-start")
+
+            url = '/api/v1/data/controller/applications/bigtap/user-defined-offset/udf%s' % str(udf_number)
+            c.rest.patch(url, {"anchor": str(anchor), "offset": int(udf_offset)})
+            if not c.rest.status_code_ok():
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True

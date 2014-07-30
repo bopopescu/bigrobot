@@ -14,7 +14,7 @@ sys.path.insert(1, exscript_path)
 sys.path.insert(2, esb_path)
 
 
-from bsn_services import sample_method_tasks as tasks
+from template_services import tasks
 import autobot.helpers as helpers
 
 

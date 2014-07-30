@@ -927,18 +927,18 @@ class Test(object):
                 con.send('enable;conf;no snmp-server enable')
                 con.send('')
                 con = self.dev_console(node)
-            elif match[0] == 3:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
+#            elif match[0] == 3:
+#                helpers.log("Found a switch Crash Needs to power cycle...")
+#                helpers.log("Power cycling switch : %s " % node)
+#                self.power_cycle(node)
+#                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
+#                n_console = self.dev_console(node, modeless=True)
+#                n_console.send('admin')
+#                helpers.sleep(2)
+#                n_console.send('adminadmin')
+#                helpers.sleep(2)
+#                n_console.send('enable;conf;no snmp-server enable')
+#                n_console = self.dev_console(node)
 
         try:
             # Match login or CLI prompt.
@@ -1393,14 +1393,14 @@ class Test(object):
                 master = self.controller("master")
                 master.config("show switch")
                 master.config("show running-config")
-                master.config("enable; copy running-config config://ztn-base-config")
+                master.config("enable; config; copy running-config snapshot://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
-                master.enable("copy config://ztn-base-config running-config ")
+                master.enable("copy snapshot://ztn-base-config running-config ")
                 master.enable("show running-config")
                 master.enable("show switch")
                 helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
@@ -1482,7 +1482,7 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        c.config("copy config://firstboot-config running-config")
+        c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True
