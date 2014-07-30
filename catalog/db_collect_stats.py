@@ -24,7 +24,11 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 def print_stat(descr, val, untested=None, test_pct=None, manual=None):
     if manual != None:
         print("%-74s %22s  %-22s %8.1f%%  %s" %
-              (descr, val, "manual-untested(%s)" % untested, test_pct, "manual(%s)" % manual))
+              (descr,
+               val,
+               "manual-untested(%s)" % untested,
+               test_pct,
+               "manual(%s)" % manual))
     elif test_pct != None:
         print("%-74s %22s  %-22s %8.1f%%" %
               (descr, val, "manual-untested(%s)" % untested, test_pct))
@@ -133,16 +137,19 @@ def display_stats(args):
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
-        total_tc_func_untested = ih.total_testcases_by_tag([functionality, "manual-untested"])[0]
-        total_tc_func_manual = ih.total_testcases_by_tag([functionality, "manual"])[0]
-        test_pct = test_percentage(total_tc_func - total_tc_func_untested, total_tc_func)
+        total_tc_func_untested = ih.total_testcases_by_tag(
+                                    [functionality, "manual-untested"])[0]
+        total_tc_func_manual = ih.total_testcases_by_tag(
+                                    [functionality, "manual"])[0]
+        test_pct = test_percentage(total_tc_func - total_tc_func_untested,
+                                   total_tc_func)
         print_stat("Total %s tests:" % functionality,
                    total_tc_func,
                    total_tc_func_untested,
                    test_pct,
                    total_tc_func_manual,
                    )
-        total[functionality] = total_tc
+        total[functionality] = total_tc_func
 
     total_tc_executable = ih.total_executable_testcases()
     print_stat("Total executable test cases:", total_tc_executable)
@@ -157,7 +164,8 @@ def display_stats(args):
     print_stat("Total automated/executable test cases:",
                total_tc_automated_executable,
                0,
-               test_percentage(total_tc_automated_executable, total_tc_executable))
+               test_percentage(total_tc_automated_executable,
+                               total_tc_executable))
 
     total_testsuites_in_release_executed = ih.total_testsuites_executed(
                build_name=build)[0]
@@ -179,7 +187,8 @@ def display_stats(args):
 
     print ""
     total_executed = ih.total_testcases_executed(build_name=build)
-    total_untested = untested = ih.total_testcases_by_tag(["manual-untested"])[0]
+    total_untested = untested = ih.total_testcases_by_tag(
+                                    ["manual-untested"])[0]
     test_pct = test_percentage(total_executed[0], total['tests'])
     print_stat("Total test cases (total, executed, passed, failed):",
                (total['tests'],) + total_executed,
@@ -192,6 +201,7 @@ def display_stats(args):
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
         test_pct = test_percentage(total_executed[0], total[functionality])
+
         print_stat("Total %s tests (total, executed, passed, failed):"
                    % functionality,
                    (total[functionality],) + total_executed,

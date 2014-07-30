@@ -9,7 +9,8 @@
 #build="bvs master #bcf_vft-hash-reconcile_10"
 #build="bvs master #2502"
 #build="bvs master ironhorse beta1 aggregated"
-build="bvs master #2534"
+build="bvs master #2685"
+#build="bvs master #2710"
 
 
 
@@ -23,6 +24,7 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 
 release=IronHorse
 output=raw_data.db_collect_stats.py.${ts}.${build_str}.txt
+output_no_timestamp=raw_data.db_collect_stats.py.${build_str}.txt
 
 echo "Timestamp: $ts" >> $output
 echo "Build: $build" >> $output
@@ -37,7 +39,7 @@ echo ""
 echo ""
 echo "Press Control-C if you don't want to copy the report to the web server..."
 
-scp $output root@qa-tools1.qa.bigswitch.com:/var/www/regression_logs/test_catalog
+scp $output root@qa-tools1.qa.bigswitch.com:/var/www/test_catalog/$output_no_timestamp
 
 echo ""
-echo "Report is available at http://qa-tools1.qa.bigswitch.com/regression_logs/test_catalog/${output}"
+echo "Report is available at http://qa-tools1.qa.bigswitch.com/test_catalog/$output_no_timestamp"

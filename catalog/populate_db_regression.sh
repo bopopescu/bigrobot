@@ -22,8 +22,8 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 if [ $? -eq 0 ]; then
     echo "Baseline data for build '$BUILD_NAME' exists."
 else
-    echo "No baseline data for build '$BUILD_NAME'. Start collecting  baseline."
-    ./populate_db_dryrun.sh
+    echo "No baseline data for build '$BUILD_NAME'. Start collecting baseline."
+    time ./populate_db_dryrun.sh
 fi
 
 if [ $# -eq 0 ]; then
@@ -52,7 +52,7 @@ outfile=raw_data.${progname}.output.$ts.log
 
 rm -f test_suites_regression.json test_cases_regression.json
 
-./parse_test_xml_output.py \
+time ./parse_test_xml_output.py \
         --input=$infile \
         --output-suites=test_suites_regression.json \
         --output-testcases=test_cases_regression.json \
