@@ -491,7 +491,57 @@ TC29: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP p
     sleep  10
     verify packet count
     [Tags]  vxlan  run     
-                              
+
+TC30: Send NTP packets and match on NTP Version
+    ${set_udf}=  rest add bigtap udf  0  l4-start  8
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4026531840, "anchor": "l4-start", "value": 402653184, "offset": 8}, "dst-tp-port": 123}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/ntp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  ntp
+
+TC31: Send BOOTP packets and match on Client Mac Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  1  l4-start  40    
+    Should be true  ${set_udf_2}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "dst-tp-port": 67, "src-tp-port": 68, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 65792, "offset": 36}, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 65536, "offset": 40}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  bootp
+
+TC32: Send BOOTP packets and match on Your(client) IP Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  24    
+    Should be true  ${set_udf_1}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 2130706433, "offset": 24}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  bootp  
+                                
 * Keyword
 
 verify packet count
