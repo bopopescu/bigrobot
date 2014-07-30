@@ -55,7 +55,7 @@ ${software_version_string}=  Software Image Version: SwitchLight
 ${default_password}=  adminadmin
 ${default_user}=  admin
 
-### Section A: ONIE, OFAUX Channel  
+
 
 *Test Case
 
@@ -64,19 +64,19 @@ Config the switch and controller as setup
     T5 switch platform test setup
     [Tags]  switch-platform  setup  feature  skipped     
 
-Verify ONIE Installed on Switch
-	Log     Step 1 - verify ONIE installed in switch
-	verify onie installated on switch  s1
-	verify onie installated on switch  s2
-	verify onie installated on switch  s7
-	[Tags]  switch-platform  install  onie  feature  
+#Verify ONIE Installed on Switch
+#	Log     Step 1 - verify ONIE installed in switch
+#	verify onie installed on switch  s1
+#	verify onie installed on switch  s3
+#	verify onie installed on switch  s7
+#	[Tags]  switch-platform  install  onie  feature  
             
 Verify the openflow aux channel count on Switch
 	Log    Step 1 - Get the OF aux channel number
 	verify openflow aux channel  s1  c1
-	verify openflow aux channel  s2  c1  
+	verify openflow aux channel  s3  c1  
 	verify openflow aux channel  s7  c1  
-    [Tags]  switch-platform  ofaux  feature        
+    [Tags]  switch-platform  ofaux  feature         
 
     
 ### SECTION B: Initial Configuration 
@@ -86,7 +86,9 @@ Verify one openflow controller can be configured on Leaf
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]  switch-platform  InitialConfig  feature  
+    add openflow controller  s1  c2
+    add openflow controller  s1  c2
+    [Tags]  switch-platform  InitialConfig  feature    
 
 Verify controller can be modified on Leaf
     delete existing controllers  s1  c1
@@ -105,30 +107,30 @@ Verify multiple openflow controllers can be configured on Leaf
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]  switch-platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature   
 
 Verify Controller IP address is pingable
     ping remote  c1
     [Tags]  switch-platform  InitialConfig  feature  
 
-Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
-    configure dns domain  s1  ${dns_server}  ${dns_domain}
-    Sleep  30
-    cli ping from switch  s1  bigswitch.com
-    [Tags]  switch-platform  InitialConfig  dns  feature      
+#Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30
+#    cli ping from switch  s1  bigswitch.com
+#    [Tags]  switch-platform  InitialConfig  dns  feature        
 
-Verify DNS server and DNS domain can be deleted and added
-    [Tags]  switch-platform  InitialConfig  dns  feature 
-    configure dns domain  s1  ${dns_server}  ${dns_domain}
-    Sleep  30
-    cli ping from switch  s1  bigswitch.com
-    deconfigure dns domain  s1  ${dns_server}  ${dns_domain}
-    Sleep  30 
-    cli execute command  s1  show running-config
-    verify ping fail from switch  s1  bigswitch.com
-    configure dns domain  s1  ${dns_server}  ${dns_domain}
-    Sleep  30
-    cli ping from switch  s1  bigswitch.com
+#Verify DNS server and DNS domain can be deleted and added
+#   [Tags]  switch-platform  InitialConfig  dns  feature 
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30
+#    cli ping from switch  s1  bigswitch.com
+#    deconfigure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30 
+#    cli execute command  s1  show running-config
+#    verify ping fail from switch  s1  bigswitch.com
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#   Sleep  30
+#    cli ping from switch  s1  bigswitch.com
 
 Verify ntp configuration on spine
     configure ntp server  s7  time-c.nist.gov
@@ -147,19 +149,19 @@ Verify ntp server on spine after process ntp restart
     [Tags]  switch-platform  ntp  feature
 
 Verify ntp configuration on leaf
-    configure ntp server  s2  time-c.nist.gov
+    configure ntp server  s3  time-c.nist.gov
     Sleep  5
-    verify ntp server  s2  time-c.nist.gov
-    delete ntp  s2  time-c.nist.gov
+    verify ntp server  s3  time-c.nist.gov
+    delete ntp  s3  time-c.nist.gov
     [Tags]  switch-platform  ntp  feature     
 
 Verify ntp server on leaf after process ntp restart
-    configure ntp server  s2  time-c.nist.gov
+    configure ntp server  s3  time-c.nist.gov
     Sleep  5
-    verify ntp server  s2  time-c.nist.gov
-    bash restart process  s2  ntpd
+    verify ntp server  s3  time-c.nist.gov
+    bash restart process  s3  ntpd
     Sleep  5
-    verify ntp server  s2  time-c.nist.gov    
+    verify ntp server  s3  time-c.nist.gov    
     [Tags]  switch-platform  ntp  feature
 
 #Verify the default gateway configuration can be deleted and added
@@ -176,28 +178,7 @@ Verify multiple SSH connections to Management Port
     [Tags]  Manual
     Manual Passed
     
-Verify multiple telnet connections to Management Port 
-    Log    Step 1 - Verify multiple telnet connections to Management Port
-    [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
-    Manual Passed
-  
-Verify after failure of Master Controller switch connection with backup is re established
-    Log    Step 1 - Both Controller connection is present 
-    Log    Step 2 - Master Controller fails and connection is removed 
-    Log    Step 3 - Connection to Back up controller is established
-    [Tags]  switch-platform  HA    feature 
-    [Tags]  Manual
-    Manual Passed
-    
-Verify after Master Controller comes back Connection reestablished 
-    Log    Step 1 - Verify connection re-establishes after Master Controller connection comes back 
-    Log    Step 2 - Verify the correct information for Master/Backup Controller
-    [Tags]  switch-platform  HA  feature 
-    [Tags]  Manual
-    Manual Passed
-
-    
+   
 ### Section C : Admin/User Authentication     
 ### Section D: System Admin Operation
 
@@ -212,7 +193,7 @@ Shutdown and no shut 10G interface on switch and verify interface state is down 
     unshut interface  s1  ${interface10g}
     Sleep  15
     verify interface state  s1  ${interface10g}  up
-    [Tags]  switch-platform  interface  feature           
+    [Tags]  switch-platform  interface  feature             
 
 Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface1g}
@@ -221,12 +202,12 @@ Shutdown and no shutdown 1G interface on switch and verify interface state is do
     unshut interface  s1  ${interface1g}
     Sleep  15
     verify interface state  s1  ${interface1g}  up
-    [Tags]  switch-platform  interface  feature   
+    [Tags]  switch-platform  interface  feature  
 
 Verify model in Show version for leaf 
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
     verify model in show version  s1  ${leafmodel} 
-    [Tags]  switch-platform  platform  feature 
+    [Tags]  switch-platform  platform  feature  
    
 Verify model in Show version for spine
     Log    Step 1 - Verify right model in Show version for spine as AS6700
@@ -237,11 +218,11 @@ Verify switch interface 1g configuration on switch
     Log    Step 1 - Verify the 1G interface configuration on switch 
     #configure 1g interface on switch  s1  ${interface1g}
     verify 1g interface on switch  s1  ${interface1g}  1G    
-    [Tags]  switch-platform  interface  feature       
+    [Tags]  switch-platform  interface  feature         
 
 verify the ofaux channel on controller  
     verify ofaux channel on controller  c1  ${switch1_name}
-    [Tags]  switch-platform  ofaux  feature
+    [Tags]  switch-platform  ofaux  feature  
 
 Verify the user password can have alphanumeric character 
     [Tags]  switch-platform  usermanagement  feature    
@@ -348,7 +329,19 @@ Verify the show environment Thermal Sensor temperature in switch
     verify show environment thermal status  s1  none  thermal  4  Temperature
     verify show environment thermal status  s1  none  thermal  5  Temperature
                     
- 
+#Test the DHCP configuration 
+#    [Tags]  switch-platform  dhcp  
+#    delete dhcp configuration  s1
+#    cli execute command  s1  "show running-config"
+#    #sleep 20 
+#    add dhcp configuration  s1
+#    cli execute command  s1  "show running-config"
+#    #sleep 20 
+
+#Verify switch output from controller 
+#    [Tags]  switch-platform  test2
+#    get switch output from controller  ${switch1_name}  model 
+    
 * Keywords
 
 T5 switch platform test setup
@@ -359,7 +352,7 @@ T5 switch platform test setup
    #rest add fabric role  ${switch1_name}  leaf
    #sleep  2   
    #rest add switch  ${switch2_name}
-   #${swDpid2}=  rest return switch dpid from ip  s2
+   #${swDpid2}=  rest return switch dpid from ip  s3
    #rest add dpid  ${switch2_name}   ${swDpid2}
    #rest add fabric role  ${switch2_name}  leaf
    #sleep  2
@@ -385,7 +378,7 @@ verify ofaux channel on controller  [Arguments]  ${controller}  ${switch_alias}
     ${retval1}=  cli return ofaux connection from alias  ${controller}  ${switch_alias}
 	Should be True  ${retval1}  
 	         
-verify onie installated on switch  [Arguments]  ${switch}    
+verify onie installed on switch  [Arguments]  ${switch}    
     ${result1}=  bash execute command  ${switch}  cat /proc/mtd
 #	${result1}=  bash  s1  cat /proc/mtd  
     Should contain  ${result1['content']}  onie 
@@ -547,8 +540,18 @@ verify show environment fan status  [Arguments]  ${switch}  ${model}  ${element}
 verify show environment thermal status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
      ${componentVal}=  cli t5 switch show environment thermal  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
     Should Be True  ${componentVal}
-       
+
+delete dhcp configuration  [Arguments]  ${switch}            
+     ${retValue1}=  cli t5 switch delete dhcp ip  ${switch}
+     Should Be True  ${retValue1}     
          
-         
-           
+add dhcp configuration  [Arguments]  ${switch}
+    ${retValue1}=  cli t5 switch add dhcp ip  ${switch}
+    Should Be True  ${retValue1}
+
+
+get switch output from controller  [Arguments]  ${switch}  ${field}
+    ${retvalue1}=  rest get switch output from controller  ${switch}  ${field}         
+    Should Be True  ${retValue1}   
+                
     

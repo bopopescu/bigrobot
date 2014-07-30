@@ -1,0 +1,168 @@
+== T5 Fabric/L2 Bugs Test suite==
+
+*Settings
+Documentation    T5 Fabric/L2 bugs test suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       T5 test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library			 keywords/T5L3.py
+Library          keywords/T5Platform.py
+Library			 keywords/SwitchLight.py
+Library			 keywords/Ixia.py
+Library			 keywords/Host.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource         testsuites/T5/t5_physical_variables.txt
+
+*Test Case
+
+Setup Three Rack Dual Leaf Topology
+	[Tags]  L2  feature   
+	base suite setup   
+    add fabric switch
+    sleep  10
+    rest verify fabric switch all
+	rest verify fabric link common 	
+
+Test to check multiple ip present in the same segment
+	[Tags]  L2  feature  
+	rest add tenant  internal
+	rest add vns  internal  v1
+	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add vns  internal  v2
+	rest add interface to vns  internal  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add router intf  internal  v1
+	rest add router intf  internal  v2
+	rest add vns ip  internal  v1  10.192.18.1  24
+	rest add vns ip  internal  v2  10.192.19.1  24
+	${stream1}=  L3 add  name=stream1  flow=a->c  src_ip=10.192.18.2  src_gw=10.192.18.1  dst_ip=10.192.19.2  src_mac=00:00:01:00:00:01 
+	${stream2}=  L3 add  name=stream2  flow=a->c  src_ip=10.192.18.3  src_gw=10.192.18.1  dst_ip=10.192.19.2  src_mac=00:00:01:00:00:01
+	${stream3}=  L3 add  name=stream3  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.2  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
+    start traffic  
+    rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
+    rest_verify_endpoint_ip_state  internal  v1  10.192.18.3  00:00:01:00:00:01  -1  learned  
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop stream  ${stream3}
+    ${stream4}=  L3 add  name=stream4  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.3  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
+    start traffic  {stream4} 
+	verify traffic rate  tx_rate  rx_rate  c  a
+	stop traffic  
+	rest delete tenant  internal
+
+Test to check multiple ip present in different segment
+    [Tags]  L2  feature     
+	rest add tenant  internal
+	rest add vns  internal  v1
+	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  10
+	rest add vns  internal  v2
+	rest add interface to vns  internal  v2  leaf0-a  ${leaf0a_ixia_intf}  11
+	rest add router intf  internal  v1
+	rest add router intf  internal  v2
+	rest add vns ip  internal  v1  10.192.18.1  24
+	rest add vns ip  internal  v2  10.192.19.1  24
+	${stream1}=  L3 add  name=stream1  flow=a->c  src_ip=10.192.18.2  src_gw=10.192.18.1  dst_ip=10.192.19.2  src_mac=00:00:01:00:00:01  frame_rate=1000  frame_size=68  vlan_id=10 
+	${stream2}=  L3 add  name=stream2  flow=a->c  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.2  src_mac=00:00:01:00:00:01  frame_rate=1000  frame_size=68  vlan_id=11
+	${stream3}=  L3 add  name=stream3  flow=c->a
+    start traffic  
+    rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
+    rest_verify_endpoint_ip_state  internal  v2  10.192.19.2  00:00:01:00:00:01  -1  learned  
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  a  c
+	stop traffic
+	rest delete tenant  internal     
+     
+verify endpoint timeout from one of the host in multiple IP scenario
+	[Tags]  L2  feature   
+	rest add tenant  internal
+	rest add vns  internal  v1
+	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add vns  internal  v2
+	rest add interface to vns  internal  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add router intf  internal  v1
+	rest add router intf  internal  v2
+	rest add vns ip  internal  v1  10.192.18.1  24
+	rest add vns ip  internal  v2  10.192.19.1  24
+	${stream1}=  L3 add  name=stream1  flow=a->c  src_ip=10.192.18.2  src_gw=10.192.18.1  dst_ip=10.192.19.2  src_mac=00:00:01:00:00:01 
+	${stream2}=  L3 add  name=stream2  flow=a->c  src_ip=10.192.18.3  src_gw=10.192.18.1  dst_ip=10.192.19.2  src_mac=00:00:01:00:00:01
+	${stream3}=  L3 add  name=stream3  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.2  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
+    start traffic  
+    rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
+    rest_verify_endpoint_ip_state  internal  v1  10.192.18.3  00:00:01:00:00:01  -1  learned  
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop stream  ${stream3}
+    ${stream4}=  L3 add  name=stream4  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.3  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
+    start traffic  {stream4} 
+	verify traffic rate  tx_rate  rx_rate  c  a
+	stop traffic  
+	delete traffic  ${stream1}
+	sleep  600
+	${result}=  rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
+	Should not be True  ${result}
+	rest_verify_endpoint_ip_state  internal  v1  10.192.18.3  00:00:01:00:00:01  -1  learned
+	rest delete tenant  internal
+
+
+Tear down config and Topology
+	[Tags]  L2  feature          
+	clean configuration
+    base suite teardown
+ 
+
+* Keywords  
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+    
+T5 test teardown
+	delete traffic
+	rest delete portgroup  p5
+	rest delete portgroup  p6
+	rest delete portgroup  p4
+	rest delete tenant  internal
+	base test teardown
+
+T5 test setup
+	base test setup
+	sleep  10
+	
+
+
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0  
