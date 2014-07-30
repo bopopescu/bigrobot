@@ -1249,10 +1249,10 @@ class Test(object):
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
-        console = self.params(name, 'console')
-
-        c1_ip = self.params('c1', 'ip')
-        c2_ip = self.params('c2', 'ip')
+#         console = self.params(name, 'console')
+#
+#         c1_ip = self.params('c1', 'ip')
+#         c2_ip = self.params('c2', 'ip')
         helpers.log("First Adding Switch in master controller for ZTN Bootup...")
         master = self.controller("master")
         if re.match(r'.*spine.*', self.params(name, 'alias')):
@@ -1271,35 +1271,35 @@ class Test(object):
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
 
-        if not ('ip' in console and 'port' in console):
-            return True
-        helpers.log("ZTN setup - found switch '%s' console info" % name)
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
-        else:
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
-        if not helpers.is_switchlight(con.platform()):
-            helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
-            return True
-
-        helpers.log("Reload the switch for ZTN..")
-        con.bash("")
-        con.bash('rm -rf /mnt/flash/boot-config')
-        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
-        con.send('reboot')
-        con.send('')
-        helpers.log("Finish sending Reboot on switch : %s" % name)
+#         if not ('ip' in console and 'port' in console):
+#             return True
+#         helpers.log("ZTN setup - found switch '%s' console info" % name)
+#         if re.match(r'.*spine.*', self.params(name, 'alias')):
+#             helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+#             con = self.dev_console(name, modeless=True)
+#             con.send('admin')
+#             helpers.sleep(2)
+#             con.send('adminadmin')
+#             helpers.sleep(2)
+#             con.send('enable;conf;no snmp-server enable')
+#             con = self.dev_console(name)
+#         else:
+#             helpers.log("Initializaing leafs normally..")
+#             con = self.dev_console(name)
+#         if not helpers.is_switchlight(con.platform()):
+#             helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
+#             return True
+#
+#         helpers.log("Reload the switch for ZTN..")
+#         con.bash("")
+#         con.bash('rm -rf /mnt/flash/boot-config')
+#         con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+#         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+#         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+#         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+#         con.send('reboot')
+#         con.send('')
+#         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
     def setup_ztn_phase2(self, name):
@@ -1383,14 +1383,32 @@ class Test(object):
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 for key in params:
                     self.setup_ztn_phase1(key)
-                helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
+                helpers.log("Sleeping 2 mins.. for ZTN to bring up switchs")
+                helpers.sleep(180)
+                master = self.controller("master")
+                url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
+                master.rest.get(url1)
+                data = master.rest.content()
+                retry = 1
+                for i in range (0, len(data)):
+                    if (data[i]["fabric-connection-state"] == "not-connected") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
+                        helpers.log("Fabric manager status is incorrect wait for another 2 minutes")
+                        master.config("show switch")
+                        master.config("show running-config")
+                        if retry == 0:
+                            helpers.test_failure("Fabric manager status is incorrect")
+                        else:
+                            helpers.log("Sleep 2 mins ..for ZTN to bring up")
+                            helpers.sleep(120)
+                            retry = retry - 1
+
+                helpers.log("Fabric manager status is correct")
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = self.controller("master")
+
                 master.config("show switch")
                 master.config("show running-config")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
@@ -1452,7 +1470,8 @@ class Test(object):
         params = self.topology_params_nodes()
         for key in params:
             if helpers.is_controller(key):
-                pass
+                helpers.log("Tearing down controller ..loading first-boot config.")
+                self.t5_clean_configuration(key)
             elif helpers.is_switch(key):
                 self.teardown_switch(key)
         helpers.debug("Test object teardown ends.%s"
@@ -1481,7 +1500,7 @@ class Test(object):
         t = self
         c = t.controller(name)
 
-        helpers.log("Attempting to delete all tenants")
+        helpers.log("Attempting to loading first-boot config")
         c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
