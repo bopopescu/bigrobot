@@ -442,9 +442,10 @@ class  T5SwitchPlatform(object):
             t = test.Test()
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            tn = t.dev_console(node)
+            #console_ip = t.params(node, "console_ip")
+            #console_port = t.params(node, "console_port")
+            #tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -483,9 +484,10 @@ class  T5SwitchPlatform(object):
             t = test.Test()
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            tn = t.dev_console(node)
+            #console_ip = t.params(node, "console_ip")
+            #console_port = t.params(node, "console_port")
+            #tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
