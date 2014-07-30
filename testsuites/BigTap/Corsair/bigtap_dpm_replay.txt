@@ -508,7 +508,6 @@ TC30: Send NTP packets and match on NTP Version
     verify packet count
     [Tags]  ntp
 
-
 TC31: Send BOOTP packets and match on Client Mac Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
     Should be true  ${set_udf_1}
@@ -526,7 +525,23 @@ TC31: Send BOOTP packets and match on Client Mac Address
     sleep  10
     verify packet count
     [Tags]  bootp
-                              
+
+TC32: Send BOOTP packets and match on Your(client) IP Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  24    
+    Should be true  ${set_udf_1}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 2130706433, "offset": 24}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  bootp  
+                                
 * Keyword
 
 verify packet count
