@@ -549,16 +549,17 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `ipaddr`          host IP address
             Return: true if configuration is successful, false otherwise
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="A"]/segment[name="A1"]/endpoint[name="H1"] {"name": "H1"}
-
+        PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/segment[name="X1"]/endpoint[name="H1"]/ip-address[ip-address="10.251.1.88"] {"ip-address": "10.251.1.88"}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/ip-address[ip-address="%s"]' % (tenant, vnsname, endpointname, ipaddr)
         try:
-            c.rest.patch(url, {"ip-address": ipaddr})
+            #c.rest.patch(url, {"ip-address": ipaddr})
+            c.rest.put(url, {"ip-address": ipaddr})
         except:
             helpers.test_failure(c.rest.error())
         else:
