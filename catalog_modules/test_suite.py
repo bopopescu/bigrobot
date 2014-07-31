@@ -206,7 +206,7 @@ class TestSuite(object):
 
         self._suite = {
                     'source': source,
-                    'createtime': helpers.ts_long(),
+                    'createtime': helpers.ts_long_local(),
                     'starttime': helpers.utf8(timestamp),
                     'starttime_datestamp': helpers.utf8(datestamp),
                     'github_link': github_link,
@@ -286,7 +286,7 @@ class TestSuite(object):
                     'tags': tags,
                     'executed': executed,
                     'status': status,
-                    'createtime': helpers.ts_long(),
+                    'createtime': helpers.ts_long_local(),
                     'starttime': starttime,
                     'starttime_datestamp': starttime_datestamp,
                     'endtime': endtime,
@@ -323,7 +323,7 @@ class TestSuite(object):
         self.total_tests()
 
     def extract_build_attributes(self):
-        ts = helpers.ts_long()
+        ts = helpers.ts_long_local()
         self._build = {'build_name': os.environ['BUILD_NAME'],
                        'starttime': ts,
                        'starttime_datestamp': ts.split('T')[0],
