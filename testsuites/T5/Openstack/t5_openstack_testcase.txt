@@ -16,7 +16,7 @@ Library		     keywords/Ixia.py
 Library          keywords_dev/prashanth/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
-Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 	
@@ -279,52 +279,52 @@ Controller failover
 Trigger HA failover from CLI, then check
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover from CLI Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover from CLI Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover from CLI New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
 
-Failback to previous master
+Trigger HA failover from CLI Failback to previous master
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover from CLI Failback to previous master to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover from CLI Failback to previous master Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover from CLI Failback to previous master New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
 Trigger HA failover via a process restart (floodlight restart) 
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA process restart Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA process restart Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA process restart New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
 Trigger HA failover via master controller node shutdown/reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover via master controller Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover via master controller Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover via master controller New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual failed
 
