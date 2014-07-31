@@ -9,9 +9,10 @@
 #build="bvs master #bcf_vft-hash-reconcile_10"
 #build="bvs master #2502"
 #build="bvs master ironhorse beta1 aggregated"
-build="bvs master #2685"
+#build="bvs master #2685"
 #build="bvs master #2710"
 #build="bvs master #2742"
+build="bvs master #2761"
 #build="bvs master aggregated 2014 wk31"
 
 
@@ -57,7 +58,8 @@ echo "Output: $output" >> $output
 
 #./db_collect_stats.py --release $release --build "$build" | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-suites | tee -a $output
-./db_collect_stats.py --release $release --build "$build" --show-suites --no-show-functional-areas | tee -a $output
+./db_collect_stats.py --release $release --build "$build" --show-suites --show-all | tee -a $output
+#./db_collect_stats.py --release $release --build "$build" --show-suites --no-show-functional-areas | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-untested | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-untested --show-suites | tee -a $output
 
