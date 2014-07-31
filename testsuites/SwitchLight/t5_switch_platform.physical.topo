@@ -7,10 +7,10 @@
 # tg1 : Tester like Ixia
 
 c1:
-  ip:  10.8.25.5
+  ip:  10.8.25.7
   
 c2:
-  ip:  10.8.25.6
+  ip:  10.8.25.8
 
 s1:
   alias: leaf0-a
