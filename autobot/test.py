@@ -1392,7 +1392,7 @@ class Test(object):
                 master.rest.get(url1)
                 data = master.rest.content()
                 for i in range (0, len(data)):
-                    if (data[i]["fabric-connection-state"] == "suspended") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
+                    if (data[i]["fabric-connection-state"] == "suspended") or (data[i]["fabric-connection-state"] == "not_connected"):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
