@@ -29,7 +29,8 @@ def print_stat3(descr, val, pct=None):
         print("%-74s %22s" % (descr, val))
 
 
-def print_stat2(descr, val, untested=None, manual=None, test_pct=None, pass_pct=None, automation_pct=None):
+def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
+                pass_pct=None, automation_pct=None):
     if automation_pct != None:
         print("%-74s %22s  %-22s %-12s %8.1f%% %5.1f%% %5.1f%%" %
               (descr,
@@ -141,7 +142,8 @@ Display test execution stats collected for a specific build.
                         help=("Show the test suites"))
     parser.add_argument('--show-all', action='store_true', default=False,
                         help=("Show all stats"))
-    parser.add_argument('--no-show-functional-areas', action='store_true', default=False,
+    parser.add_argument('--no-show-functional-areas', action='store_true',
+                        default=False,
                         help=("Don't show test details for functional areas"))
     _args = parser.parse_args()
 
@@ -216,21 +218,8 @@ def display_stats(args):
 
 
     total_tc_automated = total_tc - total_tc_manual - total_tc_untested
-    """
-    print_stat2("Total test cases automated (total - (manual + manual-untested)):",
-               total_tc_automated,
-               total_tc_untested,
-               total_tc_manual,
-               percentage(total_tc_automated, total_tc))
 
-    total_tc_automated_executable = total_tc_executable - total_tc_manual
-    print_stat2("Total test cases executable and automated (executable - manual):",
-               total_tc_automated_executable,
-               0,
-               total_tc_manual,
-               percentage(total_tc_automated_executable,
-                          total_tc_executable))
-    """
+
     # total_tc_automated_executable = total_tc_executable - total_tc_manual
     print_stat3("Total test cases automated:",
                total_tc_automated,

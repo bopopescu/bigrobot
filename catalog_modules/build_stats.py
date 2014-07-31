@@ -51,7 +51,7 @@ class BuildStats(object):
         for tc in testcases:
             name = helpers.utf8(tc['product_suite'])
             if name not in suite_names:
-                suite_names[name] = 0
+                suite_names[name] = 1  # initialization
             else:
                 suite_names[name] += 1
         suites = []
