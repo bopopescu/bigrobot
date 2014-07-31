@@ -12,7 +12,7 @@ products:
 test_types:
   - feature
   - scaling
-  - performance
+  #- performance
   - solution
   - longevity
   - negative
