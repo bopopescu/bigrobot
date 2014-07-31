@@ -1040,19 +1040,19 @@ def ts_local():
 def ts_long():
     """
     Return the current timestamp in UTC time (string format),
-    e.g., 2013-09-26T15:57:49z
+    e.g., 2013-09-26T15:57:49.123Z
     """
     utc_datetime = datetime.datetime.utcnow()
-    return utc_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
+    return utc_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
 
 
 def ts_long_local():
     """
     Return the current timestamp in local time (string format),
-    e.g., 2013-09-26T15:57:49z
+    e.g., 2013-09-26T15:57:49.123
     """
     local_datetime = datetime.datetime.now(_TZ)
-    return local_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
+    return local_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
 def ts_logger():
     """
@@ -1073,22 +1073,22 @@ def time_now():
 
 def format_robot_timestamp(timestamp, is_datestamp=False):
     """
-    Robot Framework uses the following timestamp format:
+    Robot Framework records the local time uses the following timestamp format:
         20140523 16:49:38.051
-    Convert it to UTC ISO time format:
-        2014-05-23T23:49:38.051Z
+    Convert it to local ISO time format:
+        2014-05-23T16:49:38.051
     """
     match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$',
                      timestamp)
     if not match:
         environment_failure("Incorrect time format: '%s'" % timestamp)
     (year, month, date, hour, minute, sec, msec) = match.groups()
-    hour = int(hour) + 7  # change PST to UTC
+    # hour = int(hour) + 7  # change PST to UTC
     if is_datestamp:
         s = '%s-%s-%s' % (year, month, date)
     else:
-        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date,
-                                       hour, minute, sec, msec)
+        s = '%s-%s-%sT%s:%s:%s.%s' % (year, month, date,
+                                      hour, minute, sec, msec)
     return s
 
 
