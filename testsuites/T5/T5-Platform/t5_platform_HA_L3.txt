@@ -28,7 +28,7 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 Single Tenant Multiple VNS HA Test
-	[Tags]	sanity  feature  
+	[Tags]	sanity  feature  smoke
 	mininet start    node=mn1    new_topology=--num-spine 2 --num-rack 3 --num-bare-metal 2 --num-hypervisor 0 --dual-tor
 	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Mininet
 	Configure 1 Tenant with Multiple VNSs & Gateway Interfaces
