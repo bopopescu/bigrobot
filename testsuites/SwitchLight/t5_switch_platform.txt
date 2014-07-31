@@ -25,7 +25,7 @@ ${dns_server}  10.3.0.4
 ${dns_domain}  qa.bigswitch.com
 ${j}    1
 ${switch1_name}=  leaf0-a
-${switch2_name}=  leaf0-b
+${switch3_name}=  leaf1-a
 ${switch7_name}=  spine0
 ${tenant}=        testTenant 
 ${vns}=           v1
@@ -51,7 +51,7 @@ ${ratetolerance}=     10
 ${tolerance}=         5
 ${sleepAfter}=    10
 ${sleepBefore}=   5
-${software_version_string}=  Software Image Version: SwitchLight
+${software_version_string}=  Software Image Version: Switch Light
 ${default_password}=  adminadmin
 ${default_user}=  admin
 
@@ -224,30 +224,30 @@ verify the ofaux channel on controller
     verify ofaux channel on controller  c1  ${switch1_name}
     [Tags]  switch-platform  ofaux  feature  
 
-Verify the user password can have alphanumeric character 
-    [Tags]  switch-platform  usermanagement  feature    
-    verify user password update  s1  ${default_user}  ${default_password}  admin1234
-    reset username password  s1  ${default_user}  ${new_password}
+#Verify the user password can have alphanumeric character 
+#    [Tags]  switch-platform  usermanagement  feature  test1   
+#    verify user password update  s1  ${default_user}  ${default_password}  admin1234
+#    reset username password  s1  ${default_user}  ${new_password}
 
-Verify the user password can have special characters !@#
-    [Tags]  switch-platform  usermanagement  feature  
-    verify user password update  s1  ${default_user}  ${default_password}  admin!@#
-    reset username password  s1  ${default_user}  ${new_password}  
+#Verify the user password can have special characters !@#
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin!@#
+#    reset username password  s1  ${default_user}  ${new_password}  
 
-Verify the user password can have special characters $%^ 
-    [Tags]  switch-platform  usermanagement  feature  
-    verify user password update  s1  ${default_user}  ${default_password}  admin$%^
-    reset username password  s1  ${default_user}  ${new_password}    
+#Verify the user password can have special characters $%^ 
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin$%^
+#    reset username password  s1  ${default_user}  ${new_password}    
 
-Verify the user password can have special characters &*(
-    [Tags]  switch-platform  usermanagement  feature  
-    verify user password update  s1  ${default_user}  ${default_password}  admin&*(
-    reset username password  s1  ${default_user}  ${new_password}    
+#Verify the user password can have special characters &*(
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin&*(
+#    reset username password  s1  ${default_user}  ${new_password}    
 
-Verify the user password can have small and big cap letters alphanuric and special aDmin12@#
-    [Tags]  switch-platform  usermanagement  feature  
-    verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
-    reset username password  s1  ${default_user}  ${new_password}
+#Verify the user password can have small and big cap letters alphanuric and special aDmin12@#
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
+#    reset username password  s1  ${default_user}  ${new_password}
 
 Verify the show environment psu output for Vin 
     [Tags]  switch-platform  environment   
@@ -351,10 +351,10 @@ T5 switch platform test setup
    #rest add dpid  ${switch1_name}   ${swDpid1}
    #rest add fabric role  ${switch1_name}  leaf
    #sleep  2   
-   #rest add switch  ${switch2_name}
+   #rest add switch  ${switch3_name}
    #${swDpid2}=  rest return switch dpid from ip  s3
-   #rest add dpid  ${switch2_name}   ${swDpid2}
-   #rest add fabric role  ${switch2_name}  leaf
+   #rest add dpid  ${switch3_name}   ${swDpid2}
+   #rest add fabric role  ${switch3_name}  leaf
    #sleep  2
    #rest add switch  ${switch7_name}
    #${swDpid7}=  rest return switch dpid from ip  s7
@@ -365,7 +365,7 @@ T5 switch platform test setup
 T5 switch platform test teardown
    rest delete tenant  ${tenant}  
    rest delete fabric switch  ${switch1_name} 
-   rest delete fabric switch  ${switch2_name}
+   rest delete fabric switch  ${switch3_name}
    rest delete fabric switch  ${switch7_name}
    base suite teardown
    sleep  5     
@@ -510,19 +510,19 @@ deconfigure 1g interface on switch  [Arguments]  ${switch}  ${interface}
     Should Be True  ${ret_value_1}
    
 change user password  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
-    ${ret_value_1}=  cli change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    ${ret_value_1}=  cli t5 switch change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
     Should Be True  ${ret_value_1}
 
 verify user password update  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
     change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
-    ${ret_vlaue1}=  cli verify password change  ${switch}  ${user}  ${updatepass}  ${software_version_string}              
+    ${ret_vlaue1}=  cli t5 switch verify password change  ${switch}  ${user}  ${updatepass}  ${software_version_string}              
     Sleep  10
     Set Global Variable  ${newpassword}  ${updatepass}
     Should be True  ${ret_vlaue1}
 
 reset username password  [Arguments]  ${switch}  ${user}  ${newpassword}  
     change user password  ${switch}  ${user}  ${newpassword}  ${default_password} 
-    ${ret_vlaue1}=  cli verify password change  ${switch}  ${user}  ${default_password}  ${software_version_string}
+    ${ret_vlaue1}=  cli t5 switch verify password change  ${switch}  ${user}  ${default_password}  ${software_version_string}
     Should Be True  ${ret_vlaue1}  
 
 verify show environment psu  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component} 
@@ -548,7 +548,6 @@ delete dhcp configuration  [Arguments]  ${switch}
 add dhcp configuration  [Arguments]  ${switch}
     ${retValue1}=  cli t5 switch add dhcp ip  ${switch}
     Should Be True  ${retValue1}
-
 
 get switch output from controller  [Arguments]  ${switch}  ${field}
     ${retvalue1}=  rest get switch output from controller  ${switch}  ${field}         
