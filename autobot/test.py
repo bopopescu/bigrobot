@@ -1344,7 +1344,9 @@ class Test(object):
             helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
         con.cli("")
         self.node_reconnect(name)
-        # Need to add switch connect verification..
+        helpers.log("Closing dev_console session for switch : %s" % name)
+        con.close()
+        # Need to add switch connect verification.. Added in Setup so we can ignore verifying the switch connections here.
         return True
 
 
