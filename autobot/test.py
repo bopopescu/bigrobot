@@ -1383,16 +1383,24 @@ class Test(object):
                         self.setup_switch_post_clean_config(key)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                master = self.controller("master")
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
                 helpers.sleep(120)
+                url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
+                master.rest.get(url1)
+                data = master.rest.content()
+                for i in range (0, len(data)):
+                    if (data[i]["fabric-connection-state"] == "suspended") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
+                        helpers.test_failure("Fabric manager status is incorrect")
+                        helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
+                helpers.log("Fabric manager status is correct")
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = self.controller("master")
                 master.config("show switch")
                 master.config("show running-config")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
