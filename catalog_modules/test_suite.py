@@ -306,7 +306,14 @@ class TestSuite(object):
                     test['build_number'] = os.environ['BUILD_NUMBER']
                 if 'BUILD_URL' in os.environ:
                     test['build_url'] = os.environ['BUILD_URL']
-                self.db_find_and_modify_testcase(test)
+
+                # 2014-07-31 We probably don't need to update baseline
+                # anymore since the strategy has chanced to collect baseline
+                # data for every build instead of maintaining just a single
+                # baseline for an extended duration...
+                #
+                # self.db_find_and_modify_testcase(test)
+
                 self.db_find_and_modify_regression_testcase(test)
                 # self.db_insert(test, collection='test_cases_archive')
             else:

@@ -1,5 +1,10 @@
 #!/bin/sh -x
-# 'infile': a file which contains a list of output.xml files (path included).
+# Search for all the BigRobot test structured log files (output.xml).
+# Parse the log files and populate the test catalog database with the
+# test results.
+#
+# 'infile': If specified, it is a file which contains a list of output.xml
+#           files (path included).
 #
 
 usage() {
