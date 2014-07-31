@@ -1270,7 +1270,9 @@ class Test(object):
         if fabric_role == 'leaf':
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
-
+        helpers.log("Success adding switch in controller..%s" % str(name))
+        helpers.sleep(10)
+        return True
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
