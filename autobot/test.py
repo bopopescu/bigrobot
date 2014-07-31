@@ -1494,7 +1494,11 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        c.config("copy snapshot://firstboot-config running-config")
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN knob is True just loding the ztn-base-config")
+        else:
+            helpers.log("Loading firstboot-config ...")
+            c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True
