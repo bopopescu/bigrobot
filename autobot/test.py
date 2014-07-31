@@ -1270,7 +1270,10 @@ class Test(object):
         if fabric_role == 'leaf':
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
-
+        helpers.log("Success adding switch in controller..%s" % str(name))
+        helpers.sleep(10)
+        if helpers.get_env("ZTN_RELOAD") != "True":
+            return True
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
@@ -1381,16 +1384,25 @@ class Test(object):
                         self.setup_switch_post_clean_config(key)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                master = self.controller("master")
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
                 helpers.sleep(120)
+                url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
+                master.rest.get(url1)
+                data = master.rest.content()
+                for i in range (0, len(data)):
+                    helpers.log("Checking switch Connections state from controller...state: %s" % data[i]["fabric-connection-state"])
+                    if (data[i]["fabric-connection-state"] == "suspended") or (data[i]["fabric-connection-state"] == "not_connected"):
+                        helpers.test_failure("Fabric manager status is incorrect")
+                        helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
+                helpers.log("Fabric manager status is correct")
                 helpers.log("Reconnecting switch consoles and updating switch IP's....")
                 for key in params:
                     self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = self.controller("master")
                 master.config("show switch")
                 master.config("show running-config")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
@@ -1482,7 +1494,11 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        c.config("copy snapshot://firstboot-config running-config")
+        if helpers.bigrobot_test_ztn().lower() == 'true':
+            helpers.log("ZTN knob is True just loding the ztn-base-config")
+        else:
+            helpers.log("Loading firstboot-config ...")
+            c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True
