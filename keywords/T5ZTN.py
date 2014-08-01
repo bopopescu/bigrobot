@@ -1371,3 +1371,85 @@ class T5ZTN(object):
         t = test.Test()
         t.power_cycle(switch)
         return True
+    
+    
+    
+    def get_controller_switch_image(self, node='master'):
+        """
+        Get SwitchLight version on the controller
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - True if images are present, False otherwise
+        Author:  Mingtao
+        """
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log("Get switch image on controller: %s" % node  )
+        c.bash("ls -l /usr/share/floodlight/zerotouch")
+        output = c.cli_content()
+        output = helpers.strip_cli_output(output)
+        output = helpers.str_to_list(output)   
+        for line in output:    
+            helpers.log("INFO: line is - %s" % line)            
+            match = re.search(r'.*switchlight-(.*)-powerpc-.*.swi', line)
+            if match:
+                helpers.log("INFO: image signature is: %s" % match.group(1))
+                return  match.group(1)         
+        helpers.test_failure("ERROR: there is not swi image in controller:  %s" % node)        
+        
+    def get_controller_switch_installer(self, node='master'):
+        """
+        Get SwitchLight version on the controller
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - True if images are present, False otherwise
+        Author:  Mingtao
+        """
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log("Get switch installer version on controller: %s" % node  )
+        c.bash("ls -l /usr/share/floodlight/zerotouch")
+        output = c.cli_content()
+        output = helpers.strip_cli_output(output)
+        output = helpers.str_to_list(output)   
+        for line in output:    
+            helpers.log("INFO: line is - %s" % line)            
+            match = re.search(r'.*switchlight-(.*)-powerpc-.*.installer', line)
+            if match:
+                helpers.log("INFO: installer signature is: %s" % match.group(1))
+                return  match.group(1)         
+        helpers.test_failure("ERROR: there is not installer in controller:  %s" % node)            
+                
+    def cli_get_switch_image(self, switch):
+        '''
+           return the local node role:
+          Author: Mingtao
+          input:  node  - controller
+                           c1 c2
+          usage:
+          output: active or stand-by
+          fails if there is no domain-leader for the cluster
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_get_switch_image ')
+        c.cli('show switch %s version ' %switch)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        for line in temp:
+            helpers.log("INFO: line is - %s" % line)
+            match = re.match(r'Software Image Version: Switch Light OS (.*)', line)
+            if match:
+                helpers.log("INFO: image signature is: %s" % match.group(1))
+                return  match.group(1)         
+        helpers.test_failure("ERROR: Did not get the version for siwtch %s" % switch)        
+
+
+      
