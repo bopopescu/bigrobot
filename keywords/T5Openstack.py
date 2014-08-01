@@ -1,8 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import re
-import autobot.restclient as restclient
-from netaddr import *
+import netaddr
 
 class T5Openstack(object):
 
