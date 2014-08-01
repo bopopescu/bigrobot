@@ -190,7 +190,7 @@ Test cli walk
 Test background ping
     #[Tags]  skipped
     bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng  interval=0.2
-    sleep             5
+    sleep             10
     ${result}=        bash ping background stop    c1  label=vui_bg_ping
     should be true    ${result} == 0
 
