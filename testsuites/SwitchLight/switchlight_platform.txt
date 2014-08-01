@@ -22,7 +22,7 @@ Verify one openflow controller can be configured
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]  t5  platform  
+    [Tags]  t5  platform  feature  
 
 Verify controller can be modified 
     delete existing controllers  s1  c1
@@ -32,7 +32,7 @@ Verify controller can be modified
     delete existing controllers  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
-    [Tags]  t5  platform  
+    [Tags]  t5  platform  feature  
 
 Verify multiple openflow controllers can be configured
     delete existing controllers  s1  c1
@@ -41,21 +41,21 @@ Verify multiple openflow controllers can be configured
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]  t5  platform  
+    [Tags]  t5  platform  feature  
 
 T5987: Verify Controller IP address is pingable
     ping remote  s1
-    [Tags]  t5  platform  
+    [Tags]  t5  platform  feature  
 
 T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]  t5  platform      
+    [Tags]  t5  platform  feature      
 
 T5981: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]  t5  platform      
+    [Tags]  t5  platform  feature      
  
 Shutdown an interface and verify interface state is down
     shut interface  s1  ethernet1
@@ -64,7 +64,7 @@ Shutdown an interface and verify interface state is down
     unshut interface  s1  ethernet1
     Sleep  15
     verify interface state  s1  ethernet1  up
-    [Tags]  t5  platform  jira-pan-741       
+    [Tags]  t5  platform  jira-pan-741  feature       
 
 T5983: Verify ma1 ip address configuration via static config
     delete static ip  s1  ${netmask}  ${gateway}
@@ -74,7 +74,7 @@ T5983: Verify ma1 ip address configuration via static config
     add dns  s1  ${dns_server}  ${dns_domain}
     Sleep  60
     verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]  t5  platform    
+    [Tags]  t5  platform  feature    
     
 Verify cli:show forwarding crc status
     enable crc forwarding  s1
@@ -83,14 +83,14 @@ Verify cli:show forwarding crc status
     disable crc forwarding  s1
     Sleep  5
     verify crc is disabled  s1
-    [Tags]  sanity  JIRA_PAN_651        
+    [Tags]  sanity  JIRA_PAN_651  feature        
 
 Verify ntp
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  t5  platform  ntp     
+    [Tags]  t5  platform  ntp  feature     
 
 Verify ntp server after process ntp restart
     configure ntp server  s1  time-c.nist.gov
@@ -99,7 +99,7 @@ Verify ntp server after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov    
-    [Tags]  t5  platform  ntp
+    [Tags]  t5  platform  ntp  feature
         
 * Keywords 
 
