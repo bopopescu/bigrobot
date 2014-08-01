@@ -5,7 +5,7 @@ import keywords.T5 as T5
 import keywords.T5Platform as T5Platform 
 import keywords.T5L3 as T5L3
 import keywords.BsnCommon as BsnCommon
-
+from mingtao_services import tasks as tasks
 
  
 class T5_longevity(object):
@@ -182,18 +182,21 @@ class T5_longevity(object):
     def spawn_log_in(self,sessions):
        
         bsn =  BsnCommon.BsnCommon()    
-        helpers.log("***Etnering==> spawn_log_in   \n" )
+        helpers.log("***Entering==> spawn_log_in   \n" )
         
         t = test.Test()
         ip = bsn.get_node_ip('master')
   
-        for _ in range (0, int(sessions)):     
+        for loop in range (0, int(sessions)): 
+            helpers.log('USR info:  this is loop:  %d' % loop )
             n = t.node_spawn(ip)                    
             content= n.cli('show session')
             
-        helpers.log("***Entering==> spawn_log_in   \n" )
+        helpers.log("***Exiting==> spawn_log_in   \n" )
 
         return True
+
+
 
     def check_controller(self):
        
@@ -282,7 +285,15 @@ class T5_longevity(object):
                     c.send(helpers.ctrl('c'))
                     helpers.summary_log('Ctrl C is hit during phase-1-migrate')
                     return True         
-                c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)                       
+                c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)   
+                c.expect(r'new state: phase-2-migrate',timeout=360)
+                if breakpoint == 'phase2':
+                    c.send(helpers.ctrl('c'))
+                    helpers.summary_log('Ctrl C is hit during phase-1-migrate')
+                    return True         
+                c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)   
+                c.expect(r'The system is going down for reboot NOW!',timeout=360)
+                                                    
                 return True         
 
             elif role == 'stand-by':
@@ -291,9 +302,119 @@ class T5_longevity(object):
                 c.expect(r'Leader->begin-upgrade-old state: begin-completed',timeout=360)
                 c.expect(r'Leader->partition state: partition-completed',timeout=360)
                 c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
-                c.expect(r'rebooting',timeout=360)
+                c.expect(r'[R|r]ebooting',timeout=360)
                 
                 return True
                 
                 
-              
+    def upgrade_copy_image_HA_parallel(self,nodes,image):
+       
+        helpers.log("***Entering==> upgrade_copy_image_HA_parallel   \n" )
+        t = test.Test()
+        
+        results = []
+        result_dict = {}
+        task = tasks.UpgradeCommands()
+        #
+        # Parallel execution happens below
+        #     
+        for node in nodes:
+            res1 = task.cli_copy_upgrade_pkg.delay(t.params(),src=image,node=node)
+            results.append(res1)
+            task_id = results[-1].task_id
+            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+  
+        # Check task status - are we done yet?
+        #
+        
+        self.task_finish_check_parallel(results,result_dict)        
+        helpers.log("***Exiting==> upgrade_copy_image_HA_parallel  \n" )
+
+        return True             
+    
+    def upgrade_statge_image_HA_parallel(self,nodes):
+       
+        helpers.log("***Entering==> upgrade_statge_image_HA_parallel   \n" )
+        t = test.Test()
+        
+        results = []
+        result_dict = {}
+        task = tasks.UpgradeCommands()
+        #
+        # Parallel execution happens below
+        #     
+        for node in nodes:
+            res1 = task.cli_stage_upgrade_pkg.delay(t.params(),node=node)
+            results.append(res1)
+            task_id = results[-1].task_id
+            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+  
+        # Check task status - are we done yet?
+        self.task_finish_check_parallel(results,result_dict)
+        
+        helpers.log("***Exiting==> upgrade_statge_image_HA_parallel  \n" )
+       
+        return True      
+    
+    def upgrade_launch_image_HA_parallel(self,nodes):
+       
+        helpers.log("***Entering==> upgrade_launch_image_HA_parallel   \n" )
+        t = test.Test()
+        
+        results = []
+        result_dict = {}
+        task = tasks.UpgradeCommands()
+        #
+        # Parallel execution happens below
+        #     
+        for node in nodes:
+            res1 = task.cli_launch_upgrade_pkg.delay(t.params(),node=node)
+            results.append(res1)
+            task_id = results[-1].task_id
+            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+  
+        # Check task status - are we done yet?
+        self.task_finish_check_parallel(results,result_dict)
+        
+        helpers.log("***Exiting==> upgrade_launch_image_HA_parallel  \n" )
+       
+        return True      
+        
+           
+    
+    def task_finish_check_parallel(self,results,result_dict):
+       
+        helpers.log("***Entering==> task_finish_check_parallel   \n" )
+        is_pending = True
+        iteration = 0
+        while is_pending:
+            is_pending = False
+            iteration += 1
+            helpers.sleep(1)
+            helpers.log("USR INFO:  result is %s" %results)                             
+           
+            for res in results:
+                task_id = res.task_id
+                action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
+                if res.ready() == True:
+                    helpers.log("****** %d.READY     - task_id(%s)['%s']"
+                                % (iteration, res.task_id, action))
+                else:
+                    helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
+                                % (iteration, res.task_id, action))
+                    is_pending = True
+        helpers.log("*** Parallel tasks completed")
+        
+        #
+        # Check task output
+        #
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)
+            output = res.get()
+            result_dict[task_id]["result"] = output
+        helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
+        return True             
+    
+
+  
