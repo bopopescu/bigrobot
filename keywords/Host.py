@@ -60,7 +60,36 @@ class Host(object):
             helpers.log('scp completed successfully')
             return True
 
-    def bash_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+    def bash_ping_background_start(self, *args, **kwargs):
+        """
+        Start background ping. It accepts the same options as bash_ping
+        although it requires an additional 'label' argument. The label is
+        used to name the output log and to store the background PID. So it
+        needs to be unique for the duration of the background ping.
+
+        To stop background ping, call the keyword 'bash ping background stop'
+        and provide it with the label.
+
+        Example:
+        | bash ping background start | c1 | dest_ip=www.cnn.com | label=test001 |
+        | bash ping background stop | c1 | label=test001 |
+        """
+        _ = self.bash_ping(background=True, *args, **kwargs)
+
+    def bash_ping_background_stop(self, node, label):
+        """
+        See details in keyword 'bash ping background start'.
+        """
+        t = test.Test()
+        n = t.node(node)
+        ping_output_file = '/tmp/ping_background_output.%s.log' % label
+        ping_pid_file = ping_output_file + ".pid"
+        pid = helpers.str_to_list(n.bash('cat %s' % ping_pid_file)['content'])[1]
+        n.bash('kill -2 %s' % pid)
+        ping_output = n.bash('tail -20 %s' % ping_output_file)['content']
+        return helpers._ping(ping_output=ping_output)
+
+    def bash_ping(self, node=None, dest_ip=None, dest_node=None, *args, **kwargs):
         """
         Perform a ping from the shell. Returns the loss percentage
         - 0   - 0% loss
@@ -74,6 +103,7 @@ class Host(object):
         - count:     Number of ping packets to send
         - ttl:       IP Time-to-live
         - record_route:  ${true}  - to include RECORD ROUTE option
+        - interval:  Time in seconds (floating point value allowed) to wait between sending packets.
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
@@ -400,7 +430,7 @@ class Host(object):
         content = n.bash("%s " % cmd)['content']
         str_list = helpers.strip_cli_output(content, to_list=True)
         return  str_list
-    
+
     def bash_ifconfig_ip_address(self, node, ipaddr, intf, down=False):
         """
         Adding IP address to Host interface,For tagged interface user needs

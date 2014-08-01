@@ -184,5 +184,17 @@ Test node disconnect/reconnect
     cli               c1   show version
 
 Test cli walk
-    #[Tags]  skipped
+    [Tags]  skipped
     cli walk config   base_hierarchy=fabric-setting
+
+Test background ping
+    #[Tags]  skipped
+    bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng  interval=0.2
+    sleep             5
+    ${result}=        bash ping background stop    c1  label=vui_bg_ping
+    should be true    ${result} == 0
+
+Test run command (helpers)
+    [Tags]  skipped
+    run cmd test      c1
+
