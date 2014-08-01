@@ -38,11 +38,11 @@ Single Tenant Multiple VNS HA Test
 	
 	
 Verify HA Cluster Formation
-   [Tags]  feature
+   [Tags]  feature  smoke
    Verify the cluster formation 
    
  Verify Cluster Election Take-Leader
-	[Tags]  feature  
+	[Tags]  feature  smoke
 	Verify cluster election take leader
 	
 Verify Cluster Election Re-run
