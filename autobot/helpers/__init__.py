@@ -1902,6 +1902,12 @@ def split_and_strip(input_str, split_str=','):
     return [x.strip() for x in input_str.split(split_str)]
 
 
+def strip_ctrl_chars(string):
+    # Strip control chars, such as
+    #   \x07 - ^G - Bell
+    return re.sub(r'[\x07]', '', string)
+
+
 def strip_cli_output(input_str, to_list=False):
     """
     The convention from the expect library (Exscript) is as followed:
