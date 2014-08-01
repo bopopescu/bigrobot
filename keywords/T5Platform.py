@@ -3829,7 +3829,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -3870,7 +3874,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -3901,7 +3905,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
                 re.match(r' clear session session-id', string) or re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
@@ -3997,7 +4001,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -4038,7 +4046,8 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4102,7 +4111,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or \
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' test path', string) or \
                 re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string) or \
                 re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4208,9 +4217,13 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-
-        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
-        c.expect(prompt_re)
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        #prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
+        #c.expect(prompt_re)
         content = c.cli_content()
         helpers.log("********** CONTENT ************\n%s" % content)
 
@@ -4291,7 +4304,7 @@ class T5Platform(object):
                     helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
-                if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
+                if key == "debug" or key == "terminal"  or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
                     helpers.log("Ignore line '%s'" % line)
                     num = num - 1
                     continue
