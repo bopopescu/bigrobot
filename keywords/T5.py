@@ -2728,5 +2728,21 @@ class T5(object):
         c.rest.patch(url, {"orchestration-mapping": "default"})
         return True
 
+    def rest_verify_segment_internal_vlan(self, tenant, vns, vlan_id):
+        '''
+        Function to verify the internal vlan ID
+        '''
+        t = test.Test()
+        c = t.controller('master')
 
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"][tenant="%s"]' % (vns, tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if int(data["internal-vlan"]) == int(vlan_id):
+            helpers.log("Pass:Internal vlan is matching given external vlan")
+            return True
+        else:
+            helpers.log("Fail:Internal vlan ID does not match given Vlan ID")
+            return False
+ 
 
