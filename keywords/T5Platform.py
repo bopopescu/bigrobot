@@ -4513,7 +4513,7 @@ class T5Platform(object):
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
             else:
-                helpers.test_failure("Correct number of arguments not returned", soft_error)
+                helpers.log("Correct number of arguments not returned", soft_error)
                 return False
 
             if "<cr> <cr>" in content:
@@ -4531,13 +4531,13 @@ class T5Platform(object):
                         if (str(new_string[index]) in content):
                             helpers.log("Argument %s found in CLI help output" % new_string[index])
                         else:
-                            helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
                             return False
                 else:
                     if (str(cmd_argument) in content):
                         helpers.log("Argument %s found in CLI help output" % cmd_argument)
                     else:
-                        helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
     def cli_reboot_switch_name(self, node='master', switch=None):
