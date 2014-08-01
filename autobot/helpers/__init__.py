@@ -1601,14 +1601,21 @@ def _ping(*args, **kwargs):
     if match:
         packets_transmitted = int(match.group(1))
         packets_received = int(match.group(2))
-        loss_percentage = int(float(match.group(4)))
+        loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
              % (kwargs.get('host'), packets_transmitted, packets_received,
-                loss_percentage))
+                loss_pct))
+
+        calculated_loss_pct = int((float(packets_transmitted) -
+                                   float(packets_received))
+                                  / float(packets_transmitted) * 100.0)
+        if calculated_loss_pct != loss_pct:
+            warn("Reported ping loss%% (%s) does not equal calculated %% (%s)"
+                 % (loss_pct, calculated_loss_pct))
 
         log("Ping result: %s%s"
             % (s, br_utils.end_of_output_marker()), level=4)
-        return loss_percentage
+        return calculated_loss_pct
 
     if re.search(r'no route to host', output, re.M | re.I):
         test_error("Ping error - no route to host")
@@ -1616,7 +1623,8 @@ def _ping(*args, **kwargs):
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host=None, count=10, timeout=None, loss=0, ping_output=None, quiet=False):
+def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
+         quiet=False):
     """
     Unix ping. See _ping() for a complete list of options.
     Additional arguments:
