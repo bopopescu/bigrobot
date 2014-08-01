@@ -60,8 +60,14 @@ class TestCatalog(object):
         query = {"build_name": build_name}
         return self.test_cases_archive_collection().find(query)
 
+    def insert_doc(self, collection, document):
+        if '_id' in document:
+            del document['_id']
+        return self.db()[collection].insert(document)
+
     def upsert_doc(self, collection, document, query):
-        del document['_id']
+        if '_id' in document:
+            del document['_id']
         return self.db()[collection].find_and_modify(
                 query=query,
                 update={ "$set": document },

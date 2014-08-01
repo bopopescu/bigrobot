@@ -1775,7 +1775,7 @@ class T5Platform(object):
             temp = helpers.str_to_list(temp)
             helpers.log("USR INFO:   list   is :\n%s" % temp)
             line = temp[-1]
-            helpers.log("USR INFO:  line is :\n%s" % line)            
+            helpers.log("USR INFO:  line is :\n%s" % line)
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
@@ -1783,16 +1783,16 @@ class T5Platform(object):
                 else:
                     helpers.test_failure("Error: %s" % line)
             elif re.match(r'Image added:.* build: (\d+)', line):
-                helpers.log("image added" )                
+                helpers.log("image added")
                 match = re.match(r'Image added:.* build: (\d+)', line)
-                helpers.log("USR INFO: image is: %s" % match.group(1))              
+                helpers.log("USR INFO: image is: %s" % match.group(1))
                 image = match.group(1)
             elif  re.match(r'.*already exists.*', line):
-                helpers.log("image already exists" )
+                helpers.log("image already exists")
                 match = re.match(r'.* (\d+):.* already exists.*', line)
-                helpers.log("USR INFO: image is : %s" % match.group(1))                      
-                image = match.group(1)               
-                
+                helpers.log("USR INFO: image is : %s" % match.group(1))
+                image = match.group(1)
+
             else:
                 (num, images) = self.cli_check_image(node)
                 image = max(images)
@@ -4496,7 +4496,12 @@ class T5Platform(object):
         else:
             cli_string = command + ' ?'
             c.send(cli_string, no_cr=True)
-            c.expect(r'[\r\n\x07][\w-]+[#>] ')
+
+            # Match controller prompt for various modes (cli, enable, config, bash, etc).
+            # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+            prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+            c.expect(prompt_re)
+
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
@@ -4508,14 +4513,14 @@ class T5Platform(object):
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
             else:
-                helpers.log("Correct number of arguments not returned", soft_error)
+                helpers.test_failure("Correct number of arguments not returned", soft_error)
                 return False
 
             if "<cr> <cr>" in content:
-                helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
+                helpers.test_failure("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
 
             if "<help missing>" in content:
-                helpers.test_error("CLI command has a missing help", soft_error)
+                helpers.test_failure("CLI command has a missing help", soft_error)
 
             if (cmd_argument is not None) :
                 if (' ' in cmd_argument):
@@ -4526,13 +4531,13 @@ class T5Platform(object):
                         if (str(new_string[index]) in content):
                             helpers.log("Argument %s found in CLI help output" % new_string[index])
                         else:
-                            helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
                             return False
                 else:
                     if (str(cmd_argument) in content):
                         helpers.log("Argument %s found in CLI help output" % cmd_argument)
                     else:
-                        helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
     def cli_reboot_switch_name(self, node='master', switch=None):
@@ -4810,14 +4815,14 @@ class T5Platform(object):
           usage:
           output: True  - upgrade launched successfully
                   False  -upgrade launched Not successfully
-        ''' 
+        '''
 
         t = test.Test()
-        c = t.controller(node)        
+        c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch_HA ')
         role = self.cli_get_node_role(node=node)
-        helpers.log("USER INFO: current controller:  %s  is :  %s" %(node, role))    
-                
+        helpers.log("USER INFO: current controller:  %s  is :  %s" % (node, role))
+
         c.config('')
         string = 'upgrade launch ' + option
         c.send(string)
@@ -4827,40 +4832,40 @@ class T5Platform(object):
         c.send("yes")
         options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
         if options[0] == 1:
-            c.send("yes")        
-                                
+            c.send("yes")
+
         if role == 'active':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                                
-            c.expect(r'waiting for standby to begin \"upgrade launch\"',timeout=360)
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'config updates are frozen for update',timeout=360)
 #            c.expect(r'standby has begun upgrade',timeout=360)
 #            c.expect(r'waiting for standby to complete switch handoff',timeout=360)
 #            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360)
 #            c.expect(r'new state: phase-1-migrate',timeout=360)
-      
-#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)   
+
+#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)
 #            c.expect(r'new state: phase-2-migrate',timeout=360)
-        
-#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)   
-            c.expect(r'The system is going down for reboot NOW!',timeout=600)
-            
+
+#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)
+            c.expect(r'The system is going down for reboot NOW!', timeout=600)
+
             content = c.cli_content()
             helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-                                                 
-            return True         
- 
+
+            return True
+
         elif role == 'standby':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                  
-            c.expect(r'waiting for active to begin \"upgrade launch\"',timeout=360) 
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
 #            c.expect(r'Leader->partition state: partition-completed',timeout=360)
 #            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
-            c.expect(r'[R|r]ebooting',timeout=600)
+            c.expect(r'[R|r]ebooting', timeout=600)
             content = c.cli_content()
             helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-            
+
             return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
             return False
-            
+

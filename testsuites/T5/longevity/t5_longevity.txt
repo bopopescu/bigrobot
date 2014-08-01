@@ -5,7 +5,7 @@ Suite Setup      T5 longevity suite setup
 Suite Teardown   T5 longevity suite teardown
 Test Setup       base test setup 
 Test Teardown    base test teardown 
-Force Tags       IronHorse
+Force Tags       IronHorse   T5   longevity
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
@@ -299,7 +299,7 @@ T14 background show command (every 1 hour )
 ##### longevity test case
 T21 spine node down/up event
     : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* switch node down/up event: ${i}********   
+    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
     \	switch node down/up event      spine0 
     \   sleep  ${inevent}
     \   Run Keyword if   '${verifytraffic}'=='1'  traffic endpoint learning    1

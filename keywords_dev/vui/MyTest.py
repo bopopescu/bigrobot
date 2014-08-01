@@ -803,3 +803,91 @@ prompt>
             helpers.log("ID:%s  ip_address:%s" % (key, fixed_ips_dict['ip_address']))
         """
         return True
+
+    def ping_background_trial(self, node):
+        t = test.Test()
+        n = t.node(node)
+        output = """
+PING blade-0-b.eng.bigswitch.com (10.2.3.52) 56(84) bytes of data.
+64 bytes from 10.2.3.52: icmp_req=1 ttl=61 time=0.444 ms
+64 bytes from 10.2.3.52: icmp_req=2 ttl=61 time=0.458 ms
+64 bytes from 10.2.3.52: icmp_req=3 ttl=61 time=0.440 ms
+64 bytes from 10.2.3.52: icmp_req=4 ttl=61 time=0.388 ms
+64 bytes from 10.2.3.52: icmp_req=5 ttl=61 time=0.417 ms
+64 bytes from 10.2.3.52: icmp_req=6 ttl=61 time=0.504 ms
+64 bytes from 10.2.3.52: icmp_req=7 ttl=61 time=0.434 ms
+64 bytes from 10.2.3.52: icmp_req=8 ttl=61 time=0.499 ms
+64 bytes from 10.2.3.52: icmp_req=9 ttl=61 time=0.403 ms
+64 bytes from 10.2.3.52: icmp_req=10 ttl=61 time=0.458 ms
+64 bytes from 10.2.3.52: icmp_req=11 ttl=61 time=0.464 ms
+64 bytes from 10.2.3.52: icmp_req=12 ttl=61 time=0.437 ms
+64 bytes from 10.2.3.52: icmp_req=13 ttl=61 time=0.476 ms
+64 bytes from 10.2.3.52: icmp_req=14 ttl=61 time=0.428 ms
+64 bytes from 10.2.3.52: icmp_req=15 ttl=61 time=0.440 ms
+64 bytes from 10.2.3.52: icmp_req=16 ttl=61 time=0.454 ms
+64 bytes from 10.2.3.52: icmp_req=17 ttl=61 time=0.491 ms
+64 bytes from 10.2.3.52: icmp_req=18 ttl=61 time=0.405 ms
+64 bytes from 10.2.3.52: icmp_req=19 ttl=61 time=0.411 ms
+64 bytes from 10.2.3.52: icmp_req=20 ttl=61 time=0.451 ms
+64 bytes from 10.2.3.52: icmp_req=21 ttl=61 time=0.374 ms
+64 bytes from 10.2.3.52: icmp_req=22 ttl=61 time=0.461 ms
+64 bytes from 10.2.3.52: icmp_req=23 ttl=61 time=0.405 ms
+64 bytes from 10.2.3.52: icmp_req=24 ttl=61 time=0.399 ms
+64 bytes from 10.2.3.52: icmp_req=25 ttl=61 time=0.458 ms
+64 bytes from 10.2.3.52: icmp_req=26 ttl=61 time=0.507 ms
+64 bytes from 10.2.3.52: icmp_req=27 ttl=61 time=0.417 ms
+64 bytes from 10.2.3.52: icmp_req=28 ttl=61 time=0.439 ms
+64 bytes from 10.2.3.52: icmp_req=29 ttl=61 time=0.363 ms
+64 bytes from 10.2.3.52: icmp_req=30 ttl=61 time=0.416 ms
+64 bytes from 10.2.3.52: icmp_req=31 ttl=61 time=0.416 ms
+64 bytes from 10.2.3.52: icmp_req=32 ttl=61 time=0.456 ms
+64 bytes from 10.2.3.52: icmp_req=33 ttl=61 time=0.424 ms
+64 bytes from 10.2.3.52: icmp_req=34 ttl=61 time=0.408 ms
+64 bytes from 10.2.3.52: icmp_req=35 ttl=61 time=0.404 ms
+64 bytes from 10.2.3.52: icmp_req=36 ttl=61 time=0.460 ms
+64 bytes from 10.2.3.52: icmp_req=37 ttl=61 time=0.439 ms
+64 bytes from 10.2.3.52: icmp_req=38 ttl=61 time=0.420 ms
+64 bytes from 10.2.3.52: icmp_req=39 ttl=61 time=0.428 ms
+64 bytes from 10.2.3.52: icmp_req=40 ttl=61 time=0.527 ms
+64 bytes from 10.2.3.52: icmp_req=41 ttl=61 time=0.457 ms
+64 bytes from 10.2.3.52: icmp_req=42 ttl=61 time=0.529 ms
+64 bytes from 10.2.3.52: icmp_req=43 ttl=61 time=0.393 ms
+64 bytes from 10.2.3.52: icmp_req=44 ttl=61 time=0.368 ms
+64 bytes from 10.2.3.52: icmp_req=45 ttl=61 time=0.454 ms
+64 bytes from 10.2.3.52: icmp_req=46 ttl=61 time=0.487 ms
+64 bytes from 10.2.3.52: icmp_req=47 ttl=61 time=0.443 ms
+64 bytes from 10.2.3.52: icmp_req=48 ttl=61 time=0.479 ms
+64 bytes from 10.2.3.52: icmp_req=49 ttl=61 time=0.525 ms
+64 bytes from 10.2.3.52: icmp_req=50 ttl=61 time=0.470 ms
+64 bytes from 10.2.3.52: icmp_req=51 ttl=61 time=0.425 ms
+64 bytes from 10.2.3.52: icmp_req=52 ttl=61 time=0.415 ms
+64 bytes from 10.2.3.52: icmp_req=53 ttl=61 time=0.455 ms
+64 bytes from 10.2.3.52: icmp_req=54 ttl=61 time=0.380 ms
+64 bytes from 10.2.3.52: icmp_req=55 ttl=61 time=0.439 ms
+64 bytes from 10.2.3.52: icmp_req=56 ttl=61 time=0.516 ms
+64 bytes from 10.2.3.52: icmp_req=57 ttl=61 time=0.432 ms
+64 bytes from 10.2.3.52: icmp_req=58 ttl=61 time=0.458 ms
+64 bytes from 10.2.3.52: icmp_req=59 ttl=61 time=0.507 ms
+64 bytes from 10.2.3.52: icmp_req=60 ttl=61 time=0.446 ms
+64 bytes from 10.2.3.52: icmp_req=61 ttl=61 time=0.438 ms
+64 bytes from 10.2.3.52: icmp_req=62 ttl=61 time=0.457 ms
+64 bytes from 10.2.3.52: icmp_req=63 ttl=61 time=0.450 ms
+64 bytes from 10.2.3.52: icmp_req=64 ttl=61 time=0.455 ms
+64 bytes from 10.2.3.52: icmp_req=65 ttl=61 time=0.419 ms
+64 bytes from 10.2.3.52: icmp_req=66 ttl=61 time=0.402 ms
+64 bytes from 10.2.3.52: icmp_req=67 ttl=61 time=0.431 ms
+64 bytes from 10.2.3.52: icmp_req=68 ttl=61 time=0.480 ms
+64 bytes from 10.2.3.52: icmp_req=69 ttl=61 time=0.406 ms
+
+--- blade-0-b.eng.bigswitch.com ping statistics ---
+69 packets transmitted, 69 received, 0% packet loss, time 68100ms
+rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
+"""
+        loss_pct = helpers.ping(ping_output=output)
+        helpers.log("Ping loss percentage: %s" % loss_pct)
+        return loss_pct
+
+    def run_cmd_test(self, node):
+        arg1, arg2 = helpers.run_cmd('cat /etc/hosts', shell=True)
+        helpers.log("arg1: %s" % arg1)
+        helpers.log("arg2: %s" % arg2)

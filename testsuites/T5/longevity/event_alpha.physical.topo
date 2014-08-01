@@ -6,44 +6,39 @@
 # mn  : Mininet server
   
 c1:
-  ip: 10.192.2.98 
+  ip: 10.1.6.5 
    
 c2:
-  ip: 10.192.2.102   
+  ip: 10.1.6.6 
   
 s1:
-  ip: 10.192.2.103
-  alias: leaf0-a
-  user: admin
-  password: adminadmin
-s2:
-  ip: 10.192.2.104
-  alias: leaf0-b
-  user: admin
-  password: adminadmin
-s3:
-  ip: 10.192.2.105
+  ip: 10.1.6.52
   alias: leaf1-a
   user: admin
   password: adminadmin
-s4:
-  ip: 10.192.2.106
+s2:
+  ip: 10.1.6.54
   alias: leaf1-b
   user: admin
   password: adminadmin
-s5:
-  ip: 10.192.2.107
+s3:
+  ip: 10.1.6.50
   alias: leaf2-a
   user: admin
   password: adminadmin
-s6:
-  ip: 10.192.2.108
-  alias: spine0
+s4:
+  ip: 10.1.6.53
+  alias: leaf2-b
   user: admin
   password: adminadmin
-s7:
-  ip: 10.192.2.109
+s5:
+  ip: 10.1.6.51
   alias: spine1
+  user: admin
+  password: adminadmin
+s6:
+  ip: 10.1.6.55
+  alias: spine2
   user: admin
   password: adminadmin
 

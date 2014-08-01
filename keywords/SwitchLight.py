@@ -1641,9 +1641,9 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1 = t.switch(node)
+            switch = t.switch(node)
             bash_input = 'service ' + str(processName) + ' restart'
-            s1.bash(bash_input, timeout=timeout)
+            switch.bash(bash_input, timeout=timeout)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")

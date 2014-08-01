@@ -56,35 +56,35 @@ ${s1IxiaVerifyInt}	eth1
 
 T0 Setup
 	[Tags]  feature  setup
-	bash network restart  h1
-	bash add tag  h1  bond0  10 
-	bash add ip address  h1  10.10.10.51/24  bond0.10
-	bash ifup intf  h1  bond0.10
-	bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
+	#bash network restart  h1
+	#bash add tag  h1  bond0  10 
+	#bash add ip address  h1  10.10.10.51/24  bond0.10
+	#bash ifup intf  h1  bond0.10
+	#bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
 	
-	bash network restart  h2
-	bash add tag  h2  bond0  10 
-	bash add ip address  h2  10.10.10.52/24  bond0.10
-	bash ifup intf  h2  bond0.10
-	bash add route  h2  20.20.20.0/24  10.10.10.100  bond0.10
+	#bash network restart  h2
+	#bash add tag  h2  bond0  10 
+	#bash add ip address  h2  10.10.10.52/24  bond0.10
+	#bash ifup intf  h2  bond0.10
+	#bash add route  h2  20.20.20.0/24  10.10.10.100  bond0.10
 	
-	bash network restart  h3
-	bash add tag  h3  bond0  10 
-	bash add ip address  h3  10.10.10.53/24  bond0.10
-	bash ifup intf  h3  bond0.10
-	bash add route  h3  20.20.20.0/24  10.10.10.100  bond0.10
+	#bash network restart  h3
+	#bash add tag  h3  bond0  10 
+	#bash add ip address  h3  10.10.10.53/24  bond0.10
+	#bash ifup intf  h3  bond0.10
+	#bash add route  h3  20.20.20.0/24  10.10.10.100  bond0.10
 	
-	bash network restart  h4
-	bash add tag  h4  bond0  20 
-	bash add ip address  h4  20.20.20.54/24  bond0.20
-	bash ifup intf  h4  bond0.20
-	bash add route  h4  10.10.10.0/24  20.20.20.100  bond0.20
+	#bash network restart  h4
+	#bash add tag  h4  bond0  20 
+	#bash add ip address  h4  20.20.20.54/24  bond0.20
+	#bash ifup intf  h4  bond0.20
+	#bash add route  h4  10.10.10.0/24  20.20.20.100  bond0.20
 	
-	bash network restart  h5
-	bash add tag  h5  bond0  20 
-	bash add ip address  h5  20.20.20.55/24  bond0.20
-	bash ifup intf  h5  bond0.20
-	bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
+	#bash network restart  h5
+	#bash add tag  h5  bond0  20 
+	#bash add ip address  h5  20.20.20.55/24  bond0.20
+	#bash ifup intf  h5  bond0.20
+	#bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
 	
 	#bash execute command  leaf0-a  ofad-ctl autoneg 33
 	#bash execute command  leaf0-a  ofad-ctl autoneg 34

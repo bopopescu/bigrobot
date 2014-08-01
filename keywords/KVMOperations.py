@@ -216,6 +216,9 @@ class KVMOperations(object):
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
             helpers.summary_log("Success SCP'ing latest Jenkins build !!")
         helpers.summary_log("Using Jenkins BCF Build #%s" % latest_build_number)
+        helpers.log("Setting BUILD_NUM Env...")
+        helpers.set_env("BUILD_NUM", str(latest_build_number))
+        helpers.log("env BUILD_NUM: %s" % helpers.get_env("BUILD_NUM"))
         kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name, vm_name))
 
         local_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
@@ -364,9 +367,11 @@ class KVMOperations(object):
                                                             netmask=netmask,
                                                             vm_host_name=vm_host_name,
                                                             gateway=gateway)
-#             controller_handle = ControllerDevConf(host=result['vm_ip'], user='admin', password='admiandmin')
-#             controller_handle.config("copy running-config config://firstboot-config")
-#             helpers.summary_log("Success saving firstboot-config")
+            helpers.summary_log("Copying firstboot-config on New Controller: %s" % result['vm_ip'])
+            helpers.sleep(10)
+            bvs = ControllerDevConf(host=result['vm_ip'], user="admin", password="adminadmin", name="test-bvs")
+            bvs.config("copy running-config snapshot://firstboot-config")
+            helpers.summary_log("Success saving firstboot-config")
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result

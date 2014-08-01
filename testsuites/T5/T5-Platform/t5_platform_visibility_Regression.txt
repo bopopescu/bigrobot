@@ -736,11 +736,11 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 
 
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  testpath  full  manual
+	[Tags]  testpath  feature  manual
     manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  full  manual
+	[Tags]  testpath  feature  manual
     manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures

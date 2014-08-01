@@ -1,0 +1,580 @@
+*Settings
+Documentation  Corsair Deep Packet Matching Test Suite
+Suite Setup  corsair suite setup
+#Suite Teardown   corsair suite teardown
+Test Setup   corsair test setup
+Test Teardown  corsair test teardown 
+Force Tags   Corsair  BigTap  DPM
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+Library  keywords/ThirdParty.py
+
+############################ TOPOLOGY #################################
+##                                                                   ##
+##   linux-->s1(app-s4810-2)-->ixia                                  ##
+##                                                                   ##
+######################### TOPOLOGY ####################################
+
+* Variable
+${switch_alias}                            app-s4810-2     #Alias for switch 1
+${switch_filter_intf}                      ethernet11      #filter interface on switch app-s4810-2
+${switch_filter_alias}                     pandora-eth1    #Alias for filter interface on switch app-s4810-2
+${switch_delivery_intf}                    ethernet2       #Delivery interface on switch app-s4810-2
+${switch_delivery_alias}                   ixia-1-3        #Alias for delivery interface on switch app-s4810-2
+
+${policy_name_1}                            P1
+${policy_name_2}                            ZP1
+${policy_overlap}                           _ZP1_o_P1
+
+*Test Case
+
+TC1:Verify Configuration
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    [Tags]  basic
+TC2:Send GRE packets and verify match on inner source IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  36
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843009, "offset": 36}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
+    sleep  30
+    verify packet count 
+    [Tags]  gre
+TC3:Send GRE packets and verify match on inner destination IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  48
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 48}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
+    sleep  10
+    verify packet count 
+    [Tags]  gre
+
+TC4:Send GRE within GRE packets and verify match on inner source IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  60
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 168433921, "offset": 60}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap  timeout=180
+    sleep  10
+    verify packet count 
+    [Tags]  gre-in-gre
+    
+TC5:Send GRE within GRE packets and verify match on inner destination IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  72
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 3232235778, "offset": 72}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap     timeout=180
+    sleep  10
+    verify packet count 
+    [Tags]  gre-in-gre
+
+TC6:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 175507969, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  802.1q
+
+
+TC7:Send doubly tagged 802.1q tunneled IP packet and verify match on destination IP
+    ${set_udf}=  rest add bigtap udf  0  l3-start  24
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 175507970, "offset": 24}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
+    sleep  10
+    verify packet count   
+    [Tags]  802.1q
+        
+TC8:Send GTPv1(control) packets and match on GTP version
+    ${set_udf}=  rest add bigtap udf  0  l4-start  8
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
+    sleep  30
+    verify packet count      
+    [Tags]  gtpv1-c
+        
+TC9:Send GTPv1(control) packets and match on TEID
+    ${set_udf}=  rest add bigtap udf  0  l4-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 0, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
+    sleep  10
+    verify packet count      
+    [Tags]  gtpv1-c
+    
+TC10:Send GTPv1(user) packets and match on GTP version
+    ${set_udf}=  rest add bigtap udf  0  l4-start  8
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap     timeout=300
+    sleep  10
+    verify packet count      
+    [Tags]  gtpv1-u
+        
+TC11:Send GTPv1(user) packets and match on TEID
+    ${set_udf}=  rest add bigtap udf  0  l4-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
+    sleep  10
+    verify packet count  
+    [Tags]  gtpv1-u
+        
+TC12:Send GTPv1(user) packets and match on inner source IP
+    ${set_udf}=  rest add bigtap udf  0  l4-start  32
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3389728926, "offset": 32}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
+    sleep  10
+    verify packet count
+    [Tags]  gtpv1-u
+    
+TC13:Send GTPv1(user) packets and match on inner destination IP
+    ${set_udf}=  rest add bigtap udf  0  l4-start  44
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3232245938, "offset": 44}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
+    sleep  10
+    verify packet count
+    [Tags]  gtpv1-u
+    
+TC14:Send GTP Prime packets and match on GTP version
+    ${set_udf}=  rest add bigtap udf  0  l4-start  8
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "src-tp-port": 3386, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
+    sleep  10
+    verify packet count      
+    [Tags]  gtp-prime
+        
+TC15:Send GTP Prime packets and match on TEID
+    ${set_udf}=  rest add bigtap udf  0  l4-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "src-tp-port": 3386, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
+    sleep  10
+    verify packet count 
+    [Tags]  gtp-prime
+
+TC16:Send IP-in-GTP packets and match on inner source IP
+    ${set_udf}=  rest add bigtap udf  0  l4-start  28
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 177339905, "offset": 28}, "dst-tp-port": 2152}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
+    sleep  10
+    verify packet count 
+    [Tags]  ip-in-gtp
+
+TC17:Send IP-in-GTP packets and match on inner destination IP
+    ${set_udf}=  rest add bigtap udf  0  l4-start  40
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1711277312, "offset": 40}, "dst-tp-port": 2152}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
+    sleep  10
+    verify packet count 
+    [Tags]  ip-in-gtp
+
+TC18: Send basic MPLS packet and match on source IP address.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 167838209, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 10 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-basic
+
+TC19: Send basic MPLS packet and match on destination IP address.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  24
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 170000385, "offset": 24}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-basic
+
+
+TC20: Send Ethernet over MPLS packet and match on MPLS Label
+    ${set_udf}=  rest add bigtap udf  0  l3-start  0
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294963200, "anchor": "l3-start", "value": 73728, "offset": 0}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+
+
+TC21: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  32
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294901760, "anchor": "l3-start", "value": 65536, "offset": 32}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+
+TC22: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  36
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843266, "offset": 36}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+
+TC23: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  44
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294901760, "anchor": "l3-start", "value": 65536, "offset": 44}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+
+TC24: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
+    ${set_udf}=  rest add bigtap udf  0  l3-start  48
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843266, "offset": 48}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+
+TC25: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
+    ${set_udf_1}=  rest add bigtap udf  0  l3-start  4
+    Should be true  ${set_udf_1}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294963200, "anchor": "l3-start", "value": 65536, "offset": 4}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+    
+TC26: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
+    ${set_udf_1}=  rest add bigtap udf  0  l3-start  44
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  0  l3-start  48
+    Should be true  ${set_udf_2}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 65535, "anchor": "l3-start", "value": 2048, "offset": 44}, "offset-match-1": {"mask": 4026531840, "anchor": "l3-start", "value": 1342177280, "offset": 48}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  mpls-ldp 
+      
+
+TC27: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
+    ${set_udf}=  rest add bigtap udf  0  l4-start  12
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967040, "anchor": "l4-start", "value": 1955669760, "offset": 12}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  vxlan  
+
+
+TC28: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP packet
+    ${set_udf}=  rest add bigtap udf  0  l4-start  44
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3232287493, "offset": 44}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  vxlan
+
+
+TC29: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP packet
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  52    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  1  l4-start  56    
+    Should be true  ${set_udf_2}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 65535, "anchor": "l4-start", "value": 49320, "offset": 52}, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 3406102528, "offset": 56}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  vxlan  run     
+
+TC30: Send NTP packets and match on NTP Version
+    ${set_udf}=  rest add bigtap udf  0  l4-start  8
+    Should be true  ${set_udf}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4026531840, "anchor": "l4-start", "value": 402653184, "offset": 8}, "dst-tp-port": 123}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/ntp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  ntp
+
+TC31: Send BOOTP packets and match on Client Mac Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  1  l4-start  40    
+    Should be true  ${set_udf_2}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "dst-tp-port": 67, "src-tp-port": 68, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 65792, "offset": 36}, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 65536, "offset": 40}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  bootp
+
+TC32: Send BOOTP packets and match on Your(client) IP Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  24    
+    Should be true  ${set_udf_1}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 2130706433, "offset": 24}}
+    Should be true  ${set_policy_match}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  bootp  
+                                
+* Keyword
+
+verify packet count
+    ${input_filter}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${policy_name_1}"]/filter-interface
+    ${input_count}=  verify json key  ${input_filter}  0  packet-count
+    ${output_delivery}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${policy_name_1}"]/delivery-interface
+    ${output_count}=    verify json key  ${output_delivery}  0  packet-count
+    ${in_range}=  ixia verify traffic rate  ${input_count}  ${output_count}
+    Should be true  ${in_range}
+
+corsair suite setup
+    base suite setup
+    rest enable feature  l3-l4-offset-match
+    rest add switch alias  s1  ${switch_alias}
+    rest add interface role  s1  ${switch_filter_intf}      filter        intf_nickname=${switch_filter_alias}
+    rest add interface role  s1  ${switch_delivery_intf}    delivery      intf_nickname=${switch_delivery_alias}
+    sleep  5
+
+corsair test setup        
+    rest add policy  admin-view  ${policy_name_1}   forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias}  delivery 
+    Sleep  5  
+    
+corsair test teardown
+    REST delete policy  admin-view  ${policy_name_1}
+    sleep  5
+
+
+corsair suite teardown
+    rest delete interface role  s1  ${switch_filter_intf}  filter 
+    rest delete interface role  s1  ${switch_delivery_intf}   delivery    
+    rest delete interface  s1  ${switch_filter_intf}        
+    rest delete switch alias  s1
+    base suite teardown        

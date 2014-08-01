@@ -206,8 +206,9 @@ class TestSuite(object):
 
         self._suite = {
                     'source': source,
-                    'timestamp': helpers.utf8(timestamp),
-                    'datestamp': helpers.utf8(datestamp),
+                    'createtime': helpers.ts_long_local(),
+                    'starttime': helpers.utf8(timestamp),
+                    'starttime_datestamp': helpers.utf8(datestamp),
                     'github_link': github_link,
                     'name_actual': name_actual,
                     'name': helpers.utf8(suite['@name']),
@@ -272,10 +273,10 @@ class TestSuite(object):
                                 helpers.utf8(a_test['status']['@endtime']))
                 executed = True
             else:
-                status = starttime = endtime = endtime_datestamp = None
+                status = starttime = starttime_datestamp = endtime = endtime_datestamp = None
                 executed = False
-                starttime_datestamp = self._suite['datestamp']
-                # starttime_datestamp = '2014-05-28'
+                # starttime_datestamp = self._suite['starttime_datestamp']
+                #   starttime_datestamp = '2014-05-28'
 
             # This should contain the complete list of attributes. Some may
             # be populated by the Script Catalog while others may be populated
@@ -285,6 +286,7 @@ class TestSuite(object):
                     'tags': tags,
                     'executed': executed,
                     'status': status,
+                    'createtime': helpers.ts_long_local(),
                     'starttime': starttime,
                     'starttime_datestamp': starttime_datestamp,
                     'endtime': endtime,
@@ -304,7 +306,14 @@ class TestSuite(object):
                     test['build_number'] = os.environ['BUILD_NUMBER']
                 if 'BUILD_URL' in os.environ:
                     test['build_url'] = os.environ['BUILD_URL']
-                self.db_find_and_modify_testcase(test)
+
+                # 2014-07-31 We probably don't need to update baseline
+                # anymore since the strategy has chanced to collect baseline
+                # data for every build instead of maintaining just a single
+                # baseline for an extended duration...
+                #
+                # self.db_find_and_modify_testcase(test)
+
                 self.db_find_and_modify_regression_testcase(test)
                 # self.db_insert(test, collection='test_cases_archive')
             else:
@@ -321,7 +330,7 @@ class TestSuite(object):
         self.total_tests()
 
     def extract_build_attributes(self):
-        ts = helpers.ts_long()
+        ts = helpers.ts_long_local()
         self._build = {'build_name': os.environ['BUILD_NAME'],
                        'starttime': ts,
                        'starttime_datestamp': ts.split('T')[0],
