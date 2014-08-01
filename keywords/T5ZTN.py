@@ -1377,12 +1377,10 @@ class T5ZTN(object):
     def get_controller_switch_image(self, node='master'):
         """
         Get SwitchLight version on the controller
-
         Inputs:
-        | node | reference to switch/controller as defined in .topo file |
-
+        | node | reference to controller  
         Return Value:
-        - True if images are present, False otherwise
+        -  switch image version
         Author:  Mingtao
         """
         t = test.Test()
@@ -1405,10 +1403,10 @@ class T5ZTN(object):
         Get SwitchLight version on the controller
 
         Inputs:
-        | node | reference to switch/controller as defined in .topo file |
+        | node | reference to controller node
 
         Return Value:
-        - True if images are present, False otherwise
+           - the installer version 
         Author:  Mingtao
         """
         t = test.Test()
@@ -1428,13 +1426,10 @@ class T5ZTN(object):
                 
     def cli_get_switch_image(self, switch):
         '''
-           return the local node role:
-          Author: Mingtao
-          input:  node  - controller
-                           c1 c2
+          do a show switch leaf0a ver from the controller and get the switch image version
+          input:  switch   leaf0-a 
           usage:
-          output: active or stand-by
-          fails if there is no domain-leader for the cluster
+          output: image version         
         '''
         t = test.Test()
         c = t.controller('master')
