@@ -6,106 +6,130 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.210.144.17
+  ip: 10.8.23.17
  
 c2:
-  ip: 10.210.144.18
+  ip: 10.8.23.18
 
 s1:
-  ip: 10.210.144.101
-  alias: leaf0-a
-  user: admin
-  password: adminadmin
+  alias:  leaf0-a
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6003
+  set_session_ssh: false
+  set_init_ping: false
 
 s2:
-  ip: 10.210.144.102
-  alias: leaf0-b
-  user: admin
-  password: adminadmin
+  alias:  leaf0-b
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6004
+  set_session_ssh: false
+  set_init_ping: false
 
 s3:
-  ip: 10.210.144.103
-  alias: leaf1-a
-  user: admin
-  password: adminadmin
+  alias:  leaf1-a
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6005
+  set_session_ssh: false
+  set_init_ping: false
 
 s4:
-  ip: 10.210.144.104
-  alias: leaf1-b
-  user: admin
-  password: adminadmin
+  alias:  leaf1-b
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6006
+  set_session_ssh: false
+  set_init_ping: false
 
 s5:
-  ip: 10.210.144.105
-  alias: leaf2-a
-  user: admin
-  password: adminadmin
+  alias:  leaf2-a
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6007
+  set_session_ssh: false
+  set_init_ping: false
 
 s6:
-  ip: 10.210.144.106
-  alias: leaf2-b
-  user: admin
-  password: adminadmin
+  alias:  leaf2-b
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6008
+  set_session_ssh: false
+  set_init_ping: false
   
 s7:
-  ip: 10.210.144.110
-  alias: spine0
-  user: admin
-  password: adminadmin
+  alias:  spine0
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6001
+  set_session_ssh: false
+  set_init_ping: false
 
 s8:
-  ip: 10.210.144.111
-  alias: spine1
-  user: admin
-  password: adminadmin
+  alias:  spine1
+  console:
+    ip: 10.1.8.68
+    protocol: telnet
+    port: 6002
+  set_session_ssh: false
+  set_init_ping: false
 
 h1:
-  ip: 10.210.144.51
+  ip: 10.8.23.51
   user: root
   password: bsn
 
 h2:
-  ip: 10.210.144.52
+  ip: 10.8.23.52
   user: root
   password: bsn
   
 h3:
-  ip: 10.210.144.53
+  ip: 10.8.23.53
   user: root
   password: bsn
   
 h4:
-  ip: 10.210.144.54
+  ip: 10.8.23.54
   user: root
   password: bsn
   
 h5:
-  ip: 10.210.144.55
+  ip: 10.8.23.55
   user: root
   password: bsn
   
 h6:
-  ip: 10.210.144.56
+  ip: 10.8.23.56
   user: root
   password: bsn
 
-tg1:
+#tg1:
   platform: 'ixia'
-  chassis_ip: 10.210.192.2
-  tcl_server_ip: 10.194.64.182
+  chassis_ip: 10.8.0.5
+  tcl_server_ip: 10.9.19.242
   #tcl_server_port: 8009
   #ix_version: '7.10'
   #set_init_ping: false
   ports:
     a:
-      name: 1/21
+      name: 12/09
     b:
-      name: 1/22
+      name: 12/10
     c:
-      name: 1/19
+      name: 12/11
     d:
-      name: 1/20
+      name: 12/12
     e:
-      name: 1/23
+      name: 12/13
     f:
-      name: 1/24
+      name: 12/14
