@@ -1371,32 +1371,32 @@ T7.3. no ZTN servers are available - before Switch Light Install
 	Manual Untested
 	[Tags]  manual-untested
 T7.4. no ZTN servers are available - after Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.5. management port of the switch is down - before Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.6. management port of the switch is down - after Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.7. switch's MAC address is not configured on the controller - before Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.8. switch's MAC address is not configured on the controller - after Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
 	Manual Untested
 	[Tags]  manual-untested
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.11. Verify that SWI image download is resumed after connectivity flap
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.12. Verify that ZTN manifest search is resumed after connectivity flap
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.13. Verify that discovery process times out and restarts when all controllers go down during Switch Light Installer image download
 	Manual Untested
 	[Tags]  manual-untested
@@ -1407,62 +1407,60 @@ T7.15. Verify that discovery process times out and restarts when all controllers
 	Manual Untested
 	[Tags]  manual-untested
 T7.16. Verify that discovery process times out and restarts when connectivity goes down while Switch Light Installer download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.17. Verify that discovery process times out and restarts when connectivity goes down while SWI Image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.18. Verify that discovery process times out and restarts when connectivity goes down while searching for ZTN manifests
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.19. Verify that discovery process restarts when downloaded Switch Light Installer image is corrupted
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.20. Verify that discovery process restarts when downloaded SWI image is corrupted
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
 	Manual Untested
 	[Tags]  manual-untested
 T7.22. Verify that discovery process restarts when switch reboots during Switch Light Installer image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.23. Verify that discovery process restarts when switch reboots during SWI image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.24. Verify that discovery process restarts when switch reboots while searching for ZTN manifests
-	Manual Untested
-	[Tags]  manual-untested
-T7.25. Verify that discovery process restarts when specified image path is invalid
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+T7.25.1 Verify that discovery process restarts when specified Switch Light Installer image path is invalid
+	Manual Passed
+	[Tags]  manual
+T7.25.2 Verify that discovery process restarts when specified SWI image path is invalid
+	Manual Passed
+	[Tags]  manual
 #7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
-	Manual Untested
-	[Tags]  manual-untested
 T7.27.1 - while Installer download - no SWI download
-	Manual Untested
-	[Tags]  manual-untested
-T7.27.2 - while SWI download - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-T7.27.3 - while image startup - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+T7.27.2 - while SWI download - no startup-config download if not cached, if cached - switch undefined (suspended)
+	Manual Passed
+	[Tags]  manual
+T7.27.3 - while image startup - switch rebooted (starts up, gets removed)
+	Manual Passed
+	[Tags]  manual
 #7.28. Verify following behaviors when switch's name is changed during switch boot up
-	Manual Untested
-	[Tags]  manual-untested
 T7.28.1 - while Installer download - correct SWI download and fabric join
-	Manual Untested
-	[Tags]  manual-untested
-T7.28.2 - while SWI download - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-T7.28.3 - while image startup - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+T7.28.2 - while SWI download - if startup-config not cached - checksum and retry, successful join eventually, if starutp-config cached - reload indicated
+	#retest
+	Manual Passed
+	[Tags]  manual
+T7.28.3 - while image startup - reload indicated
+	Manual Passed
+	[Tags]  manual
 #7.29. Verify following behaviors when ZTN config is changed during switch boot up
-	Manual Untested
-	[Tags]  manual-untested
 T7.29.1 - while Installer download - correct SWI download and fabric join
 	Manual Untested
 	[Tags]  manual-untested
@@ -1488,8 +1486,8 @@ T7.30.3 - while image startup - switch undefined (suspended)
 	Manual Untested
 	[Tags]  manual-untested
 T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 # Single node cluster
 T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process
