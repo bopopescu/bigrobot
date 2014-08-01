@@ -891,3 +891,8 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         arg1, arg2 = helpers.run_cmd('cat /etc/hosts', shell=True)
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
+
+    def strip_control_char_test(self):
+        string = "abc" + helpers.ctrl('g') + "def"
+        helpers.log("string: %s" % string)
+        helpers.log("stripped string: %s" % helpers.strip_ctrl_chars(string))
