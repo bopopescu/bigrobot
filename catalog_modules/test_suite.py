@@ -220,16 +220,15 @@ class TestSuite(object):
                     'notes': None,
                     'build_name': os.environ['BUILD_NAME'],
                     }
+
+    def db_populate_suites(self):
         if self._is_regression:
             pass
         else:
             # Baselining
             self.db_add_if_not_found_suite(self._suite)
 
-    def db_populate_suites(self):
-        pass
-
-    def extract_test_attributes(self):
+    def extract_test_attributes_and_db_populate(self):
         """
         Extract test data from XML, create test case data structure and
         populate it in DB.
@@ -273,7 +272,9 @@ class TestSuite(object):
                                 helpers.utf8(a_test['status']['@endtime']))
                 executed = True
             else:
-                status = starttime = starttime_datestamp = endtime = endtime_datestamp = None
+                status = None
+                starttime = starttime_datestamp = None
+                endtime = endtime_datestamp = None
                 executed = False
                 # starttime_datestamp = self._suite['starttime_datestamp']
                 #   starttime_datestamp = '2014-05-28'
@@ -327,6 +328,7 @@ class TestSuite(object):
         if self._is_regression:
             helpers.debug("DB testcase count (AFTER): %s"
                           % self.db_count_testcases())
+
         self.total_tests()
 
     def extract_build_attributes(self):
@@ -340,7 +342,8 @@ class TestSuite(object):
     def extract_attributes(self):
         self.extract_build_attributes()
         self.extract_suite_attributes()
-        self.extract_test_attributes()
+        self.extract_test_attributes_and_db_populate()
+        self.db_populate_suites()
 
     def suite_name(self):
         return self._suite['name']

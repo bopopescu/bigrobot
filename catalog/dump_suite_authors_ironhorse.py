@@ -1,4 +1,16 @@
 #!/usr/bin/env python
+# Description:
+#   Display a list of test suites and their authors for IronHorse release.
+#
+# Usage:
+#   % BUILD_NAME="bvs master #2761" ./dump_suite_authors_ironhorse.py
+#
+#   <Output>
+#   ...
+#   animesh      SwitchLight/switchlight_platform
+#   animesh      SwitchLight/switchlight_user_management
+#   ...
+#
 
 import os
 import sys

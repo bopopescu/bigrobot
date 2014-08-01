@@ -179,7 +179,8 @@ class BuildStats(object):
         if helpers.is_list(tag):
             tags = helpers.list_flatten(tags)
 
-        tags_and_release = helpers.list_flatten([self.release_lowercase(), tag])
+        tags_and_release = helpers.list_flatten([self.release_lowercase(),
+                                                 tag])
         return self.total_testcases_by_tag(tags_and_release,
                                            collection="test_cases_archive")
 
