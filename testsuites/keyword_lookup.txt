@@ -12,6 +12,7 @@ Library           Telnet.py
 Library           XML.py
 # BSN keyword libraries
 Library           keywords/AppController.py
+Library           keywords/BigChain.py
 Library           keywords/BigTap.py
 Library           keywords/BigWire.py
 Library           keywords/BsnCommon.py
@@ -26,6 +27,7 @@ Library           keywords/T5.py
 Library           keywords/T5L3.py
 Library           keywords/T5Openstack.py
 Library           keywords/T5Utilities.py
+Library           keywords/T5ZTN.py
 Library           keywords/ThirdParty.py
 
 *** Test Case ***
