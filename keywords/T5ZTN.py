@@ -1371,3 +1371,49 @@ class T5ZTN(object):
         t = test.Test()
         t.power_cycle(switch)
         return True
+    
+    
+    def cli_get_switch_image(self, image, switch):
+        """
+        Get SWI or Installer Versions in the switch from the controller
+
+        Inputs:
+        | image | SL image - swi or installer |
+        | switch | reference to switch/controller as defined in .topo file |
+
+        Return Value:
+        - SWI or Installer Versions, None in case of errors
+        """
+
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_get_switch_image ')
+        c.cli('show switch %s version ' %switch)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+  
+        version = ''
+
+        if image == 'installer':
+            line1 = "Loader Version: "
+            line2 = "Loader Build: "
+        if image == 'swi':
+            line1 = "Software Image Version: "
+            line2 = "Internal Build Version: "
+        for line in temp:
+            if line1 in line:
+                version = line.replace(line1, '')
+            if line2 in line:
+                line = line.replace(line2, '')
+                if ' ' in line:
+                    line = line.replace(' ', '')
+                version = version + " (" + line + ")"
+        return version
+    
+                 
+      

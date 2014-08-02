@@ -2124,7 +2124,7 @@ class T5Platform(object):
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
-            return c.rest.content()[0]['build-id']
+            return c.rest.content()[0]['ci-build-number']
         return False
 
 
@@ -4737,9 +4737,9 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         helpers.log("get switch fabric connection state")
-
+ 
         c.rest.get(url)
         data = c.rest.content()
         info = []
