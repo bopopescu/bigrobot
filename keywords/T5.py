@@ -857,7 +857,7 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         for i in range(0, len(data1)):
-            if data1[i]["port-num"] == lag_id[0]:
+            if str(data1[i]["in-port-group"]) == str(interface):
                 if str(data1[i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
@@ -1923,18 +1923,18 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface"]["name"] == intf:
-            if (data[0]["interface"]["counter"]["rx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["rx-unicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["rx-unicast-packet"]))
+        if data[0]["interface"][0]["name"] == intf:
+            if (data[0]["interface"][0]["counter"]["rx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["rx-unicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["rx-unicast-packet"]))
                 return True
-            elif (data[0]["interface"]["counter"]["rx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["rx-broadcast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["rx-broadcast-packet"]))
+            elif (data[0]["interface"][0]["counter"]["rx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["rx-broadcast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["rx-broadcast-packet"]))
                 return True
-            elif (data[0]["interface"]["counter"]["rx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["rx-multicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["rx-multicast-packet"]))
+            elif (data[0]["interface"][0]["counter"]["rx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["rx-multicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["rx-multicast-packet"]))
                 return True
             else:
-                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["interface"]["counter"]["rx-unicast-packet"], data[0]["interface"]["counter"]["rx-broadcast-packet"], data[0]["interface"]["counter"]["rx-multicast-packet"]))
+                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["interface"][0]["counter"]["rx-unicast-packet"], data[0]["interface"][0]["counter"]["rx-broadcast-packet"], data[0]["interface"][0]["counter"]["rx-multicast-packet"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1952,18 +1952,18 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface"]["name"] == intf:
-            if (data[0]["interface"]["counter"]["tx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["tx-unicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["tx-unicast-packet"]))
+        if data[0]["interface"][0]["name"] == intf:
+            if (data[0]["interface"][0]["counter"]["tx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["tx-unicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["tx-unicast-packet"]))
                 return True
-            elif (data[0]["interface"]["counter"]["tx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["tx-broadcast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["tx-broadcast-packet"]))
+            elif (data[0]["interface"][0]["counter"]["tx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["tx-broadcast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["tx-broadcast-packet"]))
                 return True
-            elif (data[0]["interface"]["counter"]["tx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"]["counter"]["tx-multicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"]["counter"]["tx-multicast-packet"]))
+            elif (data[0]["interface"][0]["counter"]["tx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["interface"][0]["counter"]["tx-multicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["interface"][0]["counter"]["tx-multicast-packet"]))
                 return True
             else:
-                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["interface"]["counter"]["tx-unicast-packet"], data[0]["interface"]["counter"]["tx-broadcast-packet"], data[0]["interface"]["counter"]["tx-multicast-packet"]))
+                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["interface"][0]["counter"]["tx-unicast-packet"], data[0]["interface"][0]["counter"]["tx-broadcast-packet"], data[0]["interface"][0]["counter"]["tx-multicast-packet"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1981,12 +1981,12 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface"]["name"] == intf:
-            if (data[0]["interface"]["rate"]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"]["rate"]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"]["rate"]["rx-unicast-packet-rate"]))
+        if data[0]["interface"][0]["name"] == intf:
+            if (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"]["rate"]["rx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2004,12 +2004,12 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface"]["name"] == intf:
-            if (data[0]["interface"]["rate"]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"]["rate"]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"]["rate"]["tx-unicast-packet-rate"]))
+        if data[0]["interface"][0]["name"] == intf:
+            if (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"]["rate"]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2742,7 +2742,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"][tenant="%s"]' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if int(data["internal-vlan"]) == int(vlan_id):
+        if int(data[0]["internal-vlan"]) == int(vlan_id):
             helpers.log("Pass:Internal vlan is matching given external vlan")
             return True
         else:
@@ -2759,7 +2759,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        dpid = data["dpid"]
+        dpid = data[0]["dpid"]
         return dpid
        
      
