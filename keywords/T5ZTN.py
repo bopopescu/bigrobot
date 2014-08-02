@@ -1373,64 +1373,22 @@ class T5ZTN(object):
         return True
     
     
-    
-    def get_controller_switch_image(self, node='master'):
+    def cli_get_switch_image(self, image, switch):
         """
-        Get SwitchLight version on the controller
-        Inputs:
-        | node | reference to controller  
-        Return Value:
-        -  switch image version
-        Author:  Mingtao
-        """
-        t = test.Test()
-        c = t.controller(node)
-        helpers.log("Get switch image on controller: %s" % node  )
-        c.bash("ls -l /usr/share/floodlight/zerotouch")
-        output = c.cli_content()
-        output = helpers.strip_cli_output(output)
-        output = helpers.str_to_list(output)   
-        for line in output:    
-            helpers.log("INFO: line is - %s" % line)            
-            match = re.search(r'.*switchlight-(.*)-powerpc-.*.swi', line)
-            if match:
-                helpers.log("INFO: image signature is: %s" % match.group(1))
-                return  match.group(1)         
-        helpers.test_failure("ERROR: there is not swi image in controller:  %s" % node)        
-        
-    def get_controller_switch_installer(self, node='master'):
-        """
-        Get SwitchLight version on the controller
+        Get SWI or Installer Versions in the switch from the controller
 
         Inputs:
-        | node | reference to controller node
+        | image | SL image - swi or installer |
+        | switch | reference to switch/controller as defined in .topo file |
 
         Return Value:
-           - the installer version 
-        Author:  Mingtao
+        - SWI or Installer Versions, None in case of errors
         """
-        t = test.Test()
-        c = t.controller(node)
-        helpers.log("Get switch installer version on controller: %s" % node  )
-        c.bash("ls -l /usr/share/floodlight/zerotouch")
-        output = c.cli_content()
-        output = helpers.strip_cli_output(output)
-        output = helpers.str_to_list(output)   
-        for line in output:    
-            helpers.log("INFO: line is - %s" % line)            
-            match = re.search(r'.*switchlight-(.*)-powerpc-.*.installer', line)
-            if match:
-                helpers.log("INFO: installer signature is: %s" % match.group(1))
-                return  match.group(1)         
-        helpers.test_failure("ERROR: there is not installer in controller:  %s" % node)            
-                
-    def cli_get_switch_image(self, switch):
-        '''
-          do a show switch leaf0a ver from the controller and get the switch image version
-          input:  switch   leaf0-a 
-          usage:
-          output: image version         
-        '''
+
+        if image != 'swi' and image != 'installer':
+            helpers.log("Please use \'swi\' or \'installer\'")
+            return None
+
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_get_switch_image ')
@@ -1438,13 +1396,24 @@ class T5ZTN(object):
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
+  
+        version = ''
+
+        if image == 'installer':
+            line1 = "Loader Version: "
+            line2 = "Loader Build: "
+        if image == 'swi':
+            line1 = "Software Image Version: "
+            line2 = "Internal Build Version: "
         for line in temp:
-            helpers.log("INFO: line is - %s" % line)
-            match = re.match(r'Software Image Version: Switch Light OS (.*)', line)
-            if match:
-                helpers.log("INFO: image signature is: %s" % match.group(1))
-                return  match.group(1)         
-        helpers.test_failure("ERROR: Did not get the version for siwtch %s" % switch)        
-
-
+            if line1 in line:
+                version = line.replace(line1, '')
+            if line2 in line:
+                line = line.replace(line2, '')
+                if ' ' in line:
+                    line = line.replace(' ', '')
+                version = version + " (" + line + ")"
+        return version
+    
+                 
       
