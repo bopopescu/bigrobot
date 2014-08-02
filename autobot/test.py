@@ -1387,6 +1387,7 @@ class Test(object):
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 master = self.controller("master")
+                standby = self.controller("c2")
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
@@ -1408,6 +1409,10 @@ class Test(object):
                 master.config("show switch")
                 master.config("show running-config")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
+                helpers.log("########  Stand_by config after ZTN setup: ")
+                standby.config("show switch")
+                standby.config("show running-config")
+                standby.config("enable; config; copy running-config snapshot://ztn-base-config")
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
