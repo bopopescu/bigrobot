@@ -402,7 +402,7 @@ verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
     Should be true  ${in_range} 
 
@@ -410,7 +410,7 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
     
