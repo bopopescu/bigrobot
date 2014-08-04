@@ -9,9 +9,7 @@ echo "========================================================================"
 echo
 pwd=`pwd`
 export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
-
-[ -f $WORKSPACE/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2 ] && echo "Found BVS Image" && echo `bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path "$WORKSPACE/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"` || echo "Found BCF Image" && echo `bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path "$WORKSPACE/target/appliance/images/bcf/controller-bcf-*-SNAPSHOT.qcow2"`
-
+bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet
 export BIGROBOT_TESTBED=libvirt
 export BIGROBOT_PARAMS_INPUT="file:$BIGROBOT_PARAMS_INPUT_PRE"
 echo "Need to sleep few sec for VMs SSH process to be ready for smoke tests"
