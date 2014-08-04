@@ -1569,13 +1569,13 @@ class T5Platform(object):
             return True
 
 
-    def cli_compare_running_config_with_config_line_by_line(self, filename):
+    def cli_compare_running_config_with_snapshot_line_by_line(self, filename):
         ''' Function to compare current running config with
-        config saved in config://, via CLI line by line
+        snapshot saved in snapshot://, via CLI line by line
         Input: Filename
         Output: True if successful, False otherwise
         '''
-        helpers.test_log("Comparing output of 'show running-config' with 'show config %s'" % filename)
+        helpers.test_log("Comparing output of 'show running-config' with 'show snapshot %s'" % filename)
         t = test.Test()
         c = t.controller('master')
         try:
@@ -1585,25 +1585,25 @@ class T5Platform(object):
                 return False
             rc = helpers.strip_cli_output(rc)
             rc = helpers.str_to_list(rc)
-            config_file = c.config("show config %s" % filename)['content']
+            snapshot_file = c.config("show snapshot %s" % filename)['content']
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
-            config_file = helpers.strip_cli_output(config_file)
-            config_file = helpers.str_to_list(config_file)
+            snapshot_file = helpers.strip_cli_output(snapshot_file)
+            snapshot_file = helpers.str_to_list(snapshot_file)
 
             helpers.log("length is %s" % len(rc))
-            helpers.log("length is %s" % len(config_file))
+            helpers.log("length is %s" % len(snapshot_file))
             # Cropping headers of the outputs
             rc = rc[4:]
-            config_file = config_file[8:]
+            snapshot_file = snapshot_file[8:]
 
-            if not len(rc) == len(config_file):
-                helpers.log("Length of RC is different than lenght of RC in config")
+            if not len(rc) == len(snapshot_file):
+                helpers.log("Length of RC is different than lenght of RC in snapshot")
                 return False
             for index, line in enumerate(rc):
-                helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
-                if not line == config_file[index]:
+                helpers.log("Comparing '%s' and '%s'" % (line, snapshot_file[index]))
+                if not line == snapshot_file[index]:
                     helpers.log("difference")
                     return False
         except:
