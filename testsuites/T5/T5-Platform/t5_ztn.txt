@@ -285,7 +285,8 @@ T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.3. Disconnect, change config, reboot
 	Reboot Switches From CLI
@@ -309,7 +310,8 @@ T5.3.4. Disconnect, delete, reboot
 	Randomize ZTN Configuration
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.5. Disconnect, change config, failover, reconnect, reload
 	Reboot Switches From CLI
@@ -340,7 +342,8 @@ T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.7. Disconnect, change config, failover, reboot
 	Reboot Switches From CLI
@@ -363,7 +366,8 @@ T5.3.8. Disconnect, delete, failover, reboot
 	Failover
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.9. Disconnect, change config, double failover, reconnect, reload
 	Reboot Switches From CLI
@@ -391,7 +395,8 @@ T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.11. Disconnect, change config, double failover, reboot
 	Reboot Switches From CLI
@@ -418,31 +423,32 @@ T5.3.12. Disconnect, delete, double failover, reboot
 	Failover
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 ### Switch bring-up
 # Bring up out-of-the-box switch
 T2.1.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.7. Verify that unconfigured switch does not receive image
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
@@ -511,7 +517,8 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  connected  ${s1_alias}
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
 	Reboot Switches From CLI
@@ -603,7 +610,8 @@ T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not r
 	#Telnet Verify ZTN Discovery Failed  s2
 	#Verify Switch Connection State  False  ${s2_alias}
 	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not receive Installer image
 	Reboot Switches From CLI
@@ -625,8 +633,8 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 	#Telnet Verify ONIE Discovery Failed  s2
 	#Verify Switch Connection State  False  ${s2_alias}
 	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	Manual Untested
-	[Tags]  manual-untested  skipped
+	Manual Passed
+	[Tags]  manual
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
@@ -832,7 +840,8 @@ T5.1.2. Power down, delete
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.1.3. Power down, change config, failover
 	Reboot Switches From CLI
@@ -868,7 +877,8 @@ T5.1.4. Power down, delete, failover
 	Failover
 	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 # Switch in stand-by mode
 T5.2.1. Power down, change config
@@ -905,7 +915,8 @@ T5.2.2. Power down, delete
 	Telnet Reboot Switch  s3
 	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.2.3. Power down, change config, failover
 	Reboot Switches From CLI
@@ -945,8 +956,8 @@ T5.2.4. Power down, delete, failover
 	Telnet Reboot Switch  s3
 	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
-
+	Manual Passed
+	[Tags]  manual
 
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
@@ -984,7 +995,8 @@ T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.3. Disconnect, change config, reboot
 	Reboot Switches From CLI
@@ -1016,7 +1028,8 @@ T5.4.4. Disconnect, delete, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.5. Disconnect, change config, failover, reconnect, reload
 	Reboot Switches From CLI
@@ -1052,7 +1065,8 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.7. Disconnect, change config, failover, reboot
 	Power Cycle All Switches
@@ -1087,7 +1101,8 @@ T5.4.8. Disconnect, delete, failover, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.9. Disconnect, change config, double failover, reconnect, reload
 	Reboot Switches From CLI
@@ -1125,7 +1140,8 @@ T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.11. Disconnect, change config, double failover, reboot
 	Reboot Switches From CLI
@@ -1161,7 +1177,8 @@ T5.4.12. Disconnect, delete, double failover, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 # Switch in provisioned mode
 T5.5.1. Connected, change config, flap interface, reload
@@ -1253,14 +1270,14 @@ T5.6.12. Connected, delete, double failover, reboot
 
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 #T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
 	Manual Untested
 	[Tags]  manual-untested
@@ -1271,17 +1288,17 @@ T6.6. Verify that controller does platform check for switches, after configuring
 	Manual Untested
 	[Tags]  manual-untested
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.8. Issue reboot command for a switch that is not connected - error should be presented
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.9. Issue reload command for a switch that is not connected - error should be presented
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.10. Verify that controller caches information about switch from its manifest, and it is available after failover
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.11. Verify that controller can get list of images stored at switch's flash, and after a failover the (new) master can gather the information using cached switch IP addresses
 	Manual Untested
 	[Tags]  manual-untested
@@ -1289,17 +1306,17 @@ T6.12. Verify what happens when switch's running-config changes while fabric is 
 	Manual Untested
 	[Tags]  manual-untested
 T6.13. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.14. Verify that switch caches last known good ZTN manifest from the active ZTN server
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.15. Verify that switch uses cached image after reboot and does not download it again (if no image change)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.16. Verify that switch uses cached config after reboot and does not download it again (if no config change)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
 	Manual Untested
 	[Tags]  manual-untested
@@ -1307,8 +1324,8 @@ T6.18. Verify that discovery process succeeds when no DNS servers are available 
 	Manual Untested
 	[Tags]  manual-untested
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
 	Manual Untested
 	[Tags]  manual-untested
@@ -1331,8 +1348,8 @@ T6.26. Check behavior when controller keeps more than one set of SL images
 	Manual Untested
 	[Tags]  manual-untested
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.28. Check what happens when switch boots when controllers in split-brain mode
 	Manual Untested
 	[Tags]  manual-untested
