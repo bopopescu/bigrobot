@@ -6,9 +6,9 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.8.67.113
+  ip: 10.8.67.10
 c2:
-  ip: 10.8.67.114
+  ip: 10.8.67.11
 
 s1:
   alias:  spine0

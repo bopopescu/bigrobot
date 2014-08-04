@@ -41,8 +41,10 @@ class AggregatedBuild(object):
 
     def do_it(self):
         for build in self.builds():
-            cursor = self.catalog().find_test_cases_archive_matching_build(build)
-            print("build: '%s', total test cases: %s" % (build, cursor.count()))
+            cursor = self.catalog().find_test_cases_archive_matching_build(
+                                        build)
+            print("build: '%s', total test cases: %s"
+                  % (build, cursor.count()))
             for tc in cursor:
                 query = { "name": tc['name'],
                           "product_suite": tc['product_suite'],
@@ -63,13 +65,15 @@ class AggregatedBuild(object):
                                                     tc)
                 else:
                     if count != 1:
-                        print("WARNING: Expecting only one aggregated test case, but result is '%s'"
-                          % count)
+                        print("WARNING: Expecting only one aggregated"
+                              " test case, but result is '%s'"
+                              % count)
 
                     print("Updating document: %s" % query)
                     aggr_tc = aggr_cursor[0]
                     if 'build_name_list' in aggr_tc:
-                        tc['build_name_list'] = aggr_tc['build_name_list'] + [build]
+                        tc['build_name_list'] = (
+                                aggr_tc['build_name_list'] + [build])
                     else:
                         tc['build_name_list'] = [build]
 

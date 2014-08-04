@@ -2880,9 +2880,9 @@ test setup topology
 	REST add system intf to tenant routers 			Y
 	REST add system intf to tenant routers 			Z
 
-	REST add static routes							X							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Y							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Z							0.0.0.0/0			 {"tenant-name": "system"}	
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
 	
 
 test teardown topology

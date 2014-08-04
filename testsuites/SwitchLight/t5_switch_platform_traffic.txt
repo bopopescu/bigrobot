@@ -2,7 +2,7 @@
 Documentation     switch-platform Platform Traffic Test suite- Iron Horse
 Suite Setup       T5 switch platform test setup
 Suite Teardown    T5 switch platform test teardown
-Test Setup        base test setup
+#Test Setup        base test setup
 Test Teardown     atest teardown
 Force Tags        T5  IronHorse
 ...             
@@ -19,20 +19,15 @@ Library         String
 
 ${j}    1
 ${switch1_name}=  leaf0-a
-${switch2_name}=  leaf0-b
+${switch3_name}=  leaf1-a
 ${switch7_name}=  spine0
 ${tenant}=        testTenant 
 ${vns}=           v1
 ${vlan}=          -1
 ${intf_1}=        ethernet24
-${intf_2}=        ethernet2
-${intf_3}=        ethernet3
-${intf_4}=        ethernet4
 
-${intf_6}=        ethernet24
-${intf_7}=        ethernet46
-${intf_8}=        ethernet47
-${intf_9}=        ethernet48
+${intf_2}=        ethernet24
+
 
 ${leaf1_spine0_intf1}=  ethernet49
 ${spine0_leaf1_intf1}=  ethernet21
@@ -362,76 +357,39 @@ spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic 
     stop traffic   ${stream}          
     [Tags]  switch-platform  L2  traffic  linkflap  feature    
 
-Verify all interfaces show up after sw installation 
-    Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  switch-platform  Manual  feature    
-    Manual passed
-
-Verify that the options are maintained on the interface after the system reboot. 
-    Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
-    [Tags]  switch-platform  Manual  feature
-    Manual passed
-     
-Test the Oversubscription of 40Gig Links between Leaf and Spines
-    Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
-    [Tags]  switch-platform  Manual-untested  interface  counters  feature
-    Manual untested
-
-Test the Oversubscription of 10Gig Links between Leaf ports 
-    Log   Step 1 - Test the Oversubscription of 10Gig Links between Leaf ports
-    [Tags]  switch-platform  Manual-untested  interface  counters  feature
-    Manual untested
-    
-Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
-    Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  switch-platform  Manual  interface  counters  feature
-    Manual passed
-
-Test the hashing algorithm between the leaf and spine with multiple links L3 Traffic 
-    Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  switch-platform  Manual  interface  counters  feature
-    Manual passed
-    
 
 * Keywords
       
 T5 switch platform test setup
    base test setup
-   rest add switch  ${switch1_name}
-   ${swDpid1}=  rest return switch dpid from ip  s1
-   rest add dpid  ${switch1_name}   ${swDpid1}
-   rest add fabric role  ${switch1_name}  leaf
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
       
-   rest add switch  ${switch2_name}
-   ${swDpid2}=  rest return switch dpid from ip  s2
-   rest add dpid  ${switch2_name}   ${swDpid2}
-   rest add fabric role  ${switch2_name}  leaf
+   #rest add switch  ${switch2_name}
+   #${swDpid2}=  rest return switch dpid from ip  s2
+   #rest add dpid  ${switch2_name}   ${swDpid2}
+   #rest add fabric role  ${switch2_name}  leaf
    
-   rest add switch  ${switch7_name}
-   ${swDpid7}=  rest return switch dpid from ip  s7
-   rest add dpid  ${switch7_name}   ${swDpid7}
-   rest add fabric role  ${switch7_name}  spine
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
       
    rest add tenant  ${tenant}
    rest add vns  ${tenant}  ${vns}
    
-   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan} 
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_2}  ${vlan}
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_3}  ${vlan}
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_4}  ${vlan}
-   
-   
-   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_6}  ${vlan} 
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_7}  ${vlan}
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_8}  ${vlan}
-#   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_9}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan}    
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_2}  ${vlan} 
+
    
                 
 T5 switch platform test teardown
    rest delete tenant  ${tenant}  
-   rest delete fabric switch  ${switch1_name} 
-   rest delete fabric switch  ${switch2_name}
-   rest delete fabric switch  ${switch7_name}
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch2_name}
+   #rest delete fabric switch  ${switch7_name}
    base test teardown
    sleep  5   
 
@@ -444,7 +402,7 @@ verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
     Should be true  ${in_range} 
 
@@ -452,7 +410,7 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
     
@@ -478,7 +436,8 @@ disable switch interface from controller  [Arguments]  ${switch}  ${intf}
     
 enable switch interface from controller  [Arguments]  ${switch}  ${intf}
     ${result}=  rest enable fabric interface   ${switch}  ${intf}
-    Should be true  ${result}    
+    Should be true  ${result}  
+      
 add interface to vns snake config   [Arguments]  ${tenant}  ${count}
     ${range}=  Evaluate  ${count} + 1
     : FOR  ${i}  IN RANGE  1  ${range}

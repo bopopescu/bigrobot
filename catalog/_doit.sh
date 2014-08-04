@@ -33,7 +33,7 @@ echo "Start time: `date`"
 
 if [ $phase1 -eq 1 ]; then
     subject "Finding all the test suites"
-    time ./total_suites_by_areas.sh
+    time ./dump_suites_by_areas.sh
 fi
 
 if [ $phase2 -eq 1 ]; then
@@ -42,7 +42,7 @@ if [ $phase2 -eq 1 ]; then
     subject "Running all the test suites in dry-run mode"
 
     for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
-        file=raw_data.total_suites_by_areas.sh.${product}.suite_files
+        file=raw_data.dump_suites_by_areas.sh.${product}.suite_files
         dryrun_out=${file}.dryrun
         xml_logs=${file}.dryrun.output_xml.log
 

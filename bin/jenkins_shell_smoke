@@ -1,0 +1,33 @@
+#!/bin/bash -x
+# Description: Jenkins Shell cmds for smoke
+#
+echo
+echo "========================================================================"
+echo ">>> Running BigRobot for post-build validation"
+echo "========================================================================"
+echo
+pwd=`pwd`
+echo $pwd
+qcow_path=$1
+export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
+bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path $qcow_path
+export BIGROBOT_TESTBED=libvirt
+export BIGROBOT_PARAMS_INPUT="file:$BIGROBOT_PARAMS_INPUT_PRE"
+export BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE=True
+export BIGROBOT_TEST_POSTMORTEM=False
+(cd bigrobot/bin; ./run_smoketests)
+pwd
+bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
+
+testlogs_path=../testlogs
+# Process test results - get a count of total tests PASSED/FAILED.
+result_file=$testlogs_path/test_results.txt
+find $testlogs_path -name PASSED -o -name FAILED > $result_file
+total_count=$(cat $result_file | wc -l)
+failed_count=$(cat $result_file | grep FAILED | wc -l)
+mesg "Total smoke test suites: $total_count ($failed_count failed)."
+if [ $failed_count -gt 0 ]; then
+    mesg "Failed smoke test suites:"
+    grep FAILED $result_file
+fi
+exit $failed_count

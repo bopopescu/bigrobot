@@ -48,7 +48,7 @@ T4 Deleting lines
 
 T5 Deleting lines
 	${command}=  Set Variable  snmp-server community ro
-	${diff}=  Create List  snmp-server community ro \'Test\\ntest\'
+	${diff}=  Create List  snmp-server community ro Test_12-test
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
@@ -125,11 +125,8 @@ T15 Deleting lines
 	...  ${diff}
 
 T16 Deleting lines
-	${command}=  Set Variable  tacacs server timeout 10
-	${diff}=  Create List  tacacs server timeout 10
-	Delete single running config line and verify
-	...  ${command}
-	...  ${diff}
+	# Placeholder, userd to be the same as T15
+	Cli Run  master  show run
 
 T17 Deleting lines
 	${command}=  Set Variable  user test-user123

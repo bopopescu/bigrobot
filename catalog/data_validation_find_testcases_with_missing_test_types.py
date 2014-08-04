@@ -6,6 +6,10 @@
 #
 #   For a complete list of test types, see:
 #   https://bigswitch.atlassian.net/wiki/display/QA/Test+Case+Tagging+in+BigRobot
+#
+#   Usage:
+#     % BUILD_NAME="bvs master #2761" ./data_validation_find_testcases_with_missing_test_types.py
+#
 
 import os
 import sys

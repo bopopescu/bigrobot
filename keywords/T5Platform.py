@@ -1569,13 +1569,13 @@ class T5Platform(object):
             return True
 
 
-    def cli_compare_running_config_with_config_line_by_line(self, filename):
+    def cli_compare_running_config_with_snapshot_line_by_line(self, filename):
         ''' Function to compare current running config with
-        config saved in config://, via CLI line by line
+        snapshot saved in snapshot://, via CLI line by line
         Input: Filename
         Output: True if successful, False otherwise
         '''
-        helpers.test_log("Comparing output of 'show running-config' with 'show config %s'" % filename)
+        helpers.test_log("Comparing output of 'show running-config' with 'show snapshot %s'" % filename)
         t = test.Test()
         c = t.controller('master')
         try:
@@ -1585,25 +1585,25 @@ class T5Platform(object):
                 return False
             rc = helpers.strip_cli_output(rc)
             rc = helpers.str_to_list(rc)
-            config_file = c.config("show config %s" % filename)['content']
+            snapshot_file = c.config("show snapshot %s" % filename)['content']
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
-            config_file = helpers.strip_cli_output(config_file)
-            config_file = helpers.str_to_list(config_file)
+            snapshot_file = helpers.strip_cli_output(snapshot_file)
+            snapshot_file = helpers.str_to_list(snapshot_file)
 
             helpers.log("length is %s" % len(rc))
-            helpers.log("length is %s" % len(config_file))
+            helpers.log("length is %s" % len(snapshot_file))
             # Cropping headers of the outputs
             rc = rc[4:]
-            config_file = config_file[8:]
+            snapshot_file = snapshot_file[8:]
 
-            if not len(rc) == len(config_file):
-                helpers.log("Length of RC is different than lenght of RC in config")
+            if not len(rc) == len(snapshot_file):
+                helpers.log("Length of RC is different than lenght of RC in snapshot")
                 return False
             for index, line in enumerate(rc):
-                helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
-                if not line == config_file[index]:
+                helpers.log("Comparing '%s' and '%s'" % (line, snapshot_file[index]))
+                if not line == snapshot_file[index]:
                     helpers.log("difference")
                     return False
         except:
@@ -2124,7 +2124,7 @@ class T5Platform(object):
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
-            return c.rest.content()[0]['build-id']
+            return c.rest.content()[0]['ci-build-number']
         return False
 
 
@@ -3829,7 +3829,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -3870,7 +3874,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -3901,7 +3905,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
                 re.match(r' clear session session-id', string) or re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
@@ -3997,7 +4001,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -4038,7 +4046,8 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4102,7 +4111,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or \
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' test path', string) or \
                 re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string) or \
                 re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4208,9 +4217,13 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-
-        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
-        c.expect(prompt_re)
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        #prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
+        #c.expect(prompt_re)
         content = c.cli_content()
         helpers.log("********** CONTENT ************\n%s" % content)
 
@@ -4291,7 +4304,7 @@ class T5Platform(object):
                     helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
-                if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
+                if key == "debug" or key == "terminal"  or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
                     helpers.log("Ignore line '%s'" % line)
                     num = num - 1
                     continue
@@ -4513,7 +4526,7 @@ class T5Platform(object):
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
             else:
-                helpers.test_failure("Correct number of arguments not returned", soft_error)
+                helpers.log("Correct number of arguments not returned", soft_error)
                 return False
 
             if "<cr> <cr>" in content:
@@ -4531,13 +4544,13 @@ class T5Platform(object):
                         if (str(new_string[index]) in content):
                             helpers.log("Argument %s found in CLI help output" % new_string[index])
                         else:
-                            helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
                             return False
                 else:
                     if (str(cmd_argument) in content):
                         helpers.log("Argument %s found in CLI help output" % cmd_argument)
                     else:
-                        helpers.test_failure("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
     def cli_reboot_switch_name(self, node='master', switch=None):
@@ -4724,9 +4737,9 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         helpers.log("get switch fabric connection state")
-
+ 
         c.rest.get(url)
         data = c.rest.content()
         info = []

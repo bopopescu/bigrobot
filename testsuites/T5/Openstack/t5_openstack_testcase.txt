@@ -194,8 +194,8 @@ Ping VMs from external addresses
 	[Tags]  feature  openstack  IronHorse  manual 
 	manual passed
 Use traceroute to verify traffic paths
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 Use test packet path and check correctness of output
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
@@ -241,8 +241,8 @@ Use seperate storage VLAN to provide a storage traffic going through the fabric 
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
 Test to provide any Qos settings for storage traffic
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
 	[Tags]  scaling  openstack  IronHorse  manual-untested
@@ -473,8 +473,8 @@ Reboot second mgmt switch
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Flap one of the controller mgmt connectivity
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 Hardware replacement
 	[Tags]  solution  openstack  IronHorse  manual
