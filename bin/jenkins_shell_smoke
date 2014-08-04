@@ -18,3 +18,16 @@ export BIGROBOT_TEST_POSTMORTEM=False
 (cd bigrobot/bin; ./run_smoketests)
 pwd
 bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
+
+testlogs_path=../testlogs
+# Process test results - get a count of total tests PASSED/FAILED.
+result_file=$testlogs_path/test_results.txt
+find $testlogs_path -name PASSED -o -name FAILED > $result_file
+total_count=$(cat $result_file | wc -l)
+failed_count=$(cat $result_file | grep FAILED | wc -l)
+mesg "Total smoke test suites: $total_count ($failed_count failed)."
+if [ $failed_count -gt 0 ]; then
+    mesg "Failed smoke test suites:"
+    grep FAILED $result_file
+fi
+exit $failed_count
