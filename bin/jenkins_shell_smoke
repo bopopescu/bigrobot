@@ -19,7 +19,9 @@ export BIGROBOT_TEST_POSTMORTEM=False
 pwd
 bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
 
-testlogs_path=../testlogs
+testlogs_path=bigrobot/testlogs
+# Generate BigRobot log/report.
+(cd "$testlogs_path"; ../bin/bigrobot_log_gen)
 # Process test results - get a count of total tests PASSED/FAILED.
 result_file=$testlogs_path/test_results.txt
 find $testlogs_path -name PASSED -o -name FAILED > $result_file
