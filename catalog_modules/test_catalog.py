@@ -80,6 +80,10 @@ class TestCatalog(object):
             self.db()[collection].remove(query)
         return count
 
+    def remove_build_matching_build(self, build_name):
+        return self.remove_docs(collection='builds',
+                                query={"build_name": build_name})
+
     def remove_test_suites_matching_build(self, build_name):
         return self.remove_docs(collection='test_suites',
                                 query={"build_name": build_name})
