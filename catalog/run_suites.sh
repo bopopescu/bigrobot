@@ -1,7 +1,7 @@
 #!/bin/sh
 # Usage:
 #   $ cd .../bigrobot/catalog
-#   $ ./run_suites.sh total_suites_by_areas.sh.T5.text_files
+#   $ ./run_suites.sh dump_suites_by_areas.sh.T5.text_files
 # Description:
 #   Take an input file which contains a list of test suites (with full path).
 #   Then execute Gobot dryrun against these files to produce the Robot data
