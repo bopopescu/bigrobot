@@ -311,7 +311,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 return c.rest.content()
         else:
             try:
-                c.rest.post(url, {"det-ip-subnet": dstroute})
+                c.rest.post(url, {"dst-ip-subnet": dstroute})
             except:
                 helpers.test_failure(c.rest.error())
             else:
