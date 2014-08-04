@@ -1270,14 +1270,14 @@ T5.6.12. Connected, delete, double failover, reboot
 
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual
 #T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
 	Manual Untested
 	[Tags]  manual-untested
@@ -1288,8 +1288,8 @@ T6.6. Verify that controller does platform check for switches, after configuring
 	Manual Untested
 	[Tags]  manual-untested
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.8. Issue reboot command for a switch that is not connected - error should be presented
 	Manual Passed
 	[Tags]  manual
