@@ -60,10 +60,10 @@ T0 Setup
 	[Tags]  feature  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	#bash execute command  leaf0-a  ofad-ctl autoneg 25
+	#bash execute command  leaf0-a  ofad-ctl autoneg 26
+	#bash execute command  leaf1-a  ofad-ctl autoneg 25
+	#bash execute command  leaf1-a  ofad-ctl autoneg 26
 	
 	bring up h1 bond0
 	sleep  2

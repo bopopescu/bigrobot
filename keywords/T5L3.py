@@ -184,19 +184,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
 
             Return: true if configuration is successful, false otherwise
 REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] {"tenant-name": "A"}
-               http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="X"] {"remote-tenant": "X"}
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] reply: ""
 
-http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="X"] {"remote-tenant": "X"}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-#        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
         url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant)
-
         try:
             # c.rest.post(url, {"tenant-name": tenant, "active": True})
             c.rest.put(url, {"remote-tenant": tenant})
@@ -215,15 +211,13 @@ http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="syste
 
             Return: true if configuration is successful, false otherwise
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] {}
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {} -- Aug 4
        '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        # url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -238,7 +232,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
             Input:
                 `tenant`        tenant name
-PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {"remote-tenant": "system"}
+
             Return: true if configuration is successful, false otherwise
 
         '''
@@ -250,7 +244,6 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="system"]' % (tenant)
         try:
             # c.rest.post(url, {"tenant-name": "system", "active": True})
-            # c.rest.put(url, {"tenant-name": "system"})
             c.rest.put(url, {"remote-tenant": "system"})
         except:
             helpers.test_failure(c.rest.error())
@@ -265,7 +258,6 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X
             Input:
                 `tenant`        tenant name
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/tenant-interfaces[tenant-name="system"] {}
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {} -- Aug 4
             Return: true if configuration is successful, false otherwise
 
         '''
@@ -274,8 +266,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="system"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -320,7 +311,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 return c.rest.content()
         else:
             try:
-                c.rest.post(url, {"dest-ip-subnet": dstroute})
+                c.rest.post(url, {"dst-ip-subnet": dstroute})
             except:
                 helpers.test_failure(c.rest.error())
             else:
@@ -567,7 +558,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/ip-address[ip-address="%s"]' % (tenant, vnsname, endpointname, ipaddr)
         try:
-            # c.rest.patch(url, {"ip-address": ipaddr})
+            #c.rest.patch(url, {"ip-address": ipaddr})
             c.rest.put(url, {"ip-address": ipaddr})
         except:
             helpers.test_failure(c.rest.error())
@@ -774,10 +765,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `dhcpserverip`    IP address of dhcp server
             Return: true if configuration is successful, false otherwise
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] {"dhcp-server-ip": "10.2.1.1"}
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/segment-interface[segment="X2"]/dhcp-relay {"dhcp-server-ip": "10.251.1.9"}
-
-
-                                     /api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply:
         '''
         t = test.Test()
         c = t.controller('master')
@@ -981,7 +969,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.test_log("Input arguments: tenant = %s policy name = %s  " % (tenant, polname))
 
         # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-lists[name="%s"]' % (tenant, polname)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-list[name="%s"]' % (tenant, polname)
         try:
             c.rest.post(url, {"name": polname})
         except:
@@ -1095,7 +1083,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router' % (tenant)
         try:
-            c.rest.patch(url, {"inbound-policy-name": polname})
+            c.rest.patch(url, {"inbound-policy": polname})
         except:
             # helpers.test_failure(c.rest.error())
             return False
@@ -1120,7 +1108,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname))
 
         # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url_remove_policy = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/inbound-policy-name' % (tenant)
+        url_remove_policy = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/inbound-policy' % (tenant)
         try:
             c.rest.delete(url_remove_policy, {})
         except:
@@ -1149,7 +1137,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s policy name = %s sequence number = %s src-data = %s dst-data = %s action = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), polaction))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-list[name="%s"]/rule[seq=%s]' % (tenant, polname, seqnum)
         try:
             c.rest.put(url, {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(polaction)})
 
@@ -1255,7 +1243,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                          " ip-proto = %s " \
                          " segment-interface = %s" \
                          " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-list[name="%s"]/rule[seq=%s]' % (tenant, polname, seqnum)
         if (next_hop is None and ip_proto is None):
             if (srcdata is not None and dstdata is not None):
                 data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action)}
@@ -1528,7 +1516,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-
+  
     def rest_disable_endpoint_flap_protection(self):
         '''Disable endpoint flap protection
          REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection {}
@@ -1537,7 +1525,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         t = test.Test()
         c = t.controller('master')
 
-        url = 'api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection'
+        url = 'api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection' 
         try:
             c.rest.delete(url, {})
         except:
@@ -1556,7 +1544,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         t = test.Test()
         c = t.controller('master')
 
-        url = 'api/v1/data/controller/applications/bcf/global-setting'
+        url = 'api/v1/data/controller/applications/bcf/global-setting' 
         try:
             c.rest.patch(url, {"enable-endpoint-flap-protection": True})
         except:
