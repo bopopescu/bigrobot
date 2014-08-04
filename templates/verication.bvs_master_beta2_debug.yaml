@@ -1,0 +1,45 @@
+# Debug Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as testsuites_dev/<user>/verification.<build_name>.yaml . E.g.,
+#     testsuites_dev/tomasz/verification.bvs_master_beta2_debug.yaml
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be exact match)
+#   - status:              the test case status from the verification, should be either
+#                          PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify the test case
+#   - notes:               free form comments
+#
+# An example:
+#
+#   - name: 'Verify L3 traffic honor more specific routes with ecmp group'
+#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     notes: 'I manually verified this and it works.'
+#   
+#   - name: 'Add and delete all ECMP members in ecmp group'
+#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#     status: PASS
+#     build_name_verified: 'bvs master #2806'
+#     notes:
+#       'This test case failed continuously in regression yet it works
+#       in my testbed through manual verification.'
+#
+
+- name: 
+  product_suite: 
+  status: 
+  build_name_verified: 
+  notes: 
+
+- name: 
+  product_suite: 
+  status: 
+  build_name_verified: 
+  notes:
+
