@@ -27,7 +27,6 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-import catalog_modules.cat_helpers as cat_helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
@@ -35,7 +34,7 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-configs = cat_helpers.load_config_catalog()
+configs = helpers.bigrobot_config_test_catalog()
 db_server = configs['db_server']
 db_port = configs['db_port']
 database = configs['database']
@@ -66,7 +65,7 @@ for x in tc:
 count = 0
 
 for key, value in tc_dict.items():
-    ts = testsuites.find_one( { "product_suite": key } )
+    ts = testsuites.find_one({ "product_suite": key })
     print "Name: %s, Source file: %s" % (ts["author"], ts["source"])
     for x in ["\t%s" % x for x in value]:
         print x

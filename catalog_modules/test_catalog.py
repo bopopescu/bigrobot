@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-import catalog_modules.cat_helpers as cat_helpers
+import autobot.helpers as helpers
 
 
 class TestCatalog(object):
@@ -14,7 +14,7 @@ class TestCatalog(object):
 
     def configs(self):
         if not self._configs:
-            self._configs = cat_helpers.load_config_catalog()
+            self._configs = helpers.bigrobot_config_test_catalog()
         return self._configs
 
     def connect(self):
