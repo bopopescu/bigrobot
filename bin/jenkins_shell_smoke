@@ -8,9 +8,6 @@ echo ">>> Running BigRobot for post-build validation"
 echo "========================================================================"
 echo
 pwd=`pwd`
-rm -rf bigtest
-rm -rf bigrobot
-git clone -b smoke_stable git@github.com:bigswitch/bigrobot.git
 export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
 
 [ -f $WORKSPACE/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2 ] && echo "Found BVS Image" && echo `bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path "$WORKSPACE/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"` || echo "Found BCF Image" && echo `bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path "$WORKSPACE/target/appliance/images/bcf/controller-bcf-*-SNAPSHOT.qcow2"`
