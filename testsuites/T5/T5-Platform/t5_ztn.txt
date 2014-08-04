@@ -423,26 +423,26 @@ T5.3.12. Disconnect, delete, double failover, reboot
 ### Switch bring-up
 # Bring up out-of-the-box switch
 T2.1.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.1.7. Verify that unconfigured switch does not receive image
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
@@ -1274,14 +1274,14 @@ T6.7. Switch running wrong version of switch light, issue reboot, verify new ima
 	Manual Untested
 	[Tags]  manual-untested
 T6.8. Issue reboot command for a switch that is not connected - error should be presented
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.9. Issue reload command for a switch that is not connected - error should be presented
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.10. Verify that controller caches information about switch from its manifest, and it is available after failover
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.11. Verify that controller can get list of images stored at switch's flash, and after a failover the (new) master can gather the information using cached switch IP addresses
 	Manual Untested
 	[Tags]  manual-untested
@@ -1289,17 +1289,17 @@ T6.12. Verify what happens when switch's running-config changes while fabric is 
 	Manual Untested
 	[Tags]  manual-untested
 T6.13. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.14. Verify that switch caches last known good ZTN manifest from the active ZTN server
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.15. Verify that switch uses cached image after reboot and does not download it again (if no image change)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.16. Verify that switch uses cached config after reboot and does not download it again (if no config change)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
 	Manual Untested
 	[Tags]  manual-untested
@@ -1307,8 +1307,8 @@ T6.18. Verify that discovery process succeeds when no DNS servers are available 
 	Manual Untested
 	[Tags]  manual-untested
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
 	Manual Untested
 	[Tags]  manual-untested
@@ -1331,8 +1331,8 @@ T6.26. Check behavior when controller keeps more than one set of SL images
 	Manual Untested
 	[Tags]  manual-untested
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.28. Check what happens when switch boots when controllers in split-brain mode
 	Manual Untested
 	[Tags]  manual-untested
