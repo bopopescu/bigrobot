@@ -304,6 +304,10 @@ Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
     [Tags]          feature
 
+
+Add and delete nexthopgroup in system tenant
+
+
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0

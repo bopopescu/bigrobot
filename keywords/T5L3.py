@@ -184,18 +184,22 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
 
             Return: true if configuration is successful, false otherwise
 REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] {"tenant-name": "A"}
+               http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="X"] {"remote-tenant": "X"}
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] reply: ""
 
+http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="X"] {"remote-tenant": "X"}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
+#        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant)
+
         try:
             # c.rest.post(url, {"tenant-name": tenant, "active": True})
-            c.rest.put(url, {"tenant-name": tenant})
+            c.rest.put(url, {"remote-tenant": tenant})
 
         except:
             helpers.test_failure(c.rest.error())
@@ -211,13 +215,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[
 
             Return: true if configuration is successful, false otherwise
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="A"] {}
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {} -- Aug 4
        '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
+        #url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -232,7 +238,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
             Input:
                 `tenant`        tenant name
-
+PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {"remote-tenant": "system"}
             Return: true if configuration is successful, false otherwise
 
         '''
@@ -241,10 +247,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="system"]' % (tenant)
         try:
             # c.rest.post(url, {"tenant-name": "system", "active": True})
-            c.rest.put(url, {"tenant-name": "system"})
+            #c.rest.put(url, {"tenant-name": "system"})
+            c.rest.put(url, {"remote-tenant": "system"})
         except:
             helpers.test_failure(c.rest.error())
         else:
@@ -258,6 +265,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             Input:
                 `tenant`        tenant name
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/tenant-interfaces[tenant-name="system"] {}
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {} -- Aug 4
             Return: true if configuration is successful, false otherwise
 
         '''
@@ -266,7 +274,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
+        #url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="system"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -765,7 +774,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `dhcpserverip`    IP address of dhcp server
             Return: true if configuration is successful, false otherwise
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] {"dhcp-server-ip": "10.2.1.1"}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply:
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/segment-interface[segment="X2"]/dhcp-relay {"dhcp-server-ip": "10.251.1.9"}
+
+
+                                     /api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay
         '''
         t = test.Test()
         c = t.controller('master')

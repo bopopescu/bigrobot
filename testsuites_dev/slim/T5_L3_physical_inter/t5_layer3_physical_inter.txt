@@ -90,7 +90,7 @@ Inter tenant dhcp relay with multiple dhcp servers
 
 Inter tenant dhcp relay with duplicate circuitid
     manual failed
-    [Tags]      feature         dhcp-relay          jira-PAN-902
+    [Tags]      feature         dhcp-relay          
     
 Host moved to another vns on another tenant and renew dhcp 
     Host moved to another vns on another tenant and renew dhcp 

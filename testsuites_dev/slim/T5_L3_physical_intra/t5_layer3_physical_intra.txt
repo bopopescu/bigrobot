@@ -551,21 +551,22 @@ Verify static endpoint state
     REST add endpoint mac                       X                               X1                      X1_pc1                  ${mac1}
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
-    Should Contain                              ${apState1}                     unknown
+#    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
-    Should Contain                              ${ipState1}                     unknown 
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
+    Should Contain                              ${ipState1}                     Unknown 
     REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Member Rule Error
     REST add endpoint ip                        X                               X1                      X1_pc1                  10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${ipState1}                     static 
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -590,15 +591,15 @@ Verify static endpoint state
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -672,15 +673,15 @@ L3 intra tenant same rack untagged with static endpoints
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -1326,7 +1327,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     BASH ping                                   h5                              10.252.1.9              count=5
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']['ip-address']}  
     ${segment} =                                Set Variable                    ${result[0]['segment']}
     Should Contain                              ${ipAddr}                       10.252.2
     Should Contain                              ${segment}                      Y2
@@ -1388,7 +1389,7 @@ Verify dhcp host is not being aged out
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}    
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
 #   Should Contain                              ${ipAddr1}                      ${ipAddr}
     Should Be Equal As Strings                  ${ipAddr1}                      ${ipAddr}
     BASH delete route                           h1                              10.252.3.0/24           10.252.1.1
@@ -1869,11 +1870,11 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr1}                      10.251.4.11
 #   Should Contain                              ${result}                       10.251.4.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11
 #   Should Contain                              ${result}                       10.251.2.11
     REST add vns ip                             X                               X1                      10.251.1.1              24  
@@ -1888,10 +1889,10 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                               1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11         
     BASH delete route                           h3                              10.251.2.0/24           10.251.1.1
     BASH delete route                           h4                              10.251.4.0/24           10.251.2.1
@@ -2093,8 +2094,8 @@ Static endpoint with dynamic host showing up on another port
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Log                                         attachpoint = ${attachpoint}                
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${loss} =                                   BASH ping                       h2                      10.251.1.11             count=10
