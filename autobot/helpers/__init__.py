@@ -1040,19 +1040,19 @@ def ts_local():
 def ts_long():
     """
     Return the current timestamp in UTC time (string format),
-    e.g., 2013-09-26T15:57:49z
+    e.g., 2013-09-26T15:57:49.123Z
     """
     utc_datetime = datetime.datetime.utcnow()
-    return utc_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
+    return utc_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
 
 
 def ts_long_local():
     """
     Return the current timestamp in local time (string format),
-    e.g., 2013-09-26T15:57:49z
+    e.g., 2013-09-26T15:57:49.123
     """
     local_datetime = datetime.datetime.now(_TZ)
-    return local_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
+    return local_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
 def ts_logger():
     """
@@ -1073,22 +1073,22 @@ def time_now():
 
 def format_robot_timestamp(timestamp, is_datestamp=False):
     """
-    Robot Framework uses the following timestamp format:
+    Robot Framework records the local time uses the following timestamp format:
         20140523 16:49:38.051
-    Concert it to UTC ISO time format:
-        2014-05-23T23:49:38.051Z
+    Convert it to local ISO time format:
+        2014-05-23T16:49:38.051
     """
     match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$',
                      timestamp)
     if not match:
         environment_failure("Incorrect time format: '%s'" % timestamp)
     (year, month, date, hour, minute, sec, msec) = match.groups()
-    hour = int(hour) + 7  # change PST to UTC
+    # hour = int(hour) + 7  # change PST to UTC
     if is_datestamp:
         s = '%s-%s-%s' % (year, month, date)
     else:
-        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date,
-                                       hour, minute, sec, msec)
+        s = '%s-%s-%sT%s:%s:%s.%s' % (year, month, date,
+                                      hour, minute, sec, msec)
     return s
 
 
@@ -1434,6 +1434,8 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         print("Executing '%s'" % cmd)
 
     if shell:
+        # In general, should avoid shell mode. The command output will go
+        # straight to stdout/stderr and are not redirected.
         p = subprocess.call(cmd, shell=True)
         return (True, None)
     else:
@@ -1448,26 +1450,21 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
+def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None,
-          interval=0.4):
-    """
-    Ping options:
-      :param host: (Str) ping hist host
-      :param count : (Int) number of packets to send, equivalent to -c <counter>
-      :param source_inf : -I <interface>
-      :param record_route : -R
-      :param ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
-      :param timeout : (Int) time in seconds to wait for a reply, equivalent
-             to -w <timeout> (on Linux), -t <timeout> (on Mac OS X)
-      :param interval : (Real) time in seconds to wait between sending packets.
-             equivalent to -i <wait>. Interval value less than 0.2 will
-             trigger an error (not supported).
+          interval=0.4, ping_output=None, background=False, label=None):
 
-    See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
-    """
+    if background:
+        if node_handle == None or mode != 'bash':
+            test_error("Background ping is only support for bash mode")
+        if label == None:
+            test_error("You must provide a unique label (string) for background ping")
+        count = None
 
-    cmd = "ping -c %s" % count
+    if count == None or int(count) == -1:  # disable count
+        cmd = "ping"
+    else:
+        cmd = "ping -c %s" % count
     if source_if:
         cmd = "%s -I %s" % (cmd, source_if)
     if record_route:
@@ -1503,13 +1500,24 @@ def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
     if not node_handle:
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
-        _, out = run_cmd(cmd, shell=False, quiet=True, ignore_stderr=True)
+        _, ping_output = run_cmd(cmd, shell=False, quiet=True,
+                                 ignore_stderr=True)
     else:
         if mode == 'bash':
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
-            result = node_handle.bash(cmd)
-            out = result["content"]
+            if background:
+                output_file = '/tmp/ping_background_output.%s.log' % label
+                result = node_handle.bash(cmd + " > " + output_file + " &")
+                pid = str_to_list(node_handle.bash("echo $!")['content'])[1]
+                log("Ping is running in the background. PID=%s" % pid)
+                node_handle.bash("echo %s > %s" % (pid, output_file + ".pid"))
+
+                return pid
+            else:
+                result = node_handle.bash(cmd)
+                ping_output = result["content"]
+
         elif mode == 'cli':
             if source_if:
                 test_error("source_if option not supported for controller CLI ping.")
@@ -1520,13 +1528,43 @@ def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
             result = node_handle.cli(cmd)
-            out = result["content"]
+            ping_output = result["content"]
         else:
             test_error("Unknown mode '%s'. Only 'bash' or 'cli' supported."
                        % mode)
+    return ping_output
 
-    if not quiet:
-        log("Ping output:\n%s" % out, level=4)
+
+def _ping(*args, **kwargs):
+    """
+    Ping options:
+      :param host: (Str) ping hist host
+      :param count : (Int) number of packets to send, equivalent to -c <counter>
+                      If count is -1 or None, disable count.
+                      If background is specified, disable count.
+      :param source_inf : -I <interface>
+      :param record_route : -R
+      :param ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
+      :param timeout : (Int) time in seconds to wait for a reply, equivalent
+             to -w <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param interval : (Real) time in seconds to wait between sending packets.
+             equivalent to -i <wait>. Interval value less than 0.2 will
+             trigger an error (not supported).
+      :param ping_output : (Str) if specified, assuming ping action happened
+             as a separate activity and simply process the ping output.
+
+    See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
+    """
+
+    output = kwargs.get('ping_output', None)
+    if output == None:
+        output = _run_ping_cmd(*args, **kwargs)
+
+    if kwargs.get('background'):
+        return output
+
+    if not kwargs.get('quiet'):
+        log("Ping output:\n%s" % output, level=4)
 
     # Linux output:
     #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
@@ -1549,33 +1587,44 @@ def _ping(host, count=10, timeout=None, quiet=False, source_if=None,
     #   5 packets transmitted, 5 received, 0% packet loss, time 4007ms
     #   rtt min/avg/max/mdev = 0.512/3.669/16.196/6.263 ms
 
-    if source_if:
-        match = re.search(r'ping: unknown iface (\w+)', out, re.M | re.I)
+    if kwargs.get('source_if'):
+        match = re.search(r'ping: unknown iface (\w+)',
+                          output,
+                          re.M | re.I)
         if match:
             test_error("Ping error - unknown source interface '%s'"
                        % match.group(1))
 
     match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?(\d+)?)% packet loss.*',
-                      out,
+                      output,
                       re.M | re.I)
     if match:
         packets_transmitted = int(match.group(1))
         packets_received = int(match.group(2))
-        loss_percentage = int(float(match.group(4)))
+        loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
-             % (host, packets_transmitted, packets_received, loss_percentage))
+             % (kwargs.get('host'), packets_transmitted, packets_received,
+                loss_pct))
+
+        calculated_loss_pct = int((float(packets_transmitted) -
+                                   float(packets_received))
+                                  / float(packets_transmitted) * 100.0)
+        if calculated_loss_pct != loss_pct:
+            warn("Reported ping loss%% (%s) does not equal calculated %% (%s)"
+                 % (loss_pct, calculated_loss_pct))
 
         log("Ping result: %s%s"
             % (s, br_utils.end_of_output_marker()), level=4)
-        return loss_percentage
+        return calculated_loss_pct
 
-    if re.search(r'no route to host', out, re.M | re.I):
+    if re.search(r'no route to host', output, re.M | re.I):
         test_error("Ping error - no route to host")
 
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=10, timeout=None, loss=0, quiet=False):
+def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
+         quiet=False):
     """
     Unix ping. See _ping() for a complete list of options.
     Additional arguments:
@@ -1584,15 +1633,20 @@ def ping(host, count=10, timeout=None, loss=0, quiet=False):
 
     Return: (Int) loss percentage
     """
+    if ping_output == None and host == None:
+        test_error("Must specify a host to ping")
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
+    actual_loss = _ping(host, count=count, timeout=timeout,
+                        ping_output=ping_output, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
+        actual_loss = _ping(host, count=count, timeout=timeout,
+                            ping_output=ping_output, quiet=quiet)
         if actual_loss > loss:
             count -= 4
-            actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
+            actual_loss = _ping(host, count=count, timeout=timeout,
+                                ping_output=ping_output, quiet=quiet)
     return actual_loss
 
 
@@ -1846,6 +1900,12 @@ def split_and_strip(input_str, split_str=','):
     whitespaces.
     """
     return [x.strip() for x in input_str.split(split_str)]
+
+
+def strip_ctrl_chars(string):
+    # Strip control chars, such as
+    #   \x07 - ^G - Bell
+    return re.sub(r'[\x07]', '', string)
 
 
 def strip_cli_output(input_str, to_list=False):

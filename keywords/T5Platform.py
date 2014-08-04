@@ -1775,7 +1775,7 @@ class T5Platform(object):
             temp = helpers.str_to_list(temp)
             helpers.log("USR INFO:   list   is :\n%s" % temp)
             line = temp[-1]
-            helpers.log("USR INFO:  line is :\n%s" % line)            
+            helpers.log("USR INFO:  line is :\n%s" % line)
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
@@ -1783,16 +1783,16 @@ class T5Platform(object):
                 else:
                     helpers.test_failure("Error: %s" % line)
             elif re.match(r'Image added:.* build: (\d+)', line):
-                helpers.log("image added" )                
+                helpers.log("image added")
                 match = re.match(r'Image added:.* build: (\d+)', line)
-                helpers.log("USR INFO: image is: %s" % match.group(1))              
+                helpers.log("USR INFO: image is: %s" % match.group(1))
                 image = match.group(1)
             elif  re.match(r'.*already exists.*', line):
-                helpers.log("image already exists" )
+                helpers.log("image already exists")
                 match = re.match(r'.* (\d+):.* already exists.*', line)
-                helpers.log("USR INFO: image is : %s" % match.group(1))                      
-                image = match.group(1)               
-                
+                helpers.log("USR INFO: image is : %s" % match.group(1))
+                image = match.group(1)
+
             else:
                 (num, images) = self.cli_check_image(node)
                 image = max(images)
@@ -2124,7 +2124,7 @@ class T5Platform(object):
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
-            return c.rest.content()[0]['build-id']
+            return c.rest.content()[0]['ci-build-number']
         return False
 
 
@@ -3829,7 +3829,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -3870,7 +3874,7 @@ class T5Platform(object):
             helpers.log("*** stringc is - %s" % string_c)
 
             # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -3901,7 +3905,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or\
                 re.match(r' clear session session-id', string) or re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
@@ -3997,7 +4001,11 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -4038,7 +4046,8 @@ class T5Platform(object):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 continue
 
-            if re.match(r'For', line) or line == "Commands: (use help <tab> to see all choices)":
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or re.match(r'Commands', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -4102,7 +4111,7 @@ class T5Platform(object):
                 continue
 
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or \
+            if ((key == '<cr>' and (re.match(r' terminal', string))) or re.match(r' test path', string) or \
                 re.match(r' show debug counters', string) or re.match(r' show debug events details', string) or re.match(r' clear session session-id', string) or \
                 re.match(r' clear session user', string) or re.match(r' show debug event all events', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4208,9 +4217,13 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-
-        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
-        c.expect(prompt_re)
+        # Match controller prompt for various modes (cli, enable, config, bash, etc).
+        # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+        prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+        c.expect(prompt_re)        
+        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        #prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
+        #c.expect(prompt_re)
         content = c.cli_content()
         helpers.log("********** CONTENT ************\n%s" % content)
 
@@ -4291,7 +4304,7 @@ class T5Platform(object):
                     helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
-                if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
+                if key == "debug" or key == "terminal"  or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
                     helpers.log("Ignore line '%s'" % line)
                     num = num - 1
                     continue
@@ -4496,7 +4509,12 @@ class T5Platform(object):
         else:
             cli_string = command + ' ?'
             c.send(cli_string, no_cr=True)
-            c.expect(r'[\r\n\x07][\w-]+[#>] ')
+
+            # Match controller prompt for various modes (cli, enable, config, bash, etc).
+            # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
+            prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
+            c.expect(prompt_re)
+
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
@@ -4512,10 +4530,10 @@ class T5Platform(object):
                 return False
 
             if "<cr> <cr>" in content:
-                helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
+                helpers.test_failure("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
 
             if "<help missing>" in content:
-                helpers.test_error("CLI command has a missing help", soft_error)
+                helpers.test_failure("CLI command has a missing help", soft_error)
 
             if (cmd_argument is not None) :
                 if (' ' in cmd_argument):
@@ -4719,9 +4737,9 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         helpers.log("get switch fabric connection state")
-
+ 
         c.rest.get(url)
         data = c.rest.content()
         info = []
@@ -4810,14 +4828,14 @@ class T5Platform(object):
           usage:
           output: True  - upgrade launched successfully
                   False  -upgrade launched Not successfully
-        ''' 
+        '''
 
         t = test.Test()
-        c = t.controller(node)        
+        c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch_HA ')
         role = self.cli_get_node_role(node=node)
-        helpers.log("USER INFO: current controller:  %s  is :  %s" %(node, role))    
-                
+        helpers.log("USER INFO: current controller:  %s  is :  %s" % (node, role))
+
         c.config('')
         string = 'upgrade launch ' + option
         c.send(string)
@@ -4827,40 +4845,40 @@ class T5Platform(object):
         c.send("yes")
         options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
         if options[0] == 1:
-            c.send("yes")        
-                                
+            c.send("yes")
+
         if role == 'active':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                                
-            c.expect(r'waiting for standby to begin \"upgrade launch\"',timeout=360)
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'config updates are frozen for update',timeout=360)
 #            c.expect(r'standby has begun upgrade',timeout=360)
 #            c.expect(r'waiting for standby to complete switch handoff',timeout=360)
 #            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360)
 #            c.expect(r'new state: phase-1-migrate',timeout=360)
-      
-#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)   
+
+#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)
 #            c.expect(r'new state: phase-2-migrate',timeout=360)
-        
-#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)   
-            c.expect(r'The system is going down for reboot NOW!',timeout=600)
-            
+
+#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)
+            c.expect(r'The system is going down for reboot NOW!', timeout=600)
+
             content = c.cli_content()
             helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-                                                 
-            return True         
- 
+
+            return True
+
         elif role == 'standby':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role ))                  
-            c.expect(r'waiting for active to begin \"upgrade launch\"',timeout=360) 
+            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
 #            c.expect(r'Leader->partition state: partition-completed',timeout=360)
 #            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
-            c.expect(r'[R|r]ebooting',timeout=600)
+            c.expect(r'[R|r]ebooting', timeout=600)
             content = c.cli_content()
             helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-            
+
             return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
             return False
-            
+

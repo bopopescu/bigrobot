@@ -1,7 +1,7 @@
 #!/bin/sh
 # Usage:
 #   $ cd .../bigrobot/catalog
-#   $ ./total_suites_by_areas.sh
+#   $ ./dump_suites_by_areas.sh
 # Description:
 #   Create data files containing the suite names for all the products defined
 #   in the catalog.yaml config.

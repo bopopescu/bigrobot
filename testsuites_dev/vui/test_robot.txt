@@ -245,8 +245,13 @@ Test logging
 #    summary log       This is a summary log message
 
 Test openstack convert table to dict
-    #[Tags]           skipped
+    [Tags]           skipped
     parse table
+
+Test strip control char
+    #[Tags]           skipped
+    strip control char test
+
 
 * Keywords
 my base suite setup

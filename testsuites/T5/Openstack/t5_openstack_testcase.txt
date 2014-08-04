@@ -16,7 +16,7 @@ Library		     keywords/Ixia.py
 Library          keywords_dev/prashanth/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
-Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 	
@@ -114,8 +114,8 @@ verify that floating IPs can be recovered/managed through the access & security 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 Security group profiles downloaded onto Vswitch IPtable through our plugin.
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 Test Various ICMP/TCP/UDP security profiles.
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
@@ -206,11 +206,11 @@ Run show tech-support
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Run bsn-support.py
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Verify trace packet support in the Horizon 
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
   
 
 Cinder: Volume create/Delete for block storage management
@@ -223,11 +223,11 @@ Cinder: Volume Attach/Detach of block storage to the server
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
 Cinder: Create/Delete Snapshots
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Number of snapshots to create
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Cinder: Create a new Volume from Snapshot
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
@@ -261,8 +261,8 @@ Upgrade Iron Horse Image to a Iron Horse Official Release image.
 	manual untested
 
 Configure 2 Nuetron server for openstack HA
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 Failover using link down
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -279,52 +279,52 @@ Controller failover
 Trigger HA failover from CLI, then check
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover from CLI Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover from CLI Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover from CLI New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
 
-Failback to previous master
+Trigger HA failover from CLI Failback to previous master
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover from CLI Failback to previous master to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover from CLI Failback to previous master Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover from CLI Failback to previous master New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
 Trigger HA failover via a process restart (floodlight restart) 
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA process restart Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA process restart Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA process restart New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
 Trigger HA failover via master controller node shutdown/reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Failover to slave correctly happens
+Trigger HA failover via master controller Failover to slave correctly happens
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Existing flows should not be impacted
+Trigger HA failover via master controller Existing flows should not be impacted
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-New flows should be established after failover
+Trigger HA failover via master controller New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual failed
 
@@ -351,14 +351,14 @@ Flap the link between Service Rack Leaf switch and router
 
 
 Flap all the links on nova-controller
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 Flap all the links on compute node
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Flap all the links on storage server
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Flap all the links between Leaf and spine switches
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -387,8 +387,8 @@ Connection to Leaf switch Switch failure/reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 All Spine reboot
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Process failure (OFAD) all leaf
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
@@ -401,41 +401,41 @@ Process failure (OFAD) all spine
 
 
 OVS - Nova Controller start/stop process
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 OVS - Compute node start/stop process
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 OVS - Storage if any process starts
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
 
 Multiple failure: All servers fail and recover
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Multiple failure: All Leafs in Service Rack fail
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Multiple failure: All Leafs in Compute Rack fail
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Multiple failure: All Spine switches fail
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Multiple failure: reboot whole P domain
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
 
 Host reboot
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Nova controller reboot
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 Nova compute node reboot
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 Storage reboot
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
@@ -467,18 +467,18 @@ flap mgmt link on the service rack
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Reboot one of the mgmt switch 
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Reboot second mgmt switch
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Flap one of the controller mgmt connectivity
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
 
 Hardware replacement
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Replace a Leaf switch
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -486,11 +486,11 @@ Replace a Spine switch
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Scenario of replacing external router (With the same IP and different MAC)
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Replacing server with same host name and IP
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Test work flow of VM migration
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
@@ -499,8 +499,8 @@ Test work flow of VM migration
 
 
 Add service between Data and App VNS and verify the traffic load balance
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 Out of sync script for new controller bringup and exsisting openstack setup
 	[Tags]  solution  openstack  IronHorse  manual
@@ -514,17 +514,17 @@ add/remove CLI
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 Verify the tenant/VNS mapping to global tenant
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 check the setting before and after reboot
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 verify sync script with global mapping setting
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 Verify single VNS , multiple VNS forwarding
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 	
 
 shared resources VNS created under admin tenant (clemson univsersity)
