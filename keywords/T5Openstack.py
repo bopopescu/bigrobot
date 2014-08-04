@@ -283,7 +283,7 @@ class T5Openstack(object):
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("source /home/stack/devstack/%s" % source_name)
+		os1.bash("source /root/%s" % source_name)
 
 	def openstack_add_tenant(self, tenantName):
 		'''create tenant
@@ -720,29 +720,26 @@ S
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
-			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/vns[tenant="%s"][name="%s"]' % (tenantId, netId)
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
 			c.rest.get(url)
 			data = c.rest.content()
-			if data[0]["tenant"] == tenantId:
-				if data[0]["name"] == netId:
+			for i in range(0,len(data)):
+				if data[i]["tenant"] == tenantId and data[i]["name"] == netId:
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
 				else:
-					helpers.test_failure("Fail:Openstack networks are not created in the BSN controller, check the network service log")
-					return False
-			else:
-					helpers.log("Openstack tenant not present in the BSN controller")
-					return False
+					continue
 		else:
 			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
 			c.rest.get(url)
 			data = c.rest.content()
-			if len(data) == 0:
-				helpers.log("Expected vns is deleted from the controller")
-				return True
-			else:
-				helpers.test_failure("Expected vns is not deleted from the controller")
-				return False
+			for i in range(0,len(data)):
+				if data[i]["name"] != tenantId:
+					helpers.log("Expected vns is deleted from the controller")
+					return True
+				else:
+					helpers.log("Expected vns is not deleted from the controller")
+					return False
 
 	def openstack_verify_endpoint(self, instanceName, netName):
 		'''function to verify endpoint in BSN controller
@@ -792,12 +789,11 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
-		c.rest.get(url)
-		data = c.rest.content()
 		subnetIp = self.openstack_show_subnet_ip(subnetName)
-		for i in range(0, len(data)):
-			if str(data[i]["ip-address"]) == str(subnetIp) and str(data[i]["state"]) == "Active":
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
+		c.rest.get(url)
+		data = c.rest.content()		
+		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "Active":
 				helpers.log("Pass: Router interface creaetd as endpoint in controller")
 				return True
 		helpers.test_failure("Fail:router interface not present in controller endpoint table")
@@ -819,28 +815,30 @@ S
 			i = i + 1
 		return True
 
-	def openstack_segment_scale(self, tenantName, subnet_firstbyte, name='s', count=0):
+	def openstack_segment_scale(self, tenantName, subnet, count):
 		'''Function to create multiple segments in a given tenant
-		Input: tenantName , count , name starts with segment
-		Output: given number of segments created in neutron server using neutron command
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
 	    '''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
+		tenantId = self.openstack_show_tenant(tenantName)
 		count = int(count)
+		name = 's'
 		i = 1
 		j = 0
 		k = 0
+		helpers.log("Print:%d", count)
 		while (i <= count):
 			netName = name
 			netName += str(i)
-			tenantId = self.openstack_show_tenant(tenantName)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
 				return False
-			ipaddr = "%d.%d.%d.0" % (subnet_firstbyte, j, k)
+			ipaddr = "%d.%d.%d.0" % (subnet, j, k)
 			subnet_ip = ipaddr + "/" + 24
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
