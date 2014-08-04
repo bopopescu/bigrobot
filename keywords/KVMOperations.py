@@ -298,19 +298,19 @@ class KVMOperations(object):
             gateway = kwargs.get("gateway", "10.8.0.1")
             network_interface = kwargs.get("network_interface", "br0")
             helpers.summary_log("Creating log_path %s" % self.log_path)
+            self.log_path = LOG_BASE_PATH + '/' + vm_name
             try:
-                if os.path.exists(LOG_BASE_PATH) or os.path.islink(LOG_BASE_PATH):
+                if os.path.exists(self.log_path) or os.path.islink(self.log_path):
                     pass
                 else:
-                    os.makedirs(LOG_BASE_PATH)
+                    os.makedirs(self.log_path)
             except OSError as exc:  # Python >2.5
                 if exc.errno == errno.EEXIST and os.path.isdir(LOG_BASE_PATH):
                     pass
                 else:
                     # Last resort - put logs in /tmp
-                    LOG_BASE_PATH = '/tmp'
-            self.log_path = LOG_BASE_PATH + '/' + vm_name
-            os.makedirs(self.log_path)
+                    self.log_path = '/tmp' + '/' + vm_name
+                    os.makedirs(self.log_path)
 
             # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
             remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2")
