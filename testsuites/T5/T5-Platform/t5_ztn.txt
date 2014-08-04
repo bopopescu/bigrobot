@@ -285,7 +285,8 @@ T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.3. Disconnect, change config, reboot
 	Reboot Switches From CLI
@@ -309,7 +310,8 @@ T5.3.4. Disconnect, delete, reboot
 	Randomize ZTN Configuration
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.5. Disconnect, change config, failover, reconnect, reload
 	Reboot Switches From CLI
@@ -340,7 +342,8 @@ T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.7. Disconnect, change config, failover, reboot
 	Reboot Switches From CLI
@@ -363,7 +366,8 @@ T5.3.8. Disconnect, delete, failover, reboot
 	Failover
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.9. Disconnect, change config, double failover, reconnect, reload
 	Reboot Switches From CLI
@@ -391,7 +395,8 @@ T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s2  up
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.3.11. Disconnect, change config, double failover, reboot
 	Reboot Switches From CLI
@@ -418,7 +423,8 @@ T5.3.12. Disconnect, delete, double failover, reboot
 	Failover
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 ### Switch bring-up
 # Bring up out-of-the-box switch
@@ -511,7 +517,8 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  connected  ${s1_alias}
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
 	Reboot Switches From CLI
@@ -603,7 +610,8 @@ T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not r
 	#Telnet Verify ZTN Discovery Failed  s2
 	#Verify Switch Connection State  False  ${s2_alias}
 	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not receive Installer image
 	Reboot Switches From CLI
@@ -625,8 +633,8 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 	#Telnet Verify ONIE Discovery Failed  s2
 	#Verify Switch Connection State  False  ${s2_alias}
 	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	Manual Untested
-	[Tags]  manual-untested  skipped
+	Manual Passed
+	[Tags]  manual
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
@@ -832,7 +840,8 @@ T5.1.2. Power down, delete
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.1.3. Power down, change config, failover
 	Reboot Switches From CLI
@@ -868,7 +877,8 @@ T5.1.4. Power down, delete, failover
 	Failover
 	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 # Switch in stand-by mode
 T5.2.1. Power down, change config
@@ -905,7 +915,8 @@ T5.2.2. Power down, delete
 	Telnet Reboot Switch  s3
 	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.2.3. Power down, change config, failover
 	Reboot Switches From CLI
@@ -945,8 +956,8 @@ T5.2.4. Power down, delete, failover
 	Telnet Reboot Switch  s3
 	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
-
+	Manual Passed
+	[Tags]  manual
 
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
@@ -984,7 +995,8 @@ T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.3. Disconnect, change config, reboot
 	Reboot Switches From CLI
@@ -1016,7 +1028,8 @@ T5.4.4. Disconnect, delete, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.5. Disconnect, change config, failover, reconnect, reload
 	Reboot Switches From CLI
@@ -1052,7 +1065,8 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.7. Disconnect, change config, failover, reboot
 	Power Cycle All Switches
@@ -1087,7 +1101,8 @@ T5.4.8. Disconnect, delete, failover, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.9. Disconnect, change config, double failover, reconnect, reload
 	Reboot Switches From CLI
@@ -1125,7 +1140,8 @@ T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 T5.4.11. Disconnect, change config, double failover, reboot
 	Reboot Switches From CLI
@@ -1161,7 +1177,8 @@ T5.4.12. Disconnect, delete, double failover, reboot
 	# add validation of state here
 	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 
 # Switch in provisioned mode
 T5.5.1. Connected, change config, flap interface, reload
