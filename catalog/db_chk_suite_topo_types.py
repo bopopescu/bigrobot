@@ -19,7 +19,6 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-import catalog_modules.cat_helpers as cat_helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
@@ -27,7 +26,7 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-configs = cat_helpers.load_config_catalog()
+configs = helpers.bigrobot_config_test_catalog()
 db_server = configs['db_server']
 db_port = configs['db_port']
 database = configs['database']
@@ -43,7 +42,7 @@ print_mv_commands = True
 
 testsuites = db.test_suites
 
-suites = testsuites.find( {"build_name": os.environ['BUILD_NAME']},
+suites = testsuites.find({"build_name": os.environ['BUILD_NAME']},
                           { "author": 1, "source": 1, "topo_type": 1, "_id": 1}
                           )
 
@@ -55,8 +54,8 @@ if print_unknown:
     for x in sorted(suites, key=lambda k: k['author']):
         if x["topo_type"] == 'unknown':
             print("%10s   %-10s %s" % (x["topo_type"], x["author"], x["source"]))
-            #x["dest_source"] = os.path.splitext(x["source"])[0] + ".physical.topo"
-            #print("mv %s %s" % (x["source"], x["dest_source"]))
+            # x["dest_source"] = os.path.splitext(x["source"])[0] + ".physical.topo"
+            # print("mv %s %s" % (x["source"], x["dest_source"]))
 
 if print_mv_commands:
     for x in sorted(suites, key=lambda k: k['author']):
@@ -68,6 +67,6 @@ if print_mv_commands:
             topo_file_new = "../" + suite + ".physical.topo"
 
             if helpers.file_exists(topo_file_current):
-                #print("mv %s %s" % (topo_file_current, topo_file_new))
+                # print("mv %s %s" % (topo_file_current, topo_file_new))
                 print("git mv %s %s" % (topo_file_current, topo_file_new))
-                #print("ls -la %s" % topo_file_current)
+                # print("ls -la %s" % topo_file_current)

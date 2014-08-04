@@ -716,6 +716,37 @@ def bigrobot_configs_path(config_path='/../configs'):
     return ''.join((get_path_autobot(), config_path))
 
 
+def _bigrobot_config_load(config_file):
+    config_file = bigrobot_configs_path() + config_file
+    if file_not_exists(config_file):
+        error_exit("Config file '%s' does not exist" % config_file, 1)
+    config_dict = load_config(config_file)
+    config_dict['this_file'] = config_file
+    return config_dict
+
+
+def bigrobot_config_bsn():
+    return _bigrobot_config_load('/bsn.yaml')
+
+
+def bigrobot_config_test_catalog():
+    return _bigrobot_config_load('/catalog.yaml')
+
+
+def bigrobot_config_qa_authors():
+    return _bigrobot_config_load('/qa_authors.yaml')
+
+
+def load_config(yaml_file):
+    """
+    Load a configuration file which is in YAML format. Result is Python dict.
+    """
+    if file_not_exists(yaml_file):
+        environment_failure("File %s does not exist" % yaml_file)
+    stream = open(yaml_file, 'r')
+    return yaml.load(stream)
+
+
 def sleep(s):
     """
     Sleep for <s> seconds.
@@ -935,16 +966,6 @@ def unicode_to_ascii(u):
     COnvert a Unicode string to an ASCII string.
     """
     return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
-
-
-def load_config(yaml_file):
-    """
-    Load a configuration file which is in YAML format. Result is Python dict.
-    """
-    if file_not_exists(yaml_file):
-        environment_failure("File %s does not exist" % yaml_file)
-    stream = open(yaml_file, 'r')
-    return yaml.load(stream)
 
 
 def from_yaml(yaml_str):
