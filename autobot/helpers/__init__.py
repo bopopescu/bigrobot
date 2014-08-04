@@ -737,6 +737,10 @@ def bigrobot_config_qa_authors():
     return _bigrobot_config_load('/qa_authors.yaml')
 
 
+def bigrobot_config_rest_services():
+    return _bigrobot_config_load('/rest_services.yaml')
+
+
 def load_config(yaml_file):
     """
     Load a configuration file which is in YAML format. Result is Python dict.
