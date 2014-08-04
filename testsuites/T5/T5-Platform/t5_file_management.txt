@@ -137,7 +137,7 @@ T1.1 Copy running config to file
 
 T1.2 Copy running config to snapshot://
 	Cli Copy  running-config  ${config}
-	Compare RC with Config Line By Line  ${config}
+	Compare RC with Snapshot Line By Line  ${config}
 	Compare  running-config  ${config}
 	[Tags]  Smoke
 
@@ -159,7 +159,7 @@ T2.1 Copy running config to file, change RC, verify configs different
 T2.2 Copy running config to snapshot://, change RC, verify configs different
 	Cli Copy  running-config  ${config}
 	Modify Running Config
-	Compare RC with Config Line By Line Negative  ${config}
+	Compare RC with Snapshot Line By Line Negative  ${config}
 	Compare Negative  running-config  ${config}
 	[Tags]
 
@@ -214,8 +214,8 @@ T4.2 Copy running config to snapshot://, change RC, restore, verify old RC resto
 	Cli Copy  running-config  ${config}
 	Modify Running Config
 	Cli Copy  ${config}  running-config
-	Compare RC with Config Line By Line  ${config}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
+	Compare RC with Snapshot Line By Line  ${config}
+	${status} =  Cli Compare Running Config with Snapshot Line By Line  ${config name}
 	Should Be True  ${status}
 	Compare  running-config  ${config}
 	[Tags]
@@ -814,14 +814,14 @@ Compare RC with File Line By Line Negative
 	${status} =  Cli Compare Running Config with File Line By Line  ${file}
 	Should Not Be True  ${status}
 
-Compare RC with Config Line By Line
+Compare RC with Snapshot Line By Line
 	[Arguments]  ${file}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${file}
+	${status} =  Cli Compare Running Config with Snapshot Line By Line  ${file}
 	Should Be True  ${status}
 
-Compare RC with Config Line By Line Negative
+Compare RC with Snapshot Line By Line Negative
 	[Arguments]  ${file}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${file}
+	${status} =  Cli Compare Running Config with Snapshot Line By Line  ${file}
 	Should Not Be True  ${status}
 
 Validate Filename
