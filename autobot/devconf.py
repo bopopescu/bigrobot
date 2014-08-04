@@ -217,6 +217,7 @@ class DevConf(object):
                "==== Expect error (End) ===="
                % (descr, self.prompt_str(prompt), _buffer))
         helpers.log(msg)
+        self.clear_lock()
         helpers.test_error("Devconf expect exception", soft_error)
 
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
