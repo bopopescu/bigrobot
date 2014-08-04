@@ -1,0 +1,18 @@
+#!/bin/bash -x
+# Description: Jenkins Shell cmds for smoke
+#
+echo
+echo "========================================================================"
+echo ">>> Running BigRobot for post-build validation"
+echo "========================================================================"
+echo
+pwd=`pwd`
+export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
+bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path "$WORKSPACE/target/appliance/images/bcf/controller-bcf-*.qcow2"
+export BIGROBOT_TESTBED=libvirt
+export BIGROBOT_PARAMS_INPUT="file:$BIGROBOT_PARAMS_INPUT_PRE"
+export BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE=True
+export BIGROBOT_TEST_POSTMORTEM=False
+(cd bigrobot/bin; ./run_smoketests)
+pwd
+bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
