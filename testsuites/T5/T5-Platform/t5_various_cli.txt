@@ -386,10 +386,10 @@ T20.2 TACACS Default timeout
 	[Tags]  BSC-5088  AAA  TACACS  skipped
 
 T21 Escaping special characters in quoted strings
-	Cli Run  master  snmp-server community ro "tests\\n \\r \\n '''"
+	Cli Run  master  snmp-server contact "tests\\n \\r \\n '''"
 	Cli Run and Verify Output  master
 	...  show run snmp
-	...  snmp-server community ro "tests\\n \\r \\n '''"
+	...  snmp-server contact "tests\\n \\r \\n '''"
 	Cli Run  master  snmp-server location 'Location \\n \\r \\n """"'
 	Cli Run and Verify Output  master
 	...  show run snmp
