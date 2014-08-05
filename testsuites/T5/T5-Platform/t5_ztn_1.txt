@@ -1,0 +1,252 @@
+*** Settings ***
+Documentation       Testing ZTN
+...              The purpose of this test suite is to check managing switches with ZTN. Small testbed will be used.
+...
+...              *Test topology*: pair of controllers, one spine switch, two leaf switches (Accton).
+...
+...              For tests which check correct installation of flows on the switches, simple forwarding configuration
+...              and small traffic rate will be used.
+...              Larger testbeds will be tested inherently in other testsuites.
+...
+...              In this Test Suite the following terms will be used:
+...
+...              * stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+...
+...              * provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+...
+...              * suspended switch - switch connected to fabric but not configured on the controller,
+...                or running wrong version of Swith Light, or with incorrect running-config
+...
+...              * ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
+...
+...              * ZTN configuration, which includes:
+...
+...                - configuration mirrored from controller's configuration to switches (NTP, Logging, SNMP)
+...
+...                - controllers' IP addresses
+...
+...                  - per-switch hostname (as switch name on the controller)
+...
+...                  - per-switch interface configuration (as assigned by DHCP server when switch booted)
+...
+...              * ZTN configuration change:
+...
+...                - any controller Cli change that affects the switch startup-config
+...
+...              * Switch mode change:
+...
+...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
+
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
+Test Setup		Test Setup
+Test Teardown	Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
+Library  		keywords/BsnCommon.py
+Library		keywords/T5Platform.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		String
+Resource		t5_ztn_resource.txt
+
+
+*** Test Cases ***
+### Basic image check
+T1.1. Verify that release images are present on all controllers
+	Bash Verify Switchlight Images  node=master
+	Bash Verify Switchlight Images  node=slave
+
+T1.2. Verify that manifest files are included in Switchlight image bundles
+	Bash Verify Switchlight Manifests  node=master
+	Bash Verify Switchlight Manifests  node=slave
+
+T1.3. Check supported platforms of SWI and installer
+	@{installer_platforms}=  Bash Get Supported Platforms  installer
+	@{swi_platforms}=  Bash Get Supported Platforms  swi
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[0]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[1]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[2]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[3]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[4]
+	Should Contain  ${installer_platforms}  @{supported_installer_platforms}[5]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[0]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[1]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[2]
+	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
+
+T1.4. Check Running config for a switch
+	Cli Run  master  show run
+    Reboot Switches From CLI
+	Verify All Switches Running Config
+
+T1.5. Check Startup config for a switch
+	Cli Run  master  show run
+	Verify All Switches Startup Config
+
+T1.6. Test switch reboot
+	Telnet Reboot Switch  s1
+	Sleep  5
+	Telnet Reboot Switch  s2
+	Sleep  5
+	Telnet Reboot Switch  s3
+	Sleep  5
+	Telnet Reboot Switch  s4
+	Sleep  5
+	Telnet Reboot Switch  s5
+
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
+
+T1.7. Reboot all switches from CLI
+	${status}=  Cli Reboot Switch  master  all
+	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	${status}=  Cli Reboot Switch  slave  all
+	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+
+T1.8. Reboot switches from CLI
+	Cli Reboot Switch  master  ${s1_alias}
+	Sleep  5
+	Cli Reboot Switch  master  ${s2_mac}
+	Sleep  5
+	Cli Reboot Switch  master  ${s3_ip}
+	Sleep  5
+	Cli Reboot Switch  master  ${s4_alias}
+	Sleep  5
+	Cli Reboot Switch  master  ${s5_mac}
+
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
+
+	Sleep  20
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
+
+T1.9. Verify startup config after failover
+    Reboot Switches From CLI
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	Failover
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+
+T1.10. Verify switches Switchlight SWI version
+	Verify Switch SWI Version  ${s1_alias}
+	Verify Switch SWI Version  ${s2_alias}
+	Verify Switch SWI Version  ${s3_alias}
+	Verify Switch SWI Version  ${s4_alias}
+	Verify Switch SWI Version  ${s5_alias}
+T1.11. Verify switches Switchlight Installer version
+	Verify Switch Installer Version  ${s1_alias}
+	Verify Switch Installer Version  ${s2_alias}
+	Verify Switch Installer Version  ${s3_alias}
+	Verify Switch Installer Version  ${s4_alias}
+	Verify Switch Installer Version  ${s5_alias}
+
+#T1.12. Reset switch to factory default
+#	Telnet Reset Switch to Factory Default  ${s4_alias}
+
+T1.13. Reboot and stop at loader shell
+	Telnet Reboot Switch  s1
+	Telnet Stop Autoboot  s1
+	Telnet Reboot Switch  s1
+	[Tags]  skipped
+
+T1.14. Power cycle switches
+	Power Cycle All Switches
+	[Tags]  skipped
+
+T0.1. BSC-5430
+	${mac1}=  Set Variable  12:22:22:44:55:66
+	${mac2}=  Set Variable  66:55:22:33:22:11
+	${name}=  Set Variable  test1
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${mac1}  ${name}
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac2}
+	Verify Switch Startup Config  ${mac2}  ${name}
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Verify Switch Startup Config  ${mac1}  ${name}
+	[Tags]  BSC-5430
+
+T0.2. BSC-5550
+	${mac1}=  Set Variable  12:22:33:44:55:66
+	${name}=  Set Variable  test
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Cli Run and Verify Output  master
+	...  system reboot switch ?
+	...  <core/action
+	...  flag=False
+	[Tags]  BSC-5550
+
+T0.3. BSC-5568
+	${mac1}=  Set Variable  44:aa:bb:cc:dd:ee
+	${name}=  Set Variable  test
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Run Keyword and Expect error
+	...  *Error: Unable to determine IP address of specified switch name*
+	...  Cli Run and Verify Output  master
+	...  system reboot switch test ?
+	...  Shutdown Controller
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  system reboot switch ?
+	...  Shutdown Controller
+	...  flag=False
+	Run Keyword and Expect Error
+	...  *Error: Unable to determine IP address of specified switch name*
+	...  Cli Run and Verify Output  master
+	...  system reboot switch test ?
+	...  Reboot indicated switches
+	[Tags]  BSC-5568
+
+T0.4. Show remote
+	Cli Run  master  show switch ${s1_alias} environment
+	Cli Run  master  show switch ${s1_alias} version
+	#Cli Run  master  show switch ${s1_alias} controller
+	Cli Run  master  show switch ${s1_alias} inventory
+
+	Cli Run  master  show switch ${s2_alias} environment
+	Cli Run  master  show switch ${s2_alias} version
+	#Cli Run  master  show switch ${s2_alias} controller
+	Cli Run  master  show switch ${s2_alias} inventory
+
+	Cli Run  master  show switch ${s3_alias} environment
+	Cli Run  master  show switch ${s3_alias} version
+	#Cli Run  master  show switch ${s3_alias} controller
+	Cli Run  master  show switch ${s3_alias} inventory
+
+	Cli Run  master  show switch ${s4_alias} environment
+	Cli Run  master  show switch ${s4_alias} version
+	#Cli Run  master  show switch ${s4_alias} controller
+	Cli Run  master  show switch ${s4_alias} inventory
+
+	Cli Run  master  show switch ${s5_alias} environment
+	Cli Run  master  show switch ${s5_alias} version
+	#Cli Run  master  show switch ${s5_alias} controller
+	Cli Run  master  show switch ${s5_alias} inventory
+
+
