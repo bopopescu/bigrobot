@@ -7,7 +7,7 @@ Test Teardown  offset test teardown
 Force Tags   Corsair  BigTap  Sanity  Feature
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
-Library  keywords/BigTap.py
+Library  keywords_dev/sakshi/BigTap.py
 Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
@@ -41,9 +41,7 @@ ${bigtap_policy_name}					offset-policy
     Should be true   ${return_value}       
     [Tags]  feature
 
-02_Verify CLI command "BigTap offset-match ?" does not contain any erroneous strings
-
-03_Verify no errors are reported in CLI/Syslog while disabling offset based match via cli command "no BigTap offset-match"
+#02_Verify CLI command "BigTap offset-match ?" does not contain any erroneous strings
 
 04_With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
@@ -68,7 +66,7 @@ ${bigtap_policy_name}					offset-policy
     Should be equal as integers  ${ipproto}  17 
     ${dstport}=  rest return switch flow  s1  2  port
     Should be equal as integers  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s1  4  udf4
+    ${udf}=  rest return switch flow  s1  4  udf1
     Should be equal as integers  ${udf}  100
     sleep  5
     ${ethType}=  rest return switch flow  s2  0  eth-type
@@ -77,7 +75,7 @@ ${bigtap_policy_name}					offset-policy
     Should be equal as integers  ${ipproto}  17 
     ${dstport}=  rest return switch flow  s2  2  port
     Should be equal as integers  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s2  4  udf4
+    ${udf}=  rest return switch flow  s2  4  udf1
     Should be equal as integers  ${udf}  100
     sleep  5
     [Tags]  feature   

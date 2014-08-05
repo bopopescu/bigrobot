@@ -64,8 +64,8 @@ T1.5. Verify startup config after failover
 *** Keywords ***
 Suite Setup
 	Base Suite Setup
-	Cli Copy  running-config  config://startup-config
-	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Copy  running-config  snapshot://startup-config
+	Cli Copy  running-config  snapshot://startup-config  node=slave
 
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${spine_alias}; mac ${spine_mac}; fabric-role spine
@@ -73,7 +73,7 @@ Suite Setup
 	Randomize ZTN Configuration
 
 Suite Teardown
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  snapshot://startup-config  running-config
 	Base Suite Teardown
 
 Test Setup
@@ -81,11 +81,11 @@ Test Setup
 	Cli Run  master  show run
 	Cli Run  master  show switch
 	Cli Run  slave  show switch
-	Cli Copy  running-config  config://test-config
-	Cli Copy  running-config  config://test-config  node=slave
+	Cli Copy  running-config  snapshot://test-config
+	Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	Cli Copy  config://test-config  running-config
+	Cli Copy  snapshot://test-config  running-config
 	Base Test Teardown
 
 Generate Random Name
@@ -124,13 +124,13 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server enable traps
 	${threshold_random}  Generate Random Threshold
 	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${threshold_random}  Generate Random Threshold
 	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}

@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import re
+import netaddr
 
 class T5Openstack(object):
 
@@ -247,6 +248,34 @@ class T5Openstack(object):
 					break
 		return imageId
 
+	def openstack_show_external_network(self, extName):
+		'''Get subnet id
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`subnetName`       	subnet's name
+			Return: id of subnet for that tenant
+			NB: when creating subnet, name is optional. Must pass name during subnet creation to use this function
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+
+		result = os1.bash("neutron net-external-list %s" % (extName))
+		output = result["content"]
+		match = re.search(r'Unable to find subnet with name', output)
+		if match:
+			helpers.log("subnet Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			extId = None
+			for key in out_dict:
+				name = out_dict[key]['name']
+				match = re.search(extName, name)
+				if match:
+					extId = key
+			return extId
+	
+	
 	def openstack_source(self, source_name):
 		'''Get image id
 			Input:
@@ -254,7 +283,7 @@ class T5Openstack(object):
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("source /home/stack/devstack/%s" % source_name)
+		os1.bash("source /root/%s" % source_name)
 
 	def openstack_add_tenant(self, tenantName):
 		'''create tenant
@@ -455,6 +484,55 @@ class T5Openstack(object):
 				return False
 		return True
 
+	def openstack_add_net_external(self, netName):
+		'''create a external network
+			Input:
+				network name
+			Return: id for created subnet
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		try:
+				os1.bash("neutron net-create %s --router:external=True" % (netName))
+		except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+		return True
+	
+	def openstack_add_subnet_external(self,  netName, subnetName, external_gateway_ip, subnet_ip):
+		'''create subnet
+			Input:
+				network name , Subnet name , Subnet (e.g app-net , app-net1, 50.0.0.0/24)
+			Return: id for created subnet
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		try:
+				os1.bash("neutron subnet-create %s --name %s %s %s" % (netName, subnetName, external_gateway_ip, subnet_ip))
+		except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+		return True
+
+	def openstack_delete_subnet(self, subnetName):
+		'''create subnet
+			Input:
+				network name , Subnet name , Subnet (e.g app-net , app-net1, 50.0.0.0/24)
+			Return: id for created subnet
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		try:
+				os1.bash("neutron subnet-delete %s" % (subnetName))
+		except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+		return True
+	
+	
 	def openstack_add_keypair(self, keypairName, pathToSave):
 		'''Generate openstack tenant keypair
 			Input:
@@ -482,38 +560,38 @@ class T5Openstack(object):
 		os1.bash("nova keypair-delete %s" % (keypairName))
 		return True
 
-	def openstack_add_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId):
+	def openstack_add_router_gw(self, routerName, extName):
 		'''set tenant router gateway
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
 				`routerId`			tenant router id
 				`extNetId`		external network id
-				root@nova-controller:~# neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-gateway-set ff25378d-8b0d-4192-8c33-78ea0eba8d0e 02f4a4d1-0930-43bf-94db-2d39b11c343d
+				root@nova-controller:~# neutron router-gateway-set ff25378d-8b0d-4192-8c33-78ea0eba8d0e 02f4a4d1-0930-43bf-94db-2d39b11c343d
 S
 				Set gateway for router ff25378d-8b0d-4192-8c33-78ea0eba8d0e
 			Return: output of command results
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-
-		os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-gateway-set %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId))
+		routerId = self.openstack_show_router(routerName)
+		extId = self.openstack_show_external_network(extName)
+		os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
 		data = os1.bash_content()
 		return data
 
-	def openstack_delete_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId):
+	def openstack_delete_router_gw(self, routerName):
 		'''set tenant router gateway
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
 				`routerId`			tenant router id
 				`extNetId`		external network id
-				neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-gateway-clear ff25378d-8b0d-4192-8c33-78ea0eba8d0e
+				neutron router-gateway-clear ff25378d-8b0d-4192-8c33-78ea0eba8d0e
 				Removed gateway from router ff25378d-8b0d-4192-8c33-78ea0eba8d0e
 			Return: output of command results
+			All of these commands will assume you have the openrc file sourced , make sure to source that file in the script test suite setup or test setup
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-
-		os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-gateway-delete %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId))
+		routerId = self.openstack_show_router(routerName)
+		os1.bash("neutron router-gateway-clear %s" % (routerId))
 		data = os1.bash_content()
 		return data
 
@@ -642,29 +720,26 @@ S
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
-			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/vns[tenant="%s"][name="%s"]' % (tenantId, netId)
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
 			c.rest.get(url)
 			data = c.rest.content()
-			if data[0]["tenant"] == tenantId:
-				if data[0]["name"] == netId:
+			for i in range(0,len(data)):
+				if data[i]["tenant"] == tenantId and data[i]["name"] == netId:
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
 				else:
-					helpers.test_failure("Fail:Openstack networks are not created in the BSN controller, check the network service log")
-					return False
-			else:
-					helpers.log("Openstack tenant not present in the BSN controller")
-					return False
+					continue
 		else:
 			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
 			c.rest.get(url)
 			data = c.rest.content()
-			if len(data) == 0:
-				helpers.log("Expected vns is deleted from the controller")
-				return True
-			else:
-				helpers.test_failure("Expected vns is not deleted from the controller")
-				return False
+			for i in range(0,len(data)):
+				if data[i]["name"] != tenantId:
+					helpers.log("Expected vns is deleted from the controller")
+					return True
+				else:
+					helpers.log("Expected vns is not deleted from the controller")
+					return False
 
 	def openstack_verify_endpoint(self, instanceName, netName):
 		'''function to verify endpoint in BSN controller
@@ -714,18 +789,17 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
-		c.rest.get(url)
-		data = c.rest.content()
 		subnetIp = self.openstack_show_subnet_ip(subnetName)
-		for i in range(0, len(data)):
-			if str(data[i]["ip-address"]) == str(subnetIp) and str(data[i]["state"]) == "Active":
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
+		c.rest.get(url)
+		data = c.rest.content()		
+		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "Active":
 				helpers.log("Pass: Router interface creaetd as endpoint in controller")
 				return True
 		helpers.test_failure("Fail:router interface not present in controller endpoint table")
 		return False
 	
-	def openstack_tenant_scale(self, name='p', count):
+	def openstack_tenant_scale(self, name='p', count=0):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -741,28 +815,30 @@ S
 			i = i + 1
 		return True
 
-	def openstack_segment_scale(self, tenantName, subnet_firstbyte, name='s', count):
+	def openstack_segment_scale(self, tenantName, subnet, count):
 		'''Function to create multiple segments in a given tenant
-		Input: tenantName , count , name starts with segment
-		Output: given number of segments created in neutron server using neutron command
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
 	    '''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
+		tenantId = self.openstack_show_tenant(tenantName)
 		count = int(count)
+		name = 's'
 		i = 1
 		j = 0
 		k = 0
+		helpers.log("Print:%d", count)
 		while (i <= count):
 			netName = name
 			netName += str(i)
-			tenantId = self.openstack_show_tenant(tenantName)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
 				return False
-			ipaddr = "%d.%d.%d.0" % (subnet_firstbyte, j, k)
+			ipaddr = "%d.%d.%d.0" % (subnet, j, k)
 			subnet_ip = ipaddr + "/" + 24
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
@@ -779,5 +855,35 @@ S
 			i = i + 1
 		return True
 			
-	
-	
+	def openstack_verify_external_router_interface(self, routerName):
+		'''verify interface creation through horizon and check endpoints created in BCF controller.
+			Input:router name
+			Output : Verify the specific endpoint created in BCF controller
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron router-port-list %s" % (routerName))
+		output = result["content"]
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		ip_list = []
+		for key, value in out_dict.items():
+			fixed_ips_str = value['fixed_ips']
+			fixed_ips_dict = helpers.from_json(fixed_ips_str)
+			ip_list.append(fixed_ips_dict['ip_address'])
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+		c.rest.get(url)
+		data = c.rest.content()
+		endpoint_ip_list = []
+		for i in range(0,len(data)):
+			for j in range(0,len(data[i]["ip-address"])):
+					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])						
+		ip_common = list(set(ip_list).intersection(set(endpoint_ip_list)))
+		if len(ip_common) == len(ip_list):
+			helpers.log("Pass:All router interface created as endpoint in BCF controller")
+			return True
+		else:
+			helpers.log("Fail:All router interface not present in BCF endpoint")
+			return False
+				
+		

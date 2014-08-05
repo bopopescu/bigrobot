@@ -3,10 +3,10 @@
 * Setting
 Documentation    T5 Controller Platform Robustness Test Suite - Physical Testbed
 Suite Setup      T5 base suite setup
-Suite Teardown   T5 base suite teardown
+#Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
-Force Tags       T5  IronHorse  Platform  HA  robustness
+Force Tags       T5  IronHorse  robustness
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -33,7 +33,7 @@ Resource		 testsuites_dev/don/physical_variables.txt
 * Test Case 
 
 Configure 6/1 Setup - 6 Tenants with 1 VNS Each
-   [Tags]   full
+   [Tags]   manual-untested
    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    ${vnsIntIPs}=  Create List  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5  50.50.50.100  v6  60.60.60.100
    ${v1MemPGs}=  Create List  v1  PG  p1  10
@@ -46,7 +46,7 @@ Configure 6/1 Setup - 6 Tenants with 1 VNS Each
    
    
 Configure Hosts for 6/1 Setup
-	[Tags]   full
+	[Tags]   skipped
 	bash network restart  h1
 	bash add tag  h1  bond0  10 
 	bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -98,70 +98,70 @@ Configure Hosts for 6/1 Setup
 	#route add -net 20.20.20.0/24 gw 10.10.10.100 dev bond0.10
 
 Configure Multiple L2 Tenants With Single VNS
-	[Tags]	full
+	[Tags]	skipped
 	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
 	Configure 2 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
 
 T1 Fabric Robustness During All Switch Reboot & HA Failover
-	[Tags]  full  
-	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1 leaf0-a leaf0-b leaf1-a
+	[Tags]  skipped 
+	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1
 	Should be true  ${returnVal}
 
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
-	[Tags]  full  
+	[Tags]  skipped 
 	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
 	Should be true  ${returnVal}
 	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
-	[Tags]  full  
+	[Tags]  skipped 
 	${returnVal}=	verify HA with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
 	Should be true  ${returnVal}
 
 Verify HA Cluster Formation
-   [Tags]  full
+   [Tags]  skipped
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  full
+	[Tags]  skipped
 	Verify cluster election take leader
 	
 Verify Cluster Election Re-run
-	[Tags]  full  
+	[Tags]  skipped  
 	Verify cluster election rerun 
 	
 Verify Cluster Master Reboot
-	[Tags]  full
+	[Tags]  skipped
 	Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
-	[Tags]  full
+	[Tags]  skipped
 	Reboot the Slave node & verify fabric integrity
 
 
 Master Failover/Failback & Verify Connectivity
-   [Tags]  full  
+   [Tags]  skipped  
    Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback & Verify Connectivity
-   [Tags]  full 
+   [Tags]  skipped 
    Failover/Failback by rebooting the slave and verify connectivity
 
 Cluster Election Take-Leader & Verify Connectivity
-   [Tags]  full    
+   [Tags]  skipped    
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Reboot Peer Leaf Switch During Failover & Verify Connectivity
-	[Tags]  full  
+	[Tags]  skipped  
 	
 	Reboot the master node & verify fabric integrity
 
 Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
-	[Tags]  full
+	[Tags]  skipped
 	: FOR    ${Iteration}    IN RANGE    1    26
 	\	Log To Console   \n================ Configure & Delete L3 Tenants & Failover - Iteration ${Iteration} ===============\n
 	\	rest delete tenant  autoT1
@@ -177,29 +177,29 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]  full 
+   [Tags]  skipped 
    Stress Failover/Failback by rebooting the master and verify connectivity
    Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
    
 Master System Failover Stress Test For 250 Times
-   [Tags]  full 
+   [Tags]  skipped 
    #Stress Failover/Failback by rebooting the master and verify connectivity
    Stress Failover/Failback by failing over the master and verify connectivity
    Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
    
 Slave Failover/Failback Stress Test For 25 Times
-   [Tags]  full
+   [Tags]  skipped
    Stress Failover/Failback by rebooting the slave and verify connectivity
    Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 
 Cluster Election Take-Leader Stress Test For 25 Times
-   [Tags]  full  
+   [Tags]  skipped  
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Cluster Election Re-run Stress Test For 25 Times
-   [Tags]  full  
+   [Tags]  skipped  
    # To be: Make sure to do it on both master & slave when the commands
    #		are finalized
    Re-run the election and verify connectivity
@@ -209,171 +209,173 @@ Cluster Election Re-run Stress Test For 25 Times
 # Stub test cases for the Robustnesss Test Suite
 ###########################################################################################
 
-Consecutive connect/disconnect of switches
-	[Tags]  full  manual-untested
-	manual untested
+Consecutive connect/disconnect of switches 
+	[Tags]  manual
+	manual passed
 	
 Consecutive Power off controller
-	[Tags]  full  manual-untested
+	[Tags]  manual  jira-BSC-5972
+	manual failed
+	
+Changing leaf groups
+	[Tags]  manual-untested
 	manual untested
 	
-Changing leaf groups 
-	[Tags]  full  manual-untested
-	manual untested
-	
-Headless mode verifications:
-	[Tags]  full  manual-untested
-	manual untested
+Headless mode verifications
+	[Tags]  manual  bsc-5972
+	manual failed 
 
-Disconnect peer leaf switch lag links. 
-	[Tags]  full  manual-untested
+Disconnect peer leaf switch lag links
+	[Tags]  manual-untested
 	manual untested
 	
-Reboot peer leaf switches.
-	[Tags]  full  manual-untested
+Reboot peer leaf switches. 
+	[Tags]  manual-untested
 	manual untested
 	
-Add links / New traffic paths. 
-	[Tags]  full  manual-untested
+Add links / New traffic paths
+	[Tags]  manual-untested
 	manual untested
 	
-Remove links 
-	[Tags]  full  manual-untested
+Remove links
+	[Tags]  manual-untested
 	manual untested
 	
 Bring back the controller. Verify the fabric integrity
-	[Tags]  full  manual
+	[Tags]  manual
 	manual passed
 
-Packet of death: Consecutive pacekt of death
-	[Tags]  full  manual-untested
+Packet of death: Consecutive pacekt of death 
+	[Tags]  manual-untested
 	manual untested
 
 Split Brian Scenarios
-	[Tags]  full  manual-untested
+	[Tags]  manual-untested
 	manual untested
 	
 Changing VIP/IP /Cluster properties of the Controller cluster
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Traffic prioritization on the switch cpu to-controller traffic 
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Remove stdby controller & add another stdby controller with the same IP as earlier one
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Large VFT push during switch reboots 
-	[Tags]  full   manual-untested
+	[Tags]     manual-untested
 	manual untested
 	
 Enable log levels to Debug along with all the switch logs punting to the controller and controller push it to an external splunk server 
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Controller tries to program and switch disconnects and connects again
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Penetration test
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Reboot Management switch
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Interface Disable/Enable - Perhaps in a loop
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Bond/LAG configuration/ De-configuration
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Platform Switch: Add/Remove rack lag links
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Interface shutdowns / bringup
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Power down/up switch
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Performance during VFT push from the controller
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Add/Remove peer lags
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Consecutive reboot of peer leaf (dual-tor context)
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Consecutive reboots of spines
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Consecutive reboots of leaves
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Traffic convergence during island forming
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Configuration in SPINE
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Table Size Spine / Leaf - What happens when tables are full
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Switch go Full in Loggins
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Optics Pull/ Cable
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
 Switch - Open Ports - Penetration test
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Controller- Bundle Image
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Power supplies - DC /AC Mix match
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 Order of Bring up- All links - Peer LAg and then management
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 OFAD Packets - Malformed Packet
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 OSPF/ BGP / PAcket-IN to controller
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 	
 IP header malformation
-	[Tags]  full  manual-untested
+	[Tags]    manual-untested
 	manual untested
 
-
+Check recovery user account behavior when floodlight is busy
+	[Tags]  manual  jira-BSC-5097
+	manual failed
 
 
 ########################################################################################################################################

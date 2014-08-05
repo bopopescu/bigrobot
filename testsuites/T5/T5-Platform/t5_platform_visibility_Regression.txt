@@ -60,10 +60,10 @@ T0 Setup
 	[Tags]  feature  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	#bash execute command  leaf0-a  ofad-ctl autoneg 25
+	#bash execute command  leaf0-a  ofad-ctl autoneg 26
+	#bash execute command  leaf1-a  ofad-ctl autoneg 25
+	#bash execute command  leaf1-a  ofad-ctl autoneg 26
 	
 	bring up h1 bond0
 	sleep  2
@@ -736,11 +736,11 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 
 
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  testpath  full  manual
+	[Tags]  testpath  feature  manual
     manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  full  manual
+	[Tags]  testpath  feature  manual
     manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures

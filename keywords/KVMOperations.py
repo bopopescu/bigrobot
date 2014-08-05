@@ -216,6 +216,9 @@ class KVMOperations(object):
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
             helpers.summary_log("Success SCP'ing latest Jenkins build !!")
         helpers.summary_log("Using Jenkins BCF Build #%s" % latest_build_number)
+        helpers.log("Setting BUILD_NUM Env...")
+        helpers.set_env("BUILD_NUM", str(latest_build_number))
+        helpers.log("env BUILD_NUM: %s" % helpers.get_env("BUILD_NUM"))
         kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name, vm_name))
 
         local_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
@@ -294,11 +297,21 @@ class KVMOperations(object):
             netmask = kwargs.get("netmask", "18")
             gateway = kwargs.get("gateway", "10.8.0.1")
             network_interface = kwargs.get("network_interface", "br0")
-
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             helpers.summary_log("Creating log_path %s" % self.log_path)
-            os.makedirs(self.log_path)
-
+            try:
+                if os.path.exists(self.log_path) or os.path.islink(self.log_path):
+                    pass
+                else:
+                    os.makedirs(self.log_path)
+            except OSError as exc:  # Python >2.5
+                if exc.errno == errno.EEXIST and os.path.isdir(LOG_BASE_PATH):
+                    pass
+                else:
+                    # Last resort - put logs in /tmp
+                    self.log_path = '/tmp' + '/' + vm_name
+                    os.makedirs(self.log_path)
+            helpers.summary_log("Createdlog_path %s" % self.log_path)
             # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
             remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
@@ -364,9 +377,11 @@ class KVMOperations(object):
                                                             netmask=netmask,
                                                             vm_host_name=vm_host_name,
                                                             gateway=gateway)
-#             controller_handle = ControllerDevConf(host=result['vm_ip'], user='admin', password='admiandmin')
-#             controller_handle.config("copy running-config config://firstboot-config")
-#             helpers.summary_log("Success saving firstboot-config")
+            helpers.summary_log("Copying firstboot-config on New Controller: %s" % result['vm_ip'])
+            helpers.sleep(10)
+            bvs = ControllerDevConf(host=result['vm_ip'], user="admin", password="adminadmin", name="test-bvs")
+            bvs.config("copy running-config snapshot://firstboot-config")
+            helpers.summary_log("Success saving firstboot-config")
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result

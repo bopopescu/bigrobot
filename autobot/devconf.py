@@ -181,6 +181,10 @@ class DevConf(object):
             helpers.log("Send command: '%s'" % cmd, level=level)
         if no_cr is False:
             cmd = ''.join((cmd, '\r'))
+
+        prefix_str = '%s %s' % (self.name(), 'send')
+        helpers.bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
+
         self.conn.send(cmd)
         self.clear_lock()
 
@@ -213,6 +217,7 @@ class DevConf(object):
                "==== Expect error (End) ===="
                % (descr, self.prompt_str(prompt), _buffer))
         helpers.log(msg)
+        self.clear_lock()
         helpers.test_error("Devconf expect exception", soft_error)
 
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
@@ -447,7 +452,7 @@ class BsnDevConf(DevConf):
                                        " enable back to %s mode" % mode)
                 helpers.log("Switching from enable to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('exit', mode=mode,
+                super(BsnDevConf, self).cmd('exit', mode='enable',
                                             quiet=True, level=level)
             elif self.is_config():
                 if helpers.is_arista(self.platform()):
@@ -455,8 +460,8 @@ class BsnDevConf(DevConf):
                                        " enable back to %s mode" % mode)
                 helpers.log("Switching from config to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('end', mode=mode, quiet=True)
-                super(BsnDevConf, self).cmd('exit', mode=mode, quiet=True)
+                super(BsnDevConf, self).cmd('end', mode='config', quiet=True)
+                super(BsnDevConf, self).cmd('exit', mode='enable', quiet=True)
         elif mode == 'enable':
             if self.is_bash():
                 self.exit_bash_mode(mode)
@@ -464,12 +469,12 @@ class BsnDevConf(DevConf):
             if self.is_cli():
                 helpers.log("Switching from cli to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('enable', mode=mode,
+                super(BsnDevConf, self).cmd('enable', mode='cli',
                                             quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('end', mode=mode,
+                super(BsnDevConf, self).cmd('end', mode='config',
                                             quiet=True, level=level)
         elif mode == 'config':
             if self.is_bash():
@@ -478,9 +483,9 @@ class BsnDevConf(DevConf):
             if self.is_cli():
                 helpers.log("Switching from cli to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('enable', mode=mode,
+                super(BsnDevConf, self).cmd('enable', mode='cli',
                                             quiet=True, level=level)
-                super(BsnDevConf, self).cmd('configure', mode=mode,
+                super(BsnDevConf, self).cmd('configure', mode='enable',
                                             quiet=True, level=level)
             elif self.is_enable():
                 helpers.log("Switching from enable to %s mode" % mode,

@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-import catalog_modules.cat_helpers as cat_helpers
+import autobot.helpers as helpers
 
 
 class TestCatalog(object):
@@ -14,7 +14,7 @@ class TestCatalog(object):
 
     def configs(self):
         if not self._configs:
-            self._configs = cat_helpers.load_config_catalog()
+            self._configs = helpers.bigrobot_config_test_catalog()
         return self._configs
 
     def connect(self):
@@ -46,6 +46,9 @@ class TestCatalog(object):
         return self.configs()['features'][release]
 
     def aggregated_build(self, build_name):
+        """
+        Returns a list of actual builds in an aggregated build.
+        """
         config = self.configs()
         if 'aggregated_builds' not in config:
             return {}
@@ -60,19 +63,45 @@ class TestCatalog(object):
         query = {"build_name": build_name}
         return self.test_cases_archive_collection().find(query)
 
+    def insert_doc(self, collection, document):
+        if '_id' in document:
+            del document['_id']
+        return self.db()[collection].insert(document)
+
     def upsert_doc(self, collection, document, query):
-        del document['_id']
+        if '_id' in document:
+            del document['_id']
         return self.db()[collection].find_and_modify(
                 query=query,
                 update={ "$set": document },
                 upsert=True
                 )
 
+    def find_docs(self, collection, query):
+        count = self.db()[collection].find(query).count()
+        return count
+
+    def find_builds_matching_build(self, build_name):
+        return self.find_docs(collection='builds',
+                              query={"build_name": build_name})
+
+    def find_test_suites_matching_build(self, build_name):
+        return self.find_docs(collection='test_suites',
+                              query={"build_name": build_name})
+
+    def find_test_cases_matching_build(self, build_name):
+        return self.find_docs(collection='test_cases',
+                              query={"build_name": build_name})
+
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()
         if count > 0:
             self.db()[collection].remove(query)
         return count
+
+    def remove_builds_matching_build(self, build_name):
+        return self.remove_docs(collection='builds',
+                                query={"build_name": build_name})
 
     def remove_test_suites_matching_build(self, build_name):
         return self.remove_docs(collection='test_suites',

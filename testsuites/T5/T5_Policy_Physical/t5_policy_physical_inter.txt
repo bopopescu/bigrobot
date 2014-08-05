@@ -28,7 +28,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface tenant add/remove permit policy src-ip to dest-ip 
-	[Tags]  feature
+	[Tags]  feature  run
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -2880,9 +2880,9 @@ test setup topology
 	REST add system intf to tenant routers 			Y
 	REST add system intf to tenant routers 			Z
 
-	REST add static routes							X							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Y							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Z							0.0.0.0/0			 {"tenant-name": "system"}	
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
 	
 
 test teardown topology

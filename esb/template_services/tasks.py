@@ -10,13 +10,6 @@ from keywords.Host import Host
 
 class BsnCommands(object):
     @app.task(filter=task_method)
-    def add(self, x, y):
-        """
-        A very simple task which adds 2 numbers.
-        """
-        return x + y
-
-    @app.task(filter=task_method)
     def cli_show_user(self, params, node):
         def run():
             helpers.log("Task: cli_show_user")

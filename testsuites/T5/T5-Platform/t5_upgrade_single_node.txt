@@ -16,7 +16,7 @@ Resource	     testsuites/T5/T5-Platform/t5_platform_infra_resource.txt
 * Variable
 ${imageonserver}    bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.0-beta1-20.pkg
 ${bigtapimage}      bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
-${image}     bsn@regress:/home/bsn/bvs/jenkins-bcf_beta1-27/controller-upgrade-bvs-2.0.0-beta1-SNAPSHOT.pkg
+${image}     bsn@regress:/home/bsn/bvs/jenkins-bcf_master-2761/controller-upgrade-bcf-2.0.0-master01-SNAPSHOT.pkg
 
 * Test Case
 

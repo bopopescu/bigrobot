@@ -554,6 +554,78 @@ class  T5SwitchPlatform(object):
         except:
             helpers.log("Could not get the rest output.see log for errors\n")
             return False
+
                 
-                
+    def cli_t5_switch_verify_password_change(self, node, user, current_password, version_string):
+        '''
+            Objective: Return version of switch software
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+
+            Return Value:
+            - Output on configuration success
+            - False on configuration failure
+        '''
+        t = test.Test()
+        tn = t.dev_console(node)
+        #console_ip = t.params(node, "console_ip")
+        #console_port = t.params(node, "console_port")
+        #tn = telnetlib.Telnet(console_ip, console_port)
+        #tn.set_debuglevel(10)
+        #tn.read_until("login:", 10)
+        #tn.write(str(user).encode('ascii') + "\r\n".encode('ascii'))
+        #tn.read_until("Password: ", 10)
+        #tn.write(str(current_password).encode('ascii') + "\r\n".encode('ascii'))
+        #tn.read_until('')
+        #tn.write("show version \r\n".encode('ascii'))
+        #helpers.sleep(4)
+        #output = tn.read_very_eager()
+        #helpers.log(output)
+        #tn.write("logout" + "\r\n".encode('ascii'))
+        tn.close()
+        if version_string in  output:
+            return True
+        else:
+            t.cli_t5_switch_change_user_password(node, user, current_password, "adminadmin")
+            return False
+
+    def cli_t5_switch_change_user_password(self, node, user, current_password, new_password):
+        '''
+            Objective: Change the username and password for a given user
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | username | Username for which password has to be changed |
+            | current_password | Current Password |
+            | new_password | Desired password |
+
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+        '''
+        try:
+            t = test.Test()
+            tn = t.dev_console(node)
+            #helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
+            #helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
+            #tn = telnetlib.Telnet(console_ip, console_port)
+            helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
+            #tn.set_debuglevel(10)
+            tn.read_until("login:", 10)
+            tn.write(str(user) + "\r\n")
+            tn.read_until("Password: ", 10)
+            tn.write(str(current_password) + "\r\n")
+            tn.read_until('')
+            tn.write("\r\n" + "enable \r\n")
+            tn.write("\r\n" + "configure \r\n")
+            tn.write("\r\n" + "username " + str(user) + " password " + str(new_password) + "\r\n")
+            tn.write("exit" + "\r\n")
+            tn.write("logout" + "\r\n")
+            tn.close()
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+             
                     
