@@ -76,7 +76,7 @@ T1 Setup Tenant and VNS
     mininet host gw  bm2  10.0.0.254  bm2-bond0
     mininet host gw  bm1  20.0.0.254  bm1-bond0
     mininet host gw  bm3  20.0.0.254  bm3-bond0
-    [Tags] 	sanity   CLI  smoke
+    [Tags] 	sanity   CLI       
        
 T2 Verify 'show switch' command completion
     ${result}=  cli walk command  show switch  10  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1  
@@ -91,7 +91,7 @@ T2 Verify 'show switch' command completion
     Should be true  ${result}
     ${result_1}=  cli walk command  show switch  10  cmd_argument=spine2
     Should not be true  ${result_1}
-    [Tags]  feature  CLI  cli-completion  smoke
+    [Tags]  feature  CLI  cli-completion  
     
 T3 Verify 'show tenant' command completion
     ${result}=  cli walk command  show tenant  5  cmd_argument=<cr> all A  
@@ -104,7 +104,7 @@ T3 Verify 'show tenant' command completion
     Should be true  ${result}
     ${result}=  cli walk command  show tenant  5  cmd_argument=B
     Should not be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke
+    [Tags]  feature  CLI  cli-completion  
 
 T4 Verify 'show segment' command completion
     ${result}=  cli walk command  show segment  5  cmd_argument=<cr> all A1 A2 
@@ -117,7 +117,7 @@ T4 Verify 'show segment' command completion
     Should be true  ${result}
     ${result}=  cli walk command  show segment  5  cmd_argument=A3
     Should not be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke
+    [Tags]  feature  CLI  cli-completion 
     
 T5 Verify 'show port-group' command completion
     ${result}=  cli walk command  show port-group  7  cmd_argument=<cr> all rack0pg1 rack0pg2 rack1pg1 rack1pg2
@@ -134,7 +134,7 @@ T5 Verify 'show port-group' command completion
     rest add interface to portgroup  leaf0b  leaf0b-eth8  rack0pg1
     ${result}=  cli walk command  show port-group  7  cmd_argument=<cr> all rack0pg1 rack0pg2 rack1pg1 rack1pg2
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke 
+    [Tags]  feature  CLI  cli-completion  
     
 T6 Verify 'show endpoint' command completion
     ${result}=  cli walk command  show endpoint  5  cmd_argument=<cr> ip mac
@@ -150,4 +150,79 @@ T6 Verify 'show endpoint' command completion
     Should not be true  ${result}
     ${result}=  cli walk command  show endpoint  5  cmd_argument=h1
     Should not be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke	
+    [Tags]  feature  CLI  cli-completion   
+        
+T7 Verify 'tenant' command completion in config mode
+    ${result}=  cli walk command  tenant  3  config_mode=${True}  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion    
+    
+T8 Verify 'segment' command completion in config mode
+    ${result}=  cli walk command  segment  3  config_mode=${True}  multiline=tenant A  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+    
+T9 Verify 'member port-group' command completion in config mode
+    ${result}=  cli walk command  member port-group  6  config_mode=${True}  multiline=tenant A; segment A1 
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+    
+T10 Verify 'member switch' command completion in config mode
+    ${result}=  cli walk command  member switch  8  config_mode=${True}  multiline=tenant A; segment A1 
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+  
+T11 Verify 'member switch leaf0a interface' command completion in config mode
+    ${result}=  cli walk command  member switch leaf0a interface  12  config_mode=${True}  multiline=tenant A; segment A1 
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+        
+T12 Verify 'member port-group rack0pg1 vlan' command completion in config mode
+    ${result}=  cli walk command  member port-group rack0pg1 vlan  2  config_mode=${True}  multiline=tenant A; segment A1 
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+    
+T13 Verify 'switch' command completion in config mode
+    ${result}=  cli walk command  switch  7  config_mode=${True}  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion   
+    
+T14 Verify 'switch leaf0a interface' command completion in config mode
+    ${result}=  cli walk command  interface  11  config_mode=${True}  multiline=switch leaf0a  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion     
+    
+T15 Verify 'switch leaf0a leaf-group' command completion in config mode
+    ${result}=  cli walk command  leaf-group  4  config_mode=${True}  multiline=switch leaf0a  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion     
+    
+T16 Verify 'switch leaf0a fabric-role' command completion in config mode
+    ${result}=  cli walk command  fabric-role  2  config_mode=${True}  multiline=switch leaf0a  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion    
+              
+T17 Verify 'user' command completion in config mode
+    ${result}=  cli walk command  user  2  config_mode=${True}  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+    
+T18 Verify 'group' command completion in config mode
+    ${result}=  cli walk command  group  2  config_mode=${True}  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion   
+    
+T19 Verify 'port-group' command completion in config mode
+    ${result}=  cli walk command  port-group  5  config_mode=${True}  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion      
+        
+T20 Verify 'port-group rack0pg1 member switch' command completion in config mode
+    ${result}=  cli walk command  member switch  6  config_mode=${True}  multiline=port-group rack0pg1  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
+    
+T21 Verify 'port-group rack0pg1 member switch leaf0a interface' command completion in config mode
+    ${result}=  cli walk command  member switch leaf0a interface  55  config_mode=${True}  multiline=port-group rack0pg1  
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  
