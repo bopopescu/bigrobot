@@ -14,7 +14,8 @@
 #build="bvs master #2742"
 #build="bvs master #2761"
 #build="bvs master #2806"
-build="bvs master aggregated 2014 wk32"
+#build="bvs master aggregated 2014 wk32"
+build="bvs master #2840"
 
 
 if [ ! -x ../bin/gobot ]; then
