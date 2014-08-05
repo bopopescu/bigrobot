@@ -1213,7 +1213,7 @@ Inter tenant dhcp relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1282,7 +1282,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1363,7 +1363,7 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     Should Contain                              ${state5}                       L2 Only
     sleep                                       5
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1432,7 +1432,7 @@ Host moved to another vns on another tenant and renew dhcp
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1528,9 +1528,9 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH add route                              h2                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     REST add dhcp relay                         X                               X2                      10.252.1.11
-    REST enable dhcp relay                      X                               X2  
+    #REST enable dhcp relay                      X                               X2  
     REST add dhcp relay                         Y                               Y2                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y2  
+    #REST enable dhcp relay                      Y                               Y2  
     sleep                                       5
     ${mac1} =                                   BASH get intf mac               h1                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1949,7 +1949,7 @@ Controller HA failover with dhcp-relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2040,7 +2040,7 @@ Active Controller reboot with dhcp-relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2139,9 +2139,9 @@ Dhcp request from overlapping private IP and public IP
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
     REST add vns ip                             Y                               Y3                      10.251.3.1              24  
     REST add dhcp relay                         Y                               Y3                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y3
+    #REST enable dhcp relay                      Y                               Y3
     REST add dhcp relay                         X                               X3                      10.251.1.11
-    REST enable dhcp relay                      X                               X3
+    #REST enable dhcp relay                      X                               X3
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2206,7 +2206,7 @@ Restart ofad on leaf with dhcp-relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2304,7 +2304,7 @@ Restart ofad on spine with dhcp-relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}

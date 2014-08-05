@@ -326,29 +326,43 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 return c.rest.content()
 
 
-    def rest_delete_static_routes(self, tenant, dstroute):
+    def rest_delete_static_routes(self, tenant, dstroute, nexthop=None):
         '''Add static routes to tenant router"
 
             Input:
                 `tenant`          tenant name
                 `dstroute`        destination subnet
                 Return: true if configuration is successful, false otherwise
+            cli delete route with nexthop:
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.252.0.0/16"][next-hop/tenant="system"] {}
+            cli delete route only:
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.252.0.0/16"] {}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s dstroute = %s " % (tenant, dstroute))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/routes[dest-ip-subnet="%s"]' % (tenant, dstroute)
-        try:
-            # c.rest.delete(url, {"dest-ip-subnet": dstroute})
-            c.rest.delete(url, {})
-        except:
-            helpers.test_failure(c.rest.error())
+        if nexthop is None:
+            url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/static-route[dst-ip-subnet="%s"]' % (tenant, dstroute)
+            try:
+                # c.rest.delete(url, {"dest-ip-subnet": dstroute})
+                c.rest.delete(url, {})
+            except:
+                helpers.test_failure(c.rest.error())
+            else:
+                helpers.test_log("Output: %s" % c.rest.result_json())
+                return c.rest.content()
         else:
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-
+            url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/static-route[dst-ip-subnet="%s"][next-hop/tenant="%s"]' % (tenant, dstroute, nexthop)
+            try:
+                # c.rest.delete(url, {"dest-ip-subnet": dstroute})
+                c.rest.delete(url, {})
+            except:
+                helpers.test_failure(c.rest.error())
+            else:
+                helpers.test_log("Output: %s" % c.rest.result_json())
+                return c.rest.content()
 
     def rest_show_endpoints(self):
         t = test.Test()
