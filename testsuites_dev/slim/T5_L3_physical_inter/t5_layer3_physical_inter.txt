@@ -297,51 +297,43 @@ Dhcp request from overlapping private IP and public IP
     [Tags]          solution            dhcp-relay  
                     
 Add and delete nexthop group
-    Add and delete nexthop group
+    manual pass
     [Tags]          manual              feature            
 
 Add and delete nexthop group in system
-    Add and delete nexthop group in system
+    manual pass
     [Tags]          manual              feature     negative             
 
 Add and delete nexthop group IP 
-    Add and delete nexthop group IP
+    manual pass
     [Tags]          manual              feature            
                     
 Add and delete route pointing to nexthop group in tenant
-    Add and delete route pointing to nexthop group in tenant
+    manual untested
     [Tags]          manual              feature            
                     
-Add and delete route pointing to nexthop group in system
-    Add and delete route pointing to nexthop group in system
-    [Tags]          manual              feature            
-
-Add and delete route pointing to nexthop group in system
-    Add and delete route pointing to nexthop group in system
-    [Tags]          manual              feature            
-
 Add and delete route pointing to different nexthop group in system
-    Add and delete route pointing to different nexthop group in system
+    manual untested
     [Tags]          manual              feature            
 
 Add and delete route pointing to nexthop group in system
-    Add and delete route pointing to nexthop group in system
+    manual untested
     [Tags]          manual              feature            
 
 Add and delete route pointing to unknown nexthop group in system
-    Add and delete route pointing to unknown nexthop group in system
+    manual untested
     [Tags]          manual              feature            
 
 Add and delete route pointing to nexthop group defined in other tenant in system
-    Add and delete route pointing to nexthop group defined in other tenant in system
+    manual untested
     [Tags]          manual              feature            
 
 Add and delete route pointing to nexthop group defined in tenantX in tenantY
-    Add and delete route pointing to nexthop group defined in tenantX in tenantY
+    manual untested
     [Tags]          manual              feature            
 
 Verify nexthop group config is still applied on HA failover
-    Verify nexthop group config is still applied on HA failover
+    manual untested
     [Tags]          manual              feature            HA
     
 
@@ -2521,10 +2513,12 @@ Link flap between leaf and spine
     verify results                              transmitted_frames              received_valid_frames       ${stream1}              stream1
     start traffic                               ${stream1}
     sleep  10
-    CLI disable interface                       s3                              ${leaf0a_spine0}    
+    #CLI disable interface                       s3                              ${leaf0a_spine0}    
+    REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0}
     sleep                                       5   
     log traffic rate                            tx_rate                         rx_rate                 a                       c
-    CLI enable interface                        s3                              ${leaf0a_spine0}    
+    #CLI enable interface                        s3                              ${leaf0a_spine0}    
+    REST enable fabric interface                ${leaf0_a}                       ${leaf0a_spine0}
     sleep                                       10
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1    
