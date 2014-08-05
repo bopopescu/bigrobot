@@ -75,7 +75,7 @@ T3 enable mode cli walk
    
 T4 config mode cli walk
    cli walk config  file_name=cli_walk_config
-   [Tags]  sanity  CLI  feature  skipped
+   [Tags]  sanity  CLI  feature  
      
  
 	

@@ -4439,6 +4439,12 @@ class T5Platform(object):
                     helpers.log("Prompt1: '%s'" % prompt_str1)
                     helpers.log("Prompt2: '%s'" % prompt_str2)
 
+                    # string after (stripped control char)
+                    helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str1))
+                    helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str2))
+                    
+                    prompt1 = helpers.strip_ctrl_chars(prompt_str1)
+                    prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
                     # Compare prompts.
                     if prompt1 != prompt2:
