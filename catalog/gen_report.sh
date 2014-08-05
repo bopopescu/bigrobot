@@ -14,8 +14,8 @@
 #build="bvs master #2742"
 #build="bvs master #2761"
 #build="bvs master #2806"
-#build="bvs master aggregated 2014 wk32"
-build="bvs master #2840"
+build="bvs master aggregated 2014 wk32"
+#build="bvs master #2840"
 
 
 if [ ! -x ../bin/gobot ]; then
@@ -57,13 +57,14 @@ done
 echo "Timestamp: $ts" >> $output
 echo "Build: $build" >> $output
 echo "Output: $output" >> $output
+echo ""
 
 #./db_collect_stats.py --release $release --build "$build" | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-suites | tee -a $output
-./db_collect_stats.py --release $release --build "$build" --show-suites --show-all | tee -a $output
+#./db_collect_stats.py --release $release --build "$build" | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-suites --no-show-functional-areas | tee -a $output
 #./db_collect_stats.py --release $release --build "$build" --show-untested | tee -a $output
-#./db_collect_stats.py --release $release --build "$build" --show-untested --show-suites --show-all | tee -a $output
+./db_collect_stats.py --release $release --build "$build" --show-untested --show-suites | tee -a $output
 
 echo ""
 
