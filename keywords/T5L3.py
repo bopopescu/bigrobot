@@ -878,7 +878,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/server-ip' % (tenant, vnsname)
         try:
 
 #            self.rest_disable_dhcp_relay(tenant, vnsname)

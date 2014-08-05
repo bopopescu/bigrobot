@@ -1,0 +1,173 @@
+c1:
+ ip: 10.8.24.105
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+# console:
+#   ip: regress
+#   libvirt_vm_name: amallina_ztn-c1_06251549
+#   user: root
+#   password: bsn
+c2:
+# ip: 10.9.16.173
+  ip : 10.8.24.106
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+# console:
+#   ip: regress
+#   libvirt_vm_name: amallina_snt-c2_06251553
+#   user: root
+#   password: bsn
+s1:
+#  ip: 10.195.0.33
+  alias: leaf0-a
+  fabric-role: leaf
+  leaf-group: rack0
+  mac: 70:72:cf:b5:ff:0e
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7017
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+s2:
+#  ip: 10.195.0.34
+  alias: leaf0-b
+  fabric-role: leaf
+  leaf-group: rack0
+  mac: 70:72:cf:b7:6d:5c
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7018
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+#  ip: 10.195.0.35
+  alias: leaf1-a
+  fabric-role: leaf
+  leaf-group: rack1
+  mac: 70:72:cf:bc:c7:5e
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7019
+  set_session_ssh: false
+  set_init_ping: false
+s4:
+#  ip: 10.195.0.36
+  alias: leaf1-b
+  fabric-role: leaf
+  leaf-group: rack1
+  mac: 70:72:cf:bc:c4:7a
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7020
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+#  ip: 10.195.0.31
+  alias: leaf2-a
+  fabric-role: leaf
+  leaf-group: rack2
+  mac: 70:72:cf:b6:01:f2
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7021
+  set_session_ssh: false
+  set_init_ping: false
+s6:
+#  ip: 10.195.0.32
+  alias: leaf2-b
+  fabric-role: leaf
+  leaf-group: rack2
+  mac: 70:72:cf:b7:6e:3a
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7022
+  set_session_ssh: false
+  set_init_ping: false
+s7:
+#  ip: 10.195.0.21
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:cf:a8:07:50
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7024
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 7
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+#  ip: 10.195.0.22
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:cf:a8:09:50
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7023
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 6
+  set_session_ssh: false
+  set_init_ping: false
+h1:
+  ip: 10.9.16.21
+  user: root
+  password: bsn
+h2:
+  ip: 10.9.16.22
+  user: root
+  password: bsn
+h3:
+  ip: 10.9.16.23
+  user: root
+  password: bsn
+h4:
+  ip: 10.9.16.24
+  user: root
+  password: bsn
+h5:
+  ip: 10.9.16.25
+  user: root
+  password: bsn
+h6:
+  ip: 10.9.16.26
+  user: root
+  password: bsn
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+  tcl_server_ip: 10.9.19.243
+  #tcl_server_port: 8009
+  #ix_version: '7.10'
+  #set_init_ping: false
+  ports:
+    a:
+      name: 3/10
+    b:
+      name: 3/9
+    c:
+      name: 3/8
+    d:
+      name: 3/7
+    e:
+      name: 3/6
+    f:
+      name: 3/5
+
