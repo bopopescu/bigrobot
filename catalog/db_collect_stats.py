@@ -171,6 +171,7 @@ def display_stats(args):
 
     print ""
     print "%s Release Metrics" % (ih.release())
+    # ****** self.catalog().aggregated_build(build)
     print "==================================================================="
     total_testsuites_in_release = ih.total_testsuites(
                release=ih.release_lowercase())
