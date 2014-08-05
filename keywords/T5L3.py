@@ -289,6 +289,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.192.0.0/16"] {"dest-ip-subnet": "10.192.0.0/16"}
             REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/routes[dest-ip-subnet="10.99.0.0/24"] {"next-hop": {"next-hop-group": "AA2"}, "dest-ip-subnet": "10.99.0.0/24"}
             {"next-hop": {"tenant-name": "system"}, "dest-ip-subnet": "0.0.0.0/0"}
+            routes pointing to tenant system:
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.10.10.0/24"] {"next-hop": {"tenant": "system"}, "dst-ip-subnet": "10.10.10.0/24"}
+            routes pointing to nexthop group:
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.255.11.0/24"] {"next-hop": {"next-hop-group": "ecmp-aa"}, "dst-ip-subnet": "10.255.11.0/24"}
+            routes pointing to null:
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.255.11.0/24"] {"dst-ip-subnet": "10.255.11.0/24"}
 
         '''
 
@@ -311,7 +317,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 return c.rest.content()
         else:
             try:
-                c.rest.post(url, {"dst-ip-subnet": dstroute})
+                #c.rest.post(url, {"dst-ip-subnet": dstroute})
+                c.rest.put(url, {"dst-ip-subnet": dstroute})
             except:
                 helpers.test_failure(c.rest.error())
             else:
