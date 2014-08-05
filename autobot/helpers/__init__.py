@@ -1729,17 +1729,33 @@ def snake_case_key(in_dict):
     return out_dict
 
 
-def send_mail(m):
+def send_mail(m, infile=None):
     """
     m data structure contains:
       from: <sender>
       to: <comma-separated list of receivers>
       subject: <subject>
       message_body: <content>
+
+    Usage:
+        helpers.send_mail( {
+                'from': 'vui.le@bigswitch.com',
+                'to': 'vui.le@bigswitch.com',
+                'subject': 'Emergency system test',
+                'message_body': 'This is only a test',
+                } )
     """
     _to = [utf8(x) for x in split_and_strip(m['to'])]
     s = smtplib.SMTP(SMTP_SERVER)
     s.set_debuglevel(debug)
+
+    if infile:
+        input_text = file_read_once(infile)
+        if len(input_text) > 100000:
+            lines = 200
+            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+                          % lines + '\n'.join(str_to_list(input_text)[-lines:]))
+        m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
     msg = MIMEText(m['message_body'])
     msg['Subject'] = m['subject']

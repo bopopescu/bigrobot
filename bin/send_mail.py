@@ -43,7 +43,12 @@ class SendMail(object):
         formatted_message = self._message
         if self._input_file:
             input_text = helpers.file_read_once(self._input_file)
-            formatted_message += "\n<<<File: %s>>>" % self._input_file + input_text
+
+            if len(input_text) > 100000:
+                lines = 200
+                input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+                              % lines + '\n'.join(helpers.str_to_list(input_text)[-lines:]))
+            formatted_message += "\n\n<<<File: %s>>>\n" % infile + input_text
 
         h = httplib2.Http()
         body = json.dumps({
