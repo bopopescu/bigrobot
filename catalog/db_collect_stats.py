@@ -87,7 +87,12 @@ def print_stat(descr, val, untested=None, test_pct=None, manual=None):
 
 
 def print_testcases(testcases):
-    print "\n".join(sorted(["\t%s" % helpers.utf8(x) for x in testcases]))
+    i = 0
+    for tc in sorted(testcases):
+        i += 1
+        print("\t%03d. %s" % (i, helpers.utf8(tc)))
+    if i > 0:
+        print("")
 
 
 def print_suites(suites):
@@ -176,17 +181,10 @@ def display_stats(args):
                release=ih.release_lowercase())
     print_stat("Total test suites:", total_testsuites_in_release)
 
-
     total_tc = ih.total_testcases(release=ih.release_lowercase())
     total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
     total_tc_manual = ih.total_testcases_by_tag(["manual"])[0]
     total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
-    # print_stat2("Total test cases:",
-    #           total_tc,
-    #           total_tc_untested,
-    #           total_tc_manual,
-    #           total_tc_pct,
-    #           )
     print_stat2("Total test cases:", total_tc)
     total['tests'] = total_tc
 
@@ -223,14 +221,15 @@ def display_stats(args):
     # total_tc_automated_executable = total_tc_executable - total_tc_manual
     print_stat3("Total test cases automated:",
                total_tc_automated,
-               # total_tc_automated_executable,
-               # percentage(total_tc_automated_executable,
-               #           total_tc_executable))
                percentage(total_tc_automated, total_tc))
 
 
     print ""
     print "Regression Run Results (Build: %s)" % (build)
+    i = 0
+    for a_build in cat.aggregated_build(build):
+        i += 1
+        print "\tBuild %02d: %s" % (i, a_build)
     print "==================================================================="
 
 
@@ -244,8 +243,8 @@ def display_stats(args):
                                build=build,
                                collection_testcases="test_cases_archive")
         print_suites(suites_executed)
+        print ""
 
-    print ""
     print_stat("Total test suites not executed:",
                total_testsuites_in_release - total_testsuites_in_release_executed)
     if args.show_suites:
@@ -275,6 +274,8 @@ def display_stats(args):
                pass_pct,
                automation_pct,
                )
+    if args.show_untested:
+        print_testcases(ih.manual_untested_by_tag())
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)

@@ -10,8 +10,8 @@ Library  			keywords/T5Platform.py
 
 
 *** Variables ***
-${vip}  		10.9.16.19
-${vip bis} 		10.9.16.20
+${vip}  		10.9.16.31
+${vip bis} 		10.9.16.32
 ${vip invalid}  	10.9.16.333
 ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
