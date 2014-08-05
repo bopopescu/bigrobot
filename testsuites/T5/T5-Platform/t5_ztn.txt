@@ -619,7 +619,7 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
-	Request Switchlight Installer Reinstall
+	#Request Switchlight Installer Reinstall
 	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
