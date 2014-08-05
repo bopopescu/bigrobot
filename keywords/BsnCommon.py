@@ -56,7 +56,6 @@ class BsnCommon(object):
             t.teardown()
             helpers.log("Closing all device connections")
             t.node_disconnect()
-            assert 1 / 0, "divide by zeror issue"
         except:
             pass
         # We don't want suite teardown to ever fail
