@@ -785,7 +785,7 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/t
         helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
-            c.rest.patch(url, {"dhcp-server-ip": dhcpserverip})
+            c.rest.patch(url, {"server-ip": dhcpserverip})
         except:
             helpers.test_failure(c.rest.error())
         else:
@@ -841,7 +841,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()
 
-    def rest_add_dhcprelay_circuitid(self, tenant, vnsname, circuitid):
+    def rest_add_dhcprelay_circuitid(self, tenant, vnsname, dhcpserverip, circuitid):
         '''Set dhcp relay circuit id"
 
             Input:
@@ -852,14 +852,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] {"dhcp-circuit-id": "this is a test"}
 <<<<<<< HEAD
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""
+PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y"]/logical-router/segment-interface[segment="Y3"]/dhcp-relay {"circuit-id": "11111", "server-ip": "10.251.1.11"}
         '''
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
+        helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s circuit id = %s" % (tenant, vnsname, dhcpserverip, circuitid))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
-            c.rest.patch(url, {"dhcp-circuit-id": circuitid})
+            c.rest.patch(url, {"circuit-id": circuitid, "server-ip": dhcpserverip})
         except:
             helpers.test_failure(c.rest.error())
         else:
