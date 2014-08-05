@@ -1641,6 +1641,7 @@ Suite Setup
 	Sleep  10
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
+	Sleep  180
 	#Reboot Switches From CLI
 	#Reboot Switches
 	#Power Cycle All Switches
@@ -1786,9 +1787,14 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server host ${host_random}
 	Cli Run  master  snmp-server enable traps
 	${threshold_random}  Generate Random Threshold
-	#Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	#Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
+	${threshold_random}  Generate Random Threshold
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
