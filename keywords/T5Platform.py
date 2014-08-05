@@ -4462,7 +4462,7 @@ class T5Platform(object):
                     helpers.log("***** Call the cli walk again with  --- '%s'" % string)
                     self.cli_walk_config(string, file_name, padding)
 
-    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, config_mode=False, multiline=None, soft_error=False):
         '''
             Execute CLI walk on controller
             Arguments:
@@ -4514,7 +4514,16 @@ class T5Platform(object):
             return False
         else:
             cli_string = command + ' ?'
-            c.send(cli_string, no_cr=True)
+
+            if config_mode is True :
+                if multiline is not None:
+                    c.config(str(multiline))
+                    c.send(cli_string, no_cr=True)                    
+                else:
+                    c.config('')
+                    c.send(cli_string, no_cr=True)
+            else:
+                c.send(cli_string, no_cr=True)
 
             # Match controller prompt for various modes (cli, enable, config, bash, etc).
             # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
