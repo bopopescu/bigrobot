@@ -5,7 +5,7 @@
 Documentation    T5 Controller Platform Test Suite - L3
 #Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
-Test Setup       T5 Platform test setup
+#Test Setup       T5 Platform test setup
 #Test Teardown    T5 Platform test teardown
 Force Tags       IronHorse  Platform  HA  L3
 Library          keywords/BsnCommon.py
