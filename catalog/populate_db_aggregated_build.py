@@ -22,7 +22,7 @@ if not 'BUILD_NAME' in os.environ:
 
 class AggregatedBuild(object):
     def __init__(self, build):
-        self._aggregated_build = build
+        self._aggregated_build_name = build
         self._cat = None
         self._builds = self.catalog().aggregated_build(build)
         if not self._builds:
@@ -35,7 +35,7 @@ class AggregatedBuild(object):
             self._cat = TestCatalog()
         return self._cat
 
-    def aggregated_build(self): return self._aggregated_build
+    def aggregated_build_name(self): return self._aggregated_build_name
 
     def builds(self): return self._builds
 
@@ -48,13 +48,13 @@ class AggregatedBuild(object):
             for tc in cursor:
                 query = { "name": tc['name'],
                           "product_suite": tc['product_suite'],
-                          "build_name": self.aggregated_build(),
+                          "build_name": self.aggregated_build_name(),
                          }
                 print("query: %s" % query)
                 aggr_cursor = self.catalog().find_test_cases_archive(query)
 
                 tc['build_name_orig'] = build
-                tc['build_name'] = self.aggregated_build()
+                tc['build_name'] = self.aggregated_build_name()
 
                 count = aggr_cursor.count()
                 if count == 0:

@@ -46,6 +46,9 @@ class TestCatalog(object):
         return self.configs()['features'][release]
 
     def aggregated_build(self, build_name):
+        """
+        Returns a list of actual builds in an aggregated build.
+        """
         config = self.configs()
         if 'aggregated_builds' not in config:
             return {}
