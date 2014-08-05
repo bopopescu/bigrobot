@@ -46,11 +46,11 @@ Add and delete static route on tenant
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
-    [Tags]      feature
+    [Tags]      feature             run1999
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature
+    [Tags]      feature             run1999
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
@@ -74,8 +74,8 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay          
-
+    [Tags]      sanity      feature         dhcp-relay                 run1999
+    
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     [Tags]      feature         dhcp-relay          

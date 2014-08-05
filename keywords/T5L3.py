@@ -257,7 +257,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
             Input:
                 `tenant`        tenant name
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/tenant-interfaces[tenant-name="system"] {}
+ DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="T-1"]/logical-router/tenant-interface[remote-tenant="system"] {}
             Return: true if configuration is successful, false otherwise
 
         '''
@@ -266,7 +266,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="system"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
