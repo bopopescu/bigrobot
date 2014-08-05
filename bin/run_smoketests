@@ -10,7 +10,6 @@ testsuites="\
 testsuites/T5/L2/t5_singleleaf_dualrack_ping_test_suite \
 testsuites/T5/L2/t5_dualleaf_dualrack_ping_test_suite \
 testsuites/T5/T5-Platform/T5_cli_check \
-testsuites/T5/T5_Policy_Virtual/t5_policy_virtual \
 testsuites/T5/T5-Platform/t5_platform_HA_L2 \
 "
 
