@@ -250,11 +250,11 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
     [Tags]                  feature         HA      dhcp-relay          
 
 Trigger controller HA failover via CLI and verify ecmp is working
-    manual passed
+    manual untested
     [Tags]                  manual                  feature                 ecmp            run     
 
 Trigger controller HA failover via reboot and verify ecmp is working
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 ecmp            run
 
 Verify dhcp-relay functionality in headless mode
@@ -262,7 +262,7 @@ Verify dhcp-relay functionality in headless mode
     [Tags]                  manual              feature                 dhcp-relay          
 
 Verify ecmp forwarding in headless mode
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 ecmp    
             
 Verify L3 intra tenant forwarding after controller upgrade
@@ -278,7 +278,7 @@ Verify dhcp-relay functionality after controller upgrade
     [Tags]                  manual          feature                 
 
 Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 
 
 Verify arp agent functionality after controller HA failover via CLI
@@ -289,8 +289,8 @@ Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
     [Tags]                  feature                                             
     
-Verify ecmp traffic will failover and failback to more specific routes in ecmp group
-    manual passed
+Verify ecmp traffic will failover and failback to more specific routes with ecmp group
+    manual untested
     [Tags]                  manual                  feature                 ecmp        
     
     
@@ -2812,10 +2812,13 @@ Flap link between leaf and spine
     ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
-    CLI disable interface                       s3                              ${leaf0a_spine0}    
+#    CLI disable interface                       s3                              ${leaf0a_spine0}    
+    REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0}
+   
     sleep                                       5   
     log traffic rate                            tx_rate                         rx_rate                 a                       c
-    CLI enable interface                        s3                              ${leaf0a_spine0}    
+#    CLI enable interface                        s3                              ${leaf0a_spine0}    
+    REST enable fabric interface                ${leaf0_a}                              ${leaf0a_spine0}
     sleep                                       10
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
@@ -2863,7 +2866,7 @@ Flap bond interface towards host
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
-    REST disable fabric interface               leaf0-a                         ${leaf0_pc1_intf1}
+    REST disable fabric interface               ${leaf0_a}                         ${leaf0_pc1_intf1}
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -2873,15 +2876,15 @@ Flap bond interface towards host
     ${vlanid} =                                 Set Variable                    ${result[0]['vlan']}    
     Should Be Equal                             ${vlanid}                       ${1001}     
     sleep                                       5
-    REST disable fabric interface               leaf0-b                         ${leaf0_pc1_intf1}
+    REST disable fabric interface               ${leaf0_b}                         ${leaf0_pc1_intf1}
     sleep                                       2   
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Not Be True                          ${result}
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 100      
     sleep                                       1
-    REST enable fabric interface                leaf0-a                         ${leaf0_pc1_intf1}
-    REST enable fabric interface                leaf0-b                         ${leaf0_pc1_intf1}
+    REST enable fabric interface                ${leaf0_a}                         ${leaf0_pc1_intf1}
+    REST enable fabric interface                ${leaf0_b}                         ${leaf0_pc1_intf1}
     BASH ping                                   h1                              10.251.3.11             count=5
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
