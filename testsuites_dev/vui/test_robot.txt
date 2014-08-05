@@ -262,6 +262,7 @@ my base suite setup
 
 my base suite teardown
     should be true       ${true}
+    base suite teardown
 
 variable assignment
     [Arguments]     ${input}

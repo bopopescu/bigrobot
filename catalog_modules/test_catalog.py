@@ -77,13 +77,29 @@ class TestCatalog(object):
                 upsert=True
                 )
 
+    def find_docs(self, collection, query):
+        count = self.db()[collection].find(query).count()
+        return count
+
+    def find_builds_matching_build(self, build_name):
+        return self.find_docs(collection='builds',
+                              query={"build_name": build_name})
+
+    def find_test_suites_matching_build(self, build_name):
+        return self.find_docs(collection='test_suites',
+                              query={"build_name": build_name})
+
+    def find_test_cases_matching_build(self, build_name):
+        return self.find_docs(collection='test_cases',
+                              query={"build_name": build_name})
+
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()
         if count > 0:
             self.db()[collection].remove(query)
         return count
 
-    def remove_build_matching_build(self, build_name):
+    def remove_builds_matching_build(self, build_name):
         return self.remove_docs(collection='builds',
                                 query={"build_name": build_name})
 

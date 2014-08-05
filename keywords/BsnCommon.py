@@ -43,10 +43,24 @@ class BsnCommon(object):
         t.topology()
 
     def base_suite_teardown(self):
-        t = test.Test()
-        t.teardown()
-        helpers.log("Closing all device connections")
-        t.node_disconnect()
+        """
+        Attention: It is critical that suite teardown keywords don't fail.
+        If suite teardown fails, Robot will flag all the test cases as failed
+        even if some or all may have passed. So you might want to handle the
+        exceptions to ensure that suite teardown doesn't fail... unless you
+        purposely want it to fail - there may be good reasons for doing that
+        also.
+        """
+        try:
+            t = test.Test()
+            t.teardown()
+            helpers.log("Closing all device connections")
+            t.node_disconnect()
+            assert 1 / 0, "divide by zeror issue"
+        except:
+            pass
+        # We don't want suite teardown to ever fail
+        return True
 
     def base_test_setup(self):
         test.Test()

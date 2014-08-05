@@ -636,7 +636,7 @@ Add and delete default route on tenant router
     REST delete static routes                   X                               10.252.0.0/16               
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100      
-    REST add static routes                      X                               0.0.0.0/0               {"tenant-name": "system"}
+    REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0        
     REST delete static routes                   X                               0.0.0.0/0               
@@ -779,9 +779,9 @@ Add and delete more specific route on tenant over existing static route
     BASH add route                              h4                              10.252.0.0/16           10.252.2.1
     sleep                                       5
     REST delete static routes                   X                               0.0.0.0/0   
-    REST add static routes                      X                               10.252.0.0/16           {"tenant-name": "system"}
+    REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
     REST delete static routes                   Y                               0.0.0.0/0   
-    REST add static routes                      Y                               10.251.0.0/16           {"tenant-name": "system"}
+    REST add static routes                      Y                               10.251.0.0/16           {"tenant": "system"}
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
@@ -1311,7 +1311,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     Should Be Empty                             ${ipAddr2}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}
     Should Be True                              ${loss} = 100
-    REST add static routes                      Y                               10.251.0.0/16            {"tenant-name": "system"}
+    REST add static routes                      Y                               10.251.0.0/16            {"tenant": "system"}
     sleep                                       1
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2720,8 +2720,8 @@ test setup topology
 #   Should Be True                                  ${result}
 #   ${result} =                                     REST add policy item        X                   allow_all           20      permit          {"tenant-name": "system"}, "dst": {"tenant-name": "X"}
 #   Should Be True                                  ${result}
-    REST add static routes                          X                           10.252.0.0/16        {"tenant-name": "system"}
-    REST add static routes                          Y                           10.251.0.0/16        {"tenant-name": "system"}
+    REST add static routes                          X                           10.252.0.0/16        {"tenant": "system"}
+    REST add static routes                          Y                           10.251.0.0/16        {"tenant": "system"}
         
     
 

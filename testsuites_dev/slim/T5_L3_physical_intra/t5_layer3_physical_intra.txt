@@ -619,7 +619,7 @@ Verify host with same IP as vrf is having L2 service only
     REST delete vns ip                          X                               X1                      10.251.1.1              24
     sleep                                       1  
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
-    BASH ifconfig ip address                         h5                              10.251.1.1/24           bond0   
+    BASH ifconfig ip address                    h5                              10.251.1.1/24           bond0   
     BASH ping                                   h5                              10.251.1.2              count=5
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
@@ -632,6 +632,15 @@ Verify host with same IP as vrf is having L2 service only
     sleep                                       1
     BASH ping                                   h5                              10.251.1.2              count=5
     ${mac5} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac5}
+    Should Be True                              ${result}                           
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
+    ${state} =                                  Set Variable                    ${result[0]['state']}   
+#    Should Contain                              ${state}                        Active    
+    Should Contain                              ${state}                        L2 Only    
+    BASH ifconfig ip address                    h5                              10.251.1.22/24           bond0   
+    BASH ping                                   h5                              10.251.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -1053,7 +1062,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf0_pc2}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0
@@ -1159,7 +1168,7 @@ L3 intra tenant dhcp relay with circuit id across rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1314,7 +1323,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     REST delete portgroup from vns              Y                               Y3                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Y                               Y2                      ${leaf2_pc1}            -1
@@ -1355,7 +1364,7 @@ Verify dhcp host is not being aged out
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening

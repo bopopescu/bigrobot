@@ -18,11 +18,12 @@ import autobot.helpers as helpers
 
 
 class SendMail(object):
-    def __init__(self, sender, receiver, subject, message=None):
+    def __init__(self, sender, receiver, subject, message=None, infile=None):
         self._sender = sender
         self._receiver = receiver
         self._subject = subject
         self._message = message
+        self._input_file = infile
 
     def service_url(self):
         base_url = helpers.bigrobot_config_rest_services()['send_mail']['url']
@@ -33,15 +34,28 @@ class SendMail(object):
             'Content-Type': 'application/json'
             }
 
-    def send(self, message=None):
+    def send(self, message=None, infile=None):
         if message:
             self._message = message
+        if infile:
+            self._input_file = infile
+
+        formatted_message = self._message
+        if self._input_file:
+            input_text = helpers.file_read_once(self._input_file)
+
+            if len(input_text) > 100000:
+                lines = 200
+                input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+                              % lines + '\n'.join(helpers.str_to_list(input_text)[-lines:]))
+            formatted_message += "\n\n<<<File: %s>>>\n" % infile + input_text
+
         h = httplib2.Http()
         body = json.dumps({
             "from": self._sender,
             "to": self._receiver,
             "subject": self._subject,
-            "message_body": self._message,
+            "message_body": formatted_message,
             })
         resp, content = h.request(
             self.service_url(),
@@ -76,6 +90,8 @@ Send an email. Example:
                         help=("The email subject line'"))
     parser.add_argument('--message', required=True,
                         help=("The message body"))
+    parser.add_argument('--infile',
+                        help=("Input text file to attach to message body"))
     _args = parser.parse_args()
     return _args
 
@@ -86,7 +102,7 @@ def send_mail():
                  receiver=args.receiver,
                  subject=args.subject,
                  )
-    response, _ = s.send(message=args.message)
+    response, _ = s.send(message=args.message, infile=args.infile)
     if int(response['status']) == 201:
         print "Message sent successfully."
         sys.exit(0)
