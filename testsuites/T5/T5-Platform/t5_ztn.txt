@@ -984,7 +984,7 @@ T5.4.1. Disconnect, change config, reconnect, reload
 T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1003,7 +1003,7 @@ T5.4.3. Disconnect, change config, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
@@ -1018,7 +1018,7 @@ T5.4.4. Disconnect, delete, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1036,7 +1036,7 @@ T5.4.5. Disconnect, change config, failover, reconnect, reload
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
@@ -1053,7 +1053,7 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1074,7 +1074,7 @@ T5.4.7. Disconnect, change config, failover, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
@@ -1090,7 +1090,7 @@ T5.4.8. Disconnect, delete, failover, reboot
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -1109,7 +1109,7 @@ T5.4.9. Disconnect, change config, double failover, reconnect, reload
 	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
