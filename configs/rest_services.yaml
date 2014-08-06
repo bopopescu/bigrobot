@@ -1,0 +1,2 @@
+send_mail:
+  url: http://qa-rest.qa.bigswitch.com:5000/
