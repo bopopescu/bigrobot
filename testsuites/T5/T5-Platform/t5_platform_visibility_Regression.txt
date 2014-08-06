@@ -910,13 +910,13 @@ Configure Tenants For SPAN & Test Path
    rest add system intf to tenant routers	Ixia6
    
    
-   rest add static routes	autoT1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	autoT2	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia3	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia4	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia5	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia6	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoT1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	autoT2	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia3	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia4	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia5	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia6	0.0.0.0/0	{"tenant": "system"}
       
    sleep  10
 
