@@ -51,14 +51,19 @@ class BsnCommon(object):
         purposely want it to fail - there may be good reasons for doing that
         also.
         """
+        suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
+        helpers.bigrobot_test_suite_status(suite_status)
+        helpers.log("Test suite status: %s" % suite_status)
         try:
             t = test.Test()
             t.teardown()
             helpers.log("Closing all device connections")
             t.node_disconnect()
         except:
+            # Some teardown actions failed. But we don't want suite teardown
+            # to ever fail...
             pass
-        # We don't want suite teardown to ever fail
+
         return True
 
     def base_test_setup(self):

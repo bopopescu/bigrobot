@@ -609,15 +609,24 @@ def bigrobot_ignore_mininet_exception_on_close(new_val=None, default='False'):
                             new_val, default)
 
 
-def bigrobot_preserve_mininet_screen_session(new_val=None, default='False'):
+def bigrobot_preserve_mininet_screen_session_on_fail(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'True' to preserve the Mininet "screen" session. This feature is
     useful for debugging. A user can attach to the screen session at a later
     time.
     """
-    return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION',
+    return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION_ON_FAIL',
                             new_val, default)
+
+
+def bigrobot_test_suite_status(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'PASS' or 'FAIL' by 'Base suite teardown' keyword (defined in
+    BsnCommon.py).
+    """
+    return _env_get_and_set('BIGROBOT_TEST_SUITE_STATUS', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
