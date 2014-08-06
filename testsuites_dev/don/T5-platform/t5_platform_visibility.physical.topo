@@ -105,7 +105,7 @@ s7:
 s8:
   alias:  spine1
   fabric-role: spine
-  ac: 70:72:CF:AE:B3:AA
+  mac: 70:72:CF:AE:B3:AA
   user: admin
   password: adminadmin
   console:
