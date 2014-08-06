@@ -708,6 +708,8 @@ class MininetDevConf(DevConf):
         self.controller2 = controller2
         self.openflow_port = openflow_port
         self.state = 'stopped'  # or 'started'
+        self.is_screen_session = False
+
         super(MininetDevConf, self).__init__(host, user, password, name=name,
                                              timeout=timeout,
                                              port=port,
@@ -725,17 +727,19 @@ class MininetDevConf(DevConf):
                     "There are other Mininet screen sessions running on %s."
                     " Please close them." % host)
 
-            # Must specify a "sensible" term type to avoid the screen error
-            # "Clear screen capability required."
-            self.send("export TERM=vt100")
-            self.expect(quiet=False)
-            self.send("screen")
-            self.expect(r'.*Press Space or Return to end.*')
-            self.send(" ", no_cr=True)
+            if helpers.bigrobot_preserve_mininet_screen_session_on_fail().lower() == 'true':
+                # Must specify a "sensible" term type to avoid the screen error
+                # "Clear screen capability required."
+                self.send("export TERM=vt100")
+                self.expect(quiet=False)
+                self.send("screen")
+                self.expect(r'.*Press Space or Return to end.*')
+                self.send(" ", no_cr=True)
+                self.is_screen_session = True
 
-            # Important: Sleep a little big to ensure we get back the shell
-            # prompt before issuing the command to start up Mininet.
-            helpers.sleep(0.5)
+                # Important: Sleep a little big to ensure we get back the shell
+                # prompt before issuing the command to start up Mininet.
+                helpers.sleep(0.5)
 
             self.start_mininet()
 
@@ -853,9 +857,11 @@ class MininetDevConf(DevConf):
         self.start_mininet(new_topology)
 
     def close(self):
-        if helpers.bigrobot_preserve_mininet_screen_session().lower() == 'true':
-            helpers.log("Env BIGROBOT_PRESERVE_MININET_SCREEN_SESSION"
-                        " is 'True'. Preserving Mininet screen session.")
+        if (helpers.bigrobot_test_suite_status().lower() == 'fail' and
+            helpers.bigrobot_preserve_mininet_screen_session_on_fail().lower() == 'true'):
+            helpers.log("Env BIGROBOT_PRESERVE_MININET_SCREEN_SESSION_ON_FAIL"
+                        " is 'True' and test suite failed. Preserving Mininet"
+                        " screen session.")
             return True
         try:
             self.stop_mininet()
@@ -866,7 +872,9 @@ class MininetDevConf(DevConf):
             else:
                 raise
         else:
-            self.send('exit', quiet=True)  # terminate screen session
+            if self.is_screen_session:
+                helpers.log("Exiting 'screen' session")
+                self.send('exit', quiet=True)  # terminate screen session
             helpers.log("Closing MininetDevConf '%s' (%s)"
                         % (self.name(), self._host))
             super(MininetDevConf, self).close()
