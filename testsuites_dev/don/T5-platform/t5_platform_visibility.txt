@@ -160,19 +160,6 @@ T0 Setup
 	start traffic  ${stream-ac1}
 	
 
-T00 Ixia Setup
-
-	${bogus_ethertype}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  
-	...			name=ab1_flow	ethertype=88cc
-	...			src_ip_step=0.0.0.1  dst_ip_step=0.0.0.1 
-	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
-	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
-	...			protocol=TCP  src_port=1000  dst_port=2000 
-	
-	
-	
-	
-
 T1 Configure SPAN session for Single interface - Direction Both
     [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
