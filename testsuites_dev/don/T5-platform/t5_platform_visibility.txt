@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
-Suite Setup      base suite setup
+#Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
@@ -117,7 +117,7 @@ T0 Setup
     bash add ip address  h6  ${h6_single_ip}/24  eth1
     bash ifup intf  h6  eth1
     
-    #Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
@@ -655,7 +655,7 @@ T28 Configure SPAN session for Ethertype - Direction Ingress
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
 	[Tags]  span  feature  manual
-	manual  failed
+	manual failed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
