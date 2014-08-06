@@ -3969,6 +3969,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
+                
+                #skip command below due to PR BVS-2170
+                if re.match(r'.*show logical-router incomplete.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue  
+                
+                #skip command below due to PR BSC-6030
+                if re.match(r'.*show zerotouch velocity.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                                  
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4187,6 +4199,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
+                
+                #skip command below due to PR BVS-2170
+                if re.match(r'.*show logical-router incomplete.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue    
+                
+                  #skip command below due to PR BSC-6030
+                if re.match(r'.*show zerotouch velocity.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                            
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4417,6 +4441,24 @@ class T5Platform(object):
                         helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                         num = num - 1
                         continue
+                    
+                    #skip command below due to PR BVS-2170
+                    if re.match(r'.*show logical-router incomplete.*', string):
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue    
+                    
+                    #skip command below due to PR BSC-6030
+                    if re.match(r'.*show zerotouch velocity.*', string):
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue   
+                    
+                    #skip command below due to PR BSC-6009
+                    if re.match(r'.*zerotouch device.*', string) or re.match(r'.*zerotouch unmanaged-device.*', string):
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue                                       
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
