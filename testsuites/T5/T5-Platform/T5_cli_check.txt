@@ -104,7 +104,7 @@ T3 Verify 'show tenant' command completion
     Should be true  ${result}
     ${result}=  cli walk command  show tenant  4  cmd_argument=B
     Should not be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke
+    [Tags]  feature  CLI  cli-completion 
 
 T4 Verify 'show segment' command completion
     ${result}=  cli walk command  show segment  5  cmd_argument=<cr> all A1 A2 
