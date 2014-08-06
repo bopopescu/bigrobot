@@ -3,19 +3,9 @@
 #  A convenient wrapper to generate a report and also post it on the web server.
 #  You need to modify the "build" variable below.
 
-#build="bvs master #2.0.0-beta1-SNAPSHOT"
-#build="bvs master #beta1-31"
-#build="bvs master #2287"
-#build="bvs master #bcf_vft-hash-reconcile_10"
-#build="bvs master #2502"
-#build="bvs master ironhorse beta1 aggregated"
-#build="bvs master #2685"
-#build="bvs master #2710"
-#build="bvs master #2742"
-#build="bvs master #2761"
-#build="bvs master #2806"
-build="bvs master aggregated 2014 wk32"
-#build="bvs master #2840"
+#build="bvs master aggregated 2014 wk32"
+#build="bvs master #beta2_15"
+build="bvs master ironhorse beta2 aggregated"
 
 
 if [ ! -x ../bin/gobot ]; then
