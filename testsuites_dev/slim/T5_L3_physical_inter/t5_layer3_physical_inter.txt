@@ -774,6 +774,7 @@ Add and delete more specific route on tenant over existing static route
     REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
     REST delete static routes                   Y                               0.0.0.0/0   
     REST add static routes                      Y                               10.251.0.0/16           {"tenant": "system"}
+    BASH ping                                   h1                              10.252.1.11             count=5
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
