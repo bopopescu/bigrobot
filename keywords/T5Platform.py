@@ -4421,6 +4421,17 @@ class T5Platform(object):
                     helpers.log("Ignore line  - '%s'" % string)
                     num = num - 1
                     continue
+           
+                if re.match(r'.*hashed-password.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue   
+                                
+                #skip command below due to PR BSC-6009
+                if re.match(r'.*zerotouch device.*', string) or re.match(r'.*zerotouch unmanaged-device.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                   
 
                 if re.match(r'All', line):
                     helpers.log("Don't need to loop through exec commands- '%s'" % line)
@@ -4450,12 +4461,6 @@ class T5Platform(object):
                     
                     #skip command below due to PR BSC-6030
                     if re.match(r'.*show zerotouch velocity.*', string):
-                        helpers.log("Ignoring line - %s" % string)
-                        num = num - 1
-                        continue   
-                    
-                    #skip command below due to PR BSC-6009
-                    if re.match(r'.*zerotouch device.*', string) or re.match(r'.*zerotouch unmanaged-device.*', string):
                         helpers.log("Ignoring line - %s" % string)
                         num = num - 1
                         continue                                       
