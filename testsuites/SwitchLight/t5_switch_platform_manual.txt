@@ -375,6 +375,7 @@ Verify LED status for MGMT Port
 Verify LED status for console Port 
     Log    Step 1 - Verify LED status for console port when link is connected and up 
     Log    Step 2 - Verify LED status for console port when cable is taken out from the other end
+    Log    Step 3 - For Leaf and Spine there is no LED for console
     [Tags]  switch-platform  LED  feature
     [Tags]  Manual  
     Manual passed
@@ -407,11 +408,12 @@ Verify LED Beacon feature on leaf and spine
     [Tags]  Manual  
     Manual passed   
 
-Verify that all the all network LEDs goes off when systems is halted
-    Log    Step 1 - Verify that all the all network LEDs goes off when systems is halted
+Verify the LED state when system is halted 
+    Log    Step 1 - Verify that when systems is halted without reboot, LED stays the same
+    Log    Step 2 - Verify the system is halted with reboot, then LED comes backup when the power is up.
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual-untested  
-    Manual untested     
+    [Tags]  Manual
+    Manual passed    
 
 ### Different Switch Platforms 
 ## Provide HCL for all supported SKUs 

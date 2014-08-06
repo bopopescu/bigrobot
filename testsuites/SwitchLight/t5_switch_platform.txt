@@ -41,7 +41,7 @@ ${intf_6}=        ethernet45
 ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
-${interface10g}=   ethernet25
+${interface10g}=  ethernet25
 ${PSU1}=            PSU1
 ${PSU2}=            PSU2
 ${PSUnotup}=        PSU1
@@ -247,27 +247,27 @@ verify the ofaux channel on controller
 
 Verify the show environment psu output for Vin 
     [Tags]  switch-platform  environment  feature  
-    verify show environment psu  s1  none  ${PSU2}  2  Vin
+    verify show environment psu  s1  none  ${PSU1}  2  Vin
 
 Verify the show environment psu output for Vout
     [Tags]  switch-platform  environment  feature     
-    verify show environment psu  s1  none  ${PSU2}  2  Vout
+    verify show environment psu  s1  none  ${PSU1}  2  Vout
 
 Verify the show environment psu output for Iin 
     [Tags]  switch-platform  environment  feature    
-    verify show environment psu  s1  none  ${PSU2}  2  Iin
+    verify show environment psu  s1  none  ${PSU1}  2  Iin
 
 Verify the show environment psu output for Iout 
     [Tags]  switch-platform  environment  feature     
-    verify show environment psu  s1  none  ${PSU2}  2  Iout
+    verify show environment psu  s1  none  ${PSU1}  2  Iout
 
 Verify the show environment psu output for Pout 
     [Tags]  switch-platform  environment  feature    
-    verify show environment psu  s1  none  ${PSU2}  2  Pout
+    verify show environment psu  s1  none  ${PSU1}  2  Pout
 
 Verify the show environment psu output for Pin 
     [Tags]  switch-platform  environment  feature    
-    verify show environment psu  s1  none  ${PSU2}  2  Pin
+    verify show environment psu  s1  none  ${PSU1}  2  Pin
   
 Verify the show environment fan rpm in switch 
     [Tags]  switch-platform  environment  feature  
@@ -341,7 +341,7 @@ Verify the show environment Thermal Sensor temperature in switch
 * Keywords
 
 T5 switch platform test setup
-   base suite setup
+   #base suite setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
@@ -360,10 +360,10 @@ T5 switch platform test setup
                 
 T5 switch platform test teardown
    rest delete tenant  ${tenant}  
-   rest delete fabric switch  ${switch1_name} 
-   rest delete fabric switch  ${switch3_name}
-   rest delete fabric switch  ${switch7_name}
-   base suite teardown
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   #base suite teardown
    sleep  5     
 
 verify openflow aux channel  [Arguments]  ${switch}  ${cntrlr} 
