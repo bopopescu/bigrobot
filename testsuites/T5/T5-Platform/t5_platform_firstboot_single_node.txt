@@ -82,8 +82,8 @@ T2.3 Verify with invalid DNS server IP address
 	first_boot_controller_menu_dnsserver            c1   300.0.0.1     invalid_input=True
 	first_boot_controller_menu_dnsserver            c1   100.0.0.1.0   invalid_input=True
 	Log   broadcast as dns server address
-#	first_boot_controller_menu_dnsserver            c1   255.255.255.255   invalid_input=True	
-#	first_boot_controller_menu_dnsserver            c1   224.0.0.0   invalid_input=True	
+	first_boot_controller_menu_dnsserver            c1   255.255.255.255   invalid_input=True	
+	first_boot_controller_menu_dnsserver            c1   224.0.0.0   invalid_input=True	
 	first_boot_controller_menu_dnsserver            c1   2f.3f.0.0   invalid_input=True	
 	first_boot_controller_menu_dnsserver            c1   0.0.0.0     invalid_input=True		
 	first_boot_controller_menu_dnsserver            c1   ${dns}   
@@ -101,7 +101,7 @@ T2.4 Verify with invalid mask
 	first_boot_controller_menu_prefix               c1   32   invalid_input=True
 	first_boot_controller_menu_prefix               c1   31   invalid_input=True				
 	log    0 is accepted as valid mask
-#	first_boot_controller_menu_prefix               c1   0   invalid_input=True	
+	first_boot_controller_menu_prefix               c1   0   invalid_input=True	
 	first_boot_controller_menu_prefix               c1   ${mask}    
  	first_boot_controller_menu_apply                c1	
     
@@ -115,8 +115,8 @@ T2.5 Verify with invalid IP
 	first_boot_controller_initial_cluster_setup 	c1  no  
 	first_boot_controller_menu_IP                   c1   300.0.0.1     invalid_input=True
     log   broadcast address   
-#	first_boot_controller_menu_IP                   c1   255.255.255.255    18   invalid_input=True	
-#	first_boot_controller_menu_IP                   c1   224.0.0.0    18   invalid_input=True
+	first_boot_controller_menu_IP                   c1   255.255.255.255    18   invalid_input=True	
+	first_boot_controller_menu_IP                   c1   224.0.0.0    18   invalid_input=True
 	first_boot_controller_menu_IP                   c1   0.0.0.0      18   invalid_input=True	
 	first_boot_controller_menu_IP                   c1   100.100.100.100.100      18   invalid_input=True	
 	first_boot_controller_menu_IP                   c1   1f.2f.3f.0      18   invalid_input=True			
