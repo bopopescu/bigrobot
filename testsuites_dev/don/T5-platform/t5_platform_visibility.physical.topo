@@ -13,6 +13,10 @@ c2:
 
 s1:
   alias:  leaf0-a
+  leaf-group: rack0
+  mac: 70:72:CF:AB:36:D8
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -22,6 +26,10 @@ s1:
 
 s2:
   alias:  leaf0-b
+  leaf-group: rack0
+  mac: 70:72:CF:AB:36:98
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -31,6 +39,10 @@ s2:
 
 s3:
   alias:  leaf1-a
+  leaf-group: rack1
+  mac: 70:72:CF:B5:F5:CE
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -40,6 +52,10 @@ s3:
 
 s4:
   alias:  leaf1-b
+  leaf-group: rack1
+  mac: 70:72:CF:B5:EB:B0
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -49,6 +65,10 @@ s4:
 
 s5:
   alias:  leaf2-a
+  leaf-group: rack2
+  mac: 70:72:CF:B5:E6:C6
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -58,6 +78,10 @@ s5:
 
 s6:
   alias:  leaf2-b
+  leaf-group: rack2
+  mac: 70:72:CF:AB:39:18
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -67,6 +91,9 @@ s6:
   
 s7:
   alias:  spine0
+  mac: 70:72:CF:AE:B5:B2
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
@@ -76,6 +103,9 @@ s7:
 
 s8:
   alias:  spine1
+  ac: 70:72:CF:AE:B3:AA
+  user: admin
+  password: adminadmin
   console:
     ip: 10.1.8.68
     protocol: telnet
