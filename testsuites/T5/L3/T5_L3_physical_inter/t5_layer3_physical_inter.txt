@@ -1223,14 +1223,14 @@ Inter tenant dhcp relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1289,7 +1289,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     sleep                                       1
@@ -1373,14 +1373,14 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1442,14 +1442,14 @@ Host moved to another vns on another tenant and renew dhcp
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1464,7 +1464,7 @@ Host moved to another vns on another tenant and renew dhcp
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     ${segment} =                                Set Variable                    ${result[0]['segment']}
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
@@ -1959,14 +1959,14 @@ Controller HA failover with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1990,14 +1990,14 @@ Controller HA failover with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2050,14 +2050,14 @@ Active Controller reboot with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2081,14 +2081,14 @@ Active Controller reboot with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2153,14 +2153,14 @@ Dhcp request from overlapping private IP and public IP
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac6} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac6}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr6}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
@@ -2216,14 +2216,14 @@ Restart ofad on leaf with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2254,14 +2254,14 @@ Restart ofad on leaf with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2314,14 +2314,14 @@ Restart ofad on spine with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2352,14 +2352,14 @@ Restart ofad on spine with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
