@@ -447,6 +447,7 @@ T27 Interaction between snmp and banner commands
 	[Tags]  banner  snmp  BSC-5141
 
 T28 NTP sync command
+	Cli Run  master  ntp server 0.bigswitch.pool.ntp.org
 	Cli Run  master  ntp sync  cmd_timeout=15
 	Cli Run  master  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
 	[Tags]  NTP BSC-5169
