@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
-#Suite Setup      base suite setup
+Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
@@ -19,8 +19,8 @@ Library	         keywords/SwitchLight.py
 Resource		 testsuites_dev/don/physical_variables.txt
 
 * Variables
-@{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
-@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03  00:00:04:00:02:00:00:04  00:00:04:00:02:00:00:05  00:00:04:00:02:00:00:06
+@{spineList}  00:00:70:72:CF:AE:B5:B2  00:00:70:72:CF:AE:B3:AA
+@{leafList}  00:00:70:72:CF:AB:36:D8  00:00:70:72:CF:AB:36:98  00:00:70:72:CF:B5:F5:CE  00:00:70:72:CF:B5:EB:B0  00:00:70:72:CF:B5:E6:C6  00:00:70:72:CF:AB:39:18  
 
 ${gateway1IP}	10.10.10.100
 ${gateway2IP}	20.20.20.100
@@ -117,7 +117,7 @@ T0 Setup
     bash add ip address  h6  ${h6_single_ip}/24  eth1
     bash ifup intf  h6  eth1
     
-    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+    #Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
