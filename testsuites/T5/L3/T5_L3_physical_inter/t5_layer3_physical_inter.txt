@@ -120,14 +120,6 @@ Controller HA failover via reboot of master
     Controller HA failover via reboot of master
     [Tags]          feature         HA
     
-Spine reboot
-    Spine reboot
-    [Tags]          feature         HA
-
-Leaf reboot
-    Leaf reboot
-    [Tags]          feature         HA
-
 Traffic load balance across ECMP group
     manual passed
     [Tags]          manual          feature         ecmp        
@@ -336,7 +328,13 @@ Verify nexthop group config is still applied on HA failover
     manual untested
     [Tags]          manual              feature            HA
     
+Spine reboot
+    Spine reboot
+    [Tags]          feature         HA
 
+Leaf reboot
+    Leaf reboot
+    [Tags]          feature         HA
 
 
 * Keywords

@@ -21,7 +21,7 @@ Resource        testsuites_dev/slim/T5_L3_physical_intra/t5_dualleaf_three_rack_
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack untagged with dynamic endpoints
-    [Tags]              feature         sanity          run1
+    [Tags]              feature         sanity          runfailed
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack untagged with dynamic endpoints
@@ -41,11 +41,11 @@ Intra tenant L3 traffic same rack different leaf switch
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                feature             sanity                              
+    [Tags]                feature             sanity          runfailed                    
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature                  
+    [Tags]                 feature                            runfailed
     
 Activate and deactivate router interface
     Activate and deactivate router interface
@@ -53,7 +53,7 @@ Activate and deactivate router interface
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature         sanity          
+    [Tags]                  feature         sanity          runfailed
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
@@ -81,7 +81,7 @@ Intra tenant dhcp relay
     
 Intra tenant dhcp relay with circuit id
     L3 intra tenant dhcp relay with circuit id on same rack
-    [Tags]                   feature            sanity                  dhcp-relay  
+    [Tags]                   feature            sanity                  dhcp-relay      runfailed
 
 Intra tenant dhcp relay across rack
     L3 intra tenant dhcp relay across rack
@@ -89,7 +89,7 @@ Intra tenant dhcp relay across rack
     
 Intra tenant dhcp relay with circuit id across rack
     L3 intra tenant dhcp relay with circuit id across rack
-    [Tags]                   feature            feature                 dhcp-relay  
+    [Tags]                   feature            feature                 dhcp-relay      runfailed
 
 Delete and Add dhcp relay
     L3 dhcp request without dhcp relay enabled
@@ -97,11 +97,11 @@ Delete and Add dhcp relay
     
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
     Move host from one vns to another vns in the same tenant and verify dhcp request is working
-    [Tags]                  feature                 dhcp-relay              
+    [Tags]                  feature                 dhcp-relay              runfailed
 
 Verify dhcp host is not aged out
     Verify dhcp host is not being aged out
-    [Tags]              feature                 dhcp-relay          
+    [Tags]              feature                 dhcp-relay        runfailed  
 
 Dhcp relay with dhcp server configured as static endpoint
     Dhcp relay with static dhcp server endpoint
@@ -109,7 +109,7 @@ Dhcp relay with dhcp server configured as static endpoint
     
 Verify add and delete of dhcp server config works
     Verify add and delete of dhcp server config works
-    [Tags]             feature                 dhcp-relay  
+    [Tags]             feature                 dhcp-relay   runfailed
         
     
 Add and delete untagged endpoints with existing host
@@ -118,7 +118,7 @@ Add and delete untagged endpoints with existing host
     
 Add and delete tagged endpoints with existing host
     L3 add and delete tagged endpoints with existing host
-    [Tags]              feature 
+    [Tags]              feature                     runfailed
         
 Change L3 endpoint from untagged to tagged and back     
     L3 change endpoint from untagged to tagged and back 
@@ -138,7 +138,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature     
+    [Tags]              feature             runfailed   
 
 Delete and add router vns ip
     Delete and add router vns ip 
@@ -150,16 +150,16 @@ Set 32bit full mask on vns router ip
     
 Change tagged endpoint IP address
     Change tagged host endpoint IP address
-    [Tags]              feature                 
+    [Tags]              feature                     runfailed
 
 Configure static endpoint with host showing up on another port
     Static endpoint with dynamic host showing up on another port
-    [Tags]                  feature                 
+    [Tags]                  feature                 runfailed
 
 Verify subnet mask is properly applied on router vns
     Verify subnet mask on vns router ip
-    [Tags]                  feature     
-
+    [Tags]                  feature     runfailed
+    
 Verify vlsm forwarding
     Verify vlsm forwarding
     [Tags]                  feature     
@@ -182,47 +182,39 @@ L3 intra tenant traffic between private and public subnet with overlapping IP
     
 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
-    [Tags]                      feature                    run
+    [Tags]                      feature                    
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature                            run
+    [Tags]              feature                            
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature                            run
-
-Spine reboot
-    Reboot spine0 via CLI
-    [Tags]              feature         
-
-Leaf reboot
-    Reboot Leaf0 via CLI
-    [Tags]              feature         
+    [Tags]              feature                            
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
-    [Tags]              feature         
+    [Tags]              feature         runfailed
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
-    [Tags]              feature         
+    [Tags]              feature         runfailed
 
 Spine to leaf link flap
     Flap link between leaf and spine
-    [Tags]              feature         
+    [Tags]              feature         runfailed
 
 Leaf to host link flap
     Flap bond interface towards host
-    [Tags]              feature                 run 
+    [Tags]              feature                 runfailed 
     
 Restart ofad process on spine
     restart ofad on spine
-    [Tags]              feature                 run
+    [Tags]              feature                 runfailed
     
 Restart ofad process on leaf    
     restart ofad on leaf
-    [Tags]              feature         
+    [Tags]              feature         runfailed
     
 L3 intra tenant traffic behavior in headless mode 
     manual passed
@@ -230,20 +222,20 @@ L3 intra tenant traffic behavior in headless mode
 
 L3 intra tenant traceroute
     L3 intra tenant traceroute
-    [Tags]                  feature     
+    [Tags]                  feature     runfailed
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature             
+    [Tags]                                  feature     runfailed         
     
 Verify host on private segment is able to get dhcp address from tenant dhcp server
     Verify host on private segment is able to get dhcp address from tenant dhcp server
-    [Tags]                                  feature           dhcp-relay            run5
+    [Tags]                                  feature           dhcp-relay            runfailed
                                 
         
 Trigger controller HA failover via CLI and verify dhcp-relay is working
     Trigger controller HA failover via CLI and verify dhcp-relay is working
-    [Tags]                  feature         HA      dhcp-relay          
+    [Tags]                  feature         HA      dhcp-relay          runfailed
 
 Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
@@ -251,11 +243,11 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 
 Trigger controller HA failover via CLI and verify ecmp is working
     manual untested
-    [Tags]                  manual                  feature                 ecmp            run     
+    [Tags]                  manual                  feature                 ecmp                 
 
 Trigger controller HA failover via reboot and verify ecmp is working
     manual untested
-    [Tags]                  manual          feature                 ecmp            run
+    [Tags]                  manual          feature                 ecmp            
 
 Verify dhcp-relay functionality in headless mode
     manual passed
@@ -296,17 +288,25 @@ Verify ecmp traffic will failover and failback to more specific routes with ecmp
     
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
-    [Tags]                  feature                         
+    [Tags]                  feature          runfailed               
     
 
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
-    [Tags]                  feature                         
+    [Tags]                  feature            runfailed             
     
 Verify blocked endpoint should be automatically cleared
     Verify blocked endpoint should be automatically cleared
-    [Tags]                  feature                         
+    [Tags]                  feature           runfailed              
     
+Spine reboot
+    Reboot spine0 via CLI
+    [Tags]              feature         
+
+Leaf reboot
+    Reboot Leaf0 via CLI
+    [Tags]              feature         
+
     
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -637,7 +637,6 @@ Verify host with same IP as vrf is having L2 service only
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     ${state} =                                  Set Variable                    ${result[0]['state']}   
-#    Should Contain                              ${state}                        Active    
     Should Contain                              ${state}                        L2 Only    
     BASH ifconfig ip address                    h5                              10.251.1.22/24           bond0   
     BASH ping                                   h5                              10.251.1.1              count=5
@@ -647,7 +646,6 @@ Verify host with same IP as vrf is having L2 service only
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     ${state} =                                  Set Variable                    ${result[0]['state']}   
     Should Contain                              ${state}                        Active    
-#    BASH init intf                              h5                              bond0
 
 L3 intra tenant same rack untagged with static endpoints
     BASH ifup intf                              h1                              bond0
@@ -865,6 +863,7 @@ L3 intra tenant traceroute
     BASH add route                              h5                              10.251.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
     sleep                                       1
+    BASH ping                                   h5                              10.251.1.11             count=5
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} < 50        
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
