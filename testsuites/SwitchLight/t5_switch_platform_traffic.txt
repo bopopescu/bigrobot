@@ -30,7 +30,7 @@ ${intf_2}=        ethernet24
 ${leaf1_spine0_intf1}=  ethernet49
 ${spine0_leaf1_intf1}=  ethernet21
 ${leaf2_spine0_intf1}=  ethernet49
-${spine0_leaf2_intf1}=  ethernet22
+${spine0_leaf2_intf1}=  ethernet25
 
 ${count}=         1 
 ${ratetolerance}=     10
