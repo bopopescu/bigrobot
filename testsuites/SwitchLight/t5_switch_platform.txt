@@ -341,7 +341,7 @@ Verify the show environment Thermal Sensor temperature in switch
 * Keywords
 
 T5 switch platform test setup
-   #base suite setup
+   base suite setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
@@ -363,7 +363,7 @@ T5 switch platform test teardown
    #rest delete fabric switch  ${switch1_name} 
    #rest delete fabric switch  ${switch3_name}
    #rest delete fabric switch  ${switch7_name}
-   #base suite teardown
+   base suite teardown
    sleep  5     
 
 verify openflow aux channel  [Arguments]  ${switch}  ${cntrlr} 
