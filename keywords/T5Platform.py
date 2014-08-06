@@ -136,7 +136,7 @@ class T5Platform(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            c.expect(r"Failover to this controller node \(yes/no\)?")
+            c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)?")
             c.config("yes")
             # sleep(30)
             sleep(90)
