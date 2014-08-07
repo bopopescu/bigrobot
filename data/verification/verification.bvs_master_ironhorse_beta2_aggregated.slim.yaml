@@ -387,35 +387,35 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: controller upgrade is not working
 
 - name: 'Verify ecmp forwarding after controller upgrade'
   product_suite: 'T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: controller upgrade is not working
 
 - name: 'Verify dhcp-relay functionality after controller upgrade'
   product_suite: 'T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: controller upgrade is not working
 
 - name: 'Verify same mac address showing up on two ports in the same segment is blocked'
   product_suite: 'T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: script issue, is working in master build in my setup
 
 - name: 'Verify clear blocked endpoint works'
   product_suite: 'T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: script issue, is working in master build in my setup
 
 - name: 'Verify blocked endpoint should be automatically cleared'
   product_suite: 'T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra'
