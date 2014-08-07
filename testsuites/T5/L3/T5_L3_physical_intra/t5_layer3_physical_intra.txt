@@ -551,13 +551,12 @@ Verify static endpoint state
     REST add endpoint mac                       X                               X1                      X1_pc1                  ${mac1}
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-#    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
     ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
-    Should Contain                              ${ipState1}                     Unknown 
+#    ${ipState1} =                               Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
+#    Should Contain                              ${ipState1}                     Unknown 
     REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
@@ -577,8 +576,8 @@ Verify static endpoint state
     REST add endpoint mac                       X                               X2                      X2_pc2                  ${mac2}
     REST add endpoint portgroup attachment      X                               X2                      X2_pc2                  ${leaf2_pc2}                -1  
     REST add endpoint ip                        X                               X2                      X2_pc2                  10.251.2.11
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h6                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
@@ -591,14 +590,14 @@ Verify static endpoint state
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
@@ -680,14 +679,14 @@ L3 intra tenant same rack untagged with static endpoints
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
