@@ -41,126 +41,126 @@
 
 - name: 'Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 64'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 512'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1518'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 64'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 256'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic linerate 75% pktsize 1024'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic flow=a<->c traffic linerate 100% pktsize 1518'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic Jumbo flow=a->c traffic framerate 10000 pktsize 9216'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Uni-Directional L3 Traffic Jumbo flow=a->c traffic linerate 10% pktsize 9216'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 25% pktsize 9216'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 50% pktsize 9216'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
 
 - name: 'Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216'
   product_suite: 'SwitchLight/t5_switch_platform_L3_traffic'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
   jira:
-  notes:
+  notes: 'Ran the script again and it passed'
