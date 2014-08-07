@@ -489,7 +489,7 @@ class T5ZTN(object):
             single = True
 
         if not single:
-            url = ("http://%s/ztn/switch/%s/startup_config"
+            url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave controller does not provide"
                         " any startup-config for the switch")
@@ -511,7 +511,7 @@ class T5ZTN(object):
             except:
                 return helpers.test_failure("Other error connecting to Slave")
 
-            url = ("http://%s/ztn/switch/%s/startup_config?internal=1"
+            url = ("http://%s/ztn/switch/%s/startup_config?internal=1&proxy=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave can compute startup config"
                         " for us if internal=1 flag attached")
