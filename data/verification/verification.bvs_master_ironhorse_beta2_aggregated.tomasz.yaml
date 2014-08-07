@@ -326,7 +326,7 @@
   jira:
   notes:
 
-- name: 'T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI'
+- name: T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
   product_suite: 'T5/T5-Platform/t5_ztn_6'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
@@ -354,14 +354,14 @@
   jira:
   notes:
 
-- name: 'T7.7. switch's MAC address is not configured on the controller - before Switch Light Install'
+- name: T7.7. switch's MAC address is not configured on the controller - before Switch Light Install
   product_suite: 'T5/T5-Platform/t5_ztn_6'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:
 
-- name: 'T7.8. switch's MAC address is not configured on the controller - after Switch Light Install'
+- name: T7.8. switch's MAC address is not configured on the controller - after Switch Light Install
   product_suite: 'T5/T5-Platform/t5_ztn_6'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
@@ -501,7 +501,7 @@
   jira:
   notes:
 
-- name: 'T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image'
+- name: T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image
   product_suite: 'T5/T5-Platform/t5_ztn_6'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
