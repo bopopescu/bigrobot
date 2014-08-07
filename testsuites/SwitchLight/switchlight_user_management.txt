@@ -9,7 +9,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}  Software Image Version: SwitchLight  
+${switchlight_version}  Software Image Version: Switch Light OS  
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
