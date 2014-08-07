@@ -1,15 +1,6 @@
 * Keywords
 
-set colo variables  
-	Set Suite Variable  ${gw}      10.210.1.1
-	Set Suite Variable  ${mask}    16
-	Set Suite Variable  ${VIP1}    10.210.96.150
-	Set Suite Variable  ${VIP2}    10.210.96.151
- 	Set Suite Variable  ${namec1}    MY-C1
-	Set Suite Variable  ${namec2}    MY-C2
-	Set Suite Variable  ${ipcno}    10.210.96.255	 
-
-
+ 
 
 #  first boot  
 

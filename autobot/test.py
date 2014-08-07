@@ -90,10 +90,8 @@ class Test(object):
             #
             self._node_static_aliases = {}
 
-            self._bsn_config_file = ''.join((helpers.bigrobot_configs_path(),
-                                             '/bsn.yaml'))
-            helpers.log("Loading config file %s" % self._bsn_config_file)
-            self._bsn_config = helpers.load_config(self._bsn_config_file)
+            self._bsn_config = helpers.bigrobot_config_bsn()
+            helpers.log("Loaded config file %s" % self._bsn_config['this_file'])
 
             # self._is_ci = helpers.bigrobot_continuous_integration()
             # if self._is_ci.lower() == "true":
@@ -313,7 +311,7 @@ class Test(object):
             return self._bsn_config[key]
         else:
             helpers.test_error("Attribute '%s' is not defined in %s" %
-                               (key, self._bsn_config_file))
+                               (key, self._bsn_config['this_file']))
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -402,6 +400,15 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
+                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    if key == "console_ip":
+                        helpers.log("console_ip key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['ip']
+                    if key == "console_port":
+                        helpers.log("console_port key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['port']
                     helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                        % (node, key))
                 else:

@@ -55,7 +55,7 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
 	log   VIP_runningconfig_factorydefault_vip_runningconfig
  	 
 	Verify VIP function 	 ${VIP1}   	
-	Cli Copy  running-config   scp://bsn@10.192.88.32:/home/mingtao/${file}  node=c1  scp_passwd=bsn
+	Cli Copy  running-config   scp://bsn@10.8.0.59:/home/mingtao/${file}  node=c1  scp_passwd=bsn
  	${A}=   cli_take_snapshot   master  run_config=yes	
 	
  	cli_boot_factory_default	c1
@@ -65,7 +65,7 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
     controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
 
 	rest_verify_show_cluster
-	Cli Copy   scp://bsn@10.192.88.32:/home/mingtao/${file}  running-config  scp_passwd=bsn
+	Cli Copy   scp://bsn@10.8.0.59:/home/mingtao/${file}  running-config  scp_passwd=bsn
 	${B}=   cli_take_snapshot   master   run_config=yes		
   	Should Be Equal    ${A}    ${B}	 	
 	Verify VIP function 	 ${VIP2}

@@ -65,8 +65,8 @@ T5 L3 Traffic set up
     T5 switch platform test setup
     [Tags]  setup  feature  skipped  
 
-Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 64 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=64   
     clear stats
@@ -76,10 +76,10 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 64
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
         
-    [Tags]  switch-platform  L3  traffic  feature           
+    [Tags]  switch-platform  L3  traffic  feature             
 
-Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 256 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=256   
     clear stats
@@ -91,8 +91,8 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 256
         
     [Tags]  switch-platform  L3  traffic  feature  
 
-Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 512 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=512   
     clear stats
@@ -103,8 +103,8 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 512
     stop traffic   ${stream}   
     [Tags]  switch-platform  L3  traffic  feature  
 
-Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1024 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=1024   
     clear stats
@@ -115,8 +115,8 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1024
     stop traffic   ${stream}    
     [Tags]  switch-platform  L3  traffic  feature  
 
-Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1518 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1518 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=1518   
     clear stats
@@ -127,8 +127,8 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1518
     stop traffic   ${stream}    
     [Tags]  switch-platform  L3  traffic  feature  
 
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 10% pktsize 64 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=10  frame_size=64   
     clear stats
@@ -139,8 +139,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 10% pktsize 64
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature   
 
-Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 64 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=64   
     clear stats
@@ -151,8 +151,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 64
     stop traffic   ${stream}
     [Tags]  switch-platform  L3  traffic  feature
 
-Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 256 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=256   
     clear stats
@@ -163,8 +163,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature
 
-Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 512 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=512   
     clear stats
@@ -175,8 +175,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 512
     stop traffic   ${stream}  
     [Tags]  switch-platform  L3  traffic  feature
 
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=25  frame_size=256   
     clear stats
@@ -188,8 +188,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256
     [Tags]  switch-platform  L3  traffic  feature
 
 
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 50% pktsize 512 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=50  frame_size=512   
     clear stats
@@ -201,8 +201,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 50% pktsize 512
     [Tags]  switch-platform  L3  traffic  feature
 
 
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 75% pktsize 1024 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 75% pktsize 1024 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=75  frame_size=1024   
     clear stats
@@ -214,8 +214,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 75% pktsize 1024
     [Tags]  switch-platform  L3  traffic  feature
 
 
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 100% pktsize 1518 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=100  frame_size=1518   
     clear stats
@@ -226,8 +226,8 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature
 
-Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic Jumbo flow=a->c traffic framerate 10000 pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=9216   
     clear stats
@@ -238,8 +238,8 @@ Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216
     stop traffic   ${stream}    
     [Tags]  switch-platform  L3  traffic  feature
  
-Uni-Directional L3 Traffic Jumbo flow=a->b traffic linerate 10% pktsize 9216 
-    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Uni-Directional L3 Traffic Jumbo flow=a->c traffic linerate 10% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=10  frame_size=9216   
     clear stats
@@ -250,8 +250,8 @@ Uni-Directional L3 Traffic Jumbo flow=a->b traffic linerate 10% pktsize 9216
     stop traffic   ${stream}    
     [Tags]  switch-platform  L3  traffic  feature
 
-Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 25% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=25  frame_size=9216   
     clear stats
@@ -262,8 +262,8 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature  
 
-Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 50% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=50  frame_size=9216   
     clear stats
@@ -274,8 +274,8 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature  
 
-Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=100  frame_size=9216   
     clear stats
@@ -286,11 +286,27 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216
     stop traffic   ${stream}     
     [Tags]  switch-platform  L3  traffic  feature 
 
+#Process restart L3 Traffic linerate 100% pktsize 1518
+#    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+#    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+#   ...                 line_rate=100  frame_size=1518   
+#   clear stats
+#    start traffic  ${stream}
+#    sleep          10
+#    ${report}=     fetch port stats
+#    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+#    restart process on switch  s1  ntpd
+#    sleep    20
+#    ${report}=     fetch port stats
+#    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+#    stop traffic   ${stream}     
+#    [Tags]  switch-platform  L3  traffic  feature  test1
+
 
 * Keywords
       
 T5 switch platform test setup
-   base suite setup
+   #base suite setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
@@ -328,7 +344,7 @@ T5 switch platform test teardown
    #rest delete fabric switch  ${switch1_name} 
    #rest delete fabric switch  ${switch3_name}
    #rest delete fabric switch  ${switch7_name}
-   base suite teardown
+   #base suite teardown
    sleep  5   
 
 traffic teardown
@@ -338,7 +354,7 @@ verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
     Should be true  ${in_range} 
 
@@ -346,8 +362,14 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
 
+restart process on switch  [Arguments]  ${switch}  ${process}
+    ${retvalue1} =  bash restart process  ${switch}  ${process}
+    Should Be True  ${retvalue1}
     
+    
+     
+  

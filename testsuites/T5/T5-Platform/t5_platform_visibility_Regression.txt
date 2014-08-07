@@ -60,10 +60,10 @@ T0 Setup
 	[Tags]  feature  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	#bash execute command  leaf0-a  ofad-ctl autoneg 25
+	#bash execute command  leaf0-a  ofad-ctl autoneg 26
+	#bash execute command  leaf1-a  ofad-ctl autoneg 25
+	#bash execute command  leaf1-a  ofad-ctl autoneg 26
 	
 	bring up h1 bond0
 	sleep  2
@@ -910,13 +910,13 @@ Configure Tenants For SPAN & Test Path
    rest add system intf to tenant routers	Ixia6
    
    
-   rest add static routes	autoT1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	autoT2	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia3	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia4	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia5	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia6	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoT1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	autoT2	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia3	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia4	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia5	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia6	0.0.0.0/0	{"tenant": "system"}
       
    sleep  10
 

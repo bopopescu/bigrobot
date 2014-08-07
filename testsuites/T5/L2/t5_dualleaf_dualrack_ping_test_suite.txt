@@ -32,7 +32,6 @@ basic cli show commands test case
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
-#   cli  c1  show cluster
    cli  c1  show switch
    cli  c1  show controller
    config  c1  show controller
@@ -52,6 +51,12 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    add portgroup to vns  A  A  p2  -1
    sleep  10 
    ${loss}=  mininet ping  bm0  ${bm1_ip}
+   config  c1  show endpoint
+   enable  c1  show endpoint
+   config  c1  show tenant
+   enable  c1  show tenant all
+   config  c1  show segment
+   enable  c1  show segment all
    Should Be True  ${loss} == 0						 
 	 
 ping bm0 to bm1 dual leaf single rack static endpoints

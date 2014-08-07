@@ -250,11 +250,11 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
     [Tags]                  feature         HA      dhcp-relay          
 
 Trigger controller HA failover via CLI and verify ecmp is working
-    manual passed
+    manual untested
     [Tags]                  manual                  feature                 ecmp            run     
 
 Trigger controller HA failover via reboot and verify ecmp is working
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 ecmp            run
 
 Verify dhcp-relay functionality in headless mode
@@ -262,7 +262,7 @@ Verify dhcp-relay functionality in headless mode
     [Tags]                  manual              feature                 dhcp-relay          
 
 Verify ecmp forwarding in headless mode
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 ecmp    
             
 Verify L3 intra tenant forwarding after controller upgrade
@@ -278,7 +278,7 @@ Verify dhcp-relay functionality after controller upgrade
     [Tags]                  manual          feature                 
 
 Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
-    manual passed
+    manual untested
     [Tags]                  manual          feature                 
 
 Verify arp agent functionality after controller HA failover via CLI
@@ -289,8 +289,8 @@ Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
     [Tags]                  feature                                             
     
-Verify ecmp traffic will failover and failback to more specific routes in ecmp group
-    manual passed
+Verify ecmp traffic will failover and failback to more specific routes with ecmp group
+    manual untested
     [Tags]                  manual                  feature                 ecmp        
     
     
@@ -551,21 +551,22 @@ Verify static endpoint state
     REST add endpoint mac                       X                               X1                      X1_pc1                  ${mac1}
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
-    Should Contain                              ${apState1}                     unknown
+#    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
-    Should Contain                              ${ipState1}                     unknown 
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
+    Should Contain                              ${ipState1}                     Unknown 
     REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Member Rule Error
     REST add endpoint ip                        X                               X1                      X1_pc1                  10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${ipState1}                     static 
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -590,15 +591,15 @@ Verify static endpoint state
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -618,7 +619,7 @@ Verify host with same IP as vrf is having L2 service only
     REST delete vns ip                          X                               X1                      10.251.1.1              24
     sleep                                       1  
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
-    BASH ifconfig ip address                         h5                              10.251.1.1/24           bond0   
+    BASH ifconfig ip address                    h5                              10.251.1.1/24           bond0   
     BASH ping                                   h5                              10.251.1.2              count=5
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
@@ -631,6 +632,15 @@ Verify host with same IP as vrf is having L2 service only
     sleep                                       1
     BASH ping                                   h5                              10.251.1.2              count=5
     ${mac5} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac5}
+    Should Be True                              ${result}                           
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
+    ${state} =                                  Set Variable                    ${result[0]['state']}   
+#    Should Contain                              ${state}                        Active    
+    Should Contain                              ${state}                        L2 Only    
+    BASH ifconfig ip address                    h5                              10.251.1.22/24           bond0   
+    BASH ping                                   h5                              10.251.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -672,15 +682,15 @@ L3 intra tenant same rack untagged with static endpoints
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -1052,7 +1062,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf0_pc2}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0
@@ -1158,7 +1168,7 @@ L3 intra tenant dhcp relay with circuit id across rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1313,7 +1323,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     REST delete portgroup from vns              Y                               Y3                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Y                               Y2                      ${leaf2_pc1}            -1
@@ -1326,7 +1336,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     BASH ping                                   h5                              10.252.1.9              count=5
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']['ip-address']}  
     ${segment} =                                Set Variable                    ${result[0]['segment']}
     Should Contain                              ${ipAddr}                       10.252.2
     Should Contain                              ${segment}                      Y2
@@ -1354,7 +1364,7 @@ Verify dhcp host is not being aged out
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1388,7 +1398,7 @@ Verify dhcp host is not being aged out
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}    
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
 #   Should Contain                              ${ipAddr1}                      ${ipAddr}
     Should Be Equal As Strings                  ${ipAddr1}                      ${ipAddr}
     BASH delete route                           h1                              10.252.3.0/24           10.252.1.1
@@ -1869,11 +1879,11 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr1}                      10.251.4.11
 #   Should Contain                              ${result}                       10.251.4.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11
 #   Should Contain                              ${result}                       10.251.2.11
     REST add vns ip                             X                               X1                      10.251.1.1              24  
@@ -1888,10 +1898,10 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                               1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11         
     BASH delete route                           h3                              10.251.2.0/24           10.251.1.1
     BASH delete route                           h4                              10.251.4.0/24           10.251.2.1
@@ -2093,8 +2103,8 @@ Static endpoint with dynamic host showing up on another port
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Log                                         attachpoint = ${attachpoint}                
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${loss} =                                   BASH ping                       h2                      10.251.1.11             count=10
@@ -2802,10 +2812,13 @@ Flap link between leaf and spine
     ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
-    CLI disable interface                       s3                              ${leaf0a_spine0}    
+#    CLI disable interface                       s3                              ${leaf0a_spine0}    
+    REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0}
+   
     sleep                                       5   
     log traffic rate                            tx_rate                         rx_rate                 a                       c
-    CLI enable interface                        s3                              ${leaf0a_spine0}    
+#    CLI enable interface                        s3                              ${leaf0a_spine0}    
+    REST enable fabric interface                ${leaf0_a}                              ${leaf0a_spine0}
     sleep                                       10
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
@@ -2853,7 +2866,7 @@ Flap bond interface towards host
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
-    REST disable fabric interface               leaf0-a                         ${leaf0_pc1_intf1}
+    REST disable fabric interface               ${leaf0_a}                         ${leaf0_pc1_intf1}
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -2863,15 +2876,15 @@ Flap bond interface towards host
     ${vlanid} =                                 Set Variable                    ${result[0]['vlan']}    
     Should Be Equal                             ${vlanid}                       ${1001}     
     sleep                                       5
-    REST disable fabric interface               leaf0-b                         ${leaf0_pc1_intf1}
+    REST disable fabric interface               ${leaf0_b}                         ${leaf0_pc1_intf1}
     sleep                                       2   
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Not Be True                          ${result}
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 100      
     sleep                                       1
-    REST enable fabric interface                leaf0-a                         ${leaf0_pc1_intf1}
-    REST enable fabric interface                leaf0-b                         ${leaf0_pc1_intf1}
+    REST enable fabric interface                ${leaf0_a}                         ${leaf0_pc1_intf1}
+    REST enable fabric interface                ${leaf0_b}                         ${leaf0_pc1_intf1}
     BASH ping                                   h1                              10.251.3.11             count=5
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        

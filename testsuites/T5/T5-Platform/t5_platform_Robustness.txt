@@ -33,7 +33,7 @@ Resource		 testsuites_dev/don/physical_variables.txt
 * Test Case 
 
 Configure 6/1 Setup - 6 Tenants with 1 VNS Each
-   [Tags]   skipped
+   [Tags]   manual-untested
    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    ${vnsIntIPs}=  Create List  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5  50.50.50.100  v6  60.60.60.100
    ${v1MemPGs}=  Create List  v1  PG  p1  10
@@ -105,18 +105,18 @@ Configure Multiple L2 Tenants With Single VNS
 	
 
 T1 Fabric Robustness During All Switch Reboot & HA Failover
-	[Tags]  skipped  
+	[Tags]  skipped 
 	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1
 	Should be true  ${returnVal}
 
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
-	[Tags]  skipped  
+	[Tags]  skipped 
 	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
 	Should be true  ${returnVal}
 	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
-	[Tags]  skipped  
+	[Tags]  skipped 
 	${returnVal}=	verify HA with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
 	Should be true  ${returnVal}
 

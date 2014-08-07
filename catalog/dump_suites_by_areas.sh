@@ -15,7 +15,7 @@ fi
 
 testsuite_path=`pwd | sed 's/catalog$//'`testsuites
 config="../configs/catalog.yaml"
-output=raw_data.total_suites_by_areas.sh
+output=raw_data.dump_suites_by_areas.sh
 
 rm -f ${output}.*
 

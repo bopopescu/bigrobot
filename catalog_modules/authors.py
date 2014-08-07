@@ -1,4 +1,4 @@
-import cat_helpers
+import autobot.helpers as helpers
 
 
 class Authors(object):
@@ -7,6 +7,6 @@ class Authors(object):
     @classmethod
     def get(self):
         if not Authors._authors:
-            Authors._authors = cat_helpers.load_config_authors()
+            Authors._authors = helpers.bigrobot_config_qa_authors()
         return Authors._authors
 

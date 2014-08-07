@@ -136,7 +136,7 @@ class T5Platform(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            c.expect(r"Failover to this controller node \(yes/no\)?")
+            c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)?")
             c.config("yes")
             # sleep(30)
             sleep(90)
@@ -1925,8 +1925,13 @@ class T5Platform(object):
         if options[0] == 1:
             helpers.log('USER INFO:  image is staged already ')
             return True
-
+        
         c.send("yes")
+        
+        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition']) 
+        if options[0] == 0:
+            c.send("yes")               
+            
         try:
             c.expect(timeout=900)
         except:
@@ -1964,13 +1969,13 @@ class T5Platform(object):
         c.config('')
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
-        c.send(string)
-        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        c.send(string)        
+        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)  
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
 
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("yes" or "y" to continue\):'])
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("y" or "yes" to continue\):'])
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
         if options[0] == 1:
@@ -3969,6 +3974,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
+                
+                #skip command below due to PR BVS-2170
+                if re.match(r'.*show logical-router incomplete.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue  
+                
+                #skip command below due to PR BSC-6030
+                if re.match(r'.*show zerotouch velocity.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                                  
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4187,6 +4204,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
+                
+                #skip command below due to PR BVS-2170
+                if re.match(r'.*show logical-router incomplete.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue    
+                
+                  #skip command below due to PR BSC-6030
+                if re.match(r'.*show zerotouch velocity.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                            
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4397,6 +4426,17 @@ class T5Platform(object):
                     helpers.log("Ignore line  - '%s'" % string)
                     num = num - 1
                     continue
+           
+                if re.match(r'.*hashed-password.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue   
+                                
+                #skip command below due to PR BSC-6009
+                if re.match(r'.*zerotouch device.*', string) or re.match(r'.*zerotouch unmanaged-device.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue                   
 
                 if re.match(r'All', line):
                     helpers.log("Don't need to loop through exec commands- '%s'" % line)
@@ -4417,6 +4457,18 @@ class T5Platform(object):
                         helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                         num = num - 1
                         continue
+                    
+                    #skip command below due to PR BVS-2170
+                    if re.match(r'.*show logical-router incomplete.*', string):
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue    
+                    
+                    #skip command below due to PR BSC-6030
+                    if re.match(r'.*show zerotouch velocity.*', string):
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue                                       
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
@@ -4439,6 +4491,12 @@ class T5Platform(object):
                     helpers.log("Prompt1: '%s'" % prompt_str1)
                     helpers.log("Prompt2: '%s'" % prompt_str2)
 
+                    # string after (stripped control char)
+                    helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str1))
+                    helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str2))
+                    
+                    prompt1 = helpers.strip_ctrl_chars(prompt_str1)
+                    prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
                     # Compare prompts.
                     if prompt1 != prompt2:
@@ -4456,7 +4514,7 @@ class T5Platform(object):
                     helpers.log("***** Call the cli walk again with  --- '%s'" % string)
                     self.cli_walk_config(string, file_name, padding)
 
-    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, config_mode=False, multiline=None, soft_error=False):
         '''
             Execute CLI walk on controller
             Arguments:
@@ -4508,7 +4566,16 @@ class T5Platform(object):
             return False
         else:
             cli_string = command + ' ?'
-            c.send(cli_string, no_cr=True)
+
+            if config_mode is True :
+                if multiline is not None:
+                    c.config(str(multiline))
+                    c.send(cli_string, no_cr=True)                    
+                else:
+                    c.config('')
+                    c.send(cli_string, no_cr=True)
+            else:
+                c.send(cli_string, no_cr=True)
 
             # Match controller prompt for various modes (cli, enable, config, bash, etc).
             # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
@@ -4751,8 +4818,32 @@ class T5Platform(object):
                             info.append(data[i]['name'])
         helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)
         return info
+    
+    def rest_get_disconnect_switch(self, node='master'):
+        """
+        Get fabric connection state of the switch
 
+        Inputs:
+        | node | Alias of the controller node |
 
+        Return Value:
+        - the list of switches in suspended state
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
+        helpers.log("get switch fabric connection state")
+ 
+        c.rest.get(url)
+        data = c.rest.content()
+        info = []
+        if (data):
+            for i in range(0, len(data)):
+                if data[i]['connected'] == False :
+                    if 'fabric-connection-state' in data[i].keys() and data[i]['fabric-connection-state'] == "not_connected":
+                        info.append(data[i]['name'])
+        helpers.test_log("USER INFO:  the switches in NOT connected states:  %s" % info)
+        return info
 
     def cli_boot_partition(self, node='master', option='alternate'):
         '''
@@ -4839,11 +4930,11 @@ class T5Platform(object):
         c.config('')
         string = 'upgrade launch ' + option
         c.send(string)
-        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)       
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("y" or "yes" to continue\):'])
         if options[0] == 1:
             c.send("yes")
 

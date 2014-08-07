@@ -17,6 +17,7 @@ import ipcalc
 import platform
 import unicodedata
 import tempfile
+import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
@@ -609,15 +610,24 @@ def bigrobot_ignore_mininet_exception_on_close(new_val=None, default='False'):
                             new_val, default)
 
 
-def bigrobot_preserve_mininet_screen_session(new_val=None, default='False'):
+def bigrobot_preserve_mininet_screen_session_on_fail(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'True' to preserve the Mininet "screen" session. This feature is
     useful for debugging. A user can attach to the screen session at a later
     time.
     """
-    return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION',
+    return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION_ON_FAIL',
                             new_val, default)
+
+
+def bigrobot_test_suite_status(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'PASS' or 'FAIL' by 'Base suite teardown' keyword (defined in
+    BsnCommon.py).
+    """
+    return _env_get_and_set('BIGROBOT_TEST_SUITE_STATUS', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
@@ -714,6 +724,41 @@ def python_path(new_val=None, default=None):
 
 def bigrobot_configs_path(config_path='/../configs'):
     return ''.join((get_path_autobot(), config_path))
+
+
+def _bigrobot_config_load(config_file):
+    config_file = bigrobot_configs_path() + config_file
+    if file_not_exists(config_file):
+        error_exit("Config file '%s' does not exist" % config_file, 1)
+    config_dict = load_config(config_file)
+    config_dict['this_file'] = config_file
+    return config_dict
+
+
+def bigrobot_config_bsn():
+    return _bigrobot_config_load('/bsn.yaml')
+
+
+def bigrobot_config_test_catalog():
+    return _bigrobot_config_load('/catalog.yaml')
+
+
+def bigrobot_config_qa_authors():
+    return _bigrobot_config_load('/qa_authors.yaml')
+
+
+def bigrobot_config_rest_services():
+    return _bigrobot_config_load('/rest_services.yaml')
+
+
+def load_config(yaml_file):
+    """
+    Load a configuration file which is in YAML format. Result is Python dict.
+    """
+    if file_not_exists(yaml_file):
+        environment_failure("File %s does not exist" % yaml_file)
+    stream = open(yaml_file, 'r')
+    return yaml.load(stream)
 
 
 def sleep(s):
@@ -935,16 +980,6 @@ def unicode_to_ascii(u):
     COnvert a Unicode string to an ASCII string.
     """
     return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
-
-
-def load_config(yaml_file):
-    """
-    Load a configuration file which is in YAML format. Result is Python dict.
-    """
-    if file_not_exists(yaml_file):
-        environment_failure("File %s does not exist" % yaml_file)
-    stream = open(yaml_file, 'r')
-    return yaml.load(stream)
 
 
 def from_yaml(yaml_str):
@@ -1185,6 +1220,13 @@ def file_touch(fname, times=None):
     """
     with file(fname, 'a'):
         os.utime(fname, times)
+
+
+def file_copy(src, dst):
+    """
+    Copy source file to destination file.
+    """
+    shutil.copyfile(src, dst)
 
 
 def is_same_file(file1, file2):
@@ -1704,17 +1746,33 @@ def snake_case_key(in_dict):
     return out_dict
 
 
-def send_mail(m):
+def send_mail(m, infile=None):
     """
     m data structure contains:
       from: <sender>
       to: <comma-separated list of receivers>
       subject: <subject>
       message_body: <content>
+
+    Usage:
+        helpers.send_mail( {
+                'from': 'vui.le@bigswitch.com',
+                'to': 'vui.le@bigswitch.com',
+                'subject': 'Emergency system test',
+                'message_body': 'This is only a test',
+                } )
     """
     _to = [utf8(x) for x in split_and_strip(m['to'])]
     s = smtplib.SMTP(SMTP_SERVER)
     s.set_debuglevel(debug)
+
+    if infile:
+        input_text = file_read_once(infile)
+        if len(input_text) > 100000:
+            lines = 200
+            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+                          % lines + '\n'.join(str_to_list(input_text)[-lines:]))
+        m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
     msg = MIMEText(m['message_body'])
     msg['Subject'] = m['subject']

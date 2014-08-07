@@ -87,7 +87,12 @@ def print_stat(descr, val, untested=None, test_pct=None, manual=None):
 
 
 def print_testcases(testcases):
-    print "\n".join(sorted(["\t%s" % helpers.utf8(x) for x in testcases]))
+    i = 0
+    for tc in sorted(testcases):
+        i += 1
+        print("\t%03d. %s" % (i, helpers.utf8(tc)))
+    if i > 0:
+        print("")
 
 
 def print_suites(suites):
@@ -169,6 +174,12 @@ def display_stats(args):
         print_stat("Total of all test suites:", ih.total_testsuites())
         print_stat("Total of all test cases:", ih.total_testcases())
 
+    suites_in_release = ih.testsuites(release=ih.release_lowercase())
+    product_suites = {}
+    for _suites in suites_in_release:
+        product_suites[_suites['product_suite']] = _suites
+
+
     print ""
     print "%s Release Metrics" % (ih.release())
     print "==================================================================="
@@ -176,19 +187,13 @@ def display_stats(args):
                release=ih.release_lowercase())
     print_stat("Total test suites:", total_testsuites_in_release)
 
-
     total_tc = ih.total_testcases(release=ih.release_lowercase())
     total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
     total_tc_manual = ih.total_testcases_by_tag(["manual"])[0]
     total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
-    # print_stat2("Total test cases:",
-    #           total_tc,
-    #           total_tc_untested,
-    #           total_tc_manual,
-    #           total_tc_pct,
-    #           )
     print_stat2("Total test cases:", total_tc)
     total['tests'] = total_tc
+
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
@@ -223,14 +228,15 @@ def display_stats(args):
     # total_tc_automated_executable = total_tc_executable - total_tc_manual
     print_stat3("Total test cases automated:",
                total_tc_automated,
-               # total_tc_automated_executable,
-               # percentage(total_tc_automated_executable,
-               #           total_tc_executable))
                percentage(total_tc_automated, total_tc))
 
 
     print ""
     print "Regression Run Results (Build: %s)" % (build)
+    i = 0
+    for a_build in cat.aggregated_build(build):
+        i += 1
+        print "\tBuild %02d: %s" % (i, a_build)
     print "==================================================================="
 
 
@@ -244,12 +250,12 @@ def display_stats(args):
                                build=build,
                                collection_testcases="test_cases_archive")
         print_suites(suites_executed)
+        print ""
 
-    print ""
     print_stat("Total test suites not executed:",
                total_testsuites_in_release - total_testsuites_in_release_executed)
+
     if args.show_suites:
-        suites_in_release = ih.testsuites(release=ih.release_lowercase())
         print_suites_not_executed(suites_in_release, suites_executed)
 
 
@@ -275,6 +281,8 @@ def display_stats(args):
                pass_pct,
                automation_pct,
                )
+    if args.show_untested:
+        print_testcases(ih.manual_untested_by_tag())
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
@@ -331,6 +339,30 @@ def display_stats(args):
             if args.show_untested:
                 print_testcases(ih.manual_untested_by_tag([functionality,
                                                            feature]))
+
+    print ""
+    print "Manual Verification Details"
+    print "==================================================================="
+    test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
+    i = 0
+    for test_case in test_case_cursor:
+        if (('jira' in test_case and test_case['jira']) or
+            ('notes' in test_case and test_case['notes'])):
+            i += 1
+            author = product_suites[test_case['product_suite']]['author']
+            jira = test_case['jira']
+            if test_case['jira']:
+                jira += " - https://bigswitch.atlassian.net/browse/%s" % test_case['jira']
+
+            print "%03d. %s  %s  %s" % (i, author, test_case['product_suite'], test_case['name'])
+            print "\tverified in : %s" % test_case['build_name_verified']
+            print "\tjira        : %s" % jira
+            print "\tstatus      : %s" % test_case['status']
+            print "\tnotes       : %s" % test_case['notes']
+            print ""
+    if i == 0:
+        print "None"
 
 
 if __name__ == '__main__':
