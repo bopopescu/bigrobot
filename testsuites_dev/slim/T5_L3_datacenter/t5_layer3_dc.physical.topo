@@ -15,6 +15,9 @@ s1:
     console:
         ip: cs-120
         port: 7001
+    pdu:
+        ip: pdu-120-b.bigswitch.com
+        port: 17        
     alias: spine0
     set_session_ssh: false
     set_init_ping: false
@@ -25,6 +28,9 @@ s2:
     console:
         ip: cs-120
         port: 7002
+    pdu:
+        ip: pdu-120-b.bigswitch.com
+        port: 15        
     set_session_ssh: false
     set_init_ping: false
     alias: spine1
@@ -35,6 +41,9 @@ s3:
     console:
         ip: cs-120
         port: 7003
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 20        
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0
@@ -46,6 +55,9 @@ s4:
     console:
         ip: cs-120
         port: 7004
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 19        
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0       
@@ -57,6 +69,9 @@ s5:
     console:
         ip: cs-120
         port: 7005
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 18      
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack1        
@@ -79,6 +94,9 @@ s7:
     console:
         ip: cs-120
         port: 7007
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 15        
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack2        
@@ -90,6 +108,9 @@ s8:
     console:
         ip: cs-120
         port: 7008
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 14
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack2        
@@ -101,6 +122,9 @@ s9:
     console:
         ip: cs-120
         port: 7019
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 3
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack3
@@ -164,7 +188,7 @@ h9:
 
 h10:
    ip: 10.8.24.40
-   alias: h-external
+   alias: h4-rack2
    user: root
    password: bsn
     
