@@ -518,13 +518,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `nexthop`        nexthop IP address
             Return: true if configuration is successful, false otherwise
             PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {"ip-address": "10.99.0.1"}
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="E"]/logical-router/next-hop-group[name="AA1"]/ip-address[ip-address="10.99.99.1"] {"ip-address": "10.99.99.1"}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-address[ip-address="%s"] ' % (tenant, groupName, nexthop)
         try:
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.post(url, {"ip-address": nexthop})
@@ -543,12 +544,15 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `nexthop`        nexthop IP address
             Return: true if configuration is successful, false otherwise
           REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {}
+                     DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="E"]/logical-router/next-hop-group[name="AA1"]/ip-address[ip-address="10.99.99.1"] {}
+
+          
       '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-address[ip-address="%s"] ' % (tenant, groupName, nexthop)
         try:
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.delete(url, {})
@@ -561,7 +565,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
 
     def rest_add_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Add ip address to static endpoint"
 
             Input:
                 `tenant`          tenant name
@@ -603,7 +607,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
 
     def rest_add_endpoint_mac(self, tenant, vnsname, endpointname, mac):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Add mac address to static endpoint"
 
             Input:
                 `tenant`          tenant name
@@ -630,7 +634,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
 
     def rest_delete_endpoint_mac(self, tenant, vnsname, endpointname, mac):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Delete static endpoint mac address"
 
             Input:
                 `tenant`          tenant name
@@ -657,7 +661,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             return c.rest.content()
 
     def rest_add_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Add static endpoint port-group"
 
             Input:
                 `tenant`          tenant name
@@ -689,7 +693,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
 
     def rest_delete_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Delete static endpoint portgroup"
 
             Input:
                 `tenant`          tenant name
@@ -720,7 +724,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
 
 
     def rest_add_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''add static endpoint switch port"
             Input:
                 `tenant`          tenant name
                 `vnsname`         vns name
@@ -746,7 +750,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
             return c.rest.content()
 
     def rest_delete_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        '''Delete static endpoint switch port"
 
             Input:
                 `tenant`          tenant name
@@ -1561,11 +1565,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
     def rest_enable_endpoint_flap_protection(self):
         '''Enable endpoint flap protection
          REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"enable-endpoint-flap-protection": true}
+                    PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"enable-endpoint-flap-protection": true}
+
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-
+        helpers.log ("Inside rest enable endpoint flap protection")
         url = 'api/v1/data/controller/applications/bcf/global-setting'
         try:
             c.rest.patch(url, {"enable-endpoint-flap-protection": True})

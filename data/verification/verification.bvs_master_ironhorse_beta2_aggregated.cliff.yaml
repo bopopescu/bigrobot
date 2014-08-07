@@ -41,7 +41,7 @@
 
 - name: 'T4 config mode cli walk'
   product_suite: 'T5/T5-Platform/T5_cli_walk'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'beta2_bcf #17'
   jira:
-  notes:
+  notes: 'Reran script and it passes fine'

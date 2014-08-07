@@ -8,6 +8,7 @@
 
 c1:
   ip: dummy
+  monitor_reauth: false  # default=true, set to false to disable
  
 c2:
   ip: dummy

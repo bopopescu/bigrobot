@@ -37,13 +37,14 @@ scp_to_web() {
     no_scp=$1
     src=$2
     dst=$3
+    server=qa-tools1.qa.bigswitch.com
     if [ $no_scp -eq 0 ]; then
         echo ""
         echo "Press Control-C if you don't want to copy the report to the web server..."
         set -x
-        scp $src root@qa-tools1.qa.bigswitch.com:/var/www/test_catalog/$dst
+        ../bin/passwordless_scp $server $src /var/www/test_catalog/$dst
         echo ""
-        echo "Report is available at http://qa-tools1.qa.bigswitch.com/test_catalog/$dst"
+        echo "Report is available at http://$server/test_catalog/$dst"
     fi
 }
 

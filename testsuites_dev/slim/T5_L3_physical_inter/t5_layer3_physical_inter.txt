@@ -1275,7 +1275,6 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}

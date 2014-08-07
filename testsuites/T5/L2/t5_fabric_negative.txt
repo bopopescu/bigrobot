@@ -69,9 +69,11 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest_add_tenant_routers_intf_to_system  internal
 	rest_add_system_intf_to_tenant_routers  internal
 	rest_add_system_intf_to_tenant_routers  external
-	rest_add_static_routes  internal  0.0.0.0/0  {"tenant-name": "system"}
-	rest_add_static_routes  system  0.0.0.0/0  {"tenant-name": "external"}
-	rest_add_static_routes  external  0.0.0.0/0  {"ip-address": "10.192.16.1"}
+	rest_add_static_routes  internal  0.0.0.0/0  {"tenant": "system"}
+	rest_add_static_routes  system  0.0.0.0/0  {"tenant": "external"}
+	rest add nexthop group  external  test
+	rest add nexthopGroup ip  external  test  10.192.16.1
+	rest_add_static_routes  external  0.0.0.0/0  {"next-hop-group": "test"}
 	sleep  5
 	rest verify forwarding cidr route spine  spine0  4  
 	rest verify forwarding cidr route spine  spine1  4
@@ -98,7 +100,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify fabric link common
     rest delete fabric switch  leaf0-a
-    sleep  2
+    sleep  10
     rest verify endpoint in system  1000
     rest add switch  leaf0-a
     rest add dpid  leaf0-a  ${leaf0a_dpid}
@@ -352,7 +354,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     rest verify fabric switch  leaf2-a
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
-    Should be True  ${count} == 0
+    Should be True  ${count} == 1
 
 Tear down config and Topology
 	[Tags]  L2  IronHorse          

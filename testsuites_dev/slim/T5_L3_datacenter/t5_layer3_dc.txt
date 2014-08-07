@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
 * Test Cases
 Basic setup test
     Basic setup test
-    [Tags]                                  smoke               sanity              run99
+    [Tags]                                  smoke               sanity              run1
     
 
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
@@ -127,11 +127,11 @@ Delete and add router vns ip
 
 Activate and deactivate router segment interface
     Activate and deactivate router segment interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run88
 
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run88
 
     
 Change tagged endpoint IP address
@@ -238,15 +238,15 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                 run1    
+	[Tags]                                 sanity                 run88    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                 run1       
+	[Tags]                                 sanity                 run88       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                 run1        
+	[Tags]                                 sanity                 run88       
     
     
 * Keywords
@@ -1365,62 +1365,113 @@ Activate and deactivate router interface
       
     
 initialize host
-	BASH delete tag										h1-rack0								bond0.1001				soft_error=${true}
-	BASH delete tag										h2-rack0								bond0.1002				soft_error=${true}
-	BASH delete tag										h3-rack0								bond0.1003				soft_error=${true}
-	BASH delete tag										h4-rack0								bond0.1004				soft_error=${true}
-	BASH delete tag										h5-rack0								bond0.1005				soft_error=${true}	
-	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
-	BASH delete route									h1-rack0								10.251.0.0/16			10.251.1.1
+	BASH delete tag								h1-rack0								bond0.1001				soft_error=${true}
+	BASH delete tag								h2-rack0								bond0.1002				soft_error=${true}
+	BASH delete tag								h3-rack0								bond0.1003				soft_error=${true}
+	BASH delete tag								h1-rack1								bond0.1004				soft_error=${true}
+	BASH delete tag								h2-rack1								bond0.1005				soft_error=${true}	
+	BASH delete tag								h3-rack1								bond0.1006				soft_error=${true}
 	BASH init intf								h1-rack0								bond0
 	BASH init intf								h2-rack0								bond0
 	BASH init intf								h3-rack0								bond0
-	BASH init intf								h4-rack0								bond0
-	BASH init intf								h5-rack0								bond0
-	BASH init intf								h6-rack0								bond0
+	BASH init intf								h1-rack1								bond0
+	BASH init intf								h2-rack1								bond0
+	BASH init intf								h3-rack1								bond0
+	BASH init intf                              h1-rack2                                bond0
+    BASH init intf                              h2-rack2                                bond0
+    BASH init intf                              h3-rack2                                bond0
 	BASH ifdown intf							h1-rack0 								bond0
 	BASH ifdown intf							h2-rack0								bond0
 	BASH ifdown intf							h3-rack0								bond0
-	BASH ifdown intf							h4-rack0								bond0
-	BASH ifdown intf							h5-rack0								bond0
-	BASH ifdown intf							h6-rack0								bond0
+	BASH ifdown intf							h1-rack1								bond0
+	BASH ifdown intf							h2-rack1								bond0
+	BASH ifdown intf							h3-rack1								bond0
+	BASH ifdown intf                            h1-rack2                                bond0
+    BASH ifdown intf                            h2-rack2                                bond0
+    BASH ifdown intf                            h3-rack2                                bond0
 	BASH release dhcpv4 address					h1-rack0								bond0
 	BASH release dhcpv4 address					h2-rack0								bond0
 	BASH release dhcpv4 address					h3-rack0								bond0
-	BASH release dhcpv4 address					h4-rack0								bond0
-	BASH release dhcpv4 address					h5-rack0								bond0
-	BASH release dhcpv4 address					h6-rack0								bond0
+	BASH release dhcpv4 address					h1-rack1								bond0
+	BASH release dhcpv4 address					h2-rack1								bond0
+	BASH release dhcpv4 address					h3-rack1								bond0
+    BASH release dhcpv4 address                 h1-rack2                                bond0
+    BASH release dhcpv4 address                 h2-rack2                                bond0
+    BASH release dhcpv4 address                 h3-rack2                                bond0
 	BASH ifup intf								h1-rack0								eth2
 	BASH ifup intf								h1-rack0								eth3
 	BASH ifup intf								h2-rack0								eth2
 	BASH ifup intf								h2-rack0								eth3
 	BASH ifup intf								h3-rack0								eth2
 	BASH ifup intf								h3-rack0								eth3
-	BASH ifup intf								h4-rack0								eth2
-	BASH ifup intf								h4-rack0								eth3
-	BASH ifup intf								h5-rack0								eth2
-	BASH ifup intf								h5-rack0								eth3
-	BASH ifup intf								h6-rack0								eth2
-	BASH ifup intf								h6-rack0								eth3
+	BASH ifup intf								h1-rack1								eth2
+	BASH ifup intf								h1-rack1								eth3
+	BASH ifup intf								h2-rack1								eth2
+	BASH ifup intf								h2-rack1								eth3
+	BASH ifup intf								h3-rack1								eth2
+	BASH ifup intf								h3-rack1								eth3
+    BASH ifup intf                              h1-rack2                                eth2
+    BASH ifup intf                              h1-rack2                                eth3
+    BASH ifup intf                              h2-rack2                                eth2
+    BASH ifup intf                              h2-rack2                                eth3
+    BASH ifup intf                              h3-rack2                                eth2
+    BASH ifup intf                              h3-rack2                                eth3
 
 setup topology
 	initialize host
-	REST add tenant									system
-	REST add tenant 								X
-	REST add tenant									Y
-	REST add tenant									Z
-	REST add vns									X							X1
-	REST add vns									X							X2
-	REST add vns									X							X3
-	REST add vns									Y							Y1
-	REST add vns									Y							Y2
-	REST add vns									Y							Y3
-	REST add vns									Z							Z1
-	REST add vns									Z							Z2
-	REST add vns									Z							Z3
-	REST add vns									Z							Arista30
-	REST add vns									Z							Arista29
-	
+	REST add tenant								system
+	REST add tenant                             External
+	REST add tenant 							X
+	REST add tenant								Y
+	REST add tenant								Z
+	REST add vns								X							X1
+	REST add vns								X							X2
+	REST add vns								X							X3
+	REST add vns								Y							Y1
+	REST add vns								Y							Y2
+	REST add vns								Y							Y3
+	REST add vns								Z							Z1
+	REST add vns								Z							Z2
+	REST add vns								Z						    Z3
+	REST add vns								External				   Arista1-e13
+	REST add vns								External				   Arista1-e14
+    REST add vns                                External                   Arista1-e15
+    REST add vns                                External                   Arista1-e16
+    REST add vns                                External                   Arista1-e21
+    REST add vns                                External                   Arista1-e22
+    REST add vns                                External                   Arista1-e23
+    REST add vns                                External                   Arista1-e24
+    REST add vns                                External                   Arista1-e25
+    REST add vns                                External                   Arista1-e26
+	REST add vns                                External                   Arista1-e27
+    REST add vns                                External                   Arista1-e28
+	REST add vns                                External                   Arista1-e29
+    REST add vns                                External                   Arista1-e30
+    REST add vns                                External                   Arista1-pc1
+    REST add vns                                External                   Arista1-pc2
+    REST add vns                                External                   Arista1-pc3
+    REST add vns                                External                   Arista1-pc4
+    REST add vns                                External                   Arista1-pc5	
+    REST add vns                                External                   Arista2-e13
+    REST add vns                                External                   Arista2-e14
+    REST add vns                                External                   Arista2-e15
+    REST add vns                                External                   Arista2-e16
+    REST add vns                                External                   Arista2-e21
+    REST add vns                                External                   Arista2-e22
+    REST add vns                                External                   Arista2-e23
+    REST add vns                                External                   Arista2-e24
+    REST add vns                                External                   Arista2-e25
+    REST add vns                                External                   Arista2-e26
+    REST add vns                                External                   Arista2-e27
+    REST add vns                                External                   Arista2-e28
+    REST add vns                                External                   Arista2-e29
+    REST add vns                                External                   Arista2-e30
+    REST add vns                                External                   Arista2-pc1
+    REST add vns                                External                   Arista2-pc2
+    REST add vns                                External                   Arista2-pc3
+    REST add vns                                External                   Arista2-pc4
+    REST add vns                                External                   Arista2-pc5  	
+    REST add vns                                External                   external-vrrp
 	REST add router intf							X							X1
 	REST add router intf							X							X2
 	REST add router intf							X							X3
@@ -1430,8 +1481,45 @@ setup topology
 	REST add router intf							Z							Z1
 	REST add router intf							Z							Z2
 	REST add router intf							Z							Z3
-	REST add router intf 							Z							Arista30
-	REST add router intf 							Z							Arista29
+    REST add router intf                                External                   Arista1-e13
+    REST add router intf                                External                   Arista1-e14
+    REST add router intf                                External                   Arista1-e15
+    REST add router intf                                External                   Arista1-e16
+    REST add router intf                                External                   Arista1-e21
+    REST add router intf                                External                   Arista1-e22
+    REST add router intf                                External                   Arista1-e23
+    REST add router intf                                External                   Arista1-e24
+    REST add router intf                                External                   Arista1-e25
+    REST add router intf                                External                   Arista1-e26
+    REST add router intf                                External                   Arista1-e27
+    REST add router intf                                External                   Arista1-e28
+    REST add router intf                                External                   Arista1-e29
+    REST add router intf                                External                   Arista1-e30
+    REST add router intf                                External                   Arista1-pc1
+    REST add router intf                                External                   Arista1-pc2
+    REST add router intf                                External                   Arista1-pc3
+    REST add router intf                                External                   Arista1-pc4
+    REST add router intf                                External                   Arista1-pc5  
+    REST add router intf                                External                   Arista2-e13
+    REST add router intf                                External                   Arista2-e14
+    REST add router intf                                External                   Arista2-e15
+    REST add router intf                                External                   Arista2-e16
+    REST add router intf                                External                   Arista2-e21
+    REST add router intf                                External                   Arista2-e22
+    REST add router intf                                External                   Arista2-e23
+    REST add router intf                                External                   Arista2-e24
+    REST add router intf                                External                   Arista2-e25
+    REST add router intf                                External                   Arista2-e26
+    REST add router intf                                External                   Arista2-e27
+    REST add router intf                                External                   Arista2-e28
+    REST add router intf                                External                   Arista2-e29
+    REST add router intf                                External                   Arista2-e30
+    REST add router intf                                External                   Arista2-pc1
+    REST add router intf                                External                   Arista2-pc2
+    REST add router intf                                External                   Arista2-pc3
+    REST add router intf                                External                   Arista2-pc4
+    REST add router intf                                External                   Arista2-pc5      
+    REST add router intf                                External                   external-vrrp	
 	REST add vns ip  								X							X1				10.251.1.1				24	
 	REST add vns ip  								X							X2				10.251.2.1				24	
 	REST add vns ip  								X							X3				10.251.3.1				24	
@@ -1441,12 +1529,67 @@ setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
-	REST add vns ip									Z							Arista30		10.99.0.2				24
-	REST add vns ip									Z							Arista29		10.98.0.2				24
-	REST add nexthop group                          Z                           AA1
-    REST add nexthopGroup ip                        Z                           AA1            10.99.0.1
-    REST add nexthopGroup ip                        Z                           AA1            10.98.0.1
-	REST add static routes							Z							192.168.0.0/24						{"next-hop-group": "AA1"}
+    REST add vns ip             External                   Arista1-e13          10.99.13.2          24
+    REST add vns ip             External                   Arista1-e14          10.99.14.2          24  
+    REST add vns ip             External                   Arista1-e15          10.99.15.2          24
+    REST add vns ip             External                   Arista1-e16          10.99.16.2          24
+    REST add vns ip             External                   Arista1-e21          10.99.21.2          24
+    REST add vns ip             External                   Arista1-e22          10.99.22.2          24    
+    REST add vns ip             External                   Arista1-e23          10.99.23.2          24    
+    REST add vns ip             External                   Arista1-e24          10.99.24.2          24    
+    REST add vns ip             External                   Arista1-e25          10.99.25.2          24   
+    REST add vns ip             External                   Arista1-e26          10.99.26.2          24    
+    REST add vns ip             External                   Arista1-e27          10.99.27.2          24    
+    REST add vns ip             External                   Arista1-e28          10.99.28.2          24    
+    REST add vns ip             External                   Arista1-e29          10.99.29.2          24    
+    REST add vns ip             External                   Arista1-e30          10.99.30.2          24    
+    REST add vns ip             External                   Arista1-pc1          10.99.1.2           24    
+    REST add vns ip             External                   Arista1-pc2          10.99.2.2           24        
+    REST add vns ip             External                   Arista1-pc3          10.99.3.2           24          
+    REST add vns ip             External                   Arista1-pc4          10.99.4.2           24    
+    REST add vns ip             External                   Arista1-pc5          10.99.5.2           24            
+    REST add vns ip             External                   Arista2-e13          10.98.13.2          24        
+    REST add vns ip             External                   Arista2-e14          10.98.14.2          24    
+    REST add vns ip             External                   Arista2-e15          10.98.15.2          24   
+    REST add vns ip             External                   Arista2-e16          10.98.16.2          24    
+    REST add vns ip             External                   Arista2-e21          10.98.21.2          24    
+    REST add vns ip             External                   Arista2-e22          10.98.22.2          24    
+    REST add vns ip             External                   Arista2-e23          10.98.23.2          24    
+    REST add vns ip             External                   Arista2-e24          10.98.24.2          24    
+    REST add vns ip             External                   Arista2-e25          10.98.25.2          24    
+    REST add vns ip             External                   Arista2-e26          10.98.26.2          24    
+    REST add vns ip             External                   Arista2-e27          10.98.27.2          24    
+    REST add vns ip             External                   Arista2-e28          10.98.28.2          24    
+    REST add vns ip             External                   Arista2-e29          10.98.29.2          24    
+    REST add vns ip             External                   Arista2-e30          10.98.30.2          24    
+    REST add vns ip             External                   Arista2-pc1          10.98.1.2           24    
+    REST add vns ip             External                   Arista2-pc2          10.98.2.2           24         
+    REST add vns ip             External                   Arista2-pc3          10.98.3.2           24        
+    REST add vns ip             External                   Arista2-pc4          10.98.4.2           24        
+    REST add vns ip             External                   Arista2-pc5          10.98.5.2           24              
+    REST add vns ip             External                   external-vrrp        10.99.99.5          24                      
+    
+	REST add nexthop group                          External                        ecmp-A1
+    REST add nexthopGroup ip                        External                        ecmp-A1                 10.99.3.1
+    REST add nexthopGroup ip                        External                        ecmp-A1                 10.99.5.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.21.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.22.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.23.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.24.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.25.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.26.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.27.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.98.28.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.21.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.22.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.23.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.24.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.25.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.26.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.27.1
+    REST add nexthopGroup ip                        External                        ecmp-A16                10.99.28.1
+	REST add static routes							External						10.98.0.0/24			{"next-hop-group": "ecmp-A1"}
+	REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "ecmp-A16"}
 
   	
 teardown topology
@@ -1477,10 +1620,6 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s5							c2
 	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c2
-	Should Be True									${result}
 	${result} = 									CLI verify controller       s7							c1
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s7							c2
@@ -1493,11 +1632,165 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s9							c2
 	Should Be True									${result}
+    REST add portgroup                      Arista1-pc1
+    REST add portgroup                      Arista1-pc2
+    REST add portgroup                      Arista1-pc3
+    REST add portgroup                      Arista1-pc4
+    REST add portgroup                      Arista1-pc5
+    REST add portgroup                      Arista2-pc1
+    REST add portgroup                      Arista2-pc2
+    REST add portgroup                      Arista2-pc3
+    REST add portgroup                      Arista2-pc4
+    REST add portgroup                      Arista2-pc5
+    REST add portgroup                      leaf0-pc1
+    REST add portgroup                      leaf0-pc2
+    REST add portgroup                      leaf0-pc3
+    REST add portgroup                      leaf1-pc1
+    REST add portgroup                      leaf1-pc2
+    REST add portgroup                      leaf1-pc3
+    REST add portgroup                      leaf2-pc1
+    REST add portgroup                      leaf2-pc2
+    REST add portgroup                      leaf2-pc3
+    REST add portgroup lacp                 Arista1-pc1
+    REST add portgroup lacp                 Arista1-pc2
+    REST add portgroup lacp                 Arista1-pc3
+    REST add portgroup lacp                 Arista1-pc4
+    REST add portgroup lacp                 Arista1-pc5
+    REST add portgroup lacp                 Arista2-pc1
+    REST add portgroup lacp                 Arista2-pc2
+    REST add portgroup lacp                 Arista2-pc3
+    REST add portgroup lacp                 Arista2-pc4
+    REST add portgroup lacp                 Arista2-pc5
+    REST add portgroup lacp                 leaf0-pc1
+    REST add portgroup lacp                 leaf0-pc2
+    REST add portgroup lacp                 leaf0-pc3
+    REST add portgroup lacp                 leaf1-pc1
+    REST add portgroup lacp                 leaf1-pc2
+    REST add portgroup lacp                 leaf1-pc3
+    REST add portgroup lacp                 leaf2-pc1
+    REST add portgroup lacp                 leaf2-pc2
+    REST add portgroup lacp                 leaf2-pc3
+    REST add interface to portgroup         Arista1-pc1         leaf0-a     ethernet17
+    REST add interface to portgroup         Arista1-pc1         leaf0-b     ethernet17
+    REST add interface to portgroup         Arista1-pc2         leaf0-a     ethernet18
+    REST add interface to portgroup         Arista1-pc2         leaf0-b     ethernet18
+    REST add interface to portgroup         Arista1-pc3         leaf1-a     ethernet17
+    REST add interface to portgroup         Arista1-pc3         leaf1-a     ethernet19
+    REST add interface to portgroup         Arista1-pc4         leaf1-a     ethernet11
+    REST add interface to portgroup         Arista1-pc4         leaf1-a     ethernet13
+    REST add interface to portgroup         Arista1-pc4         leaf1-b     ethernet17
+    REST add interface to portgroup         Arista1-pc4         leaf1-b     ethernet19
+    REST add interface to portgroup         Arista1-pc5         leaf2-a     ethernet17
+    REST add interface to portgroup         Arista1-pc5         leaf2-a     ethernet19
+    REST add interface to portgroup         Arista1-pc5         leaf2-b     ethernet17
+    REST add interface to portgroup         Arista1-pc5         leaf2-b     ethernet19
+    REST add interface to portgroup         Arista2-pc1         leaf0-a     ethernet19
+    REST add interface to portgroup         Arista2-pc1         leaf0-b     ethernet19
+    REST add interface to portgroup         Arista2-pc2         leaf0-a     ethernet20
+    REST add interface to portgroup         Arista2-pc2         leaf0-b     ethernet20
+    REST add interface to portgroup         Arista2-pc3         leaf1-a     ethernet18
+    REST add interface to portgroup         Arista2-pc3         leaf1-a     ethernet20
+    REST add interface to portgroup         Arista2-pc4         leaf1-a     ethernet12
+    REST add interface to portgroup         Arista2-pc4         leaf1-a     ethernet14
+    REST add interface to portgroup         Arista2-pc4         leaf1-b     ethernet18
+    REST add interface to portgroup         Arista2-pc4         leaf1-b     ethernet20
+    REST add interface to portgroup         Arista2-pc5         leaf2-a     ethernet18
+    REST add interface to portgroup         Arista2-pc5         leaf2-a     ethernet20
+    REST add interface to portgroup         Arista2-pc5         leaf2-b     ethernet18
+    REST add interface to portgroup         Arista2-pc5         leaf2-b     ethernet20
+    REST add interface to portgroup         leaf0-pc1           leaf0-a     ethernet1
+    REST add interface to portgroup         leaf0-pc1           leaf0-b     ethernet1
+    REST add interface to portgroup         leaf0-pc2           leaf0-a     ethernet2
+    REST add interface to portgroup         leaf0-pc2           leaf0-b     ethernet2
+    REST add interface to portgroup         leaf0-pc3           leaf0-a     ethernet3
+    REST add interface to portgroup         leaf0-pc3           leaf0-b     ethernet3
+    REST add interface to portgroup         leaf1-pc1           leaf1-a     ethernet1
+    REST add interface to portgroup         leaf1-pc1           leaf1-a     ethernet5
+    REST add interface to portgroup         leaf1-pc1           leaf1-b     ethernet1
+    REST add interface to portgroup         leaf1-pc2           leaf1-a     ethernet2
+    REST add interface to portgroup         leaf1-pc2           leaf1-a     ethernet6
+    REST add interface to portgroup         leaf1-pc2           leaf1-b     ethernet2
+    REST add interface to portgroup         leaf1-pc3           leaf1-a     ethernet3
+    REST add interface to portgroup         leaf1-pc3           leaf1-a     ethernet7
+    REST add interface to portgroup         leaf1-pc3           leaf1-b     ethernet3
+    REST add interface to portgroup         leaf2-pc1           leaf2-a     ethernet1
+    REST add interface to portgroup         leaf2-pc1           leaf2-b     ethernet1
+    REST add interface to portgroup         leaf2-pc2           leaf2-a     ethernet2
+    REST add interface to portgroup         leaf2-pc2           leaf2-b     ethernet2
+    REST add interface to portgroup         leaf2-pc3           leaf2-a     ethernet3
+    REST add interface to portgroup         leaf2-pc3           leaf2-b     ethernet3
+    REST add interface to vns           External            Arista1-e13         leaf0-a     ethernet23      -1
+    REST add interface to vns           External            Arista1-e14         leaf0-b     ethernet23      -1
+    REST add interface to vns           External            Arista1-e15         leaf2-a     ethernet23      -1
+    REST add interface to vns           External            Arista1-e16         leaf2-b     ethernet23      -1
+    REST add interface to vns           External            Arista1-e21         leaf2-a     ethernet35      -1
+    REST add interface to vns           External            Arista1-e22         leaf2-a     ethernet36      -1
+    REST add interface to vns           External            Arista1-e23         leaf2-a     ethernet37      -1
+    REST add interface to vns           External            Arista1-e24         leaf2-a     ethernet38      -1
+    REST add interface to vns           External            Arista1-e25         leaf2-a     ethernet39      -1
+    REST add interface to vns           External            Arista1-e26         leaf2-a     ethernet40      -1
+    REST add interface to vns           External            Arista1-e27         leaf2-a     ethernet41      -1
+    REST add interface to vns           External            Arista1-e28         leaf2-a     ethernet42      -1
+    REST add interface to vns           External            Arista1-e29         leaf2-a     ethernet43      -1
+    REST add interface to vns           External            Arista1-e30         leaf2-a     ethernet44      -1
+    REST add portgroup to vns           External            Arista1-pc1         Arista1-pc1             -1
+    REST add portgroup to vns           External            Arista1-pc2         Arista1-pc2             -1
+    REST add portgroup to vns           External            Arista1-pc3         Arista1-pc3             -1
+    REST add portgroup to vns           External            Arista1-pc4         Arista1-pc4             -1
+    REST add portgroup to vns           External            Arista1-pc5         Arista1-pc5             -1
+    REST add interface to vns           External            Arista2-e13         leaf1-a     ethernet23      -1
+    REST add interface to vns           External            Arista2-e14         leaf1-a     ethernet15      -1
+    REST add interface to vns           External            Arista2-e14         leaf1-b     ethernet23      -1
+    REST add interface to vns           External            Arista2-e15         leaf0-a     ethernet24      -1
+    REST add interface to vns           External            Arista2-e16         leaf0-b     ethernet24      -1
+    REST add interface to vns           External            Arista2-e21         leaf2-b     ethernet35      -1
+    REST add interface to vns           External            Arista2-e22         leaf2-b     ethernet36      -1
+    REST add interface to vns           External            Arista2-e23         leaf2-b     ethernet37      -1
+    REST add interface to vns           External            Arista2-e24         leaf2-b     ethernet38      -1
+    REST add interface to vns           External            Arista2-e25         leaf2-b     ethernet39      -1
+    REST add interface to vns           External            Arista2-e26         leaf2-b     ethernet40      -1
+    REST add interface to vns           External            Arista2-e27         leaf2-b     ethernet41      -1
+    REST add interface to vns           External            Arista2-e28         leaf2-b     ethernet42      -1
+    REST add interface to vns           External            Arista2-e29         leaf2-b     ethernet43      -1
+    REST add interface to vns           External            Arista2-e30         leaf2-b     ethernet44      -1
+    REST add portgroup to vns           External            Arista2-pc1         Arista2-pc1             -1
+    REST add portgroup to vns           External            Arista2-pc2         Arista2-pc2             -1
+    REST add portgroup to vns           External            Arista2-pc3         Arista2-pc3             -1
+    REST add portgroup to vns           External            Arista2-pc4         Arista2-pc4             -1
+    REST add portgroup to vns           External            Arista2-pc5         Arista2-pc5             -1
+    REST add interface to vns           External            external-vrrp       leaf1-a         ethernet31      -1
+    REST add interface to vns           External            external-vrrp       leaf1-b         ethernet31      -1
+    REST add interface to vns           External            external-vrrp       leaf2-b         ethernet31      -1
+    
+	
 	
 T5 base suite teardown
-  	REST delete portgroup								${leaf0_pc1}
-
 	delete fabric switch  
+	REST delete portgroup                      Arista1-pc1
+    REST delete portgroup                      Arista1-pc2
+    REST delete portgroup                      Arista1-pc3
+    REST delete portgroup                      Arista1-pc4
+    REST delete portgroup                      Arista1-pc5
+    REST delete portgroup                      Arista2-pc1
+    REST delete portgroup                      Arista2-pc2
+    REST delete portgroup                      Arista2-pc3
+    REST delete portgroup                      Arista2-pc4
+    REST delete portgroup                      Arista2-pc5
+    REST delete portgroup                      leaf0-pc1
+    REST delete portgroup                      leaf0-pc2
+    REST delete portgroup                      leaf0-pc3
+    REST delete portgroup                      leaf1-pc1
+    REST delete portgroup                      leaf1-pc2
+    REST delete portgroup                      leaf1-pc3
+    REST delete portgroup                      leaf2-pc1
+    REST delete portgroup                      leaf2-pc2
+    REST delete portgroup                      leaf2-pc3
+    REST delete tenant                         X
+    REST delete tenant                         Y
+    REST delete tenant                         Z
+    REST delete tenant                         External
+    REST delete tenant                         system
+    
 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
