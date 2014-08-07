@@ -4,8 +4,8 @@
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
 Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
-Test Setup       T5 Platform Test Setup
-Test Teardown    T5 Platform Test Teardown
+#Test Setup       T5 Platform Test Setup
+#Test Teardown    T5 Platform Test Teardown
 Force Tags       T5  IronHorse  Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
