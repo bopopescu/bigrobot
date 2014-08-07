@@ -2025,7 +2025,8 @@ Change tagged host endpoint IP address
     BASH ping                                   h1                              10.251.3.212            count=10
     sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr} =                                 Get From Dictionary             ${result[0]}            ip-address
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
+#    ${ipAddr} =                                 Get From Dictionary             ${result[0]}            ip-address
     Should Contain                              ${ipAddr}                       10.251.3.212
     ${loss} =                                   BASH ping                       h1                      10.251.3.212            count=10
     Should Be True                              ${loss} < 20                            
