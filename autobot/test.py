@@ -400,6 +400,15 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
+                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    if key == "console_ip":
+                        helpers.log("console_ip key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['ip']
+                    if key == "console_port":
+                        helpers.log("console_port key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['port']
                     helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                        % (node, key))
                 else:
