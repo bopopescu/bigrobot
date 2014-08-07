@@ -174,6 +174,12 @@ def display_stats(args):
         print_stat("Total of all test suites:", ih.total_testsuites())
         print_stat("Total of all test cases:", ih.total_testcases())
 
+    suites_in_release = ih.testsuites(release=ih.release_lowercase())
+    product_suites = {}
+    for _suites in suites_in_release:
+        product_suites[_suites['product_suite']] = _suites
+
+
     print ""
     print "%s Release Metrics" % (ih.release())
     print "==================================================================="
@@ -187,6 +193,7 @@ def display_stats(args):
     total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
     print_stat2("Total test cases:", total_tc)
     total['tests'] = total_tc
+
 
     for functionality in cat.test_types() + ["manual", "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
@@ -247,8 +254,8 @@ def display_stats(args):
 
     print_stat("Total test suites not executed:",
                total_testsuites_in_release - total_testsuites_in_release_executed)
+
     if args.show_suites:
-        suites_in_release = ih.testsuites(release=ih.release_lowercase())
         print_suites_not_executed(suites_in_release, suites_executed)
 
 
@@ -332,6 +339,28 @@ def display_stats(args):
             if args.show_untested:
                 print_testcases(ih.manual_untested_by_tag([functionality,
                                                            feature]))
+
+    print ""
+    print "Manual Verification Details"
+    print "==================================================================="
+    test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
+    i = 0
+    for test_case in test_case_cursor:
+        if (('jira' in test_case and test_case['jira']) or
+            ('notes' in test_case and test_case['notes'])):
+            i += 1
+            author = product_suites[test_case['product_suite']]['author']
+            jira = test_case['jira']
+            if test_case['jira']:
+                jira += " - https://bigswitch.atlassian.net/browse/%s" % test_case['jira']
+
+            print "%03d. %s  %s  %s" % (i, author, test_case['product_suite'], test_case['name'])
+            print "\tverified in : %s" % test_case['build_name_verified']
+            print "\tjira        : %s" % jira
+            print "\tstatus      : %s" % test_case['status']
+            print "\tnotes       : %s" % test_case['notes']
+            print ""
 
 
 if __name__ == '__main__':

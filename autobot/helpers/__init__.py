@@ -17,6 +17,7 @@ import ipcalc
 import platform
 import unicodedata
 import tempfile
+import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
@@ -1219,6 +1220,13 @@ def file_touch(fname, times=None):
     """
     with file(fname, 'a'):
         os.utime(fname, times)
+
+
+def file_copy(src, dst):
+    """
+    Copy source file to destination file.
+    """
+    shutil.copyfile(src, dst)
 
 
 def is_same_file(file1, file2):
