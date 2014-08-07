@@ -56,9 +56,9 @@ ${bigtap_policy_name}					offset-policy
     #${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     #Should be true  ${verify_policy1}
     ${flow_count}=  rest show switch flow  s1
-    Should be equal as integers  ${flow_count}  1
+    Should be equal as integers  ${flow_count}  2
     ${flow_count}=  rest show switch flow  s2
-    Should be equal as integers  ${flow_count}  1  
+    Should be equal as integers  ${flow_count}  2 
     sleep  5
     ${ethType}=  rest return switch flow  s1  0  eth-type
     Should be equal as integers  ${ethType}  2048    
