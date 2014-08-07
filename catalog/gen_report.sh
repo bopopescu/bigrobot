@@ -4,8 +4,8 @@
 #  You need to modify the "build" variable below.
 
 #build="bvs master aggregated 2014 wk32"
-#build="bvs master #beta2_15"
-build="bvs master ironhorse beta2 aggregated"
+build="bvs master #beta2_17"
+#build="bvs master ironhorse beta2 aggregated"
 
 
 if [ ! -x ../bin/gobot ]; then
@@ -31,14 +31,15 @@ usage() {
 
 scp_to_web() {
     no_scp=$1
-    output=$2
+    src=$2
+    dst=$3
     if [ $no_scp -eq 0 ]; then
         echo ""
         echo "Press Control-C if you don't want to copy the report to the web server..."
         set -x
-        scp $output root@qa-tools1.qa.bigswitch.com:/var/www/test_catalog/$output
+        scp $src root@qa-tools1.qa.bigswitch.com:/var/www/test_catalog/$dst
         echo ""
-        echo "Report is available at http://qa-tools1.qa.bigswitch.com/test_catalog/$output"
+        echo "Report is available at http://qa-tools1.qa.bigswitch.com/test_catalog/$dst"
     fi
 }
 
@@ -73,23 +74,24 @@ if [ "$summary"x = x -a "$detailed"x = x ]; then
 fi
 
 if [ "$summary"x != x ]; then
-    output=$output_summary_no_timestamp
+    output=$output_summary
     echo "Timestamp: $ts" >> $output
     echo "Build: $build" >> $output
     echo "Output: $output" >> $output
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites | tee -a $output
     echo ""
-    scp_to_web $no_scp $output
+    scp_to_web $no_scp $output $output_summary_no_timestamp
 fi
 
 if [ "$detailed"x != x ]; then
-    output=$output_detailed_no_timestamp
+    output=$output_detailed
     echo "Timestamp: $ts" >> $output
     echo "Build: $build" >> $output
     echo "Output: $output" >> $output
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites --show-untested | tee -a $output
     echo ""
-    scp_to_web $no_scp $output
+    scp_to_web $no_scp $output $output_detailed_no_timestamp
 fi
+
