@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
 * Test Cases
 Basic setup test
     Basic setup test
-    [Tags]                                  smoke               sanity              run99
+    [Tags]                                  smoke               sanity              run1
     
 
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
@@ -127,11 +127,11 @@ Delete and add router vns ip
 
 Activate and deactivate router segment interface
     Activate and deactivate router segment interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run88
 
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run88
 
     
 Change tagged endpoint IP address
@@ -238,15 +238,15 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                 run1    
+	[Tags]                                 sanity                 run88    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                 run1       
+	[Tags]                                 sanity                 run88       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                 run1        
+	[Tags]                                 sanity                 run88       
     
     
 * Keywords
