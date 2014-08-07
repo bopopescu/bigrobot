@@ -950,7 +950,7 @@ class BsnCommon(object):
                     helpers.log("NTP Server IP is %s" % iparray[3])
                     helpers.log("Length of content is %s" % len(content))
                     for x in range(0, len(content)):
-                        if iparray[3] in content[x]['status']:
+                        if ntp_server in content[x]['status']:
                             helpers.log("Value of content is %s" % content[x]['status'])
                             pass_flag = True
                             break
