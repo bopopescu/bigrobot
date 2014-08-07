@@ -1234,6 +1234,43 @@ class T5ZTN(object):
 
         helpers.log("Reboot command executed successfully")
         return True
+
+    def cli_reset_connection_switch(self, node, switch):
+        """
+        Reset connection with switch, switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | Alias, IP, MAC of the switch, or All |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        c.config("")
+        helpers.log("Executing 'system reset-connection switch %s' command"
+                    " on node %s" % (switch, node))
+        try:
+            c.send("system reset-connection switch %s" % switch)
+            helpers.log(c.cli_content())
+            options = c.expect([r'to continue', c.get_prompt()], timeout=30)
+            if options[0] == 0:
+                helpers.log("Switch has fabric role configured. Confirming.")
+                c.send("yes")
+                c.expect(c.get_prompt(), timeout=15)
+            if 'Error' in c.cli_content():
+                helpers.log(c.cli_content())
+                helpers.log("Error rebooting the switch")
+                return False
+        except:
+            helpers.log(c.cli_content())
+            helpers.log("Error resetting connection with the switch")
+            return False
+
+        helpers.log("Reset connection command executed successfully")
+        return True
+
     def console_bash_switch_mode_nonztn(self, node,password='adminadmin' ):
         """
         Set the bootmode for switch - non ztn
