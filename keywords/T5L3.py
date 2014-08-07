@@ -1574,7 +1574,9 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.log ("Inside rest enable endpoint flap protection")
         url = 'api/v1/data/controller/applications/bcf/global-setting'
         try:
-            c.rest.patch(url, {"enable-endpoint-flap-protection": True})
+            helpers.log("Before patch command")
+            result = c.rest.patch(url, {"enable-endpoint-flap-protection": True})
+            helpers.log("After patch command. result:%s" % helpers.prettify(result))
         except:
             return False
             # helpers.test_failure(c.rest.error())
