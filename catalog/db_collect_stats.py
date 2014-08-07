@@ -361,6 +361,8 @@ def display_stats(args):
             print "\tstatus      : %s" % test_case['status']
             print "\tnotes       : %s" % test_case['notes']
             print ""
+    if i == 0:
+        print "None"
 
 
 if __name__ == '__main__':

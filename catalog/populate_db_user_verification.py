@@ -52,6 +52,14 @@ class ManualVerificationBuild(object):
         print "\n"
         helpers.error_exit(msg, 1)
 
+    def is_test_case_verified(self, tc):
+        verified = False
+        if 'jira' in tc and tc['jira']:
+            verified = True
+        if 'notes' in tc and tc['notes']:
+            verified = True
+        return verified
+
     def sanitize_test_case_data(self, tc):
         if 'status' not in tc:
             self.exit("Entry missing 'status' field (%s)" % tc)
@@ -75,6 +83,9 @@ class ManualVerificationBuild(object):
         print "Updating documents in build '%s'" % self.aggregated_build_name()
 
         for tc in test_cases:
+            if self.is_test_case_verified(tc) == False:
+                print "Test case is not verified. No update made. (%s)" % tc
+                continue
             self.sanitize_test_case_data(tc)
             query = { "name": tc['name'],
                       "product_suite": tc['product_suite'],
