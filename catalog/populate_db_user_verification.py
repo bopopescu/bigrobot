@@ -78,7 +78,15 @@ class ManualVerificationBuild(object):
         if tc['notes'] == None:
             self.exit("'notes' field must contain a description (%s)" % tc)
 
-    def do_it(self):
+    def sanitize_verification_data(self):
+        test_cases = helpers.from_yaml(helpers.file_read_once(self._verification_file))
+        for tc in test_cases:
+            if self.is_test_case_verified(tc) == False:
+                continue
+            self.sanitize_test_case_data(tc)
+        return True
+
+    def populate_db_with_verification_data(self):
         test_cases = helpers.from_yaml(helpers.file_read_once(self._verification_file))
         print "Updating documents in build '%s'" % self.aggregated_build_name()
 
@@ -150,6 +158,8 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
                               " e.g., 'bvs master ironhorse beta2 aggregated'"))
     parser.add_argument('--infile', required=True,
                         help=("Input verification file"))
+    parser.add_argument('--sanitize-data', action='store_true', default=False,
+                        help=("Check data file for formatting errors"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -169,4 +179,10 @@ if __name__ == '__main__':
         helpers.error_exit("File '%s' is not found." % args.infile, 1)
 
     verification_build = ManualVerificationBuild(args.build, args.infile)
-    verification_build.do_it()
+    if args.sanitize_data:
+        if verification_build.sanitize_verification_data():
+            print "Data format is correct."
+        else:
+            print "Error found in data format."
+    else:
+        verification_build.populate_db_with_verification_data()
