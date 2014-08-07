@@ -760,15 +760,15 @@ Modify Running Config
 	auto configure fabric switch   ${spineList}   ${leafList}   2
 
 Teardown
-	Bash Clear Known Hosts
-	Cli Copy  snapshot://startup-config  running-config
+	Run Keyword and Ignore Error  Bash Clear Known Hosts
+	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
 #	Compare  snapshot://startup-config  running-config
-	Base Test Teardown
+	Run Keyword and Ignore Error  Base Test Teardown
 
 File Suite Teardown
-	Cli Copy  snapshot://startup-config  running-config
-	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
-	Base Suite Teardown
+	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Run Keyword and Ignore Error  Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+	Run Keyword and Ignore Error  Base Suite Teardown
 
 Compare
 	[Arguments]  ${first}  ${second}
