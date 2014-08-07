@@ -188,13 +188,20 @@ Test cli walk
     cli walk config   base_hierarchy=fabric-setting
 
 Test background ping
-    #[Tags]  skipped
+    [Tags]  skipped
     bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng  interval=0.2
     sleep             10
     ${result}=        bash ping background stop    c1  label=vui_bg_ping
     should be true    ${result} == 0
 
 Test run command (helpers)
-    [Tags]  skipped
+    #[Tags]  skipped
+    monitor reauth    master  ${false}
+    run cmd test      c1
+    sleep             20
+    run cmd test      c1
+    log               ***** Renabling reauth monitor
+    monitor reauth    master  ${true}
+    sleep             20
     run cmd test      c1
 
