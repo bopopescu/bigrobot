@@ -326,7 +326,7 @@ def _env_get_and_set(name, new_val=None, default=None):
     return os.environ[name]
 
 
-def set_env(name, value):
+def set_env(name, value, quiet=True):
     """
     Set the environment variable 'name' to 'value'.
     Note: In Robot text file, you can call the keyword 'Set Environment Variable'
@@ -336,41 +336,50 @@ def set_env(name, value):
     value = str(value)
 
     if name in os.environ:
-        debug("Environment variable '%s' current value is: '%s'"
-              % (name, os.environ[name]))
+        if not quiet:
+            debug("Environment variable '%s' current value is: '%s'"
+                  % (name, os.environ[name]))
     os.environ[name] = value
-    debug("Environment variable '%s' new value is: '%s'"
-          % (name, os.environ[name]))
+    if not quiet:
+        debug("Environment variable '%s' new value is: '%s'"
+              % (name, os.environ[name]))
     return os.environ[name]
 
 
-def get_env(name):
+def get_env(name, default=None, quiet=True):
     """
     Get the environment variable 'name'.
     Note: In Robot text file, you can call the keyword 'Get Environment Variable'
           from the OperatingSystem library instead.
     """
     if not name in os.environ:
-        debug("Environment variable '%s' doesn't exist." % name)
-        return None
+        if not quiet:
+            debug("Environment variable '%s' doesn't exist." % name)
+        if default:
+            return set_env(name, default, quiet)
+        else:
+            return None
     else:
-        debug("Environment variable '%s': '%s'"
-              % (name, os.environ[name]))
+        if not quiet:
+            debug("Environment variable '%s': '%s'"
+                  % (name, os.environ[name]))
         return os.environ[name]
 
 
-def remove_env(name):
+def remove_env(name, quiet=True):
     """
     Remove the environment variable 'name'.
     Note: In Robot text file, you can call the keyword 'Remove Environment Variable'
           from the OperatingSystem library instead.
     """
     if not name in os.environ:
-        debug("Environment variable '%s' doesn't exist. Removal is not required."
-              % name)
+        if not quiet:
+            debug("Environment variable '%s' doesn't exist. Removal is not required."
+                  % name)
         return False
     else:
-        debug("Environment variable '%s' is removed" % name)
+        if not quiet:
+            debug("Environment variable '%s' is removed" % name)
         del os.environ[name]
         return True
 
