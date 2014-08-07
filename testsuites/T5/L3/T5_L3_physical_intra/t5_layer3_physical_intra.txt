@@ -862,7 +862,7 @@ L3 intra tenant traceroute
     BASH add route                              h5                              10.251.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
     sleep                                       1
-    BASH ping                                   h5                              10.251.1.11             count=5
+    BASH ping                                   h5                              10.251.2.11             count=5
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} < 50        
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
@@ -2467,7 +2467,8 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     REST add vns ip                             Y                               Y3                      10.252.3.1              24      private=true 
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     #REST enable dhcp relay                      Y                               Y3  
-    sleep                                       5
+    sleep                                       1
+    BASH ping                                   h1                              10.252.1.1              count=5
     ${h1_ip} =                                  BASH get interface ipv4         h1                      bond0               
     Should Contain                              ${h1_ip}                        10.252.1.9  
     ${h1_mac} =                                 BASH get intf mac               h1                      bond0
@@ -3031,9 +3032,9 @@ Verify L3 intra tenant traffic with ip options
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
-    ${loss} =                                   BASH ping                       h5                              10.251.1.1              count=10                
+    ${loss} =                                   BASH ping                       h5                              10.251.1.1              count=16                
     Should Be True                              ${loss} < 50
-    ${loss} =                                   BASH ping                       h6                              10.251.2.1              count=10
+    ${loss} =                                   BASH ping                       h6                              10.251.2.1              count=16
     Should Be True                              ${loss} < 50
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
     Should Be True                              ${value}        
@@ -3075,6 +3076,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     #REST enable dhcp relay                     Y                               Y3  
     sleep                                       5
+    BASH ping                                   h1                              10.252.1.1              count=5
     ${h1_ip} =                                  BASH get interface ipv4         h1                      bond0               
     Should Contain                              ${h1_ip}                        10.252.1.9  
     ${h1_mac} =                                 BASH get intf mac               h1                      bond0
