@@ -10,7 +10,6 @@ Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py
 Library	         keywords/T5.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
