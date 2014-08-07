@@ -40,10 +40,16 @@ class Monitor(object):
               % (self.name(), self._init_timer))
         self._thread = self._start_daemon_thread(self._init_timer, self.on)
 
-    def on(self):
+    def on(self, user_invoked=False):
         """
-        Execute the callback task.
+        Execute the callback task and set the timer for future execution.
         """
+
+        if user_invoked:
+            # Make sure if it's already on then turn it off first before
+            # turning it on again.
+            self.off()
+
         self._has_lock = True
         self._counter += 1
         print("Test Monitor '%s' - running task #%s (timer=%s)"
@@ -67,6 +73,7 @@ class Monitor(object):
             print("Test Monitor '%s' - disabling (%s total events)"
                   % (self.name(), self.counter()))
             self._thread.cancel()
+            self._thread = None  # reset
 
     def name(self):
         return self._name
