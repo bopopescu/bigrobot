@@ -15,13 +15,13 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-${version}      2.0.0-beta1  
+${version}      2.0.0-beta2
     
 * Test Case
 Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.192.4.91  300
+    Verify Tacacs Configuration  0  10.2.3.201  300
     Verify AAA Authentication Configuration                      
-    [Tags]  feature
+    [Tags]  feature  run
 
 Verify tacacs server key is not shown in clear text 
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
@@ -35,7 +35,7 @@ Add user tacacsadmin to group admin and verify access
     [Tags]  feature
 
 Verify remote authentication with open source tacacs
-    ${result}=  rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${result}=  rest add tacacs server  10.192.66.100  secret  300
     Should be true  ${result}
@@ -47,14 +47,14 @@ Verify remote authentication with open source tacacs
 Verify multiple tacacs servers can be configured 
     ${result}=  rest add tacacs server  10.192.66.100  secret  200
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.192.4.91  300
+    Verify Tacacs Configuration  0  10.2.3.201  300
     Verify Tacacs Configuration  1  10.192.66.100  200
     ${result}=  rest delete tacacs server  10.192.66.100        
     Should be true  ${result}
     [Tags]  feature
 
 Verify second tacacs server is used when the first is unreachable   
-    ${result}=  rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${result}=  rest add tacacs server  10.192.97.20   secret  300
     Should be true  ${result}
@@ -70,9 +70,9 @@ Verify second tacacs server is used when the first is unreachable
     [Tags]  feature
             
 Configure mismatched tacacs secret and verify tacacs user cannot login
-    ${result}=  rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.192.4.91  bsnbsn  300
+    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  300
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
@@ -87,7 +87,7 @@ Verify that when AAA is configured for tacacs only, local AAA should not work ev
     [Tags]  feature
                 
 Delete tacacs server from configuration and verify tacacs user has no access
-    ${result}=  rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
@@ -105,7 +105,7 @@ Delete user tacacsadmin from group admin and verify access
 * Keywords
 
 tacacs test setup
-    ${result}=  rest add tacacs server  10.192.4.91  secret  300
+    ${result}=  rest add tacacs server  10.2.3.201  secret  300
     Should be true  ${result}
     ${result}=  rest add tacacs authentication
     Should be true  ${result}
@@ -145,7 +145,7 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
 tacacs test teardown
     ${result}=  cli delete user from group  tacacsadmin  admin
     Should be true  ${result}
-    ${result}=  rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${result}=  rest delete tacacs authentication      
     Should be true  ${result}
