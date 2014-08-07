@@ -921,6 +921,8 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
     Should Be True                              ${value}
     sleep                                       1
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
+    ${result} =                                 REST show endpoints 
+    Log                                         result[0] = ${result[0]}    
     Should Not Be Empty                         ${ipAddr}
     ${result} =                                 REST show endpoints mac         ${h1_mac}
     Should Not Be Empty                         ${result}
@@ -1479,6 +1481,7 @@ Verify add and delete of dhcp server config works
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     sleep                                       5
     ${result} =                                 REST show forwarding dhcp table
+    Log                                         ${result}
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
@@ -2102,7 +2105,7 @@ Static endpoint with dynamic host showing up on another port
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Log                                         attachpoint = ${attachpoint}                
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
