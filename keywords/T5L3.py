@@ -518,13 +518,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `nexthop`        nexthop IP address
             Return: true if configuration is successful, false otherwise
             PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {"ip-address": "10.99.0.1"}
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="E"]/logical-router/next-hop-group[name="AA1"]/ip-address[ip-address="10.99.99.1"] {"ip-address": "10.99.99.1"}
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-address[ip-address="%s"] ' % (tenant, groupName, nexthop)
         try:
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.post(url, {"ip-address": nexthop})
@@ -543,12 +544,15 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                 `nexthop`        nexthop IP address
             Return: true if configuration is successful, false otherwise
           REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Z"]/logical-router/next-hop-group[name="AA1"]/ip-addresses[ip-address="10.99.0.1"] {}
+                     DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="E"]/logical-router/next-hop-group[name="AA1"]/ip-address[ip-address="10.99.99.1"] {}
+
+          
       '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s groupName = %s nexthop = %s" % (tenant, groupName, nexthop))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-addresses[ip-address="%s"] ' % (tenant, groupName, nexthop)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/next-hop-group[name="%s"]/ip-address[ip-address="%s"] ' % (tenant, groupName, nexthop)
         try:
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.delete(url, {})
