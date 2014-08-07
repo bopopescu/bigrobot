@@ -233,11 +233,11 @@ verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1
 verify lag entry when rack0 leaf0b switch lost connectivity to rack1 completely.
 	[Tags]  Fabric  feature  IronHorse   
 	rest disable fabric interface  leaf1-b  ${leaf1b_spine1_intf0}
-	sleep  2
+	sleep  5
 	rest disable fabric interface  leaf0-b  ${leaf0b_spine0_intf0}
-	sleep  2
+	sleep  5
 	rest disable fabric interface  leaf1-a  ${leaf1a_spine1_intf0}
-	sleep  2
+	sleep  5
 	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine0_intf0}  
 	${result}=  rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine1_intf0}
 	Should Not Be True  ${result} 
