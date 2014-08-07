@@ -600,19 +600,48 @@ class BsnDevConf(DevConf):
 
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        if 'is_monitor_reauth' in kwargs:
+            is_monitor_reauth = kwargs['is_monitor_reauth']
+            del kwargs['is_monitor_reauth']
+        else:
+            is_monitor_reauth = True
+
         super(ControllerDevConf, self).__init__(*args, **kwargs)
+
+        self.test_monitor = None
+        if is_monitor_reauth:
+            self.monitor_reauth_init()
+        else:
+            helpers.log("Params attribute 'monitor_reauth' is false."
+                        " Reauth monitoring is disabled.")
+
+    def monitor_reauth_init(self):
         init_timer = helpers.bigrobot_monitor_reauth_init_timer()
         timer = helpers.bigrobot_monitor_reauth_timer()
-
         helpers.log("Test Monitor '%s' init_timer: %s, timer:%s"
                     % (self.name(), init_timer, timer))
         self.test_monitor = monitor.Monitor(
                     self.name(),
                     init_timer=init_timer,
                     timer=timer,
-                    callback_task=self.monitor_action)
+                    callback_task=self.monitor_action_reauth)
 
-    def monitor_action(self):
+    def monitor_reauth(self, state):
+        if state == True:
+            helpers.debug("Enabling reauth monitor")
+            if self.test_monitor:
+                self.test_monitor.on(user_invoked=True)
+            else:
+                self.monitor_reauth_init()
+        elif state == False:
+            helpers.debug("Disabling reauth monitor")
+            if self.test_monitor:
+                self.test_monitor.off()
+        else:
+            helpers.test_error("Unknown state '%s' - should be True or False"
+                               % state)
+
+    def monitor_action_reauth(self):
         """
         This callback method is a workaround for the infamous 'reauth' issue.
         When in enable/config mode and idled for longer than 10 minutes, the

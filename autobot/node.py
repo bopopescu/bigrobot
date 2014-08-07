@@ -210,6 +210,8 @@ class ControllerNode(Node):
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
 
+        self._monitor_reauth = True  # default
+
         # Note: Must be initialized before BsnRestClient since we need the
         # CLI for platform info and also to configure the firewall for REST
         # access
@@ -223,6 +225,9 @@ class ControllerNode(Node):
                         " node SSH and RestClient session setup"
                         % name)
             return
+
+        if 'monitor_reauth' in self.node_params:
+            self._monitor_reauth = self.node_params['monitor_reauth']
 
         helpers.log("name=%s host=%s user=%s password=%s"
                     % (name, ip, user, password))
@@ -295,6 +300,7 @@ class ControllerNode(Node):
                                          password=password,
                                          port=port,
                                          protocol=protocol,
+                                         is_monitor_reauth=self._monitor_reauth,
                                          debug=self.dev_debug_level)
 
     def devconf(self):
@@ -403,6 +409,9 @@ class ControllerNode(Node):
             self.dev_console.send("virsh console %s"
                                   % self._console_info['libvirt_vm_name'])
             return self.dev_console
+
+    def monitor_reauth(self, state):
+        return self.dev.monitor_reauth(state)
 
 
 class MininetNode(Node):
