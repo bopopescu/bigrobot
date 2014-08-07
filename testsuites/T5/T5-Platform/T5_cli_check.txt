@@ -88,6 +88,7 @@ T2 Verify 'show switch' command completion
     ${result}=  cli walk command  show switch  11  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1 spine2
     Should be true  ${result}
     rest delete fabric switch  switch=spine2
+    sleep  1
     ${result}=  cli walk command  show switch  10  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1
     Should be true  ${result}
     ${result_1}=  cli walk command  show switch  10  cmd_argument=spine2
@@ -113,9 +114,11 @@ T4 Verify 'show segment' command completion
     ${result}=  cli walk command  show segment  5  cmd_argument=<cr> all A1 A2 
     Should be true  ${result}
     rest add vns  A  A3
+    sleep   1
     ${result}=  cli walk command  show segment  6  cmd_argument=<cr> all A1 A2 A3
     Should be true  ${result}
     rest delete vns  A  A3
+    sleep   1
     ${result}=  cli walk command  show segment  5  cmd_argument=<cr> all A1 A2
     Should be true  ${result}
     ${result}=  cli walk command  show segment  5  cmd_argument=A3
@@ -150,6 +153,7 @@ T6 Verify 'show endpoint' command completion
     ${result}=  cli walk command  show endpoint  6  cmd_argument=<cr> ip mac h1
     Should be true  ${result}
     rest delete endpoint  A  A1  h1
+    sleep   1
     ${result}=  cli walk command  show endpoint  5  cmd_argument=<cr> ip mac
     Should be true  ${result}
     ${result}=  cli walk command  show endpoint  6
