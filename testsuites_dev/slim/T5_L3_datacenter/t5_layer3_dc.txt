@@ -1719,7 +1719,49 @@ T5 base suite setup
     REST add interface to portgroup         leaf2-pc2           leaf2-b     ethernet2
     REST add interface to portgroup         leaf2-pc3           leaf2-a     ethernet3
     REST add interface to portgroup         leaf2-pc3           leaf2-b     ethernet3
-  
+    REST add interface to vns           External            Arista1-e13         leaf0-a     ethernet23      -1
+    REST add interface to vns           External            Arista1-e14         leaf0-b     ethernet23      -1
+    REST add interface to vns           External            Arista1-e15         leaf2-a     ethernet23      -1
+    REST add interface to vns           External            Arista1-e16         leaf2-b     ethernet23      -1
+    REST add interface to vns           External            Arista1-e21         leaf2-a     ethernet35      -1
+    REST add interface to vns           External            Arista1-e22         leaf2-a     ethernet36      -1
+    REST add interface to vns           External            Arista1-e23         leaf2-a     ethernet37      -1
+    REST add interface to vns           External            Arista1-e24         leaf2-a     ethernet38      -1
+    REST add interface to vns           External            Arista1-e25         leaf2-a     ethernet39      -1
+    REST add interface to vns           External            Arista1-e26         leaf2-a     ethernet40      -1
+    REST add interface to vns           External            Arista1-e27         leaf2-a     ethernet41      -1
+    REST add interface to vns           External            Arista1-e28         leaf2-a     ethernet42      -1
+    REST add interface to vns           External            Arista1-e29         leaf2-a     ethernet43      -1
+    REST add interface to vns           External            Arista1-e30         leaf2-a     ethernet44      -1
+    REST add portgroup to vns           External            Arista1-pc1         Arista1-pc1             -1
+    REST add portgroup to vns           External            Arista1-pc2         Arista1-pc2             -1
+    REST add portgroup to vns           External            Arista1-pc3         Arista1-pc3             -1
+    REST add portgroup to vns           External            Arista1-pc4         Arista1-pc4             -1
+    REST add portgroup to vns           External            Arista1-pc5         Arista1-pc5             -1
+    REST add interface to vns           External            Arista2-e13         leaf1-a     ethernet23      -1
+    REST add interface to vns           External            Arista2-e14         leaf1-a     ethernet15      -1
+    REST add interface to vns           External            Arista2-e14         leaf1-b     ethernet23      -1
+    REST add interface to vns           External            Arista2-e15         leaf0-a     ethernet24      -1
+    REST add interface to vns           External            Arista2-e16         leaf0-b     ethernet24      -1
+    REST add interface to vns           External            Arista2-e21         leaf2-b     ethernet35      -1
+    REST add interface to vns           External            Arista2-e22         leaf2-b     ethernet36      -1
+    REST add interface to vns           External            Arista2-e23         leaf2-b     ethernet37      -1
+    REST add interface to vns           External            Arista2-e24         leaf2-b     ethernet38      -1
+    REST add interface to vns           External            Arista2-e25         leaf2-b     ethernet39      -1
+    REST add interface to vns           External            Arista2-e26         leaf2-b     ethernet40      -1
+    REST add interface to vns           External            Arista2-e27         leaf2-b     ethernet41      -1
+    REST add interface to vns           External            Arista2-e28         leaf2-b     ethernet42      -1
+    REST add interface to vns           External            Arista2-e29         leaf2-b     ethernet43      -1
+    REST add interface to vns           External            Arista2-e30         leaf2-b     ethernet44      -1
+    REST add portgroup to vns           External            Arista2-pc1         Arista2-pc1             -1
+    REST add portgroup to vns           External            Arista2-pc2         Arista2-pc2             -1
+    REST add portgroup to vns           External            Arista2-pc3         Arista2-pc3             -1
+    REST add portgroup to vns           External            Arista2-pc4         Arista2-pc4             -1
+    REST add portgroup to vns           External            Arista2-pc5         Arista2-pc5             -1
+    REST add interface to vns           External            external-vrrp       leaf1-a         ethernet31      -1
+    REST add interface to vns           External            external-vrrp       leaf1-b         ethernet31      -1
+    REST add interface to vns           External            external-vrrp       leaf2-b         ethernet31      -1
+    
 	
 	
 T5 base suite teardown
