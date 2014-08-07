@@ -182,7 +182,7 @@ class T5Openstack(object):
 			return ''
 		else:
 			out_dict = helpers.openstack_convert_table_to_dict(output)
-			subnetId = out_dict["network_id"]["value"]
+			subnetId = out_dict["id"]["value"]
 			return subnetId
 
 	def openstack_show_subnet_ip(self, subnetName):
