@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 # Description:
 #  A convenient wrapper to generate a report and also post it on the web server.
 #  You need to modify the "build" variable below.
@@ -32,7 +32,7 @@ usage() {
 scp_to_web() {
     no_scp=$1
     output=$2
-    if [ $is_scp -eq 0 ]; then
+    if [ $no_scp -eq 0 ]; then
         echo ""
         echo "Press Control-C if you don't want to copy the report to the web server..."
         set -x

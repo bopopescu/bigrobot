@@ -119,11 +119,12 @@ class VerificationFileBuilder(object):
                 file_dict[file_name] = True
                 if not helpers.file_exists(file_name):
                     helpers.file_copy(self.verification_header_template(),
-                                      self.verification_file(author))
+                                      file_name)
+                    print "Creating file %s" % file_name
+                else:
+                    print "Updating file %s" % file_name
 
             helpers.file_write_append_once(file_name, doc_str)
-
-
 
 
 def prog_args():
