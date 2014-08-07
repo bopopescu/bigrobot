@@ -33,7 +33,7 @@ features:
 aggregated_builds:
   'bvs master ironhorse beta2 aggregated':    # 2014-08 IronHorse Beta 2
     [ 
-      #'bvs master #beta2_14',
+      'bvs master #beta2_14',
       'bvs master #beta2_15',
     ] 
   'bvs master aggregated 2014 wk32':          # week of 2014-08-04
