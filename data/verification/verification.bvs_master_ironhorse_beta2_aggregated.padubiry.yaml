@@ -58,14 +58,14 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
 
 - name: 'Verifying Duplicate packets for Non IP multicast packets over the fabric'
   product_suite: 'T5/Fabric/t5_fabric_lag_test'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
 
 - name: 'add same interface to multiple tag onto same VNS'
   product_suite: 'T5/L2/t5_app_cli'
@@ -114,35 +114,35 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'add portgroup lacp to 2 different rack'
   product_suite: 'T5/Fabric/t5_fabric_link'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'Verify the Fabric feature Role Spine0'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'delete/add the Fabric role spine0'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'delete/add Fabric role leaf in dual leaf setup'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'verify rack1 connectivity ,when link down from leaf1b-spine1'
   product_suite: 'T5/Fabric/t5_rack_detection'
@@ -170,14 +170,14 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Rerun , seems like IXIA issue
+  notes: Rerun , seems like IXIA issue
 
 - name: 'MAC move test after master controller node reboot'
   product_suite: 'T5/L2/t5_mac_move_age'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Rerun , seems like IXIA issue
+  notes: Rerun , seems like IXIA issue
 
 - name: 'Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)'
   product_suite: 'T5/Fabric/t5_fabric_traffic_failover'
@@ -205,49 +205,49 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'verify interface rx/tx stats different rack'
   product_suite: 'T5/L2/t5_vns_stats'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'verify interface rx/tx rates different rack'
   product_suite: 'T5/L2/t5_vns_stats'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'verify interface rx/tx rates same rack'
   product_suite: 'T5/L2/t5_vns_stats'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'verify interface LLDP/control packet count different rack'
   product_suite: 'T5/L2/t5_vns_stats'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'verify multiple tenant rates'
   product_suite: 'T5/L2/t5_vns_stats'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'Setup Three Rack Dual Leaf Topology'
   product_suite: 'T5/L2/t5_alpha_pr'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:IXIA issue
+  notes: IXIA issue
 
 - name: 'Static endpoint age test'
   product_suite: 'T5/L2/t5_alpha_pr'
@@ -261,14 +261,14 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:For some reason IXIA ARP getway is not resolved
+  notes: For some reason IXIA ARP getway is not resolved
 
 - name: 'Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac'
   product_suite: 'T5/L2/t5_mac_scale'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Seems like Performance system is changed , Earlier within 10 sec 4000 mac on 2 ports used to learn , now it might take about 12 sec , so test will fail.
+  notes: Seems like Performance system is changed , Earlier within 10 sec 4000 mac on 2 ports used to learn , now it might take about 12 sec , so test will fail.
 
 - name: 'Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac'
   product_suite: 'T5/L2/t5_mac_scale'
@@ -282,14 +282,14 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Aging timing needs to be fine tuned based on Rich lane explanation
+  notes: Aging timing needs to be fine tuned based on Rich lane explanation
 
 - name: 'Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac'
   product_suite: 'T5/L2/t5_mac_scale'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Aging timing needs to be fine tuned based on Rich lane explanation
+  notes: Aging timing needs to be fine tuned based on Rich lane explanation
 
 - name: 'spine switch reboot with 48k mac address in the system'
   product_suite: 'T5/L2/t5_mac_scale'
@@ -303,13 +303,13 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:With ZTN , any command on switchlight will fail
+  notes: With ZTN , any command on switchlight will fail
 
 - name: 'Add 16k static endpoints and check the forwarding also check with master reboot'
   product_suite: 'T5/L2/t5_mac_scale'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:BSC-4851
+  jira: BSC-4851
   notes: Known config size issue 
 
 - name: 'add Dual Leaf Three Rack setup'
@@ -345,7 +345,7 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:one of the controller node is not rechable, Setup Failure.
+  notes: one of the controller node is not rechable, Setup Failure.
 
 - name: 'create 4000 vns and all interface ,verify the table and forwarding'
   product_suite: 'T5/L2/t5_vns_scale'
@@ -373,18 +373,18 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Should have been passed , This is a smoke Test
+  notes: Should have been passed , This is a smoke Test
 
 - name: 'ping h2 to h3 dual rack single leaf dynamic endpoints tag'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Should have been passed , This is a smoke Test
+  notes: Should have been passed , This is a smoke Test
 
 - name: 'ping h2 to h3 dual rack single leaf static endpoints tag'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:Should have been passed , This is a smoke Test
+  notes: Should have been passed , This is a smoke Test
