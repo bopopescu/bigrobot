@@ -76,7 +76,8 @@ T1.3. Check supported platforms of SWI and installer
 
 T1.4. Check Running config for a switch
 	Cli Run  master  show run
-    Reboot Switches From CLI
+	Sleep  30
+    #Reboot Switches From CLI
 	Verify All Switches Running Config
 
 T1.5. Check Startup config for a switch
