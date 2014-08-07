@@ -1,0 +1,320 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: 'Verify L3 traffic honor more specific routes with ecmp group'
+#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: 'I manually verified this and it works.'
+#
+#   - name: 'Add and delete all ECMP members in ecmp group'
+#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes:
+#       'This test case failed continuously in regression. It also fails
+#       in my testbed some of the time.'
+#
+
+
+- name: 'T0 Setup'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T1 Configure SPAN session for Single interface - Direction Both'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T3 Configure SPAN session for Single interface - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T5 Configure SPAN session for Single interface - Direction Egress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Egress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T10 Configure SPAN session for Port-Group interface - Direction Both'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T12 Configure SPAN session for Port-Group interface - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T14 Configure SPAN session for Port-Group interface - Direction Egress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T16 Configure SPAN session - Direction Both'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T17 Configure SPAN Session - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T18 Configure SPAN Session - Direction Egress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T20 Configure SPAN session for SRC-PORT - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T22 Configure SPAN session for DST-PORT - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T23 Configure SPAN session for SRC-MAC - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T24 Configure SPAN session for DST-MAC - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T28 Configure SPAN session for Ethertype - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T29 Configure SPAN session for Tenant/VNS - Direction Ingress'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T36 Configure peer links as source interfaces'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'T11 Inter Tenant: SRC & DST Are In Different Racks'
+  product_suite: 'T5/T5-Platform/t5_platform_visibility_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'bring up host bond0 interface'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Configure Multiple L2 Tenants With Single VNS & Failover'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Verify HA Cluster Formation'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Verify Cluster Election Take-Leader'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Verify Cluster Election Re-run'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Verify Cluster Master Reboot'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Verify Cluster Slave Reboot'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Master Failover/Failback & Verify Connectivity'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Slave Failover/Failback & Verify Connectivity'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Cluster Election Take-Leader & Verify Connectivity'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:
+
+- name: 'Cluster Election Re-run & Verify Connectivity'
+  product_suite: 'T5/T5-Platform/t5_platform_HA_L2_Regression'
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira:
+  notes:

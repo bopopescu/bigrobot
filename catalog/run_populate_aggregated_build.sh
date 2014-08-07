@@ -37,7 +37,6 @@ if [ "$force_overwrite"x = 1x ]; then
     echo "Force-overwrite specified. Removing baseline data for '$BUILD_NAME'."
     ./db_remove_build_baselines.py --y
 fi
-exit 1
 
 ./db_chk_build_name.py
 if [ $? -eq 0 ]; then
@@ -47,5 +46,6 @@ else
     time ./populate_db_dryrun.sh
 fi
 
+echo "Start updating data for aggregated build '$BUILD_NAME'..."
 BUILD_NAME="$BUILD_NAME" time ./populate_db_aggregated_build.py > $outfile
 

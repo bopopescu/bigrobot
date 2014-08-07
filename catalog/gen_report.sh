@@ -1,7 +1,8 @@
 #!/bin/sh
 # Description:
 #  A convenient wrapper to generate a report and also post it on the web server.
-#  You need to modify the "build" variable below.
+#  To specify the build info, you can modify the "build" variable below or
+#  set the env BUILD_NAME.
 
 #build="bvs master aggregated 2014 wk32"
 build="bvs master #beta2_17"
@@ -13,6 +14,9 @@ if [ ! -x ../bin/gobot ]; then
     exit 1
 fi
 
+if [ "$BUILD_NAME"x != x ]; then
+    build=$BUILD_NAME
+fi
 
 usage() {
     if [ $# -ne 0 ]; then
@@ -72,6 +76,8 @@ done
 if [ "$summary"x = x -a "$detailed"x = x ]; then
     summary=1
 fi
+
+echo "Generating stats for build '$build'..."
 
 if [ "$summary"x != x ]; then
     output=$output_summary
