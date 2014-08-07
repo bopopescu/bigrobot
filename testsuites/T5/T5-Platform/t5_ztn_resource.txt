@@ -64,6 +64,7 @@ Suite Setup
 	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
+	Sleep  60
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
 	Run Keyword and Ignore Error  Base Suite Teardown
 
@@ -77,6 +78,7 @@ Test Setup
 	Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
+	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Base Test Teardown
 

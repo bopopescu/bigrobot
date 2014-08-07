@@ -3,6 +3,8 @@
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
 database: test_catalog3
+#database: test_catalog3_20140806
+
 products:
   - BigChain
   - BigTap
@@ -34,6 +36,7 @@ aggregated_builds:
     [ 
       'bvs master #beta2_14',
       'bvs master #beta2_15',
+      'bvs master #beta2_17',
     ] 
   'bvs master aggregated 2014 wk32':          # week of 2014-08-04
     [ 

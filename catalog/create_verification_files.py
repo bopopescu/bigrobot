@@ -79,7 +79,8 @@ class VerificationFileBuilder(object):
 
     def author(self, product_suite):
         if product_suite not in self._product_suites:
-            self.exit("Cannot find product_suite '%s'" % product_suite)
+            self.warn("Cannot find product_suite '%s'" % product_suite)
+            return "unknown"
         return self._product_suites[product_suite]['author']
 
     def verification_header_template(self):
@@ -102,17 +103,18 @@ class VerificationFileBuilder(object):
         for tc in aggr_cursor:
             product_suite = tc['product_suite']
             tc_name = tc['name']
+            status = tc['status']
             author = self.author(product_suite)
             file_name = self.verification_file(author)
 
             doc_str = """
 - name: '%s'
   product_suite: '%s'
-  status:
+  status: %s
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:
-""" % (tc_name, product_suite)
+""" % (tc_name, product_suite, status)
 
             if file_name not in file_dict:
                 # First time we're writing to this file
