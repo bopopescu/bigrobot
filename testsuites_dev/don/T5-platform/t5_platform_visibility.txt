@@ -598,12 +598,12 @@ T27 Configure SPAN session for IP-ECN - Direction Ingress
 	
 T28 Configure SPAN session for Ethertype - Direction Ingress
 	[Tags]  span  feature  manual
-	manual failed 
+	manual passed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
 	[Tags]  span  feature  manual
-	manual failed
+	manual passed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
@@ -612,7 +612,8 @@ T30 Configure SPAN session with multiple options - Direction Ingress
 
 
 T31 Configure SPAN session with Different VLANs
-	[Tags]  span  feature  manual-untested
+	[Tags]  span  feature  manual
+	manual passed
 
 
 T32 Configure SPAN session with Spine switches 
@@ -631,12 +632,13 @@ T34 Configure SPAN session with multiple destination interfaces
 
 
 T35 Configure multiple SPAN sessions in multiple switches
-	[Tags]  span  feature  manual-untested
+	[Tags]  span  feature  manual
+	manual passed
 	
 
 T36 Configure peer links as source interfaces
 	[Tags]  span  feature  manual
-	manual failed
+	manual passed
 
 
 
