@@ -1761,7 +1761,26 @@ T5 base suite setup
     REST add interface to vns           External            external-vrrp       leaf1-a         ethernet31      -1
     REST add interface to vns           External            external-vrrp       leaf1-b         ethernet31      -1
     REST add interface to vns           External            external-vrrp       leaf2-b         ethernet31      -1
-    
+    REST add portgroup to vns       X           X1          leaf0-pc1           -1
+    REST add portgroup to vns       X           X1          leaf1-pc1           -1
+    REST add interface to vns       X           X1          leaf1-a             ethernet33      1
+    REST add interface to vns       X           X1          leaf2-a             ethernet33      1
+    REST add interface to vns       X           X192        leaf0-a             ethernet33      -1
+    REST add portgroup to vns       X           X2          leaf0-pc2           -1
+    REST add portgroup to vns       X           X2          leaf1-pc3           -1
+    REST add interface to vns       X           X2          leaf1-a             ethernet33      2
+    REST add interface to vns       X           X2          leaf2-a             ethernet33      2
+    REST add interface to vns       X           X224        leaf0-b             ethernet33      -1
+    REST add interface to vns       X           X3          leaf1-a             ethernet33      3
+    REST add interface to vns       X           X3          leaf2-a             ethernet33      3
+    REST add interface to vns       Y           Y192        leaf1-a             ethernet33      -1
+    REST add interface to vns       Y           X224        leaf1-b             ethernet33      -1
+    REST add portgroup to vns       Y           Y2          leaf1-pc2               -1
+    REST add interface to vns       Y           X2          leaf1-pc3               -1  
+    REST add interface to vns       Z           Y192        leaf2-a             ethernet33      -1
+    REST add interface to vns       Z           X224        leaf2-b             ethernet33      -1
+    REST add portgroup to vns       Z           Z3          leaf2-pc3               -1
+
 	
 	
 T5 base suite teardown
