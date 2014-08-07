@@ -509,7 +509,7 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		try:
-				os1.bash("neutron subnet-create %s --name %s %s %s" % (netName, subnetName, external_gateway_ip, subnet_ip))
+				os1.bash("neutron subnet-create %s --name %s --gateway %s %s" % (netName, subnetName, external_gateway_ip, subnet_ip))
 		except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -850,8 +850,8 @@ S
 			if k == 254:
 				j = j + 1
 				k = 0
-			else:
-				continue
+			#else:
+			#	continue
 			i = i + 1
 		return True
 			
