@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
-#Suite Setup      base suite setup
+Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
@@ -19,8 +19,8 @@ Library	         keywords/SwitchLight.py
 Resource		 testsuites_dev/don/physical_variables.txt
 
 * Variables
-@{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
-@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03  00:00:04:00:02:00:00:04  00:00:04:00:02:00:00:05  00:00:04:00:02:00:00:06
+@{spineList}  00:00:70:72:CF:AE:B5:B2  00:00:70:72:CF:AE:B3:AA
+@{leafList}  00:00:70:72:CF:AB:36:D8  00:00:70:72:CF:AB:36:98  00:00:70:72:CF:B5:F5:CE  00:00:70:72:CF:B5:EB:B0  00:00:70:72:CF:B5:E6:C6  00:00:70:72:CF:AB:39:18  
 
 ${gateway1IP}	10.10.10.100
 ${gateway2IP}	20.20.20.100
@@ -55,7 +55,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  feature  setup
+	[Tags]  feature  setup  skipped
 	#bash network restart  h1
 	#bash add tag  h1  bond0  10 
 	#bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -158,19 +158,6 @@ T0 Setup
 	start traffic  ${stream-ab4}
 	start traffic  ${stream-cd1}
 	start traffic  ${stream-ac1}
-	
-
-T00 Ixia Setup
-
-	${bogus_ethertype}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  
-	...			name=ab1_flow	ethertype=88cc
-	...			src_ip_step=0.0.0.1  dst_ip_step=0.0.0.1 
-	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
-	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
-	...			protocol=TCP  src_port=1000  dst_port=2000 
-	
-	
-	
 	
 
 T1 Configure SPAN session for Single interface - Direction Both
@@ -592,52 +579,13 @@ T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	
 	
 T24 Configure SPAN session for DST-MAC - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-
-	sleep  3
+	[Tags]  span  feature  manual
+	manual passed
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.2  IP 
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.1  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.3  IP
-	Should not be true  ${returnVal}
-
-
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	#[Tags]  span  feature manual
-	#manual passed
-	[Tags]  span  feature  don
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-
-	sleep  3
+	[Tags]  span  feature  manual
+	manual passed
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
-	
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=udp
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=udp
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	tcp  IP
-	Should not be true  ${returnVal}
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
 	[Tags]  span  feature  manual
@@ -655,14 +603,12 @@ T28 Configure SPAN session for Ethertype - Direction Ingress
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
 	[Tags]  span  feature  manual
-	manual  failed
+	manual failed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
 	[Tags]  span  feature  manual
 	manual passed
-	# src-ip-cidr & dst-ip-cidr
-	# etc. etc.
 
 
 T31 Configure SPAN session with Different VLANs
@@ -680,7 +626,7 @@ T33 Configure SPAN session with multiple source interfaces
 	
 	
 T34 Configure SPAN session with multiple destination interfaces
-	[Tags]  span  feature manual
+	[Tags]  span  feature  manual
 	manual passed
 
 
@@ -830,13 +776,12 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 	Should Be True  ${returnVal}
 
 
-
-Verify test packet path with L2 traffic to an unknown destination - untracked endpoints
-	[Tags]  testpath  full  manual
+Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
+	[Tags]  testpath  feature  manual
     manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  full  manual
+	[Tags]  testpath  feature  manual
     manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
@@ -854,7 +799,7 @@ Destination as a ECMP Group
 Destination as a default router
 	[Tags]  testpath  feature  manual
     manual passed
-    
+
 Inter Tenant - Droped by Policy
 	[Tags]  testpath  feature  manual
     manual passed 
@@ -883,32 +828,33 @@ Tracking with multiple test paths
 	[Tags]  testpath  feature  manual
     manual passed 
 
-3. intra tenant test
-    3.3 3-tier app. We need tcp traffic.
-    // 3.4 service insertion
-4. inter tenant test
-    4.3 3-tier app.
-          4.3.1. we change router's default policy to deny and config permit ACLs.
-    // 4.4 service insertion
-    4.5 dst is other tenant's gateway <===== We don't support this?
-5. to destination outside
-    // 5.1 fabric default gateway is one router
-    5.2 fabric default gateway is an ecmp group, whose members are in multiple VNSes.
-6. private vns test
-    6.1 make sure this vns cannot get out of its tenant, even if ACL says permit.
-    
-7. tracking topology change
-    7.1 create cases where we have to use peer link.  
 
-1. work flow test
-    1.1 tracking 25 tests at the same time. 25 is the tcam limitation.
-    1.2 if policy simulation fails, we don't do fabric simulation. we don't program tcam entry.
-    1.3 we configure with wrong src, dst, test-name, timeout. Make sure the error messages are right
-    1.4 Track by name of the endpoints
-    // 1.4 we can clear timedout tests.
+#3. intra tenant test
+#    3.3 3-tier app. We need tcp traffic.
+#    // 3.4 service insertion
+#4. inter tenant test
+#    4.3 3-tier app.
+#          4.3.1. we change router's default policy to deny and config permit ACLs.
+#    // 4.4 service insertion
+#    4.5 dst is other tenant's gateway <===== We don't support this?
+#5. to destination outside
+#    // 5.1 fabric default gateway is one router
+#    5.2 fabric default gateway is an ecmp group, whose members are in multiple VNSes.
+#6. private vns test
+#    6.1 make sure this vns cannot get out of its tenant, even if ACL says permit.
     
-2. Negative Test
- 	1.1 Intra VNS: from src to a wrong dst vns
+#7. tracking topology change
+#    7.1 create cases where we have to use peer link.  
+
+#1. work flow test
+#    1.1 tracking 25 tests at the same time. 25 is the tcam limitation.
+#    1.2 if policy simulation fails, we don't do fabric simulation. we don't program tcam entry.
+#    1.3 we configure with wrong src, dst, test-name, timeout. Make sure the error messages are right
+#    1.4 Track by name of the endpoints
+#    // 1.4 we can clear timedout tests.
+    
+#2. Negative Test
+# 	1.1 Intra VNS: from src to a wrong dst vns
  	
     
 ################## 		Visibility		################## 	

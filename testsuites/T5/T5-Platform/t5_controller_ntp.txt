@@ -74,13 +74,15 @@ Add multiple NTP servers and verify on Master and Slave
     Should be true  ${status}
     ${status}=  verify ntp  c1  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  c1  nist-time-serve
+    #${status}=  verify ntp  c1  nist-time-server.eoni.com
     Should be true  ${status}
     ${status}=  verify ntp  c2  time-c.nist.gov
     Should be true  ${status}
     ${status}=  verify ntp  c2  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  c2  nist-time-serve
+    #${status}=  verify ntp  c2  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
     ${status}=  delete ntp server  c1  time-d.nist.gov
@@ -98,7 +100,8 @@ With multiple NTP servers, restart process ntp on Master and verify
     Should be true  ${status}
     ${status}=  verify ntp  c1  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  c1  nist-time-serve
+    #${status}=  verify ntp  c1  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Master
     Sleep  5
@@ -106,7 +109,8 @@ With multiple NTP servers, restart process ntp on Master and verify
     Should be true  ${status}
     ${status}=  verify ntp  c1  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  c1  nist-time-serve
+    #${status}=  verify ntp  c1  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
     ${status}=  delete ntp server  c1  time-d.nist.gov
@@ -125,14 +129,16 @@ With multiple NTP servers, restart process ntp on Master and verify Slave is una
     Should be true  ${status}
     ${status}=  verify ntp  c1  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  c1  nist-time-serve
+    #${status}=  verify ntp  c1  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Master
     ${status}=  verify ntp  c2  time-c.nist.gov
     Should be true  ${status}
     ${status}=  verify ntp  c2  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  c2  nist-time-serve
+    #${status}=  verify ntp  c2  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
     ${status}=  delete ntp server  c1  time-d.nist.gov
@@ -151,14 +157,16 @@ With multiple NTP servers, restart process ntp on Slave and verify Master is una
     Should be true  ${status}
     ${status}=  verify ntp  c2  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  c2  nist-time-serve
+    #${status}=  verify ntp  c2  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Slave
     ${status}=  verify ntp  c1  time-c.nist.gov
     Should be true  ${status}
     ${status}=  verify ntp  c1  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  c1  nist-time-serve
+    #${status}=  verify ntp  c1  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
     ${status}=  delete ntp server  c1  time-d.nist.gov

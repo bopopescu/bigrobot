@@ -1,8 +1,7 @@
 * Settings
 Documentation     switch-platform Platform Test suite- Iron Horse
-#Suite Setup       T5 switch platform test setup
-#Suite Teardown    T5 switch platform test teardown
-#Test Setup        base suite setup
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
 Force Tags        T5  IronHorse 
 ...             
 ...            
@@ -633,27 +632,9 @@ Verify the logging of PSU insertion and removal events in the Switch
     Manual passed
     
 * Keywords
-
+                   
 T5 switch platform test setup
    base suite setup
-   rest add switch  ${switch1_name}
-   ${swDpid1}=  rest return switch dpid from ip  s1
-   rest add dpid  ${switch1_name}   ${swDpid1}
-   rest add fabric role  ${switch1_name}  leaf
-      
-   rest add switch  ${switch2_name}
-   ${swDpid2}=  rest return switch dpid from ip  s2
-   rest add dpid  ${switch2_name}   ${swDpid2}
-   rest add fabric role  ${switch2_name}  leaf
-   
-   rest add switch  ${switch7_name}
-   ${swDpid7}=  rest return switch dpid from ip  s7
-   rest add dpid  ${switch7_name}   ${swDpid7}
-   rest add fabric role  ${switch7_name}  spine
-                
-                   
-#T5 switch platform test setup
-#   base test setup
 #   rest add switch  ${switch1_name}
 #   ${swDpid1}=  rest return switch dpid from ip  s1
 #   rest add dpid  ${switch1_name}   ${swDpid1}
@@ -668,12 +649,13 @@ T5 switch platform test setup
 #   ${swDpid3}=  rest return switch dpid from ip  s3
 #   rest add dpid  ${switch3_name}   ${swDpid3}
 #   rest add fabric role  ${switch3_name}  leaf
+
                 
-#T5 switch platform test teardown
+T5 switch platform test teardown
 #   rest delete tenant  ${tenant}  
 #   rest delete fabric switch  ${switch1_name} 
 #   rest delete fabric switch  ${switch2_name}
 #   rest delete fabric switch  ${switch3_name}
-#   base test teardown
-#   sleep  5   
+   base suite teardown
+ 
 

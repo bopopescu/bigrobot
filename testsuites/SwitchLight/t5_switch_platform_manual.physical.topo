@@ -7,33 +7,47 @@
 # tg1 : Tester like Ixia
 
 c1:
-    ip:  dummy    
+  ip:  10.8.25.5
+  
 c2:
-    ip:  dummy
-    
-s1:
-    ip:  10.195.0.33
-    alias:  leaf0-a
-    user:  admin
-    password:  adminadmin
-    console_ip: cs-rack10
-    console_port: 6016   
- 
-s2:
-    ip:  10.195.0.34
-    alias:  leaf0-b
-    user:  admin
-    password:  adminadmin
-    console_ip: cs-rack10
-    console_port: 6017   
+  ip:  10.8.25.6
 
+s1:
+  alias: leaf0-a
+  mac: 70:72:cf:bc:c5:0e
+  fabric-role: leaf
+  leaf-group: rack0
+  console:
+    ip:  10.1.8.181
+    protocol: telnet
+    port: 7002
+  set_session_ssh: false
+  set_init_ping: false
+   
+s3:
+  alias: leaf1-a
+  mac: 70:72:cf:b7:5f:7c
+  fabric-role: leaf
+  leaf-group: rack1
+  console:
+    ip:  10.1.8.181
+    protocol: telnet
+    port: 7003
+  set_session_ssh: false
+  set_init_ping: false  
+ 
 s7:
-    ip:  10.195.0.21
-    alias: spine0
-    user:  admin
-    password:  adminadmin
-    console_ip: cs-rack10
-    console_port: 6015
+  alias: spine0
+  mac: 70:72:cf:ae:b2:24
+  fabric-role: spine
+  console:
+    ip:  10.1.8.181
+    protocol: telnet
+    port: 7001
+  set_session_ssh: false
+  set_init_ping: false
+  
+      
        
    
     
