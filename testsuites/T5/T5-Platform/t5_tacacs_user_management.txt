@@ -21,6 +21,7 @@ ${version}      2.0.0-beta2
 Verify Running-Configuration
     Verify Tacacs Configuration  0  10.2.3.201  300
     Verify AAA Authentication Configuration                      
+    pause
     [Tags]  feature  run
 
 Verify tacacs server key is not shown in clear text 
@@ -37,19 +38,19 @@ Add user tacacsadmin to group admin and verify access
 Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.192.66.100  secret  300
+    ${result}=  rest add tacacs server  10.9.18.2  secret  300
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
-    ${result}=  rest delete tacacs server  10.192.66.100    
+    ${result}=  rest delete tacacs server  10.9.18.2    
     Should be true  ${result}
     [Tags]  feature
 
 Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.192.66.100  secret  200
+    ${result}=  rest add tacacs server  10.9.18.2  secret  200
     Should be true  ${result}
     Verify Tacacs Configuration  0  10.2.3.201  300
-    Verify Tacacs Configuration  1  10.192.66.100  200
-    ${result}=  rest delete tacacs server  10.192.66.100        
+    Verify Tacacs Configuration  1  10.9.18.2  200
+    ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
 
@@ -58,12 +59,12 @@ Verify second tacacs server is used when the first is unreachable
     Should be true  ${result}
     ${result}=  rest add tacacs server  10.192.97.20   secret  300
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.192.66.100  secret  200 
+    ${result}=  rest add tacacs server  10.9.18.2  secret  200 
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.192.66.100  200
+    Verify Tacacs Configuration  0  10.9.18.2  200
     Verify Tacacs Configuration  1  10.192.97.20   300   
     verify version  tacacsadmin  adminadmin  ${true}
-    ${result}=  rest delete tacacs server  10.192.66.100
+    ${result}=  rest delete tacacs server  10.9.18.2
     Should be true  ${result}
     ${result}=  rest delete tacacs server  10.192.97.20 
     Should be true  ${result}
