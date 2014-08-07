@@ -1448,7 +1448,7 @@ class Ixia(object):
             helpers.log("Checking Connection Stat of Vport: %s" % str(vport))
             vport_state = handle.getAttribute(vport, '-isConnected')
             helpers.log("Connection State: %s" % str(vport_state))
-            if vport_state == "false":
+            if vport_state != "true":
                 helpers.log("IXIA BUG / Network issue ports got Disconnected.. Reconnecting:")
                 handle.execute('connectPorts', vport)
                 helpers.log("waiting  5 secs..")
