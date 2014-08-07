@@ -249,9 +249,13 @@ Test openstack convert table to dict
     parse table
 
 Test strip control char
-    #[Tags]           skipped
+    [Tags]           skipped
     strip control char test
 
+Test regexp match
+    ${ip_address}=       set variable   1.1.1.2
+    log                  ip_address=${ip_address}
+    should match regexp  ${ip_address}  (1\\.1\\.1\\.2|2\\.2\\.2\\.1)
 
 * Keywords
 my base suite setup

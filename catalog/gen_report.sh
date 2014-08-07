@@ -3,9 +3,9 @@
 #  A convenient wrapper to generate a report and also post it on the web server.
 #  You need to modify the "build" variable below.
 
-#build="bvs master aggregated 2014 wk32"
+build="bvs master aggregated 2014 wk32"
 #build="bvs master #beta2_15"
-build="bvs master ironhorse beta2 aggregated"
+#build="bvs master ironhorse beta2 aggregated"
 
 
 if [ ! -x ../bin/gobot ]; then
