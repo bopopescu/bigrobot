@@ -33,8 +33,8 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
+import catalog_modules.cat_helpers as cat_helpers
 from catalog_modules.test_catalog import TestCatalog
-
 
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
@@ -64,22 +64,15 @@ class VerificationFileBuilder(object):
 
     def builds(self): return self._builds
 
-    def warn(self, msg):
-        print "\n"
-        print "WARNING: " + msg
-
-    def exit(self, msg):
-        print "\n"
-        helpers.error_exit(msg, 1)
-
     def load_product_suites_dict(self):
-        test_suites = self.catalog().find_test_suites({"build_name": self.aggregated_build_name()})
+        test_suites = self.catalog().find_test_suites(
+                                {"build_name": self.aggregated_build_name()})
         for ts in test_suites:
             self._product_suites[ts['product_suite']] = ts
 
     def author(self, product_suite):
         if product_suite not in self._product_suites:
-            self.warn("Cannot find product_suite '%s'" % product_suite)
+            cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
             return "unknown"
         return self._product_suites[product_suite]['author']
 
@@ -89,7 +82,8 @@ class VerificationFileBuilder(object):
     def verification_file(self, author):
         build_str = re.sub(' ', '_', self.aggregated_build_name())
         build_str = re.sub('#', '', build_str)
-        return '../data/verification/verification.%s.%s.yaml' % (build_str, author)
+        return ('../data/verification/verification.%s.%s.yaml'
+                % (build_str, author))
 
     def do_it(self):
         query = { "build_name": self.aggregated_build_name(),
@@ -97,7 +91,8 @@ class VerificationFileBuilder(object):
                  }
         aggr_cursor = self.catalog().find_test_cases_archive(query)
         fail_count = aggr_cursor.count()
-        print "Total failed test cases in build '%s': %s" % (self.aggregated_build_name(), fail_count)
+        print("Total failed test cases in build '%s': %s"
+              % (self.aggregated_build_name(), fail_count))
         file_dict = {}
 
         for tc in aggr_cursor:
@@ -108,13 +103,13 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             doc_str = """
-- name: '%s'
-  product_suite: '%s'
+- name: %s
+  product_suite: %s
   status: %s
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  build_name_verified: bvs master #nnn
 """ % (tc_name, product_suite, status)
+            doc_str += "  jira: "
+            doc_str += "  notes: "
 
             if file_name not in file_dict:
                 # First time we're writing to this file
@@ -138,11 +133,15 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 """
     parser = argparse.ArgumentParser(prog='create_verification_files',
                                      description=descr)
-    parser.add_argument('--build',
-                        help=("Build name,"
-                              " e.g., 'bvs master ironhorse beta2 aggregated'"))
-    parser.add_argument('--force-overwrite', action='store_true', default=False,
-                        help=("Overwrite the existing verification files"))
+    parser.add_argument(
+                '--build',
+                help=("Build name,"
+                      " e.g., 'bvs master ironhorse beta2 aggregated'"))
+    parser.add_argument(
+                '--force-overwrite',
+                action='store_true',
+                default=False,
+                help=("Overwrite the existing verification files"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -158,5 +157,6 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 
 if __name__ == '__main__':
     args = prog_args()
-    verification_builder = VerificationFileBuilder(args.build, args.force_overwrite)
+    verification_builder = VerificationFileBuilder(args.build,
+                                                   args.force_overwrite)
     verification_builder.do_it()
