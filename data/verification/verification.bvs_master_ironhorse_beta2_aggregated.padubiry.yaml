@@ -21,370 +21,515 @@
 #
 # * Examples:
 #
-#   - name: 'Verify L3 traffic honor more specific routes with ecmp group'
-#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
 #     status: PASS
 #     build_name_verified: 'bvs master #2794'
 #     jira: 
-#     notes: 'I manually verified this and it works.'
+#     notes: I manually verified this and it works.
 #
-#   - name: 'Add and delete all ECMP members in ecmp group'
-#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
 #     status: FAIL
 #     build_name_verified: 'bvs master #2806'
 #     jira: BVS-1598
-#     notes:
-#       'This test case failed continuously in regression. It also fails
-#       in my testbed some of the time.'
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
 #
 
 
-- name: 'Verify broadcast forwarding with spine link failover'
-  product_suite: 'T5/Fabric/t5_fabric_lag_test'
+- name: Verify Duplicate ARP broadcast on Edge Port groups
+  product_suite: T5/Fabric/t5_fabric_lag_test
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  jira: 
+  notes: 
 
-- name: 'Verifying Duplicate packets for ARP broadcast over the fabric'
-  product_suite: 'T5/Fabric/t5_fabric_lag_test'
+- name: Verify Duplicate Multicast packets on edge port groups
+  product_suite: T5/Fabric/t5_fabric_lag_test
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  jira: 
+  notes: 
 
-- name: 'Verifying Duplicate packets for VRRP Multicast packets over the fabric'
-  product_suite: 'T5/Fabric/t5_fabric_lag_test'
+- name: check edge port members in the vlan-table with linkup/down
+  product_suite: T5/L2/t5_multiple_vns_forwarding
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  jira: 
+  notes: 
 
-- name: 'Verifying Duplicate packets for Non IP multicast packets over the fabric'
-  product_suite: 'T5/Fabric/t5_fabric_lag_test'
+- name: Check multicast source mac learning on the controller
+  product_suite: T5/L2/t5_multiple_vns_forwarding
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+  jira: 
+  notes: 
 
-- name: 'add same interface to multiple tag onto same VNS'
-  product_suite: 'T5/L2/t5_app_cli'
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual chaning of switch/DPID/Role may not allow.
-
-- name: 'Test to check all the cidr routes are created in spine and leaf switches'
-  product_suite: 'T5/L2/t5_fabric_negative'
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira:
-  notes: txt file issue , Fixed.
-
-- name: 'With 2k mac entries , Remove the Leaf switch and Readd the leaf switch'
-  product_suite: 'T5/L2/t5_fabric_negative'
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira:
-  notes: Looks like with ZTN we need to wait for some tims to delete the switch , Should be fixed.
-
-- name: 'Test VFT push to when system has not connected switches'
-  product_suite: 'T5/L2/t5_fabric_negative'
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira:
-  notes: txt file issue , should be fixed
-
-- name: 'verifying flow reconsilation when new switch is connected to the fabric'
-  product_suite: 'T5/L2/t5_fabric_negative'
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira:
-  notes: txt file issue , should be fixed
-
-- name: 'Add leaf group from 2 different rack and verify the status and check the fabric error'
-  product_suite: 'T5/Fabric/t5_fabric_switch_check'
+- name: Master controller node reboot with multiple vns forwarding
+  product_suite: T5/L2/t5_multiple_vns_forwarding
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  jira: 
+  notes: 
 
-- name: 'add leaf group before leaf role to check the config error'
-  product_suite: 'T5/Fabric/t5_fabric_switch_check'
+- name: restart ofad to verify the fabric link
+  product_suite: T5/L2/t5_fabric_negative
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+  jira: 
+  notes: 
 
-- name: 'add portgroup lacp to 2 different rack'
-  product_suite: 'T5/Fabric/t5_fabric_link'
+- name: tagged/untagged packet Mac move within the rack0
+  product_suite: T5/L2/t5_mac_move_age
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
-
-- name: 'Verify the Fabric feature Role Spine0'
-  product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
-
-- name: 'delete/add the Fabric role spine0'
-  product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
-
-- name: 'delete/add Fabric role leaf in dual leaf setup'
-  product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
-
-- name: 'verify rack1 connectivity ,when link down from leaf1b-spine1'
-  product_suite: 'T5/Fabric/t5_rack_detection'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
-
-- name: 'verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1'
-  product_suite: 'T5/Fabric/t5_rack_detection'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
-
-- name: 'tagged/untagged packet Mac move within the rack0'
-  product_suite: 'T5/L2/t5_mac_move_age'
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Rerun , seems like IXIA issue
 
-- name: 'tagged/untagged packet move between rack'
-  product_suite: 'T5/L2/t5_mac_move_age'
+- name: tagged/untagged packet move between rack
+  product_suite: T5/L2/t5_mac_move_age
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Rerun , seems like IXIA issue
 
-- name: 'MAC move test after master controller node reboot'
-  product_suite: 'T5/L2/t5_mac_move_age'
+- name: MAC move test after master controller node reboot
+  product_suite: T5/L2/t5_mac_move_age
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Rerun , seems like IXIA issue
 
-- name: 'Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)'
-  product_suite: 'T5/Fabric/t5_fabric_traffic_failover'
+- name: Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
+  product_suite: T5/Fabric/t5_fabric_traffic_failover
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'HA failover with lacp host'
-  product_suite: 'T5/Fabric/t5_fabric_traffic_failover'
+- name: HA failover with lacp host
+  product_suite: T5/Fabric/t5_fabric_traffic_failover
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'Verify single vns rx/tx rates same rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: Verify single VNS rx/tx stats between rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
+  notes: 
+
+- name: Verify single vns rx/tx rates same rack
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
   notes: IXIA issue
 
-- name: 'verify single vns rx/tx rates different rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify single vns rx/tx rates different rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: IXIA issue
 
-- name: 'verify interface rx/tx stats different rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify interface rx/tx stats different rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: IXIA issue
 
-- name: 'verify interface rx/tx rates different rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify interface rx/tx rates different rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: IXIA issue
 
-- name: 'verify interface rx/tx rates same rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify interface rx/tx rates same rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: IXIA issue
 
-- name: 'verify interface LLDP/control packet count different rack'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify interface rx/tx broadcast packet stats different rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
+  notes: 
+
+- name: verify interface rx/tx multicast packets stats
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: verify interface LLDP/control packet count different rack
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
   notes: IXIA issue
 
-- name: 'verify multiple tenant rates'
-  product_suite: 'T5/L2/t5_vns_stats'
+- name: verify multiple vns counters different rack
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
+  notes: 
+
+- name: verify multiple vns counters on 2 different tenant
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: verify the single tenant stats
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: verify single tenant stats using multiple VNS
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: verify multiple tenant stats
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: verify multiple tenant rates
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
   notes: IXIA issue
 
-- name: 'Setup Three Rack Dual Leaf Topology'
-  product_suite: 'T5/L2/t5_alpha_pr'
+- name: Master node controller reboot with multiple vns/interface stats
+  product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
+  notes: 
+
+- name: Setup Three Rack Dual Leaf Topology
+  product_suite: T5/L2/t5_alpha_pr
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
   notes: IXIA issue
 
-- name: 'Static endpoint age test'
-  product_suite: 'T5/L2/t5_alpha_pr'
+- name: Static endpoint age test
+  product_suite: T5/L2/t5_alpha_pr
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: For some reason IXIA ARP getway is not resolved
 
-- name: 'static endpoint membership rule change test'
-  product_suite: 'T5/L2/t5_alpha_pr'
+- name: static endpoint membership rule change test
+  product_suite: T5/L2/t5_alpha_pr
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: For some reason IXIA ARP getway is not resolved
 
-- name: 'Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes: Seems like Performance system is changed , Earlier within 10 sec 4000 mac on 2 ports used to learn , now it might take about 12 sec , so test will fail.
+  jira: 
+  notes: 
 
-- name: 'Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Aging timing needs to be fine tuned based on Rich lane explanation
 
-- name: 'Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Aging timing needs to be fine tuned based on Rich lane explanation
 
-- name: 'Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Aging timing needs to be fine tuned based on Rich lane explanation
 
-- name: 'spine switch reboot with 48k mac address in the system'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: spine link failover with 48k mac address in the system
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
+  notes: 
+
+- name: spine switch shutdown with 48k mac address in the system
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: spine switch reboot with 48k mac address in the system
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
   notes: With ZTN , any command on switchlight will fail
 
-- name: 'Master controller node reboot with 48k mac entries'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Master controller node reboot with 48k mac entries
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: With ZTN , any command on switchlight will fail
 
-- name: 'Add 16k static endpoints and check the forwarding also check with master reboot'
-  product_suite: 'T5/L2/t5_mac_scale'
+- name: Mac move at scale 1k mac between rack
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Mac move at scale 16k between rack
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Mac move at scale 48k between rack
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Add 16k static endpoints and check the forwarding also check with master reboot
+  product_suite: T5/L2/t5_mac_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: BSC-4851
-  notes: Known config size issue 
+  notes: Known config size issue
 
-- name: 'add Dual Leaf Three Rack setup'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: add Dual Leaf Three Rack setup
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'create 100 vns and verify the table and forwarding'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: create 100 vns and verify the table and forwarding
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'create 1k vns and verify the table and forwarding'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: create 1k vns and verify the table and forwarding
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'create 4000 vns and verify the table and forwarding'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: create 4000 vns and verify the table and forwarding
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'Master controller node reboot with 4k vns'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: Master controller node reboot with 4k vns
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'create 4000 vns and all interface ,verify the table and forwarding'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: create 4000 vns and all interface ,verify the table and forwarding
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'Tear down the config'
-  product_suite: 'T5/L2/t5_vns_scale'
+- name: Tear down the config
+  product_suite: T5/L2/t5_vns_scale
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
-- name: 'ping h2 to h3 dual rack single leaf dynamic endpoints'
-  product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
+- name: ping h2 to h3 dual rack single leaf dynamic endpoints
+  product_suite: T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: No reason we should get this failed . Should have been passed , This is a smoke Test
 
-- name: 'ping h2 to h3 dual rack single leaf static endpoints'
-  product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
+- name: ping h2 to h3 dual rack single leaf static endpoints
+  product_suite: T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Should have been passed , This is a smoke Test
 
-- name: 'ping h2 to h3 dual rack single leaf dynamic endpoints tag'
-  product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
+- name: ping h2 to h3 dual rack single leaf dynamic endpoints tag
+  product_suite: T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Should have been passed , This is a smoke Test
 
-- name: 'ping h2 to h3 dual rack single leaf static endpoints tag'
-  product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
+- name: ping h2 to h3 dual rack single leaf static endpoints tag
+  product_suite: T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
+  jira: 
   notes: Should have been passed , This is a smoke Test
+
+- name: Add leaf group from 2 different rack and verify the status and check the fabric error
+  product_suite: T5/Fabric/t5_fabric_switch_check
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: Verify broadcast forwarding with spine link failover
+  product_suite: T5/Fabric/t5_fabric_lag_test
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+
+- name: Verifying Duplicate packets for ARP broadcast over the fabric
+  product_suite: T5/Fabric/t5_fabric_lag_test
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+
+- name: Verifying Duplicate packets for VRRP Multicast packets over the fabric
+  product_suite: T5/Fabric/t5_fabric_lag_test
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+
+- name: Verifying Duplicate packets for Non IP multicast packets over the fabric
+  product_suite: T5/Fabric/t5_fabric_lag_test
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
+
+- name: add leaf group before leaf role to check the config error
+  product_suite: T5/Fabric/t5_fabric_switch_check
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: add portgroup lacp to 2 different rack
+  product_suite: T5/Fabric/t5_fabric_link
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: Verify the Fabric feature Role Spine0
+  product_suite: T5/Fabric/t5_fabric_role_change
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: delete/add the Fabric role spine0
+  product_suite: T5/Fabric/t5_fabric_role_change
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: delete/add Fabric role leaf in dual leaf setup
+  product_suite: T5/Fabric/t5_fabric_role_change
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
+
+- name: verify rack1 connectivity ,when link down from leaf1b-spine1
+  product_suite: T5/Fabric/t5_rack_detection
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
+
+- name: verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1
+  product_suite: T5/Fabric/t5_rack_detection
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
+
+- name: Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
+  product_suite: T5/L2/t5_mac_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Seems like Performance system is changed , Earlier within 10 sec 4000 mac on 2 ports used to learn , now it might take about 12 sec , so test will fail.
+
+- name: Test VFT push to when system has not connected switches
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
+  jira: 
+  notes: txt file issue , should be fixed
+
+- name: With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
+  jira: 
+  notes: Looks like with ZTN we need to wait for some tims to delete the switch , Should be fixed.
+
+- name: verifying flow reconsilation when new switch is connected to the fabric
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
+  jira: 
+  notes: txt file issue , should be fixed
+
+- name: add same interface to multiple tag onto same VNS
+  product_suite: T5/L2/t5_app_cli
+  status: PASS
+  build_name_verified: 'bvs master #2882'
+  jira: 
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual chaning of switch/DPID/Role may not allow.
+
+- name: Test to check all the cidr routes are created in spine and leaf switches
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
+  jira: 
+  notes: txt file issue , Fixed.

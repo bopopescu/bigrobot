@@ -21,111 +21,662 @@
 #
 # * Examples:
 #
-#   - name: 'Verify L3 traffic honor more specific routes with ecmp group'
-#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
 #     status: PASS
 #     build_name_verified: 'bvs master #2794'
 #     jira: 
-#     notes: 'I manually verified this and it works.'
+#     notes: I manually verified this and it works.
 #
-#   - name: 'Add and delete all ECMP members in ecmp group'
-#     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
 #     status: FAIL
 #     build_name_verified: 'bvs master #2806'
 #     jira: BVS-1598
-#     notes:
-#       'This test case failed continuously in regression. It also fails
-#       in my testbed some of the time.'
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
 #
 
 
-- name: 'T33 Interface tenant add/remove permit policy src-ip-port to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T1 Interface tenant add/remove permit policy src-ip to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T35 Interface tenant add/remove permit policy src-ip-port to dest-vns'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T2 Interface tenant add/removedeny policy src-ip to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T37 Interface tenant add/remove permit src-ip-port to dest-tenant'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T3 Interface tenant add/remove permit policy src-ip to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T39 Interface tenant add/remove permit policy src-ip-port to any'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T4 Interface tenant add/remove deny policy src-ip to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T43 Interface tenant add/remove permit policy src-vns to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T5 Interface tenant add/remove permit policy src-ip to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T45 Interface tenant add/remove permit policy any to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T6 Interface tenant add/remove deny policy src-ip to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T80 Interface system tenant add/remove permit policy src-ip-port to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T7 Interface tenant add/remove permit policy src-ip to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T82 Interface system tenant add/remove permit policy src-ip-port to dest-vns'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T8 Interface tenant add/remove deny policy src-ip to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T84 Interface system tenant add/remove permit src-ip-port to dest-tenant'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T9 Interface tenant add/remove permit policy src-tenant to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T86 Interface system tenant add/remove permit policy src-ip-port to any'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T10 Interface tenant add/remove deny policy src-tenant to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T88 Interface system tenant add/remove permit policy src-tenant to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T11 Interface tenant add/remove permit policy src-tenant to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T90 Interface system tenant add/remove permit policy src-vns to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T12 Interface tenant add/remove deny policy src-tenant to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
 
-- name: 'T92 Interface system tenant add/remove permit policy any to dest-ip-port'
-  product_suite: 'T5/T5_Policy_Physical/t5_policy_physical_inter'
+- name: T13 Interface tenant add/remove permit policy src-tenant to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira:
-  notes:
+  jira: 
+  notes: 
+
+- name: T14 Interface tenant add/remove deny policy src-tenant to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T15 Interface tenant add/remove permit policy src-tenant to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T16 Interface tenant add/remove deny policy src-tenant to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T17 Interface tenant add/remove permit policy src-vns to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T18 Interface tenant add/remove deny policy src-vns to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T19 Interface tenant add/remove permit policy src-vns to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T20 Interface tenant add/remove deny policy src-vns to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T21 Interface tenant add/remove permit policy src-vns to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T22 Interface tenant add/remove deny policy src-vns to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T23 Interface tenant add/remove permit policy src-vns to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T24 Interface tenant add/remove deny policy src-vns to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T25 Interface tenant add/remove permit policy any to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T26 Interface tenant add/remove deny policy any to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T27 Interface tenant add/remove permit policy any to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T28 Interface tenant add/remove deny policy any to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T29 Interface tenant add/remove permit policy any to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T30 Interface tenant add/remove deny policy any to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T31 Interface tenant add/remove permit policy any to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T32 Interface tenant add/remove deny policy any to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T33 Interface tenant add/remove permit policy src-ip-port to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T34 Interface tenant add/remove deny policy src-ip-port to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T35 Interface tenant add/remove permit policy src-ip-port to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T36 Interface tenant add/remove deny policy src-ip-port to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T37 Interface tenant add/remove permit src-ip-port to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T38 Interface tenant add/remove deny src-ip-port to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T39 Interface tenant add/remove permit policy src-ip-port to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T40 Interface tenant add/remove deny policy src-ip-port to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T41 Interface tenant add/remove permit policy src-tenant to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T42 Interface tenant add/remove deny policy src-tenant to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T43 Interface tenant add/remove permit policy src-vns to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T44 Interface tenant add/remove deny policy src-vns to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T45 Interface tenant add/remove permit policy any to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T46 Interface tenant add/remove deny policy any to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T48 Interface system tenant add/remove permit policy src-ip to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T49 Interface system tenant add/remove deny policy src-ip to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T50 Interface system tenant add/remove permit policy src-ip to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T51 Interface system tenant add/remove deny policy src-ip to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T52 Interface system tenant add/remove permit policy src-ip to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T53 Interface system tenant add/remove deny policy src-ip to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T54 Interface system tenant add/remove permit policy src-ip to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T55 Interface system tenant add/remove deny policy src-ip to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T56 Interface system tenant add/remove permit policy src-tenant to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T57 Interface system tenant add/remove deny policy src-tenant to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T58 Interface system tenant add/remove permit policy src-tenant to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T59 Interface system tenant add/remove deny policy src-tenant to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T60 Interface system tenant add/remove permit policy src-tenant to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T61 Interface system tenant add/remove deny policy src-tenant to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T62 Interface system tenant add/remove permit policy src-tenant to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T63 Interface system tenant add/remove deny policy src-tenant to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T64 Interface system tenant add/remove permit policy src-vns to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T65 Interface system tenant add/remove deny policy src-vns to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T66 Interface system tenant add/remove permit policy src-vns to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T67 Interface system tenant add/remove deny policy src-vns to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T68 Interface system tenant add/remove permit policy src-vns to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T69 Interface system tenant add/remove deny policy src-vns to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T70 Interface system tenant add/remove permit policy src-vns to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T71 Interface system tenant add/remove deny policy src-vns to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T72 Interface system tenant add/remove permit policy any to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T73 Interface system tenant add/remove deny policy any to dest-ip
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T74 Interface system tenant add/remove permit policy any to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T75 Interface system tenant add/remove deny policy any to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T76 Interface system tenant add/remove permit policy any to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T77 Interface system tenant add/remove deny policy any to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T78 Interface system tenant add/remove permit policy any to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T79 Interface system tenant add/remove deny policy any to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T80 Interface system tenant add/remove permit policy src-ip-port to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T81 Interface system tenant add/remove deny policy src-ip-port to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T82 Interface system tenant add/remove permit policy src-ip-port to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T83 Interface system tenant add/remove deny policy src-ip-port to dest-vns
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T84 Interface system tenant add/remove permit src-ip-port to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T85 Interface system tenant add/remove deny src-ip-port to dest-tenant
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T86 Interface system tenant add/remove permit policy src-ip-port to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T87 Interface system tenant add/remove deny policy src-ip-port to any
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T88 Interface system tenant add/remove permit policy src-tenant to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T89 Interface system tenant add/remove deny policy src-tenant to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T90 Interface system tenant add/remove permit policy src-vns to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T91 Interface system tenant add/remove deny policy src-vns to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T92 Interface system tenant add/remove permit policy any to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: T93 Interface system tenant add/remove deny policy any to dest-ip-port
+  product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
