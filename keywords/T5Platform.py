@@ -2962,7 +2962,7 @@ class T5Platform(object):
         n_console.send(dnsserver)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect(r'Error:.*')
+            n_console.expect([r'Error:.*',r' '])
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
 
