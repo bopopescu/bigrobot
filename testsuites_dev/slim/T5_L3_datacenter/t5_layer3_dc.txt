@@ -1420,15 +1420,15 @@ initialize host
 	BASH init intf                              h1-rack2                                bond0
     BASH init intf                              h2-rack2                                bond0
     BASH init intf                              h3-rack2                                bond0
-	BASH ifdown intf							h1-rack0 								bond0
-	BASH ifdown intf							h2-rack0								bond0
-	BASH ifdown intf							h3-rack0								bond0
-	BASH ifdown intf							h1-rack1								bond0
-	BASH ifdown intf							h2-rack1								bond0
-	BASH ifdown intf							h3-rack1								bond0
-	BASH ifdown intf                            h1-rack2                                bond0
-    BASH ifdown intf                            h2-rack2                                bond0
-    BASH ifdown intf                            h3-rack2                                bond0
+	BASH ifup intf							    h1-rack0 								bond0
+	BASH ifup intf							    h2-rack0								bond0
+	BASH ifup intf							    h3-rack0								bond0
+	BASH ifup intf							    h1-rack1								bond0
+	BASH ifup intf							    h2-rack1								bond0
+	BASH ifup intf							    h3-rack1								bond0
+	BASH ifup intf                              h1-rack2                                bond0
+    BASH ifup intf                              h2-rack2                                bond0
+    BASH ifup intf                              h3-rack2                                bond0
 	BASH release dhcpv4 address					h1-rack0								bond0
 	BASH release dhcpv4 address					h2-rack0								bond0
 	BASH release dhcpv4 address					h3-rack0								bond0
