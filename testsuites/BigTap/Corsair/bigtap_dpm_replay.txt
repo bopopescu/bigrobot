@@ -51,9 +51,9 @@ TC2:Send GRE packets and verify match on inner source IP
     verify packet count 
     [Tags]  gre
 TC3:Send GRE packets and verify match on inner destination IP
-    ${set_udf}=  rest add bigtap udf  0  l3-start  48
+    ${set_udf}=  rest add bigtap udf  0  l3-start  40
     Should be true  ${set_udf}
-    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 48}}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 40}}
     Should be true  ${set_policy_match}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -64,7 +64,7 @@ TC3:Send GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  10
     verify packet count 
-    [Tags]  gre
+    [Tags]  gre  sandip
 
 TC4:Send GRE within GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  60
@@ -424,7 +424,7 @@ TC25: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
 TC26: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  44
     Should be true  ${set_udf_1}
-    ${set_udf_2}=  rest add bigtap udf  0  l3-start  48
+    ${set_udf_2}=  rest add bigtap udf  1  l3-start  48
     Should be true  ${set_udf_2}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 65535, "anchor": "l3-start", "value": 2048, "offset": 44}, "offset-match-1": {"mask": 4026531840, "anchor": "l3-start", "value": 1342177280, "offset": 48}}
     Should be true  ${set_policy_match}
@@ -569,6 +569,14 @@ corsair test setup
     
 corsair test teardown
     REST delete policy  admin-view  ${policy_name_1}
+    ${set_udf_0}=  rest add bigtap udf  0  l4-start  8    
+    Should be true  ${set_udf_0}
+    ${set_udf_1}=  rest add bigtap udf  1  l4-start  12    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  2  l4-start  20    
+    Should be true  ${set_udf_2}
+    ${set_udf_3}=  rest add bigtap udf  3  l4-start  24    
+    Should be true  ${set_udf_3}            
     sleep  5
 
 
