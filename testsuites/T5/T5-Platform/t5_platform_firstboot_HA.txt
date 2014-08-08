@@ -10,7 +10,6 @@ Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py
 Library	         keywords/T5.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
@@ -31,7 +30,7 @@ ${VIP1}         10.9.16.19
 ${VIP2}         10.9.16.20
 ${namec1}       MY-T5-C10
 ${namec2}       MY-T5-C11
-${ipcno}        10.192.105.255
+${ipcno}        10.9.16.255
 
 
 * Test Case
@@ -139,6 +138,7 @@ T1.10 first boot of controller join an non existing cluster
   	first_boot_controller_initial_node_setup        c2  no   ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}
 	first_boot_controller_initial_cluster_setup 	c2  yes   cluster_ip=${ipcno}
 	${result}=  first_boot_controller_menu_apply_negative	    c2    cluster_ip=${ipc1}
+	
 	Should be True     ${result}  
 	 	   	
 	[Tags] 	full  feature   firstboot     HA

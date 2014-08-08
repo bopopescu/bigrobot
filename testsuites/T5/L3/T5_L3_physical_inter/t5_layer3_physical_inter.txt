@@ -162,7 +162,7 @@ L3 inter tenant forwarding to external router
 
 L3 inter tenant forwarding to VRRP routers
     manual failed
-    [Tags]          manual          feature         BVS-1701
+    [Tags]          manual          feature        
 
 L3 inter tenant traceroute with icmp and udp probe
     L3 inter tenant traceroute with icmp and udp probe
@@ -206,7 +206,7 @@ L3 inter tenant shutdown and bringup both spine switch
 
 L3 inter tenant destroy active controller VM from KVM
     manual passed
-    [Tags]          manual            feature       jira-BVS-1695   
+    [Tags]          manual            feature        
 
 L3 inter tenant destroy standby controller VM from KVM
     manual passed

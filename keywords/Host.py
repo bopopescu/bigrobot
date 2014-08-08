@@ -281,11 +281,11 @@ class Host(object):
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
         if int(return_stat) == 1:
-            helpers.log("I am here")
+#            helpers.log("I am here")
             return ''
         else:
-            helpers.log("I am there")
-            helpers.log("output: %s" % output)
+#            helpers.log("I am there")
+#            helpers.log("output: %s" % output)
             output = helpers.strip_cli_output(output)
             result = re.search('HWaddr (.*)', output)
             mac_addr = result.group(1)
@@ -445,3 +445,36 @@ class Host(object):
             n.sudo("ifconfig %s %s up" % (intf, ipaddr))
         return True
 
+    def bash_lsb_release(self, node, minor=False, soft_error=False):
+        """
+        Return the Ubuntu release number. Ubuntu release numbers typically has
+        the format "14.04" or "12.04".
+        - By default, return the major version number, e.g., 14 or 12.
+        - If minor=True, return the minor version number, e.g., 0.3 or 0.4.
+        """
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash("lsb_release -r")['content']
+        match = re.search(r'Release:\s+(\d+)\.(\d+)', content, re.M)
+        if match:
+            if minor:
+                return int(match.group(2))
+            else:
+                return int(match.group(1))
+        else:
+            helpers.test_error("lsb_release command output is invalid",
+                               soft_error=soft_error)
+
+    def bash_restart_networking_service(self, node, timeout=None):
+        """
+        Restart networking service.
+        """
+        t = test.Test()
+        h = t.controller(node)
+        major_version = self.bash_lsb_release(node)
+        helpers.log("Host %s is running Ubuntu major version %s"
+                    % (node, major_version))
+        if major_version == 14:
+            h.sudo("service networking restart", timeout=timeout)
+        else:
+            h.sudo("/etc/init.d/networking restart", timeout=timeout)

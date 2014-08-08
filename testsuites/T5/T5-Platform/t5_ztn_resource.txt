@@ -42,11 +42,11 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	Sleep  10
-	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
 	Sleep  10
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	Sleep  180
+	Sleep  30
 	#Reboot Switches From CLI
 	#Reboot Switches
 	#Power Cycle All Switches
@@ -64,8 +64,9 @@ Suite Setup
 	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
-	Sleep  60
+	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
@@ -192,7 +193,7 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server community ro ${community_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
-	Cli Run  master  snmp-server enable traps
+#	Cli Run  master  snmp-server enable traps
 	${threshold_random}  Generate Random Threshold
 	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
 	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
@@ -279,8 +280,15 @@ Failover
 	Sleep  30
 #	Should Be True  ${status}
 
-Reboot Switches
 
+Trigger All Switches Reboot
+	Telnet Reboot Switch  s1
+	Telnet Reboot Switch  s2
+	Telnet Reboot Switch  s3
+	Telnet Reboot Switch  s4
+	Telnet Reboot Switch  s5
+
+Reboot Switches
 	Telnet Reboot Switch  s1
 	Telnet Reboot Switch  s2
 	Telnet Reboot Switch  s3

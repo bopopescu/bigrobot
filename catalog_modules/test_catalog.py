@@ -62,10 +62,6 @@ class TestCatalog(object):
     def find_test_cases_archive(self, query):
         return self.test_cases_archive_collection().find(query)
 
-    def find_test_cases_archive_matching_build(self, build_name):
-        query = {"build_name": build_name}
-        return self.test_cases_archive_collection().find(query)
-
     def insert_doc(self, collection, document):
         if '_id' in document:
             del document['_id']
@@ -81,8 +77,7 @@ class TestCatalog(object):
                 )
 
     def find_docs(self, collection, query):
-        count = self.db()[collection].find(query).count()
-        return count
+        return self.db()[collection].find(query)
 
     def find_builds_matching_build(self, build_name):
         return self.find_docs(collection='builds',
@@ -95,6 +90,11 @@ class TestCatalog(object):
     def find_test_cases_matching_build(self, build_name):
         return self.find_docs(collection='test_cases',
                               query={"build_name": build_name})
+
+    def find_test_cases_archive_matching_build(self, build_name):
+        return self.find_docs(collection='test_cases_archive',
+                              query={"build_name": build_name})
+
 
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()
@@ -113,3 +113,8 @@ class TestCatalog(object):
     def remove_test_cases_matching_build(self, build_name):
         return self.remove_docs(collection='test_cases',
                                 query={"build_name": build_name})
+
+    def remove_test_cases_archive_matching_build(self, build_name):
+        return self.remove_docs(collection='test_cases_archive',
+                                query={"build_name": build_name})
+
