@@ -1256,12 +1256,6 @@ class Test(object):
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
-        console = self.params(name, 'console')
-
-        c1_ip = self.params('c1', 'ip')
-        c2_ip = self.params('c2', 'ip')
-        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
-        master = self.controller("master")
         if re.match(r'.*spine.*', self.params(name, 'alias')):
             fabric_role = 'spine'
         elif re.match(r'.*leaf.*', self.params(name, 'alias')):
@@ -1270,7 +1264,11 @@ class Test(object):
         else:
             helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
             return True
-
+        c1_ip = self.params('c1', 'ip')
+        c2_ip = self.params('c2', 'ip')
+        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
+        master = self.controller("master")
+        console = self.params(name, 'console')
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
@@ -1404,14 +1402,6 @@ class Test(object):
                         self.setup_switch_post_clean_config(key)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
-                if re.match(r'.*spine.*', self.params(key, 'alias')):
-                    fabric_role = 'spine'
-                elif re.match(r'.*leaf.*', self.params(key, 'alias')):
-                    fabric_role = 'leaf'
-                    leaf_group = self.params(key, 'leaf-group')
-                else:
-                    helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
-                    return True
                 master = self.controller("master")
                 standby = self.controller("c2")
                 for key in params:
