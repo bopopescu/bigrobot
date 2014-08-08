@@ -37,6 +37,30 @@
 #
 
 
+### new entry in recent 'bvs master ironhorse beta2 aggregated'
+- name: Set variable
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master ironhorse beta2 aggregated'
+- name: T2.1 first boot of controller in standalone via static IP after boot factory default
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master ironhorse beta2 aggregated'
+- name: T2.2 Test first boot of controller menu node for standalone
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
 - name: T2.3 Verify with invalid DNS server IP address
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -72,6 +96,14 @@
   jira: 
   notes: 
 
+### new entry in recent 'bvs master ironhorse beta2 aggregated'
+- name: T2.8 Test first boot of controller join cluster with same ip and itself
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
 - name: T2.9 Test first boot of controller menu invalid cluster name
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -86,43 +118,23 @@
   jira: 
   notes: 
 
+- name: T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master ironhorse beta2 aggregated'
+- name: T2.12 Verification of configs in local node mode
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
 - name: T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
   product_suite: T5/T5-Platform/t5_platform_firstboot_dhcp_mis
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T1.1 first boot of controller in HA mode via static IP after boot factory default
-  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T1.5 Test controller reboot
-  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T1.6 Verification of CLI commands (whoami , ping , set length , history , reauth)
-  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T1.7 Traceroute
-  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T1.8 Watch debug command output
-  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
@@ -235,13 +247,6 @@
 
 - name: T3.3 BPDU guard rapid-pvst with matched vlan
   product_suite: T5/T5-Platform/t5_bpdu_guard
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
-- name: T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
-  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 

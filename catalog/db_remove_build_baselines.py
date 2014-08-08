@@ -23,11 +23,11 @@ if not 'BUILD_NAME' in os.environ:
 def find_test_data():
     cat = TestCatalog()
     build_count = cat.find_builds_matching_build(
-                        os.environ['BUILD_NAME'])
+                        os.environ['BUILD_NAME']).count()
     suite_count = cat.find_test_suites_matching_build(
-                        os.environ['BUILD_NAME'])
+                        os.environ['BUILD_NAME']).count()
     test_count = cat.find_test_cases_matching_build(
-                        os.environ['BUILD_NAME'])
+                        os.environ['BUILD_NAME']).count()
     print("Found builds(%s), suites(%s), and tests(%s) matching build '%s'."
           % (build_count, suite_count, test_count, os.environ['BUILD_NAME']))
     return (build_count, suite_count, test_count)

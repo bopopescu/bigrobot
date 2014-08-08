@@ -37,13 +37,7 @@
 #
 
 
-- name: T3 enable mode cli walk
-  product_suite: T5/T5-Platform/T5_cli_walk
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
-
+### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
 - name: T4 config mode cli walk
   product_suite: T5/T5-Platform/T5_cli_walk
   status: PASS
