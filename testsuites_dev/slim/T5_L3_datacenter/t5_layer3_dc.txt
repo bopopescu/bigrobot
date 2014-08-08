@@ -1862,7 +1862,8 @@ T5 base suite teardown
     REST delete tenant                         Z
     REST delete tenant                         External
     REST delete tenant                         system
-    
+    BASH restart networking service             h1-rack0            timeout=60
+    bash_restart_networking_service             h1-rack1            timeout=60
 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
