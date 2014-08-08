@@ -465,7 +465,7 @@ class Host(object):
             helpers.test_error("lsb_release command output is invalid",
                                soft_error=soft_error)
 
-    def bash_restart_networking_service(self, node):
+    def bash_restart_networking_service(self, node, timeout=None):
         """
         Restart networking service.
         """
@@ -475,6 +475,6 @@ class Host(object):
         helpers.log("Host %s is running Ubuntu major version %s"
                     % (node, major_version))
         if major_version == 14:
-            h.sudo("service networking restart")
+            h.sudo("service networking restart", timeout=timeout)
         else:
-            h.sudo("/etc/init.d/networking restart")
+            h.sudo("/etc/init.d/networking restart", timeout=timeout)
