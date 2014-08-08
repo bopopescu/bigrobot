@@ -1607,9 +1607,9 @@ setup topology
     REST add vns ip             External                   Arista2-pc3          10.98.3.2           24        
     REST add vns ip             External                   Arista2-pc4          10.98.4.2           24        
     REST add vns ip             External                   Arista2-pc5          10.98.5.2           24              
-    REST add vns ip             External                   external-vrrp        10.99.99.5          24                      
-    
+    REST add vns ip             External                   external-vrrp        10.99.99.5          24   
 	REST add nexthop group                          External                        ecmp-A1
+    REST add nexthop group                          External                        ecmp-A16
     REST add nexthopGroup ip                        External                        ecmp-A1                 10.99.3.1
     REST add nexthopGroup ip                        External                        ecmp-A1                 10.99.5.1
     REST add nexthopGroup ip                        External                        ecmp-A16                10.98.21.1
@@ -1691,8 +1691,20 @@ setup topology
     REST add interface to vns       Z           Y192        leaf2-a             ethernet33      -1
     REST add interface to vns       Z           X224        leaf2-b             ethernet33      -1
     REST add portgroup to vns       Z           Z3          leaf2-pc3               -1
-
-    	
+    REST add tenant routers intf to system          X
+    REST add tenant routers intf to system          Y
+    REST add tenant routers intf to system          Z
+    REST add tenant routers intf to system          External
+    REST add system intf to tenant routers          External
+    REST add system intf to tenant routers          X
+    REST add system intf to tenant routers          Y
+    REST add system intf to tenant routers          Z
+    REST add static routes                          X                           0.0.0.0/0           {"tenant": "system"}
+    REST add static routes                          Y                           0.0.0.0/0           {"tenant": "system"}
+    REST add static routes                          Z                           0.0.0.0/0           {"tenant": "system"}
+    REST add static routes                          External                    10.251.0.0/16       {"tenant": "system"}
+    REST add static routes                          External                    10.252.0.0/16       {"tenant": "system"}
+    REST add static routes                          External                    10.253.0.0/16       {"tenant": "system"}
 
   	
 teardown topology

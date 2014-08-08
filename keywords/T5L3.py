@@ -1551,7 +1551,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         t = test.Test()
         c = t.controller('master')
 
-        url = 'api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection'
+        url = '/api/v1/data/controller/applications/bcf/global-setting/enable-endpoint-flap-protection'
         try:
             c.rest.delete(url, {})
         except:
@@ -1566,17 +1566,18 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         '''Enable endpoint flap protection
          REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"enable-endpoint-flap-protection": true}
                     PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"enable-endpoint-flap-protection": true}
-
+                                                api/v1/data/controller/applications/bcf/global-setting
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
         helpers.log ("Inside rest enable endpoint flap protection")
-        url = 'api/v1/data/controller/applications/bcf/global-setting'
+        url = '/api/v1/data/controller/applications/bcf/global-setting'
         try:
-            helpers.log("Before patch command")
+            #helpers.log("Before patch command")
             result = c.rest.patch(url, {"enable-endpoint-flap-protection": True})
-            helpers.log("After patch command. result:%s" % helpers.prettify(result))
+            #helpers.log("After patch command. result:%s" % helpers.prettify(result))
+#        try:
         except:
             return False
             # helpers.test_failure(c.rest.error())
