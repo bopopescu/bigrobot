@@ -234,7 +234,13 @@ class VerificationFileBuilder(object):
         for author in self._test_case_dict:
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
+
             for key in self._test_case_dict[author]:
+
+                if not helpers.file_exists(new_file_name):
+                    helpers.file_copy(self.verification_header_template(),
+                                      new_file_name)
+
                 tc = self._test_case_dict[author][key]
                 if tc['status'] == 'FAIL':
                     if tc['jira'] or tc['notes']:
@@ -248,7 +254,6 @@ class VerificationFileBuilder(object):
                         pass
                 else:
                     # Contains user comments
-                    helpers.file_write_append_once(new_file_name, "\n### Was passed in manual verification. Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
                     tc['name'] = sanitize_string(tc['name'])
                     self.write_entry_to_file(tc, new_file_name)
 

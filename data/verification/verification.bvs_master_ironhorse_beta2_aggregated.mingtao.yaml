@@ -37,7 +37,6 @@
 #
 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: Set variable
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -45,7 +44,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: T2.1 first boot of controller in standalone via static IP after boot factory default
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -53,7 +51,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: T2.2 Test first boot of controller menu node for standalone
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -96,7 +93,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: T2.8 Test first boot of controller join cluster with same ip and itself
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
@@ -125,7 +121,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: T2.12 Verification of configs in local node mode
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
   status: FAIL
