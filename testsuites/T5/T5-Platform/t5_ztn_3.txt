@@ -239,7 +239,7 @@ T5.1.3. Power down, change config, failover
 	Verify All Switches Connected
 
 T5.1.4. Power down, delete, failover
-	Trigger All Switches Reboot
+	Cli Reboot Switch  master  all
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s1_alias}
 	Cli Run  master  no switch ${s2_alias}
