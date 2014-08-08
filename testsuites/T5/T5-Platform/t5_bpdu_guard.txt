@@ -25,10 +25,10 @@ ${medium}  5
 ${long}   30
 ${verylong}    120 
 ${arista_sw}    s100
-${arista_intf}    ethernet33
-${sw}             leaf1-b
-${swname}         s6
-${intf}           ethernet33
+${arista_intf}    ethernet47
+${sw}             leaf1-a
+${swname}         s3
+${intf}           ethernet47
 
 ${sw1dpid}   00:00:70:72:77:77:77:29
 ${sw6dpid}   00:00:70:72:cf:ab:3c:58
