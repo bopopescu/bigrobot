@@ -39,10 +39,10 @@
 
 - name: Verify private IP is able to communicate with other vns in the same tenanttrr
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: manual pass in my setup
 
 - name: Controller HA failover via CLI
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -123,7 +123,7 @@
 
 - name: Verify inter tenant L3 traffic is getting drop with null next hop
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, works manually on my setup
@@ -648,38 +648,38 @@
 
 - name: Verify private IP is able to communicate with other vns in the same tenant
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, manual testing on my setup is fine
 
 - name: Add and delete nexthop group
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: manual test pass on my setup
 
 - name: Add and delete nexthop group in system
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: manual test pass on my setup
 
 - name: Add and delete nexthop group IP
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: manual test pass on my setup
 
 - name: Verify ecmp traffic will failover and failback to more specific routes with ecmp group
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: manual test pass on my setup
 
 - name: Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -704,7 +704,7 @@
 
 - name: Add and delete more specific route on tenant over existing static route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, will update script. manual testing on my setup is fine
@@ -725,7 +725,7 @@
 
 - name: Inter tenant dhcp relay with duplicate circuitid
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, manaul testing on my setup is fine
@@ -746,7 +746,7 @@
 
 - name: Dhcp discover on the same vns as server with dhcp relay enabled
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, maunal testing on my setup works fine
@@ -767,7 +767,7 @@
 
 - name: Verify same mac address showing up on two ports in the same segment is blocked
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, is working in master build in my setup
