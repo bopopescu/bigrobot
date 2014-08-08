@@ -237,9 +237,20 @@ class VerificationFileBuilder(object):
             for key in self._test_case_dict[author]:
                 tc = self._test_case_dict[author][key]
                 if tc['status'] == 'FAIL':
-                    helpers.file_write_append_once(new_file_name, "\n### Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
-                tc['name'] = sanitize_string(tc['name'])
-                self.write_entry_to_file(tc, new_file_name)
+                    if tc['jira'] or tc['notes']:
+                        # Contains user comments
+                        helpers.file_write_append_once(new_file_name, "\n### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
+                        tc['name'] = sanitize_string(tc['name'])
+                        self.write_entry_to_file(tc, new_file_name)
+                    else:
+                        # User didn't get a chance to verify it previously.
+                        # So just silently ignore it.
+                        pass
+                else:
+                    # Contains user comments
+                    helpers.file_write_append_once(new_file_name, "\n### Was passed in manual verification. Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
+                    tc['name'] = sanitize_string(tc['name'])
+                    self.write_entry_to_file(tc, new_file_name)
 
 
 def prog_args():

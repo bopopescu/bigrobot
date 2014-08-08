@@ -37,89 +37,26 @@
 #
 
 
-- name: T0 Setup
+- name: T1 Configure SPAN session for Single interface - Direction Both
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: IXIA issue.
 
-- name: bring up host bond0 interface
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+- name: T3 Configure SPAN session for Single interface - Direction Ingress
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
+  notes: IXIA issue.
 
-- name: Configure Multiple L2 Tenants With Single VNS & Failover
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+- name: T5 Configure SPAN session for Single interface - Direction Egress
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Verify HA Cluster Formation
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Verify Cluster Election Take-Leader
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Verify Cluster Election Re-run
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Verify Cluster Master Reboot
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Verify Cluster Slave Reboot
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Master Failover/Failback & Verify Connectivity
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Slave Failover/Failback & Verify Connectivity
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Cluster Election Take-Leader & Verify Connectivity
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Cluster Election Re-run & Verify Connectivity
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
+  notes: IXIA issue.
 
 - name: T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
@@ -142,41 +79,6 @@
   jira: 
   notes: IXIA issue.
 
-- name: T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: IXIA issue.
-
-- name: 'T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch'
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: IXIA issue.
-
-- name: T1 Configure SPAN session for Single interface - Direction Both
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: IXIA issue.
-
-- name: T3 Configure SPAN session for Single interface - Direction Ingress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: IXIA issue.
-
-- name: T5 Configure SPAN session for Single interface - Direction Egress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: IXIA issue.
-
 - name: T10 Configure SPAN session for Port-Group interface - Direction Both
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
@@ -192,6 +94,27 @@
   notes: IXIA issue.
 
 - name: T14 Configure SPAN session for Port-Group interface - Direction Egress
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue.
+
+- name: T16 Configure SPAN session - Direction Both
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue.
+
+- name: T17 Configure SPAN Session - Direction Ingress
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue.
+
+- name: T18 Configure SPAN Session - Direction Egress
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
@@ -261,6 +184,20 @@
   jira: 
   notes: IXIA issue.
 
+- name: T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue.
+
+- name: 'T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch'
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue.
+
 - name: 'T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks'
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
@@ -296,23 +233,93 @@
   jira: 
   notes: IXIA issue.
 
-- name: T16 Configure SPAN session - Direction Both
+- name: Configure Multiple L2 Tenants With Single VNS & Failover
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+- name: Verify Cluster Election Take-Leader
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+- name: Verify Cluster Election Re-run
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+- name: Verify Cluster Master Reboot
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+- name: Verify Cluster Slave Reboot
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Cluster Election Re-run & Verify Connectivity
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Verify HA Cluster Formation
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: T0 Setup
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: IXIA issue.
 
-- name: T17 Configure SPAN Session - Direction Ingress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Slave Failover/Failback & Verify Connectivity
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: IXIA issue.
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
 
-- name: T18 Configure SPAN Session - Direction Egress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Cluster Election Take-Leader & Verify Connectivity
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: IXIA issue.
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Master Failover/Failback & Verify Connectivity
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: bring up host bond0 interface
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
