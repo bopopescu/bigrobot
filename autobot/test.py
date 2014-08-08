@@ -1256,18 +1256,19 @@ class Test(object):
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
-        console = self.params(name, 'console')
-
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+            return True
         c1_ip = self.params('c1', 'ip')
         c2_ip = self.params('c2', 'ip')
         helpers.log("First Adding Switch in master controller for ZTN Bootup...")
         master = self.controller("master")
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
-        else:
-            fabric_role = 'leaf'
-            leaf_group = self.params(name, 'leaf-group')
-
+        console = self.params(name, 'console')
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
@@ -1317,6 +1318,14 @@ class Test(object):
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
         if not helpers.is_switch(name):
+            return True
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
             return True
         console = self.params(name, 'console')
         if not ('ip' in console and 'port' in console):
