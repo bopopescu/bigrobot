@@ -281,11 +281,11 @@ class Host(object):
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
         if int(return_stat) == 1:
-            helpers.log("I am here")
+#            helpers.log("I am here")
             return ''
         else:
-            helpers.log("I am there")
-            helpers.log("output: %s" % output)
+#            helpers.log("I am there")
+#            helpers.log("output: %s" % output)
             output = helpers.strip_cli_output(output)
             result = re.search('HWaddr (.*)', output)
             mac_addr = result.group(1)

@@ -3120,7 +3120,8 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     sleep                                       1
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
-    sleep                                       10
+    sleep                                       5
+    Log =                                       BASH run cmd                    route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
@@ -3615,7 +3616,8 @@ test teardown topology
     REST delete tenant                              Z
 #   Stop Floodlight Monitor 
     initialize host
-    
+    BASH network restart                        h3                              timeout=60
+    BASH network restart                        h6                              timeout=60 
 
 T5 base suite setup
     base suite setup

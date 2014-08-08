@@ -137,11 +137,11 @@ Add and delete one ECMP members with active traffic in ecmp group
     [Tags]          manual          feature         ecmp            
 
 Add and delete all ECMP members in ecmp group  
-    manual failed
+    manual passed
     [Tags]          manual          feature         ecmp            
 
 Delete existing one ECMP members and add new ECMP member
-    manual failed
+    manual passed
     [Tags]          manual          feature         ecmp            
 
 Verify L3 traffic honor more specific routes with ecmp group
@@ -169,7 +169,7 @@ L3 inter tenant forwarding to external router
     [Tags]          manual          feature         
 
 L3 inter tenant forwarding to VRRP routers
-    manual failed
+    manual untested
     [Tags]          manual          feature         
 
 L3 inter tenant traceroute with icmp and udp probe
