@@ -1264,9 +1264,12 @@ class Test(object):
         master = self.controller("master")
         if re.match(r'.*spine.*', self.params(name, 'alias')):
             fabric_role = 'spine'
-        else:
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
             fabric_role = 'leaf'
             leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+            return True
 
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
@@ -1317,6 +1320,14 @@ class Test(object):
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
         if not helpers.is_switch(name):
+            return True
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
             return True
         console = self.params(name, 'console')
         if not ('ip' in console and 'port' in console):
