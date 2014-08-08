@@ -17,6 +17,7 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
+import catalog_modules.cat_helpers as cat_helpers
 from catalog_modules.test_catalog import TestCatalog
 
 
@@ -44,14 +45,6 @@ class ManualVerificationBuild(object):
 
     def builds(self): return self._builds
 
-    def warn(self, msg):
-        print "\n"
-        print "WARNING: " + msg
-
-    def exit(self, msg):
-        print "\n"
-        helpers.error_exit(msg, 1)
-
     def is_test_case_verified(self, tc):
         verified = False
         if 'jira' in tc and tc['jira']:
@@ -62,24 +55,30 @@ class ManualVerificationBuild(object):
 
     def sanitize_test_case_data(self, tc):
         if 'status' not in tc:
-            self.exit("Entry missing 'status' field (%s)" % tc)
+            cat_helpers.formatted_error_exit(
+                    "Entry missing 'status' field (%s)" % tc)
         if 'build_name_verified' not in tc:
-            self.exit("Entry missing 'build_name_verified' field (%s)" % tc)
+            cat_helpers.formatted_error_exit(
+                    "Entry missing 'build_name_verified' field (%s)" % tc)
         if 'notes' not in tc:
-            self.exit("Entry missing 'notes' field (%s)" % tc)
+            cat_helpers.formatted_error_exit(
+                    "Entry missing 'notes' field (%s)" % tc)
 
         if re.match(r'^fail(ed)?$', tc['status'], re.I):
             tc['status'] = 'FAIL'
         elif re.match(r'^pass(ed)?$', tc['status'], re.I):
             tc['status'] = 'PASS'
         else:
-            self.exit("'status' field has invalid value (%s)" % tc)
+            cat_helpers.formatted_error_exit(
+                    "'status' field has invalid value (%s)" % tc)
 
         if tc['notes'] == None:
-            self.exit("'notes' field must contain a description (%s)" % tc)
+            cat_helpers.formatted_error_exit(
+                    "'notes' field must contain a description (%s)" % tc)
 
     def sanitize_verification_data(self):
-        test_cases = helpers.from_yaml(helpers.file_read_once(self._verification_file))
+        test_cases = helpers.from_yaml(helpers.file_read_once(
+                                                    self._verification_file))
         for tc in test_cases:
             if self.is_test_case_verified(tc) == False:
                 continue
@@ -87,7 +86,8 @@ class ManualVerificationBuild(object):
         return True
 
     def populate_db_with_verification_data(self):
-        test_cases = helpers.from_yaml(helpers.file_read_once(self._verification_file))
+        test_cases = helpers.from_yaml(helpers.file_read_once(
+                                                    self._verification_file))
         print "Updating documents in build '%s'" % self.aggregated_build_name()
 
         for tc in test_cases:
@@ -105,17 +105,20 @@ class ManualVerificationBuild(object):
             count = aggr_cursor.count()
 
             if count == 0:
-                self.warn("Cannot find document matching below query. No update made.\n%s" % helpers.prettify(query))
+                cat_helpers.warn("Cannot find document matching below query."
+                                 " No update made.\n%s"
+                                 % helpers.prettify(query))
             else:
                 if count != 1:
-                    self.warn("Expecting only one aggregated test case, but"
-                              " result is '%s'" % count)
+                    cat_helpers.warn("Expecting only one aggregated test case,"
+                                     " but result is '%s'" % count)
 
                 doc = dict(aggr_cursor[0])  # create a copy of dictionary
                 if 'build_name_list' in doc:
                     if doc['build_name_list'][-1] != tc['build_name_verified']:
                         doc['build_name_list'] = (
-                            doc['build_name_list'] + [tc['build_name_verified']])
+                            doc['build_name_list'] +
+                            [tc['build_name_verified']])
                 else:
                     doc['build_name_list'] = [tc['build_name_verified']]
 
@@ -132,13 +135,15 @@ class ManualVerificationBuild(object):
 
 
                 # print("Updating document:\n%s" % helpers.prettify(doc))
-                print("Updating suite '%s', test case '%s'" % (doc['product_suite'], doc['name']))
+                print("Updating suite '%s', test case '%s'"
+                      % (doc['product_suite'], doc['name']))
                 new_doc = self.catalog().upsert_doc('test_cases_archive',
                                                     doc,
                                                     query)
                 if new_doc == None:
-                    self.warn("Cannot find document. Upsert failed for: %s, name:'%s', product_suite:'%s'\n"
-                              % (doc, tc['name'], tc['product_suite']))
+                    cat_helpers.warn("Cannot find document. Upsert failed"
+                                     " for: %s, name:'%s', product_suite:'%s'\n"
+                                     % (doc, tc['name'], tc['product_suite']))
                 else:
                     # print("\n new_doc: %s\n" % new_doc)
                     pass
