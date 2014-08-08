@@ -1320,12 +1320,11 @@ class Test(object):
         if not helpers.is_switch(name):
             return True
         if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Spines..")
         elif re.match(r'.*leaf.*', self.params(name, 'alias')):
-            fabric_role = 'leaf'
-            leaf_group = self.params(name, 'leaf-group')
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Leaf..")
         else:
-            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP PHASE 2")
             return True
         console = self.params(name, 'console')
         if not ('ip' in console and 'port' in console):
