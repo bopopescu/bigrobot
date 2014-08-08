@@ -40,6 +40,17 @@ if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
 
+def sanitize_string(value):
+    if re.search(r':', value):
+        # String contains the character ':' which will cause YAML
+        # error.
+        if re.search("'", value):
+            value = '"' + value + '"'
+        else:
+            value = "'" + value + "'"
+    return value
+
+
 class PseudoYAML(object):
     def __init__(self, infile):
         self._infile = infile
@@ -53,13 +64,7 @@ class PseudoYAML(object):
             key, value = line.split(':', 1)
             value = value.strip("' ")
 
-            if re.search(r':', value):
-                # String contains the character ':' which will cause YAML
-                # error.
-                if re.search("'", value):
-                    value = '"' + value + '"'
-                else:
-                    value = "'" + value + "'"
+            value = sanitize_string(value)
 
             key = key.strip(" ")
             line = "%s: %s" % (key, value)
@@ -169,7 +174,6 @@ class VerificationFileBuilder(object):
         fail_count = aggr_cursor.count()
         print("Total failed test cases in build '%s': %s"
               % (self.aggregated_build_name(), fail_count))
-        file_dict = {}
 
         # Initialize test case dictionary for each author if not exist
         for author in Authors().get().values():
@@ -203,16 +207,18 @@ class VerificationFileBuilder(object):
                 if status == self._test_case_dict[author][key]['status']:
                     # print "Test case exists (no change): %s" % key
                     # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name))
+                    self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 else:
                     # print "Test case exists (status changed): %s" % key
                     helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name))
+                    self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 del self._test_case_dict[author][key]
             else:
                 helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name))
                 rec = {
-                       "name": tc_name,
+                       "name": sanitize_string(tc_name),
                        "product_suite": product_suite,
                        "status": status,
                        }
@@ -232,6 +238,7 @@ class VerificationFileBuilder(object):
                 tc = self._test_case_dict[author][key]
                 if tc['status'] == 'FAIL':
                     helpers.file_write_append_once(new_file_name, "\n### Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
+                tc['name'] = sanitize_string(tc['name'])
                 self.write_entry_to_file(tc, new_file_name)
 
 
