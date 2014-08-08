@@ -42,4 +42,10 @@ Test directory listing
     bash             h1    echo $COLUMNS
 
 Test traceroute
+    [Tags]  skipped
     bash             h1    traceroute dev1   timeout=60
+
+Test lsb_release command
+    #[Tags]  skipped
+    bash_restart_networking_service  h1
+
