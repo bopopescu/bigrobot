@@ -37,7 +37,6 @@
 #
 
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
 - name: T4 config mode cli walk
   product_suite: T5/T5-Platform/T5_cli_walk
   status: PASS
