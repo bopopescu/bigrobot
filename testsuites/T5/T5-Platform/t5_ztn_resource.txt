@@ -66,6 +66,7 @@ Suite Setup
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
@@ -80,7 +81,6 @@ Test Setup
 Test Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
-	Failover
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -280,8 +280,15 @@ Failover
 	Sleep  30
 #	Should Be True  ${status}
 
-Reboot Switches
 
+Trigger All Switches Reboot
+	Telnet Reboot Switch  s1
+	Telnet Reboot Switch  s2
+	Telnet Reboot Switch  s3
+	Telnet Reboot Switch  s4
+	Telnet Reboot Switch  s5
+
+Reboot Switches
 	Telnet Reboot Switch  s1
 	Telnet Reboot Switch  s2
 	Telnet Reboot Switch  s3
