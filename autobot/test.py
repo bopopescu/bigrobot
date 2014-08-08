@@ -1404,6 +1404,14 @@ class Test(object):
                         self.setup_switch_post_clean_config(key)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                if re.match(r'.*spine.*', self.params(key, 'alias')):
+                    fabric_role = 'spine'
+                elif re.match(r'.*leaf.*', self.params(key, 'alias')):
+                    fabric_role = 'leaf'
+                    leaf_group = self.params(key, 'leaf-group')
+                else:
+                    helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+                    return True
                 master = self.controller("master")
                 standby = self.controller("c2")
                 for key in params:
