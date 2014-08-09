@@ -1459,19 +1459,21 @@ class Ixia(object):
 
     def ix_check_vport_state(self, **kwargs):
         handle = self._handle
+        vports_not_connected = False
         for vport in self._vports:
             helpers.log("Checking Connection State of Vport: %s" % str(vport))
             vport_state = handle.getAttribute(vport, '-isConnected')
             helpers.log("Connection State: %s" % str(vport_state))
             if vport_state != "true":
+                vports_not_connected = True
                 helpers.log("IXIA BUG / Network issue ports got Disconnected.. Reconnecting:")
                 handle.execute('connectPorts', vport)
                 helpers.log("Executed vport connected")
             else:
                 helpers.log("Ports still connected ..No IXIA connection issues")
-
-        helpers.log("Waiting for IXIA ports to connecte back ....")
-        helpers.sleep(10)
+        if vports_not_connected:
+            helpers.log("Waiting for IXIA ports to connecte back ....")
+            helpers.sleep(10)
         helpers.log("vports state..after connecting back")
         for vport in self._vports:
             vport_state = handle.getAttribute(vport, '-isConnected')
