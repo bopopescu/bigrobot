@@ -193,7 +193,9 @@ class VerificationFileBuilder(object):
             product_suite = tc['product_suite']
             tc_name = tc['name']
             status = tc['status']
-            build_name = tc['build_name']
+            build_name = build_name_last = tc['build_name']
+            if 'build_name_list' in tc and tc['build_name_list']:
+                build_name_last = tc['build_name_list'][-1]
             author = self.author(product_suite)
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
@@ -206,17 +208,17 @@ class VerificationFileBuilder(object):
             if key in self._test_case_dict[author]:
                 if status == self._test_case_dict[author][key]['status']:
                     # print "Test case exists (no change): %s" % key
-                    # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name))
+                    # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name_last))
                     self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 else:
                     # print "Test case exists (status changed): %s" % key
-                    helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name))
+                    helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name_last))
                     self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 del self._test_case_dict[author][key]
             else:
-                helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name))
+                helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name_last))
                 rec = {
                        "name": sanitize_string(tc_name),
                        "product_suite": product_suite,
