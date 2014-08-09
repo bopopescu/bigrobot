@@ -3444,7 +3444,7 @@ Verify blocked endpoint should be automatically cleared
     BASH ifup intf                              h3                              bond0.1003
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0.1001
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h1                              10.251.1.1              count=5
