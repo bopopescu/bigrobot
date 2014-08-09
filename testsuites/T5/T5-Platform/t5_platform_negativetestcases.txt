@@ -15,7 +15,15 @@ Library         keywords/T5.py
 Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
 Library         String
 
+*Variables
+${switchlight_version}  Switch Light OS
+${netmask}  18
+${gateway}  10.8.0.1
+${gateway1}  10.192.60.1
+${dns_server}  10.3.0.4
+${dns_domain}  qa.bigswitch.com
 
+${tenant}=        testTenant
 
 *TestCases
 
@@ -202,4 +210,33 @@ Test with traffic invalid dst mac and verify that traffic is dropped
     [Tags]  Manual  jira-pan-1162   
     Manual Failed
     
+
+* Keywords
+
+T5 switch platform test setup
+   base suite setup
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch3_name}
+   #${swDpid2}=  rest return switch dpid from ip  s3
+   #rest add dpid  ${switch3_name}   ${swDpid2}
+   #rest add fabric role  ${switch3_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   sleep  10
+                
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   base suite teardown
+   sleep  5     
+
     
