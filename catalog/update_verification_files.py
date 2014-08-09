@@ -138,7 +138,7 @@ class VerificationFileBuilder(object):
 
     def author(self, product_suite):
         if product_suite not in self._product_suites:
-            cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
+            # cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
             return "unknown"
         return self._product_suites[product_suite]['author']
 
@@ -190,7 +190,7 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                print "Loading file %s" % file_name
+                # print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
                 for tc in tc_list:
@@ -199,6 +199,7 @@ class VerificationFileBuilder(object):
             else:
                 self._test_case_dict[author] = {}
 
+        first_pass = {}
         for tc in aggr_cursor:
             product_suite = tc['product_suite']
             tc_name = tc['name']
@@ -215,9 +216,15 @@ class VerificationFileBuilder(object):
             else:
                 continue
 
-            if not helpers.file_exists(new_file_name):
+            if new_file_name not in first_pass:
+                if helpers.file_exists(new_file_name):
+                    print "Removing file %s" % new_file_name
+                    helpers.file_remove(new_file_name)
+
                 helpers.file_copy(self.verification_header_template(),
                                   new_file_name)
+                print "Creating file %s" % new_file_name
+                first_pass[new_file_name] = True
 
             key = product_suite + ' ' + tc_name
             if key in self._test_case_dict[author]:
