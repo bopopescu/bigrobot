@@ -1345,37 +1345,33 @@ Verify clear blocked endpoint works
     
     
 Activate and deactivate router segment interface
-    Log                                         CLI show running tenant
-    ${ipAddr4} =                                BASH get interface ipv4         h4-rack0                        bond0
-    Should Not Be Empty                         ${ipAddr4}
-    ${ipAddr5} =                                BASH get interface ipv4         h5-rack0                        bond0
-    Should Not Be Empty                         ${ipAddr5}
-    BASH ping                                   h4-rack0                        10.251.1.1                      count=10
-    BASH ping                                   h5-rack0                        10.251.2.1                      count=10
-    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    BASH ifconfig ip address                    h1                              10.251.1.9/24           bond0
+    BASH add route                              h1                              10.251.0.0/16           10.251.1.1
+    BASH ifconfig ip address                    h2                              10.251.2.10/24          bond0
+    BASH add route                              h1                              10.251.0.0/16           10.251.2.1
+    BASH ping                                   h1                              10.251.2.10             count=10
+    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h5-rack0                        10.251.2.1
+    ${value} =                                  BASH verify arp                 h2                      10.251.2.1
     Should Be True                              ${value} 
-    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${mac1} =                                   BASH get intf mac               h1                        bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
-    ${mac2} =                                   BASH get intf mac               h5-rack0                        bond0
+    Should Contain                              ${attachpoint}                  leaf0_pc1    
+    ${mac2} =                                   BASH get intf mac               h2                        bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    Should Contain                              ${attachpoint}                  ${leaf0_pc5}    
-    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    Should Contain                              ${attachpoint}                  leaf0_pc2    
+    ${loss} =                                   BASH ping                       h1                        10.251.2.10             count=10
     Should Be True                              ${loss} == 0                    
     REST disable router segment intf            X                               X1
     sleep                                       1
-    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    ${loss} =                                   BASH ping                       h1                        10.251.2.10             count=10
     Should Be True                              ${loss} == 100
     REST enable router segment intf             X                               X1
     sleep                                       1
-    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    ${loss} =                                   BASH ping                       h1                        10.251.2.10             count=10
     Should Be True                              ${loss} < 20
-    BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
-    BASH delete route                           h3                              10.251.1.0/24           10.251.3.1
 
 Activate and deactivate router interface
     Log                                         CLI show running tenant
