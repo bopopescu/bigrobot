@@ -333,9 +333,30 @@ Reboot Switches From CLI
 	Verify All Switches Startup Config
 	Verify All Switches In Provisioned Mode
 
+Cli Reset Connection Switch All
+	Cli Reset Connection Switch  master  ${s1_alias}
+    Cli Reset Connection Switch  master  ${s2_alias}
+    Cli Reset Connection Switch  master  ${s3_alias}
+    Cli Reset Connection Switch  master  ${s4_alias}
+    Cli Reset Connection Switch  master  ${s5_alias}
+
 Power Cycle All Switches
 	Power Cycle Switch  s1
-	Power Cycle Switch  s5
 	Power Cycle Switch  s2
 	Power Cycle Switch  s3
 	Power Cycle Switch  s4
+	Power Cycle Switch  s5
+
+Power Down All Switches
+	Power Down Switch  s1
+	Power Down Switch  s2
+	Power Down Switch  s3
+	Power Down Switch  s4
+	Power Down Switch  s5
+
+Power Up All Switches
+	Power Up Switch  s1
+	Power Up Switch  s2
+	Power Up Switch  s3
+	Power Up Switch  s4
+	Power Up Switch  s5
