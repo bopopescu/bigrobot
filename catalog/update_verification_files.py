@@ -95,8 +95,9 @@ class PseudoYAML(object):
 
 
 class VerificationFileBuilder(object):
-    def __init__(self, build, overwrite):
+    def __init__(self, build, user, overwrite):
         self._aggregated_build_name = build
+        self._user = user
         self._is_overwrite = overwrite
         self._cat = None
         self._builds = self.catalog().aggregated_build(build)
@@ -167,6 +168,9 @@ class VerificationFileBuilder(object):
         helpers.file_write_append_once(outfile, doc_str)
 
     def do_it(self):
+
+        # Search for failed test cases. Verification list will be built/updated
+        # based on the failed test cases.
         query = { "build_name": self.aggregated_build_name(),
                   "status": 'FAIL',
                  }
@@ -174,6 +178,12 @@ class VerificationFileBuilder(object):
         fail_count = aggr_cursor.count()
         print("Total failed test cases in build '%s': %s"
               % (self.aggregated_build_name(), fail_count))
+
+        if self._user == 'all':
+            pass
+        elif self._user not in Authors().get().values():
+            helpers.error_exit("User '%s' is not defined in the test catalog."
+                               % self._user)
 
         # Initialize test case dictionary for each author if not exist
         for author in Authors().get().values():
@@ -199,6 +209,11 @@ class VerificationFileBuilder(object):
             author = self.author(product_suite)
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
+
+            if self._user == 'all' or self._user == author:
+                pass  # do action
+            else:
+                continue
 
             if not helpers.file_exists(new_file_name):
                 helpers.file_copy(self.verification_header_template(),
@@ -234,6 +249,12 @@ class VerificationFileBuilder(object):
 
         # Dump remaining test cases from YAML
         for author in self._test_case_dict:
+
+            if self._user == 'all' or self._user == author:
+                pass  # do action
+            else:
+                continue
+
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
 
@@ -274,6 +295,10 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
                 help=("Build name,"
                       " e.g., 'bvs master ironhorse beta2 aggregated'"))
     parser.add_argument(
+                '--user',
+                required=True,
+                help=("Create verification file for user (as defined in test catalog)."))
+    parser.add_argument(
                 '--force-overwrite',
                 action='store_true',
                 default=False,
@@ -294,5 +319,6 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 if __name__ == '__main__':
     args = prog_args()
     verification_builder = VerificationFileBuilder(args.build,
+                                                   args.user,
                                                    args.force_overwrite)
     verification_builder.do_it()
