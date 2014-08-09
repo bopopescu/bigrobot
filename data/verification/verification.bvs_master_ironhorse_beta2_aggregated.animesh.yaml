@@ -74,38 +74,38 @@
 
 - name: Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 50% pktsize 9150
   product_suite: SwitchLight/t5_switch_platform_traffic
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Rerun test and it passed'
 
 - name: leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64
   product_suite: SwitchLight/t5_switch_platform_traffic
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Rerun test and it passed' 
 
 - name: spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64
   product_suite: SwitchLight/t5_switch_platform_traffic
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Rerun test and it passed' 
 
 - name: leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512
   product_suite: SwitchLight/t5_switch_platform_traffic
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Rerun test and it passed' 
 
 - name: spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
   product_suite: SwitchLight/t5_switch_platform_traffic
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Rerun test and it passed' 
 
 - name: Verify ICMP Packet of death
   product_suite: T5/T5-Platform/t5_same_vns_traffic_forwarding
@@ -299,48 +299,48 @@
 - name: Shutdown and no shut 10G interface on switch and verify interface state is down and up
   product_suite: SwitchLight/t5_switch_platform
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
+  build_name_verified: 'Beta2_bcf #24'
+  jira: PAN-1144
+  notes: 'Test case failed JIRA PAN-1144'
 
 - name: Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
   product_suite: SwitchLight/t5_switch_platform
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
+  build_name_verified: 'Beta2_bcf #24'
+  jira: PAN-1144
+  notes: 'Test case failed JIRA PAN-1144'
 
 - name: Verify the SNMP traps generated for the PSU sensor threshold crossed
   product_suite: SwitchLight/t5_switch_platform_manual
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Manual Test case Failed'
 
 - name: Verify the SNMP traps generated for the chassis Fan failure
   product_suite: SwitchLight/t5_switch_platform_manual
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Manual Test case Failed'
 
 - name: Verify the SNMP traps generated for the temp sensors threshold value crossed
   product_suite: SwitchLight/t5_switch_platform_manual
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Manual Test case Failed'
 
 - name: Verify the SNMP traps generated for the CPU load threshold value crossed
   product_suite: SwitchLight/t5_switch_platform_manual
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Manual Test case Failed'
 
 - name: Verify the PSU1 and PSU2 SNMPwalk and after removal of the PSU1
   product_suite: SwitchLight/t5_switch_platform_manual
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'Beta2_bcf #24'
   jira: 
-  notes: 
+  notes: 'Manual Test case Failed'
