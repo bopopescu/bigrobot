@@ -2842,7 +2842,7 @@ class T5Platform(object):
         n_console.send(ip_addr)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect(r'Error:.*')
+            n_console.expect([r'Error:.*',r'.*Must not be.*',r'IP address.*'])
             return True
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
@@ -2893,7 +2893,7 @@ class T5Platform(object):
         n_console.send(netmask)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect(r'Error:.*')
+            n_console.expect([r'Error:.*',r'.*Must be between'])
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
 
@@ -2962,7 +2962,7 @@ class T5Platform(object):
         n_console.send(dnsserver)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect([r'Error:.*',r' '])
+            n_console.expect([r'Error:.*',r'.*Must not be.*'])
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
 
