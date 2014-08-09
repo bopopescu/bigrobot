@@ -64,6 +64,7 @@ Suite Setup
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Reboot Switches From CLI
 	Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
@@ -77,8 +78,9 @@ Test Setup
 	Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	Sleep  30
+	Sleep  15
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
+	Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -275,7 +277,6 @@ Verify Switch Installer Version
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
-	Sleep  30
 #	Should Be True  ${status}
 
 
