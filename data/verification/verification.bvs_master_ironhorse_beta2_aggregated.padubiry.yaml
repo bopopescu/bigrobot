@@ -104,94 +104,94 @@
 
 - name: 'Add leaf group from 2 different rack and verify the status and check the fabric error'
   product_suite: 'T5/Fabric/t5_fabric_switch_check'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'add leaf group before leaf role to check the config error'
   product_suite: 'T5/Fabric/t5_fabric_switch_check'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'add portgroup lacp to 2 different rack'
   product_suite: 'T5/Fabric/t5_fabric_link'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'Verify the Fabric feature Role Spine0'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'delete/add the Fabric role spine0'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'delete/add Fabric role leaf in dual leaf setup'
   product_suite: 'T5/Fabric/t5_fabric_role_change'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual changing of switch/DPID/Role may not allow.
 
 - name: 'verify rack1 connectivity ,when link down from leaf1b-spine1'
   product_suite: 'T5/Fabric/t5_rack_detection'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
 
 - name: 'verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1'
   product_suite: 'T5/Fabric/t5_rack_detection'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
 
 - name: 'tagged/untagged packet Mac move within the rack0'
   product_suite: 'T5/L2/t5_mac_move_age'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: Rerun , seems like IXIA issue
 
 - name: 'tagged/untagged packet move between rack'
   product_suite: 'T5/L2/t5_mac_move_age'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Rerun , seems like IXIA issue
 
 - name: 'MAC move test after master controller node reboot'
   product_suite: 'T5/L2/t5_mac_move_age'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Rerun , seems like IXIA issue
 
 - name: 'Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)'
   product_suite: 'T5/Fabric/t5_fabric_traffic_failover'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes:Host did not ping
 
 - name: 'HA failover with lacp host'
   product_suite: 'T5/Fabric/t5_fabric_traffic_failover'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
-  notes:
+  notes: Failure was due to host did not ping
 
 - name: 'Verify single vns rx/tx rates same rack'
   product_suite: 'T5/L2/t5_vns_stats'
@@ -356,35 +356,35 @@
 
 - name: 'Tear down the config'
   product_suite: 'T5/L2/t5_vns_scale'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: one of the controller node is not rechable, Setup Failure.
 
 - name: 'ping h2 to h3 dual rack single leaf dynamic endpoints'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes: No reason we should get this failed . Should have been passed , This is a smoke Test
 
 - name: 'ping h2 to h3 dual rack single leaf static endpoints'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Should have been passed , This is a smoke Test
 
 - name: 'ping h2 to h3 dual rack single leaf dynamic endpoints tag'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Should have been passed , This is a smoke Test
 
 - name: 'ping h2 to h3 dual rack single leaf static endpoints tag'
   product_suite: 'T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical'
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira:
   notes:Should have been passed , This is a smoke Test
