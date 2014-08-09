@@ -41,7 +41,7 @@
 - name: T2 login/exec mode cli walk
   product_suite: T5/T5-Platform/T5_cli_walk
   status: PASS
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'beta2_bcf #31'
   jira: 
   notes: Passed on rerun
 
