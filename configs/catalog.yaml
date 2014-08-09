@@ -38,6 +38,7 @@ aggregated_builds:
       'bvs master #beta2_15',
       'bvs master #beta2_17',
       'bvs master #beta2_20',                 # to pick up good ZTN results
+      'bvs master #beta2_31',
     ] 
   'bvs master aggregated 2014 wk32':          # week of 2014-08-04
     [ 
