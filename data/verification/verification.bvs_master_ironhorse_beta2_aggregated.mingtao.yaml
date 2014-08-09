@@ -221,7 +221,7 @@
 
 - name: 'T1.3 BPDU guard recovery: config interface shut no shut in switch'
   product_suite: T5/T5-Platform/t5_bpdu_guard
-  status: skipped
+  status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: this does not work any more
