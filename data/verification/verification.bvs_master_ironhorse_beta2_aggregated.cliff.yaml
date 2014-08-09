@@ -37,6 +37,14 @@
 #
 
 
+### new entry in recent 'bvs master #beta2_31'
+- name: T2 login/exec mode cli walk
+  product_suite: T5/T5-Platform/T5_cli_walk
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Passed on rerun
+
 - name: T4 config mode cli walk
   product_suite: T5/T5-Platform/T5_cli_walk
   status: PASS
