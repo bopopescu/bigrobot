@@ -1148,6 +1148,8 @@ class Ixia(object):
             traffic_stream1.append(traffic_item)
         return traffic_stream1[0]
     def ix_apply_traffic(self, **kwargs):
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         ixia_traffic_state = self._handle.getAttribute(self._handle.getRoot() + 'traffic', '-state')
         if str(ixia_traffic_state) == 'started':
             helpers.log("Traffic is Still Running , Stopping the Traffic before applying traffic item..")
@@ -1162,6 +1164,8 @@ class Ixia(object):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
         '''
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         helpers.log("### Starting Traffic")
         # self._handle.execute('startAllProtocols')
         learn = kwargs.get('learn', False)
@@ -1237,6 +1241,8 @@ class Ixia(object):
         '''
             Starts the Topo's that is create under port_name
         '''
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         if port_name is None:
             for topo in self._topology.values():
                 self._handle.execute('start', topo)
@@ -1279,6 +1285,8 @@ class Ixia(object):
         return True
 
     def ix_chk_arp(self, ip_type="ipv4"):
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         for port, topo in self._topology.iteritems():
             i = 0
             while True:
@@ -1312,6 +1320,8 @@ class Ixia(object):
         '''
             Stops the topo with hosts that is created under give port_name
         '''
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         self._handle.execute('stop', self._topology[port_name])
         helpers.log('Successfully Stopped Hosts on Ixia Port : %s' % str(self._port_map_list[port_name]))
         return True
@@ -1320,6 +1330,8 @@ class Ixia(object):
         '''
             Sends arp for the gw_ip configured on the ip_Device
         '''
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         self._handle.execute('sendArp', ip_device)
         helpers.log('Successully sent arp !!')
         return True
@@ -1328,6 +1340,8 @@ class Ixia(object):
         '''
             Returns Dictionary with Port Tx and Rx real time results
         '''
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         stream = kwargs.get('stream', None)
         helpers.log('Got the Stream Arguments %s' % str(kwargs))
         handle = self._handle
@@ -1407,6 +1421,8 @@ class Ixia(object):
             Ex Usage : IxStopTraffic(ix_handle, traffic_stream)
         '''
         handle = self._handle
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         helpers.log("Stopping Traffic")
         ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
         if str(ixia_traffic_state) == 'stopped':
@@ -1429,6 +1445,8 @@ class Ixia(object):
             Clears stats of give port_name or globally clears port stats
         '''
         handle = self._handle
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
         if port_name is None:
             helpers.log('Clearing Stats Globally on all ports initialized')
             handle.execute('clearPortsAndTrafficStats')
@@ -1439,24 +1457,36 @@ class Ixia(object):
         helpers.log('result:\n%s' % helpers.prettify(result))
         return True
 
+    def ix_check_vport_state(self, **kwargs):
+        handle = self._handle
+        vports_not_connected = False
+        for vport in self._vports:
+            helpers.log("Checking Connection State of Vport: %s" % str(vport))
+            vport_state = handle.getAttribute(vport, '-isConnected')
+            helpers.log("Connection State: %s" % str(vport_state))
+            if vport_state != "true":
+                vports_not_connected = True
+                helpers.log("IXIA BUG / Network issue ports got Disconnected.. Reconnecting:")
+                handle.execute('connectPorts', vport)
+                helpers.log("Executed vport connected")
+            else:
+                helpers.log("Ports still connected ..No IXIA connection issues")
+        if vports_not_connected:
+            helpers.log("Waiting for IXIA ports to connecte back ....")
+            helpers.sleep(10)
+        helpers.log("vports state..after connecting back")
+        for vport in self._vports:
+            vport_state = handle.getAttribute(vport, '-isConnected')
+            helpers.log("Connection State: %s" % str(vport_state))
+        return True
+
     def ix_delete_traffic(self, **kwargs):
         '''
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
-        for vport in self._vports:
-            helpers.log("Checking Connection Stat of Vport: %s" % str(vport))
-            vport_state = handle.getAttribute(vport, '-isConnected')
-            helpers.log("Connection State: %s" % str(vport_state))
-            if vport_state != "true":
-                helpers.log("IXIA BUG / Network issue ports got Disconnected.. Reconnecting:")
-                handle.execute('connectPorts', vport)
-                helpers.log("waiting  5 secs..")
-                helpers.sleep(5)
-                vport_state = handle.getAttribute(vport, '-isConnected')
-                helpers.log("Vport State after connecting back : %s" % str(vport_state))
-            else:
-                helpers.log("Ports still connected ..No IXIA connection issues")
+        helpers.log("First Checking IXIA vPort States whether Released or not..")
+        self.ix_check_vport_state()
 
         ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
         if str(ixia_traffic_state) == 'started':
