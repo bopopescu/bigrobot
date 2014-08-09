@@ -170,6 +170,25 @@ T1.14. Power cycle switches
 	Power Cycle All Switches
 	[Tags]  skipped
 
+T1.15. Connected, three failovers
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:22:44:55:66
 	${mac2}=  Set Variable  66:55:22:33:22:11
