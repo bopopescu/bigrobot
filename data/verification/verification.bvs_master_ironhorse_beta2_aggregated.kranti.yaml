@@ -37,6 +37,22 @@
 #
 
 
+### new entry in recent 'bvs master #beta2_31'
+- name: Try to add more than 2 controllers in to a cluster
+  product_suite: T5/T5-Platform/t5_platform_negativetestcases
+  status: FAIL
+  build_name_verified: 'bvs master #beta2_31'
+  jira: BSC-5662
+  notes: 'Failed Test'
+
+### new entry in recent 'bvs master #beta2_31'
+- name: Test with traffic invalid dst mac and verify that traffic is dropped
+  product_suite: T5/T5-Platform/t5_platform_negativetestcases
+  status: FAIL
+  build_name_verified: 'bvs master #beta2_31'
+  jira: PAN-1162
+  notes: 'Failed Test'
+
 - name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
@@ -45,13 +61,6 @@
   notes: Ran the script again and it passed
 
 - name: Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
-  product_suite: SwitchLight/t5_switch_platform_L3_traffic
-  status: PASS
-  build_name_verified: 'Beta2_bcf #18'
-  jira: 
-  notes: Ran the script again and it passed
-
-- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
@@ -72,6 +81,13 @@
   jira: 
   notes: Ran the script again and it passed
 
+- name: Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512
+  product_suite: SwitchLight/t5_switch_platform_L3_traffic
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
+  jira: 
+  notes: Ran the script again and it passed
+
 - name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1518
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
@@ -86,7 +102,7 @@
   jira: 
   notes: Ran the script again and it passed
 
-- name: Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512
+- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
@@ -128,14 +144,14 @@
   jira: 
   notes: Ran the script again and it passed
 
-- name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512
+- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
   jira: 
   notes: Ran the script again and it passed
 
-- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024
+- name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
