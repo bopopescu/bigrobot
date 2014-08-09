@@ -474,7 +474,7 @@ class Host(object):
         major_version = self.bash_lsb_release(node)
         helpers.log("Host %s is running Ubuntu major version %s"
                     % (node, major_version))
-        if major_version == 14:
-            h.sudo("service networking restart", timeout=timeout)
-        else:
+        if major_version == 12:
             h.sudo("/etc/init.d/networking restart", timeout=timeout)
+        else:
+            h.sudo("service networking restart", timeout=timeout)
