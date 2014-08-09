@@ -253,6 +253,7 @@ class T5ZTN(object):
         t = test.Test()
         con = t.dev_console(node, modeless=True)
         con.expect("ZTN Discovery Failed", timeout=300)
+        con.expect("ZTN Discovery Failed", timeout=30)
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -1408,8 +1409,34 @@ class T5ZTN(object):
         t = test.Test()
         t.power_cycle(switch)
         return True
-    
-    
+    def power_down_switch(self, switch):
+        """
+        Power cycle a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully powered down the switch, False otherwise
+        """
+        t = test.Test()
+        t.power_down(switch)
+        return True
+
+    def power_up_switch(self, switch):
+        """
+        Power cycle a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully powered up the switch, False otherwise
+        """
+        t = test.Test()
+        t.power_up(switch)
+        return True
+
     def cli_get_switch_image(self, image, switch):
         """
         Get SWI or Installer Versions in the switch from the controller

@@ -346,23 +346,41 @@ def display_stats(args):
     test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
     # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
     i = 0
+    pass_rate = {}
+    details_str = ""
     for test_case in test_case_cursor:
         if (('jira' in test_case and test_case['jira']) or
             ('notes' in test_case and test_case['notes'])):
             i += 1
-            author = product_suites[test_case['product_suite']]['author']
+            author = helpers.utf8(product_suites[test_case['product_suite']]['author'])
+
+            if author in pass_rate:
+                pass_rate[author][test_case['status']] += 1
+            else:
+                pass_rate[author] = { 'PASS':0, 'FAIL':0 }
+                pass_rate[author][test_case['status']] += 1
+
             jira = test_case['jira']
             if test_case['jira']:
                 jira += " - https://bigswitch.atlassian.net/browse/%s" % test_case['jira']
 
-            print "%03d. %s  %s  %s" % (i, author, test_case['product_suite'], test_case['name'])
-            print "\tverified in : %s" % test_case['build_name_verified']
-            print "\tjira        : %s" % jira
-            print "\tstatus      : %s" % test_case['status']
-            print "\tnotes       : %s" % test_case['notes']
-            print ""
+            details_str += "%03d. %s  %s  %s\n" % (i, author, test_case['product_suite'], test_case['name'])
+            details_str += "\tverified in : %s\n" % test_case['build_name_verified']
+            details_str += "\tstatus      : %s\n" % test_case['status']
+            details_str += "\tjira        : %s\n" % jira
+            details_str += "\tnotes       : %s\n" % test_case['notes']
+            details_str += ""
     if i == 0:
         print "None"
+    else:
+        total_passes = total_fails = 0
+        for author, status in pass_rate.items():
+            print "Author: %10s  Passes: %3d  Fails: %3d  Total: %3d" % (author, status['PASS'], status['FAIL'], status['PASS'] + status['FAIL'])
+            total_passes += status['PASS']
+            total_fails += status['FAIL']
+        print "        %10s  Passes: %3d  Fails: %3d  Total: %3d" % ('Combined', total_passes, total_fails, total_passes + total_fails)
+        print ""
+        print details_str
 
 
 if __name__ == '__main__':
