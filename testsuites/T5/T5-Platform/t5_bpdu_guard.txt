@@ -24,9 +24,13 @@ ${medium}  5
 ${long}   30
 ${verylong}    120 
 ${arista_sw}    s100
-${arista_intf}    ethernet17
-${sw}             leaf2-a
-${intf}           ethernet17
+#${arista_intf}    ethernet17
+#${sw}             leaf2-a
+#${intf}           ethernet17
+
+${arista_intf}    ethernet47
+${sw}             leaf1-a
+${intf}           ethernet47
 
   
 
@@ -108,14 +112,14 @@ T2.3 BPDU guard rapid-pvst with not matched vlan negative
 	
 	[Tags] 	sanity  negative  bpdu_guard       
 
-T3.1 BPDU guard with interface configure in vns mismatch vlan
+T3.1 BPDU guard with interface configure in vns mismatch vlan mstp
 	rest_add_tenant  BPDU
  	rest_add_vns     BPDU  V10  
  	rest_add_interface_to_vns     BPDU     V10     ${sw}   ${intf}   10
-	sleep  ${short}
-	cli_show_running_tenant	   
- 		
+	sleep  ${medium}
+	cli_show_running_tenant	    		
 	arista setup mstp	
+	sleep  ${medium}	
  	verify switch interface is up    ${sw}   ${intf}
  	config   s100	  spanning-tree vlan 100    	
  	sleep  ${short}
@@ -125,7 +129,7 @@ T3.1 BPDU guard with interface configure in vns mismatch vlan
 	
 	[Tags]  full 	feature   bpdu_guard    
 	 
-T3.2 BPDU guard with interface configure in vns match vlan
+T3.2 BPDU guard with interface configure in vns match vlan mstp
 	rest_add_tenant  BPDU
  	rest_add_vns     BPDU  V10  
  	rest_add_interface_to_vns     BPDU     V10     ${sw}   ${intf}   100
@@ -198,7 +202,7 @@ BPDU Guard test setup
 	
 BPDU Guard test teardown  
  	config   s100	   no spanning-tree vlan 100 	
-	Run Keyword If Test Failed     Reboot switches and wait till come back 	 	
+#	Run Keyword If Test Failed     Reboot switches and wait till come back 	 	
  	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
  	log  result is ${result}
  	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf}  	
