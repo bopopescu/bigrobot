@@ -1032,6 +1032,48 @@ class Test(object):
         helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
         helpers.sleep(300)
 
+    def power_down(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olOff %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.log("Powered down")
+
+    def power_up(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olOn %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.log("Powered up")
+
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
