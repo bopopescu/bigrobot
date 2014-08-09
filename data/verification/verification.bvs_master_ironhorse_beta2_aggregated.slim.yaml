@@ -37,14 +37,6 @@
 #
 
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Add and delete more specific route on tenant over existing static route
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: script issue, will update script. manual testing on my setup is fine
-
 - name: Inter tenant DHCP relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: FAIL
@@ -73,28 +65,12 @@
   jira: 
   notes: regression environment issues, will install isc-dhcp-server on second and third host
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Inter tenant dhcp relay with duplicate circuitid
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: script issue, manaul testing on my setup is fine
-
 - name: Host moved to another vns on another tenant and renew dhcp
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: BVS-2176
   notes: Ticket filed
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Verify private IP is able to communicate with other vns in the same tenanttrr
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: manual pass in my setup
 
 - name: Controller HA failover via CLI
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -123,22 +99,6 @@
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: Ixia arp issue
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Add and delete all ECMP members in ecmp group
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: manual passed in my setup, will update testsuites
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Delete existing one ECMP members and add new ECMP member
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: manual passed in my setup, will update testsuites
 
 - name: Link flap between leaf and spine
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -189,14 +149,6 @@
   jira: 
   notes: Ixia issue
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Controller HA failover with ecmp group
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: manual pass in my setup
-
 - name: Controller HA failover with dhcp-relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: FAIL
@@ -210,14 +162,6 @@
   build_name_verified: 'bvs master #nnn'
   jira: BVS-2176
   notes: Ticket filed
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Verify inter tenant L3 traffic is getting drop with null next hop
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: script issue, works manually on my setup
 
 - name: Restart ofad on leaf with dhcp-relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -275,28 +219,12 @@
   jira: 
   notes: Will need to debug further
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Add and delete nexthopgroup in system tenant
-  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: manual passed in my setup
-
 - name: Intra tenant L3 untagged traffic with static endpoints across rack
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: BVS-2156
   notes: Ticket filed by Tomas
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Dhcp discover on the same vns as server with dhcp relay enabled
-  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: script issue, maunal testing on my setup works fine
 
 - name: Verify dhcp host is not aged out
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
@@ -410,14 +338,6 @@
   jira: 
   notes: controller upgrade is not working
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Verify same mac address showing up on two ports in the same segment is blocked
-  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: script issue, is working in master build in my setup
-
 - name: Verify clear blocked endpoint works
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
   status: FAIL
@@ -432,7 +352,13 @@
   jira: 
   notes: script issue, updated script
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
+- name: Controller HA failover with ecmp group
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual pass in my setup
+
 - name: Add and delete nexthop group
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: PASS
@@ -440,7 +366,34 @@
   jira: 
   notes: manual test pass on my setup
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
+- name: Verify inter tenant L3 traffic is getting drop with null next hop
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, works manually on my setup
+
+- name: Dhcp discover on the same vns as server with dhcp relay enabled
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, maunal testing on my setup works fine
+
+- name: Add and delete all ECMP members in ecmp group
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup, will update testsuites
+
+- name: Add and delete more specific route on tenant over existing static route
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, will update script. manual testing on my setup is fine
+
 - name: Add and delete nexthop group in system
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: PASS
@@ -448,7 +401,20 @@
   jira: 
   notes: manual test pass on my setup
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
+- name: Verify private IP is able to communicate with other vns in the same tenanttrr
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual pass in my setup
+
+- name: Inter tenant dhcp relay with duplicate circuitid
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, manaul testing on my setup is fine
+
 - name: Add and delete nexthop group IP
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: PASS
@@ -456,7 +422,6 @@
   jira: 
   notes: manual test pass on my setup
 
-### Was passed in manual verification. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
 - name: Verify private IP is able to communicate with other vns in the same tenant
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: PASS
@@ -464,10 +429,30 @@
   jira: 
   notes: script issue, manual testing on my setup is fine
 
-### Was passed in manual verification. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Delete existing one ECMP members and add new ECMP member
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup, will update testsuites
+
 - name: Verify ecmp traffic will failover and failback to more specific routes with ecmp group
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
   status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: manual test pass on my setup
+
+- name: Verify same mac address showing up on two ports in the same segment is blocked
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, is working in master build in my setup
+
+- name: Add and delete nexthopgroup in system tenant
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup

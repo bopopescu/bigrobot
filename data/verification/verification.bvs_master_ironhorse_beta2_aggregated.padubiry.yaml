@@ -65,46 +65,6 @@
   jira: 
   notes: Rerun is required , Does not seems like an issue , If rerun fails , we will open a JIRA
 
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: add same interface to multiple tag onto same VNS
-  product_suite: T5/L2/t5_app_cli
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira: 
-  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual chaning of switch/DPID/Role may not allow.
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Test to check all the cidr routes are created in spine and leaf switches
-  product_suite: T5/L2/t5_fabric_negative
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira: 
-  notes: txt file issue , Fixed.
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-  product_suite: T5/L2/t5_fabric_negative
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira: 
-  notes: Looks like with ZTN we need to wait for some tims to delete the switch , Should be fixed.
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: Test VFT push to when system has not connected switches
-  product_suite: T5/L2/t5_fabric_negative
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira: 
-  notes: txt file issue , should be fixed
-
-### status: FAIL in recent 'bvs master ironhorse beta2 aggregated'
-- name: verifying flow reconsilation when new switch is connected to the fabric
-  product_suite: T5/L2/t5_fabric_negative
-  status: PASS
-  build_name_verified: 'bvs master #2882'
-  jira: 
-  notes: txt file issue , should be fixed
-
 - name: Add leaf group from 2 different rack and verify the status and check the fabric error
   product_suite: T5/Fabric/t5_fabric_switch_check
   status: FAIL
@@ -161,6 +121,27 @@
   jira: 
   notes: This looks variables file issue , need to check with Arun. Does not feel like an actual issue
 
+- name: tagged/untagged packet Mac move within the rack0
+  product_suite: T5/L2/t5_mac_move_age
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun , seems like IXIA issue
+
+- name: tagged/untagged packet move between rack
+  product_suite: T5/L2/t5_mac_move_age
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun , seems like IXIA issue
+
+- name: MAC move test after master controller node reboot
+  product_suite: T5/L2/t5_mac_move_age
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Rerun , seems like IXIA issue
+
 - name: Verify single VNS rx/tx stats between rack
   product_suite: T5/L2/t5_vns_stats
   status: FAIL
@@ -168,7 +149,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: Verify single VNS rx/tx stats within same rack
   product_suite: T5/L2/t5_vns_stats
   status: FAIL
@@ -197,7 +177,6 @@
   jira: 
   notes: IXIA issue
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: verify interface rx/tx stats same rack
   product_suite: T5/L2/t5_vns_stats
   status: FAIL
@@ -232,6 +211,13 @@
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
+
+- name: verify interface LLDP/control packet count different rack
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue
 
 - name: verify multiple vns counters different rack
   product_suite: T5/L2/t5_vns_stats
@@ -281,6 +267,13 @@
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
+
+- name: Setup Three Rack Dual Leaf Topology
+  product_suite: T5/L2/t5_alpha_pr
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: IXIA issue
 
 - name: Static endpoint age test
   product_suite: T5/L2/t5_alpha_pr
@@ -380,7 +373,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master ironhorse beta2 aggregated'
 - name: Add 8k static endpoints and check the forwarding
   product_suite: T5/L2/t5_mac_scale
   status: FAIL
@@ -394,6 +386,13 @@
   build_name_verified: 'bvs master #nnn'
   jira: BSC-4851
   notes: Known config size issue
+
+- name: add Dual Leaf Three Rack setup
+  product_suite: T5/L2/t5_vns_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: one of the controller node is not rechable, Setup Failure.
 
 - name: create 100 vns and verify the table and forwarding
   product_suite: T5/L2/t5_vns_scale
@@ -430,6 +429,13 @@
   jira: 
   notes: one of the controller node is not rechable, Setup Failure.
 
+- name: Tear down the config
+  product_suite: T5/L2/t5_vns_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: one of the controller node is not rechable, Setup Failure.
+
 - name: ping h2 to h3 dual rack single leaf dynamic endpoints
   product_suite: T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
   status: FAIL
@@ -458,58 +464,37 @@
   jira: 
   notes: Should have been passed , This is a smoke Test
 
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: verify interface LLDP/control packet count different rack
-  product_suite: T5/L2/t5_vns_stats
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+- name: Test VFT push to when system has not connected switches
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
   jira: 
-  notes: IXIA issue
+  notes: txt file issue , should be fixed
 
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: MAC move test after master controller node reboot
-  product_suite: T5/L2/t5_mac_move_age
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+- name: With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
   jira: 
-  notes: Rerun , seems like IXIA issue
+  notes: Looks like with ZTN we need to wait for some tims to delete the switch , Should be fixed.
 
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: add Dual Leaf Three Rack setup
-  product_suite: T5/L2/t5_vns_scale
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+- name: add same interface to multiple tag onto same VNS
+  product_suite: T5/L2/t5_app_cli
+  status: PASS
+  build_name_verified: 'bvs master #2882'
   jira: 
-  notes: one of the controller node is not rechable, Setup Failure.
+  notes: Manaul works good , Not sure why failed , Since the regression changed to ZTN , manual chaning of switch/DPID/Role may not allow.
 
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: Setup Three Rack Dual Leaf Topology
-  product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+- name: verifying flow reconsilation when new switch is connected to the fabric
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
   jira: 
-  notes: IXIA issue
+  notes: txt file issue , should be fixed
 
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: tagged/untagged packet Mac move within the rack0
-  product_suite: T5/L2/t5_mac_move_age
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+- name: Test to check all the cidr routes are created in spine and leaf switches
+  product_suite: T5/L2/t5_fabric_negative
+  status: PASS
+  build_name_verified: 'bvs master #2882'
   jira: 
-  notes: Rerun , seems like IXIA issue
-
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: tagged/untagged packet move between rack
-  product_suite: T5/L2/t5_mac_move_age
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Rerun , seems like IXIA issue
-
-### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
-- name: Tear down the config
-  product_suite: T5/L2/t5_vns_scale
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: one of the controller node is not rechable, Setup Failure.
+  notes: txt file issue , Fixed.

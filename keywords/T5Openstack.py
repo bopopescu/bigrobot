@@ -793,9 +793,10 @@ S
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
 		c.rest.get(url)
 		data = c.rest.content()		
-		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "Active":
-				helpers.log("Pass: Router interface creaetd as endpoint in controller")
-				return True
+		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
+				if str(data[0]["state"]) == "L2 Only":
+					helpers.log("Pass: Router interface creaetd as endpoint in controller and state is correct")
+					return True
 		helpers.test_failure("Fail:router interface not present in controller endpoint table")
 		return False
 	
@@ -815,7 +816,7 @@ S
 			i = i + 1
 		return True
 
-	def openstack_segment_scale(self, tenantName, subnet, count):
+	def openstack_segment_scale(self, tenantName, subnet, count, name='n'):
 		'''Function to create multiple segments in a given tenant
 			Input: tenantName , count , name starts with segment
 			Output: given number of segments created in neutron server using neutron command
@@ -885,5 +886,26 @@ S
 		else:
 			helpers.log("Fail:All router interface not present in BCF endpoint")
 			return False
-				
+	
+	def openstack_segment_scale_delete(self, count, name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		name = 's'
+		i = 1
+		while (i <= count):
+			netName = name
+			netName += str(i)
+			try:
+				os1.bash("neutron net-delete %s " % (netName))
+			except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+			i = i + 1
+		return True			
 		
