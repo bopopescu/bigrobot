@@ -90,7 +90,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
         try:
             c.rest.delete(url, {})
         except:
@@ -117,7 +117,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = 'api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]' % (tenant, tenantIntf)
         try:
             c.rest.patch(url, {"shutdown": True})
         except:
