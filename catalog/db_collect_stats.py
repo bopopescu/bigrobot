@@ -23,16 +23,16 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 def print_stat3(descr, val, pct=None):
     if pct != None:
-        print("%-74s %22s  %.1f%%" %
+        print("%-74s %24s  %.1f%%" %
               (descr, val, pct))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                 pass_pct=None, automation_pct=None):
     if automation_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%% %5.1f%% %5.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%% %5.1f%% %5.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
@@ -41,7 +41,7 @@ def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                pass_pct,
                automation_pct))
     elif pass_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%% %5.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%% %5.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
@@ -49,41 +49,41 @@ def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                test_pct,
                pass_pct))
     elif test_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                "manual(%s)" % manual,
                test_pct))
     elif manual != None:
-        print("%-74s %22s  %-22s %-12s" %
+        print("%-74s %24s  %-22s %-12s" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                "manual(%s)" % manual))
     elif untested != None:
-        print("%-74s %22s  %-22s" %
+        print("%-74s %24s  %-22s" %
               (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_stat(descr, val, untested=None, test_pct=None, manual=None):
     if manual != None:
-        print("%-74s %22s  %-22s %8.1f%%  %s" %
+        print("%-74s %24s  %-22s %8.1f%%  %s" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                test_pct,
                "manual(%s)" % manual))
     elif test_pct != None:
-        print("%-74s %22s  %-22s %8.1f%%" %
+        print("%-74s %24s  %-22s %8.1f%%" %
               (descr, val, "manual-untested(%s)" % untested, test_pct))
     elif untested != None:
-        print("%-74s %22s  %-22s" %
+        print("%-74s %24s  %-22s" %
               (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_testcases(testcases):
@@ -261,7 +261,7 @@ def display_stats(args):
 
     print ""
     print "Test Summary                                                                                                                               exec%  pass%  auto%"
-    print "--------------------------------------------------------------------------  ---------------------  --------------------   --------------   -----  -----  -----"
+    print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
     total_executed = ih.total_testcases_executed(build_name=build)
     total_untested = ih.total_testcases_by_tag(
                                     ["manual-untested"])[0]
@@ -313,7 +313,7 @@ def display_stats(args):
     if not args.no_show_functional_areas:
         print ""
         print "Functional Areas                                                                                                                           exec%  pass%  auto%"
-        print "--------------------------------------------------------------------------  ---------------------  --------------------   --------------   -----  -----  -----"
+        print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
         functionality = "feature"
         for feature in cat.features(release=ih.release_lowercase()):
             total_tc = ih.total_testcases_by_tag([functionality, feature])[0]
