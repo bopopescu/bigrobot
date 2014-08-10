@@ -176,22 +176,11 @@ tenant setup
 	sleep  ${short}
 	cli_show_running_tenant	   
  	
-add fabric switch spine   [Arguments]   ${node}   ${dpid}  
-  rest add switch               ${node}
-  rest add dpid                 ${node}          ${dpid}  
-  rest add fabric role          ${node}          spine
-
-add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
-  rest add switch               ${node}
-  rest add dpid                 ${node}         ${dpid} 
-  rest add fabric role          ${node}         leaf
-  rest_add_leaf_group           ${node}         ${leafg} 
-   
 
 Verify to cpu queue weight  [Arguments]   ${node}   ${expect} 
   ${info}=  cli_get_qos_weight	  ${node}    0	
   log   qos weight is ${info}
-  log   expected qos weight is ${export}
+  log   expected qos weight is ${expect}
   : FOR    ${i}    IN RANGE    0    8
 	\   Should Be Equal As Integers    ${info[${i}]}  ${expect[${i}]}   	
 
