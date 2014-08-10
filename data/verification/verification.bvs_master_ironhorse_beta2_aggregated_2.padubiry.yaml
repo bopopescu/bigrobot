@@ -249,7 +249,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings 
@@ -257,7 +257,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -265,7 +265,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -273,7 +273,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -281,7 +281,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: spine switch reboot with 48k mac address in the system
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -289,7 +289,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Master controller node reboot with 48k mac entries
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -297,7 +297,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 8k static endpoints and check the forwarding
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -305,7 +305,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 16k static endpoints and check the forwarding also check with master reboot
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
@@ -313,7 +313,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Tear down the config
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: need to modify age timings
