@@ -64,34 +64,34 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Verify default qos weight for CPU queue in all switches
   product_suite: T5/T5_Qos/t5_control_qos
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
   jira: 
-  notes: 
+  notes: cli command changed
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Verify qos weight for CPU queue in all switches when qos enabled
   product_suite: T5/T5_Qos/t5_control_qos
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
   jira: 
   notes: 
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Verify qos weight for different queue and different port (same rate)
   product_suite: T5/T5_Qos/t5_control_qos
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
   jira: 
-  notes: 
+  notes: manual fail to manual fail
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Verify qos weight for different queue (different rate)
   product_suite: T5/T5_Qos/t5_control_qos
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
   jira: 
-  notes: 
+  notes: manual fail to manual fail
 
 - name: T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
   product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
@@ -166,9 +166,9 @@
 - name: T2.3 BPDU guard rapid-pvst with not matched vlan negative
   product_suite: T5/T5-Platform/t5_bpdu_guard
   status: PASS
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'bvs master #beta2_37'
   jira: PAN-1156
-  notes: verified in Kiran's private switch image
+  notes: verified in beta image
 
 - name: 'T1.8 Only SCP support or : + wget support too?'
   product_suite: T5/T5-Platform/t5_upgrade_single_node
@@ -180,7 +180,7 @@
 ### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
 - name: 'T1.3 BPDU guard recovery: config interface shut no shut in switch'
   product_suite: T5/T5-Platform/t5_bpdu_guard
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: this does not work any more

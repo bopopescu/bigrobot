@@ -2554,7 +2554,7 @@ class T5(object):
     def cli_get_qos_weight(self, node, port):
         t = test.Test()
         s = t.switch(node)
-        string = 'debug ofad "qos_weight ' + port + '"'
+        string = 'debug ofad "qos_weight_info ' + port + '"'
         content = s.enable(string)['content']
         info = []
         temp = helpers.strip_cli_output(content, to_list=True)
@@ -2601,6 +2601,7 @@ class T5(object):
 
         return True
 
+ 
 
     def cli_get_links_nodes_list(self, node1, node2):
         '''
