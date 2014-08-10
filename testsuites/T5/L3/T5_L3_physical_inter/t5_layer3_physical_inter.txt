@@ -38,7 +38,7 @@ inter tenant L3 tagged traffic with dynamic endpoints across rack
     
 Add and delete default route on tenant
     Add and delete default route on tenant router
-    [Tags]      feature 
+    [Tags]      feature         runfailed
 
 Add and delete static route on tenant
     manual passed
@@ -46,19 +46,19 @@ Add and delete static route on tenant
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
-    [Tags]      feature             run1999
+    [Tags]      feature             
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature             run1999
+    [Tags]      feature             runfailed
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
-    [Tags]      feature 
+    [Tags]      feature             runfailed
 
 L3 ttl one forwarding
     Verify inter tenant L3 traffic with ttl value of one two and three
-    [Tags]      feature                 
+    [Tags]      feature               runfailed  
 
 L3 inter tenant forwarding with end host moved to another port
     L3 inter tenant host moved 
@@ -74,19 +74,19 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay                 run1999
+    [Tags]      sanity      feature         dhcp-relay                 runfailed
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay                      runfailed
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay          runfailed
 
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
-    [Tags]      feature         dhcp-relay
+    [Tags]      feature         dhcp-relay              runfailed
 
 Inter tenant dhcp relay with duplicate circuitid
     manual passed
@@ -94,7 +94,7 @@ Inter tenant dhcp relay with duplicate circuitid
     
 Host moved to another vns on another tenant and renew dhcp 
     Host moved to another vns on another tenant and renew dhcp 
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay              runfailed
 
 DHCP request to external dhcp servers
     manual passed
@@ -161,12 +161,12 @@ L3 inter tenant forwarding to external router
     [Tags]          manual          feature         
 
 L3 inter tenant forwarding to VRRP routers
-    manual failed
+    manual untested
     [Tags]          manual          feature        
 
 L3 inter tenant traceroute with icmp and udp probe
     L3 inter tenant traceroute with icmp and udp probe
-    [Tags]          feature         
+    [Tags]          feature         runfailed
 
 Add and delete endpoints with L3 inter tenant traffic
     Add and delete endpoints with L3 inter tenant traffic
@@ -182,7 +182,7 @@ L3 inter tenant traffic with jumbo frame
 
 L3 inter tenant with CRC errors
     L3 inter tenant with CRC errors
-    [Tags]          feature         
+    [Tags]          feature         runfailed
 
 Verify route next hop IP must be in the same tenant
     manual passed
@@ -221,7 +221,7 @@ Restart ofad on spine switch
     [Tags]          feature         
 
 Controller HA failover with ecmp group
-    manual failed
+    manual passed
     [Tags]          manual          feature         ecmp    
         
 Controller HA failover with dhcp-relay
@@ -238,7 +238,7 @@ Active Controller reboot with dhcp-relay
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
-    [Tags]          feature             
+    [Tags]          feature             runfailed
 
 Restart ofad on leaf switch with ecmp group
     manual passed
@@ -250,11 +250,11 @@ Restart ofad on spine with ecmp group
 
 Restart ofad on leaf with dhcp-relay
     Restart ofad on leaf with dhcp-relay
-    [Tags]          feature         dhcp-relay  
+    [Tags]          feature         dhcp-relay      runfailed
 
 Restart ofad on spine with dhcp-relay
     Restart ofad on spine with dhcp-relay
-    [Tags]          feature         dhcp-relay  
+    [Tags]          feature         dhcp-relay          runfailed
     
 Flap member link in a port-group in ecmp group
     manual passed
@@ -286,30 +286,30 @@ Verify inter tenant dhcp-relay functionality after controller upgrade
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]          solution            dhcp-relay  
+    [Tags]          solution            dhcp-relay          runfailed
                     
 Add and delete nexthop group
-    manual pass
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete nexthop group in system
-    manual pass
+    manual passed
     [Tags]          manual              feature     negative             
 
 Add and delete nexthop group IP 
-    manual pass
+    manual passed
     [Tags]          manual              feature            
                     
 Add and delete route pointing to nexthop group in tenant
-    manual untested
+    manual passed
     [Tags]          manual              feature            
                     
 Add and delete route pointing to different nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete route pointing to nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete route pointing to unknown nexthop group in system
@@ -328,21 +328,21 @@ Verify nexthop group config is still applied on HA failover
     manual untested
     [Tags]          manual              feature            HA
     
-Spine reboot
-    Spine reboot
-    [Tags]          feature         HA
-
-Leaf reboot
-    Leaf reboot
-    [Tags]          feature         HA
-
 Verify routing loop is not causing packets to loop forever
     manual passed
     [Tags]          manual          feature   
 
 Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
-    [Tags]          feature         
+    [Tags]          feature                     runfailed
+
+Spine reboot
+    Spine reboot
+    [Tags]          feature         HA          runfailed
+
+Leaf reboot
+    Leaf reboot
+    [Tags]          feature         HA
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -579,10 +579,12 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
-    REST add static routes                      X                               10.252.0.0/16           
+    REST add static routes                      X                               10.252.0.0/16  
+    Log =                                       REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     REST delete static routes                   X                               10.252.0.0/16   
+    Log =                                       REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
