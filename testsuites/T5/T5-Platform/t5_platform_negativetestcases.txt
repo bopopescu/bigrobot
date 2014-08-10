@@ -15,7 +15,15 @@ Library         keywords/T5.py
 Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
 Library         String
 
+*Variables
+${switchlight_version}  Switch Light OS
+${netmask}  18
+${gateway}  10.8.0.1
+${gateway1}  10.192.60.1
+${dns_server}  10.3.0.4
+${dns_domain}  qa.bigswitch.com
 
+${tenant}=        testTenant
 
 *TestCases
 
@@ -33,10 +41,11 @@ Test Cluster formation with a disconnected/invalid NTP server
     Manual untested
 
 Test Configuration requests originating from standby
-    Log     Step 1 - Test Configuration requests originating from standby   
+    Log     Step 1 - Test Configuration requests originating from standby
+    Log     Step 2 - Verify that the configuration should be rejected with error message   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Test Controller behavior during high cpu spikes
     Log     Step 1 - Test Controller behavior during high cpu spikes   
@@ -69,10 +78,11 @@ Test Continuous switch connect/disconnectTest Without removing the stdby control
     Manual untested
 
 Try to add more than 2 controllers in to a cluster
-    Log     Step 1 - Try to add more than 2 controllers in to a cluster   
+    Log     Step 1 - Try to add more than 2 controllers in to a cluster 
+    Log     Step 2 - Verify that it should not be allowed and 3rd controller should not join cluster  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual  jira-bsc-5662
+    Manual Failed 
 
 Test Active & Stdby controller configured in different time zones
     Log     Step 1 - Test Active & Stdby controller configured in different time zones   
@@ -93,10 +103,11 @@ Test continuous floodlight restarts
     Manual untested
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
-    Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)   
+    Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
+    Log     Step 2 - Verify that the configuration get rejected with error message 
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Changes in the switch role (leaf to spine / spine to leaf)
     Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
@@ -133,56 +144,99 @@ Connect server port to leaf & a spine
 
 Adding/deleting Controller IP address
     Log     Step 1 - Adding/deleting Controller IP address   
-    [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual
+    Manual passed
 
 Connecting leaves in between racks
     Log     Step 1 - Connecting leaves in between racks   
-    [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual
+    Manual passed
 
 Add spine to spine direct links
     Log     Step 1 - Add spine to spine direct links   
-    [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual
+    Manual passed
 
 Add external stp loop
     Log     Step 1 - Add external stp loop   
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  switch  negative  
     [Tags]  Manual-untested
     Manual untested		
     
 Different flavor of traffic types (invalid headers, CRC, malformed, Invalid protocols)
     Log     Step 1 - Different flavor of traffic types (invalid headers, CRC, malformed)   
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  switch  negative  
     [Tags]  Manual-untested
     Manual untested
 
 IP header with more than 1500 Bytes
     Log     Step 1 - IP header with more than 1500 Bytes 
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  switch  negative  
     [Tags]  Manual-untested
     Manual untested
 
 Killing OFAD
     Log     Step 1 - Killing OFAD
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  switch  negative  
     [Tags]  Manual-untested
     Manual untested
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  switch  negative  
     [Tags]  Manual-untested
     Manual untested
 
-Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
+Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff, 00:00:00:00:00:00)
     Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
-    [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual  
+    Manual passed 
 
+Test with traffic invalid src mac and verify that traffic is dropped 
+    Log     Step 1 - Test with invalid src mac like 00:00:00:00:00:00 
+    Log     Step 2 - Traffic should be dropped and mac should not be learned 
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual     
+    Manual passed 
 
+Test with traffic invalid dst mac and verify that traffic is dropped 
+    Log     Step 1 - Test with invalid dst mac like 00:00:00:00:00:00 
+    Log     Step 2 - Traffic should be dropped and mac should not be learned 
+    [Tags]  T5  switch  negative  
+    [Tags]  Manual  jira-pan-1162   
+    Manual Failed
+    
+
+* Keywords
+
+T5 switch platform test setup
+   base suite setup
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch3_name}
+   #${swDpid2}=  rest return switch dpid from ip  s3
+   #rest add dpid  ${switch3_name}   ${swDpid2}
+   #rest add fabric role  ${switch3_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   sleep  10
+                
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   base suite teardown
+   sleep  5     
+
+    

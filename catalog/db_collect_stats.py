@@ -349,10 +349,16 @@ def display_stats(args):
     pass_rate = {}
     details_str = ""
     for test_case in test_case_cursor:
-        if (('jira' in test_case and test_case['jira']) or
-            ('notes' in test_case and test_case['notes'])):
+        # if (('jira' in test_case and test_case['jira']) or
+        #    ('notes' in test_case and test_case['notes'])):
+
+        if 'build_name_verified' in test_case:
             i += 1
-            author = helpers.utf8(product_suites[test_case['product_suite']]['author'])
+
+            if test_case['product_suite'] in product_suites:
+                author = helpers.utf8(product_suites[test_case['product_suite']]['author'])
+            else:
+                author = 'unknown'
 
             if author in pass_rate:
                 pass_rate[author][test_case['status']] += 1
@@ -360,15 +366,27 @@ def display_stats(args):
                 pass_rate[author] = { 'PASS':0, 'FAIL':0 }
                 pass_rate[author][test_case['status']] += 1
 
-            jira = test_case['jira']
-            if test_case['jira']:
-                jira += " - https://bigswitch.atlassian.net/browse/%s" % test_case['jira']
+            if 'build_name_verified' in test_case and test_case['build_name_verified']:
+                build_name_verified = test_case['build_name_verified']
+            else:
+                build_name_verified = None
+            if 'jira' in test_case and test_case['jira']:
+                jira = test_case['jira']
+            else:
+                jira = None
+            if 'notes' in test_case and test_case['notes']:
+                notes = test_case['notes']
+            else:
+                notes = None
+
+            if jira:
+                jira += " - https://bigswitch.atlassian.net/browse/%s" % jira
 
             details_str += "%03d. %s  %s  %s\n" % (i, author, test_case['product_suite'], test_case['name'])
-            details_str += "\tverified in : %s\n" % test_case['build_name_verified']
+            details_str += "\tverified in : %s\n" % build_name_verified
             details_str += "\tstatus      : %s\n" % test_case['status']
             details_str += "\tjira        : %s\n" % jira
-            details_str += "\tnotes       : %s\n" % test_case['notes']
+            details_str += "\tnotes       : %s\n" % notes
             details_str += ""
     if i == 0:
         print "None"

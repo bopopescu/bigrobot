@@ -87,6 +87,7 @@ T5.2.2. Power down, delete
 	Telnet Verify ZTN Discovery Failed  s3
 
 T5.2.3. Power down, change config, failover
+	Sleep  60
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no leaf-group rack0
@@ -118,6 +119,7 @@ T5.2.4. Power down, delete, failover
 
 # Switch in provisioned mode
 T5.3.1. Disconnect, change config, reconnect, reload
+	Sleep  60
 	Verify All Switches In Provisioned Mode
 	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
@@ -140,6 +142,8 @@ T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
 	Telnet Verify ZTN Discovery Failed  s2
 
 T5.3.3. Disconnect, change config, reboot
+	# extra time for switch to recover from previous test case
+	Sleep  60
 	Verify All Switches In Provisioned Mode
 	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
@@ -159,6 +163,7 @@ T5.3.4. Disconnect, delete, reboot
 	Telnet Verify ZTN Discovery Failed  s2
 
 T5.3.5. Disconnect, change config, failover, reconnect, reload
+	Sleep  60
 	Verify All Switches In Provisioned Mode
 	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
@@ -184,6 +189,7 @@ T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	Telnet Verify ZTN Discovery Failed  s2
 
 T5.3.7. Disconnect, change config, failover, reboot
+	Sleep  60
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
@@ -203,6 +209,7 @@ T5.3.8. Disconnect, delete, failover, reboot
 	Telnet Verify ZTN Discovery Failed  s2
 
 T5.3.9. Disconnect, change config, double failover, reconnect, reload
+	Sleep  60
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set All MA1 State  down
 	Randomize ZTN Configuration
@@ -230,6 +237,7 @@ T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	Telnet Verify ZTN Discovery Failed  s2
 
 T5.3.11. Disconnect, change config, double failover, reboot
+	Sleep  60
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Sleep  30
@@ -242,7 +250,6 @@ T5.3.11. Disconnect, change config, double failover, reboot
 	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
 
 T5.3.12. Disconnect, delete, double failover, reboot
-	Reboot Switches
 	Verify Switch In Provisioned Mode  ${s2_alias}
 	Telnet Set MA1 State  s2  down
 	Cli Run  master  enable;config
@@ -252,6 +259,4 @@ T5.3.12. Disconnect, delete, double failover, reboot
 	Failover
 	Telnet Reboot Switch  s2
 	Telnet Verify ZTN Discovery Failed  s2
-	Manual Passed
-	[Tags]  manual
 

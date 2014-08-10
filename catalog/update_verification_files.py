@@ -95,8 +95,9 @@ class PseudoYAML(object):
 
 
 class VerificationFileBuilder(object):
-    def __init__(self, build, overwrite):
+    def __init__(self, build, user, overwrite):
         self._aggregated_build_name = build
+        self._user = user
         self._is_overwrite = overwrite
         self._cat = None
         self._builds = self.catalog().aggregated_build(build)
@@ -137,7 +138,7 @@ class VerificationFileBuilder(object):
 
     def author(self, product_suite):
         if product_suite not in self._product_suites:
-            cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
+            # cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
             return "unknown"
         return self._product_suites[product_suite]['author']
 
@@ -167,6 +168,9 @@ class VerificationFileBuilder(object):
         helpers.file_write_append_once(outfile, doc_str)
 
     def do_it(self):
+
+        # Search for failed test cases. Verification list will be built/updated
+        # based on the failed test cases.
         query = { "build_name": self.aggregated_build_name(),
                   "status": 'FAIL',
                  }
@@ -175,12 +179,18 @@ class VerificationFileBuilder(object):
         print("Total failed test cases in build '%s': %s"
               % (self.aggregated_build_name(), fail_count))
 
+        if self._user == 'all':
+            pass
+        elif self._user not in Authors().get().values():
+            helpers.error_exit("User '%s' is not defined in the test catalog."
+                               % self._user)
+
         # Initialize test case dictionary for each author if not exist
         for author in Authors().get().values():
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                print "Loading file %s" % file_name
+                # print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
                 for tc in tc_list:
@@ -189,34 +199,48 @@ class VerificationFileBuilder(object):
             else:
                 self._test_case_dict[author] = {}
 
+        first_pass = {}
         for tc in aggr_cursor:
             product_suite = tc['product_suite']
             tc_name = tc['name']
             status = tc['status']
-            build_name = tc['build_name']
+            build_name = build_name_last = tc['build_name']
+            if 'build_name_list' in tc and tc['build_name_list']:
+                build_name_last = tc['build_name_list'][-1]
             author = self.author(product_suite)
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
 
-            if not helpers.file_exists(new_file_name):
+            if self._user == 'all' or self._user == author:
+                pass  # do action
+            else:
+                continue
+
+            if new_file_name not in first_pass:
+                if helpers.file_exists(new_file_name):
+                    print "Removing file %s" % new_file_name
+                    helpers.file_remove(new_file_name)
+
                 helpers.file_copy(self.verification_header_template(),
                                   new_file_name)
+                print "Creating file %s" % new_file_name
+                first_pass[new_file_name] = True
 
             key = product_suite + ' ' + tc_name
             if key in self._test_case_dict[author]:
                 if status == self._test_case_dict[author][key]['status']:
                     # print "Test case exists (no change): %s" % key
-                    # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name))
+                    # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name_last))
                     self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 else:
                     # print "Test case exists (status changed): %s" % key
-                    helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name))
+                    helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name_last))
                     self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
                 del self._test_case_dict[author][key]
             else:
-                helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name))
+                helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name_last))
                 rec = {
                        "name": sanitize_string(tc_name),
                        "product_suite": product_suite,
@@ -232,6 +256,12 @@ class VerificationFileBuilder(object):
 
         # Dump remaining test cases from YAML
         for author in self._test_case_dict:
+
+            if self._user == 'all' or self._user == author:
+                pass  # do action
+            else:
+                continue
+
             file_name = self.verification_file(author)
             new_file_name = file_name + ".new"
 
@@ -272,6 +302,10 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
                 help=("Build name,"
                       " e.g., 'bvs master ironhorse beta2 aggregated'"))
     parser.add_argument(
+                '--user',
+                required=True,
+                help=("Create verification file for user (as defined in test catalog)."))
+    parser.add_argument(
                 '--force-overwrite',
                 action='store_true',
                 default=False,
@@ -292,5 +326,6 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 if __name__ == '__main__':
     args = prog_args()
     verification_builder = VerificationFileBuilder(args.build,
+                                                   args.user,
                                                    args.force_overwrite)
     verification_builder.do_it()
