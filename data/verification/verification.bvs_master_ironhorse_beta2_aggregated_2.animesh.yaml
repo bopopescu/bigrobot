@@ -40,57 +40,57 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: 'Verify L2 traffic: frame size 128 bytes'
   product_suite: T5/T5-Platform/t5_same_vns_traffic_forwarding
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #36'
   jira: 
-  notes: 
+  notes: IXIA Port Released when connected back stats were zero, re-run passed
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: 'Verify L3 traffic: frame size 9216 bytes'
   product_suite: T5/T5-Platform/t5_same_vns_traffic_forwarding
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #36'
   jira: 
   notes: 
 
 - name: 'Line Rate: L2 Traffic with frame Size 1518'
   product_suite: T5/T5-Platform/t5_same_vns_traffic_forwarding
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #36'
   jira: 
   notes: 
 
 - name: Verify remote authentication with open source tacacs
   product_suite: T5/T5-Platform/t5_tacacs_user_management
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes:
 
 - name: Verify second tacacs server is used when the first is unreachable
   product_suite: T5/T5-Platform/t5_tacacs_user_management
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
 
 - name: Configure mismatched tacacs secret and verify tacacs user cannot login
   product_suite: T5/T5-Platform/t5_tacacs_user_management
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
 
 - name: Delete tacacs server from configuration and verify tacacs user has no access
   product_suite: T5/T5-Platform/t5_tacacs_user_management
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
 
 - name: Configure and Verify Configuration
   product_suite: T5/T5-Platform/t5_controller_snmp
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
@@ -126,8 +126,8 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: 'Controller HA: Restart Process nginx on Master Controller:'
   product_suite: T5/T5-Platform/t5_ha_process_restart_different_vns
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bvs master #36'
   jira: 
   notes: 
 
