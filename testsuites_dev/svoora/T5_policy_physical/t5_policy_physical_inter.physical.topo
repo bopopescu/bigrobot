@@ -6,7 +6,7 @@
 # mn  : Mininet server
 
 c1:
- ip: 10.8.22.10
+   ip: 10.8.22.10
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  #console:
@@ -15,7 +15,7 @@ c1:
    user: admin
    password: adminadmin
 c2:
- ip: 10.8.22.11
+   ip: 10.8.22.11
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  #console:
@@ -24,8 +24,8 @@ c2:
    user: admin
    password: adminadmin
 s1:
-#  ip: 10.8.0.147
-  alias: leaf0a
+  ip: 10.8.0.147
+  alias: leaf0-a
   leaf-group: rack0
   mac: 70:72:cf:b5:e7:10
   #user: admin
@@ -37,8 +37,8 @@ s1:
   set_session_ssh: false
   set_init_ping: false
 s2:
-#  ip: 10.8.0.150
-  alias: leaf0b
+  ip: 10.8.0.150
+  alias: leaf0-b
   leaf-group: rack0
   mac: 70:72:cf:ab:39:58
   #user: admin
@@ -49,8 +49,8 @@ s2:
   set_session_ssh: false
   set_init_ping: false
 s3:
-#  ip: 10.8.0.146
-  alias: leaf1a
+  ip: 10.8.0.146
+  alias: leaf1-a
   leaf-group: rack1
   mac: 70:72:cf:b5:e9:60
   #user: admin
@@ -61,8 +61,8 @@ s3:
   set_session_ssh: false
   set_init_ping: false
 s4:
-#  ip: 10.8.0.151
-  alias: leaf1b
+  ip: 10.8.0.151
+  alias: leaf1-b
   leaf-group: rack1
   mac: 70:72:cf:b5:f1:c2
   #user: admin
@@ -73,20 +73,20 @@ s4:
   set_session_ssh: false
   set_init_ping: false
 s5:
-#  ip: 10.8.0.155
-  alias: leaf2a
+  ip: 10.8.0.155
+  alias: leaf2-a
   leaf-group: rack2
   mac: 70:72:cf:ab:37:58
   #user: admin
   #password: adminadmin
   console:
     ip: 10.1.8.107
-    port: 6007	
+    port: 6007
   set_session_ssh: false
   set_init_ping: false
 s6:
-#  ip: 10.8.0.152
-  alias: leaf2b
+  ip: 10.8.0.152
+  alias: leaf2-b
   leaf-group: rack2
   mac: 70:72:cf:b5:e5:54
   #user: admin
@@ -97,7 +97,7 @@ s6:
   set_session_ssh: false
   set_init_ping: false
 s7:
-#  ip: 10.8.0.153
+  ip: 10.8.0.153
   alias: spine0
   fabric-role: spine
   mac: 70:72:cf:ae:b4:ae
@@ -112,7 +112,7 @@ s7:
   set_session_ssh: false
   set_init_ping: false
 s8:
-#  ip: 10.8.0.149
+  ip: 10.8.0.149
   alias: spine1
   fabric-role: spine
   mac: 70:72:cf:ae:b5:30
@@ -163,8 +163,8 @@ s8:
   
 tg1:
   platform: 'ixia'
-  chassis_ip: 10.210.192.2
-  tcl_server_ip: 10.194.64.185
+  chassis_ip: 10.8.0.5
+  tcl_server_ip: 10.9.19.231
   ports:
     a:
       name: 12/1
