@@ -190,7 +190,7 @@ Trigger controller HA failover via CLI
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature              runfailed              
+    [Tags]              feature                            
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
