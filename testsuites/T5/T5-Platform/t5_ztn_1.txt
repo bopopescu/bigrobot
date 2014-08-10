@@ -184,16 +184,19 @@ T1.15. Connected, three failovers
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
+	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
 	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
+	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
 	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
+	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
 	Sleep  30
 	Verify All Switches In Provisioned Mode
