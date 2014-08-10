@@ -21,7 +21,7 @@ Resource        testsuites_dev/slim/T5_L3_physical_intra/t5_dualleaf_three_rack_
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack untagged with dynamic endpoints
-    [Tags]              feature         sanity          runfailed
+    [Tags]              feature         sanity          
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack untagged with dynamic endpoints
@@ -33,7 +33,7 @@ Intra tenant L3 tagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature         sanity  
+    [Tags]              feature         sanity      runfailed
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
@@ -41,11 +41,11 @@ Intra tenant L3 traffic same rack different leaf switch
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                feature             sanity          runfailed                    
+    [Tags]                feature             sanity                              
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature                            runfailed
+    [Tags]                 feature                            
     
 Activate and deactivate router interface
     Activate and deactivate router interface
@@ -53,11 +53,11 @@ Activate and deactivate router interface
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature         sanity          runfailed
+    [Tags]                  feature         sanity        runfailed  
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature         sanity  
+    [Tags]                  feature         sanity          runfailed
 
 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
@@ -81,7 +81,7 @@ Intra tenant dhcp relay
     
 Intra tenant dhcp relay with circuit id
     L3 intra tenant dhcp relay with circuit id on same rack
-    [Tags]                   feature            sanity                  dhcp-relay      runfailed
+    [Tags]                   feature            sanity                  dhcp-relay      
 
 Intra tenant dhcp relay across rack
     L3 intra tenant dhcp relay across rack
@@ -89,7 +89,7 @@ Intra tenant dhcp relay across rack
     
 Intra tenant dhcp relay with circuit id across rack
     L3 intra tenant dhcp relay with circuit id across rack
-    [Tags]                   feature            feature                 dhcp-relay      runfailed
+    [Tags]                   feature            feature                 dhcp-relay      
 
 Delete and Add dhcp relay
     L3 dhcp request without dhcp relay enabled
@@ -97,11 +97,11 @@ Delete and Add dhcp relay
     
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
     Move host from one vns to another vns in the same tenant and verify dhcp request is working
-    [Tags]                  feature                 dhcp-relay              runfailed
+    [Tags]                  feature                 dhcp-relay              
 
 Verify dhcp host is not aged out
     Verify dhcp host is not being aged out
-    [Tags]              feature                 dhcp-relay        runfailed  
+    [Tags]              feature                 dhcp-relay          
 
 Dhcp relay with dhcp server configured as static endpoint
     Dhcp relay with static dhcp server endpoint
@@ -109,7 +109,7 @@ Dhcp relay with dhcp server configured as static endpoint
     
 Verify add and delete of dhcp server config works
     Verify add and delete of dhcp server config works
-    [Tags]             feature                 dhcp-relay   runfailed
+    [Tags]             feature                 dhcp-relay       runfailed
         
     
 Add and delete untagged endpoints with existing host
@@ -138,7 +138,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature             runfailed   
+    [Tags]              feature            runfailed    
 
 Delete and add router vns ip
     Delete and add router vns ip 
@@ -150,7 +150,7 @@ Set 32bit full mask on vns router ip
     
 Change tagged endpoint IP address
     Change tagged host endpoint IP address
-    [Tags]              feature                     runfailed
+    [Tags]              feature            runfailed         
 
 Configure static endpoint with host showing up on another port
     Static endpoint with dynamic host showing up on another port
@@ -158,7 +158,7 @@ Configure static endpoint with host showing up on another port
 
 Verify subnet mask is properly applied on router vns
     Verify subnet mask on vns router ip
-    [Tags]                  feature     runfailed
+    [Tags]                  feature     
     
 Verify vlsm forwarding
     Verify vlsm forwarding
@@ -182,15 +182,15 @@ L3 intra tenant traffic between private and public subnet with overlapping IP
     
 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
-    [Tags]                      feature                    
+    [Tags]                      feature              runfailed      
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature                            
+    [Tags]              feature             runfailed               
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature                            
+    [Tags]              feature              runfailed              
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
@@ -198,7 +198,7 @@ Spine connect and disconnect to controller
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
-    [Tags]              feature         runfailed
+    [Tags]              feature         
 
 Spine to leaf link flap
     Flap link between leaf and spine
@@ -222,15 +222,15 @@ L3 intra tenant traffic behavior in headless mode
 
 L3 intra tenant traceroute
     L3 intra tenant traceroute
-    [Tags]                  feature     runfailed
+    [Tags]                  feature     
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature     runfailed         
+    [Tags]                                  feature              
     
 Verify host on private segment is able to get dhcp address from tenant dhcp server
     Verify host on private segment is able to get dhcp address from tenant dhcp server
-    [Tags]                                  feature           dhcp-relay            runfailed
+    [Tags]                                  feature           dhcp-relay            
                                 
         
 Trigger controller HA failover via CLI and verify dhcp-relay is working
@@ -239,7 +239,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
 
 Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
-    [Tags]                  feature         HA      dhcp-relay          
+    [Tags]                  feature         HA      dhcp-relay          runfailed
 
 Trigger controller HA failover via CLI and verify ecmp is working
     manual untested
@@ -275,11 +275,11 @@ Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
 
 Verify arp agent functionality after controller HA failover via CLI
     Verify arp agent functionality after controller HA failover via CLI
-    [Tags]                  feature                 HA                              
+    [Tags]                  feature                 HA                     runfailed         
 
 Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
-    [Tags]                  feature                                             
+    [Tags]                  feature                                       runfailed      
     
 Verify ecmp traffic will failover and failback to more specific routes with ecmp group
     manual untested
@@ -288,16 +288,16 @@ Verify ecmp traffic will failover and failback to more specific routes with ecmp
     
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
-    [Tags]                  feature          runfailed               
+    [Tags]                  feature                         runfailed
     
 
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
-    [Tags]                  feature            runfailed             
+    [Tags]                  feature                        runfailed 
     
 Verify blocked endpoint should be automatically cleared
     Verify blocked endpoint should be automatically cleared
-    [Tags]                  feature           runfailed              
+    [Tags]                  feature                        runfailed 
     
 Spine reboot
     Reboot spine0 via CLI
@@ -439,10 +439,10 @@ L3 intra tenant across rack tagged with dynamic endpoints
     sleep                                       5   
 #   BASH ping                                   h1                              10.251.1.1              count=10
 #   BASH ping                                   h3                              10.251.3.1              count=10
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -773,10 +773,10 @@ L3 intra tenant same rack tagged with static endpoints
     BASH add route                              h1                              10.251.2.0/24           10.251.1.1
     BASH add route                              h2                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h2                      10.251.2.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h2                      10.251.2.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.2.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -827,10 +827,10 @@ L3 intra tenant across rack tagged with static endpoints
     sleep                               5   
 #   BASH ping                                   h1                              10.251.1.1              count=10
 #   BASH ping                                   h3                              10.251.3.1              count=10
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -1486,7 +1486,7 @@ Verify add and delete of dhcp server config works
 #    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
     REST add dhcprelay circuitid                Y                               Y3                      this is a test
@@ -1498,10 +1498,10 @@ Verify add and delete of dhcp server config works
     Should Be Empty                             ${result}                    
     REST add dhcp relay                         Y                               Y3                      10.252.1.11
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.11
     Should Be Equal                             ${routerip}                     10.252.3.1
     ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.9   
@@ -1510,18 +1510,18 @@ Verify add and delete of dhcp server config works
     Should Be True                              ${result} 
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
     REST add dhcp relay                         Y                               Y3                      10.252.1.12
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.12
     Should Be Equal                             ${routerip}                     10.252.3.1
 
@@ -1602,10 +1602,10 @@ L3 add and delete tagged endpoints with existing host
     sleep                                       5   
 #   BASH ping                                   h3                              10.251.1.1              count=10
 #   BASH ping                                   h2                              10.251.3.1              count=10
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -1902,7 +1902,8 @@ Change router ip address
     sleep                               1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
-    Should Contain                              ${ipAddr1}                      10.251.1.11
+    Should match regexp                         ${ipAddr1}                      (10\.251\.4\.11|10\.251\.1\.11)
+#    Should Contain                              ${ipAddr1}                      10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac2}
     ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11         
@@ -2006,10 +2007,10 @@ Change tagged host endpoint IP address
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -2057,10 +2058,10 @@ Static endpoint with dynamic host showing up on another port
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#   ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -2410,10 +2411,10 @@ Controller HA failover via CLI
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   X                               X3                      ${leaf1_a}              ${ixia3}                -1  
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=30
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -2527,10 +2528,10 @@ Controller HA failover via reboot
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -2679,10 +2680,10 @@ Connect and Disconnect spine to controller
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
 #   Should Be True                              ${value}        
@@ -2794,10 +2795,10 @@ Flap link between leaf and spine
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
 #   Should Be True                              ${value}        
@@ -2849,10 +2850,10 @@ Flap bond interface towards host
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
 #   Should Be True                              ${value}        
@@ -2923,10 +2924,10 @@ restart ofad on spine
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
 #   Should Be True                              ${value}        
@@ -2982,10 +2983,10 @@ restart ofad on leaf
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
 #   Should Be True                              ${value}        
@@ -3204,10 +3205,10 @@ Verify arp agent functionality after controller HA failover via CLI
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -3257,10 +3258,10 @@ Verify arp agent functionality after controller HA failover via reboot
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -3305,15 +3306,12 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH add tag                                h1                              bond0                   1001
     BASH add tag                                h3                              bond0                   1003
     BASH add tag                                h4                              bond0                   1004
-    
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
     BASH ifup intf                              h4                              bond0.1004
-    
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
     BASH init intf                              h4                              bond0.1004
-    
     BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     sleep                                       2
@@ -3329,12 +3327,12 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       1
-    BASH ping                                   h3                              10.251.1.1              count=5
-    ${value} =                                  BASH verify arp                 h3                      10.251.1.1
-    Should Be True                              ${value}
+    BASH ping                                   h3                              10.251.1.1              count=10
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
+    ${value} =                                  BASH verify arp                 h3                      10.251.1.1
+    Should Be True                              ${value}
     BASH run command                            h1                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
     ${string} =                                 BASH run command                h1                      echo $!
@@ -3391,10 +3389,10 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
     BASH set mac address                        h3                              bond0                   ${mac1}
     BASH set mac address                        h3                              bond0.1003              ${mac1}
-    BASH ifconfig ip address                         h3                              10.251.1.11/24          bond0.1003
+    BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       1
-    BASH ping                                   h3                              10.251.1.1              count=5
+    BASH ping                                   h3                              10.251.1.1              count=10
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -3461,7 +3459,7 @@ Verify blocked endpoint should be automatically cleared
     BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       1
-    BASH ping                                   h3                              10.251.1.1              count=5
+    BASH ping                                   h3                              10.251.1.1              count=10
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac         ${mac1}
