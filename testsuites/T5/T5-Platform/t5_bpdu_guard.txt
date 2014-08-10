@@ -197,7 +197,8 @@ BPDU Guard test setup
  	config   s100	   no spanning-tree vlan 100
  	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
  	log  result is ${result}
- 	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf}   	  
+ 	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf}  
+	Wait Until Keyword Succeeds   	1 min  5 sec  verify switch interface is up    ${sw}   ${intf}	  	 	  
 	base test setup	
 	
 BPDU Guard test teardown  
