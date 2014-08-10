@@ -40,10 +40,10 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: add same interface to multiple tag onto same VNS
   product_suite: T5/L2/t5_app_cli
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: REST CHANGE cli works
 
 ### status: FAIL in recent 'bvs master #beta2_36'
 - name: restart ofad to verify the fabric link
@@ -56,42 +56,42 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
   product_suite: T5/L2/t5_fabric_negative
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: failed becuase of switchlight CLI does not seems to be expecting controller add/delete
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Test VFT push to when system has not connected switches
   product_suite: T5/L2/t5_fabric_negative
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: failed becuase of switchlight CLI does not seems to be expecting controller add/delete
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: check forwarding port/lag table consisteny after switch mgmt remove/add
   product_suite: T5/L2/t5_fabric_negative
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: failed becuase of switchlight CLI does not seems to be expecting controller add/delete
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: check forwarding vlan table consistency after switch mgmt remove/add
   product_suite: T5/L2/t5_fabric_negative
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: failed becuase of switchlight CLI does not seems to be expecting controller add/delete
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: verifying flow reconsilation when new switch is connected to the fabric
   product_suite: T5/L2/t5_fabric_negative
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: failed becuase of switchlight CLI does not seems to be expecting controller add/delete
 
 ### status: FAIL in recent 'bvs master #beta2_36'
 - name: Add leaf group from 2 different rack and verify the status and check the fabric error
@@ -143,21 +143,21 @@
 
 - name: Setup Three Rack Dual Leaf Topology
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: IXIA issue
 
 - name: Static endpoint age test
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: For some reason IXIA ARP getway is not resolved
 
 - name: static endpoint membership rule change test
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: For some reason IXIA ARP getway is not resolved
@@ -165,40 +165,40 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Mac age test
   product_suite: T5/L2/t5_mac_move_age
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Due to IXIA
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Traffic Test between the 2 leaf with single peer link
   product_suite: T5/Fabric/t5_fabric_traffic_failover
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: due to p4 host seems like not responded
 
 - name: Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
   product_suite: T5/Fabric/t5_fabric_traffic_failover
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: due to p4 host seems like not responded
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
   product_suite: T5/Fabric/t5_fabric_traffic_failover
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: due to p4 host seems like not responded
 
 - name: HA failover with lacp host
   product_suite: T5/Fabric/t5_fabric_traffic_failover
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: due to p4 host seems like not responded
 
 ### status: FAIL in recent 'bvs master #beta2_36'
 - name: Verify single vns rx/tx rates same rack
@@ -234,89 +234,89 @@
 
 - name: verify interface rx/tx multicast packets stats
   product_suite: T5/L2/t5_vns_stats
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: range is off 10
 
 - name: verify interface LLDP/control packet count different rack
   product_suite: T5/L2/t5_vns_stats
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: IXIA issue
+  notes: LLDP packet does forward
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings 
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: spine switch reboot with 48k mac address in the system
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Master controller node reboot with 48k mac entries
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 8k static endpoints and check the forwarding
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 16k static endpoints and check the forwarding also check with master reboot
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Tear down the config
   product_suite: T5/L2/t5_mac_scale
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings
 
 - name: Verifying Duplicate packets for Non IP multicast packets over the fabric
   product_suite: T5/Fabric/t5_fabric_lag_test

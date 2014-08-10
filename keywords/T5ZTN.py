@@ -654,17 +654,17 @@ class T5ZTN(object):
                         helpers.log("Rearranging line: %s" % ztn_config_line)
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap cpu-load",
-                           "snmp-server trap CPU_load threshold")
+                           "snmp-server trap cpu-load threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap mem-free",
-                           "snmp-server trap mem_total_free threshold")
+                           "snmp-server trap mem-total-free threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap l2-flow-table-util",
-                           "snmp-server trap flow_table_l2_util threshold")
+                           "snmp-server trap flow-table-l2-util threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap fm-flow-table-util",
-                           "snmp-server trap flow_table_tcam_fm_util threshold")
-                        if "mem_total_free" in ztn_config_line:
+                           "snmp-server trap flow-table-tcam-fm-util threshold")
+                        if "mem-total-free" in ztn_config_line:
                            helpers.log("Need to divide value in %s "
                                        "by 1024" % ztn_config_line)
                            split = ztn_config_line.split(" ")
@@ -773,9 +773,9 @@ class T5ZTN(object):
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
                 # temp override BSC-5629
-                if re.match(r'snmp-server trap', startup_config_line):
-                    helpers.log("Skipping line %s" % startup_config_line)
-                    continue
+                #if re.match(r'snmp-server trap', startup_config_line):
+                #    helpers.log("Skipping line %s" % startup_config_line)
+                #    continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
                     startup_config_temp.append(temp_line)

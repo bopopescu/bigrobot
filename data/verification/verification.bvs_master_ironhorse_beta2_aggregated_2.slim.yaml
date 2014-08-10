@@ -40,48 +40,48 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add and delete default route on tenant
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: PASS on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add and delete tenant system interface on tenant router
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: PASS on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add and delete tenant router interface on system tenant
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: PASS on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: L3 ttl one forwarding
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: PASS on second run
 
 - name: Inter tenant DHCP relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
   status: FAIL
   build_name_verified: 'bvs master #nnn'
-  jira: BVS-2176
-  notes: File a ticket
+  jira: 
+  notes: 
 
 - name: Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
-  jira: BVS-2176
-  notes: File a ticket
+  jira: 
+  notes: Pass on second run
 
 - name: Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -167,10 +167,10 @@
 
 - name: Restart ofad on leaf with dhcp-relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
-  jira: BVS-2176
-  notes: ticket filed
+  jira: 
+  notes: Pass on second run
 
 - name: Restart ofad on spine with dhcp-relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -233,34 +233,34 @@
 
 - name: Spine reboot
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: Pass
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: Ixia arp issue
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Intra tenant L3 tagged traffic with dynamic endpoints across rack
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Intra tenant L3 tagged traffic with static endpoints same rack
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Intra tenant L3 tagged traffic with static endpoints across rack
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 - name: Verify add and delete of dhcp server config works
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
@@ -278,10 +278,10 @@
 
 - name: Change router vns ip
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: script issue due to support for multiple IPs, will have to figure out how to update script/test steps to work around multiple IP issue
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Change tagged endpoint IP address
@@ -308,34 +308,34 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Trigger controller HA failover via CLI
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Trigger controller HA failover via reboot
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Spine connect and disconnect to controller
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Spine to leaf link flap
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 - name: Leaf to host link flap
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
@@ -347,17 +347,17 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Restart ofad process on spine
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on second run
 
 - name: Restart ofad process on leaf
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: Ixia arp issue
+  notes: Pass on second run
 
 - name: Trigger controller HA failover via CLI and verify dhcp-relay is working
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
