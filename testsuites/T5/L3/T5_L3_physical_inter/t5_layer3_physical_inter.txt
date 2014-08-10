@@ -38,7 +38,7 @@ inter tenant L3 tagged traffic with dynamic endpoints across rack
     
 Add and delete default route on tenant
     Add and delete default route on tenant router
-    [Tags]      feature         runfailed
+    [Tags]      feature         
 
 Add and delete static route on tenant
     manual passed
@@ -50,15 +50,15 @@ Add and delete more specific route on tenant over existing static route
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature             runfailed
+    [Tags]      feature             
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
-    [Tags]      feature             runfailed
+    [Tags]      feature             
 
 L3 ttl one forwarding
     Verify inter tenant L3 traffic with ttl value of one two and three
-    [Tags]      feature               runfailed  
+    [Tags]      feature                 
 
 L3 inter tenant forwarding with end host moved to another port
     L3 inter tenant host moved 
@@ -78,7 +78,7 @@ Inter tenant DHCP relay
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-    [Tags]      feature         dhcp-relay                      runfailed
+    [Tags]      feature         dhcp-relay                      
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
@@ -250,7 +250,7 @@ Restart ofad on spine with ecmp group
 
 Restart ofad on leaf with dhcp-relay
     Restart ofad on leaf with dhcp-relay
-    [Tags]          feature         dhcp-relay      runfailed
+    [Tags]          feature         dhcp-relay      
 
 Restart ofad on spine with dhcp-relay
     Restart ofad on spine with dhcp-relay
@@ -338,7 +338,7 @@ Enable and disable tenant logical router interface
 
 Spine reboot
     Spine reboot
-    [Tags]          feature         HA          runfailed
+    [Tags]          feature         HA          
 
 Leaf reboot
     Leaf reboot
@@ -580,11 +580,11 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
     REST add static routes                      X                               10.252.0.0/16  
-    Log =                                       REST show l3 cidr table         
+    REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     REST delete static routes                   X                               10.252.0.0/16   
-    Log =                                       REST show l3 cidr table         
+    REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
@@ -1252,6 +1252,8 @@ Inter tenant dhcp relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
+    ${ipAddr5a} =                               BASH get interface ipv4         h5                      bond0
+    Should Be Empty                             ${ipAddr5a}                     
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1344,6 +1346,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
+    BASH release dhcpv4 address                 h2                              bond0.1002
+    BASH release dhcpv4 address                 h5                              bond0
+    sleep                                       1
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Be Empty                             ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -1468,7 +1473,7 @@ Host moved to another vns on another tenant and renew dhcp
     REST delete portgroup from vns              Y                               Y1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Z                               Z3                      ${leaf2_pc1}            -1
     sleep                                       1
-    
+    REST show forwarding dhcp table
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr5}
     ${result} =                                 REST show endpoints mac         ${mac5}

@@ -33,7 +33,7 @@ Intra tenant L3 tagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature         sanity      runfailed
+    [Tags]              feature         sanity      
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
@@ -53,11 +53,11 @@ Activate and deactivate router interface
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature         sanity        runfailed  
+    [Tags]                  feature         sanity          
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature         sanity          runfailed
+    [Tags]                  feature         sanity          
 
 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
@@ -138,7 +138,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature            runfailed    
+    [Tags]              feature                
 
 Delete and add router vns ip
     Delete and add router vns ip 
@@ -186,7 +186,7 @@ Verify host with different IP on vns router is not getting L3 service
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature             runfailed               
+    [Tags]              feature                            
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
@@ -1489,7 +1489,7 @@ Verify add and delete of dhcp server config works
 #    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
-    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    REST add dhcprelay circuitid                Y                               Y3                  10.252.1.9        this is a test
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     Should Be Equal                             ${circuitid}                    this is a test
@@ -3124,7 +3124,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
     sleep                                       5
-    Log =                                       BASH run cmd                    route -n
+    BASH run cmd                    route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
