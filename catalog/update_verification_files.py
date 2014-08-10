@@ -190,12 +190,15 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                # print "Loading file %s" % file_name
+                print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
-                for tc in tc_list:
-                    tc_key = tc['product_suite'] + ' ' + tc['name']
-                    self._test_case_dict[author][tc_key] = tc
+
+                if tc_list:
+                    # Test cases found
+                    for tc in tc_list:
+                        tc_key = tc['product_suite'] + ' ' + tc['name']
+                        self._test_case_dict[author][tc_key] = tc
             else:
                 self._test_case_dict[author] = {}
 
