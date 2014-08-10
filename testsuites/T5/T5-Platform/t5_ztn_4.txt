@@ -166,6 +166,7 @@ T5.3.5. Disconnect, change config, failover, reconnect, reload
 	Sleep  60
 	Verify All Switches In Provisioned Mode
 	Telnet Set All MA1 State  down
+	Sleep  30
 	Randomize ZTN Configuration
 	Failover
 	Cli Run  master  show run

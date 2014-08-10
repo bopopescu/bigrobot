@@ -104,8 +104,25 @@ T1.6. Test switch reboot
 T1.7. Reboot all switches from CLI
 	${status}=  Cli Reboot Switch  master  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	Sleep  30
+	Verify All Switches Disconnected
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
 	${status}=  Cli Reboot Switch  slave  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	Sleep  30
+	Verify All Switches Disconnected
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
+	Sleep  20
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
 
 T1.8. Reboot switches from CLI
 	Cli Reboot Switch  master  ${s1_alias}
