@@ -89,7 +89,7 @@ Inter tenant dhcp relay with multiple dhcp servers
     [Tags]      feature         dhcp-relay
 
 Inter tenant dhcp relay with duplicate circuitid
-    manual failed
+    manual passed
     [Tags]      feature         dhcp-relay          
     
 Host moved to another vns on another tenant and renew dhcp 
@@ -612,10 +612,10 @@ Add and delete default route on tenant router
     sleep                                       5   
 #   BASH ping                                   h1                              10.251.1.1              count=10
 #   BASH ping                                   h3                              10.252.1.1              count=10
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -664,10 +664,10 @@ Add and delete tenant system interface on tenant router
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       10  
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -714,10 +714,10 @@ Add and delete tenant router interface on system tenant
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       10  
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -822,10 +822,10 @@ Verify inter tenant L3 traffic with ttl value of one two and three
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -1213,7 +1213,6 @@ Inter tenant dhcp relay
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1252,9 +1251,9 @@ Inter tenant dhcp relay
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -1307,10 +1306,10 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     REST delete static routes                   Y                               10.251.0.0/16       
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0.1002
     Should Be True                              ${value}
-    ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
-    Should Be Empty                             ${ipAddr2}
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2                      bond0.1002
+    Should Be Empty                             ${ipAddr3}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     REST add static routes                      Y                               10.251.0.0/16            {"tenant": "system"}
     sleep                                       1
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
@@ -1363,7 +1362,6 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     Should Contain                              ${state5}                       L2 Only
     sleep                                       5
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1402,9 +1400,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -1432,7 +1430,6 @@ Host moved to another vns on another tenant and renew dhcp
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1468,8 +1465,10 @@ Host moved to another vns on another tenant and renew dhcp
     Should Be True                              ${loss} < 20    
     REST delete portgroup from vns              Y                               Y1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Z                               Z3                      ${leaf2_pc1}            -1
+    sleep                                       1
+    
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
-    Should Be True                              ${ipAddr5}
+    Should Not Be Empty                         ${ipAddr5}
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
@@ -1487,9 +1486,9 @@ Host moved to another vns on another tenant and renew dhcp
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -2804,6 +2803,10 @@ test teardown topology
     REST delete tenant routers intf to system       Z
     initialize host
     Stop Floodlight Monitor     
+    BASH restart networking service                 h1                          timeout=60
+    BASH restart networking service                 h3                          timeout=60
+    BASH restart networking service                 h6                          timeout=60
+    
 
 T5 base suite setup
     base suite setup
