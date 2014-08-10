@@ -40,15 +40,15 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: T24 Interface tenant add/remove deny policy src-vns to any
   product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: IXIA issue re-run PASS
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: T74 Interface system tenant add/remove permit policy any to dest-tenant
   product_suite: T5/T5_Policy_Physical/t5_policy_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: IXIA issue re-run PASS
