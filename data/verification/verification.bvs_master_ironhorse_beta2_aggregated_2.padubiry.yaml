@@ -40,10 +40,10 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: add same interface to multiple tag onto same VNS
   product_suite: T5/L2/t5_app_cli
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: REST CHANGE cli works
 
 ### status: FAIL in recent 'bvs master #beta2_36'
 - name: restart ofad to verify the fabric link
@@ -67,7 +67,7 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Need to modify testcases with ZTN to check 
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: check forwarding port/lag table consisteny after switch mgmt remove/add
@@ -143,21 +143,21 @@
 
 - name: Setup Three Rack Dual Leaf Topology
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: IXIA issue
 
 - name: Static endpoint age test
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: For some reason IXIA ARP getway is not resolved
 
 - name: static endpoint membership rule change test
   product_suite: T5/L2/t5_alpha_pr
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: For some reason IXIA ARP getway is not resolved
@@ -165,7 +165,7 @@
 ### new entry in recent 'bvs master #beta2_36'
 - name: Mac age test
   product_suite: T5/L2/t5_mac_move_age
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: 
@@ -252,7 +252,7 @@
   status: FAIL
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: need to modify age timings 
 
 ### new entry in recent 'bvs master #beta2_36'
 - name: Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
