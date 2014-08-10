@@ -1,0 +1,611 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Add and delete default route on tenant
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Add and delete tenant system interface on tenant router
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Add and delete tenant router interface on system tenant
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: L3 ttl one forwarding
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Inter tenant DHCP relay
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: File a ticket
+
+- name: Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: File a ticket
+
+- name: Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: File a ticket
+
+- name: Inter tenant dhcp relay with multiple dhcp servers
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: regression environment issues, will install isc-dhcp-server on second and third host
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Inter tenant dhcp relay with duplicate circuitid
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, manaul testing on my setup is fine
+
+- name: Host moved to another vns on another tenant and renew dhcp
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: Ticket filed
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Add and delete all ECMP members in ecmp group
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup, will update testsuites
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Delete existing one ECMP members and add new ECMP member
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup, will update testsuites
+
+- name: L3 inter tenant forwarding to VRRP routers
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual untested, will need to run test on my setup
+
+- name: L3 inter tenant traceroute with icmp and udp probe
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, manual testing on my setup is fine
+
+- name: L3 inter tenant with CRC errors
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Controller HA failover with ecmp group
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual pass in my setup
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Verify inter tenant L3 traffic is getting drop with null next hop
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, works manually on my setup
+
+- name: Restart ofad on leaf with dhcp-relay
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: ticket filed
+
+- name: Restart ofad on spine with dhcp-relay
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: ticket filed
+
+- name: Verify L3 inter tenant forwarding after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade not working
+
+- name: Verify inter tenant ecmp forwarding after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade not working
+
+- name: Verify inter tenant dhcp-relay functionality after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade not working
+
+- name: Dhcp request from overlapping private IP and public IP
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: ticket filed
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Add and delete nexthop group
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual test pass on my setup
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Add and delete nexthop group in system
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual test pass on my setup
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Add and delete nexthop group IP
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual test pass on my setup
+
+- name: Spine reboot
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Intra tenant L3 tagged traffic with dynamic endpoints across rack
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Intra tenant L3 tagged traffic with static endpoints same rack
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Intra tenant L3 tagged traffic with static endpoints across rack
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Verify add and delete of dhcp server config works
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue
+
+- name: Add and delete tagged endpoints with existing host
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, same mac is showing on two host
+
+- name: Change router vns ip
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue due to support for multiple IPs, will have to figure out how to update script/test steps to work around multiple IP issue
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Change tagged endpoint IP address
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Configure static endpoint with host showing up on another port
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, updated script
+
+- name: Verify host with different IP on vns router is not getting L3 service
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: PAN-1116
+  notes: ticket filed
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Trigger controller HA failover via CLI
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Trigger controller HA failover via reboot
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Spine connect and disconnect to controller
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Spine to leaf link flap
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Leaf to host link flap
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, two host is having the same mac address
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Restart ofad process on spine
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Restart ofad process on leaf
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+- name: Trigger controller HA failover via CLI and verify dhcp-relay is working
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, need to debug further
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Trigger controller HA failover via reboot and verify dhcp-relay is working
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+- name: Verify L3 intra tenant forwarding after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade is not working
+
+- name: Verify ecmp forwarding after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade is not working
+
+- name: Verify dhcp-relay functionality after controller upgrade
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: controller upgrade is not working
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify arp agent functionality after controller HA failover via CLI
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify arp agent functionality after controller HA failover via reboot
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: Verify same mac address showing up on two ports in the same segment is blocked
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, is working in master build in my setup
+
+- name: Verify clear blocked endpoint works
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, is working in master build in my setup
+
+- name: Verify blocked endpoint should be automatically cleared
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, updated script
+
+- name: Enable and disable tenant logical router interface
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Will need to debug further
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Intra tenant L3 untagged traffic with static endpoints across rack
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2156
+  notes: Ticket filed by Tomas
+
+- name: Add and delete more specific route on tenant over existing static route
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, will update script. manual testing on my setup is fine
+
+- name: Dhcp discover on the same vns as server with dhcp relay enabled
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, maunal testing on my setup works fine
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Link flap between leaf and spine
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Verify L3 intra tenant traffic with ip options
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, need to debug further
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Verify dhcp host is not aged out
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue
+
+- name: Verify private IP is able to communicate with other vns in the same tenanttrr
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual pass in my setup
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Controller HA failover via reboot of master
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Restart ofad on spine switch
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: L3 inter tenant traffic with jumbo frame
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Leaf reboot
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Controller HA failover with dhcp-relay
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: Ticket filed
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Verify subnet mask is properly applied on router vns
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: will need to debug further
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Spine reboot
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Restart ofad on leaf switch
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia issue
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Leaf reboot
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+- name: Verify private IP is able to communicate with other vns in the same tenant
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: script issue, manual testing on my setup is fine
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Verify routing loop is not causing packets to loop forever
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Will need to debug further
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Controller HA failover via CLI
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Ixia arp issue
+
+- name: Verify ecmp traffic will failover and failback to more specific routes with ecmp group
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual test pass on my setup
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: Active Controller reboot with dhcp-relay
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: BVS-2176
+  notes: Ticket filed
+
+- name: Add and delete nexthopgroup in system tenant
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: manual passed in my setup
