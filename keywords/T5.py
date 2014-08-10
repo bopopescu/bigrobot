@@ -1451,7 +1451,7 @@ class T5(object):
                 return True
                 break
         if status == False:
-            helpers.test_failure("Fabric switch role removal Test Failed")
+            helpers.test_failure("Fabric switch role Check Test Failed")
 
         return False
 
