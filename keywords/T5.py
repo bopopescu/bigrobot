@@ -1982,11 +1982,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["interface"][0]["name"] == intf:
-            if (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
+            if (data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2005,11 +2005,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["interface"][0]["name"] == intf:
-            if (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
+            if (data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
