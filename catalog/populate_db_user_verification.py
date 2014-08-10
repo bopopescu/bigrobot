@@ -79,6 +79,11 @@ class ManualVerificationBuild(object):
     def sanitize_verification_data(self):
         test_cases = helpers.from_yaml(helpers.file_read_once(
                                                     self._verification_file))
+
+        if test_cases == None:
+            # No test cases found
+            return True
+
         for tc in test_cases:
             if self.is_test_case_verified(tc) == False:
                 continue
@@ -89,6 +94,10 @@ class ManualVerificationBuild(object):
         test_cases = helpers.from_yaml(helpers.file_read_once(
                                                     self._verification_file))
         print "Updating documents in build '%s'" % self.aggregated_build_name()
+
+        if test_cases == None:
+            # No test cases found
+            return True
 
         for tc in test_cases:
             if self.is_test_case_verified(tc) == False:
