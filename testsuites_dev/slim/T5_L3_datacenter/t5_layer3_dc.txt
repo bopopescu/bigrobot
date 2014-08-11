@@ -22,45 +22,47 @@ Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
 * Test Cases
 L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
 	L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
-	[Tags]									smoke				sanity				run
+	[Tags]									smoke				sanity				run1
 
 L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run2
 
 L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run3
     
 L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay   
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run4
 
 L3 inter tenant same rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run5
 
 L3 inter tenant across rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run6
 
 L3 inter tenant same rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run7
     
 L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay   
-    [Tags]                                  smoke               sanity              run
+    [Tags]                                  smoke               sanity              run8
     
         
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
     ${value} =                                  REST enable endpoint flap protection
     Log                                         ${value}
-    REST add portgroup to vns                   X                               X1          leaf0-pc1           -1
-    REST add portgroup to vns                   X                               X2          leaf0-pc2           -1   
-    REST add dhcp relay                         X                               X2                      10.251.1.9
-    REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
+    REST add portgroup to vns                   X                               X1                              leaf0-pc1           -1
+    REST add portgroup to vns                   X                               X2                              leaf0-pc2           -1   
+    REST add dhcp relay                         X                               X2                              10.251.1.9
+    REST add dhcprelay circuitid                X                               X2                              10.251.1.9              private vns X2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -102,6 +104,9 @@ L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2          leaf1-pc2           -1   
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -144,6 +149,9 @@ L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2                      leaf0-pc2               1002 
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -187,6 +195,9 @@ L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2          leaf1-pc2           2002 
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -231,6 +242,9 @@ L3 inter tenant same rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   Y                               Y2          leaf0-pc2           -1   
     REST add dhcp relay                         Y                               Y2                      10.251.1.9
     REST add dhcprelay circuitid                Y                               Y2                      10.251.1.9              private vns Y2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -270,6 +284,9 @@ L3 inter tenant across rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X1                          leaf0-pc1           -1
     REST add portgroup to vns                   Y                               Y3                          leaf1-pc2           -1   
     REST add dhcp relay                         Y                               Y3                          10.251.1.9
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
@@ -310,6 +327,9 @@ L3 inter tenant same rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   Y                               Y2                      leaf0-pc2               1002 
     REST add dhcp relay                         Y                               Y2                      10.251.1.9
     REST add dhcprelay circuitid                Y                               Y2                      10.251.1.9              private vns Y2
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -351,6 +371,9 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X1                      leaf0-pc1           1001
     REST add portgroup to vns                   Y                               Y3                      leaf1-pc2           2002 
     REST add dhcp relay                         Y                               Y3                      10.251.1.9
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
@@ -386,6 +409,16 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     Should Be True                              ${loss} == 0    
     
 initialize host
+    BASH run cmd                                h1-rack0                                ifdown bond0
+    BASH run cmd                                h2-rack0                                ifdown bond0
+    BASH run cmd                                h3-rack0                                ifdown bond0
+    BASH run cmd                                h1-rack1                                ifdown bond0
+    BASH run cmd                                h2-rack1                                ifdown bond0
+    BASH run cmd                                h3-rack1                                ifdown bond0
+    BASH run cmd                                h1-rack2                                ifdown bond0
+    BASH run cmd                                h2-rack2                                ifdown bond0
+    BASH run cmd                                h3-rack2                                ifdown bond0
+    
     BASH ifdown intf							h1-rack0								bond0
 	BASH ifdown intf							h2-rack0								bond0
 	BASH ifdown intf							h3-rack0								bond0
