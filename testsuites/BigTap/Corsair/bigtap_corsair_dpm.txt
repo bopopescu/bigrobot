@@ -277,7 +277,7 @@ TC12:With policy installed, send matching traffic. Verify traffic statistics are
     clear stats
     start traffic  ${stream} 
     sleep          35
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${bigtap_policy_name}"]/delivery-interface
  	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
  	${rx_value}=  verify dict key  ${report}  b  received_frame_rate
@@ -299,7 +299,7 @@ TC13:With policy installed, send matching traffic. Verify traffic statistics are
     clear stats
     start traffic  ${stream} 
     sleep          35
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${bigtap_policy_name}"]/filter-interface
  	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
  	${tx_value}=  verify dict key  ${report}  a  transmitted_frame_rate
@@ -310,7 +310,7 @@ TC13:With policy installed, send matching traffic. Verify traffic statistics are
 
 TC14:With policy installed. Verify CLI O/P for "show bigtap policy-flow <policy name> "
 	 
-	${switch1_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]?select=flow-info
+	${switch1_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${bigtap_policy_name}"]?select=flow-info
      
      Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][0]['eth-type']}  2048 
      Should be equal as integers   ${switch1_dictionary[0]['flow-info'][0]['flow'][0]['flow-mod']['match-field'][1]['ip-proto']}  17 
@@ -508,13 +508,13 @@ TC26:With policy installed and match on GTP TEID, send packet with GTP header an
     clear stats
     start traffic  ${stream} 
     sleep          30
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${bigtap_policy_name}"]/filter-interface
  	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
  	${tx_value}=  verify dict key  ${report}  a  transmitted_frame_rate
  	${return_value}=  ixia verify traffic rate  ${value}  ${tx_value}  rangev=20
  	Should be True  ${return_value}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${bigtap_policy_name}"]/delivery-interface
  	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
  	${rx_value}=  verify dict key  ${report}  b  received_frame_rate
