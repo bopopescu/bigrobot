@@ -3124,7 +3124,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
     sleep                                       5
-    BASH run cmd                    route -n
+    BASH run cmd                                h5                             route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
