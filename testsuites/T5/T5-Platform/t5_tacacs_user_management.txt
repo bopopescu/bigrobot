@@ -15,7 +15,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-${version}      2.0.0-beta2
+${version}      2.0.0
     
 * Test Case
 Verify Running-Configuration
@@ -23,7 +23,7 @@ Verify Running-Configuration
     Verify AAA Authentication Configuration 
     config  c1  show tacacs
     cli  c1  show tacacs                  
-    [Tags]  feature  run
+    [Tags]  feature
 
 Verify tacacs server key is not shown in clear text 
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
