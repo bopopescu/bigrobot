@@ -842,7 +842,10 @@ Delete All Big Tap Interfaces
     Go To Big Tap Interfaces Page
     Delete All
 
-
+Delete All Big Tap Interface Groups
+    Go To Big Tap Interface Groups Page
+    Delete All
+    
 Delete All Security Users
     Go To Security Users Page
     Delete All
@@ -880,9 +883,6 @@ Delete All Big Tap Match Rules
 	Verify Element Visible  ${BIGTAP POLICY DELETE RULE MINUS SIGN}	
     Click Element  ${BIGTAP POLICY DELETE RULE MINUS SIGN}  and don't wait
     
-Delete All Big Tap Interface Groups
-    Go To Big Tap Interface Groups Page
-    Delete All
 
 
 Delete All Big Tap Resources
@@ -893,6 +893,7 @@ Delete All Big Tap Resources
 	Delete All Big Tap Services
 	Delete All Big Tap IP Lists
 	Delete All Big Tap Interfaces
+	Delete All Big Tap Interface Groups
 
 
 Configure User
@@ -1225,7 +1226,7 @@ Configure Big Tap Policy
 
     Click Element  ${INFO BUTTON}  and don't wait
     
-    #Match All Rule
+    Match All Rule
     
     Run Keyword Unless  '${filter}'=='${EMPTY}'  
     ...		Associate Policy Filter Interface  ${filter}
