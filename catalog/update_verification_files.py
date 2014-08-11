@@ -33,7 +33,6 @@ sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
-import catalog_modules.cat_helpers as cat_helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
 if not 'BUILD_NAME' in os.environ:
@@ -138,7 +137,6 @@ class VerificationFileBuilder(object):
 
     def author(self, product_suite):
         if product_suite not in self._product_suites:
-            # cat_helpers.warn("Cannot find product_suite '%s'" % product_suite)
             return "unknown"
         return self._product_suites[product_suite]['author']
 
@@ -190,12 +188,15 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                # print "Loading file %s" % file_name
+                print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
-                for tc in tc_list:
-                    tc_key = tc['product_suite'] + ' ' + tc['name']
-                    self._test_case_dict[author][tc_key] = tc
+
+                if tc_list:
+                    # Test cases found
+                    for tc in tc_list:
+                        tc_key = tc['product_suite'] + ' ' + tc['name']
+                        self._test_case_dict[author][tc_key] = tc
             else:
                 self._test_case_dict[author] = {}
 
@@ -204,7 +205,7 @@ class VerificationFileBuilder(object):
             product_suite = tc['product_suite']
             tc_name = tc['name']
             status = tc['status']
-            build_name = build_name_last = tc['build_name']
+            # build_name = build_name_last = tc['build_name']
             if 'build_name_list' in tc and tc['build_name_list']:
                 build_name_last = tc['build_name_list'][-1]
             author = self.author(product_suite)
@@ -229,18 +230,27 @@ class VerificationFileBuilder(object):
             key = product_suite + ' ' + tc_name
             if key in self._test_case_dict[author]:
                 if status == self._test_case_dict[author][key]['status']:
-                    # print "Test case exists (no change): %s" % key
-                    # helpers.file_write_append_once(new_file_name, "\n### status is unchanged in recent '%s'" % (build_name_last))
-                    self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
-                    self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
+                    self._test_case_dict[author][key]['name'] = \
+                        sanitize_string(
+                            self._test_case_dict[author][key]['name'])
+                    self.write_entry_to_file(self._test_case_dict[author][key],
+                                             new_file_name)
                 else:
-                    # print "Test case exists (status changed): %s" % key
-                    helpers.file_write_append_once(new_file_name, "\n### status: %s in recent '%s'" % (status, build_name_last))
-                    self._test_case_dict[author][key]['name'] = sanitize_string(self._test_case_dict[author][key]['name'])
-                    self.write_entry_to_file(self._test_case_dict[author][key], new_file_name)
+                    helpers.file_write_append_once(
+                            new_file_name,
+                            "\n### status: %s in recent '%s'"
+                            % (status, build_name_last))
+                    self._test_case_dict[author][key]['name'] = \
+                        sanitize_string(
+                            self._test_case_dict[author][key]['name'])
+                    self.write_entry_to_file(self._test_case_dict[author][key],
+                                             new_file_name)
                 del self._test_case_dict[author][key]
             else:
-                helpers.file_write_append_once(new_file_name, "\n### new entry in recent '%s'" % (build_name_last))
+                helpers.file_write_append_once(
+                            new_file_name,
+                            "\n### new entry in recent '%s'"
+                            % (build_name_last))
                 rec = {
                        "name": sanitize_string(tc_name),
                        "product_suite": product_suite,
@@ -273,9 +283,13 @@ class VerificationFileBuilder(object):
 
                 tc = self._test_case_dict[author][key]
                 if tc['status'] == 'FAIL':
-                    if tc['jira'] or tc['notes']:
+                    if tc['jira'] or (tc['notes'] and
+                                      tc['notes'] != "No description."):
                         # Contains user comments
-                        helpers.file_write_append_once(new_file_name, "\n### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.")
+                        helpers.file_write_append_once(
+                                new_file_name,
+                                "\n### Previously verified. Not reported as"
+                                " FAIL in recent report so is likely PASSing.")
                         tc['name'] = sanitize_string(tc['name'])
                         self.write_entry_to_file(tc, new_file_name)
                     else:
@@ -304,7 +318,8 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
     parser.add_argument(
                 '--user',
                 required=True,
-                help=("Create verification file for user (as defined in test catalog)."))
+                help=("Create verification file for user (as defined in"
+                      " test catalog)."))
     parser.add_argument(
                 '--force-overwrite',
                 action='store_true',

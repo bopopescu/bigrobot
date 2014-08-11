@@ -260,7 +260,7 @@ def display_stats(args):
 
 
     print ""
-    print "Test Summary                                                                                                                               exec%  pass%  auto%"
+    print "Test Summary                                                                                                                                 exec%  pass%  auto%"
     print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
     total_executed = ih.total_testcases_executed(build_name=build)
     total_untested = ih.total_testcases_by_tag(
@@ -312,7 +312,7 @@ def display_stats(args):
 
     if not args.no_show_functional_areas:
         print ""
-        print "Functional Areas                                                                                                                           exec%  pass%  auto%"
+        print "Functional Areas                                                                                                                             exec%  pass%  auto%"
         print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
         functionality = "feature"
         for feature in cat.features(release=ih.release_lowercase()):
