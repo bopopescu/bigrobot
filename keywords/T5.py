@@ -680,7 +680,7 @@ class T5(object):
         else:
             helpers.log("Given segment does not match in the controller")
             return False
-   
+
     def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
         '''Verify Static Endpoint entry
 
@@ -1444,13 +1444,14 @@ class T5(object):
         data = c.rest.content()
         status = False
         for i in range (0, len(data)):
-            if data[i]["dpid"] == dpid and data[i]["fabric-role"] == role:
+            helpers.log("Checking switch dpid in controller...")
+            if data[i]["dpid"] == dpid.lower() and data[i]["fabric-role"] == role.lower():
                 helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
                 status = True
                 return True
                 break
         if status == False:
-            helpers.test_failure("Fabric switch role removal Test Failed")
+            helpers.test_failure("Fabric switch role Check Test Failed")
 
         return False
 
@@ -1982,11 +1983,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["interface"][0]["name"] == intf:
-            if (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
+            if (data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["rx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["rx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2005,11 +2006,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["interface"][0]["name"] == intf:
-            if (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
+            if (data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2554,7 +2555,7 @@ class T5(object):
     def cli_get_qos_weight(self, node, port):
         t = test.Test()
         s = t.switch(node)
-        string = 'debug ofad "qos_weight ' + port + '"'
+        string = 'debug ofad "qos_weight_info ' + port + '"'
         content = s.enable(string)['content']
         info = []
         temp = helpers.strip_cli_output(content, to_list=True)
@@ -2600,6 +2601,7 @@ class T5(object):
         s.enable(string)
 
         return True
+
 
 
     def cli_get_links_nodes_list(self, node1, node2):
@@ -2748,7 +2750,7 @@ class T5(object):
         else:
             helpers.log("Fail:Internal vlan ID does not match given Vlan ID")
             return False
- 
+
     def rest_get_dpid(self, switch):
         '''
         Function to get DPID from switch name
@@ -2761,5 +2763,5 @@ class T5(object):
         data = c.rest.content()
         dpid = data[0]["dpid"]
         return dpid
-       
-     
+
+

@@ -73,12 +73,18 @@ class ManualVerificationBuild(object):
                     "'status' field has invalid value (%s)" % tc)
 
         if tc['notes'] == None:
-            cat_helpers.formatted_error_exit(
-                    "'notes' field must contain a description (%s)" % tc)
+            tc['notes'] = "No description."
+            # cat_helpers.formatted_error_exit(
+            #        "'notes' field must contain a description (%s)" % tc)
 
     def sanitize_verification_data(self):
         test_cases = helpers.from_yaml(helpers.file_read_once(
                                                     self._verification_file))
+
+        if test_cases == None:
+            # No test cases found
+            return True
+
         for tc in test_cases:
             if self.is_test_case_verified(tc) == False:
                 continue
@@ -90,10 +96,15 @@ class ManualVerificationBuild(object):
                                                     self._verification_file))
         print "Updating documents in build '%s'" % self.aggregated_build_name()
 
+        if test_cases == None:
+            # No test cases found
+            return True
+
         for tc in test_cases:
-            if self.is_test_case_verified(tc) == False:
-                print "Test case is not verified. No update made. (%s)" % tc
-                continue
+            # if self.is_test_case_verified(tc) == False:
+            #    print "Test case is not verified. No update made. (%s)" % tc
+            #    continue
+
             self.sanitize_test_case_data(tc)
             query = { "name": tc['name'],
                       "product_suite": tc['product_suite'],

@@ -36,6 +36,7 @@ aggregated_builds:
     [ 
       'bvs master #beta2_20',                 # to pick up good ZTN results
       'bvs master #beta2_31',
+      'bvs master #beta2_36',
     ] 
   'bvs master ironhorse beta2 aggregated':    # 2014-08 IronHorse Beta 2
     [ 
