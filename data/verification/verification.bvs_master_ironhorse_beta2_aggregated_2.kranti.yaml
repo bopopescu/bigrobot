@@ -58,13 +58,6 @@
   jira: 
   notes: Ran the script again and it passed
 
-- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256
-  product_suite: SwitchLight/t5_switch_platform_L3_traffic
-  status: PASS
-  build_name_verified: 'Beta2_bcf #18'
-  jira: 
-  notes: Ran the script again and it passed
-
 - name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 75% pktsize 1024
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
@@ -73,6 +66,13 @@
   notes: Ran the script again and it passed
 
 - name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 512
+  product_suite: SwitchLight/t5_switch_platform_L3_traffic
+  status: PASS
+  build_name_verified: 'Beta2_bcf #18'
+  jira: 
+  notes: Ran the script again and it passed
+
+- name: Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
@@ -93,7 +93,7 @@
   jira: 
   notes: Ran the script again and it passed
 
-- name: Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512
+- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
@@ -142,14 +142,14 @@
   jira: 
   notes: Ran the script again and it passed
 
-- name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512
+- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'
   jira: 
   notes: Ran the script again and it passed
 
-- name: Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024
+- name: Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512
   product_suite: SwitchLight/t5_switch_platform_L3_traffic
   status: PASS
   build_name_verified: 'Beta2_bcf #18'

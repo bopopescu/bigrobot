@@ -71,10 +71,10 @@
 
 - name: Inter tenant DHCP relay
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: 
+  notes: Pass on third run
 
 - name: Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -85,10 +85,10 @@
 
 - name: Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
-  jira: BVS-2176
-  notes: File a ticket
+  jira: 
+  notes: Pass on third run
 
 - name: Inter tenant dhcp relay with multiple dhcp servers
   product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
@@ -421,14 +421,14 @@
 
 - name: Verify clear blocked endpoint works
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, is working in master build in my setup
 
 - name: Verify blocked endpoint should be automatically cleared
   product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #nnn'
   jira: 
   notes: script issue, updated script

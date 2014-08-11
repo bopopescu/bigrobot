@@ -74,7 +74,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay                 runfailed
+    [Tags]      sanity      feature         dhcp-relay                 
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
@@ -82,11 +82,11 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-    [Tags]      feature         dhcp-relay          runfailed
+    [Tags]      feature         dhcp-relay          
 
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
-    [Tags]      feature         dhcp-relay              runfailed
+    [Tags]      feature         dhcp-relay              runfailed1
 
 Inter tenant dhcp relay with duplicate circuitid
     manual passed
@@ -2809,7 +2809,8 @@ test teardown topology
     REST delete tenant routers intf to system       Y
     REST delete tenant routers intf to system       Z
     initialize host
-    Stop Floodlight Monitor     
+    Stop Floodlight Monitor    
+    BASH ifdown                                     h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60

@@ -194,7 +194,7 @@ Trigger controller HA failover via reboot
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
-    [Tags]              feature         runfailed
+    [Tags]              feature         
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
@@ -202,7 +202,7 @@ Leaf connect and disconnect to controller
 
 Spine to leaf link flap
     Flap link between leaf and spine
-    [Tags]              feature         runfailed
+    [Tags]              feature         
 
 Leaf to host link flap
     Flap bond interface towards host
@@ -214,7 +214,7 @@ Restart ofad process on spine
     
 Restart ofad process on leaf    
     restart ofad on leaf
-    [Tags]              feature         runfailed
+    [Tags]              feature         
     
 L3 intra tenant traffic behavior in headless mode 
     manual passed
@@ -3616,6 +3616,7 @@ test teardown topology
     REST delete tenant                              Z
 #   Stop Floodlight Monitor 
     initialize host
+    BASH ifdown                                     h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60
