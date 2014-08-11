@@ -53,21 +53,21 @@
 
 - name: Consecutive Power off controller
   product_suite: T5/T5-Platform/t5_platform_Robustness
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #beta2_31'
   jira: 
   notes: 
 
 - name: Headless mode verifications
   product_suite: T5/T5-Platform/t5_platform_Robustness
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #beta2_31'
   jira: 
   notes: 
 
 - name: Check recovery user account behavior when floodlight is busy
   product_suite: T5/T5-Platform/t5_platform_Robustness
-  status: FAIL
+  status: PASS
   build_name_verified: 'bvs master #beta2_31'
   jira: 
   notes: 
