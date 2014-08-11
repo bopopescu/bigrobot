@@ -429,25 +429,26 @@ initialize host
     BASH ifdown intf                            h2-rack2                                bond0
     BASH ifdown intf                            h3-rack2                                bond0
     sleep                                       1
-    BASH ifup intf                              h1-rack0                                eth2
-    BASH ifup intf                              h1-rack0                                eth3
-    BASH ifup intf                              h2-rack0                                eth2
-    BASH ifup intf                              h2-rack0                                eth3
-    BASH ifup intf                              h3-rack0                                eth2
-    BASH ifup intf                              h3-rack0                                eth3
-    BASH ifup intf                              h1-rack1                                eth2
-    BASH ifup intf                              h1-rack1                                eth3
-    BASH ifup intf                              h2-rack1                                eth2
-    BASH ifup intf                              h2-rack1                                eth3
-    BASH ifup intf                              h3-rack1                                eth2
-    BASH ifup intf                              h3-rack1                                eth3
-    BASH ifup intf                              h1-rack2                                eth2
-    BASH ifup intf                              h1-rack2                                eth3
-    BASH ifup intf                              h2-rack2                                eth2
-    BASH ifup intf                              h2-rack2                                eth3
-    BASH ifup intf                              h3-rack2                                eth2
-    BASH ifup intf                              h3-rack2                                eth3   
-	BASH ifup intf							    h1-rack0 								bond0
+    BASH run command                                h1-rack0                                ifup eth2
+    BASH run command                                h1-rack0                                ifup eth3
+    BASH run command                                h2-rack0                                ifup eth2
+    BASH run command                                h2-rack0                                ifup eth3
+    BASH run command                                h3-rack0                                ifup eth2
+    BASH run command                                h3-rack0                                ifup eth3
+    BASH run command                                h1-rack1                                ifup eth2
+    BASH run command                                h1-rack1                                ifup eth3
+    BASH run command                                h2-rack1                                ifup eth2
+    BASH run command                                h2-rack1                                ifup eth3
+    BASH run command                                h3-rack1                                ifup eth2
+    BASH run command                                h3-rack1                                ifup eth3
+    BASH run command                                h1-rack2                                ifup eth2
+    BASH run command                                h1-rack2                                ifup eth3
+    BASH run command                                h2-rack2                                ifup eth2
+    BASH run command                                h2-rack2                                ifup eth3
+    BASH run command                                h3-rack2                                ifup eth2
+    BASH run command                                h3-rack2                                ifup eth3
+      
+	BASH ifup intf							      h1-rack0 								bond0
 	BASH ifup intf							    h2-rack0								bond0
 	BASH ifup intf							    h3-rack0								bond0
 	BASH ifup intf							    h1-rack1								bond0
