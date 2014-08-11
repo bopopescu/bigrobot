@@ -253,6 +253,7 @@ class T5ZTN(object):
         t = test.Test()
         con = t.dev_console(node, modeless=True)
         con.expect("ZTN Discovery Failed", timeout=300)
+        con.expect("ZTN Discovery Failed", timeout=30)
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -489,7 +490,7 @@ class T5ZTN(object):
             single = True
 
         if not single:
-            url = ("http://%s/ztn/switch/%s/startup_config"
+            url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave controller does not provide"
                         " any startup-config for the switch")
@@ -511,7 +512,7 @@ class T5ZTN(object):
             except:
                 return helpers.test_failure("Other error connecting to Slave")
 
-            url = ("http://%s/ztn/switch/%s/startup_config?internal=1"
+            url = ("http://%s/ztn/switch/%s/startup_config?internal=1&proxy=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave can compute startup config"
                         " for us if internal=1 flag attached")
@@ -653,17 +654,17 @@ class T5ZTN(object):
                         helpers.log("Rearranging line: %s" % ztn_config_line)
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap cpu-load",
-                           "snmp-server trap CPU_load threshold")
+                           "snmp-server trap cpu-load threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap mem-free",
-                           "snmp-server trap mem_total_free threshold")
+                           "snmp-server trap mem-total-free threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap l2-flow-table-util",
-                           "snmp-server trap flow_table_l2_util threshold")
+                           "snmp-server trap flow-table-l2-util threshold")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap fm-flow-table-util",
-                           "snmp-server trap flow_table_tcam_fm_util threshold")
-                        if "mem_total_free" in ztn_config_line:
+                           "snmp-server trap flow-table-tcam-fm-util threshold")
+                        if "mem-total-free" in ztn_config_line:
                            helpers.log("Need to divide value in %s "
                                        "by 1024" % ztn_config_line)
                            split = ztn_config_line.split(" ")
@@ -772,9 +773,9 @@ class T5ZTN(object):
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
                 # temp override BSC-5629
-                if re.match(r'snmp-server trap', startup_config_line):
-                    helpers.log("Skipping line %s" % startup_config_line)
-                    continue
+                #if re.match(r'snmp-server trap', startup_config_line):
+                #    helpers.log("Skipping line %s" % startup_config_line)
+                #    continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
                     startup_config_temp.append(temp_line)
@@ -1234,6 +1235,43 @@ class T5ZTN(object):
 
         helpers.log("Reboot command executed successfully")
         return True
+
+    def cli_reset_connection_switch(self, node, switch):
+        """
+        Reset connection with switch, switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | Alias, IP, MAC of the switch, or All |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        c.config("")
+        helpers.log("Executing 'system reset-connection switch %s' command"
+                    " on node %s" % (switch, node))
+        try:
+            c.send("system reset-connection switch %s" % switch)
+            helpers.log(c.cli_content())
+            options = c.expect([r'to continue', c.get_prompt()], timeout=30)
+            if options[0] == 0:
+                helpers.log("Switch has fabric role configured. Confirming.")
+                c.send("yes")
+                c.expect(c.get_prompt(), timeout=15)
+            if 'Error' in c.cli_content():
+                helpers.log(c.cli_content())
+                helpers.log("Error rebooting the switch")
+                return False
+        except:
+            helpers.log(c.cli_content())
+            helpers.log("Error resetting connection with the switch")
+            return False
+
+        helpers.log("Reset connection command executed successfully")
+        return True
+
     def console_bash_switch_mode_nonztn(self, node,password='adminadmin' ):
         """
         Set the bootmode for switch - non ztn
@@ -1371,8 +1409,34 @@ class T5ZTN(object):
         t = test.Test()
         t.power_cycle(switch)
         return True
-    
-    
+    def power_down_switch(self, switch):
+        """
+        Power cycle a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully powered down the switch, False otherwise
+        """
+        t = test.Test()
+        t.power_down(switch)
+        return True
+
+    def power_up_switch(self, switch):
+        """
+        Power cycle a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully powered up the switch, False otherwise
+        """
+        t = test.Test()
+        t.power_up(switch)
+        return True
+
     def cli_get_switch_image(self, image, switch):
         """
         Get SWI or Installer Versions in the switch from the controller

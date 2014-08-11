@@ -77,14 +77,10 @@ T2.1.7. Verify that unconfigured switch does not receive image
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	#Power Cycle All Switches
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  mac ${s2_mac}
-	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
@@ -100,14 +96,11 @@ T2.2.1. Verify that switch is successfully provisioned when no fabric role for t
 
 
 T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  mac ${s2_mac}
 	Cli Run  master  shutdown
-	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
@@ -123,14 +116,11 @@ T2.2.2. Verify that switch is successfully provisioned when no fabric role for t
 
 
 T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s1_alias}
 	Cli Run  master  switch ${s1_alias}
 	Cli Run  master  mac ${s1_mac}
 	Cli Run  master  fabric-role spine
-	Telnet Reboot Switch  s1
 	Sleep  30
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
@@ -142,19 +132,14 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  connected  ${s1_alias}
-	Manual Passed
-	[Tags]  manual
 
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s1_alias}
 	Cli Run  master  switch ${s1_alias}
 	Cli Run  master  mac ${s1_mac}
 	Cli Run  master  fabric-role spine
 	Cli Run  master  shutdown
-	Telnet Reboot Switch  s1
 	Sleep  30
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
@@ -167,18 +152,13 @@ T2.2.4. Verify that switch is successfully provisioned and no flows for given sp
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  suspended  ${s1_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
-	[Tags]  skipped
-
 
 T2.2.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  mac ${s2_mac}
 	Cli Run  master  fabric-role leaf
-	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
@@ -193,15 +173,12 @@ T2.2.5. Verify that switch is successfully provisioned and flows installed for g
 
 
 T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  no switch ${s2_alias}
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  mac ${s2_mac}
 	Cli Run  master  fabric-role leaf
 	Cli Run  master  shutdown
-	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
@@ -217,47 +194,39 @@ T2.2.6. Verify that switch is successfully provisioned and no flows for given le
 
 
 T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not receive SWI image
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
-	Telnet Reboot Switch  s2
 	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Verify ZTN Discovery Failed  s2
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	#Telnet Verify ZTN Discovery Failed  s2
-	#Verify Switch Connection State  False  ${s2_alias}
-	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	#Telnet Verify ZTN Discovery Failed  s2
-	#Verify Switch Connection State  False  ${s2_alias}
-	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	Manual Passed
-	[Tags]  manual
+	Telnet Verify ZTN Discovery Failed  s2
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Verify ZTN Discovery Failed  s2
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 
 T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not receive Installer image
-	Reboot Switches From CLI
-	#Reboot Switches
-	Cli Run  master  enable; config
-	Cli Run  master  switch ${s2_alias}
-	Cli Run  master  no mac ${s2_mac}
-	#Request Switchlight Installer Reinstall
-	Telnet Reboot Switch  s2
-	Sleep  30
-	Verify Switch Connection State  False  ${s2_alias}
-	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	Telnet Verify ONIE Discovery Failed  s2
-	Verify Switch Connection State  False  ${s2_alias}
-	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	#Telnet Verify ONIE Discovery Failed  s2
-	#Verify Switch Connection State  False  ${s2_alias}
-	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
-	#Telnet Verify ONIE Discovery Failed  s2
-	#Verify Switch Connection State  False  ${s2_alias}
-	#Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Manual Passed
 	[Tags]  manual
+#	Telnet Reset Switch to Factory Default  s2
+#	Cli Run  master  enable; config
+#	Cli Run  master  switch ${s2_alias}
+#	Cli Run  master  no mac ${s2_mac}
+#	Sleep  30
+#	Verify Switch Connection State  False  ${s2_alias}
+#	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+#	Telnet Verify ONIE Discovery Failed  s2
+#	Verify Switch Connection State  False  ${s2_alias}
+#	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+#	Telnet Verify ONIE Discovery Failed  s2
+#	Verify Switch Connection State  False  ${s2_alias}
+#	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+#	Telnet Verify ONIE Discovery Failed  s2
+#	Verify Switch Connection State  False  ${s2_alias}
+#	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 

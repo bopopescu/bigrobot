@@ -220,6 +220,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.console(*args, **kwargs)
 
+    def monitor_reauth(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.monitor_reauth(*args, **kwargs)
+
     def close(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.close(*args, **kwargs)

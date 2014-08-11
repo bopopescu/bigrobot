@@ -1,0 +1,284 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
+  product_suite: T5/T5-Platform/t5_platform_firstboot_dhcp_mis
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: T1.9 Verify user can pick & choose images for upgrade staging
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+### status: FAIL in recent 'bvs master #beta2_36'
+- name: T1.10 Test downgrade
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify default qos weight for CPU queue in all switches
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
+  jira: 
+  notes: cli command changed
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify qos weight for CPU queue in all switches when qos enabled
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
+  jira: 
+  notes: 
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify qos weight for different queue and different port (same rate)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
+  jira: 
+  notes: manual fail to manual fail
+
+### new entry in recent 'bvs master #beta2_36'
+- name: Verify qos weight for different queue (different rate)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
+  jira: 
+  notes: manual fail to manual fail
+
+- name: T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T1.10 first boot of controller join an non existing cluster
+  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.10 Test first boot of controller menu reset and start over for standalone
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T1.11 Test first boot of controller menu update cluster from join to new (ntp need to be configured)
+  product_suite: T5/T5-Platform/t5_platform_firstboot_HA
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.12 Verification of configs in local node mode
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.4 Verify with invalid mask
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.7 Test first boot of controller menu update cluster
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T1.4 After the upgrade verify the config integrity
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'beta2_22'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: 'T1.7 Integrity checks on the image: SCP half of the image etc'
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.8 Test first boot of controller join cluster with same ip and itself
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.3 BPDU guard rapid-pvst with not matched vlan negative
+  product_suite: T5/T5-Platform/t5_bpdu_guard
+  status: PASS
+  build_name_verified: 'bvs master #beta2_37'
+  jira: PAN-1156
+  notes: verified in beta image
+
+- name: 'T1.8 Only SCP support or : + wget support too?'
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+### Contains Jira/Notes. Not reported as FAIL in recent report. Likely PASSing. Consider removing.
+- name: 'T1.3 BPDU guard recovery: config interface shut no shut in switch'
+  product_suite: T5/T5-Platform/t5_bpdu_guard
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: this does not work any more
+
+- name: T1.6 Check only the T5 image packages are accepted and eligible for staging
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T1.2 Show command verification for package contents
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'beta2_22'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.3 Verify with invalid DNS server IP address
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T1.1 Test image copy and delete
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'beta2_22'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.1 first boot of controller in standalone via static IP after boot factory default
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.9 Test first boot of controller menu invalid cluster name
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T3.2 BPDU guard with interface configure in vns match vlan
+  product_suite: T5/T5-Platform/t5_bpdu_guard
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: PAN-1156
+  notes: verified in Kiran's private switch image
+
+- name: T1.3 test single node upgrade
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'beta2_22'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T3.3 BPDU guard rapid-pvst with matched vlan
+  product_suite: T5/T5-Platform/t5_bpdu_guard
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: PAN-1156
+  notes: verified in Kiran's private switch image
+
+- name: T1.5 Verify whether the saved configs are retained after the upgrade
+  product_suite: T5/T5-Platform/t5_upgrade_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.5 Verify with invalid IP
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.2 Test first boot of controller menu node for standalone
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: Set variable
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error
+
+- name: T2.6 Test first boot of controller menu cluster for standalone
+  product_suite: T5/T5-Platform/t5_platform_firstboot_single_node
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: in the regression,it failed because of previous error

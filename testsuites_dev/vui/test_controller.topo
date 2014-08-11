@@ -3,3 +3,4 @@ common:
 c1:
   ip: dummy
   #http_port: 8080
+  monitor_reauth: false

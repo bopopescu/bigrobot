@@ -53,8 +53,6 @@ Resource		t5_ztn_resource.txt
 *** Test Cases ***
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
-	Reboot Switches From CLI
-	#Cli Reboot Switch  master  all
 	Verify All Switches In Provisioned Mode
 	Telnet Set All MA1 State  down
 	Sleep  30
@@ -62,12 +60,9 @@ T5.4.1. Disconnect, change config, reconnect, reload
 	Set All Switches Mode Standby
 	Randomize ZTN Configuration
 	Telnet Set All MA1 State  up
-	Sleep  10
-	Verify All Switches Connected
+	Sleep  30
 	Cli Run  master  show switch all
 	Cli Run  master  show zerotouch devices
-	Reboot Switches From CLI
-	#Cli Reboot Switch  master  all
 	Cli Run  master  show run
 	Verify All Switches In Standby Mode
 	Verify All Switches Startup Config
@@ -76,76 +71,78 @@ T5.4.1. Disconnect, change config, reconnect, reload
 T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
-	Sleep  10
+	Sleep  30
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Cli Run  master  no switch ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  show run
 	Telnet Set MA1 State  s3  up
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
-	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
+	Cli Run and Verify Output  master
+	...  show switch all
+	...  10.8.67.103 suspended (No fabric role configured)
+	# add better validation of state here
 
 T5.4.3. Disconnect, change config, reboot
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
+	Sleep  30
 	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Randomize ZTN Configuration
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Verify Switch In Standby Mode  ${s3_alias}
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.4.4. Disconnect, delete, reboot
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
-	Sleep  10
+	Sleep  30
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Cli Run  master  no switch ${s3_alias}
-	Randomize ZTN Configuration
-	Cli Run  master  show run
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
 
 T5.4.5. Disconnect, change config, failover, reconnect, reload
-	Reboot Switches From CLI
-	#Reboot Switches
-	Cli Run  master  enable;config
-	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
-	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby Mode  ${s3_alias}
-	Telnet Set MA1 State  s3  down
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
+	Sleep  30
+	Verify All Switches Disconnected
+	Set All Switches Mode Standby
 	Randomize ZTN Configuration
 	Failover
+	Telnet Set All MA1 State  up
+	Sleep  30
+	Cli Reset Connection Switch All
+	Sleep  30
+	Cli Run  master  show switch all
+	Cli Run  master  show zerotouch devices
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	Telnet Set MA1 State  s3  up
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify All Switches In Standby Mode
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
 
 T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
 	Telnet Set MA1 State  s3  down
@@ -154,69 +151,67 @@ T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
 	Failover
 	Cli Run  master  show run
 	Telnet Set MA1 State  s3  up
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
-	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
+	Sleep  10
+	Cli Run and Verify Output  master
+	...  show switch all
+	...  10.8.67.103 suspended (no startup-config available for this switch)
 
 T5.4.7. Disconnect, change config, failover, reboot
-	Power Cycle All Switches
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
-	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  switch ${s2_alias}
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby Mode  ${s3_alias}
-	Telnet Set MA1 State  s3  down
+	Sleep  30
+	Verify Switch In Standby Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
 	Failover
+	Verify Switch Connection State  False  ${s2_alias}
+	Telnet Reboot Switch  s2
+	Telnet Wait For Switch To Reload  s2
+	Sleep  30
+	Verify Switch In Standby Mode  ${s2_alias}
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T5.4.8. Disconnect, delete, failover, reboot
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
+	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Cli Run  master  no switch ${s3_alias}
 	Randomize ZTN Configuration
 	Failover
 	Cli Run  master  show run
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
 
 T5.4.9. Disconnect, change config, double failover, reconnect, reload
-	Reboot Switches From CLI
-	#Reboot Switches
-	Cli Run  master  enable;config
-	Cli Run  master  switch ${s3_alias}
-	Cli Run  master  no leaf-group rack1
-	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby Mode  ${s3_alias}
-	Telnet Set MA1 State  s3  down
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Verify All Switches In Provisioned Mode
+	Telnet Set All MA1 State  down
+	Sleep  30
+	Verify All Switches Disconnected
+	Set All Switches Mode Standby
 	Randomize ZTN Configuration
 	Failover
 	Failover
+	Telnet Set All MA1 State  up
+	Sleep  30
+	Cli Run  master  show switch all
+	Cli Run  master  show zerotouch devices
 	Cli Run  master  show run
-	Telnet Set MA1 State  s3  up
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify All Switches In Standby Mode
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
 
 T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack0
@@ -227,99 +222,213 @@ T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
 	Randomize ZTN Configuration
 	Failover
 	Failover
-	Telnet Set MA1 State  s3  up
 	Cli Run  master  show run
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
-	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
+	Telnet Set MA1 State  s3  up
+	Sleep  10
+	Cli Run and Verify Output  master
+	...  show switch all
+	...  10.8.67.103 suspended (no startup-config available for this switch)
 
 T5.4.11. Disconnect, change config, double failover, reboot
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
-	Cli Run  master  switch ${s3_alias}
+	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
-	Verify Switch In Standby Mode  ${s3_alias}
-	Telnet Set MA1 State  s3  down
+	Sleep  30
+	Verify Switch In Standby Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
 	Randomize ZTN Configuration
 	Failover
 	Failover
+	Verify Switch Connection State  False  ${s2_alias}
+	Telnet Reboot Switch  s2
+	Telnet Wait For Switch To Reload  s2
+	Sleep  30
+	Verify Switch In Standby Mode  ${s2_alias}
 	Cli Run  master  show run
-	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T5.4.12. Disconnect, delete, double failover, reboot
-	Reboot Switches From CLI
-	#Reboot Switches
 	Cli Run  master  enable;config
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  no leaf-group rack0
 	Cli Run  master  no fabric-role leaf
 	Sleep  10
+	Verify Switch In Standby Mode  ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Cli Run  master  no switch ${s3_alias}
 	Randomize ZTN Configuration
 	Failover
 	Failover
 	Cli Run  master  show run
-	# add validation of state here
-	Reboot Standby Switch  s3  ${s3_mac}  ${s3_alias}
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
-	Manual Passed
-	[Tags]  manual
 
 # Switch in provisioned mode
 T5.5.1. Connected, change config, flap interface, reload
-	Reboot Switches From CLI
-	#Reboot Switches
+	# extra time for switch to recover from previous test case
+	Sleep  60
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Telnet Set MA1 State  s3  down
 	Telnet Set MA1 State  s3  up
 	Sleep  30
-	#Add state validation here
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
-	Reboot Provisioned Switch  s3  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.2. Connected, delete, flap interface, reload (reboot?)
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
+
 T5.5.3. Connected, change config, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Sleep  30
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
 T5.5.4. Connected, delete, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
+
 T5.5.5. Connected, change config, failover, reconnect, reload
-	Manual Untested
-	[Tags]  manual-untested
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Failover
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Sleep  30
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
 T5.5.6. Connected, delete, failover, reconnect, reload (reboot?)
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
+
 T5.5.7. Connected, change config, failover, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
 T5.5.8. Connected, delete, failover, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
+
 T5.5.9. Connected, change config, double failover, reconnect, reload
-	Manual Untested
-	[Tags]  manual-untested
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Failover
+	Failover
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Sleep  30
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
 T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Failover
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
+
 T5.5.11. Connected, change config, double failover, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	# extra time for switch to recover from previous test case
+	Sleep  60
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Failover
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
 T5.5.12. Connected, delete, double failover, reboot
-	Manual Untested
-	[Tags]  manual-untested
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Randomize ZTN Configuration
+	Cli Run  master  no switch ${s3_alias}
+	Telnet Set MA1 State  s3  down
+	Telnet Set MA1 State  s3  up
+	Failover
+	Failover
+	Telnet Reboot Switch  s3
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
+	Telnet Verify ZTN Discovery Failed  s3
 
 # Switch in stand-by mode
 T5.6.1. Connected, change config, flap interface, reload

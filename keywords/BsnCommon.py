@@ -1800,6 +1800,12 @@ class BsnCommon(object):
         n = t.node(node)
         return n.rest_result_json(*args, **kwargs)
 
+    def monitor_reauth(self, node, *args, **kwargs):
+        t = test.Test()
+        if helpers.is_controller_or_error(node):
+            n = t.node(node)
+            return n.monitor_reauth(*args, **kwargs)
+
     def node_disconnect(self, node):
         """
         Disconnect the devconf session (SSH/Telnet) on the specified node.

@@ -10,7 +10,6 @@ Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py
 Library	         keywords/T5.py
 Library          keywords/T5L3.py
 Library	         keywords/T5Platform.py
@@ -115,13 +114,13 @@ Verify qos weight for different queue and same port (same rate)
 
 Verify qos weight for different queue and different port (same rate)
 	log   tested with arp and lacp
-	 Manual failed
+	 Manual passed
 	[Tags] 	full  feature   Manual   JIRA_BVS_1685 fabric_QOS
 
 
 Verify qos weight for different queue (different rate)
 	log    tested with arp and lacp
-	 Manual failed
+	 Manual passed
 	[Tags] 	full  feature   Manual   JIRA-BVS_1683   fabric_QOS
  
 
@@ -131,24 +130,44 @@ Verify qos weight for different queue (different rate)
 * Keywords
 fabric infra suite setup
  	base suite setup 
-# 	rest_delete_tenant_all
-	set fabric switches 
+	set fabric switches 	
+	rest_delete_portgroup_all 
+	rest_delete_tenant_all
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
 	tenant setup   
  	 
   
 set fabric switches  
-	rest_delete_portgroup_all
  	${switches}=  get_all_switch_nodes  
 	log   switches are ${switches}
  	: FOR    ${sw}   IN   @{switches}   
 	\   ${alias}=   get_node_alias   ${sw} 	
-	\   ${dpid}=   	cli_show_switch_dpid    ${sw}             
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
   	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
   	\   sleep    1
   	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
     \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
     \   sleep    1 
     \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+	rest add switch               ${node}
+	rest add dpid                 ${node}          ${dpid}  
+	rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+	rest add switch               ${node}
+	rest add dpid                 ${node}         ${dpid} 
+	rest add fabric role          ${node}         leaf
+	rest_add_leaf_group           ${node}         ${leafg} 
+ 
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}	
 
 tenant setup   
 	rest_add_tenant  QOS
@@ -157,23 +176,12 @@ tenant setup
 	sleep  ${short}
 	cli_show_running_tenant	   
  	
-add fabric switch spine   [Arguments]   ${node}   ${dpid}  
-  rest add switch               ${node}
-  rest add dpid                 ${node}          ${dpid}  
-  rest add fabric role          ${node}          spine
 
-add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
-  rest add switch               ${node}
-  rest add dpid                 ${node}         ${dpid} 
-  rest add fabric role          ${node}         leaf
-  rest_add_leaf_group           ${node}         ${leafg} 
-   
-
-Verify to cpu queue weight  [Arguments]   ${node}   ${export} 
+Verify to cpu queue weight  [Arguments]   ${node}   ${expect} 
   ${info}=  cli_get_qos_weight	  ${node}    0	
   log   qos weight is ${info}
-  log   expected qos weight is ${export}
+  log   expected qos weight is ${expect}
   : FOR    ${i}    IN RANGE    0    8
-	\   Should Be Equal As Integers    ${info[${i}]}  ${export[${i}]}   	
+	\   Should Be Equal As Integers    ${info[${i}]}  ${expect[${i}]}   	
 
   

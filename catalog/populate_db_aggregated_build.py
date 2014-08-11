@@ -41,6 +41,7 @@ class AggregatedBuild(object):
 
     def do_it(self):
         for build in self.builds():
+            print("build: %s" % build)
             cursor = self.catalog().find_test_cases_archive_matching_build(
                                         build)
             print("build: '%s', total test cases: %s"

@@ -41,12 +41,10 @@ Suite Setup
 	@{spineList}=  Create List  ${s1_dpid}  ${s5_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
-	Sleep  10
-	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
-	Sleep  10
+	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	Sleep  180
+	Sleep  30
 	#Reboot Switches From CLI
 	#Reboot Switches
 	#Power Cycle All Switches
@@ -64,8 +62,10 @@ Suite Setup
 	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
-	Sleep  60
+	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Reboot Switches From CLI
+	Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
@@ -78,8 +78,9 @@ Test Setup
 	Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	Sleep  30
+	Sleep  15
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
+	Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -193,16 +194,16 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
 	Cli Run  master  snmp-server enable traps
+#	${threshold_random}  Generate Random Threshold
+#	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+#	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+#	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+#	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${threshold_random}  Generate Random Threshold
-	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
-	${threshold_random}  Generate Random Threshold
-	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
+	Cli Run  master  snmp-server switch trap cpu-load 80
+	Cli Run  master  snmp-server switch trap fm-flow-table-util 80
+	Cli Run  master  snmp-server switch trap l2-flow-table-util 80
+	Cli Run  master  snmp-server switch trap mem-free 8080
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone
@@ -276,11 +277,17 @@ Verify Switch Installer Version
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
-	Sleep  30
 #	Should Be True  ${status}
 
-Reboot Switches
 
+Trigger All Switches Reboot
+	Telnet Reboot Switch  s1
+	Telnet Reboot Switch  s2
+	Telnet Reboot Switch  s3
+	Telnet Reboot Switch  s4
+	Telnet Reboot Switch  s5
+
+Reboot Switches
 	Telnet Reboot Switch  s1
 	Telnet Reboot Switch  s2
 	Telnet Reboot Switch  s3
@@ -325,9 +332,30 @@ Reboot Switches From CLI
 	Verify All Switches Startup Config
 	Verify All Switches In Provisioned Mode
 
+Cli Reset Connection Switch All
+	Cli Reset Connection Switch  master  ${s1_alias}
+    Cli Reset Connection Switch  master  ${s2_alias}
+    Cli Reset Connection Switch  master  ${s3_alias}
+    Cli Reset Connection Switch  master  ${s4_alias}
+    Cli Reset Connection Switch  master  ${s5_alias}
+
 Power Cycle All Switches
 	Power Cycle Switch  s1
-	Power Cycle Switch  s5
 	Power Cycle Switch  s2
 	Power Cycle Switch  s3
 	Power Cycle Switch  s4
+	Power Cycle Switch  s5
+
+Power Down All Switches
+	Power Down Switch  s1
+	Power Down Switch  s2
+	Power Down Switch  s3
+	Power Down Switch  s4
+	Power Down Switch  s5
+
+Power Up All Switches
+	Power Up Switch  s1
+	Power Up Switch  s2
+	Power Up Switch  s3
+	Power Up Switch  s4
+	Power Up Switch  s5

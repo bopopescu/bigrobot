@@ -253,9 +253,17 @@ Test strip control char
     strip control char test
 
 Test regexp match
+    #[Tags]           skipped
+    ${ip_address}=       set variable   1.1.1.3
+    log                  ip_address=${ip_address}
+    should match regexp  ${ip_address}  (1\\.1\\.1\\.2|2\\.2\\.2\\.1)
+
+Test regexp match
+    #[Tags]           skipped
     ${ip_address}=       set variable   1.1.1.2
     log                  ip_address=${ip_address}
     should match regexp  ${ip_address}  (1\\.1\\.1\\.2|2\\.2\\.2\\.1)
+
 
 * Keywords
 my base suite setup

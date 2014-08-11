@@ -104,8 +104,18 @@ T1.6. Test switch reboot
 T1.7. Reboot all switches from CLI
 	${status}=  Cli Reboot Switch  master  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	Sleep  30
+	Verify All Switches Disconnected
+	Sleep  120
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
 	${status}=  Cli Reboot Switch  slave  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
+	Sleep  30
+	Verify All Switches Disconnected
+	Sleep  120
+	Verify All Switches Running Config
+	Verify All Switches In Provisioned Mode
 
 T1.8. Reboot switches from CLI
 	Cli Reboot Switch  master  ${s1_alias}
@@ -169,6 +179,28 @@ T1.13. Reboot and stop at loader shell
 T1.14. Power cycle switches
 	Power Cycle All Switches
 	[Tags]  skipped
+
+T1.15. Connected, three failovers
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Cli Copy  snapshot://startup-config  running-config
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Cli Copy  snapshot://startup-config  running-config
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
+	Failover
+	Cli Copy  snapshot://startup-config  running-config
+	Randomize ZTN Configuration
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+	Verify All Switches Running Config
 
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:22:44:55:66

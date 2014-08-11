@@ -1032,6 +1032,48 @@ class Test(object):
         helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
         helpers.sleep(300)
 
+    def power_down(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olOff %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.log("Powered down")
+
+    def power_up(self, node):
+        pdu_ip = self.params(node, 'pdu')['ip']
+        pdu_port = self.params(node, 'pdu')['port']
+        tn = telnetlib.Telnet(pdu_ip)
+        tn.set_debuglevel(10)
+        tn.read_until("User Name : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password  : ", 10)
+        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until(">", 10)
+        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        reboot_cmd = 'olOn %s' % str(pdu_port)
+        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
+        time.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        helpers.log("Powered up")
+
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
@@ -1256,18 +1298,19 @@ class Test(object):
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
-        console = self.params(name, 'console')
-
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+            return True
         c1_ip = self.params('c1', 'ip')
         c2_ip = self.params('c2', 'ip')
         helpers.log("First Adding Switch in master controller for ZTN Bootup...")
         master = self.controller("master")
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
-        else:
-            fabric_role = 'leaf'
-            leaf_group = self.params(name, 'leaf-group')
-
+        console = self.params(name, 'console')
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
@@ -1317,6 +1360,13 @@ class Test(object):
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
         if not helpers.is_switch(name):
+            return True
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Spines..")
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Leaf..")
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP PHASE 2")
             return True
         console = self.params(name, 'console')
         if not ('ip' in console and 'port' in console):
