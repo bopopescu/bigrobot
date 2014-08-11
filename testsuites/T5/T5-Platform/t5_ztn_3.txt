@@ -164,16 +164,49 @@ T3.7. Disconnect all switches from the fabric (ma1 down) then do significant cha
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (snapshot://, scp://, file) to running config, watch the fabric come up.
-	Manual Untested
-	[Tags]  manual-untested
+	Cli Run  master  enable;config
+	Cli Run  master  no switch spine0
+	Cli Run  master  no switch leaf0-a
+	Cli Run  master  no switch leaf0-b
+	Cli Run  master  no switch leaf1-a
+	Cli Run  master  no switch spine1
+	Telnet Verify ZTN Discovery Failed  s1
+	Telnet Verify ZTN Discovery Failed  s2
+	Telnet Verify ZTN Discovery Failed  s3
+	Telnet Verify ZTN Discovery Failed  s4
+	Telnet Verify ZTN Discovery Failed  s5
+	Cli Copy  snapshot://test-config  running-config
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+	Telnet Wait For Switch To Reload  s5
+	Verify All Switches in Provisioned Mode
+	Verify All Switches Running Config
 
 # MAC Replacement
 T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-	Manual Untested
-	[Tags]  manual-untested
+	Telnet Reboot Switch  s1
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Sleep 30
+	Telnet Wait For Switch To Reload  s1
+	Telnet Wait For Switch To Reload  s5
+	Verify Switch Running Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s1_alias}
+
 T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
-	Manual Untested
-	[Tags]  manual-untested
+	Telnet Set MA1 State  down  s2
+	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
+	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
+	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
+	Sleep 30
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Verify Switch Running Config  ${s2_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s2_alias}
+
 T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioned
 	Manual Untested
 	[Tags]  manual-untested
