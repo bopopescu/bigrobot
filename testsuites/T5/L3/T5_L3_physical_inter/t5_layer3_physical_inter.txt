@@ -2810,7 +2810,7 @@ test teardown topology
     REST delete tenant routers intf to system       Z
     initialize host
     Stop Floodlight Monitor    
-    BASH ifdown                                     h3                          bond0
+    BASH ifdown intf                                h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60
