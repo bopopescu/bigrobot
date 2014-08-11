@@ -44,7 +44,6 @@
   jira: 
   notes: 
 
-### new entry in recent 'bvs master #beta2_36'
 - name: 'T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch'
   product_suite: T5/T5-Platform/t5_platform_visibility_regress
   status: FAIL
@@ -73,14 +72,7 @@
   jira: 
   notes: 
 
-- name: Verify Cluster Election Take-Leader
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: T18 Configure SPAN Session - Direction Egress
+- name: T0 Setup
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
@@ -122,12 +114,12 @@
   jira: 
   notes: IXIA issue.
 
-- name: T14 Configure SPAN session for Port-Group interface - Direction Egress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+- name: Configure Multiple L2 Tenants With Single VNS & Failover
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
   status: PASS
-  build_name_verified: 'bvs master #beta2_31'
+  build_name_verified: 'bvs master #nnn'
   jira: 
-  notes: IXIA issue.
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
 
 - name: Verify Cluster Master Reboot
   product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
@@ -150,7 +142,7 @@
   jira: 
   notes: IXIA issue.
 
-- name: T0 Setup
+- name: T18 Configure SPAN Session - Direction Egress
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
@@ -165,13 +157,6 @@
   notes: IXIA issue.
 
 - name: Slave Failover/Failback & Verify Connectivity
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
-  status: PASS
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
-
-- name: Configure Multiple L2 Tenants With Single VNS & Failover
   product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
   status: PASS
   build_name_verified: 'bvs master #nnn'
@@ -199,6 +184,13 @@
   jira: 
   notes: Setup Issues. Looks like the controller wasn't spawned properly
 
+- name: T10 Configure SPAN session for Port-Group interface - Direction Both
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
+  status: PASS
+  build_name_verified: 'bvs master #beta2_31'
+  jira: 
+  notes: IXIA issue.
+
 - name: T20 Configure SPAN session for SRC-PORT - Direction Ingress
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
@@ -214,13 +206,6 @@
   notes: IXIA issue.
 
 - name: T3 Configure SPAN session for Single interface - Direction Ingress
-  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
-  status: PASS
-  build_name_verified: 'bvs master #beta2_31'
-  jira: 
-  notes: IXIA issue.
-
-- name: T10 Configure SPAN session for Port-Group interface - Direction Both
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
@@ -262,12 +247,19 @@
   jira: 
   notes: IXIA issue.
 
-- name: T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
+- name: T28 Configure SPAN session for Ethertype - Direction Ingress
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
   jira: 
   notes: IXIA issue.
+
+- name: Verify Cluster Election Take-Leader
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
 
 - name: 'T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch'
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
@@ -304,12 +296,12 @@
   jira: 
   notes: IXIA issue.
 
-- name: bring up host bond0 interface
-  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+- name: T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
+  product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
-  build_name_verified: 'bvs master #nnn'
+  build_name_verified: 'bvs master #beta2_31'
   jira: 
-  notes: Setup Issues. Looks like the controller wasn't spawned properly
+  notes: IXIA issue.
 
 - name: 'T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway'
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
@@ -325,7 +317,7 @@
   jira: 
   notes: IXIA issue.
 
-- name: T28 Configure SPAN session for Ethertype - Direction Ingress
+- name: T14 Configure SPAN session for Port-Group interface - Direction Egress
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
@@ -339,12 +331,19 @@
   jira: 
   notes: Rerun passed
 
-- name: T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
+- name: T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
   status: PASS
   build_name_verified: 'bvs master #beta2_31'
   jira: 
   notes: IXIA issue.
+
+- name: bring up host bond0 interface
+  product_suite: T5/T5-Platform/t5_platform_HA_L2_Regression
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: Setup Issues. Looks like the controller wasn't spawned properly
 
 - name: 'T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch'
   product_suite: T5/T5-Platform/t5_platform_visibility_Regression
