@@ -74,7 +74,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay                 runfailed
+    [Tags]      sanity      feature         dhcp-relay                 
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
@@ -82,11 +82,11 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-    [Tags]      feature         dhcp-relay          runfailed
+    [Tags]      feature         dhcp-relay          
 
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
-    [Tags]      feature         dhcp-relay              runfailed
+    [Tags]      feature         dhcp-relay              runfailed1
 
 Inter tenant dhcp relay with duplicate circuitid
     manual passed
@@ -584,6 +584,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     REST delete static routes                   X                               10.252.0.0/16   
+    REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
     REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
@@ -1170,7 +1171,8 @@ L3 inter tenant traceroute with icmp and udp probe
     BASH add ip address                         h6                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
-    sleep                                       5   
+    sleep                                       2
+    BASH run cmd                                route -n
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.252.1.11
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -1472,8 +1474,11 @@ Host moved to another vns on another tenant and renew dhcp
     Should Be True                              ${loss} < 20    
     REST delete portgroup from vns              Y                               Y1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Z                               Z3                      ${leaf2_pc1}            -1
+    REST add dhcp relay                         Z                               Z3                      10.251.1.11
     sleep                                       1
     REST show forwarding dhcp table
+    ${value} =                                  BASH release dhcpv4 address     h5                      bond0
+    Should Be True                              ${value}   
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr5}
     ${result} =                                 REST show endpoints mac         ${mac5}
@@ -2809,7 +2814,8 @@ test teardown topology
     REST delete tenant routers intf to system       Y
     REST delete tenant routers intf to system       Z
     initialize host
-    Stop Floodlight Monitor     
+    Stop Floodlight Monitor    
+    BASH ifdown intf                                h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60

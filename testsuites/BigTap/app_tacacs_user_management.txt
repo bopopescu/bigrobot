@@ -13,11 +13,11 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Virtual Switch Appliance
-${version}      Big Tap Controller 3.0.0  
+${version}      Big Tap Controller 4.0.0  
     
 * Test Case
 Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.192.4.91  300
+    Verify Tacacs Configuration  0  10.2.3.201  300
     Verify AAA Authentication Configuration                      
     [Tags]  verifyconfig
 
@@ -33,33 +33,33 @@ Add user tacacsadmin to group admin and verify access
     [Tags]  add-tacacs-user
 
 Verify remote authentication with open source tacacs
-    rest delete tacacs server  10.192.4.91
-    rest add tacacs server  10.192.66.100  secret  300
+    rest delete tacacs server  10.2.3.201
+    rest add tacacs server  10.9.18.3  secret  300
     verify version  tacacsadmin  adminadmin  ${true}
-    rest delete tacacs server  10.192.66.100    
+    rest delete tacacs server  10.9.18.3    
     [Tags]  tacacs-linux
 
 Verify multiple tacacs servers can be configured 
-    rest add tacacs server  10.192.66.100  secret  200
-    Verify Tacacs Configuration  0  10.192.4.91  300
-    Verify Tacacs Configuration  1  10.192.66.100  200
-    rest delete tacacs server  10.192.66.100        
+    rest add tacacs server  10.9.18.3  secret  200
+    Verify Tacacs Configuration  0  10.2.3.201  300
+    Verify Tacacs Configuration  1  10.9.18.3  200
+    rest delete tacacs server  10.9.18.3        
     [Tags]  multiple-tacacs-server
 
 Verify second tacacs server is used when the first is unreachable   
-    rest delete tacacs server  10.192.4.91
+    rest delete tacacs server  10.2.3.201
     rest add tacacs server  10.192.97.20   secret  300
-    rest add tacacs server  10.192.66.100  secret  200 
-    Verify Tacacs Configuration  0  10.192.66.100  200
-    Verify Tacacs Configuration  1  10.192.97.20   300    
+    rest add tacacs server  10.9.18.3  secret  200 
+    Verify Tacacs Configuration  0  10.192.97.20   300    
+    Verify Tacacs Configuration  1  10.9.18.3  200
     verify version  tacacsadmin  adminadmin  ${true}
-    rest delete tacacs server  10.192.66.100
+    rest delete tacacs server  10.9.18.3
     rest delete tacacs server  10.192.97.20 
     [Tags]  second-tacacs-server
             
 Configure mismatched tacacs secret and verify tacacs user cannot login
-    rest delete tacacs server  10.192.4.91
-    rest add tacacs server  10.192.4.91  bsnbsn  300
+    rest delete tacacs server  10.2.3.201
+    rest add tacacs server  10.2.3.201  bsnbsn  300
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
     [Tags]  mismatched-secret
@@ -73,7 +73,7 @@ Verify that when AAA is configured for tacacs only, local AAA should not work ev
     [Tags]  only-tacacs  run
                 
 Delete tacacs server from configuration and verify tacacs user has no access
-    rest delete tacacs server  10.192.4.91
+    rest delete tacacs server  10.2.3.201
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
     [Tags]  deletetacacs  run
@@ -121,7 +121,7 @@ Restart process tacacs_plus on Master and verify users can login
 * Keywords
 
 tacacs test setup
-    rest add tacacs server  10.192.4.91  secret  300
+    rest add tacacs server  10.2.3.201  secret  300
     rest add tacacs authentication
     rest add tacacs authorization
     rest add user to group  tacacsadmin  admin
@@ -159,6 +159,8 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
 
 tacacs test teardown
     cli delete user from group  tacacsadmin  admin
-    rest delete tacacs server  10.192.4.91
+    rest delete tacacs server  10.2.3.201
+    rest delete tacacs server  10.9.18.3
+    rest delete tacacs server  10.192.97.20       
     rest delete tacacs authentication
     rest delete tacacs authorization       
