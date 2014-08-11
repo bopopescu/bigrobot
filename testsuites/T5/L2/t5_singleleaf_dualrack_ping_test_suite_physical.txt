@@ -42,7 +42,7 @@ ping h3 to h4 single leaf single rack static endpoints
    REST add mac endpoint  A  A  e2  ${h4_single_mac}
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
-   sleep  15 
+   sleep  5 
    ${loss}=  bash ping  h3   ${h4_single_ip}  source_if=eth1
    Should Be True  ${loss} < 60
    
@@ -50,7 +50,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    [Tags]  L2  feature  smoke  sanity  IronHorse     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
-   sleep  15 
+   sleep  5 
    ${loss}=  bash ping  h3   ${h2_single_ip}  source_if=eth1
    Should Be True  ${loss} < 60 					 
 		
@@ -66,7 +66,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    REST add mac endpoint  A  A  e2  ${h2_single_mac}
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
-   sleep  15 
+   sleep  5 
    ${loss}=  bash ping  h3  ${h2_single_ip}  source_if=eth1
    Should Be True  ${loss} < 60   
    
@@ -85,7 +85,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    bash add tag  h2  eth1  20
    bash add ip address  h2  ${h2_eth1_ip}  eth1.20
    bash ifup intf  h2  eth1.20
-   sleep  15
+   sleep  5
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 60  					
 		
@@ -101,7 +101,7 @@ ping h3 to h4 single leaf single rack static endpoints tag
    REST add mac endpoint  A  A  e2  ${h4_single_mac}
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
-   sleep  15 
+   sleep  5 
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 50
 
@@ -109,7 +109,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints tag
    [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
-   sleep  15
+   sleep  5
    ${loss}=  bash ping  h3  ${h2_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 60    
    
@@ -125,7 +125,7 @@ ping h2 to h3 dual rack single leaf static endpoints tag
    REST add mac endpoint  A  A  e2  ${h2_single_mac}
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
-   sleep  15 
+   sleep  5 
    ${loss}=  bash ping  h3   ${h2_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 60  
    
@@ -137,7 +137,7 @@ Single Leaf Three Rack Suite Setup
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2
-   sleep  15 
+   sleep  5 
    
 Single Leaf Three Rack Suite Teardown 
    delete a tenant  A
@@ -151,7 +151,7 @@ T5 base test setup
    base test setup
    add a tenant  A 
    add a vns  A  A
-   sleep  15
+   sleep  5
    
 T5 base test teardown
    delete a tenant  A
