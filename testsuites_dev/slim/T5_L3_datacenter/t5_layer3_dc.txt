@@ -52,6 +52,11 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay   
     [Tags]                                  smoke               sanity              run8
     
+L3 intra tenant ecmp group in same rack
+    L3 intra tenant ecmp group in same rack
+    [Tags]                                  smoke               sanity              run9
+    
+            
         
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
@@ -61,8 +66,6 @@ L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2                              leaf0-pc2           -1   
     REST add dhcp relay                         X                               X2                              10.251.1.9
     REST add dhcprelay circuitid                X                               X2                              10.251.1.9              private vns X2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -75,6 +78,8 @@ L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h2-rack0                        bond0
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0
     sleep                                       1
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
     sleep                                       1
@@ -104,9 +109,6 @@ L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2          leaf1-pc2           -1   
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -121,6 +123,8 @@ L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
     sleep                                       1
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
     Should Be True                              ${value}
@@ -149,9 +153,6 @@ L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2                      leaf0-pc2               1002 
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -165,6 +166,8 @@ L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0.1001
     BASH ifup intf                              h2-rack0                        bond0.1002
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
@@ -195,9 +198,6 @@ L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X2          leaf1-pc2           2002 
     REST add dhcp relay                         X                               X2                      10.251.1.9
     REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -211,6 +211,8 @@ L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0.1001
     BASH ifup intf                              h2-rack1                        bond0.2002
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
@@ -242,9 +244,6 @@ L3 inter tenant same rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   Y                               Y2          leaf0-pc2           -1   
     REST add dhcp relay                         Y                               Y2                      10.251.1.9
     REST add dhcprelay circuitid                Y                               Y2                      10.251.1.9              private vns Y2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -256,6 +255,8 @@ L3 inter tenant same rack untagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0
     BASH ifup intf                              h2-rack0                        bond0
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.252.0.0/16           10.251.1.1
     sleep                                       1
@@ -284,9 +285,6 @@ L3 inter tenant across rack untagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X1                          leaf0-pc1           -1
     REST add portgroup to vns                   Y                               Y3                          leaf1-pc2           -1   
     REST add dhcp relay                         Y                               Y3                          10.251.1.9
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
@@ -296,6 +294,8 @@ L3 inter tenant across rack untagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0
     BASH ifup intf                              h2-rack1                        bond0
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24               bond0
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.252.0.0/16               10.251.1.1
     sleep                                       1
@@ -327,9 +327,6 @@ L3 inter tenant same rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   Y                               Y2                      leaf0-pc2               1002 
     REST add dhcp relay                         Y                               Y2                      10.251.1.9
     REST add dhcprelay circuitid                Y                               Y2                      10.251.1.9              private vns Y2
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
@@ -343,6 +340,8 @@ L3 inter tenant same rack tagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0.1001
     BASH ifup intf                              h2-rack0                        bond0.1002
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.252.0.0/16           10.251.1.1
     sleep                                       1
@@ -371,9 +370,6 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     REST add portgroup to vns                   X                               X1                      leaf0-pc1           1001
     REST add portgroup to vns                   Y                               Y3                      leaf1-pc2           2002 
     REST add dhcp relay                         Y                               Y3                      10.251.1.9
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
@@ -385,6 +381,8 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     BASH ifup intf                              h1-rack0                        bond0.1001
     BASH ifup intf                              h2-rack1                        bond0.2002
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     sleep                                       1
     BASH add route                              h1-rack0                        10.252.0.0/16           10.251.1.1
     sleep                                       1
@@ -407,6 +405,18 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     Should Be True                              ${result}                       
     ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
+
+L3 intra tenant ecmp group in same rack
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1               
+    REST add interface to vns                       External                        external-vrrp           leaf2-a         ethernet33          -1
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=a->h               frame_rate=100000           frame_size=9216             frame_cnt=10000000
+    ...                                             src_ip=10.99.255.101            src_gw=10.99.255.1      dst_ip=10.99.99.101     dst_gw=10.99.99.5                   
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    verify results                                  transmitted_frames              received_frames         ${stream1}              stream1
+
     
 initialize host
     BASH run command                                h1-rack0                                ifdown bond0
@@ -418,16 +428,6 @@ initialize host
     BASH run command                                h1-rack2                                ifdown bond0
     BASH run command                                h2-rack2                                ifdown bond0
     BASH run command                                h3-rack2                                ifdown bond0
-    
-    BASH ifdown intf							h1-rack0								bond0
-	BASH ifdown intf							h2-rack0								bond0
-	BASH ifdown intf							h3-rack0								bond0
-	BASH ifdown intf							h1-rack1								bond0
-	BASH ifdown intf							h2-rack1								bond0
-	BASH ifdown intf							h3-rack1								bond0
-	BASH ifdown intf                            h1-rack2                                bond0
-    BASH ifdown intf                            h2-rack2                                bond0
-    BASH ifdown intf                            h3-rack2                                bond0
     sleep                                       1
     BASH run command                                h1-rack0                                ifup eth2
     BASH run command                                h1-rack0                                ifup eth3
@@ -448,7 +448,7 @@ initialize host
     BASH run command                                h3-rack2                                ifup eth2
     BASH run command                                h3-rack2                                ifup eth3
       
-	BASH ifup intf							      h1-rack0 								bond0
+	BASH ifup intf							    h1-rack0 								bond0
 	BASH ifup intf							    h2-rack0								bond0
 	BASH ifup intf							    h3-rack0								bond0
 	BASH ifup intf							    h1-rack1								bond0
@@ -457,7 +457,17 @@ initialize host
 	BASH ifup intf                              h1-rack2                                bond0
     BASH ifup intf                              h2-rack2                                bond0
     BASH ifup intf                              h3-rack2                                bond0
-
+    
+    BASH init intf                              h1-rack0                                bond0
+    BASH init intf                              h2-rack0                                bond0
+    BASH init intf                              h3-rack0                                bond0
+    BASH init intf                              h1-rack1                                bond0
+    BASH init intf                              h2-rack1                                bond0
+    BASH init intf                              h3-rack1                                bond0
+    BASH init intf                              h1-rack2                                bond0
+    BASH init intf                              h2-rack2                                bond0
+    BASH init intf                              h3-rack2                                bond0
+    BASH stop service                           h1-rack0                        isc-dhcp-server
 
 setup topology
 	initialize host
@@ -469,60 +479,76 @@ setup topology
 	REST add vns								X							X1
 	REST add vns								X							X2
 	REST add vns								X							X3
+    REST add vns                                X                           X192
+    REST add vns                                X                           X224
 	REST add vns								Y							Y1
 	REST add vns								Y							Y2
 	REST add vns								Y							Y3
+    REST add vns                                Y                           Y192
+    REST add vns                                Y                           Y224
 	REST add vns								Z							Z1
 	REST add vns								Z							Z2
 	REST add vns								Z						    Z3
-	REST add vns								External				   Arista1-e13
-	REST add vns								External				   Arista1-e14
-    REST add vns                                External                   Arista1-e15
-    REST add vns                                External                   Arista1-e16
-    REST add vns                                External                   Arista1-e21
-    REST add vns                                External                   Arista1-e22
-    REST add vns                                External                   Arista1-e23
-    REST add vns                                External                   Arista1-e24
-    REST add vns                                External                   Arista1-e25
-    REST add vns                                External                   Arista1-e26
-	REST add vns                                External                   Arista1-e27
-    REST add vns                                External                   Arista1-e28
-	REST add vns                                External                   Arista1-e29
-    REST add vns                                External                   Arista1-e30
-    REST add vns                                External                   Arista1-pc1
-    REST add vns                                External                   Arista1-pc2
-    REST add vns                                External                   Arista1-pc3
-    REST add vns                                External                   Arista1-pc4
-    REST add vns                                External                   Arista1-pc5	
-    REST add vns                                External                   Arista2-e13
-    REST add vns                                External                   Arista2-e14
-    REST add vns                                External                   Arista2-e15
-    REST add vns                                External                   Arista2-e16
-    REST add vns                                External                   Arista2-e21
-    REST add vns                                External                   Arista2-e22
-    REST add vns                                External                   Arista2-e23
-    REST add vns                                External                   Arista2-e24
-    REST add vns                                External                   Arista2-e25
-    REST add vns                                External                   Arista2-e26
-    REST add vns                                External                   Arista2-e27
-    REST add vns                                External                   Arista2-e28
-    REST add vns                                External                   Arista2-e29
-    REST add vns                                External                   Arista2-e30
-    REST add vns                                External                   Arista2-pc1
-    REST add vns                                External                   Arista2-pc2
-    REST add vns                                External                   Arista2-pc3
-    REST add vns                                External                   Arista2-pc4
-    REST add vns                                External                   Arista2-pc5  	
-    REST add vns                                External                   external-vrrp
+    REST add vns                                Z                           Z192
+    REST add vns                                Z                           Z224
+
+	REST add vns								External				    Arista1-e13
+	REST add vns								External				    Arista1-e14
+    REST add vns                                External                    Arista1-e15
+    REST add vns                                External                    Arista1-e16
+    REST add vns                                External                    Arista1-e21
+    REST add vns                                External                    Arista1-e22
+    REST add vns                                External                    Arista1-e23
+    REST add vns                                External                    Arista1-e24
+    REST add vns                                External                    Arista1-e25
+    REST add vns                                External                    Arista1-e26
+	REST add vns                                External                    Arista1-e27
+    REST add vns                                External                    Arista1-e28
+	REST add vns                                External                    Arista1-e29
+    REST add vns                                External                    Arista1-e30
+    REST add vns                                External                    Arista1-pc1
+    REST add vns                                External                    Arista1-pc2
+    REST add vns                                External                    Arista1-pc3
+    REST add vns                                External                    Arista1-pc4
+    REST add vns                                External                    Arista1-pc5	
+    REST add vns                                External                    Arista2-e13
+    REST add vns                                External                    Arista2-e14
+    REST add vns                                External                    Arista2-e15
+    REST add vns                                External                    Arista2-e16
+    REST add vns                                External                    Arista2-e21
+    REST add vns                                External                    Arista2-e22
+    REST add vns                                External                    Arista2-e23
+    REST add vns                                External                    Arista2-e24
+    REST add vns                                External                    Arista2-e25
+    REST add vns                                External                    Arista2-e26
+    REST add vns                                External                    Arista2-e27
+    REST add vns                                External                    Arista2-e28
+    REST add vns                                External                    Arista2-e29
+    REST add vns                                External                    Arista2-e30
+    REST add vns                                External                    Arista2-pc1
+    REST add vns                                External                    Arista2-pc2
+    REST add vns                                External                    Arista2-pc3
+    REST add vns                                External                    Arista2-pc4
+    REST add vns                                External                    Arista2-pc5  	
+    REST add vns                                External                    external-vrrp
 	REST add router intf							X							X1
 	REST add router intf							X							X2
 	REST add router intf							X							X3
+	REST add router intf                            X                           X192
+    REST add router intf                            X                           X224
+    
 	REST add router intf							Y							Y1
 	REST add router intf							Y							Y2
 	REST add router intf							Y							Y3
+	REST add router intf                            Y                           Y192
+    REST add router intf                            Y                           Y224
+    
 	REST add router intf							Z							Z1
 	REST add router intf							Z							Z2
 	REST add router intf							Z							Z3
+	REST add router intf                            Z                           Z192
+    REST add router intf                            Z                           Z224
+    
     REST add router intf                                External                   Arista1-e13
     REST add router intf                                External                   Arista1-e14
     REST add router intf                                External                   Arista1-e15
@@ -561,16 +587,24 @@ setup topology
     REST add router intf                                External                   Arista2-pc3
     REST add router intf                                External                   Arista2-pc4
     REST add router intf                                External                   Arista2-pc5      
-    REST add router intf                                External                   external-vrrp	
+    REST add router intf                                External                   external-vrrp
 	REST add vns ip  								X							X1				10.251.1.1				24	
 	REST add vns ip  								X							X2				10.251.2.1				24	
-	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24
+	REST add vns ip                                 X                           X192            10.251.192.1            19
+    REST add vns ip                                 X                           X224            10.251.224.1            19
 	REST add vns ip  								Y							Y1				10.252.1.1				24	
 	REST add vns ip  								Y							Y2				10.252.2.1				24	
 	REST add vns ip  								Y							Y3				10.252.3.1				24	
+    REST add vns ip                                 Y                           Y192            10.252.192.1            19
+    REST add vns ip                                 Y                           Y224            10.252.224.1            19
+
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
+    REST add vns ip                                 Z                           Z192            10.253.192.1            19
+    REST add vns ip                                 Z                           Z224            10.253.224.1            19
+
     REST add vns ip             External                   Arista1-e13          10.99.13.2          24
     REST add vns ip             External                   Arista1-e14          10.99.14.2          24  
     REST add vns ip             External                   Arista1-e15          10.99.15.2          24
@@ -693,6 +727,12 @@ setup topology
     # REST add interface to vns       Z           Y192        leaf2-a             ethernet33      -1
     # REST add interface to vns       Z           X224        leaf2-b             ethernet33      -1
     # REST add portgroup to vns       Z           Z3          leaf2-pc3               -1
+    REST add interface to vns               X                   X192             leaf0-a    ethernet33          -1
+    REST add interface to vns               X                   X224             leaf0-b    ethernet33          -1
+    REST add interface to vns               Y                   Y192             leaf1-a    ethernet33          -1
+#    REST add interface to vns               Y                   Y224             leaf1-b    ethernet33          -1
+    REST add interface to vns               Z                   Z192             leaf2-a    ethernet33          -1
+    REST add interface to vns               Z                   Z224             leaf2-b    ethernet33          -1
     REST add tenant routers intf to system          X
     REST add tenant routers intf to system          Y
     REST add tenant routers intf to system          Z
