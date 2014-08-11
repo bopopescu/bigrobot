@@ -49,7 +49,8 @@ T8.11 Disable Tunneling
 T8.12 Enable L3-L4 Offset Match	 				
  	Set Switching Mode											L3-L4 Offset Match	
  	
-T9 Test set up:
+### Configure Big Tap Policy with interfaces/interface groups	 			RBAC 			Filter			Delivery 		Service			fg		dg	 	
+T1 Test set up:
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-2 		delivery		ixia-2-15	
 	Configure Big Tap Interface from Big Tap Menu			ethernet2			qa-corsair-2 		delivery		ixia-4-8	
@@ -73,7 +74,6 @@ T1.7 Policy with interfaces and interface groups
 T1.8 Teardown
 	Delete All Big Tap Policies
 	
-### Configure Big Tap Policy with interfaces/interface groups and match all Policy	 			RBAC 			Filter			Delivery 		Service			fg		dg	
 ##Change action
 
 T2.1 Create Policy
@@ -86,23 +86,25 @@ T2.4 Change action from capture to rate-measure
 	Change Policy Action					 		test-policy		Rate Measure			
 T2.5 Change action from rate-measure to forward
 	Change Policy Action					 		test-policy		Forward			
-
+T2.6 Teardown
+	Delete All Big Tap Policies
+	
 
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
-#T3 Create Policy
-#	Configure Big Tap Policy					test-policy		admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
+T3 Create Policy
+	Configure Big Tap Policy					test-policy1		admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T3.1 Schedule policy to start now and run always  
-	Schedule Big Tap Policy					 	test-policy		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
+	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
 T3.2 Schedule policy to start now and run for 5 minutes
-	Schedule Big Tap Policy				 		test-policy		Forward		Immediately			${EMPTY}			For Duration	5				${EMPTY}	
+	Schedule Big Tap Policy				 		test-policy1		Forward		Immediately			${EMPTY}			For Duration	5				${EMPTY}	
 T3.3 Schedule policy to start now, run for 15 minutes or until 5000 packets are delivered
-	Schedule Big Tap Policy					 	test-policy		Forward		Immediately			${EMPTY}			For Duration	15				5000			
+	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			For Duration	15				5000			
 T3.4 Schedule policy to start after a delay of 5 minutes and run for 5 minutes 
-	Schedule Big Tap Policy					 	test-policy		Forward		After Delay Of		5					For Duration	5				${EMPTY}				
+	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		5					For Duration	5				${EMPTY}				
 T3.5 Schedule policy to start after a delay of 10 minutes and run for 2 minutes 
-	Schedule Big Tap Policy				 		test-policy		Forward		After Delay Of		10					For Duration	2				${EMPTY}
+	Schedule Big Tap Policy				 		test-policy1		Forward		After Delay Of		10					For Duration	2				${EMPTY}
 T3.6 Schedule policy to start after a delay of 15 minutes, run for 10 minute(s) or until 10000 packets are delivered
-	Schedule Big Tap Policy					 	test-policy		Forward		After Delay Of		15					For Duration	10				10000		
+	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		15					For Duration	10				10000		
 T3.7 Teardown
 	Delete All Big Tap Policies
 	
@@ -304,7 +306,7 @@ Setup
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-    Delete All Big Tap Policies
+    Delete All Big Tap Resources
 	Set Switching Mode											L3-L4 Match
 Teardown
 	Close Browser
