@@ -409,15 +409,15 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     Should Be True                              ${loss} == 0    
     
 initialize host
-    BASH run cmd                                h1-rack0                                ifdown bond0
-    BASH run cmd                                h2-rack0                                ifdown bond0
-    BASH run cmd                                h3-rack0                                ifdown bond0
-    BASH run cmd                                h1-rack1                                ifdown bond0
-    BASH run cmd                                h2-rack1                                ifdown bond0
-    BASH run cmd                                h3-rack1                                ifdown bond0
-    BASH run cmd                                h1-rack2                                ifdown bond0
-    BASH run cmd                                h2-rack2                                ifdown bond0
-    BASH run cmd                                h3-rack2                                ifdown bond0
+    BASH run command                                h1-rack0                                ifdown bond0
+    BASH run command                                h2-rack0                                ifdown bond0
+    BASH run command                                h3-rack0                                ifdown bond0
+    BASH run command                                h1-rack1                                ifdown bond0
+    BASH run command                                h2-rack1                                ifdown bond0
+    BASH run command                                h3-rack1                                ifdown bond0
+    BASH run command                                h1-rack2                                ifdown bond0
+    BASH run command                                h2-rack2                                ifdown bond0
+    BASH run command                                h3-rack2                                ifdown bond0
     
     BASH ifdown intf							h1-rack0								bond0
 	BASH ifdown intf							h2-rack0								bond0
