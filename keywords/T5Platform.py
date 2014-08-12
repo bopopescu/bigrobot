@@ -4973,3 +4973,82 @@ class T5Platform(object):
             helpers.test_failure("ERROR: can not determine the role of the controller")
             return False
 
+
+    def rest_add_tenant_vns_scale(self, tenantcount='1', tname='T', tenant_create=None,
+                                        vnscount='1',  vname='V', vns_create='yes',
+                                        vns_ip=None, base="100.0.0.100", step="0.1.0.0", mask="24" 
+                                        ):
+        '''
+        Function to add l3 endpoint to all created vns
+        Input: tennat , switch , interface
+        The ip address is taken from the logical interface, the last byte is modified to 253
+        output : will add end into all vns in a tenant 
+        '''
+
+        t = test.Test()
+        c = t.controller('master')         
+ 
+        t5 = T5.T5() 
+        l3 = T5L3.T5L3()           
+        helpers.test_log("Entering ==> rest_add_tenant_vns_scale " )  
+                
+        for count in range(0,int(tenantcount)):
+            tenant = tname+str(count)
+            
+            if tenant_create == 'yes':
+                if not t5.rest_add_tenant(tenant):      
+                    helpers.test_failure("USER Error: tenant is NOT configured successfully")           
+            elif  tenant_create is None:                 
+                if (re.match(r'None.*', self.cli_show_tenant(tenant))):                              
+                    helpers.test_log("tenant: %s  does not exist,  creating tenant" )      
+                    if not t5.rest_add_tenant(tenant):      
+                        helpers.test_failure("USER Error: tenant is NOT configured successfully")   
+                                                
+            if vns_create == 'yes' :  
+                helpers.test_log("creating tenant L2 vns" )            
+                if not t5.rest_add_vns_scale(tenant, vnscount,vname):
+                    helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant)  
+            if vns_ip is not None:
+                i = 1
+                while  (i<=int(vnscount)):
+                    vns=vname + str(i)
+                    l3.rest_add_router_intf(tenant, vns)
+                    if not l3.rest_add_vns_ip(tenant,vns,base,mask): 
+                        helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant) 
+                    ip_addr  = helpers.get_next_address('ipv4', base, step)
+                    base = ip_addr 
+                    i = i + 1                                 
+            c.cli('show running-config tenant')['content']                       
+            
+        return True
+
+    
+    def cli_show_tenant(self, tenant):
+        '''
+        show tenant
+        Input: tenant  
+        Output:  
+        Author: Mingtao
+        '''
+        t = test.Test()
+        c = t.controller('master')         
+        cli= 'show tenant ' + tenant
+        content = c.cli(cli)['content']    
+        temp = helpers.strip_cli_output(content)        
+        return temp
+
+    def cli_show_vns(self, tenant,vns):
+        '''
+        show tenant
+        Input: tenant  
+        Output:  
+        Author: Mingtao
+        '''
+        t = test.Test()
+        c = t.controller('master')   
+       
+        cli= 'show tenant ' + tenant + ' segment ' + vns
+        content = c.cli(cli)['content']    
+        temp = helpers.strip_cli_output(content)        
+        return temp
+

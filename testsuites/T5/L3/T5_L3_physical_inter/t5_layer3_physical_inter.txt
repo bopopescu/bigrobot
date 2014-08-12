@@ -1477,6 +1477,8 @@ Host moved to another vns on another tenant and renew dhcp
     REST add dhcp relay                         Z                               Z3                      10.251.1.11
     sleep                                       1
     REST show forwarding dhcp table
+    ${value} =                                  BASH release dhcpv4 address     h5                      bond0
+    Should Be True                              ${value}   
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr5}
     ${result} =                                 REST show endpoints mac         ${mac5}
