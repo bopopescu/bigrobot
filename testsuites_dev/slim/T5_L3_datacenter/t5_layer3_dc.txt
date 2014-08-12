@@ -433,14 +433,74 @@ L3 intra tenant ecmp group in same rack
     sleep                                           1
     start traffic                                   ${stream1}
     sleep                                           5
-    ${result} =                                     REST get fabric intf stats                      leaf2-a                     ethernet33
-    ${rx_ucast_count1} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet33
+    ${rx_33_ucast_count1} =                         Set Variable                    ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet35
+    ${tx_35_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet36
+    ${tx_36_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet37
+    ${tx_37_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet38
+    ${tx_38_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet39
+    ${tx_39_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet40
+    ${tx_40_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet41
+    ${tx_41_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet42
+    ${tx_42_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet47
+    ${tx_47_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet48
+    ${tx_48_ucast_cnt1} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     sleep                                           5
-    ${rx_ucast_count2} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-
-    ${diff1} =                                      evaluate            ${rx_ucast_count2} - ${rx_ucast_count1}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet33
+    ${rx_33_ucast_count2} =                         Set Variable                    ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet35
+    ${tx_35_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet36
+    ${tx_36_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet37
+    ${tx_37_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet38
+    ${tx_38_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet39
+    ${tx_39_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet40
+    ${tx_40_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet41
+    ${tx_41_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet42
+    ${tx_42_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet47
+    ${tx_47_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet48
+    ${tx_48_ucast_cnt2} =                           Set Variable                    ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diff1} =                                      evaluate                        ${rx_33_ucast_count2} - ${rx_33_ucast_count1}
     Should Be True                                  ${diff1} > 400000
-    
+    ${diff2} =                                      evaluate                        ${tx_35_ucast_cnt2} - ${tx_35_ucast_cnt1}
+    Should Be True                                  ${diff2} > 200000
+    ${diff3} =                                      evaluate                        ${tx_36_ucast_cnt2} - ${tx_36_ucast_cnt1}
+    Should Be True                                  ${diff3} > 200000
+    ${diff4} =                                      evaluate                        ${tx_37_ucast_cnt2} - ${tx_37_ucast_cnt1}
+    Should Be True                                  ${diff4} > 200000
+    ${diff5} =                                      evaluate                        ${tx_38_ucast_cnt2} - ${tx_38_ucast_cnt1}
+    Should Be True                                  ${diff5} > 200000
+    ${diff6} =                                      evaluate                        ${tx_39_ucast_cnt2} - ${tx_39_ucast_cnt1}
+    Should Be True                                  ${diff6} > 200000
+    ${diff7} =                                      evaluate                        ${tx_40_ucast_cnt2} - ${tx_40_ucast_cnt1}
+    Should Be True                                  ${diff7} > 200000
+    ${diff8} =                                      evaluate                        ${tx_41_ucast_cnt2} - ${tx_41_ucast_cnt1}
+    Should Be True                                  ${diff8} > 200000
+    ${diff9} =                                      evaluate                        ${tx_42_ucast_cnt2} - ${tx_42_ucast_cnt1}
+    Should Be True                                  ${diff9} > 200000
+    ${diff10} =                                      evaluate                        ${tx_47_ucast_cnt2} - ${tx_47_ucast_cnt1}
+    Should Be True                                  ${diff10} > 20000
+    ${diff11} =                                      evaluate                        ${tx_48_ucast_cnt2} - ${tx_48_ucast_cnt1}
+    Should Be True                                  ${diff11} > 20000
+  
 
     stop traffic                                    ${stream1}
     verify results                                  transmitted_frames              received_frames         ${stream1}              stream1
