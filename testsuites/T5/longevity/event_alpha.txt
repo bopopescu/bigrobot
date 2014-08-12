@@ -26,7 +26,7 @@ ${short}  1
 ${medium}  3
 ${long}   30
 ${verylong}     120 
-${inevent}       300 
+${inevent}       120
 ${betweenevent}  600
 
 ${Tflapnum}     100 
@@ -150,7 +150,7 @@ T51 continues Event
    	log  randomize all the event test cases from T23 to T30
     ${loop}=  Set Variable   1	
     : FOR   ${index}    IN RANGE    0    ${repeat}	
-	\  Log To Console   "\n========******* in continues event loop: ${index} out of 1000 ******====== " 
+	\  Log To Console   "\n========******* in continues event loop: ${index} out of ${repeat} ******====== " 
 	\  ${random}=	Evaluate	 random.randint(1,5)    random,sys
 	\  Log To Console   "--------random number is ${random} --------" 
 	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 	 
