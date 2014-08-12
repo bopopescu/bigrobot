@@ -106,8 +106,14 @@ class Ixia(object):
             self._handle.setAttribute(vport, '-connectedTo', chassis + '/card:' + card + '/port:' + port)
         self._handle.commit()
         for vport in self._vports:
-            while self._handle.getAttribute(vport, '-state') != 'up':
+            no_of_tries = 0
+            while self._handle.getAttribute(vport, '-state') != 'up' and no_of_tries != 10:
                 time.sleep(2)
+                no_of_tries = no_of_tries + 1
+                helpers.log("Vports didn't come up, will wait 2 secs and check again %s times" % str(no_of_tries))
+            if no_of_tries == 10:
+                helpers.log("IXIA ports are all not UP , may see traffic issues on ports that are down")
+                helpers.log("vport that is down: %s" % str(self._vports))
         return True
 
     def ix_create_topo(self):
