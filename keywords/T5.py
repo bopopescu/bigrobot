@@ -2764,7 +2764,7 @@ class T5(object):
         dpid = data[0]["dpid"]
         return dpid
 
-    def rest_get_fabric_interface_intf_stats(self, switch, intf):
+    def rest_get_fabric_interface_stats(self, switch, intf):
         ''' Function to return a switch fabric interface stats
         Input: switch and interface
         Output: contents from the switch interface or error

@@ -433,12 +433,12 @@ L3 intra tenant ecmp group in same rack
     sleep                                           1
     start traffic                                   ${stream1}
     sleep                                           5
-    ${result} =                                     REST get fabric intf stats                      leaf2-a                     ethernet33
-    ${rx_ucast_count1} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats      leaf2-a                     ethernet33
+    ${rx_ucast_count1} =                            Set Variable                    ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     sleep                                           5
-    ${rx_ucast_count2} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${rx_ucast_count2} =                            Set Variable                    ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
 
-    ${diff1} =                                      evaluate            ${rx_ucast_count2} - ${rx_ucast_count1}
+    ${diff1} =                                      evaluate                        ${rx_ucast_count2} - ${rx_ucast_count1}
     Should Be True                                  ${diff1} > 400000
     
 
