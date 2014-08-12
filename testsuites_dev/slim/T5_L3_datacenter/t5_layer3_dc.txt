@@ -417,15 +417,31 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     Should Be True                              ${loss} == 0    
 
 L3 intra tenant ecmp group in same rack
-    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1               
-    REST add interface to vns                       External                        external-vrrp           leaf2-a         ethernet33          -1
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
     sleep                                           1
-    ${stream1}=                                     L3 add                          name=stream1            flow=a->h               frame_rate=100000           frame_size=9216             frame_cnt=10000000
-    ...                                             src_ip=10.99.255.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.99.255.1      
-    ...                                             dst_ip=10.99.99.101             dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.99.5      
+    ${stream1}=                                     L3 add                          name=stream1            flow=g->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.254.99.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.254.99.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+
     sleep                                           1             
     start traffic                                   ${stream1}
     sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric intf stats                      leaf2-a                     ethernet33
+    ${rx_ucast_count1} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    sleep                                           5
+    ${rx_ucast_count2} =                            Set Variable                ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+
+    ${diff1} =                                      evaluate            ${rx_ucast_count2} - ${rx_ucast_count1}
+    Should Be True                                  ${diff1} > 400000
+    
+
     stop traffic                                    ${stream1}
     verify results                                  transmitted_frames              received_frames         ${stream1}              stream1
 
@@ -654,6 +670,7 @@ setup topology
     REST add vns                                External                    Arista2-pc4
     REST add vns                                External                    Arista2-pc5  	
     REST add vns                                External                    external-vrrp
+    REST add vns                                External                    External-Host
 	REST add router intf							X							X1
 	REST add router intf							X							X2
 	REST add router intf							X							X3
@@ -711,6 +728,8 @@ setup topology
     REST add router intf                                External                   Arista2-pc4
     REST add router intf                                External                   Arista2-pc5      
     REST add router intf                                External                   external-vrrp
+    REST add router intf                                External                   External-Host
+
 	REST add vns ip  								X							X1				10.251.1.1				24	
 	REST add vns ip  								X							X2				10.251.2.1				24	
 	REST add vns ip  								X							X3				10.251.3.1				24
@@ -767,6 +786,7 @@ setup topology
     REST add vns ip             External                   Arista2-pc4          10.98.4.2           24        
     REST add vns ip             External                   Arista2-pc5          10.98.5.2           24              
     REST add vns ip             External                   external-vrrp        10.99.99.5          24   
+    REST add vns ip             External                   External-Host        10.254.99.1         24    
 	REST add nexthop group                          External                        ecmp-A1
     REST add nexthop group                          External                        ecmp-A16
     REST add nexthopGroup ip                        External                        ecmp-A1                 10.99.3.1

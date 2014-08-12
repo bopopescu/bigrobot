@@ -2764,4 +2764,46 @@ class T5(object):
         dpid = data[0]["dpid"]
         return dpid
 
+    def rest_get_fabric_interface_intf_stats(self, switch, intf):
+        ''' Function to return a switch fabric interface stats
+        Input: switch and interface
+        Output: contents from the switch interface or error
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="ethernet33"][switch-dpid="00:00:70:72:cf:b5:f0:e4"]?select=interface[name="ethernet33"]
+
+
+REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/stats/interface/stats%5Binterface/name%3D%22ethernet33%22%5D%5Bswitch-dpid%3D%2200%3A00%3A70%3A72%3Acf%3Ab5%3Af0%3Ae4%22%5D?select=interface[name="ethernet33"] 0:00:00.019679 reply "[ {
+  "interface" : [ {
+    "counter" : {
+      "rx-broadcast-packet" : 0,
+      "rx-byte" : 0,
+      "rx-drop" : 0,
+      "rx-error" : 0,
+      "rx-multicast-packet" : 0,
+      "rx-unicast-packet" : 0,
+      "tx-broadcast-packet" : 0,
+      "tx-byte" : 4914,
+      "tx-drop" : 0,
+      "tx-error" : 0,
+      "tx-multicast-packet" : 42,
+      "tx-unicast-packet" : 0
+    },
+    "name" : "ethernet33",
+    "number" : 33
+  } ],
+  "switch-dpid" : "00:00:70:72:cf:b5:f0:e4"
+} ]"
+
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        dpid = self.rest_get_dpid(switch)
+        helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
+        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            return c.rest.content()
+
 
