@@ -218,25 +218,41 @@ class RestClient(object):
         return result
 
     def http_request(self, *args, **kwargs):
-        result = self._http_request(*args, **kwargs)
+        retries = int(kwargs.pop('retries', 0))
+        sleep_time = float(kwargs.pop('sleep_time_between_retries', 10))
 
-        # !!! FIXME: Handle case where session cookie is expired for
-        # Big Switch controllers. It really shouldn't be in the generic
-        # module. Should really reside in bsn_restclient.py.
-        if int(result['status_code']) == 401:
-            if self.session_cookie_loop > 5:
-                helpers.test_error("Detected session cookie loop.")
+        while True:
+            try:
+                result = self._http_request(*args, **kwargs)
+            except:
+                helpers.warn('HTTP request error:\n%s'
+                             % helpers.exception_info())
+                if retries > 0:
+                    helpers.log('Retrying HTTP request in %s seconds (retries=%s)'
+                                % (sleep_time, retries))
+                    retries -= 1
+                    helpers.sleep(sleep_time)
+                else:
+                    raise
             else:
-                self.session_cookie_loop += 1
+                # !!! FIXME: Handle case where session cookie is expired for
+                # Big Switch controllers. It really shouldn't be in the generic
+                # module. Should really reside in bsn_restclient.py.
+                if int(result['status_code']) == 401:
+                    if self.session_cookie_loop > 5:
+                        helpers.test_error("Detected session cookie loop.")
+                    else:
+                        self.session_cookie_loop += 1
 
-            helpers.log("It appears the session cookie has expired. Requesting"
-                        " new session cookie.")
-            self.request_session_cookie()
-            # helpers.sleep(2)
-            # Re-run command
-            result = self._http_request(*args, **kwargs)
-        else:
-            self.session_cookie_loop = 0
+                    helpers.log("It appears the session cookie has expired."
+                                "  Requesting new session cookie.")
+                    self.request_session_cookie()
+                    # helpers.sleep(2)
+                    # Re-run command
+                    result = self._http_request(*args, **kwargs)
+                else:
+                    self.session_cookie_loop = 0
+                break
         return result
 
     def post(self, url, *args, **kwargs):
