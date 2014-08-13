@@ -1089,6 +1089,16 @@ class Test(object):
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
+        helpers.log("Staging system uname:\n%s%s"
+                    % (helpers.uname().strip(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system uptime:\n%s%s"
+                    % (helpers.uptime().strip(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging ulimit:\n%s%s"
+                    % (helpers.ulimit().strip(),
+                       br_utils.end_of_output_marker()))
+
         self._init_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params_nodes()
