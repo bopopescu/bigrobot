@@ -82,7 +82,7 @@ T27 data Link down/up event between leaf and spine
 	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
-	\  sleep ${linkflap}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
