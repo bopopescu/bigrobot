@@ -162,7 +162,7 @@ Test config mode
     #cli      c1   show version
 
 Test REST show user
-    #[Tags]  skipped
+    [Tags]  skipped
     #rest show user        c1
     rest version check    c1
 
@@ -204,4 +204,7 @@ Test run command (helpers)
     monitor reauth    master  ${true}
     sleep             20
     run cmd test      c1
+
+Test REST show version
+    get               c1    /api/v1/data/controller/core/version/appliance  retries=2
 
