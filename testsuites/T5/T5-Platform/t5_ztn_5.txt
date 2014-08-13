@@ -281,6 +281,7 @@ T5.5.1. Connected, change config, flap interface, reload
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.2. Connected, delete, flap interface, reload (reboot?)
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
@@ -307,6 +308,7 @@ T5.5.3. Connected, change config, reboot
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.4. Connected, delete, reboot
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
@@ -333,6 +335,7 @@ T5.5.5. Connected, change config, failover, reconnect, reload
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.6. Connected, delete, failover, reconnect, reload (reboot?)
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
@@ -360,15 +363,13 @@ T5.5.7. Connected, change config, failover, reboot
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.8. Connected, delete, failover, reboot
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Telnet Set MA1 State  s3  up
 	Failover
-	Telnet Reboot Switch  s3
-	Telnet Wait For Switch To Reload  s3
-	Sleep  30
 	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
 
@@ -388,11 +389,12 @@ T5.5.9. Connected, change config, double failover, reconnect, reload
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
-	Telnet Set MA1 State  s3  up
+	#Telnet Set MA1 State  s3  up
 	Failover
 	Failover
 	Sleep  30
@@ -417,16 +419,14 @@ T5.5.11. Connected, change config, double failover, reboot
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 T5.5.12. Connected, delete, double failover, reboot
+	Sleep  15
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
-	Telnet Set MA1 State  s3  up
+#	Telnet Set MA1 State  s3  up
 	Failover
 	Failover
-	Telnet Reboot Switch  s3
-	Telnet Wait For Switch To Reload  s3
-	Sleep  30
 	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
 

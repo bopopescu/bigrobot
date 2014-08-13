@@ -190,26 +190,39 @@ T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify c
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Sleep 30
-	Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s5
-	Verify Switch Running Config  ${s1_mac}  ${s5_alias}
-	Verify Switch Running Config  ${s5_mac}  ${s1_alias}
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
 
 T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
-	Telnet Set MA1 State  down  s2
+	Telnet Set MA1 State  s2  down
 	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
 	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
 	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
-	Sleep 30
-	Telnet Wait For Switch To Reload  s2
+	Telnet Set MA1 State  s2  up
 	Telnet Wait For Switch To Reload  s3
-	Verify Switch Running Config  ${s2_mac}  ${s3_alias}
-	Verify Switch Running Config  ${s3_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
 
-T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioned
-	Manual Untested
-	[Tags]  manual-untested
+T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioning
+	Cli Run  master  switch ${s1_alias}; no fabric-role spine
+	Sleep  15
+	Verify Switch in Standby Mode  ${s1_alias}
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
 T4.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify correct boot of new switch
 	Manual Untested
 	[Tags]  manual-untested
