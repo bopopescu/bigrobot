@@ -145,7 +145,6 @@ def prettify_xml(xml_str):
     """
     with tempfile.NamedTemporaryFile() as f:
         filename = f.name
-        # print "**** filename: %s" % filename
         f.write(xml_str)
         f.flush()
         x = xml.dom.minidom.parse(filename)
@@ -1499,6 +1498,30 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
             return (False, err)
 
         return (True, out)
+
+
+def uname():
+    """
+    Dump output from 'uname -a'.
+    """
+    _, output = run_cmd('uname -a', shell=False, quiet=True)
+    return output
+
+
+def ulimit():
+    """
+    Dump output from 'ulimit -a'.
+    """
+    _, output = run_cmd('ulimit -a', shell=False, quiet=True)
+    return output
+
+
+def uptime():
+    """
+    Dump output from 'uptime'.
+    """
+    _, output = run_cmd('uptime', shell=False, quiet=True)
+    return output
 
 
 def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
