@@ -354,7 +354,7 @@ class T5Utilities(object):
                 for k in range(0, len(result[i]['interface'])) :
                     switchName = result[i]['interface'][k]['switch-name']
                     interface = result[i]['interface'][k]['interface-name']
-                    leafGroup = result[i]['interface'][k]['leaf-group']
+                    #leafGroup = result[i]['interface'][k]['leaf-group']
                     state = result[i]['interface'][k]['state']
                     key = "%s-%s-%s-%s-%s-%s" % (name, mode, switchName, interface, leafGroup, state)
                     portgroups.append(key)
