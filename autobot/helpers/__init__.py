@@ -1504,7 +1504,6 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None,
           interval=0.4, ping_output=None, background=False, label=None):
-
     if background:
         if node_handle == None or mode != 'bash':
             test_error("Background ping is only support for bash mode")
@@ -1589,7 +1588,7 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
 def _ping(*args, **kwargs):
     """
     Ping options:
-      :param host: (Str) ping hist host
+      :param host: (Str) ping this host
       :param count : (Int) number of packets to send, equivalent to -c <counter>
                       If count is -1 or None, disable count.
                       If background is specified, disable count.
@@ -1607,6 +1606,10 @@ def _ping(*args, **kwargs):
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
 
+    if args:
+        host = args[0]
+    else:
+        host = kwargs.get('host')
     output = kwargs.get('ping_output', None)
     if output == None:
         output = _run_ping_cmd(*args, **kwargs)
@@ -1654,7 +1657,7 @@ def _ping(*args, **kwargs):
         packets_received = int(match.group(2))
         loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
-             % (kwargs.get('host'), packets_transmitted, packets_received,
+             % (host, packets_transmitted, packets_received,
                 loss_pct))
 
         calculated_loss_pct = int((float(packets_transmitted) -
@@ -1689,14 +1692,14 @@ def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=timeout,
+    actual_loss = _ping(host=host, count=count, timeout=timeout,
                         ping_output=ping_output, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=timeout,
+        actual_loss = _ping(host=host, count=count, timeout=timeout,
                             ping_output=ping_output, quiet=quiet)
         if actual_loss > loss:
             count -= 4
-            actual_loss = _ping(host, count=count, timeout=timeout,
+            actual_loss = _ping(host=host, count=count, timeout=timeout,
                                 ping_output=ping_output, quiet=quiet)
     return actual_loss
 
