@@ -208,8 +208,8 @@ tg1:
   ports:
     a:
       name: 12/17
-    b:
-      name: 12/18
+#    b:
+#      name: 12/18
     c:
       name: 12/19
     d:

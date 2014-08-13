@@ -633,7 +633,7 @@ class T5ZTN(object):
 
         ztn_config_temp = []
         for ztn_config_line in ztn_config:
-            if re.match(r'snmp-server|ntp', ztn_config_line):
+            if re.match(r'snmp-server|ntp|logging remote', ztn_config_line):
                 if "snmp-server host" in ztn_config_line:
                     if "snmp-server enable traps" in ztn_config:
                         if "udp-port" in ztn_config_line:
@@ -690,6 +690,10 @@ class T5ZTN(object):
                 if "ntp time-zone" in ztn_config_line:
                     ztn_config_line = ztn_config_line.replace("ntp time-zone",
                                       "timezone")
+                    helpers.log("Rearranging config line: %s" % ztn_config_line)
+                if "logging remote" in ztn_config_line:
+                    ztn_config_line = ztn_config_line.replace("remote",
+                                      "host")
                     helpers.log("Rearranging config line: %s" % ztn_config_line)
                 ztn_config_temp.append(ztn_config_line)
                 helpers.log("Keeping line in ztn-config: %s" % ztn_config_line)

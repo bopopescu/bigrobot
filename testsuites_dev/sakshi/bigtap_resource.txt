@@ -247,6 +247,7 @@ ${SUBMIT SWITCH ALIAS BUTTON}			xpath=//span[@id='dijit_form_Button_4']
 ${CONFIGURE INTERFACE POPUP}			xpath=//div[@title='Configure Big Tap Interface']
 #${CONFIGURE INTERFACE MENU POPUP}		xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
 ${CONFIGURE INTERFACE MENU POPUP}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Set Big Tap Configuration')]
+${MODIFY INTERFACE MENU POPUP}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Modify Big Tap Configuration')]
 ${NONE INTERFACE RADIO BUTTON}			xpath=//div[@data-dojo-attach-point='nodeTypeNone']/descendant::input
 ${FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeFilter']/descendant::input
 ${DELIVERY INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
@@ -382,6 +383,8 @@ ${BIGTAP POLICY PACKETS DELIVERED FIELD}  		xpath=//div[@data-dojo-attach-point=
 
 ${BIGTAP POLICY RULE1 CHECKBOX}					xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='content' and contains(text(), '1')]/parent::td/preceding-sibling::td/preceding-sibling::td/descendant::input
 ${BIGTAP POLICY DELETE RULE MINUS SIGN}			xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='icon_node minus']
+${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}  	xpath=//div[@data-dojo-attach-point='filterInterfacesNode']/descendant::div[@class='icon_node minus']
+${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}	xpath=//div[@data-dojo-attach-point='deliveryInterfacesNode']/descendant::div[@class='icon_node minus']
 
 #### Big Tap Interface Groups Page
 
@@ -427,7 +430,12 @@ ${APPEND POST SERVICE INTERFACE BUTTON}					xpath=//span[@id='dijit_form_Button_
 ${PRE SERVICE INTERFACES ATTACHMENT POINT}				div[@title='Select Pre-Service Interfaces']/parent::div/
 ${POST SERVICE INTERFACES ATTACHMENT POINT}				div[@title='Select Post-Service Interfaces']/parent::div/
 
+### Big Tap User Defined Offsets Page
 
+${BIGTAP UDF ANCHOR DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGTAP UDF ANCHOR LIST}  				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'L4 Start')]/parent::div
+${BIGTAP UDF FIELD}   				 	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGTAP OFFSET FIELD}    				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Offset')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 
 ### Big Tap IP Lists Page
 ${LIST MAIN PLUS BUTTON}								xpath=//div[@class='icon_node plus']
@@ -2122,7 +2130,40 @@ Configure Big Tap Interface from Controller Menu
     Verify Element Invisible  ${CONFIGURE INTERFACE POPUP}
     Verify Page Contains Text   ${name}
 
+Edit Big Tap Interface from Controller Menu
+	[Arguments]  ${id}  ${switch}  ${role}  ${name}
+    Go To Controller Interfaces Page
+    Show All
+    Verify Page Contains Text  ${id}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${id}  ${switch}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    Verify Element Visible  ${MODIFY INTERFACE MENU POPUP}
+    Click Element  ${MODIFY INTERFACE MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIGURE INTERFACE POPUP}
 
+    Verify Element Visible  ${FILTER INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable  ${NONE INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable If  '${role}'=='filter'  ${FILTER INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='delivery'  ${DELIVERY INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='service'  ${SERVICE INTERFACE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword Unless  '${role}'=='${EMPTY}'
+    ...		Input Text And Verify  ${INTERFACE NAME FIELD}  ${name}
+
+    Click Element  ${radio_button}  and don't wait
+    Verify Element Visible  ${SUBMIT INTERFACE NAME BUTTON}
+    Click Element  ${SUBMIT INTERFACE NAME BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CONFIGURE INTERFACE POPUP}
+    Verify Page Contains Text   ${name}
+    
+    
 Configure Big Tap Interface from Big Tap Menu
 	[Arguments]  ${id}  ${switch}  ${role}  ${name}
     Go To Big Tap Interfaces Page
@@ -2213,7 +2254,8 @@ Configure Big Tap Interface Group from Big Tap Menu
 
     Verify Element Invisible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
     Verify Page Contains Text   ${name}
-    
+
+  
 Add Filter Interface to Group 
 	[Arguments]    ${interface-name}
 	
@@ -2398,20 +2440,20 @@ Delete Big Tap Interface from Interface Group
     Run Keyword If  '${role}'=='delivery'
     ...   	 Delete Delivery Interface from Group   ${if-name}
     
-    Verify Element Visible  ${PROCEED DELTE BUTTON}
-    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
     
     
 Delete Filter Interface from Group
 	[Arguments]  ${if-name}
 	Verify Element Visible  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}    
     Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
-    ${action_menu1}  Generate Action Menu Xpath Interfaces  div[@class='bsn_functional_table opaque']  ${if-name}
+    ${action_menu1}  Generate Checkbox Xpath  div[@data-dojo-attach-point='filterInterfacesNode']  ${if-name}
     Verify Element Visible  ${action_menu1}
     Click Element  ${action_menu1}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE REMOVE MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE REMOVE MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}
+    Click Element  ${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}  and don't wait
     Verify Page Does Not Contain Element  ${if-name}
 
 Delete Delivery Interface from Group   
@@ -2419,12 +2461,12 @@ Delete Delivery Interface from Group
 	
 	Verify Element Visible  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}    
     Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
-    ${action_menu1}  Generate Action Menu Xpath Interfaces  div[@class='bsn_functional_table opaque']  ${if-name}
+    ${action_menu1}  Generate Checkbox Xpath  div[@data-dojo-attach-point='deliveryInterfacesNode']  ${if-name}
     Verify Element Visible  ${action_menu1}
     Click Element  ${action_menu1}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE REMOVE MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE REMOVE MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}
+    Click Element  ${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}  and don't wait
     Verify Page Does Not Contain Element  ${if-name}
 	
 	
@@ -2653,4 +2695,34 @@ Configure Match Mode
     Sleep  2
     
 	
+Configure Big Tap User Defined Offsets
+	[Arguments]  ${udf}  ${anchor}  ${offset}
 	
+	Go to Big Tap User Defined Offsets Page
+	Sleep  5
+	
+	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='user_defined_offsets_table']  ${udf}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}  and don't wait
+    
+    Run Keyword Unless  '${anchor}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${BIGTAP UDF ANCHOR DROPDOWN BUTTON}
+    ...		${BIGTAP UDF ANCHOR LIST}  
+    ... 	${BIGTAP UDF FIELD}
+    ... 	${anchor}
+    
+    
+    Click Element  ${BIGTAP OFFSET FIELD}  and don't wait
+		Run Keyword Unless  '${offset}' == '${EMPTY}'
+	...		Input Text And Verify  ${BIGTAP OFFSET FIELD}  ${offset}
+	  Sleep  1
+	  
+   Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait 
+    
+    
+    

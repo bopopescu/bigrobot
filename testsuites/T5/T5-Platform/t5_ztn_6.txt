@@ -168,8 +168,8 @@ T7.2. no DHCP servers are available in the network - after Switch Light Install
 	[Tags]  manual-untested
 #we don't guarantee switch behavior if DHCP is down. It may be the case that the switch gives up after a while.
 T7.3. no ZTN servers are available - before Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.4. no ZTN servers are available - after Switch Light Install
 	Manual Passed
 	[Tags]  manual
