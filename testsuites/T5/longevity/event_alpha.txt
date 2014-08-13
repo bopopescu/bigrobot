@@ -277,7 +277,7 @@ clear stats in controller switch
  
 T5 longevity suite setup
    base suite setup
-    : FOR    ${j}    IN RANGE    0     500
+    : FOR    ${j}    IN RANGE    0     1
     \ 	config    master     no tenant FLAP${j}
 
 T5 longevity suite teardown
