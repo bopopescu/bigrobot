@@ -15,7 +15,7 @@ Library 		keywords/T5Utilities.py
 Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables.txt
+Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs
@@ -31,10 +31,11 @@ T1 Interface tenant add/remove redirect policy src-ip to dest-ip to next-hop
 	[Tags]  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
-	${next_hop}=  Create Dictionary  ip-address  ${nexthop}
-	rest add policy							${tenantX}		${tenant2_polname}		
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  
-								  next-hop=${next_hop}  segment-interface=${vnsX2}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	pause   FREEZE!!
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
@@ -110,7 +111,7 @@ Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src}
 
 
 test setup topology
-	T5 base suite setup
+	base suite setup
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
@@ -143,13 +144,13 @@ test setup topology
 	REST add system intf to tenant routers 			Y
 	REST add system intf to tenant routers 			Z
 
-	REST add static routes							X							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Y							0.0.0.0/0			 {"tenant-name": "system"}
-	REST add static routes							Z							0.0.0.0/0			 {"tenant-name": "system"}	
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
 	
 
 test teardown topology
-	delete fabric switch
+	#delete fabric switch
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
@@ -171,7 +172,7 @@ test teardown topology
 
 T5 base suite setup
 	base suite setup
-	add fabric switch
+	#add fabric switch
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
@@ -201,7 +202,7 @@ T5 base suite setup
 
   
 T5 base suite teardown
-	delete fabric switch
+	#delete fabric switch
 	base suite teardown  
 
 
