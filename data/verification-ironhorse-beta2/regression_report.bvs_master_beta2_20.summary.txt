@@ -1,0 +1,140 @@
+Timestamp: 2014-08-13_141258
+Build: bvs master #beta2_20
+Output: raw_data.db_collect_stats.py.2014-08-13_141258.bvs_master_beta2_20.summary.txt
+
+IronHorse Release Metrics
+===================================================================
+Total test suites:                                                                               66
+Total test cases:                                                                              1707
+Total manual test cases:                                                                        413  24.2%
+Total manual-untested test cases:                                                               232  13.6%
+Total test cases executable:                                                                   1475  86.4%
+Total test cases automated:                                                                    1062  62.2%
+
+Regression Run Results (Build: bvs master #beta2_20)
+===================================================================
+Total test suites executed:                                                                       6
+	  1. tomasz          ( 16 test cases) T5/T5-Platform/t5_ztn_4
+	  2. tomasz          ( 13 test cases) T5/T5-Platform/t5_ztn_5
+	  3. tomasz          ( 38 test cases) T5/T5-Platform/t5_ztn_6
+	  4. tomasz          ( 15 test cases) T5/T5-Platform/t5_ztn_1
+	  5. tomasz          ( 15 test cases) T5/T5-Platform/t5_ztn_2
+	  6. tomasz          (  9 test cases) T5/T5-Platform/t5_ztn_3
+Total test cases executed:                                                                      106
+
+Total test suites not executed:                                                                  60
+	  1. cliff           (  6 test cases) T5/T5-Platform/T5_cli_check
+	  2. animesh         ( 29 test cases) SwitchLight/t5_switch_platform
+	  3. animesh         ( 12 test cases) T5/T5-Platform/t5_different_vns_traffic_forwarding
+	  4. mingtao         ( 11 test cases) T5/T5-Platform/t5_platform_firstboot_HA
+	  5. padubiry        (  3 test cases) T5/L2/t5_alpha_pr
+	  6. padubiry        ( 25 test cases) T5/L2/t5_vns_stats
+	  7. animesh         ( 11 test cases) SwitchLight/switchlight_platform
+	  8. animesh         ( 10 test cases) T5/T5-Platform/t5_controller_ntp
+	  9. cliff           (  4 test cases) T5/T5-Platform/T5_cli_walk
+	 10. mingtao         ( 11 test cases) T5/T5-Platform/t5_bpdu_guard
+	 11. tomasz          ( 12 test cases) T5/T5-Platform/t5_virtual_ip_address
+	 12. padubiry        ( 19 test cases) T5/L2/t5_multiple_vns_forwarding
+	 13. mingtao         ( 21 test cases) T5/longevity/t5_longevity
+	 14. padubiry        ( 12 test cases) T5/L2/t5_fabric_negative
+	 15. animesh         ( 17 test cases) T5/T5-Platform/t5_ha_process_restart_same_vns
+	 16. slim            ( 71 test cases) T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra
+	 17. padubiry        ( 10 test cases) T5/L2/t5_dualleaf_three_rack_physical
+	 18. padubiry        ( 13 test cases) T5/Fabric/t5_rack_detection
+	 19. mingtao         ( 13 test cases) T5/T5-Platform/t5_platform_firstboot_single_node
+	 20. padubiry        (  9 test cases) T5/L2/t5_singleleaf_dualrack_ping_test_suite
+	 21. padubiry        ( 24 test cases) T5/Fabric/t5_fabric_lag_test
+	 22. mingtao         (  6 test cases) T5/T5-Platform/t5_platform_firstboot_dhcp_mis
+	 23. don             ( 43 test cases) T5/T5-Platform/t5_platform_Robustness
+	 24. tomasz          (101 test cases) T5/T5-Platform/t5_file_management
+	 25. mingtao         ( 13 test cases) T5/T5_Qos/t5_control_qos
+	 26. animesh         ( 24 test cases) T5/T5-Platform/t5_controller_snmp
+	 27. animesh         ( 91 test cases) SwitchLight/t5_switch_platform_manual
+	 28. animesh         ( 23 test cases) T5/T5-Platform/t5_same_vns_traffic_forwarding
+	 29. padubiry        ( 13 test cases) T5/L2/t5_app_cli
+	 30. animesh         ( 38 test cases) SwitchLight/t5_switchlight_snmp
+	 31. animesh         ( 17 test cases) T5/T5-Platform/t5_ha_process_restart_different_vns
+	 32. padubiry        ( 11 test cases) T5/Fabric/t5_fabric_traffic_failover
+	 33. padubiry        ( 16 test cases) T5/Fabric/t5_fabric_link
+	 34. tomasz          (  5 test cases) T5/T5-Platform/t5_ztn_basic
+	 35. don             ( 11 test cases) T5/T5-Platform/t5_platform_HA_L2_Regression
+	 36. animesh         ( 33 test cases) T5/T5-Platform/t5_password_management
+	 37. padubiry        (  9 test cases) T5/Fabric/t5_fabric_switch_check
+	 38. kranti          ( 27 test cases) T5/T5-Platform/t5_platform_negativetestcases
+	 39. padubiry        (  9 test cases) T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical
+	 40. tomasz          ( 24 test cases) T5/T5-Platform/t5_rc_interactions
+	 41. suresh          ( 45 test cases) T5/T5_Qos/t5_qos_dualtor
+	 42. suresh          ( 92 test cases) T5/T5_Policy_Physical/t5_policy_physical_inter
+	 43. padubiry        ( 18 test cases) T5/L2/t5_mac_scale
+	 44. padubiry        ( 10 test cases) T5/L2/t5_dualleaf_dualrack_ping_test_suite
+	 45. kranti          ( 18 test cases) SwitchLight/t5_switch_platform_L3_traffic
+	 46. padubiry        (160 test cases) T5/Openstack/t5_openstack_testcase
+	 47. animesh         ( 10 test cases) T5/T5-Platform/t5_tacacs_user_management
+	 48. tomasz          ( 34 test cases) T5/T5-Platform/t5_various_cli
+	 49. padubiry        (  4 test cases) T5/Fabric/t5_fabric_role_change
+	 50. animesh         ( 33 test cases) SwitchLight/switchlight_user_management
+	 51. slim            ( 79 test cases) T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+	 52. mingtao         (  3 test cases) T5/longevity/event_alpha
+	 53. don             ( 14 test cases) T5/T5-Platform/t5_platform_HA_feature
+	 54. padubiry        (  7 test cases) T5/L2/t5_vns_scale
+	 55. animesh         ( 19 test cases) SwitchLight/t5_switch_platform_traffic
+	 56. suresh          ( 61 test cases) T5/T5_Scale/t5_6spine_16rack_test_suite
+	 57. mingtao         ( 10 test cases) T5/T5-Platform/t5_upgrade_single_node
+	 58. don             ( 11 test cases) T5/T5-Platform/t5_platform_HA_L2
+	 59. don             ( 13 test cases) T5/T5-Platform/t5_platform_HA_L3
+	 60. padubiry        (  9 test cases) T5/L2/t5_mac_move_age
+Total test cases not executed:                                                                 1507
+
+Test Summary                                                                                                                                 exec%  pass%  auto%
+--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----
+Total test cases (total, executed, passed, failed):                             (1707, 106, 87, 19)  manual-untested(232)   manual(413)       6.2%  82.1%  62.2%
+Total feature tests (total, executed, passed, failed):                          (1418, 106, 87, 19)  manual-untested(100)   manual(329)       7.5%  82.1%  69.7%
+Total scaling tests (total, executed, passed, failed):                                (88, 0, 0, 0)  manual-untested(51)    manual(0)         0.0%   0.0%  42.0%
+Total performance tests (total, executed, passed, failed):                             (1, 0, 0, 0)  manual-untested(1)     manual(0)         0.0%   0.0%   0.0%
+Total solution tests (total, executed, passed, failed):                               (91, 0, 0, 0)  manual-untested(13)    manual(77)        0.0%   0.0%   1.1%
+Total longevity tests (total, executed, passed, failed):                              (24, 0, 0, 0)  manual-untested(2)     manual(0)         0.0%   0.0%  91.7%
+Total negative tests (total, executed, passed, failed):                               (42, 0, 0, 0)  manual-untested(27)    manual(1)         0.0%   0.0%  33.3%
+Total robustness tests (total, executed, passed, failed):                             (45, 0, 0, 0)  manual-untested(38)    manual(7)         0.0%   0.0%   0.0%
+Total manual tests (total, executed, passed, failed):                              (413, 47, 44, 3)  manual-untested(0)     manual(413)      11.4%  93.6%   0.0%
+Total manual-untested tests (total, executed, passed, failed):                       (232, 0, 0, 0)  manual-untested(232)   manual(0)         0.0%   0.0%   0.0%
+
+Functional Areas                                                                                                                             exec%  pass%  auto%
+--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----
+Total feature+ha tests (total, executed, passed, failed):                            (116, 0, 0, 0)  manual-untested(0)     manual(15)        0.0%   0.0%  87.1%
+Total feature+span tests (total, executed, passed, failed):                            (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+testpath tests (total, executed, passed, failed):                        (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+pod tests (total, executed, passed, failed):                             (4, 0, 0, 0)  manual-untested(0)     manual(4)         0.0%   0.0%   0.0%
+Total feature+l2 tests (total, executed, passed, failed):                            (137, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+l3 tests (total, executed, passed, failed):                            (188, 0, 0, 0)  manual-untested(0)     manual(46)        0.0%   0.0%  75.5%
+Total feature+snmp tests (total, executed, passed, failed):                           (54, 0, 0, 0)  manual-untested(0)     manual(12)        0.0%   0.0%  77.8%
+Total feature+ntp tests (total, executed, passed, failed):                            (17, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+traffic tests (total, executed, passed, failed):                       (115, 0, 0, 0)  manual-untested(0)     manual(9)         0.0%   0.0%  92.2%
+Total feature+logging tests (total, executed, passed, failed):                         (8, 0, 0, 0)  manual-untested(0)     manual(8)         0.0%   0.0%   0.0%
+Total feature+rsyslog tests (total, executed, passed, failed):                         (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+rsyslogd tests (total, executed, passed, failed):                        (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+install tests (total, executed, passed, failed):                        (18, 0, 0, 0)  manual-untested(0)     manual(18)        0.0%   0.0%   0.0%
+Total feature+initialconfig tests (total, executed, passed, failed):                  (13, 0, 0, 0)  manual-untested(0)     manual(9)         0.0%   0.0%  30.8%
+Total feature+rebootswitch tests (total, executed, passed, failed):                    (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+firstboot tests (total, executed, passed, failed):                      (24, 0, 0, 0)  manual-untested(0)     manual(2)         0.0%   0.0%  91.7%
+Total feature+upgrade tests (total, executed, passed, failed):                        (10, 0, 0, 0)  manual-untested(0)     manual(2)         0.0%   0.0%  80.0%
+Total feature+singlenode tests (total, executed, passed, failed):                     (22, 0, 0, 0)  manual-untested(0)     manual(2)         0.0%   0.0%  90.9%
+Total feature+bpdu_guard tests (total, executed, passed, failed):                     (10, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+fabric tests (total, executed, passed, failed):                         (77, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+fabric_qos tests (total, executed, passed, failed):                     (12, 0, 0, 0)  manual-untested(0)     manual(10)        0.0%   0.0%  16.7%
+Total feature+qos tests (total, executed, passed, failed):                            (45, 0, 0, 0)  manual-untested(5)     manual(40)        0.0%   0.0%   0.0%
+Total feature+ztn tests (total, executed, passed, failed):                       (209, 106, 87, 19)  manual-untested(94)    manual(57)       50.7%  82.1%  27.8%
+Total feature+file management tests (total, executed, passed, failed):                 (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+filemanagement tests (total, executed, passed, failed):                (101, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+running-config tests (total, executed, passed, failed):                 (24, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+initialconfig tests (total, executed, passed, failed):                  (13, 0, 0, 0)  manual-untested(0)     manual(9)         0.0%   0.0%  30.8%
+Total feature+virtualip tests (total, executed, passed, failed):                      (12, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+openstack tests (total, executed, passed, failed):                      (71, 0, 0, 0)  manual-untested(1)     manual(70)        0.0%   0.0%   0.0%
+Total feature+dhcp tests (total, executed, passed, failed):                            (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+Total feature+dhcp-relay tests (total, executed, passed, failed):                     (26, 0, 0, 0)  manual-untested(0)     manual(2)         0.0%   0.0%  92.3%
+Total feature+ecmp tests (total, executed, passed, failed):                           (16, 0, 0, 0)  manual-untested(0)     manual(16)        0.0%   0.0%   0.0%
+Total feature+policy tests (total, executed, passed, failed):                         (92, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0% 100.0%
+Total feature+policy-vlanrewrite tests (total, executed, passed, failed):              (0, 0, 0, 0)  manual-untested(0)     manual(0)         0.0%   0.0%   0.0%
+
+Manual Verification Details
+===================================================================
+None
