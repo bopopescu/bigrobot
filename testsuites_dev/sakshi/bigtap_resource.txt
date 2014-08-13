@@ -165,13 +165,13 @@ ${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point=
 #${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
 ${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Include Filter Interfaces']
 #${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//span[@id="bsn_widgets_Dialog_2_title"]
-${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id=dijit_form_Button_14_label']
+${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id='dijit_form_Button_9_label']
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}   	 	xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']
 ${RBAC DELIVERY INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='deliveryInterfaceManager']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Include Delivery Interfaces']
-${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_19_label']
+${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_14_label']
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
@@ -192,8 +192,8 @@ ${RBAC ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_1_p
 ${RBAC MATCH VLAN CHECKBOX SELECTED}		xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC MATCH VLAN CHECKBOX UNSELECTED}	  	xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC MATCH VLAN CHECKBOX}					xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::input[@role='checkbox']
-${RBAC MATCH VLAN FROM FIELD}				xpath=//input[@id='dijit_form_NumberSpinner_5']
-${RBAC MATCH VLAN TO FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_6']
+${RBAC MATCH VLAN FROM FIELD}				xpath=//input[@id='dijit_form_NumberSpinner_8']
+${RBAC MATCH VLAN TO FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_9']
 ${RBAC MATCH TCP FIN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_0']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
 ${RBAC MATCH TCP SYN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_1']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
 ${RBAC MATCH TCP RST CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_2']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
@@ -289,6 +289,7 @@ ${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-d
 ${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${BIGTAP POLICY MATCHES NODE}											xpath=//div[@data-dojo-attach-point='ruleNode']
 ${BIGTAP POLICY MATCHES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='icon_node plus']
+${RBAC MATCHES PLUS BUTTON}												xpath=//div[@data-dojo-attach-point='matchRuleNode']/descendant::div[@class='icon_node plus']
 ${BIGTAP POLICY INCLUDE MATCHES POPUP}   								xpath=//div[@title='Configure Policy Match Rule']
 ${BIGTAP POLICY APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_24']
 ${BIGTAP POLICY ALLOW ALL MATCHES CHECKBOX SELECTED}  				  	xpath=//div[@data-dojo-attach-point='ruleNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
@@ -311,6 +312,7 @@ ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}						xpath=//input[@id='dijit_form_Num
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitUpArrowButton')]
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN} 						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[@class='dijitReset dijitButtonNode dijitSpinnerButtonContainer']/descendant::div[contains(@class, 'dijitDownArrowButton')]
 ${BIGTAP POLICY MATCHES BUTTON}									xpath=//div[@class='step_text' and contains(text(), '2. Rules')]
+${RBAC MATCHES BUTTON}											xpath=//div[@class='step_text' and contains(text(), '5. Matches')]
 ${FILTER CHECKB}													xpath=//div[@class='bsn_ellipsis' and contains(text(), 'ixia-2-4')]
 ${fc}   														xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
 ${dc}   														xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
@@ -407,7 +409,7 @@ ${INTERFACE SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_4']
 ${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
 #xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
 ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
-${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
 ${BIG TAP INTERFACE REMOVE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Remove')]
 ${BIG TAP INTERFACE GROUPS CONFIRM POPUP}			xpath=//div[@title='Confirm']
 
@@ -1036,7 +1038,7 @@ Associate RBAC
 
 
 Configure RBAC
-	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}
+	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}  ${src-ip}  ${dst-ip}
 	${random_groupname}  Generate Random Name  Group  5
     Run Keyword If  '${group}'=='__new__'  
     ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
@@ -1059,17 +1061,17 @@ Configure RBAC
 
     Click Element  ${INFO BUTTON}  and don't wait
 
-    #Run Keyword Unless  '${filter}'=='${EMPTY}'  
-    #...		Associate Filter Interface  ${filter}
+    Run Keyword Unless  '${filter}'=='${EMPTY}'  
+    ...		Associate Filter Interface  ${filter}
 
-    #Run Keyword Unless  '${delivery}'=='${EMPTY}'  
-    #...		Associate Delivery Interface  ${delivery}
+    Run Keyword Unless  '${delivery}'=='${EMPTY}'  
+    ...		Associate Delivery Interface  ${delivery}
 
     #Run Keyword Unless  '${service}'=='${EMPTY}'  
     #...		Associate Service  ${service}
 
-    #Run Keyword If  '${ipprotocol}'=='${EMPTY}'  
-    #...		Associate Match Rule
+    Run Keyword Unless  '${ipprotocol}'=='${EMPTY}'  
+    ...		Associate Match Rule  ${ipprotocol}  ${src-ip}  ${dst-ip}
 
     Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
@@ -1177,27 +1179,41 @@ Match All Rule
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
 
-Associate Match Rule 
-	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
-	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+Associate Match Rule
+	[Arguments]  ${ipprotocol}  ${src-ip}  ${dst-ip}
+	Verify Page Contains Element  ${RBAC MATCHES BUTTON}
+	Click Element  ${RBAC MATCHES BUTTON}  and don't wait
 
-	Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
-
-	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
-	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}
 	
-	Click Element  ${BIGTAP POLICY ETHERTYPE FIELD}  and don't wait
+	Verify Element Visible  ${RBAC MATCHES PLUS BUTTON}
+	Click Element  ${RBAC MATCHES PLUS BUTTON}  and don't wait
+	
+	Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
 
     Select From List And Verify  
-    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
-    ...		${BIGTAP POLICY ETHERTYPE LIST}  
-    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
-    ... 	IPv4 - 0x800 (2048)
+    ... 	${RBAC ETHERTYPE DROPDOWN BUTTON}
+    ...		${RBAC ETHERTYPE LIST}  
+    ... 	${RBAC ETHERTYPE FIELD}
+    ... 	${ipprotocol}
+	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
+	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
 	
-	#Verify Page Contains Element   ${matchall_checkbox_unselected}
-	#Click Element   ${matchall_checkbox_unselected}  and don't wait
+	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
+	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	Verify Page Contains Element  ${src-ip}
 	
-	#Select Checkbox   ${matchall_checkbox_selected}   ${matchall_checkbox_unselected}
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
+	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
+		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	Verify Page Contains Element  ${dst-ip}
 
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
@@ -1674,7 +1690,7 @@ Edit Big Tap Policy for TCP Flags
     Sleep   2
 	
 Associate DPM Rule 
-	[Arguments]   ${policy}  ${ipprotocol}  ${udf0}  ${value0}  ${mask0}  ${udf1}  ${value1}  ${mask1}  ${udf2}  ${value2}  ${mask2}  ${src-ip}  ${dst-ip}  ${src-port}   ${dst-port}   ${vlan-header} 
+	[Arguments]   ${policy}  ${ipprotocol}  ${udf0}  ${value0}  ${mask0}  ${udf1}  ${value1}  ${mask1}  ${udf2}  ${value2}  ${mask2}  ${src-port}   ${dst-port}   ${vlan-header} 
 	
 	Go To Big Tap Policies Page
 	Sleep   5
@@ -1734,9 +1750,9 @@ Associate DPM Rule
 	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
 	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
 	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
-	Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
+	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	#Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
 	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
 	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP MASK FIELD}  255.255.255.0
 	
@@ -1762,9 +1778,9 @@ Associate DPM Rule
 	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
 	
 	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
 	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
 	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP MASK FIELD}  255.255.255.0
 	
@@ -2424,8 +2440,8 @@ Delete Big Tap Interface from Interface Group
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
     
     Run Keyword If  '${role}'=='filter'
     ...		 Delete Filter Interface from Group   ${if-name} 
@@ -2705,8 +2721,8 @@ Configure Big Tap User Defined Offsets
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
     
     Run Keyword Unless  '${anchor}'=='${EMPTY}'
     ...		Select From List And Verify  
