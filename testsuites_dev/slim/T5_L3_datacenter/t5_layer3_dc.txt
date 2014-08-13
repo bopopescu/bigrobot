@@ -60,6 +60,9 @@ L3 inter tenant 16 hop ecmp group in same rack
     L3 inter tenant 16 hop ecmp group in same rack
     [Tags]                                  smoke               sanity              run10
     
+More specific route for L3 inter tenant traffic to external host
+    More specific route for L3 inter tenant traffic to external host
+    [Tags]                                  smoke               sanity              run11
     
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
     Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
@@ -410,7 +413,7 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     BASH ping                                   h1-rack0                        ${ipAddr}               count=10
     ${value} =                                  BASH verify arp                 h1-rack0                10.251.1.1
     Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h2-rack1                10.251.2.1
+    ${value} =                                  BASH verify arp                 h2-rack1                10.252.3.1
     Should Be True                              ${value}    
     ${mac1} =                                   BASH get intf mac               h1-rack0                      bond0.1001
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -586,10 +589,8 @@ L3 intra tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffA7} > 40000
     Should Be True                                  ${diffA8} > 40000
     Should Be True                                  ${diffA9} > 40000
-    Should Be True                                  ${diffA12} < 1000
-    Should Be True                                  ${diffA13} < 1000
-    Should Be True                                  ${diffA14} < 1000
-    Should Be True                                  ${diffA15} < 1000
+    #### Check that leaf to spine link is not sending any traffic to spine
+    Should Be True                                  ${diffA12} < 1000 and ${diffA13} < 1000 and ${diffA14} < 1000 and ${diffA15} < 1000
     Should Be True                                  ${diffB2} > 40000
     Should Be True                                  ${diffB3} > 40000
     Should Be True                                  ${diffB4} > 40000
@@ -598,10 +599,8 @@ L3 intra tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffB7} > 40000
     Should Be True                                  ${diffB8} > 40000
     Should Be True                                  ${diffB9} > 40000 
-    Should Be True                                  ${diffB12} < 1000
-    Should Be True                                  ${diffB13} < 1000
-    Should Be True                                  ${diffB14} < 1000
-    Should Be True                                  ${diffB15} < 1000
+    #### Check that leaf to spine link is not receiving traffic from spine
+    Should Be True                                  ${diffB12} < 1000 and ${diffB13} < 1000 and ${diffB14} < 1000 and ${diffB15} < 1000
     verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
     
 
@@ -771,10 +770,6 @@ L3 inter tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffA7} > 40000
     Should Be True                                  ${diffA8} > 40000
     Should Be True                                  ${diffA9} > 40000
-    Should Be True                                  ${diffA12} > 100000
-    Should Be True                                  ${diffA13} < 100000
-    Should Be True                                  ${diffA14} > 100000
-    Should Be True                                  ${diffA15} > 100000
     Should Be True                                  ${diffB2} > 40000
     Should Be True                                  ${diffB3} > 40000
     Should Be True                                  ${diffB4} > 40000
@@ -782,11 +777,11 @@ L3 inter tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffB6} > 40000
     Should Be True                                  ${diffB7} > 40000
     Should Be True                                  ${diffB8} > 40000
-    Should Be True                                  ${diffB9} > 40000 
-    Should Be True                                  ${diffB12} > 100000
-    Should Be True                                  ${diffB13} > 100000
-    Should Be True                                  ${diffB14} > 100000
-    Should Be True                                  ${diffB15} > 100000
+    Should Be True                                  ${diffB9} > 40000
+    #### Check that one leaf to spine link is sending inter tenant traffic to spine 
+    Should Be True                                  ${diffA12} > 100000 or ${diffA13} > 100000 or ${diffB12} > 100000 or ${diffB13} > 100000
+    #### Check that one leaf to spine link is receiving inter tenant traffic from spine 
+    Should Be True                                  ${diffA14} > 100000 or ${diffA15} > 100000 or ${diffB14} > 100000 or ${diffB15} > 100000
     verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
     
 
@@ -878,7 +873,7 @@ Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     BASH ping                                   h1-rack0                        ${ipAddr}               count=10
     ${value} =                                  BASH verify arp                 h1-rack0                10.251.1.1
     Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h2-rack1                10.251.2.1
+    ${value} =                                  BASH verify arp                 h2-rack1                10.252.3.1
     Should Be True                              ${value}    
     ${mac1} =                                   BASH get intf mac               h1-rack0                      bond0.1001
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1219,7 +1214,7 @@ setup topology
     REST add interface to vns               X                   X192             leaf0-a    ethernet33          -1
     REST add interface to vns               X                   X224             leaf0-b    ethernet33          -1
     REST add interface to vns               Y                   Y192             leaf1-a    ethernet33          -1
-#    REST add interface to vns               Y                   Y224             leaf1-b    ethernet33          -1
+    REST add interface to vns               Y                   Y224             leaf1-b    ethernet33          -1
     REST add interface to vns               Z                   Z192             leaf2-a    ethernet33          -1
     REST add interface to vns               Z                   Z224             leaf2-b    ethernet33          -1
     REST add tenant routers intf to system          X
@@ -1246,6 +1241,7 @@ T5 base suite setup
 	base suite setup
 	add fabric switch
 	sleep 											5
+	add ntp timezone
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
 	${result} = 									CLI verify controller   	s1							c2
