@@ -541,7 +541,7 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
+    def add_ntp_server(self, node='master', ntp_server='0.bigswitch.pool.ntp.org'):
         '''
             Objective: Add an NTP server.
 
@@ -559,9 +559,7 @@ class BsnCommon(object):
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                '''
-                NTP Configuration at Switch
-                '''
+                # NTP Configuration at Switch
                 helpers.log("The node is a SwitchLight switch")
                 switch = t.switch(node)
                 cli_input_1 = "ntp server " + str(ntp_server)
@@ -574,11 +572,9 @@ class BsnCommon(object):
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
-                '''
-                BigTap NTP Configuration goes here
-                '''
+                # BigTap NTP Configuration goes here
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller(node)
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
                 helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -589,11 +585,9 @@ class BsnCommon(object):
                     helpers.test_log(c.rest.content_json())
                     return True
             elif helpers.is_bigwire(n.platform()):
-                '''
-                BigWire NTP Configuration goes here
-                '''
+                # BigWire NTP Configuration goes here
                 helpers.log("The node is a BigWire Controller")
-                c = t.controller('master')
+                c = t.controller(node)
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
                 helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -604,11 +598,9 @@ class BsnCommon(object):
                     helpers.test_log(c.rest.content_json())
                     return True
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller
-                '''
+                # T5 Controller
                 helpers.log("The node is a T5 Controller")
-                c = t.controller()
+                c = t.controller(node)
                 url_get_ntp = '/api/v1/data/controller/os/config/global/time-config?config=true'
                 c.rest.get(url_get_ntp)
                 content = c.rest.content()
@@ -631,7 +623,7 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def delete_ntp_server(self, node, ntp_server):
+    def delete_ntp_server(self, node, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
             Objective: Delete a NTP server.
 
@@ -648,9 +640,7 @@ class BsnCommon(object):
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                '''
-                    NTP Deletion at Switch
-                '''
+                # NTP Deletion at Switch
                 switch = t.switch(node)
                 cli_input_1 = "no ntp server " + str(ntp_server)
                 switch.config(cli_input_1)
@@ -663,10 +653,8 @@ class BsnCommon(object):
             helpers.log("The node is a controller")
 
             if  helpers.is_bigtap(n.platform()):
-                '''
-                    BigTap NTP Server Deletion goes here
-                '''
-                c = t.controller('master')
+                # BigTap NTP Server Deletion goes here
+                c = t.controller(node)
                 try:
                     url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                     c.rest.delete(url, {})
@@ -677,10 +665,8 @@ class BsnCommon(object):
                     helpers.test_log(c.rest.content_json())
                     return True
             elif helpers.is_bigwire(n.platform()):
-                '''
-                    BigWire NTP Server Deletion goes here
-                '''
-                c = t.controller('master')
+                # BigWire NTP Server Deletion goes here
+                c = t.controller(node)
                 try:
                     url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                     c.rest.delete(url, {})
@@ -691,10 +677,8 @@ class BsnCommon(object):
                     helpers.test_log(c.rest.content_json())
                     return True
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller NTP Server Deletion goes here
-                '''
-                c = t.controller()
+                # T5 Controller NTP Server Deletion goes here
+                c = t.controller(node)
                 url = '/api/v1/data/controller/os/config/global/time-config'
                 helpers.log("URL is %s" % url)
                 c.rest.delete(url, {"ntp-servers": [ntp_server]})
@@ -726,20 +710,16 @@ class BsnCommon(object):
         if helpers.is_switch(n.platform()):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                '''
-                TimeZone Configuration at Switch
-                '''
+                # TimeZone Configuration at Switch
                 return True
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
-                '''
-                BigTap TimeZone Configuration goes here
-                '''
+                # BigTap TimeZone Configuration goes here
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller(node)
                 url = '/rest/v1/model/controller-node/'
                 c.rest.get(url)
                 content = c.rest.content()
@@ -758,11 +738,9 @@ class BsnCommon(object):
                 else:
                     return False
             elif helpers.is_bigwire(n.platform()):
-                '''
-                BigWire TimeZone Configuration goes here
-                '''
+                # BigWire TimeZone Configuration goes here
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller(node)
                 url = '/rest/v1/model/controller-node/'
                 c.rest.get(url)
                 content = c.rest.content()
@@ -781,11 +759,9 @@ class BsnCommon(object):
                 else:
                     return False
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller
-                '''
+                # T5 Controller
                 helpers.log("The node is a T5 Controller")
-                c = t.controller()
+                c = t.controller(node)
                 url = '/api/v1/data/controller/os/config/global/time-config'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.patch(url, {"time-zone": str(time_zone)})
@@ -817,28 +793,22 @@ class BsnCommon(object):
         if helpers.is_switch(n.platform()):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                '''
-                TimeZone Configuration at Switch
-                '''
+                # TimeZone Configuration at Switch
                 return True
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
-                '''
-                BigTap TimeZone Configuration goes here
-                '''
+                # BigTap TimeZone Configuration goes here
+                pass
             elif helpers.is_bigwire(n.platform()):
-                '''
-                BigWire TimeZone Configuration goes here
-                '''
+                # BigWire TimeZone Configuration goes here
+                pass
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller
-                '''
+                # T5 Controller
                 helpers.log("The node is a T5 Controller")
-                c = t.controller()
+                c = t.controller(node)
                 url = '/api/v1/data/controller/os/config/global/time-config/time-zone'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.delete(url, {})
@@ -869,9 +839,7 @@ class BsnCommon(object):
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                '''
-                    NTP Verification at Switch
-                '''
+                # NTP Verification at Switch
                 switch = t.switch(node)
                 pass_count = 0
                 cli_input_1 = "show ntp"
@@ -904,10 +872,8 @@ class BsnCommon(object):
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if  helpers.is_bigtap(n.platform()):
-                '''
-                    BigTap NTP Server Verification goes here
-                '''
-                c = t.controller('master')
+                # BigTap NTP Server Verification goes here
+                c = t.controller(node)
                 try:
                     url = '/rest/v1/model/ntp-server/'
                     c.rest.get(url)
@@ -926,10 +892,8 @@ class BsnCommon(object):
                         return False
 
             elif helpers.is_bigwire(n.platform()):
-                '''
-                    BigWire NTP Server Verification goes here
-                '''
-                c = t.controller('master')
+                # BigWire NTP Server Verification goes here
+                c = t.controller(node)
                 try:
                     url = '/rest/v1/model/ntp-server/'
                     c.rest.get(url)
@@ -948,9 +912,7 @@ class BsnCommon(object):
                         return False
 
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller NTP Server Verification goes here
-                '''
+                # T5 Controller NTP Server Verification goes here
                 c = t.controller(node)
                 try:
                     url = '/api/v1/data/controller/os/action/time/ntp'
