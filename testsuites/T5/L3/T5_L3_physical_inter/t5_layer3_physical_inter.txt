@@ -2685,13 +2685,13 @@ initialize host
     BASH run command                                h5                                ifup eth2
     sleep                                           1
     BASH run command                                h5                                ifup eth3
-    BASH run command                                h6                                ifup eth2     soft_error=${true}
+    BASH run command                                h6                                ifup eth2
     sleep                                           1
-    BASH run command                                h6                                ifup eth3     soft_error=${true}
+    BASH run command                                h6                                ifup eth3
     sleep                                           1
-    BASH run command                                h6                                ifup p1p1     soft_error=${true}
+    BASH run command                                h6                                ifup p1p1
     sleep                                           1
-    BASH run command                                h6                                ifup p1p2     soft_error=${true}
+    BASH run command                                h6                                ifup p1p2
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
