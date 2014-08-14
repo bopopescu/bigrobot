@@ -1472,6 +1472,8 @@ def scp_get(server, remote_file, local_path,
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     """
+    NOTE: Consider using run_cmd2() instead.
+
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
             '&') and/or command contains shell variables/wildcards.
@@ -1500,19 +1502,53 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
+def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+    """
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
+
+    In this version of run_cmd, the shell and non-shell modes are near
+    identical, resulting in more consistent behavior. Need to gradually phase
+    out the old run_cmd usage.
+
+    Returns tuple (Boolean, String)
+        success: (True,  "...success message...")
+        failure: (False, "...error message...")
+    """
+    if not quiet:
+        print("Executing '%s'" % cmd)
+    if shell:
+        # In general, should avoid shell mode due to security reasons.
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+    else:
+        cmd_list = cmd.split(' ')
+        p = subprocess.Popen(cmd_list,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, cwd=cwd)
+    out, err = p.communicate()
+    if err and not ignore_stderr:
+        return (False, err)
+
+    return (True, out)
+
+
 def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output = run_cmd('uname -a', shell=False, quiet=True)
+    _, output = run_cmd2('uname -a', shell=False, quiet=True)
     return output
 
 
 def ulimit():
     """
     Dump output from 'ulimit -a'.
+    Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
+    built-in shell command. So let's execute it using shell mode.
     """
-    _, output = run_cmd('ulimit -a', shell=False, quiet=True)
+    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output
 
 
@@ -1520,7 +1556,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output = run_cmd('uptime', shell=False, quiet=True)
+    _, output = run_cmd2('uptime', shell=False, quiet=True)
     return output
 
 
