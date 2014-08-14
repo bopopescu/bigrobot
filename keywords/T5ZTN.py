@@ -333,13 +333,17 @@ class T5ZTN(object):
         #    s.cli('admin')
         #if options[0] == 1:  # bash mode
         #    s.cli('exit')
-        s.cli('enable; config')
+        s.send('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
-            s.cli('interface ma1 ip-address dhcp')
+            s.send('interface ma1 ip-address dhcp')
         elif state == 'down':
             helpers.log("Setting interface MA1 down")
-            s.cli('no interface ma1 ip-address dhcp')
+            s.send('no interface ma1 ip-address dhcp')
+        elif state == 'flap':
+            helpers.log("Setting interface MA1 down and up")
+            s.send('no interface ma1 ip-address dhcp')
+            s.send('interface ma1 ip-address dhcp')
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
             return helpers.test_failure("Wrong state of interface")
@@ -634,6 +638,9 @@ class T5ZTN(object):
         ztn_config_temp = []
         for ztn_config_line in ztn_config:
             if re.match(r'snmp-server|ntp|logging remote', ztn_config_line):
+                if re.match(r'logging remote$', ztn_config_line):
+                    helpers.log("skipping line: %s" % ztn_config_line)
+                    continue
                 if "snmp-server host" in ztn_config_line:
                     if "snmp-server enable traps" in ztn_config:
                         if "udp-port" in ztn_config_line:
