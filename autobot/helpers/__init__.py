@@ -1472,6 +1472,8 @@ def scp_get(server, remote_file, local_path,
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     """
+    NOTE: Consider using run_cmd2() instead.
+
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
             '&') and/or command contains shell variables/wildcards.
@@ -1500,19 +1502,53 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
+def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+    """
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
+
+    In this version of run_cmd, the shell and non-shell modes are near
+    identical, resulting in more consistent behavior. Need to gradually phase
+    out the old run_cmd usage.
+
+    Returns tuple (Boolean, String)
+        success: (True,  "...success message...")
+        failure: (False, "...error message...")
+    """
+    if not quiet:
+        print("Executing '%s'" % cmd)
+    if shell:
+        # In general, should avoid shell mode due to security reasons.
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+    else:
+        cmd_list = cmd.split(' ')
+        p = subprocess.Popen(cmd_list,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, cwd=cwd)
+    out, err = p.communicate()
+    if err and not ignore_stderr:
+        return (False, err)
+
+    return (True, out)
+
+
 def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output = run_cmd('uname -a', shell=False, quiet=True)
+    _, output = run_cmd2('uname -a', shell=False, quiet=True)
     return output
 
 
 def ulimit():
     """
     Dump output from 'ulimit -a'.
+    Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
+    built-in shell command. So let's execute it using shell mode.
     """
-    _, output = run_cmd('ulimit -a', shell=False, quiet=True)
+    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output
 
 
@@ -1520,7 +1556,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output = run_cmd('uptime', shell=False, quiet=True)
+    _, output = run_cmd2('uptime', shell=False, quiet=True)
     return output
 
 
@@ -1805,7 +1841,8 @@ def send_mail(m, infile=None):
         input_text = file_read_once(infile)
         if len(input_text) > 100000:
             lines = 200
-            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+            input_text = ("... Attention: File is greater than 100K bytes."
+                          " Send the last %s lines of file ...\n\n"
                           % lines + '\n'.join(str_to_list(input_text)[-lines:]))
         m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
@@ -1887,7 +1924,7 @@ def openstack_convert_table_to_dict(input_str):
     { 'OS-EXT-IMG-SIZE:size':
                   {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
       'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
-      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-...'},
       'minDisk':  {'property': 'minDisk',  'value': '0'},
       'minRam':   {'property': 'minRam',   'value': '0'},
       'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},
