@@ -256,30 +256,225 @@ T0.3. BSC-5568
 	...  Reboot indicated switches
 	[Tags]  BSC-5568
 
-T0.4. Show remote
-	Cli Run  master  show switch ${s1_alias} environment
-	Cli Run  master  show switch ${s1_alias} version
-	#Cli Run  master  show switch ${s1_alias} controller
-	Cli Run  master  show switch ${s1_alias} inventory
+T0.4. Show remote on Active
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} version
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} connections
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} connections details
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} switch-view connection
+	...  master connected
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} switch-view controller
+	...  CONNECTED
 
-	Cli Run  master  show switch ${s2_alias} environment
-	Cli Run  master  show switch ${s2_alias} version
-	#Cli Run  master  show switch ${s2_alias} controller
-	Cli Run  master  show switch ${s2_alias} inventory
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} version
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} connections
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} connections details
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} switch-view connection
+	...  master connected
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} switch-view controller
+	...  CONNECTED
 
-	Cli Run  master  show switch ${s3_alias} environment
-	Cli Run  master  show switch ${s3_alias} version
-	#Cli Run  master  show switch ${s3_alias} controller
-	Cli Run  master  show switch ${s3_alias} inventory
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} version
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} connections
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} connections details
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} switch-view connection
+	...  master connected
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} switch-view controller
+	...  CONNECTED
 
-	Cli Run  master  show switch ${s4_alias} environment
-	Cli Run  master  show switch ${s4_alias} version
-	#Cli Run  master  show switch ${s4_alias} controller
-	Cli Run  master  show switch ${s4_alias} inventory
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} version
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} connections
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} connections details
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} switch-view connection
+	...  master connected
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} switch-view controller
+	...  CONNECTED
 
-	Cli Run  master  show switch ${s5_alias} environment
-	Cli Run  master  show switch ${s5_alias} version
-	#Cli Run  master  show switch ${s5_alias} controller
-	Cli Run  master  show switch ${s5_alias} inventory
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} version
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} connections
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} connections details
+	...  2014
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} switch-view connection
+	...  master connected
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} switch-view controller
+	...  CONNECTED
 
+T0.5. Show remote on Standby
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} version
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} connections
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} connections details
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} switch-view connection
+	...  slave \ connected
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} switch-view controller
+	...  CONNECTED
+
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} version
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} connections
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} connections details
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} switch-view connection
+	...  slave \ connected
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} switch-view controller
+	...  CONNECTED
+
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} version
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} connections
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} connections details
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} switch-view connection
+	...  slave \ connected
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} switch-view controller
+	...  CONNECTED
+
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} version
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} connections
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} connections details
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} switch-view connection
+	...  slave \ connected
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} switch-view controller
+	...  CONNECTED
+
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} environment
+	...  Dpid
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} version
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} inventory
+	...  40GBASE-CR4
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} connections
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} connections details
+	...  2014
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} switch-view connection
+	...  slave \ connected
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} switch-view controller
+	...  CONNECTED
 
