@@ -105,7 +105,10 @@ TC28 Offset match on VXLAN VNI
 		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 12		74912700	ffffff00	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	4789		${EMPTY}
 
 TC Set up 2
-		Delete All Bigtap Policies
+		Delete All Bigtap Resources
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			qa-corsair-2 		delivery		ixia-4-8
 		Configure Big Tap User Defined Offsets							udf0					L4 Start			36
 		Configure Big Tap User Defined Offsets							udf1					L4 Start			40
 		Configure Big Tap User Defined Offsets							udf2					L4 Start			44
