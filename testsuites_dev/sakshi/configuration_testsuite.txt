@@ -19,16 +19,16 @@ T1.2 Interface with regular name-delivery-1
  	Configure Big Tap Interface from Controller Menu		ethernet1				00:00:5c:16:c7:1c:16:f2			delivery			delivery-1
 T1.3 Interface with regular name-delivery-2	
  	Configure Big Tap Interface from Controller Menu		ethernet2				00:00:5c:16:c7:1c:16:f2			delivery			delivery-2
-#T1.4 Interface with regular name-service-2	
-# 	Configure Big Tap Interface from Controller Menu		ethernet21				00:00:5c:16:c7:1e:f3:95			service				service-2
+T1.4 Interface with regular name-service-1	
+ 	Configure Big Tap Interface from Controller Menu		ethernet3				00:00:5c:16:c7:1e:f3:95			service				service-1
 T1.5 Edit regular name-filter	
  	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:5c:16:c7:1e:f3:95			filter				filter-new-1
 T1.6 Edit regular name-delivery-1				
  	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:5c:16:c7:1c:16:f2			delivery			delivery-new-1
 T1.7 Edit regular name-delivery-2				
 	Edit Big Tap Interface from Controller Menu				ethernet2				00:00:5c:16:c7:1c:16:f2			delivery			delivery-new-2
-#T1.8 Edit regular name-service-2				
-# 	Configure Big Tap Interface from Controller Menu		ethernet21				00:00:5c:16:c7:1e:f3:95			service				service-new-2
+T1.8 Edit regular name-service-1				
+ 	Edit Big Tap Interface from Controller Menu				ethernet3				00:00:5c:16:c7:1e:f3:95			service				service-new-1
 T1.9 Edit interface type and name1			
  	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:5c:16:c7:1e:f3:95			delivery			delivery-new-3
 T1.10 Edit interface type and name2			
@@ -41,30 +41,29 @@ T1.13 Delete regular name-delivery-1
 	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:5c:16:c7:1c:16:f2			${EMPTY}			${EMPTY}
 T1.14 Delete regular name-delivery-2		
  	Edit Big Tap Interface from Controller Menu				ethernet2				00:00:5c:16:c7:1c:16:f2			${EMPTY}			${EMPTY}
-# T1.15 Delete regular name-service-2			
-# 	Configure Big Tap Interface from Controller Menu		ethernet21				00:00:5c:16:c7:1e:f3:95			${EMPTY}			${EMPTY}
-#T1 Teardown
-# 	Delete All Big Tap Resources
+T1.15 Delete regular name-service-1			
+ 	Edit Big Tap Interface from Controller Menu				ethernet3 				00:00:5c:16:c7:1e:f3:95			${EMPTY}			${EMPTY}
+T1 Teardown
+ 	Delete All Big Tap Resources
 
 
-###	Configure Big Tap Interface from Big Tap Menu 
-#T2	Delete All Big Tap Resources							ID	 					Switch							Role				Name
+###	Configure Big Tap Interface from Big Tap Menu 			ID	 					Switch							Role				Name
 T2.1 Interface with regular name-filter		
  	Configure Big Tap Interface from Big Tap Menu			ethernet1				00:00:5c:16:c7:1e:f3:95			filter				filter-1
 T2.2 Interface with regular name-delivery-1	
  	Configure Big Tap Interface from Big Tap Menu			ethernet1				00:00:5c:16:c7:1c:16:f2			delivery			delivery-1
 T2.3 Interface with regular name-delivery-2	
  	Configure Big Tap Interface from Big Tap Menu			ethernet2				00:00:5c:16:c7:1c:16:f2			delivery			delivery-2
-#T2.4 Interface with regular name-service-2	
-# 	Configure Big Tap Interface from Big Tap Menu			ethernet21				00:00:5c:16:c7:1e:f3:95			service				service-2
+T2.4 Interface with regular name-service-2	
+ 	Configure Big Tap Interface from Big Tap Menu			ethernet3				00:00:5c:16:c7:1e:f3:95			service				service-2
 T2.5 Edit regular name-filter	
  	Edit Big Tap Interface from Big Tap Menu				ethernet1				00:00:5c:16:c7:1e:f3:95			filter				filter-new-1
 T2.6 Edit regular name-delivery-1				
  	Edit Big Tap Interface from Big Tap Menu				ethernet1				00:00:5c:16:c7:1c:16:f2			delivery			delivery-new-1
 T2.7 Edit regular name-delivery-2				
  	Edit Big Tap Interface from Big Tap Menu				ethernet2				00:00:5c:16:c7:1c:16:f2			delivery			delivery-new-2
-#T2.8 Edit regular name-service-2				
-# 	Configure Big Tap Interface from Controller Menu		ethernet21				00:00:5c:16:c7:1e:f3:95			service				service-new-2
+T2.8 Edit regular name-service-2				
+ 	Edit Big Tap Interface from Big Tap Menu				ethernet3				00:00:5c:16:c7:1e:f3:95			service				service-new-2
 T2.9 Edit interface type and name1			
  	Edit Big Tap Interface from Big Tap Menu				ethernet1				00:00:5c:16:c7:1e:f3:95			delivery			delivery-new-3
 T2.10 Edit interface type and name2			
@@ -77,8 +76,8 @@ T2.13 Delete regular name-delivery-1
 	Delete Big Tap Interface from Big Tap Menu																							filter-new-4
 T2.14 Delete regular name-delivery-2		
  	Delete Big Tap Interface from Big Tap Menu																							filter-new-5
-# T1.15 Delete regular name-service-2			
-# 	Configure Big Tap Interface from Big Tap Menu			ethernet21				00:00:5c:16:c7:1e:f3:95			${EMPTY}			${EMPTY}
+T1.15 Delete regular name-service-2			
+ 	Delete Big Tap Interface from Big Tap Menu																						service-new-2			
 T2 Teardown
  	Delete All Big Tap Resources
 # 
@@ -96,21 +95,17 @@ T3.2 Delivery Interface with 1 delivery interface and name delivery-group
 T3.3 Another Filter Interface group with previous filter interface 					
  	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group2		ixia-2-9
 T3.4 Another Delivery Interface group with previous delivery interface				
- 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group2		ixia-2-15
-#T3.5 Add second delivery interface in Delivery Interface group	
-# 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group		ixia-4-8	
-T3.6 Delete filter interface from Filter Interface group					
+ 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group2		ixia-2-15	
+T3.5 Delete filter interface from Filter Interface group					
  	Delete Big Tap Interface from Interface Group				filter				filter-group		ixia-2-9
-T3.7 Delete delivery interface from Delivery Interface group				
+T3.6 Delete delivery interface from Delivery Interface group				
  	Delete Big Tap Interface from Interface Group				delivery			delivery-group		ixia-2-15
-#T3.8 Delete delivery interface from Delivery Interface group				
-# 	Delete Big Tap Interface from Interface Group				delivery			delivery-group		ixia-4-8
-T3.9 Delete Filter Interface group					
+T3.7 Delete Filter Interface group					
  	Delete Big Tap Interface group													filter-group		
-T3.10 Delete Delivery Interface group				
+T3.8 Delete Delivery Interface group				
 	Delete Big Tap Interface group													delivery-group					
-#T3 Teardown
-#	Delete All Big Tap Resources
+T3.9 Teardown
+	Delete All Big Tap Resources
  
 
 #### Configure User Defined Offsets
@@ -127,102 +122,103 @@ T4.5 Configure udf0 with L4 start offset 8
  	Configure Big Tap User Defined Offsets						udf0				L4 Start			8	
 T4.6 Configure udf0 with L4 start offset 12						
  	Configure Big Tap User Defined Offsets						udf1				L4 Start			12
-T4.7 Configure udf0 with L4 start offset 16					
+T4.7 Configure udf0 with L4 start offset 20					
  	Configure Big Tap User Defined Offsets						udf2				L4 Start			20
-T4.8 Configure udf0 with L4 start offset 20					
+T4.8 Configure udf0 with L4 start offset 24					
  	Configure Big TapUser Defined Offsets						udf3				L4 Start			24
 
+### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
+T5.1 User with password 	
+ 	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
+T5.2 User no password		
+ 	Configure User			__random__			${EMPTY}			${EMPTY}					User no password		${EMPTY}
+T5.3 User wrong password
+ 	Configure User			__random__			testtest1			testtest					User wrong password		${EMPTY}
+T5.4 User no full name	
+ 	Configure User			__random__			testtest			testtest					${EMPTY}				${EMPTY}
+T5.5 User group admin
+ 	Configure User			__random__			adminadmin			adminadmin					User group admin		admin
+T5.6 User new group
+ 	Configure User			__random__			adminadmin			adminadmin					User new group			__new__
+T5.7 User unhashable pass
+	Configure User			__random__			;"$					testtest					User unhashable pass	${EMPTY}
+T5 Teardown
+ 	Delete All Big Tap Resources
 
-# ### Configure Big Tap Service			Name	 				Pre-service				Post-service	
-# T3.1 Service with regular name				
-# 	Configure Big Tap Service			__new__					service-new-1			service-new-2
-# T3.2 Service with no interfaces			
-# 	Configure Big Tap Service			__new__					${EMPTY}				${EMPTY}
-# T3 Teardown
-# 	Delete All Big Tap Resources
-# 
-# 
-# ### Configure User	  	Username 			Password 			Confirm Password  			Full Name				Group
-# T4.1 User with password 	
-# 	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
-# T4.2 User no password		
-# 	Configure User			__random__			${EMPTY}			${EMPTY}					User no password		${EMPTY}
-# T4.3 User wrong password
-# 	Configure User			__random__			testtest1			testtest					User wrong password		${EMPTY}
-# T4.4 User no full name	
-# 	Configure User			__random__			testtest			testtest					${EMPTY}				${EMPTY}
-# T4.5 User group admin
-# 	Configure User			__random__			adminadmin			adminadmin					User group admin		admin
-# T4.6 User new group
-# 	Configure User			__random__			adminadmin			adminadmin					User new group			__new__
-#T4.7 User unhashable pass
-#	Configure User			__random__			;"$					testtest					User unhashable pass	${EMPTY}
-# T4 Teardown
-# 	Delete All Big Tap Resources
-# 
-# 
-### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match	
-# T5.1 RBAC Allow All		
-#	Configure RBAC			 		__random__			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}	
- #T5.2 RBAC IPv4
-# 	Configure Big Tap Interface from Controller Menu		ethernet5		00:00:5c:16:c7:1c:16:f2			filter				filter2
-# 	Configure Big Tap Interface from Controller Menu		ethernet15		00:00:5c:16:c7:1e:f3:95			delivery			delivery2
+
+### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match				${src-ip}		${dst-ip}
+T6.1 RBAC Allow All		
+	Configure RBAC			 		__random__			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}    		${EMPTY}     	${EMPTY}	
+T6.2 RBAC IPv4
+ 	Configure Big Tap Interface from Controller Menu		ethernet1		00:00:5c:16:c7:1e:f3:95			filter				filter1
+ 	Configure Big Tap Interface from Controller Menu		ethernet1		00:00:5c:16:c7:1c:16:f2			delivery			delivery1
  	#Configure Big Tap Service								service1				${EMPTY}			${EMPTY}
-# 	Configure RBAC				 	__random__			admin				filter2			delivery2		${EMPTY}	  	IPv4		
-# T5.3 RBAC IPv6
-# 	Configure Big Tap Interface from Controller Menu		ethernet6		00:00:5c:16:c7:1c:16:f2			filter				filter3
-# 	Configure Big Tap Interface from Controller Menu		ethernet7		00:00:5c:16:c7:1e:f3:95			delivery			delivery3
+	Configure RBAC				 	__random__			admin				filter1			delivery1		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		${EMPTY}
+T6.3 RBAC IPv6
+ 	#Configure Big Tap Interface from Controller Menu		ethernet6		00:00:5c:16:c7:1c:16:f2			filter				filter3
+ 	Configure Big Tap Interface from Controller Menu		ethernet2		00:00:5c:16:c7:1c:16:f2			delivery			delivery2
  	#Configure Big Tap Service								service2				${EMPTY}			${EMPTY}
-# 	Configure RBAC				 	__random__			admin				filter3			delivery3		${EMPTY}	  	IPv6
-# T5.4 RBAC ARP
-# 	Configure RBAC				 	__random__			admin				filter2			delivery3		${EMPTY}	  	ARP
-# T5 Teardown
-# 	Delete All Big Tap Resources
-# 
-# 
-# ### Configure Group  				Group Name 			User	 			RBAC	
-# T6.1 Group with no users		
-# 	Configure Group			 		__random__			${EMPTY}			${EMPTY}		  			
-# T6.2 Group with user admin		
-# 	Configure Group			 		__random__			admin				${EMPTY}	
-# T6.3 Group with new user and new rbac	
-# 	Configure Group					__random__			__new__				__new__
-# T6 Teardown
-# 	Delete All Big Tap Resources
-# 
-# 
-# ### Upload IP Address List						Name	 				Type				File	 			
-# #T7.1 Upload IPv4 list	
-# #	Upload IP Address List						__new__					ipv4				/Users/sakshikalra/Desktop/ip_4_medium.txt
-# #T7.2 Upload IPv6 list	
-# #	Upload IP Address List						__new__					ipv6				/Users/sakshikalra/Desktop/ip_6_medium.txt
-# #T7 Teardown
-# #	Delete All Big Tap IP Lists
-# 
-# 
+ 	Configure RBAC				 	__random__			admin				filter1			delivery2		${EMPTY}	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
+T6.4 RBAC ARP
+ 	Configure RBAC				 	__random__			admin				filter1			delivery1		${EMPTY}	  	ARP - 0x806 (2054)		${EMPTY}	${EMPTY}
+T6 Teardown
+ 	Delete All Big Tap Resources
+ 
+ 
 # ### Configure Switch Alias										Switch	 						Alias	 			
-T8.1 Switch with regular alias	 				
+T7.1 Switch with regular alias	 				
  	Configure Switch Alias										00:00:5c:16:c7:1e:f3:95			qa-corsair-1
-T8.2 Edit switch alias			 							
+T7.2 Edit switch alias			 							
  	Configure Switch Alias										00:00:5c:16:c7:1c:16:f2			qa-corsair-2
-T8.3 Delete switch regular alias	 	
+T7.3 Delete switch regular alias	 	
  	Configure Switch Alias										00:00:5c:16:c7:1e:f3:95			${EMPTY}
-T8.4 Switch with alias containing allowed special characters-
+T7.4 Switch with alias containing allowed special characters-
  	Configure Switch Alias										00:00:5c:16:c7:1e:f3:95			switch-2
-T8.5 Switch with alias containing allowed special characters_
+T7.5 Switch with alias containing allowed special characters_
  	Configure Switch Alias										00:00:5c:16:c7:1e:f3:95			switch_3
-T8.6 Switch with empty alias		 			
+T7.6 Switch with empty alias		 			
  	Configure Switch Alias										00:00:5c:16:c7:1e:f3:95			${EMPTY}
-T8.7 Switch with empty alias		 			
+T7.7 Switch with empty alias		 			
  	Configure Switch Alias										00:00:5c:16:c7:1c:16:f2			${EMPTY}
  	
-#T8 Teardown
-# 	Configure Switch Alias										00:00:00:00:00:00:00:09			${EMPTY}
-# 	Configure Switch Alias										00:00:00:00:00:00:00:0a			${EMPTY}
-# 	Configure Switch Alias										00:00:00:00:00:00:00:0b			${EMPTY}
-# 	Configure Switch Alias										00:00:00:00:00:00:00:0c			${EMPTY}
 
+#### Enable Disable Match Modes								Match Mode
+						
+T8.1 Enable L3-L4 Offset Match	 				
+ 	Set Switching Mode											L3-L4 Offset Match		
+ 										
+T8.2 Enable L3-L4 Match	 	
+ 	Set Switching Mode											L3-L4 Match			
 
+T8.3 Enable Full Match Mode
+	Set Switching Mode											Full Match
+
+T8.4 Enable Policy Overlap										
+	Configure Match Mode										Policy Overlap
+		
+T8.5 Disable Policy Overlap
+	Configure Match Mode										!Policy Overlap
+		
+T8.6 Enable Inport Mask
+	Configure Match Mode										Inport Mask	
+	
+T8.7 Disable Inport Mask
+	Configure Match Mode										!Inport Mask
+	
+T8.8 Enable CRC Check
+	Configure Match Mode										CRC Check
+	
+T8.9 Disable CRC Check
+	Configure Match Mode										!CRC Check
+	
+T8.10 Enable Tunneling
+	Configure Match Mode										Tunneling
+	
+T8.11 Disable Tunneling
+	Configure Match Mode										!Tunneling
+	
+T8.12 Enable L3-L4 Offset Match	 				
+ 	Set Switching Mode											L3-L4 Offset Match	
 
 *** Keywords ***
 Setup
@@ -236,7 +232,7 @@ Setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
-
+	Set Switching Mode  L3-L4 Offset Match	
 Teardown
 	Close Browser
     #Stop Selenium Server
