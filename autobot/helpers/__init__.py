@@ -1841,7 +1841,8 @@ def send_mail(m, infile=None):
         input_text = file_read_once(infile)
         if len(input_text) > 100000:
             lines = 200
-            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+            input_text = ("... Attention: File is greater than 100K bytes."
+                          " Send the last %s lines of file ...\n\n"
                           % lines + '\n'.join(str_to_list(input_text)[-lines:]))
         m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
@@ -1923,7 +1924,7 @@ def openstack_convert_table_to_dict(input_str):
     { 'OS-EXT-IMG-SIZE:size':
                   {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
       'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
-      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-...'},
       'minDisk':  {'property': 'minDisk',  'value': '0'},
       'minRam':   {'property': 'minRam',   'value': '0'},
       'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},

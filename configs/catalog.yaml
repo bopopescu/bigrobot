@@ -32,6 +32,11 @@ features:
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
 aggregated_builds:
+  'bvs master aggregated 2014 wk33':          # week of 2014-08-11
+    [ 
+      'bvs master #2963',
+      'bvs master #2975',
+    ]
   'bvs master ironhorse beta2 aggregated 2':  # 2014-08-09 IronHorse Beta 2
     [ 
       'bvs master #beta2_20',                 # to pick up good ZTN results
@@ -39,6 +44,7 @@ aggregated_builds:
       'bvs master #beta2_36',
     ] 
   'bvs master ironhorse beta2 aggregated':    # 2014-08 IronHorse Beta 2
+                                              # too many issues, thrown out
     [ 
       'bvs master #beta2_14',
       'bvs master #beta2_15',
