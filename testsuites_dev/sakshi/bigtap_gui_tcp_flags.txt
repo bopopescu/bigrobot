@@ -1,0 +1,78 @@
+*** Settings ***
+Documentation   	A test suite with a single test for valid login. This test has
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	GUI RBAC
+Suite Setup      	Setup
+Suite Teardown   	Teardown
+Library         	keywords/BsnCommon.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library        		SeleniumLibrary
+Resource        	bigtap_resource.txt
+Library       		String
+
+
+
+***Test Cases***
+### Configure Big Tap Policy Match for TCP Flags					policy		FIN			SYN				RST			PSH			ACK			URG
+TC Set up
+	Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
+	Configure Big Tap Policy					 					policy-tcp			admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}	  	${EMPTY}	
+
+TC1 Unset FIN														
+	  Edit Big Tap Policy for TCP Flags								policy-tcp	!FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC2 Unset SYN	
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	!SYN			${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC3 Unset RST
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		!RST		${EMPTY}	${EMPTY}	${EMPTY}
+TC4 Unset PSH	
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	!PSH		${EMPTY}	${EMPTY}
+TC5 Unset ACK	
+	  Edit Big Tap Policy for TCP Flags								policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	!ACK		${EMPTY} 
+TC6 Unset URG
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	!URG
+TC7 Unset all
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	!FIN 		!SYN			!RST		!PSH		!ACK		!URG
+TC8 Set FIN														
+	  Edit Big Tap Policy for TCP Flags								policy-tcp	FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC9 Set SYN	
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	SYN				${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC10 Set RST
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		RST			${EMPTY}	${EMPTY}	${EMPTY}
+TC11 Set PSH	
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	PSH			${EMPTY}	${EMPTY}
+TC12 Set ACK	
+	  Edit Big Tap Policy for TCP Flags								policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	ACK			${EMPTY} 
+TC13 Set URG
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	URG
+TC14 Set all
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	FIN 		SYN				RST			PSH			ACK			URG
+TC15 Miscellaneous-I
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	FIN 		!SYN			RST			!PSH		ACK			URG
+TC16 Miscellaneous-II
+	  Edit Big Tap Policy for TCP Flags 							policy-tcp	!FIN 		SYN				!RST		${EMPTY}	${EMPTY}	URG
+TC17 Teardown
+	Delete All Big Tap Policies
+    
+			
+* Keyword
+
+*** Keywords ***
+Setup
+	base suite setup
+	${c1_ip}            params  node=c1  key=ip
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    Delete All Big Tap Resources
+	Set Switching Mode		L3-L4 Offset Match
+	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
+ 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
+Teardown
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown
