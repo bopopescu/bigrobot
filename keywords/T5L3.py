@@ -84,13 +84,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"]/shutdown {}
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"]/shutdown {}
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"]/shutdown {}
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]/shutdown' % (tenant, tenantIntf)
         try:
             c.rest.delete(url, {})
         except:
@@ -111,13 +112,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"] {"shutdown": true}
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"] {"shutdown": true}
+                PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {"shutdown": true}                
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant, tenantIntf)
         try:
             c.rest.patch(url, {"shutdown": True})
         except:
