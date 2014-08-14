@@ -1924,12 +1924,13 @@ Check Overlapping
     Delete All Big Tap Policies
     	
 Associate Policy Match Rule 
-	[Arguments]   ${ipprotocol}  ${matchtype}  ${version}  ${src-ip}  ${dst-ip}  ${src-port}   ${dst-port}   ${vlan-header}
+	[Arguments]   ${policy}  ${ethertype}  ${ipprotocol} 
 	
 	Go To Big Tap Policies Page
 	Sleep   5
 	Go To Big Tap Policies Page
-    #${action_menu}  Generate Action Menu Xpath  div[@id='policies_table']  ${id}
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
     Verify Element Visible  ${action_menu_policy}
     Click Element  ${action_menu_policy}  and don't wait
 
@@ -1944,15 +1945,15 @@ Associate Policy Match Rule
 	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
 	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
 
-	Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
-
-    Select From List And Verify  
-    ... 	${RBAC ETHERTYPE DROPDOWN BUTTON}
-    ...		${RBAC ETHERTYPE LIST}  
-    ... 	${RBAC ETHERTYPE FIELD}
-    ... 	IPv4 - 0x800 (2048)
-    
-    Sleep  5
+	#Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+	
+	Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+       	  
+    Sleep  1
     
     Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
     Select From List And Verify  
@@ -1961,130 +1962,20 @@ Associate Policy Match Rule
     ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
     ... 	${ipprotocol}
     
-    Sleep  5
-    Verify Page Contains Element  ${RBAC MATCH VLAN CHECKBOX}
-    Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH VLAN CHECKBOX SELECTED}  ${RBAC MATCH VLAN CHECKBOX UNSELECTED}
-	Sleep  2
-	
-	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
-	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
-	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH VLAN FROM FIELD}  ${vlan-header}
-	
-	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
-	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
-	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH VLAN TO FIELD}  ${vlan-header}
+    Sleep  1
     
-        
-	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
-	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
-	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  1.1.1.1
-	Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP MASK FIELD}  255.255.255.0
-	
-	
-	Verify Page Contains Element  ${RBAC MATCH SOURCE PORT CHECKBOX}
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH SOURCE PORT CHECKBOX SELECTED}  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
-	#...    Click Element  ${RBAC MATCH SOURCE PORT CHECKBOX}  and don't wait
-	Sleep  2
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Verify Checkbox Unselected  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
-	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
-	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE TO PORT}  ${src-port}
-	
-	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
-	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE DST PORT}  ${src-port}
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
-	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  2.2.2.2
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP MASK FIELD}  255.255.255.0
-	Sleep  5 
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH DESTINATION PORT CHECKBOX SELECTED}  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
-	#...    Click Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}  and don't wait
-	Sleep  2
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Verify Checkbox Unselected  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
-	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
-	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION TO PORT}  ${dst-port}
-	
-	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
-	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION DST PORT}  ${dst-port}
-	  
-	
-	Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH BUTTON}
-	Click Element  ${RBAC MATCH OFFSET MATCH BUTTON}  and don't wait
-
-	Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH NODE}
-	
-	Verify Page Contains Element   ${OFFSET MATCH DROPDOWN BUTTON}
-	Run Keyword Unless  '${matchtype}'=='${EMPTY}'
-    ...		Select From List And Verify  
-    ... 	${OFFSET MATCH DROPDOWN BUTTON}
-    ...		${OFFSET MATCH TYPE LIST}  
-    ... 	${OFFSET MATCH TYPE FIELD}
-    ... 	${matchtype}
-    Run Keyword If  '${matchtype}'=='VXLAN'
-    ...   Configure VXLAN Match    ${ipprotocol}
-    
-    Verify Page Contains Element  ${GTP VERSION DROPDOWN BUTTON} 
-    Run Keyword Unless  '${version}'=='${EMPTY}'
-    ...     Select From List And Verify  
-    ... 	${GTP VERSION DROPDOWN BUTTON}
-    ...		${GTP VERSION LIST}  
-    ... 	${GTP VERSION FIELD}
-    ... 	${version}
-    
-    Click Element  ${GTP TEID v1 FIELD}  and don't wait
-		Run Keyword If  '${version}' == 'v1'
-	...		Input Text And Verify  ${GTP TEID v1 FIELD}  100
-	  Sleep  5
-	  
-	Click Element  ${GTP TEID v2 FIELD}  and don't wait
-		Run Keyword If  '${version}' == 'v2'
-	...		Input Text And Verify  ${GTP TEID v2 FIELD}  100
-	  
-	Click Element  ${GTP PROTOCOL TYPE FIELD}  and don't wait
-
-    Run Keyword If  '${version}' == 'v1'
-    #Run Keyword Unless  '${version}' == 'v2'
-    ...		Select From List And Verify  
-    ... 	${GTP PROTOCOL TYPE DROPDOWN BUTTON}
-    ...		${GTP PROTOCOL TYPE LIST}  
-    ... 	${GTP PROTOCOL TYPE FIELD}
-    ... 	GTP
-    Sleep  10
-	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+    Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	#Sleep  20
+	Highlight Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
 	
 	Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
-
+    
     Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
     #Verify Page Contains Text   ${policy}
-    Sleep   10
+    Sleep   2
     
 Configure VXLAN Match
 	[Arguments]   ${ipprotocol} 
