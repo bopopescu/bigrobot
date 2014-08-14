@@ -776,7 +776,7 @@ Select Checkbox And Verify
 	[Arguments]  ${attachment_point}  ${text}
     ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
     Verify Page Contains Element  ${checkbox}
-	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='trafficNode']/div[2]/div[1]/input")
+	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
 	Checkbox Should Be Selected	  ${checkbox}
 
 
@@ -1203,8 +1203,8 @@ Associate Match Rule
 	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
 	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
 	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
-	Verify Page Contains Element  ${src-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#Verify Page Contains Element  ${src-ip}
 	
 	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
 	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
@@ -1213,7 +1213,7 @@ Associate Match Rule
 		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
 	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
 	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
-	Verify Page Contains Element  ${dst-ip}
+	#Verify Page Contains Element  ${dst-ip}
 
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
@@ -1590,7 +1590,7 @@ Edit Big Tap Policy for TCP Flags
     ... 	${BIGTAP POLICY ETHERTYPE FIELD}
     ... 	IPv4 - 0x800 (2048)
     
-    Sleep  5
+    Sleep  1
     
     Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
     Select From List And Verify  
@@ -1981,7 +1981,7 @@ Configure VXLAN Match
 	[Arguments]   ${ipprotocol} 
     Click Element  ${VXLAN VNI FIELD}  and don't wait
 	Input Text And Verify  ${VXLAN VNI FIELD}  100
-	Sleep  5
+	Sleep  1
 
 Configure Switch Alias
 	[Arguments]  ${dpid}  ${alias}
@@ -2151,7 +2151,7 @@ Configure Big Tap Interface Group from Big Tap Menu
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Add Delivery Interface to Group   ${interface-name}
@@ -2278,7 +2278,7 @@ Edit Big Tap Interface Group from Big Tap Menu
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Add Delivery Interface to Group   ${interface-name}
@@ -2342,7 +2342,7 @@ Delete Big Tap Interface from Interface Group
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Delete Delivery Interface from Group   ${if-name}
@@ -2380,9 +2380,9 @@ Delete Delivery Interface from Group
 Configure Big Tap Service
 	[Arguments]  ${service}  ${pre-service}  ${post-service}
 	Run Keyword Unless  '${pre-service}'=='${EMPTY}'
-	...  Configure Big Tap Interface from Controller Menu		s15-eth1	service  ${pre-service}
+	...  Configure Big Tap Interface from Controller Menu		ethernet5	00:00:5c:16:c7:1e:f3:95	 service  ${pre-service}
 	Run Keyword Unless  '${post-service}'=='${EMPTY}'  
-	...  Configure Big Tap Interface from Controller Menu		s15-eth2	service	 ${post-service}
+	...  Configure Big Tap Interface from Controller Menu		ethernet6	00:00:5c:16:c7:1e:f3:95	 service  ${post-service}
 	${random_servicename}  Generate Random String  5  [LOWER] 
     ${service}  Set Variable If  '${service}'=='__new__'  ${random_servicename}  ${service} 
 
@@ -2493,13 +2493,13 @@ Set Switching Mode
     
     Verify Element Visible  ${SWITCHING MODE SUBMIT BUTTON}
     Click Element  ${SWITCHING MODE SUBMIT BUTTON}  and don't wait
-    Sleep  5
+    Sleep  1
     	
   	
 Configure Match Mode
 	[Arguments]  ${match-mode}
 	Go To Landing Page
-	Sleep  5
+	Sleep  1
 	Run Keyword If  '${match-mode}'=='Policy Overlap'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
 	Run Keyword If  '${match-mode}'=='!Policy Overlap'
@@ -2606,7 +2606,7 @@ Configure Big Tap User Defined Offsets
 	[Arguments]  ${udf}  ${anchor}  ${offset}
 	
 	Go to Big Tap User Defined Offsets Page
-	Sleep  5
+	Sleep  1
 	
 	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='user_defined_offsets_table']  ${udf}
     Verify Element Visible  ${action_menu}
