@@ -491,6 +491,7 @@ class BsnCommon(object):
                         if local is True:
                             t.node_reconnect(node='master')
                         return output_value
+
             elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire Controller
