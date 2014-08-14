@@ -1095,9 +1095,9 @@ class Test(object):
         helpers.log("Staging system uptime:\n%s%s"
                     % (helpers.uptime().strip(),
                        br_utils.end_of_output_marker()))
-        #helpers.log("Staging ulimit:\n%s%s"
-        #            % (helpers.ulimit().strip(),
-        #               br_utils.end_of_output_marker()))
+        helpers.log("Staging ulimit:\n%s%s"
+                    % (helpers.ulimit().strip(),
+                       br_utils.end_of_output_marker()))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
