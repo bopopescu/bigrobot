@@ -1214,7 +1214,6 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${diffB14} =                                    evaluate                                ${rx_49_ucast_cnt2B} - ${rx_49_ucast_cnt1B}
     ${diffB15} =                                    evaluate                                ${rx_50_ucast_cnt2B} - ${rx_50_ucast_cnt1B}   
     stop traffic                                    ${stream1}
-    Should Be True                                  ${diffA1} > 400000
     Should Be True                                  ${diffA2} > 40000
     Should Be True                                  ${diffA3} > 40000
     Should Be True                                  ${diffA4} > 40000
@@ -1410,7 +1409,6 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${diffC5} =                                     evaluate                                ${tx_17_ucast_cnt2B_2} - ${tx_17_ucast_cnt2B_1}
     ${diffC6} =                                     evaluate                                ${tx_19_ucast_cnt2B_2} - ${tx_19_ucast_cnt2B_1}
     stop traffic                                    ${stream1}
-    Should Be True                                  ${diffA1} > 400000
     Should Be True                                  ${diffA2} > 40000
     Should Be True                                  ${diffA3} > 40000
     Should Be True                                  ${diffA4} > 40000
@@ -1601,7 +1599,6 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${diffC5} =                                     evaluate                                ${tx_17_ucast_cnt2B_2} - ${tx_17_ucast_cnt2B_1}
     ${diffC6} =                                     evaluate                                ${tx_19_ucast_cnt2B_2} - ${tx_19_ucast_cnt2B_1}
     stop traffic                                    ${stream1}
-    Should Be True                                  ${diffA1} > 400000
     Should Be True                                  ${diffA2} > 40000
     Should Be True                                  ${diffA3} > 40000
     Should Be True                                  ${diffA4} > 40000
