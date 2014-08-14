@@ -2692,8 +2692,6 @@ initialize host
     BASH run command                                h6                                ifup p1p1     soft_error=${true}
     sleep                                           1
     BASH run command                                h6                                ifup p1p2     soft_error=${true}
-    
-
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
@@ -2715,10 +2713,6 @@ initialize host
     BASH stop service                           h1                                isc-dhcp-server
     BASH stop service                           h2                                isc-dhcp-server
     BASH stop service                           h3                                isc-dhcp-server
-
-
-
-
 #    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
 #    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
 #    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
