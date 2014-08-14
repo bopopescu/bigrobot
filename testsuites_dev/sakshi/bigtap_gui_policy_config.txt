@@ -79,25 +79,25 @@ T3.8 Teardown
 
 T4.1 Create Policy
 	Configure Big Tap Policy					 		test-policy		admin-view		Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
-T4.2 Change action from forward to inactive
+T4.2 Associate Match Rule for IPv4 and UDP 
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		UDP (17)		
-T4.3 Change action from inactive to capture
+T4.3 Associate Match Rule for IPv4 and TCP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		TCP (6)			
-T4.4 Change action from capture to rate-measure
+T4.4 Associate Match Rule for IPv4 and SCTP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		SCTP (132)	
-T4.5 Change action from rate-measure to forward
+T4.5 Associate Match Rule for IPv4 and ICMP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		ICMP (1)	
-T4.6 Change action from forward to inactive
+T4.6 Associate Match Rule for IPv6 and UDP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	UDP (17)		
-T4.7 Change action from inactive to capture
+T4.7 Associate Match Rule for IPv6 and TCP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	TCP (6)			
-T4.8 Change action from capture to rate-measure
+T4.8 Associate Match Rule for IPv6 and SCTP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	SCTP (132)	
-T4.9 Change action from rate-measure to forward
+T4.9 Associate Match Rule for IPv6 and ICMP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	ICMP (1)
-T4.10 Change action from forward to inactive
+T4.10 Associate Match Rule for ARP
 	Associate Policy Match Rule					 		test-policy		ARP - 0x806 (2054)		${EMPTY}			
-T4.14 Teardown
+T4.11 Teardown
 	Delete All Big Tap Policies
 
 
