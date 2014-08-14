@@ -181,7 +181,7 @@ class Ixia(object):
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4'):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan=None):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -223,6 +223,17 @@ class Ixia(object):
             topo_names.append(topo_name)
             self._handle.setAttribute(topo_device, '-multiplier', multi)
             eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
+        if vlan is not None:
+            for eth_device in eth_devices:
+                helpers.log("Setting Vlan True in Ixia Ethernet Device")
+                self._handle.setMultiAttribute(eth_device, '-useVlans')
+                self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name', "VLAN\ 1")
+                ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
+                self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
+                self._handle.commit()
+                ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
+                self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan, '-step', 0)
+                self._handle.commit()
         self._handle.commit()
         mac_devices = []  # as this are added to ixia need to remap as per ixia API's
         ip_devices = []
@@ -233,8 +244,9 @@ class Ixia(object):
             ip_name = handle.getAttribute(mac_device, '-name')
 #             ip_name = ip_name + 'IPv4\ 1'
             helpers.log('Values:')
-            helpers.log('Mac Device:%s\nMac_Multi:%s\nMac_Step:%s\nMac:%s\nIP_Steps:%s\nIP:%s\nGW_STEP:%s\nGW_IP:%s\nGW_MAC:%s' % (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac))
-            helpers.log ('Ip: NAME : ' + str(ip_name))
+            helpers.log('\nMac Device:%s\nMac_Multi:%s\nMac_Step:%s\nMac:%s\nIP_Steps:%s\nIP:%s\nGW_STEP:%s\nGW_IP:%s\nGW_MAC:%s\nVLAN:%s' %
+                        (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, vlan))
+            helpers.log ('Device: NAME : ' + str(ip_name))
             ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
             ip_device_ixia = handle.remapIds(ip_device)[0]
             handle.commit()
@@ -297,14 +309,7 @@ class Ixia(object):
                 handle.commit()
                 handle.remapIds(ixia_refs['manualGatewayMac_singleValue'])[0]
 
-#                 ixia_refs['manualGatewayMac_counter_remap'] = handle.remapIds(ixia_refs['manualGatewayMac_counter'])[0]
-#                 ixia_refs['resolveGateway_counter'] = handle.add(ixia_refs['resolveGateway'], 'counter')
-#                 handle.setMultiAttribute(ixia_refs['resolveGateway_counter'], '-direction', 'increment',
-#                                          '-start', 'false', '-step', 'false')
-#                 handle.remapIds(ixia_refs['manualGatewayMac_counter'])[0]
-        # self._handle.commit()
-#         helpers.log(" ## adding Name ", topology[0], topology[1])
-#         helpers.log(" ## adding Name ", mac_devices[0], mac_devices[1])
+
         i = 1
         for mac_device in mac_devices:
             name = "Device_" + str(i)
@@ -624,17 +629,17 @@ class Ixia(object):
             if src_ip is not None:
                 helpers.log('Adding src_ip and dst_ip ..')
                 if ethertype == '0800':
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-2"/field:"ipv4.header.srcIp-27"',
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.srcIp-27"',
                                               '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-2"/field:"ipv4.header.dstIp-28"',
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.dstIp-28"',
                                               '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 elif ethertype == '86dd':
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-2"/field:"ipv6.header.srcIP-7"',
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-2"/field:"ipv6.header.srcIP-7"',
                                               '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-2"/field:"ipv6.header.dstIP-8"',
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-2"/field:"ipv6.header.dstIP-8"',
                                               '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
             if protocol is not None:
