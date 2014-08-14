@@ -225,8 +225,8 @@ class RestClient(object):
             try:
                 result = self._http_request(*args, **kwargs)
             except:
-                helpers.warn('HTTP request error:\n%s'
-                             % helpers.exception_info())
+                helpers.log('HTTP request error:\n%s'
+                            % helpers.exception_info())
                 if retries > 0:
                     helpers.log('Retrying HTTP request in %s seconds (retries=%s)'
                                 % (sleep_time, retries))

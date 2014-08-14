@@ -896,3 +896,54 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         string = "abc" + helpers.ctrl('g') + "def"
         helpers.log("string: %s" % string)
         helpers.log("stripped string: %s" % helpers.strip_ctrl_chars(string))
+
+    def match_dict_entries(self, ip, netmask):
+        data = '''
+[ {
+  "copy-to-cpu" : false,
+  "drop" : false,
+  "dst-vrf" : 1023,
+  "ecmp-index" : 0,
+  "ip" : "0.0.0.0",
+  "ip-mask" : "0.0.0.0",
+  "mac" : "5c:16:c7:01:03:ff",
+  "port-group-lag-id" : 0,
+  "rack-lag-id" : 84,
+  "vlan-id" : 4094,
+  "vrf" : 18
+}, {
+  "copy-to-cpu" : true,
+  "drop" : true,
+  "dst-vrf" : 0,
+  "ecmp-index" : 0,
+  "ip" : "10.253.1.0",
+  "ip-mask" : "255.255.255.0",
+  "port-group-lag-id" : 0,
+  "rack-lag-id" : 0,
+  "vlan-id" : 0,
+  "vrf" : 18
+}, {
+  "copy-to-cpu" : true,
+  "drop" : true,
+  "dst-vrf" : 0,
+  "ecmp-index" : 0,
+  "ip" : "10.253.2.0",
+  "ip-mask" : "255.255.255.0",
+  "port-group-lag-id" : 0,
+  "rack-lag-id" : 0,
+  "vlan-id" : 0,
+  "vrf" : 18
+} ]
+'''
+        new_data = helpers.from_json(data)
+        helpers.log("new_data: %s" % helpers.prettify(new_data))
+        for entry in new_data:
+            if entry['ip'] == ip:
+                helpers.log("Match IP address '%s'" % ip)
+                if entry['ip-mask'] == netmask:
+                    helpers.log("Match IP address '%s', netmask '%s'" % (ip, netmask))
+                    return entry
+                else:
+                    helpers.log("No match")
+        return {}
+

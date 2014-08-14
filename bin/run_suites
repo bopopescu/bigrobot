@@ -48,17 +48,22 @@ total_count=$(cat $result_file | wc -l)
 failed_count=$(cat $result_file | grep FAILED | wc -l)
 mesg "Total smoke test suites: $total_count ($failed_count failed)."
 if [ $failed_count -gt 0 ]; then
+    status=FAILED
     mesg "Failed smoke test suites:"
     grep FAILED $result_file
+else
+    status=PASSED
 fi
+
+job_name=`echo $BUILD_NAME | sed -e 's/^.*job\///' -e 's/\/$//'`
 
 mesg "Collecting test result stats for QA Dashboard database."
 (cd ../catalog; ./populate_db_regression.sh)
 curl -i -H "Content-Type: application/json" -X POST \
     -d "{\"from\":\"${sender}\",
          \"to\":\"${receiver}\",
-         \"subject\":\"Dashboard stats collected for '${BUILD_NAME}' - ${BUILD_URL}\",
-         \"message_body\":\"testsuites:\\n${testsuites}\"}" \
+         \"subject\":\"Dashboard stats '${BUILD_NAME}': $status: ${job_name}\",
+         \"message_body\":\"url: ${BUILD_URL}\\ntestsuites:\\n${testsuites}\"}" \
     http://qa-rest.qa.bigswitch.com:5000/message
 
 
