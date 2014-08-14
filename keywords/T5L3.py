@@ -84,13 +84,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"]/shutdown {}
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"]/shutdown {}
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"]/shutdown {}
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]/shutdown' % (tenant, tenantIntf)
         try:
             c.rest.delete(url, {})
         except:
@@ -111,13 +112,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"] {"shutdown": true}
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"] {"shutdown": true}
+                PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {"shutdown": true}                
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant, tenantIntf)
         try:
             c.rest.patch(url, {"shutdown": True})
         except:
@@ -1598,3 +1600,52 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             # return c.rest.content()
             return True
 
+
+    def rest_get_l3_cidr_route_info(self, ipaddress, netMask):
+        '''return specific route entry in l3 cidr table
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table
+
+            Input: ip, subnet mask
+
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table' 
+        c.rest.get(url)
+        data = c.rest.content()
+#        result = helpers.from_json(data)
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) == 0:
+            return {}
+        else:
+            for entry in data:
+                helpers.log("entry is %s" % entry)
+                if entry['ip'] == ipaddress:
+                    helpers.log("Match IP address '%s'" % ipaddress)
+                    if entry['ip-mask'] == netMask:
+                        helpers.log("Match IP address '%s', netmask '%s'" % (ipaddress, netMask))
+                        return entry
+        helpers.log("no Match")
+        return {}
+
+    def rest_ecmp_nexthop_count(self, ecmpIndex):
+        ''' return number of next hop in ecmp group
+            Input: ecmp index
+            Return: count or error
+GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/ecmp-table
+            
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        count=0
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/ecmp-table' 
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) != 0:
+            for entry in data:
+                if entry['ecmp-group-id'] == ecmpIndex:
+                    count = count + 1
+        return count
+        
