@@ -4,15 +4,15 @@
 Documentation    T5 BVS APP Functional Openstack integration vm instance flow test suite
 Suite Setup      T5 Functional Suite Setup
 Suite Teardown   T5 Functional Suite Teardown
-Test Setup       base test setup
-Test Teardown    base test teardown
+Test Setup       T5 base test setup
+Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Platform.py
 Library	         keywords/SwitchLight.py
 Library	         keywords/Host.py
-Library          keywords_dev/prashanth/T5Openstack.py
+Library          keywords/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
 Resource         testsuites/T5/t5_openstack_variables.txt
@@ -28,8 +28,8 @@ add/delete VM instance single app network
 	openstack add instance  cirros  t5test  app  app-inst1
 	sleep  15
 	openstack show instance all
-	openstack verify endpoint  app-inst1  app
-	openstack delete instance  app-inst1
+	openstack verify endpoint  app1-inst1  app
+	openstack delete instance  app1-inst1
 	sleep  2
 	openstack delete net  app
 	   
@@ -90,20 +90,31 @@ Test 3 tier app in single tenant
 * keywords
 T5 Functional Suite Setup
 	base suite setup
-  	openstack source  keystone_rc
+  	openstack source  keystonerc_admin
   	openstack add tenant  t5test
   	openstack add user  t5test  t5test  t5test  t5test@t5test.com
   	sleep  2
-  	openstack source  t5test_rc
-  	openstack add keypair  t5test  /home/stack/devstack/t5test	
+    openstack add keypair  t5test  /root/t5test
   	
 T5 Functional Suite Teardown
-	openstack source  keystone_rc
+	openstack source  keystonerc_admin
 	openstack delete tenant  t5test
 	openstack delete user  t5test
 	openstack delete instance  app-inst1
 	openstack delete net  app
-	openstack delete net  app
 	openstack delete net  web
 	openstack delete net  db
 	base suite teardown
+	
+T5 base test setup
+	base test setup
+	openstack source  keystonerc_admin
+	
+T5 base test teardown
+	openstack source  keystonerc_admin
+	openstack delete instance  app1-inst1
+	openstack delete instance  app1-inst2
+	openstack delete net  app
+	openstack delete net  web
+	openstack delete net  db
+	base test teardown

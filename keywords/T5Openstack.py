@@ -573,7 +573,7 @@ S
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		routerId = self.openstack_show_router(routerName)
-		extId = self.openstack_show_external_network(extName)
+		extId = self.openstack_show_net(extName)
 		os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
 		data = os1.bash_content()
 		return data
