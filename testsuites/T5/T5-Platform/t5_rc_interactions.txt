@@ -17,6 +17,16 @@ Library				Collections
 
 
 *** Test Cases ***
+T0 Basic check
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
+	Compare  extensive-file  snapshot://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
+	Compare  snapshot://extensive-config  running-config
+	Compare  extensive-file  running-config
+	Cli Copy  snapshot://startup-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+
 T1 Deleting lines
 	${command}=  Set Variable  ntp time-zone America/Los_Angeles
 	${diff}=  Create List  ntp time-zone America/Los_Angeles
@@ -221,14 +231,7 @@ Suite Setup
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
-	#Compare  extensive-file  snapshot://extensive-config
-	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
-	#Compare  snapshot://extensive-config  running-config
-	#Compare  extensive-file  running-config
-	Cli Copy  snapshot://startup-config  running-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
-	#Compare  snapshot://extensive-config  running-config
-	Compare  extensive-file  running-config
 	Cli Copy  running-config  snapshot://test-config
 
 Test Setup
@@ -238,8 +241,6 @@ Test Setup
 Test Teardown
 	Bash Clear Known Hosts
 	Cli Copy  snapshot://test-config  running-config
-	#Compare  snapshot://extensive-config  running-config
-	Compare  extensive-file  running-config
 	Base Test Teardown
 
 Suite Teardown
