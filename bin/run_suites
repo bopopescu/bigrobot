@@ -55,7 +55,7 @@ else
     status=PASSED
 fi
 
-job_name=`echo $BUILD_NAME | sed -e 's/^.*job\///' -e 's/\/$//'`
+job_name=`echo $BUILD_URL | sed -e 's/^.*job\///' -e 's/\/$//'`
 
 mesg "Collecting test result stats for QA Dashboard database."
 (cd ../catalog; ./populate_db_regression.sh)

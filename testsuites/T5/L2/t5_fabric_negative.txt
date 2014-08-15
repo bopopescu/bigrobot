@@ -34,6 +34,32 @@ Setup Three Rack Dual Leaf Topology
     sleep  10
 	rest verify fabric link common 	
 
+verify static endpoints with port-group
+	[Tags]  L2  IronHorse
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup lacp  p6
+    sleep  5
+	rest add endpoint  t1  v1  e1 
+    rest add portgroup to endpoint  t1   v1  e1  p6  1008
+    rest add ip endpoint  t1  v1  e1  ${h6_ip}
+    rest add mac endpoint  t1  v1  e1  ${h6_mac}
+    rest add portgroup to vns  t1  v1  p6  1008 
+    rest verify endpoint static  t1  v1  1008  ${h6_mac}
+    bash ifdown intf  h6  {h6_eth0}
+    bash ifdown intf  h6  {h6_eth1}
+    sleep  40  
+    ${result}==  rest verify endpoint static  t1  v1  1008  ${h6_mac}
+    Should not be True  ${result}
+    bash ifup intf  h6  {h6_eth0}
+    bash ifup intf  h6  {h6_eth1}
+    sleep  20
+    rest verify endpoint static  t1  v1  1008  ${h6_mac}
+    rest delete tenant  t1 
+
 restart ofad to verify the fabric link
 	[Tags]  L2  IronHorse
 	rest verify fabric link common
