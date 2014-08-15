@@ -913,7 +913,8 @@ class Test(object):
         n_console.send('')
 
         def login():
-            helpers.log("Found the login prompt. Sending user name.")
+            helpers.log("Found the login prompt. Sending user name ('%s')"
+                        % user)
             n_console = n.console()
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
