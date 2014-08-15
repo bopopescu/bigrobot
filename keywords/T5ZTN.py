@@ -324,15 +324,23 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        s = t.dev_console(node)
-        #s.send(helpers.ctrl('c'))
-        #s.send("\x03")
-        #options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
-        #                   timeout=300)
-        #if options[0] == 0:  # login prompt
-        #    s.cli('admin')
-        #if options[0] == 1:  # bash mode
-        #    s.cli('exit')
+        s = t.dev_console(node, modeless=True)
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'root@.*:',
+                            r'=> ', r'loader#', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0:  # login prompt
+            s.send('admin')
+        if options[0] == 1:  # bash mode
+            s.send('exit')
+        if options[0] == 2:
+            helpers.log("Switch rebooting")
+            s.send('boot')
+            return True
+        if options[0] == 3:
+            helpers.log("Switch in ZTN loader")
+            s.send('reboot')
+            return True
         s.send('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
