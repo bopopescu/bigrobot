@@ -37,38 +37,30 @@ T1 Interface tenant add/remove redirect policy src-ip to dest-ip to next-hop
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
 	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
-	pause   FREEZE!!
-	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
-    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
-    #sleep                  
-    ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
-	delete traffic
+    verify results   c   b
+    delete traffic
 	sleep  2
-	rest remove policy on tenant				${tenantX}		${tenant2_polname}
-	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
-    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
-    clear stats
-    start traffic  ${stream}
-    sleep                  5
-    stop traffic   ${stream}
+	#rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	#${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						#dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    #clear stats
+    #start traffic  ${stream}
+    #sleep                  5
+    #stop traffic   ${stream}
     #sleep                  
-    ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
-
-
-
-
-
-
-
-
-
+    #${report}=             fetch port stats  stream=${stream}
+    #verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 
 
@@ -78,6 +70,13 @@ T1 Interface tenant add/remove redirect policy src-ip to dest-ip to next-hop
 
 
 * Keywords
+verify results   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should be true  ${in_range}
+   
 verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  1
     ${report}=  fetch port stats  stream=${stream}  
@@ -206,13 +205,13 @@ T5 base suite teardown
 	base suite teardown  
 
 
-verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
-    Sleep  5
-    ${report}=  fetch port stats  stream=${stream}  
-    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
-    Should be true  ${in_range}	
+#verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+#    Sleep  5
+#    ${report}=  fetch port stats  stream=${stream}  
+#    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+#    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+#    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+#    Should be true  ${in_range}	
   	
 add fabric switch
   rest add switch  spine0  
