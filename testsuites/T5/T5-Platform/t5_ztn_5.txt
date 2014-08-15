@@ -318,8 +318,6 @@ T5.5.4. Connected, delete, reboot
 	Randomize ZTN Configuration
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  flap
-	Telnet Reboot Switch  s3
-	Telnet Wait For Switch To Reload  s3
 	Sleep  30
 	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
