@@ -163,7 +163,7 @@ def exception_info_type():
 
 
 def exception_info_value():
-    return str(sys.exc_info()[1]) + br_utils.end_of_output_marker()
+    return str(sys.exc_info()[1])
 
 
 def exception_info_traceback():
@@ -180,8 +180,9 @@ def exception_info():
     See http://docs.python.org/2/library/sys.html#sys.exc_info
     """
     (_type, _val, _) = sys.exc_info()
-    return ("type: %s\n\nvalue: %s%s"
-            % (_type, _val, br_utils.end_of_output_marker()))
+    return ("Exception type: %s\nException value: %s\nException traceback:\n%s%s"
+            % (_type, _val, exception_info_traceback(),
+               br_utils.end_of_output_marker()))
 
 
 def error_msg(msg):
@@ -2022,6 +2023,17 @@ def str_to_list(input_str):
     Convert a multi-line string into a list of strings.
     """
     return input_str.splitlines()
+
+
+def indent_str(input_str, spaces='    '):
+    """
+    Indent a multi-lined string by the amount of spaces specified.
+    """
+    lines = str_to_list(input_str)
+    new_lines = []
+    for line in lines:
+        new_lines.append(spaces + line)
+    return "\n".join(new_lines)
 
 
 def split_and_strip(input_str, split_str=','):
