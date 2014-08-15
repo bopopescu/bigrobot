@@ -13,7 +13,7 @@ Library          keywords/T5Platform.py
 Library	         keywords/SwitchLight.py
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
-Library          keywords_dev/prashanth/T5Openstack.py
+Library          keywords/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
 Resource         testsuites/T5/t5_openstack_variables.txt
@@ -22,6 +22,7 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 
 add/delete single project openstack 
 	[Tags]   openstack
+	openstack source  keystonerc_admin
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
@@ -34,6 +35,7 @@ add/delete single project openstack
    	
 add/delete single subnet from openstack
 	[Tags]  openstack
+	openstack source  keystonerc_admin
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
@@ -44,6 +46,7 @@ add/delete single subnet from openstack
 	
 add/delete multiple projects in openstack
 	[Tags]   openstack
+	openstack source  keystonerc_admin
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
@@ -77,6 +80,7 @@ add/delete multiple projects in openstack
 
 add/delete multiple network in a project
 	[Tags]  openstack
+	openstack source  keystonerc_admin
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
@@ -100,6 +104,7 @@ add/delete multiple network in a project
 
 checking multiple network same subnet in a single tenant
 	[Tags]  openstack
+	openstack source  keystonerc_admin
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
@@ -109,15 +114,18 @@ checking multiple network same subnet in a single tenant
 	openstack add net  app-tenant  app-net1
 	openstack add subnet  app-tenant  app-net1  app-net1  30.0.0.0/24
 	sleep  2	
-	${result}=  openstack verify vns  app-tenant  app-net2
-	Should not be True  ${result}
+	openstack delete net  app-net1
+	sleep  2
+	openstack verify vns  app-tenant  app-net
+	openstack delete net  app-net
 	
 * keywords
 T5 Functional Suite Setup
 	base suite setup
-  	openstack source  keystone_rc	
+  	openstack source  keystonerc_admin	
   	
 T5 Functional Suite Teardown
+	openstack source  keystonerc_admin
 	openstack delete tenant  app-tenant
 	openstack delete user  app
 	openstack delete net  app-net 
