@@ -222,11 +222,17 @@ class DevConf(object):
             _buffer = '\n' + self.conn.buffer.__str__()
         msg = ("\n"
                "==== Expect error (Start) ====\n"
-               "Error descr  : %s\n"
-               "Expect prompt: %s\n"
-               "Expect buffer: %s\n"
+               "Exception type     : %s\n"
+               "Exception value    : %s\n"
+               "Exception traceback:\n%s\n"
+               "Error descr        : %s\n"
+               "Expect prompt      : %s\n"
+               "Expect buffer      : %s\n"
                "==== Expect error (End) ===="
-               % (descr, self.prompt_str(prompt), _buffer))
+               % (helpers.exception_info_type(),
+                  helpers.exception_info_value(),
+                  helpers.indent_str(helpers.exception_info_traceback()),
+                  descr, self.prompt_str(prompt), _buffer))
         helpers.log(msg)
         self.clear_lock()
         helpers.test_error("Devconf expect exception", soft_error)
