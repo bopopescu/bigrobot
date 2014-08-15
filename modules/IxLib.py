@@ -992,7 +992,7 @@ class Ixia(object):
             ethertype = '8100'
             protocol = kwargs.get('protocol', 'UDP')
 
-        if ethertype == '86dd':
+        if ethertype.lower() == '86dd':
             src_ip = kwargs.get('src_ip', '2001:0:0:0:0:0:0:c4')
             dst_ip = kwargs.get('dst_ip', '2001:0:0:0:0:0:0:c5')
             src_gw_ip = kwargs.get('src_gw', '2001:0:0:0:0:0:0:c5')
