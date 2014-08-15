@@ -1,0 +1,172 @@
+* Setting
+Documentation   T5 L3 two spine three leaf rack with dual-tor Test Scaling Suite
+Suite Setup     T5 base suite setup
+#Suite Teardown  T5 base suite teardown
+Test Setup      setup topology
+#Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords_dev/slim/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Library         keywords_dev/slim/SwitchLight.py
+Library	        Collections.py
+Resource		testsuites_dev/slim/T5_L3_colo_scale/t5_layer3_colo_scale_variables.txt
+Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+
+
+* Test Cases
+Intra tenant one Tenant 4k VNS 
+	One Tenant 4k VNS with one host each
+	[Tags]									scale							run							
+
+1k Tenant with 4k segment in global vlan mapping mode
+    1k Tenant with 4k segment in global vlan mapping mode
+    [Tags]                                  scale                           run2
+    
+Delete and add tagged ports to one tenant 4k VNS
+	Delete and add tagged ports to one tenant 4k VNS with one host each
+	[Tags]									scale							
+
+Delete and add 2k VNS with traffic
+	Delete and add 2k VNS with traffic running with one host each
+	[Tags]									scale				
+
+L3 endpoint host move with traffic
+	Move 24k host endpoint to another tagged port
+	[Tags]									scale				
+
+48k L3 endpoint across one tenant two vns
+	Generate 48k L3 endpoint across one tenant two vns
+	[Tags]									scale				
+		
+Combined scaling one tenant 4k vns with 48k host
+	Combined scaling with one tenant 4k vns with 48k host
+	[Tags]									scale				
+		
+Delete and add scale 4k vns config multiple times
+	Delete and add scale config multiple times
+	[Tags]									scale				
+
+DHCP request from 48k host across 4k vns
+	Generate dhcp request from 48k host across 4k vns
+	[Tags]									scale				
+						
+Create OneK tenant with four vns each
+	Create OneK tenant with four vns each
+	[Tags]									scale				
+	
+Add and delete config with 1k tenant with 4 vns each
+	Add and delete config with 1k tenant with 4 vns each
+	[Tags]									scale				
+
+Inject 16k cidr routes
+	Inject 16k cidr routes
+	[Tags]									scale				
+	
+Delete 16k cidr routes
+	Delete 16k cidr routes
+	[Tags]									scale				
+	
+
+* Keywords		
+One Tenant 4k VNS with one host each
+	REST delete tenant							X
+	REST delete tenant							Y
+	REST delete tenant							Z
+	REST add tenant								A
+	${ipAddr} =  								Set Variable					20.0.0.1
+	: FOR 										${i}							IN RANGE 				1					2001
+	\	${result} = 							REST add vns							A								A-${i}
+	\	Should Be True							${result}
+	\	${result} = 							REST add router intf					A								A-${i}
+	\	Should Be True							${result}
+	\	${result} = 							REST add vns ip							A								A-${i}					${ipAddr}			24
+	\	Should Be True							${result}
+	\	${ipAddr} =								BSNCommon.get next address				ipv4							${ipAddr}				0.0.1.0
+	\	Should Be True							${result}
+	\	${result} = 							REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}	
+	\	sleep									1		
+				
+	${ipAddr} =  								Set Variable					40.0.0.1
+	: FOR 										${i}							IN RANGE 				2001				4001
+	\	${result} = 							REST add vns							A								B-${i}
+	\	Should Be True							${result}
+	\	${result} = 							REST add router intf					A								B-${i}
+	\	Should Be True							${result}
+	\	${result} = 							REST add vns ip							A								B-${i}					${ipAddr}			24
+	\	Should Be True							${result}
+	\	${ipAddr} =								BSNCommon.get next address				ipv4							${ipAddr}				0.0.1.0
+	\	${result} = 							REST add interface to vns				A								B-${i}					leaf1-a				ethernet24		${i}			
+	\	Should Be True							${result}
+	\	sleep									1
+				
+# ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+#    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+#    ...						src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+#    ...						dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+    
+    
+1k Tenant with 4k segment in global vlan mapping mode
+    ${ipAddr} =                                 Set Variable                    20.0.0.1
+    : FOR                                       ${i}                            IN RANGE                1                   998
+    \   ${result} =                             REST add tenant                 T-${i}
+    \   Should Be True                          ${result}
+    \   SegLoop1                                T-${i}                          ${ipAddr} 
+    \   ${ipAddr} =                             Set Variable                    ${ipAddr}
+
+SegLoop1
+    [Arguments]                                 ${j} 
+    
+    \   : FOR                                   ${k}                            IN RANGE                1               4
+    \   ${result} =                             REST add vns                            ${j}                                ${j}-${i}
+    \   Should Be True                          ${result}
+    \   ${result} =                             REST add router intf                    ${j}                                ${j}-${i}
+    \   Should Be True                          ${result} 
+    \   ${result} =                             REST add vns ip                         ${j}                                ${j}-${i}                  ${ipAddr}           24
+    \   Should Be True                          ${result}
+    \   ${ipAddr} =                             BSNCommon.get next address              ipv4                                ${ipAddr}               0.0.1.0
+    \   Should Be True                          ${result}
+    \   [return]                                ${ipAddr}
+     
+
+Delete and add 2k VNS with traffic running with one host each
+
+
+Move 2k host endpoint to another tagged port
+
+
+Generate 48k L3 endpoint across one tenant two vns
+
+
+Combined scaling with one tenant 4k vns with 48k host
+
+
+Delete and add scale config multiple times
+
+
+Generate dhcp request from 48k host across 4k vns	
+
+
+
+initialize host
+    sleep                                           1
+
+
+setup topology
+    sleep                                           1
+	
+	
+
+teardown topology
+    sleep                                           1
+
+T5 base suite setup
+    sleep                                           1
+
+
+  
+T5 base suite teardown
+#	delete fabric switch
+    sleep           1  					

@@ -165,13 +165,13 @@ ${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point=
 #${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
 ${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Include Filter Interfaces']
 #${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//span[@id="bsn_widgets_Dialog_2_title"]
-${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id=dijit_form_Button_14_label']
+${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id='dijit_form_Button_9_label']
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}   	 	xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']
 ${RBAC DELIVERY INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='deliveryInterfaceManager']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Include Delivery Interfaces']
-${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_19_label']
+${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_14_label']
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
@@ -192,8 +192,8 @@ ${RBAC ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_1_p
 ${RBAC MATCH VLAN CHECKBOX SELECTED}		xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC MATCH VLAN CHECKBOX UNSELECTED}	  	xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC MATCH VLAN CHECKBOX}					xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::input[@role='checkbox']
-${RBAC MATCH VLAN FROM FIELD}				xpath=//input[@id='dijit_form_NumberSpinner_5']
-${RBAC MATCH VLAN TO FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_6']
+${RBAC MATCH VLAN FROM FIELD}				xpath=//input[@id='dijit_form_NumberSpinner_8']
+${RBAC MATCH VLAN TO FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_9']
 ${RBAC MATCH TCP FIN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_0']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
 ${RBAC MATCH TCP SYN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_1']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
 ${RBAC MATCH TCP RST CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_2']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
@@ -289,6 +289,7 @@ ${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-d
 ${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${BIGTAP POLICY MATCHES NODE}											xpath=//div[@data-dojo-attach-point='ruleNode']
 ${BIGTAP POLICY MATCHES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='icon_node plus']
+${RBAC MATCHES PLUS BUTTON}												xpath=//div[@data-dojo-attach-point='matchRuleNode']/descendant::div[@class='icon_node plus']
 ${BIGTAP POLICY INCLUDE MATCHES POPUP}   								xpath=//div[@title='Configure Policy Match Rule']
 ${BIGTAP POLICY APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_24']
 ${BIGTAP POLICY ALLOW ALL MATCHES CHECKBOX SELECTED}  				  	xpath=//div[@data-dojo-attach-point='ruleNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
@@ -311,6 +312,7 @@ ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}						xpath=//input[@id='dijit_form_Num
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitUpArrowButton')]
 ${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN} 						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[@class='dijitReset dijitButtonNode dijitSpinnerButtonContainer']/descendant::div[contains(@class, 'dijitDownArrowButton')]
 ${BIGTAP POLICY MATCHES BUTTON}									xpath=//div[@class='step_text' and contains(text(), '2. Rules')]
+${RBAC MATCHES BUTTON}											xpath=//div[@class='step_text' and contains(text(), '5. Matches')]
 ${FILTER CHECKB}													xpath=//div[@class='bsn_ellipsis' and contains(text(), 'ixia-2-4')]
 ${fc}   														xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
 ${dc}   														xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
@@ -407,7 +409,7 @@ ${INTERFACE SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_4']
 ${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
 #xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
 ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
-${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
 ${BIG TAP INTERFACE REMOVE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Remove')]
 ${BIG TAP INTERFACE GROUPS CONFIRM POPUP}			xpath=//div[@title='Confirm']
 
@@ -774,7 +776,7 @@ Select Checkbox And Verify
 	[Arguments]  ${attachment_point}  ${text}
     ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
     Verify Page Contains Element  ${checkbox}
-	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='trafficNode']/div[2]/div[1]/input")
+	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
 	Checkbox Should Be Selected	  ${checkbox}
 
 
@@ -1036,7 +1038,7 @@ Associate RBAC
 
 
 Configure RBAC
-	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}
+	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}  ${src-ip}  ${dst-ip}
 	${random_groupname}  Generate Random Name  Group  5
     Run Keyword If  '${group}'=='__new__'  
     ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
@@ -1059,17 +1061,17 @@ Configure RBAC
 
     Click Element  ${INFO BUTTON}  and don't wait
 
-    #Run Keyword Unless  '${filter}'=='${EMPTY}'  
-    #...		Associate Filter Interface  ${filter}
+    Run Keyword Unless  '${filter}'=='${EMPTY}'  
+    ...		Associate Filter Interface  ${filter}
 
-    #Run Keyword Unless  '${delivery}'=='${EMPTY}'  
-    #...		Associate Delivery Interface  ${delivery}
+    Run Keyword Unless  '${delivery}'=='${EMPTY}'  
+    ...		Associate Delivery Interface  ${delivery}
 
     #Run Keyword Unless  '${service}'=='${EMPTY}'  
     #...		Associate Service  ${service}
 
-    #Run Keyword If  '${ipprotocol}'=='${EMPTY}'  
-    #...		Associate Match Rule
+    Run Keyword Unless  '${ipprotocol}'=='${EMPTY}'  
+    ...		Associate Match Rule  ${ipprotocol}  ${src-ip}  ${dst-ip}
 
     Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
@@ -1177,27 +1179,41 @@ Match All Rule
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
 
-Associate Match Rule 
-	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
-	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+Associate Match Rule
+	[Arguments]  ${ipprotocol}  ${src-ip}  ${dst-ip}
+	Verify Page Contains Element  ${RBAC MATCHES BUTTON}
+	Click Element  ${RBAC MATCHES BUTTON}  and don't wait
 
-	Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
-
-	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
-	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}
 	
-	Click Element  ${BIGTAP POLICY ETHERTYPE FIELD}  and don't wait
+	Verify Element Visible  ${RBAC MATCHES PLUS BUTTON}
+	Click Element  ${RBAC MATCHES PLUS BUTTON}  and don't wait
+	
+	Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
 
     Select From List And Verify  
-    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
-    ...		${BIGTAP POLICY ETHERTYPE LIST}  
-    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
-    ... 	IPv4 - 0x800 (2048)
+    ... 	${RBAC ETHERTYPE DROPDOWN BUTTON}
+    ...		${RBAC ETHERTYPE LIST}  
+    ... 	${RBAC ETHERTYPE FIELD}
+    ... 	${ipprotocol}
+	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
+	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
 	
-	#Verify Page Contains Element   ${matchall_checkbox_unselected}
-	#Click Element   ${matchall_checkbox_unselected}  and don't wait
+	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
+	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#Verify Page Contains Element  ${src-ip}
 	
-	#Select Checkbox   ${matchall_checkbox_selected}   ${matchall_checkbox_unselected}
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
+	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
+		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#Verify Page Contains Element  ${dst-ip}
 
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
@@ -1574,7 +1590,7 @@ Edit Big Tap Policy for TCP Flags
     ... 	${BIGTAP POLICY ETHERTYPE FIELD}
     ... 	IPv4 - 0x800 (2048)
     
-    Sleep  5
+    Sleep  1
     
     Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
     Select From List And Verify  
@@ -1674,7 +1690,7 @@ Edit Big Tap Policy for TCP Flags
     Sleep   2
 	
 Associate DPM Rule 
-	[Arguments]   ${policy}  ${ipprotocol}  ${udf0}  ${value0}  ${mask0}  ${udf1}  ${value1}  ${mask1}  ${udf2}  ${value2}  ${mask2}  ${src-ip}  ${dst-ip}  ${src-port}   ${dst-port}   ${vlan-header} 
+	[Arguments]   ${policy}  ${ipprotocol}  ${udf0}  ${value0}  ${mask0}  ${udf1}  ${value1}  ${mask1}  ${udf2}  ${value2}  ${mask2}  ${src-port}   ${dst-port}   ${vlan-header} 
 	
 	Go To Big Tap Policies Page
 	Sleep   5
@@ -1734,9 +1750,9 @@ Associate DPM Rule
 	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
 	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
 	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
-	Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
+	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	#Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
 	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
 	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP MASK FIELD}  255.255.255.0
 	
@@ -1762,9 +1778,9 @@ Associate DPM Rule
 	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
 	
 	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
 	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
 	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP MASK FIELD}  255.255.255.0
 	
@@ -1908,12 +1924,13 @@ Check Overlapping
     Delete All Big Tap Policies
     	
 Associate Policy Match Rule 
-	[Arguments]   ${ipprotocol}  ${matchtype}  ${version}  ${src-ip}  ${dst-ip}  ${src-port}   ${dst-port}   ${vlan-header}
+	[Arguments]   ${policy}  ${ethertype}  ${ipprotocol} 
 	
 	Go To Big Tap Policies Page
 	Sleep   5
 	Go To Big Tap Policies Page
-    #${action_menu}  Generate Action Menu Xpath  div[@id='policies_table']  ${id}
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
     Verify Element Visible  ${action_menu_policy}
     Click Element  ${action_menu_policy}  and don't wait
 
@@ -1928,15 +1945,15 @@ Associate Policy Match Rule
 	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
 	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
 
-	Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
-
-    Select From List And Verify  
-    ... 	${RBAC ETHERTYPE DROPDOWN BUTTON}
-    ...		${RBAC ETHERTYPE LIST}  
-    ... 	${RBAC ETHERTYPE FIELD}
-    ... 	IPv4 - 0x800 (2048)
-    
-    Sleep  5
+	#Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+	
+	Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+       	  
+    Sleep  1
     
     Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
     Select From List And Verify  
@@ -1945,136 +1962,26 @@ Associate Policy Match Rule
     ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
     ... 	${ipprotocol}
     
-    Sleep  5
-    Verify Page Contains Element  ${RBAC MATCH VLAN CHECKBOX}
-    Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH VLAN CHECKBOX SELECTED}  ${RBAC MATCH VLAN CHECKBOX UNSELECTED}
-	Sleep  2
-	
-	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
-	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
-	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH VLAN FROM FIELD}  ${vlan-header}
-	
-	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
-	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
-	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH VLAN TO FIELD}  ${vlan-header}
+    Sleep  1
     
-        
-	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
-	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
-	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  1.1.1.1
-	Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
-	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE IP MASK FIELD}  255.255.255.0
-	
-	
-	Verify Page Contains Element  ${RBAC MATCH SOURCE PORT CHECKBOX}
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH SOURCE PORT CHECKBOX SELECTED}  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
-	#...    Click Element  ${RBAC MATCH SOURCE PORT CHECKBOX}  and don't wait
-	Sleep  2
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Verify Checkbox Unselected  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
-	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
-	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE TO PORT}  ${src-port}
-	
-	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
-	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
-	Run Keyword Unless  '${src-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH SOURCE DST PORT}  ${src-port}
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
-	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  2.2.2.2
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
-		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP MASK FIELD}  255.255.255.0
-	Sleep  5 
-	
-	Verify Page Contains Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...     Unselect Checkbox  ${RBAC MATCH DESTINATION PORT CHECKBOX SELECTED}  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
-	#...    Click Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}  and don't wait
-	Sleep  2
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Verify Checkbox Unselected  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
-	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
-	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION TO PORT}  ${dst-port}
-	
-	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
-	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
-	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
-	...		Input Text And Verify  ${RBAC MATCH DESTINATION DST PORT}  ${dst-port}
-	  
-	
-	Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH BUTTON}
-	Click Element  ${RBAC MATCH OFFSET MATCH BUTTON}  and don't wait
-
-	Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH NODE}
-	
-	Verify Page Contains Element   ${OFFSET MATCH DROPDOWN BUTTON}
-	Run Keyword Unless  '${matchtype}'=='${EMPTY}'
-    ...		Select From List And Verify  
-    ... 	${OFFSET MATCH DROPDOWN BUTTON}
-    ...		${OFFSET MATCH TYPE LIST}  
-    ... 	${OFFSET MATCH TYPE FIELD}
-    ... 	${matchtype}
-    Run Keyword If  '${matchtype}'=='VXLAN'
-    ...   Configure VXLAN Match    ${ipprotocol}
-    
-    Verify Page Contains Element  ${GTP VERSION DROPDOWN BUTTON} 
-    Run Keyword Unless  '${version}'=='${EMPTY}'
-    ...     Select From List And Verify  
-    ... 	${GTP VERSION DROPDOWN BUTTON}
-    ...		${GTP VERSION LIST}  
-    ... 	${GTP VERSION FIELD}
-    ... 	${version}
-    
-    Click Element  ${GTP TEID v1 FIELD}  and don't wait
-		Run Keyword If  '${version}' == 'v1'
-	...		Input Text And Verify  ${GTP TEID v1 FIELD}  100
-	  Sleep  5
-	  
-	Click Element  ${GTP TEID v2 FIELD}  and don't wait
-		Run Keyword If  '${version}' == 'v2'
-	...		Input Text And Verify  ${GTP TEID v2 FIELD}  100
-	  
-	Click Element  ${GTP PROTOCOL TYPE FIELD}  and don't wait
-
-    Run Keyword If  '${version}' == 'v1'
-    #Run Keyword Unless  '${version}' == 'v2'
-    ...		Select From List And Verify  
-    ... 	${GTP PROTOCOL TYPE DROPDOWN BUTTON}
-    ...		${GTP PROTOCOL TYPE LIST}  
-    ... 	${GTP PROTOCOL TYPE FIELD}
-    ... 	GTP
-    Sleep  10
-	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+    Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	#Sleep  20
+	Highlight Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
 	
 	Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
-
+    
     Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
     #Verify Page Contains Text   ${policy}
-    Sleep   10
+    Sleep   2
     
 Configure VXLAN Match
 	[Arguments]   ${ipprotocol} 
     Click Element  ${VXLAN VNI FIELD}  and don't wait
 	Input Text And Verify  ${VXLAN VNI FIELD}  100
-	Sleep  5
+	Sleep  1
 
 Configure Switch Alias
 	[Arguments]  ${dpid}  ${alias}
@@ -2244,7 +2151,7 @@ Configure Big Tap Interface Group from Big Tap Menu
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Add Delivery Interface to Group   ${interface-name}
@@ -2371,7 +2278,7 @@ Edit Big Tap Interface Group from Big Tap Menu
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Add Delivery Interface to Group   ${interface-name}
@@ -2424,8 +2331,8 @@ Delete Big Tap Interface from Interface Group
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
     
     Run Keyword If  '${role}'=='filter'
     ...		 Delete Filter Interface from Group   ${if-name} 
@@ -2435,7 +2342,7 @@ Delete Big Tap Interface from Interface Group
     
     Run Keyword If  '${role}'=='delivery'
     ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  5
+    Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Delete Delivery Interface from Group   ${if-name}
@@ -2473,9 +2380,9 @@ Delete Delivery Interface from Group
 Configure Big Tap Service
 	[Arguments]  ${service}  ${pre-service}  ${post-service}
 	Run Keyword Unless  '${pre-service}'=='${EMPTY}'
-	...  Configure Big Tap Interface from Controller Menu		s15-eth1	service  ${pre-service}
+	...  Configure Big Tap Interface from Controller Menu		ethernet5	00:00:5c:16:c7:1e:f3:95	 service  ${pre-service}
 	Run Keyword Unless  '${post-service}'=='${EMPTY}'  
-	...  Configure Big Tap Interface from Controller Menu		s15-eth2	service	 ${post-service}
+	...  Configure Big Tap Interface from Controller Menu		ethernet6	00:00:5c:16:c7:1e:f3:95	 service  ${post-service}
 	${random_servicename}  Generate Random String  5  [LOWER] 
     ${service}  Set Variable If  '${service}'=='__new__'  ${random_servicename}  ${service} 
 
@@ -2586,13 +2493,13 @@ Set Switching Mode
     
     Verify Element Visible  ${SWITCHING MODE SUBMIT BUTTON}
     Click Element  ${SWITCHING MODE SUBMIT BUTTON}  and don't wait
-    Sleep  5
+    Sleep  1
     	
   	
 Configure Match Mode
 	[Arguments]  ${match-mode}
 	Go To Landing Page
-	Sleep  5
+	Sleep  1
 	Run Keyword If  '${match-mode}'=='Policy Overlap'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
 	Run Keyword If  '${match-mode}'=='!Policy Overlap'
@@ -2699,14 +2606,14 @@ Configure Big Tap User Defined Offsets
 	[Arguments]  ${udf}  ${anchor}  ${offset}
 	
 	Go to Big Tap User Defined Offsets Page
-	Sleep  5
+	Sleep  1
 	
 	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='user_defined_offsets_table']  ${udf}
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait
 
-    Verify Element Visible  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}
-    Click Element  ${BIG TAP INTERFACE GROUPS EDIT MENU ITEM}  and don't wait
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
     
     Run Keyword Unless  '${anchor}'=='${EMPTY}'
     ...		Select From List And Verify  

@@ -145,7 +145,6 @@ def prettify_xml(xml_str):
     """
     with tempfile.NamedTemporaryFile() as f:
         filename = f.name
-        # print "**** filename: %s" % filename
         f.write(xml_str)
         f.flush()
         x = xml.dom.minidom.parse(filename)
@@ -1473,6 +1472,8 @@ def scp_get(server, remote_file, local_path,
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     """
+    NOTE: Consider using run_cmd2() instead.
+
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
             '&') and/or command contains shell variables/wildcards.
@@ -1501,10 +1502,67 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
+def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+    """
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
+
+    In this version of run_cmd, the shell and non-shell modes are near
+    identical, resulting in more consistent behavior. Need to gradually phase
+    out the old run_cmd usage.
+
+    Returns tuple (Boolean, String)
+        success: (True,  "...success message...")
+        failure: (False, "...error message...")
+    """
+    if not quiet:
+        print("Executing '%s'" % cmd)
+    if shell:
+        # In general, should avoid shell mode due to security reasons.
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+    else:
+        cmd_list = cmd.split(' ')
+        p = subprocess.Popen(cmd_list,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, cwd=cwd)
+    out, err = p.communicate()
+    if err and not ignore_stderr:
+        return (False, err)
+
+    return (True, out)
+
+
+def uname():
+    """
+    Dump output from 'uname -a'.
+    """
+    _, output = run_cmd2('uname -a', shell=False, quiet=True)
+    return output
+
+
+def ulimit():
+    """
+    Dump output from 'ulimit -a'.
+    Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
+    built-in shell command. So let's execute it using shell mode.
+    """
+    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
+    return output
+
+
+def uptime():
+    """
+    Dump output from 'uptime'.
+    """
+    _, output = run_cmd2('uptime', shell=False, quiet=True)
+    return output
+
+
 def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None,
           interval=0.4, ping_output=None, background=False, label=None):
-
     if background:
         if node_handle == None or mode != 'bash':
             test_error("Background ping is only support for bash mode")
@@ -1589,7 +1647,7 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
 def _ping(*args, **kwargs):
     """
     Ping options:
-      :param host: (Str) ping hist host
+      :param host: (Str) ping this host
       :param count : (Int) number of packets to send, equivalent to -c <counter>
                       If count is -1 or None, disable count.
                       If background is specified, disable count.
@@ -1607,6 +1665,10 @@ def _ping(*args, **kwargs):
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
 
+    if args:
+        host = args[0]
+    else:
+        host = kwargs.get('host')
     output = kwargs.get('ping_output', None)
     if output == None:
         output = _run_ping_cmd(*args, **kwargs)
@@ -1654,7 +1716,7 @@ def _ping(*args, **kwargs):
         packets_received = int(match.group(2))
         loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
-             % (kwargs.get('host'), packets_transmitted, packets_received,
+             % (host, packets_transmitted, packets_received,
                 loss_pct))
 
         calculated_loss_pct = int((float(packets_transmitted) -
@@ -1689,14 +1751,14 @@ def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=timeout,
+    actual_loss = _ping(host=host, count=count, timeout=timeout,
                         ping_output=ping_output, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=timeout,
+        actual_loss = _ping(host=host, count=count, timeout=timeout,
                             ping_output=ping_output, quiet=quiet)
         if actual_loss > loss:
             count -= 4
-            actual_loss = _ping(host, count=count, timeout=timeout,
+            actual_loss = _ping(host=host, count=count, timeout=timeout,
                                 ping_output=ping_output, quiet=quiet)
     return actual_loss
 
@@ -1779,7 +1841,8 @@ def send_mail(m, infile=None):
         input_text = file_read_once(infile)
         if len(input_text) > 100000:
             lines = 200
-            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+            input_text = ("... Attention: File is greater than 100K bytes."
+                          " Send the last %s lines of file ...\n\n"
                           % lines + '\n'.join(str_to_list(input_text)[-lines:]))
         m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
@@ -1861,7 +1924,7 @@ def openstack_convert_table_to_dict(input_str):
     { 'OS-EXT-IMG-SIZE:size':
                   {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
       'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
-      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-...'},
       'minDisk':  {'property': 'minDisk',  'value': '0'},
       'minRam':   {'property': 'minRam',   'value': '0'},
       'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},

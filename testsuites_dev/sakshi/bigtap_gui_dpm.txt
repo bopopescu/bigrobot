@@ -1,0 +1,164 @@
+*** Settings ***
+Documentation   	A test suite with a single test for valid login. This test has
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	GUI RBAC
+Suite Setup      	Setup
+Suite Teardown   	Teardown
+Library         	keywords/BsnCommon.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library        		SeleniumLibrary
+Resource        	bigtap_resource.txt
+Library       		String
+
+*** Test Cases *** 
+
+
+### Configure Big Tap Policy with DPM									policy		ipprotocol    udf0			value0   	mask0   	udf1   		value1   	mask1    	udf2		value2		mask2		src-port   	dst-port   	VLAN Header
+TC Set up
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			qa-corsair-2 		delivery		ixia-4-8
+		Configure Big Tap Policy					 					policy-gtp			admin-view			Forward			ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	
+TC1 Policy with offset match on GTP' v1 (Protocol UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		20000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
+
+TC2 Offset match on GTP' v1 (Protocol TCP)
+		Associate DPM Rule									 			policy-gtp	TCP (6)      Offset: 20		20000000	e0000000 	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
+					
+TC3 Offset match on GTP' Protocol Type (UDP)
+		Associate DPM Rule									 			policy-gtp  UDP (17)     Offset: 8		00000000	80000000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386 		${EMPTY}
+
+TC4 Offset match on GTP' Protocol Type (TCP)
+		Associate DPM Rule											 	policy-gtp  TCP (6)      Offset: 20		00000000	80000000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
+
+TC5 Offset match on GTP' version(v1) and Protocol Type (TCP) 
+		Associate DPM Rule											 	policy-gtp	TCP (6)      Offset: 20		20000000	e0000000	Offset: 20	00000000	80000000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
+		
+TC6 Offset match on GTP-U v1 (Protocol UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		20000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
+		
+TC7 Offset match on GTP-U Protocol Type 1 (UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		10000000	80000000	 ${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
+	
+TC8 Offset match on GTP-U TEID (UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12		64			ffffffff  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152 		${EMPTY}
+		
+TC9 Offset match on GTP-U v1, Protocol Type and TEID (UDP)
+		Associate DPM Rule											 	policy-gtp	UDP (17)    Offset: 8		20000000	e0000000	Offset: 8	10000000	80000000	Offset: 12  64			ffffffff	${EMPTY}	2152		${EMPTY}
+
+TC10 Offset match on GTP-U TEID and src-port
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	323			2152		${EMPTY}
+
+TC11 Offset match on GTP-U TEID and dst-port
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
+	 	 	 			 
+TC12 Offset match on GTP-U TEID and VLAN ID
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		100
+
+TC13 Offset match on GTP-C v1 (Protocol UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		20000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+		
+TC14 Offset match on GTP-C Protocol Type 1 (UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		10000000	80000000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+	
+TC15 Offset match on GTP-C TEID (UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+		
+TC16 Offset match on GTP-C v1, Protocol Type and TEID (UDP)
+		Associate DPM Rule											 	policy-gtp	UDP (17)     Offset: 8		20000000	e0000000	Offset: 8	10000000	80000000	Offset: 12  64			ffffffff	${EMPTY}	2123		${EMPTY}
+
+TC17 Offset match on GTP-C TEID and src-port
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	344			2123		${EMPTY}
+
+TC18 Offset match on GTP-C TEID and dst-port
+		Associate DPM Rule									 			policy-gtp	UDP (17)    Offset: 12  	64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+	 	 	 			 
+TC19 Offset match on GTP-C (v1) TEID and VLAN ID
+		Associate DPM Rule									 			policy-gtp	UDP (17)   Offset: 12  		64			ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		200
+
+
+TC20 Offset match on GTP-C v2 (Protocol UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		40000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+
+TC21 Offset match on GTP-C v2 (Protocol TCP)
+		Associate DPM Rule									 			policy-gtp	TCP (6)      Offset: 20		40000000	e0000000 	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+			
+TC22 Offset match on GTP-C TEID v2 (UDP) and without teid flag
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		40000000	e0000000	Offset: 8	00000000	80000000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123 		${EMPTY}
+
+TC23 Offset match on GTP-C TEID v2 (UDP) with teid flag and TEID
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		40000000	e0000000	Offset: 8	08000000	80000000	Offset: 12  64			ffffffff	${EMPTY}	2123	 	${EMPTY}
+				
+TC24 Offset match on GTP-C (v2) and TEID (UDP)
+		Associate DPM Rule											 	policy-gtp	UDP (17)     Offset: 8		40000000	e0000000	Offset: 12  	64		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+
+TC25 Offset match on GTP-C (v2) TEID (TCP)
+		Associate DPM Rule									 			policy-gtp	TCP (6)    	 Offset: 20		40000000	e0000000	Offset: 24  	64		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+	 	  
+TC26 Offset match on GTP-C v2, TEID and VLAN ID (UDP)
+		Associate DPM Rule									 			policy-gtp	UDP (17)   	 Offset: 8		40000000	e0000000	Offset: 12  	64		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		100
+
+TC27 Offset match on GTP-C v2, TEID and VLAN ID (TCP)
+		Associate DPM Rule									 			policy-gtp	TCP (6)    	 Offset: 20		40000000	e0000000	Offset: 24  	64		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		331
+		
+TC28 Offset match on VXLAN VNI		
+		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 12		74912700	ffffff00	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	4789		${EMPTY}
+
+TC Set up 2
+		Delete All Bigtap Resources
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			qa-corsair-2 		delivery		ixia-4-8
+		Configure Big Tap User Defined Offsets							udf0					L4 Start			36
+		Configure Big Tap User Defined Offsets							udf1					L4 Start			40
+		Configure Big Tap User Defined Offsets							udf2					L4 Start			44
+		Configure Big Tap User Defined Offsets							udf3					L4 Start			48
+		Configure Big Tap Policy					 					policy-gtp2				admin-view		Forward		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}
+		
+TC29 Offset match on GTP-U inner src-ip
+		Associate DPM Rule									 			policy-gtp2	UDP (17)     Offset: 36		1010101		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
+
+TC30 Offset match on GTP-U inner dst-ip
+		Associate DPM Rule									 			policy-gtp2	UDP (17)     Offset: 40		2020202		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
+
+TC31 Offset match on GTP-C inner src-ip
+		Associate DPM Rule									 			policy-gtp2	UDP (17)     Offset: 36		1010101		ffffffff	Offset: 36	1010101		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}
+
+TC32 Offset match on GTP-C inner dst-ip
+		Associate DPM Rule												policy-gtp2	UDP (17)     Offset: 40		2020202		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2123		${EMPTY}	 			
+
+TC33 Offset match on VXLAN inner src-ip
+		Associate DPM Rule									 			policy-gtp2	UDP (17)     Offset: 40		0101		ffff		Offset: 44	01010000	ffff0000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+
+TC34 Offset match on VXLAN inner dst-ip
+		Associate DPM Rule									 			policy-gtp2	UDP (17)     Offset: 44		0202		ffff		Offset: 48	02020000	ffff0000	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	 	
+TC35 Teardown
+		Delete All Big Tap Policies
+		Configure Big Tap User Defined Offsets							udf0					L4 Start			8
+		Configure Big Tap User Defined Offsets							udf1					L4 Start			12
+		Configure Big Tap User Defined Offsets							udf2					L4 Start			20
+		Configure Big Tap User Defined Offsets							udf3					L4 Start			24
+
+
+
+*** Keywords ***
+Setup
+	base suite setup
+	${c1_ip}            params  node=c1  key=ip
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    Delete All Big Tap Resources
+	Set Switching Mode		L3-L4 Offset Match
+	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
+ 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
+Teardown
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown
+

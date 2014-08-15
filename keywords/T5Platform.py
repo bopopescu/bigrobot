@@ -3608,7 +3608,67 @@ class T5Platform(object):
                 helpers.log("Test Path Sucees In Controller View. No Errors Were Detected")
                 return True
 
-
+    def  rest_verify_testpath_error_code(self, errorCode, **kwargs):
+        '''
+            This function will query the controller for the test packet path controller view for the given error code
+            Returns True if error code is a match 
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/test/path/controller-view'
+        
+        if(kwargs.get('dst-segment')):
+            url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
+        if(kwargs.get('dst-tenant')):
+            url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        if(kwargs.get('ip-protocol')):
+            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+        if(kwargs.get('src-ip')):
+            url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
+        if(kwargs.get('src-segment')):
+            url = url + '[src-segment="%s"]' % (kwargs.get('src-segment'))
+        if(kwargs.get('dst-ip')):
+            url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
+        if(kwargs.get('src-tenant')):
+            url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+            
+        result = c.rest.get(url)['content']
+        try:
+            logicalError = result[0]['summary'][0]['logical-error']
+            helpers.log("Test Path Error In Controller View: LogicalError: %s" % (logicalError))
+            if errorCode in logicalError:
+                helpers.log("Error Code is a match : Returning True")
+                return True
+            else:
+                helpers.log("Error Code is not a match : Returning False")
+                return False
+        except (KeyError):
+            try:
+                physicalError = result[0]['summary'][0]['physical-error']
+                helpers.log("Test Path Error In Controller View: PhysicalError: %s" % (physicalError))
+                if errorCode in physicalError:
+                    helpers.log("Error Code is a match : Returning True")
+                    return True
+                else:
+                    helpers.log("Error Code is not a match : Returning False")
+                    return False
+            except (KeyError):
+                try:
+                    forwardError = result[0]['summary'][0]['forward-result']
+                    helpers.log("Test Path Forward Result code: %s" % (forwardError))
+                    if errorCode in forwardError:
+                        helpers.log("Error Code is a match : Returning True")
+                        return True
+                    else:
+                        helpers.log("Error Code is not a match : Returning False")
+                        return False
+                except:
+                    helpers.log("Test Path Sucees In Controller View. No Errors Were Detected")
+                    helpers.log("Error Code is not a match : Returning False")
+                    return False
+            
+    
     def rest_configure_testpath_fabric_view(self, **kwargs):
         '''
             This function will set up the fabric view for the controller.
@@ -3819,6 +3879,16 @@ class T5Platform(object):
             helpers.log("Didn't find path: %s in the test-path config" % pathName)
             return False
 
+    def rest_clear_testpath(self):
+        ''' Verify whether the testpath is timedout or not
+            Returns : True if timedout
+        '''
+        t = test.Test()
+        c = t.controller("master")
+
+        url = '/api/v1/data/controller/applications/bcf/test/path/expired-test'
+        result = c.rest.delete(url)
+        
 
     def cli_walk_exec(self, string='', file_name=None, padding=''):
         ''' cli_exec_walk

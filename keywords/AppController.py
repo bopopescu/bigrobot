@@ -699,14 +699,15 @@ class AppController(object):
         else:
             c = t.controller('master')
             try:
-                if "admin" not in user:
+                if user == "admin":
+                    c.enable("show banner")
+                    content = c.cli_content()
+                else:
                     c_user = t.node_reconnect(node='master', user=str(user), password=password)
                     c_user.enable("show banner")
                     content = c_user.cli_content()
-                    t.node_reconnect(node='master')
-                else:
-                    c.enable("show banner")
-                    content = c.cli_content()
+                    c_user.close()
+                    # t.node_reconnect(node='master')
             except:
                 return False
             else:

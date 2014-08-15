@@ -210,7 +210,7 @@ Randomize ZTN Configuration
 	Cli Run  master  ntp time-zone ${timezone_random}
 	${host_random}  Generate Random IP
 	${hostname_random}  Generate Random Name  hostname.tmk.  5
-	Cli Run  master  logging enable remote
+	Cli Run  master  logging remote
 	Cli Run  master  logging remote 10.192.66.100
 	Cli Run  master  logging remote ${hostname_random}
 

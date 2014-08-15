@@ -3616,7 +3616,10 @@ class BigTap(object):
             c.send(helpers.ctrl('u'))
             c.expect()
             c.cli('')
-            num = len(temp)
+            if temp[-1] == '':
+                num = len(temp) - 1
+            else:
+                num = len(temp)
             helpers.log("Number of arguments in show command are %s" % num)
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
@@ -3659,20 +3662,27 @@ class BigTap(object):
             c.cli(command)
             content = c.cli_content()
             temp_content = content.split('\n')
+            # helpers.log("Output is %s \n " % temp_content)
             num = len(temp_content)
-            if (num != cmd_argument_count) :
-                helpers.log("Number of arguments in CLI Command Output is different")
+            # helpers.log("Length is %s and passed argument is %s \n" % (num, cmd_argument_count))
+            if (num != int(cmd_argument_count)) :
+                # helpers.log("Number of arguments in CLI Command Output is different")
                 return False
+            else:
+                helpers.log("Correct number of arguments found\n.")
             if ("None" in temp_content[0]) and (num == 1):
                 return True
             elif ("None" in temp_content[0]) and (num > 2):
                 helpers.log("Number of lines ")
                 return False
-
             if cmd_argument is not None :
+                # helpers.log("Argument passed is %s \n" % (cmd_argument))
                 for line in temp_content:
-                    if (cmd_argument in line) and (num == cmd_argument_count):
+                    # helpers.log("Line is %s \n" % line)
+                    if (cmd_argument in line) and (num == int(cmd_argument_count)):
                         return True
+                return False
+            return True
 
     def convert_integer_to_tcpflag(self, integer_passed):
         binary_number = bin(int(integer_passed))[2:].zfill(6)

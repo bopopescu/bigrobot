@@ -82,7 +82,7 @@ T27 data Link down/up event between leaf and spine
 	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
-	\  sleep ${linkflap}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
@@ -238,14 +238,14 @@ tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${s
     \   cli  master  show running-config tenant FLAP${j}
     \   ${vlan}=  expr  ${vlan} + ${Vnumber}
 	\   sleep   ${sleep}
-	cli    master     show running-config tenant
+	cli    master     show running-config tenant   timeout=120
 	enable  master  copy running-config config://config_tenant_new	
 	log  big scale configuration tenant delete
 	
     : FOR    ${j}    IN RANGE    0     ${Tnumber}
     \ 	config    master     no tenant FLAP${j}
     
-	cli    master     show running-config tenant
+	cli    master     show running-config tenant  timeout=120
    	
 
 vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
@@ -255,7 +255,7 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
 	rest_add_tenant_vns_scale    tenantcount=1   tname=FLAP    vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	rest_add_interface_to_all_vns      FLAP0     ${leaf1-a}    ethernet3   vlan=${vlan}	
 	sleep   ${sleep}	 
-	cli    master     show running-config tenant	
+	cli    master     show running-config tenant	timeout=120
 	enable  master  copy running-config config://config_vns_new
 	
  	log  big scale configuration tenant delete
@@ -267,7 +267,7 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     : FOR    ${j}    IN RANGE    1     ${vns}
     \ 	config    master    no interface segment V${j}   
 	config    master    no tenant FLAP0      
-	cli    master     show running-config tenant		
+	cli    master     show running-config tenant	 timeout=120	
  
 
 clear stats in controller switch

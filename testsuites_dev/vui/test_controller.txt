@@ -195,7 +195,7 @@ Test background ping
     should be true    ${result} == 0
 
 Test run command (helpers)
-    #[Tags]  skipped
+    [Tags]  skipped
     monitor reauth    master  ${false}
     run cmd test      c1
     sleep             20
@@ -204,4 +204,7 @@ Test run command (helpers)
     monitor reauth    master  ${true}
     sleep             20
     run cmd test      c1
+
+Test REST show version
+    get               c1    /api/v1/data/controller/core/version/appliance  retries=2
 
