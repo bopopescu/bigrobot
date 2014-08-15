@@ -825,24 +825,24 @@ S
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
 		count = int(count)
-		name = 's'
 		i = 1
 		j = 0
 		k = 0
-		helpers.log("Print:%d", count)
 		while (i <= count):
 			netName = name
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
+				helpers.sleep(5)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
 				return False
-			ipaddr = "%d.%d.%d.0" % (subnet, j, k)
-			subnet_ip = ipaddr + "/" + 24
+			ipaddr = "%s.%s.%s.0" % (subnet, j, k)
+			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
+				helpers.sleep(5)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -895,7 +895,6 @@ S
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		count = int(count)
-		name = 's'
 		i = 1
 		while (i <= count):
 			netName = name
@@ -909,3 +908,99 @@ S
 			i = i + 1
 		return True			
 		
+	def openstack_verify_segment_scale(self, tenantName, count):
+		'''Function to verify multiple segments in the controller
+			Input: tenantName , count , 
+			Output: show tenant will count the no of segments created in controller
+	    '''
+		t = test.Test()
+		c = t.controller('master')
+		tenantId = self.openstack_show_tenant(tenantName)
+		count = int(count)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
+		c.rest.get(url)
+		data = c.rest.content()
+		if len(data) == count:
+			helpers.test_log("All Openstack segments are present in controller")
+			return True	
+		else:
+			helpers.test_log("All Openstack segments are not present in controller")
+			return False
+		
+	def openstack_router_scale(self, extName, tName='p', rname='r', count=0):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		extId = self.openstack_show_net(extName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			routerName = rname
+			tenantName = tName
+			tenantName += str(i)
+			routerName += str(i)
+			tenantId = self.openstack_show_tenant(tenantName)
+			os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))
+			helpers.sleep(5)
+			routerId = self.openstack_show_router(routerName)
+			os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
+			i = i + 1
+		return True
+	
+	def openstack_router_scale_delete(self, rname='r', count=0):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			routerName = rname
+			routerName += str(i)
+			routerId = self.openstack_show_router(routerName)
+			os1.bash("neutron router-gateway-clear %s" % (routerId))
+			helpers.sleep(5)
+			os1.bash("neutron router-delete %s" % (routerName))
+			i = i + 1
+		return True
+	
+	def openstack_interface_to_router_scale(self, routerName, name='n', count=0):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		routerId = self.openstack_show_router(routerName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			subnetName = name
+			subnetName += str(i)
+			subnetId = self.openstack_show_subnet(subnetName)
+			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			i = i + 1
+		return True
+		
+	def openstack_interface_to_router_scale_delete(self, routerName, name='n', count=0):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		routerId = self.openstack_show_router(routerName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			subnetName = name
+			subnetName += str(i)
+			subnetId = self.openstack_show_subnet(subnetName)
+			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+			i = i + 1
+		return True
