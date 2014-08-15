@@ -2800,5 +2800,77 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
+    
+    def rest_set_vlan_mapping_mode(self, mode):
+        '''
+        Function to set vlan mapping to global mode
+        PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "global"}
+        PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "default"}
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/global-setting'
+        try:
+            c.rest.patch(url, {"vlan-mapping": mode})
+        except:
+            return False
+        else:
+            return True
 
+    def rest_delete_vlan_mapping_mode(self, mode=None):
+        '''
+           Function to delete vlan mapping 
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "global"}
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "default"}
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/global-setting'
+        if mode is None:
+            try:
+                c.rest.delete(url, {"vlan-mapping": "default"})
+            except:
+                return False
+            else:
+                return True
+        else:
+            try:
+                c.rest.delete(url, {"vlan-mapping": mode})
+            except:
+                return False
+            else:
+                return True            
+    
+    def rest_add_vlan_membership(self, tenant, segment, vlanid):
+        '''
+            Function to add vlan membership rule to segment under global vlan-mapping mode
+            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="T-1"]/segment[name="T-1-1"] {"member-vlan": 5}
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.test_log("Input arguments: tenant = %s segment = %s vlanid = %s" % (tenant, segment, vlanid))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]'  % (tenant, segment)
+        try:
+            c.rest.patch(url, {"member-vlan": vlanid})
+        except:
+            return False
+        else:
+            return True
+        
 
+    def rest_delete_vlan_membership(self, tenant, segment):
+        '''
+            Function to delete vlan membership rule to segment under global vlan-mapping mode
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="T-1"]/segment[name="T-1-1"]/member-vlan {}
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.test_log("Input arguments: tenant = %s segment = %s" % (tenant, segment))
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/member-vlan' % (tenant, segment)
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+        else:
+            return True
+        
