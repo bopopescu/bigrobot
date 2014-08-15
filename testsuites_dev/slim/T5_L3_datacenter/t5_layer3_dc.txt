@@ -1245,21 +1245,21 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.5.1
     Should Not Be True                              ${result}
     sleep                                           1
-    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
     Should Not Be Empty                             ${result}
-    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
-    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    ${count} =                                      REST ecmp nexthop count                 ${ecmpIndex}
     Should Be True                                  ${count} == 16
     sleep                                           1
     REST delete nexthopGroup ip                     External                                ecmp-A16                                10.99.28.1
     REST delete nexthopGroup ip                     External                                ecmp-A16                                10.98.28.1
     sleep                                           1
-    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
     Should Not Be Empty                             ${result}
-    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
-    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    ${count} =                                      REST ecmp nexthop count                 ${ecmpIndex}
     Should Be True                                  ${count} == 14
     sleep                                           1
     start traffic                                   ${stream1}
@@ -1428,21 +1428,21 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${diffC5} =                                     evaluate                                ${tx_17_ucast_cnt2B_2} - ${tx_17_ucast_cnt2B_1}
     ${diffC6} =                                     evaluate                                ${tx_19_ucast_cnt2B_2} - ${tx_19_ucast_cnt2B_1}
     stop traffic                                    ${stream1}
-    Should Be True                                  ${diffA2} > 40000
-    Should Be True                                  ${diffA3} > 40000
-    Should Be True                                  ${diffA4} > 40000
-    Should Be True                                  ${diffA5} > 40000
-    Should Be True                                  ${diffA6} > 40000
-    Should Be True                                  ${diffA7} > 40000
-    Should Be True                                  ${diffA8} > 40000
+    Should Be True                                  ${diffA2} > 20000
+    Should Be True                                  ${diffA3} > 20000
+    Should Be True                                  ${diffA4} > 20000
+    Should Be True                                  ${diffA5} > 20000
+    Should Be True                                  ${diffA6} > 20000
+    Should Be True                                  ${diffA7} > 20000
+    Should Be True                                  ${diffA8} > 20000
     Should Be True                                  ${diffA9} < 100
-    Should Be True                                  ${diffB2} > 40000
-    Should Be True                                  ${diffB3} > 40000
-    Should Be True                                  ${diffB4} > 40000
-    Should Be True                                  ${diffB5} > 40000
-    Should Be True                                  ${diffB6} > 40000
-    Should Be True                                  ${diffB7} > 40000
-    Should Be True                                  ${diffB8} > 40000
+    Should Be True                                  ${diffB2} > 20000
+    Should Be True                                  ${diffB3} > 20000
+    Should Be True                                  ${diffB4} > 20000
+    Should Be True                                  ${diffB5} > 20000
+    Should Be True                                  ${diffB6} > 20000
+    Should Be True                                  ${diffB7} > 20000
+    Should Be True                                  ${diffB8} > 20000
     Should Be True                                  ${diffB9} < 100
     Should Be True                                  ${diffC1} < 100 and ${diffC2} < 100 and ${diffC3} < 100 and ${diffC4} < 100 and ${diffC5} < 100 and ${diffC6} < 100 
     verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
@@ -1452,11 +1452,11 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.5.1
     Should Be True                                  ${result}
     sleep                                           1
-    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
     Should Not Be Empty                             ${result}
-    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
-    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    ${count} =                                      REST ecmp nexthop count                 ${ecmpIndex}
     Should Be True                                  ${count} == 16
     sleep                                           1    
     start traffic                                   ${stream1}
@@ -1645,7 +1645,129 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     Should Be True                                  ${diffC3} > 40000 or ${diffC4} > 40000 or ${diffC5}> 40000 or ${diffC6} > 40000
     verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
     
-    
+Verify add and delete a second member to nexthop group change to ecmp and back
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
+    REST add nexthop group                          External                        test
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "test"}
+    REST add nexthopGroup ip                        External                        test                    10.99.3.1
+
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
+    Should Be True                                  ${ecmpIndex} == 0
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=g->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.254.99.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.254.99.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           10
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    stop traffic                                    ${stream1}
+    Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 
+    Should Be True                                  ${diffA3} > 5000000 or ${diffA4} > 500000
+    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    REST add nexthopGroup ip                        External                                test                    10.99.1.1
+    sleep                                           1
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
+    Should Not Be True                              ${ecmpIndex} == 0
+    ${count} =                                      REST ecmp nexthop count                 ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           10
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    stop traffic                                    ${stream1}
+    Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
+    Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
+    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    REST delete nexthopGroup ip                     External                                test                    10.99.3.1
+    sleep                                           1
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
+    Should Be True                                  ${ecmpIndex} == 0
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           10
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    stop traffic                                    ${stream1}
+    Should Be True                                  ${diffA3} < 100 and ${diffA4} < 100 
+    Should Be True                                  ${diffA1} > 5000000 or ${diffA2} > 500000
+    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    REST delete nexthop group                       External                                test 
+
 
 
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
