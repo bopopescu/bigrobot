@@ -39,6 +39,15 @@ class DevConf(object):
         self.is_prompt_changed = False
         self._lock = False
 
+        self._logpath = helpers.bigrobot_log_path_exec_instance()
+        if not self._logpath:
+            self._logpath = '/tmp'
+        self._logfile = ('%s/devconf_conversion.%s.log'
+                         % (self._logpath, self._name))
+        helpers.file_write_append_once(self._logfile,
+                                       "\n\n--------- %s Devconf '%s'\n\n"
+                                       % (helpers.ts_long_local(), self._name))
+
         self._timeout = timeout if timeout else 30  # default timeout
 
         self.connect()
@@ -72,11 +81,11 @@ class DevConf(object):
                 if self._protocol == 'telnet':
                     helpers.log("Telnet to host %s, port %s (user:%s)"
                                 % (self._host, self._port, self._user))
-                    conn = Telnet(debug=self._debug)
+                    conn = Telnet(debug=self._debug, logfile=self._logfile)
                 elif self._protocol == 'ssh':
                     helpers.log("SSH connect to host %s, port %s %s"
                                     % (self._host, self._port, auth_info))
-                    conn = SSH2(debug=self._debug)
+                    conn = SSH2(debug=self._debug, logfile=self._logfile)
 
                 conn.connect(self._host, self._port)
 
@@ -93,6 +102,8 @@ class DevConf(object):
                     #       and manage it themself.
                 else:
                     conn.login(account)
+                helpers.log("Devconf conversation for '%s' logged to %s"
+                            % (self._name, self._logfile))
 
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
