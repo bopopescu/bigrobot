@@ -703,7 +703,7 @@ class AppController(object):
                     c.enable("show banner")
                     content = c.cli_content()
                 else:
-                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.enable("show banner")
                     content = c_user.cli_content()
                     c_user.close()
@@ -928,7 +928,7 @@ class AppController(object):
             # Get encoded password from key
             try:
                 if "admin" not in user:
-                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.enable(command)
                     content = c_user.cli_content()
                     c_user.close()
