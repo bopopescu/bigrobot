@@ -919,7 +919,11 @@ class Test(object):
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_password,
+                                             prompt_device_cli,
+                                             spine_error,
+                                             reboot_needed],
+                                     timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
@@ -950,7 +954,12 @@ class Test(object):
 
         try:
             # Match login or CLI prompt.
-            match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_login,
+                                             prompt_device_cli,
+                                             spine_stack_trace,
+                                             spine_error,
+                                             reboot_needed],
+                                     timeout=60)
             if match[0] == 0:
                 login()  # Found login prompt. Attempt to authenticate.
             elif match[0] == 1:
@@ -1044,17 +1053,17 @@ class Test(object):
 
     def power_cycle(self, node, minutes=5):
         self._pdu_mgt(node, 'reboot')
-        helpers.log("Power cycled device. Sleeping for %s minutes while it comes up"
-                    % minutes)
+        helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
         helpers.sleep(int(minutes) * 60)
 
     def power_down(self, node):
         self._pdu_mgt(node, 'off')
-        helpers.log("Powered down")
+        helpers.log("Powered down '%s'" % node)
 
     def power_up(self, node):
         self._pdu_mgt(node, 'on')
-        helpers.log("Powered up")
+        helpers.log("Powered up '%s'" % node)
 
     def initialize(self):
         """
