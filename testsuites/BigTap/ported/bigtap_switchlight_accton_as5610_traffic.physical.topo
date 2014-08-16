@@ -1,0 +1,28 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.9.18.7
+c2:
+    ip: 10.9.18.8    
+
+# Accton AS5610-52X 10G Switch
+s1:
+    ip: 10.9.19.2
+        
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+  tcl_server_ip: 10.9.19.232
+  tcl_server_port: 8009
+  ix_version: '7.10'
+  set_init_ping: false
+  ports:
+    a:
+      name: 1/1
+    b:
+      name: 1/2    
