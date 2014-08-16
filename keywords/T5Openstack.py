@@ -928,9 +928,9 @@ S
 			return False
 		
 	def openstack_router_scale(self, extName, tName='p', rname='r', count=0):
-		'''Function to add multiple tenants based on count
-		   Input: count and name
-		   Output: project will be added to neutron server
+		'''Function to add multiple routers to each tenant
+		   Input: count and external network
+		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
@@ -951,9 +951,9 @@ S
 		return True
 	
 	def openstack_router_scale_delete(self, rname='r', count=0):
-		'''Function to add multiple tenants based on count
-		   Input: count and name
-		   Output: project will be added to neutron server
+		'''Function to delete all routers for each tenant
+		   Input: count 
+		   Output:routers will be deleted for each tenant
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
@@ -970,9 +970,9 @@ S
 		return True
 	
 	def openstack_interface_to_router_scale(self, routerName, name='n', count=0):
-		'''Function to add multiple tenants based on count
-		   Input: count and name
-		   Output: project will be added to neutron server
+		'''Function to add multiple router interfaces to single tenant
+		   Input: count and name of the tenant router
+		   Output: L3 interfaces will be added to tenant router
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
@@ -988,9 +988,9 @@ S
 		return True
 		
 	def openstack_interface_to_router_scale_delete(self, routerName, name='n', count=0):
-		'''Function to add multiple tenants based on count
-		   Input: count and name
-		   Output: project will be added to neutron server
+		'''Function to delete all router interfaces from tenant router
+		   Input: count and router name
+		   Output: all interfaces will be deleted from tenant router
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
