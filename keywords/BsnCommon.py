@@ -124,6 +124,10 @@ class BsnCommon(object):
                     % helpers.prettify(t.topology_params()))
 
     def expr(self, s):
+        """
+        We implemented this keyword before becoming aware of the Robot
+        built-in 'evaluate' keyword. Please use 'evaluate' instead.
+        """
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
