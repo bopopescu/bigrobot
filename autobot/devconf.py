@@ -51,7 +51,7 @@ class DevConf(object):
         self._logpath = helpers.bigrobot_log_path_exec_instance()
         if not self._logpath:
             self._logpath = '/tmp'
-        self._logfile = ('%s/devconf_conversion.%s.log'
+        self._logfile = ('%s/devconf_conversation.%s.log'
                          % (self._logpath, self._name))
         helpers.file_write_append_once(self._logfile,
                                        "\n\n--------- %s Devconf '%s'\n\n"
