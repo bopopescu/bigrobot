@@ -277,6 +277,7 @@ Test multiple conditions - AND condition results in truth
     should be true   ${a} == ${true} and ${b} == ${true}
 
 Test Song's function
+    #[Tags]           skipped
     #${result}=       match dict entries   10.253.1.0   255.255.255.0
     ${result}=       match dict entries   10.253.1.0   255.255.254.0
     should not be empty   ${result}
