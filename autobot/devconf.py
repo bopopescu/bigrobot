@@ -11,7 +11,7 @@ import re
 
 class DevConf(object):
     """
-    Quiet level:
+    Quiet levels:
       0 - display everything (default)
       1 - suppress command output
       2 - suppress command

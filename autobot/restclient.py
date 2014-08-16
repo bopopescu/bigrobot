@@ -9,7 +9,7 @@ class RestClient(object):
     """
     REST Client for talking to RESTful web services.
 
-    Quiet level:
+    Quiet levels:
       0 - display everything (default)
       1 - suppress command output
       2 - suppress command
