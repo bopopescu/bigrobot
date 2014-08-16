@@ -1273,6 +1273,16 @@ def dict_merge(dict1, dict2):
     return dict(dict1.items() + dict2.items())
 
 
+def matched(val, match_list):
+    if not is_list(match_list):
+        match_list = [match_list]
+    return int(val) in match_list
+
+
+def not_matched(val, match_list):
+    return not matched(val, match_list)
+
+
 def dict_compare(dict1, dict2, ignore_keys=None):
     """
     Compare to see whether dict1 is the same as dict2. You can provide a list
