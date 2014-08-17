@@ -2212,7 +2212,6 @@ class BigTap(object):
          """
         self.bigtap_delete_policy()
         self.bigtap_delete_address_group()
-
         return True
 
 # Mingtao
