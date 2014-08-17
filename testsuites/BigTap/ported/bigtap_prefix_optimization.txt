@@ -253,14 +253,14 @@ T2.101 Ipv4 prefix list optimization scale
 	[Tags]   scaling    optimization    BigTap   blackbird    
 	
 T2.102 Ipv6 prefix list optimization scale
-     Config number of ipv6 entries        G1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     512  
-     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}
+     Config number of ipv6 entries        G1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     512  	 
      Config ipv6 list src                 P1    "G1"   10
      Config ipv6 list dst                 P1    "G1"   20
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
 
-	[Tags]   scaling  optimization   BigTap   blackbird    
+	[Tags]   scaling  optimization   BigTap   blackbird  runthis    
 
    

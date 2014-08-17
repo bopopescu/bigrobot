@@ -234,19 +234,42 @@ class BigTap(object):
         """
         t = test.Test()
         c = t.controller('master')
-
+        c.rest.get('/rest/v1/system/version')
+        content = c.rest.content()
+        version_string = content[0]['controller']
+        helpers.log("version string is %s" % version_string)
         url = '/api/v1/data/controller/applications/bigtap/info'
         c.rest.get(url)
-
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
         data = c.rest.content()
-        if not data[0][feature]:
-            helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-            return "False"
-        helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
-        return str(data[0][feature])
+        if "4.0.0" in str(version_string):
+            if ("l3-l4" in feature) or ("full-match" in feature):
+                if "l3-l4-mode" in feature:
+                    matchcondition = "bigtap-l3l4"
+                elif "offset" in feature:
+                    matchcondition = "bigtap-offset-match"
+                else:
+                    matchcondition = "bigtap-full-match"
+                if (data[0]["match-mode"] == matchcondition):
+                    return "True"
+                else:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+            else:
+                if not data[0][feature]:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+                helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+                return str(data[0][feature])
+
+        else:
+            if not data[0][feature]:
+                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                return "False"
+            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+            return str(data[0][feature])
 
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
@@ -2079,14 +2102,32 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/feature'
-                c.rest.patch(url, {str(feature_name): False})
+                c.rest.get('/rest/v1/system/version')
+                content = c.rest.content()
+                version_string = content[0]['controller']
+                helpers.log("version string is %s" % version_string)
+                if "4.0.0" in str(version_string):
+                    if ("l3-l4" in str(feature_name)):
+                        matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
+                        helpers.log("Data to be patched is %s" % data)
+                    else:
+                        data = {str(feature_name): False}
+                        helpers.log("Data to be patched is %s" % data)
+                else:
+                    data = {str(feature_name): False}
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
-                return True
+                try:
+                    url = '/api/v1/data/controller/applications/bigtap/feature'
+                    c.rest.patch(url, data)
+                except:
+                    return False
+                else:
+                    helpers.test_log(c.rest.content_json())
+                    return True
 
 # Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self, feature_name):
@@ -2117,7 +2158,13 @@ class BigTap(object):
                 helpers.log("version string is %s" % version_string)
                 if "4.0.0" in str(version_string):
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
-                        data = {"match-mode": str(feature_name)}
+                        if "l3-l4-mode" in str(feature_name):
+                            matchcondition = "l3-l4-match"
+                        elif "offset" in str(feature_name):
+                            matchcondition = "l3-l4-offset-match"
+                        else:
+                            matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
                         helpers.log("Data to be patched is %s" % data)
                     else:
                         data = {str(feature_name): True}
@@ -2165,7 +2212,6 @@ class BigTap(object):
          """
         self.bigtap_delete_policy()
         self.bigtap_delete_address_group()
-
         return True
 
 # Mingtao

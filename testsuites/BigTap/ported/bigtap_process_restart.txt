@@ -13,11 +13,6 @@ Library  keywords/Ixia.py
 
 * Variable
 ${switch_1_alias}  AF1
-${switchlight_version}  SwitchLight 2.0.2
-${netmask}  18
-${gateway}  10.192.64.1
-${dns_server}  10.192.3.1
-${dns_domain}  bigswitch.com
 
 ${filter_1}  ethernet1  
 ${filter_nick_1}  F1
@@ -33,214 +28,214 @@ ${delivery_nick_2}  D2
 
 
 *Test Case
-verify configuration is successful
+TC1: Verify configuration is successful
     verify config
     [Tags]  bigtap  ha  
      
-Switch HA: Restart Process OFAD on filter switch
+TC2: Switch HA: Restart Process OFAD on filter switch
     verify config 
     bash restart process  s1  ofad
     Sleep  30
     verify config    
     [Tags]  bigtap  ha       
 
-Switch HA: Restart Process OFAD on delivery switch
+TC3: Switch HA: Restart Process OFAD on delivery switch
     verify config 
     bash restart process  s2  ofad
     Sleep  30
     verify config    
     [Tags]  bigtap  ha  
 
-Switch HA: Restart Process snmpd on filter switch
+TC4: Switch HA: Restart Process snmpd on filter switch
     verify config 
     bash restart process  s1  snmpd
     Sleep  30
     verify config    
     [Tags]  bigtap  ha    
 
-Switch HA: Restart Process ntp on filter switch
+TC5: Switch HA: Restart Process ntp on filter switch
     verify config 
     bash restart process  s1  ntp
     Sleep  30
     verify config    
     [Tags]  bigtap  ha    
 
-Switch HA: Restart Process fancontrol on filter switch
+TC6: Switch HA: Restart Process fancontrol on filter switch
     verify config 
     bash restart process  s1  fancontrol
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
     
-Switch HA: Restart Process fancontrol on delivery switch
+TC7: Switch HA: Restart Process fancontrol on delivery switch
     verify config 
     bash restart process  s2  fancontrol
     Sleep  30
     verify config    
     [Tags]  bigtap  ha    
 
-Switch HA: Restart Process RSYSLOG on filter switch
+TC8: Switch HA: Restart Process RSYSLOG on filter switch
     verify config 
     bash restart process  s1  rsyslog
     Sleep  30
     verify config    
     [Tags]  bigtap  ha    
 
-Switch HA: Restart Process networking on filter switch
+TC9: Switch HA: Restart Process networking on filter switch
     verify config 
     bash restart process  s1  networking
     Sleep  30
     verify config    
     [Tags]  bigtap  ha   
 
-Switch HA: Restart Process networking on delivery switch
+TC10: Switch HA: Restart Process networking on delivery switch
     verify config 
     bash restart process  s2  networking
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Switch HA: Restart Process ssh on filter switch
+TC11: Switch HA: Restart Process ssh on filter switch
     verify config 
     bash restart process  s1  ssh
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Switch HA: Restart filter switch
+TC12: Switch HA: Restart filter switch
     verify config 
     cli restart switch  s1  save_config="yes"
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Switch HA: Restart delivery switch
+TC13: Switch HA: Restart delivery switch
     verify config 
     cli restart switch  s2  save_config="yes"
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
   
-Controller HA: Restart Process Floodlight on Master Controller:
+TC14: Controller HA: Restart Process Floodlight on Master Controller:
     verify config 
     restart process on controller  floodlight  Master
     Sleep  90
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process Floodlight on Slave Controller:
+TC15: Controller HA: Restart Process Floodlight on Slave Controller:
     verify config 
     restart process on controller  floodlight  Slave
     Sleep  90
     verify config    
     [Tags]  bigtap  ha 
 
-Controller HA: Restart Process keepalived on Master Controller:
+TC16: Controller HA: Restart Process keepalived on Master Controller:
     verify config 
     restart process on controller  keepalived  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process keepalived on Slave Controller:
+TC17: Controller HA: Restart Process keepalived on Slave Controller:
     verify config 
     restart process on controller  keepalived  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha         
     
-Controller HA: Restart Process snmpd on Master Controller:
+TC18: Controller HA: Restart Process snmpd on Master Controller:
     verify config 
     restart process on controller  snmpd  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process snmpd on Slave Controller:
+TC19: Controller HA: Restart Process snmpd on Slave Controller:
     verify config 
     restart process on controller  snmpd  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha    
  
-Controller HA: Restart Process rsyslogd on Master Controller:
+TC20: Controller HA: Restart Process rsyslogd on Master Controller:
     verify config 
     restart process on controller  rsyslogd  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process rsyslogd on Slave Controller:
+TC21: Controller HA: Restart Process rsyslogd on Slave Controller:
     verify config 
     restart process on controller  rsyslogd  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha     
  
-Controller HA: Restart Process ntp on Master Controller:
+TC22: Controller HA: Restart Process ntp on Master Controller:
     verify config 
     restart process on controller  ntp  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process ntp on Slave Controller:
+TC23: Controller HA: Restart Process ntp on Slave Controller:
     verify config 
     restart process on controller  ntp  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha  
  
-Controller HA: Restart Process collectd on Master Controller:
+TC24: Controller HA: Restart Process collectd on Master Controller:
     verify config 
     restart process on controller  collectd  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process collectd on Slave Controller:
+TC25: Controller HA: Restart Process collectd on Slave Controller:
     verify config 
     restart process on controller  collectd  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha  
 
-Controller HA: Restart Process tacacs_plus on Master Controller:
+TC26: Controller HA: Restart Process tacacs_plus on Master Controller:
     verify config 
     restart process on controller  tacacs_plus  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
  
-Controller HA: Restart Process apache2 on Master Controller:
+TC27: Controller HA: Restart Process apache2 on Master Controller:
     verify config 
     restart process on controller  apache2  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Restart Process apache2 on Slave Controller:
+TC28: Controller HA: Restart Process apache2 on Slave Controller:
     verify config 
     restart process on controller  apache2  Slave
     Sleep  30
     verify config    
     [Tags]  bigtap  ha 
 
-Controller HA: Reboot Slave Controller:
+TC29: Controller HA: Reboot Slave Controller:
     verify config 
     restart controller  Slave
     Sleep  120
     verify config    
     [Tags]  bigtap  ha  
     
-Controller HA: Reboot Master Controller:
+TC30: Controller HA: Reboot Master Controller:
     verify config 
     restart controller  Master
     Sleep  120    
     verify config    
     [Tags]  bigtap  ha
 
-Controller HA: Flap eth0 on Master Controller
+TC31: Controller HA: Flap eth0 on Master Controller
     verify config
     flap eth0 controller  Master
     Sleep  60
@@ -251,10 +246,10 @@ Controller HA: Flap eth0 on Master Controller
 
 ha suite setup
     base suite setup
-    rest add switch alias  s1  APP-REGRESS-1
-    rest add switch alias  s2  APP-REGRESS-2
-    rest add switch alias  s3  APP-REGRESS-5
-    rest add switch alias  s4  APP-REGRESS-6    
+    rest add switch alias  s1  app-rlb9-2
+    rest add switch alias  s2  app-rlb9-3
+    rest add switch alias  s3  app-rly2-1
+    rest add switch alias  s4  app-rs4810-1     
     rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
     rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}          
     rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
@@ -279,14 +274,6 @@ verify config
     Should be true  ${verify_policy2}
     ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
-    ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  4  
-    ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  4   
-    ${switchFlowVal3} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal3}  4      
-    ${switchFlowVal4} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal4}  2  
 
     
 ha suite teardown
