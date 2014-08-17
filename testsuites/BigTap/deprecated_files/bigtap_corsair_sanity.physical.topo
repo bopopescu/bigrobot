@@ -1,0 +1,43 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.192.97.21
+
+c2:
+  ip: 10.192.97.20
+
+s1:
+  ip: 10.192.75.177
+
+s2:
+  ip: 10.192.75.178
+
+s3:
+  ip: 10.192.75.179
+
+s4:
+  ip: 10.192.88.87
+  protocol: telnet
+  
+    
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.192.85.151
+  tcl_server_ip: 10.194.64.172
+  tcl_server_port: 8009
+  ix_version: '7.10'
+  set_init_ping: false
+  ports:
+    a:
+      name: 4/21 
+    b:
+      name: 4/22 
+    c:
+      name: 4/24
+    d:
+      name: 4/18  
