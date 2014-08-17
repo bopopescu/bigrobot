@@ -1925,13 +1925,13 @@ class T5Platform(object):
         if options[0] == 1:
             helpers.log('USER INFO:  image is staged already ')
             return True
-        
+
         c.send("yes")
-        
-        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition']) 
+
+        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition'])
         if options[0] == 0:
-            c.send("yes")               
-            
+            c.send("yes")
+
         try:
             c.expect(timeout=900)
         except:
@@ -1969,8 +1969,8 @@ class T5Platform(object):
         c.config('')
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
-        c.send(string)        
-        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)  
+        c.send(string)
+        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
@@ -2842,7 +2842,7 @@ class T5Platform(object):
         n_console.send(ip_addr)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect([r'Error:.*',r'.*Must not be.*',r'IP address.*'])
+            n_console.expect([r'Error:.*', r'.*Must not be.*', r'IP address.*'])
             return True
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
@@ -2893,7 +2893,7 @@ class T5Platform(object):
         n_console.send(netmask)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect([r'Error:.*',r'.*Must be between'])
+            n_console.expect([r'Error:.*', r'.*Must be between'])
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
 
@@ -2962,7 +2962,7 @@ class T5Platform(object):
         n_console.send(dnsserver)
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case")
-            n_console.expect([r'Error:.*',r'.*Must not be.*'])
+            n_console.expect([r'Error:.*', r'.*Must not be.*'])
 #        else:
 #            n_console.expect(r'Please choose an option:.*[\r\n$]')
 
@@ -3611,13 +3611,13 @@ class T5Platform(object):
     def  rest_verify_testpath_error_code(self, errorCode, **kwargs):
         '''
             This function will query the controller for the test packet path controller view for the given error code
-            Returns True if error code is a match 
+            Returns True if error code is a match
         '''
-        
+
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/test/path/controller-view'
-        
+
         if(kwargs.get('dst-segment')):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
@@ -3632,7 +3632,7 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
-            
+
         result = c.rest.get(url)['content']
         try:
             logicalError = result[0]['summary'][0]['logical-error']
@@ -3667,8 +3667,8 @@ class T5Platform(object):
                     helpers.log("Test Path Sucees In Controller View. No Errors Were Detected")
                     helpers.log("Error Code is not a match : Returning False")
                     return False
-            
-    
+
+
     def rest_configure_testpath_fabric_view(self, **kwargs):
         '''
             This function will set up the fabric view for the controller.
@@ -3888,7 +3888,7 @@ class T5Platform(object):
 
         url = '/api/v1/data/controller/applications/bcf/test/path/expired-test'
         result = c.rest.delete(url)
-        
+
 
     def cli_walk_exec(self, string='', file_name=None, padding=''):
         ''' cli_exec_walk
@@ -3907,8 +3907,8 @@ class T5Platform(object):
         # Match controller prompt for various modes (cli, enable, config, bash, etc).
         # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
         prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
-        c.expect(prompt_re)        
-        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        c.expect(prompt_re)
+        # c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -3992,6 +3992,7 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
+
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)):
                 if key != 'leaf0a-eth1' and key != 'all':
@@ -4044,18 +4045,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
-                #skip command below due to PR BVS-2170
+
+                # skip command below due to PR BVS-2170
                 if re.match(r'.*show logical-router incomplete.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue  
-                
-                #skip command below due to PR BSC-6030
+                    continue
+
+                # skip command below due to PR BSC-6030
                 if re.match(r'.*show zerotouch velocity.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue                                  
+                    continue
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4091,8 +4092,8 @@ class T5Platform(object):
         # Match controller prompt for various modes (cli, enable, config, bash, etc).
         # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
         prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
-        c.expect(prompt_re)        
-        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        c.expect(prompt_re)
+        # c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -4151,7 +4152,8 @@ class T5Platform(object):
                 continue
 
             # Ignoring sub-commands under 'debug'
-            if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
+            if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or \
+            key == "netconfig" or key == "python" or key == "rest" or key == "compare" or key == "upgrade" or key == "copy" or key == "delete":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
@@ -4217,12 +4219,6 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
-            if (re.match(r' show vft', string)):
-                helpers.log("Ignoring line - %s" % string)
-                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
-                num = num - 1
-                continue
-
             # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
@@ -4274,18 +4270,18 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
-                #skip command below due to PR BVS-2170
+
+                # skip command below due to PR BVS-2170
                 if re.match(r'.*show logical-router incomplete.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue    
-                
-                  #skip command below due to PR BSC-6030
+                    continue
+
+                # skip command below due to PR BSC-6030
                 if re.match(r'.*show zerotouch velocity.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue                            
+                    continue
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4319,10 +4315,10 @@ class T5Platform(object):
         # Match controller prompt for various modes (cli, enable, config, bash, etc).
         # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
         prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
-        c.expect(prompt_re)        
-        #c.expect(r'[\r\n\x07][\w-]+[#>] ')
-        #prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
-        #c.expect(prompt_re)
+        c.expect(prompt_re)
+        # c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
+        # c.expect(prompt_re)
         content = c.cli_content()
         helpers.log("********** CONTENT ************\n%s" % content)
 
@@ -4403,7 +4399,8 @@ class T5Platform(object):
                     helpers.log("Ignoring line - '%s'" % line)
                     num = num - 1
                     continue
-                if key == "debug" or key == "terminal"  or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
+                if key == "debug" or key == "terminal"  or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or \
+                key == "ping" or key == "watch" or key == "upgrade" or key == "copy" or key == "delete":
                     helpers.log("Ignore line '%s'" % line)
                     num = num - 1
                     continue
@@ -4485,7 +4482,11 @@ class T5Platform(object):
                     helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
                     num = num - 1
                     continue
-
+                # skip 'show lag' (PR BSC-6121)
+                if (re.match(r' show lag', string)):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
                 if (re.match(r'enable-endpoint-flap-protection', key)):
                     helpers.log("Ignoring line - %s" % string)
                     helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2071")
@@ -4496,17 +4497,17 @@ class T5Platform(object):
                     helpers.log("Ignore line  - '%s'" % string)
                     num = num - 1
                     continue
-           
+
                 if re.match(r'.*hashed-password.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue   
-                                
-                #skip command below due to PR BSC-6009
+                    continue
+
+                # skip command below due to PR BSC-6009
                 if re.match(r'.*zerotouch device.*', string) or re.match(r'.*zerotouch unmanaged-device.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue                   
+                    continue
 
                 if re.match(r'All', line):
                     helpers.log("Don't need to loop through exec commands- '%s'" % line)
@@ -4527,18 +4528,18 @@ class T5Platform(object):
                         helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                         num = num - 1
                         continue
-                    
-                    #skip command below due to PR BVS-2170
+
+                    # skip command below due to PR BVS-2170
                     if re.match(r'.*show logical-router incomplete.*', string):
                         helpers.log("Ignoring line - %s" % string)
                         num = num - 1
-                        continue    
-                    
-                    #skip command below due to PR BSC-6030
+                        continue
+
+                    # skip command below due to PR BSC-6030
                     if re.match(r'.*show zerotouch velocity.*', string):
                         helpers.log("Ignoring line - %s" % string)
                         num = num - 1
-                        continue                                       
+                        continue
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
@@ -4564,7 +4565,7 @@ class T5Platform(object):
                     # string after (stripped control char)
                     helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str1))
                     helpers.log("stripped Prompt1: %s" % helpers.strip_ctrl_chars(prompt_str2))
-                    
+
                     prompt1 = helpers.strip_ctrl_chars(prompt_str1)
                     prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
@@ -4640,7 +4641,7 @@ class T5Platform(object):
             if config_mode is True :
                 if multiline is not None:
                     c.config(str(multiline))
-                    c.send(cli_string, no_cr=True)                    
+                    c.send(cli_string, no_cr=True)
                 else:
                     c.config('')
                     c.send(cli_string, no_cr=True)
@@ -4876,7 +4877,7 @@ class T5Platform(object):
         c = t.controller(node)
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         helpers.log("get switch fabric connection state")
- 
+
         c.rest.get(url)
         data = c.rest.content()
         info = []
@@ -4888,7 +4889,7 @@ class T5Platform(object):
                             info.append(data[i]['name'])
         helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)
         return info
-    
+
     def rest_get_disconnect_switch(self, node='master'):
         """
         Get fabric connection state of the switch
@@ -4903,7 +4904,7 @@ class T5Platform(object):
         c = t.controller(node)
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         helpers.log("get switch fabric connection state")
- 
+
         c.rest.get(url)
         data = c.rest.content()
         info = []
@@ -5000,7 +5001,7 @@ class T5Platform(object):
         c.config('')
         string = 'upgrade launch ' + option
         c.send(string)
-        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)       
+        c.expect(r'[\r\n].+ \("y" or "yes" to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
@@ -5045,80 +5046,80 @@ class T5Platform(object):
 
 
     def rest_add_tenant_vns_scale(self, tenantcount='1', tname='T', tenant_create=None,
-                                        vnscount='1',  vname='V', vns_create='yes',
-                                        vns_ip=None, base="100.0.0.100", step="0.1.0.0", mask="24" 
+                                        vnscount='1', vname='V', vns_create='yes',
+                                        vns_ip=None, base="100.0.0.100", step="0.1.0.0", mask="24"
                                         ):
         '''
         Function to add l3 endpoint to all created vns
         Input: tennat , switch , interface
         The ip address is taken from the logical interface, the last byte is modified to 253
-        output : will add end into all vns in a tenant 
+        output : will add end into all vns in a tenant
         '''
 
         t = test.Test()
-        c = t.controller('master')         
- 
-        t5 = T5.T5() 
-        l3 = T5L3.T5L3()           
-        helpers.test_log("Entering ==> rest_add_tenant_vns_scale " )  
-                
-        for count in range(0,int(tenantcount)):
-            tenant = tname+str(count)
-            
+        c = t.controller('master')
+
+        t5 = T5.T5()
+        l3 = T5L3.T5L3()
+        helpers.test_log("Entering ==> rest_add_tenant_vns_scale ")
+
+        for count in range(0, int(tenantcount)):
+            tenant = tname + str(count)
+
             if tenant_create == 'yes':
-                if not t5.rest_add_tenant(tenant):      
-                    helpers.test_failure("USER Error: tenant is NOT configured successfully")           
-            elif  tenant_create is None:                 
-                if (re.match(r'None.*', self.cli_show_tenant(tenant))):                              
-                    helpers.test_log("tenant: %s  does not exist,  creating tenant" )      
-                    if not t5.rest_add_tenant(tenant):      
-                        helpers.test_failure("USER Error: tenant is NOT configured successfully")   
-                                                
-            if vns_create == 'yes' :  
-                helpers.test_log("creating tenant L2 vns" )            
-                if not t5.rest_add_vns_scale(tenant, vnscount,vname):
-                    helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant)  
+                if not t5.rest_add_tenant(tenant):
+                    helpers.test_failure("USER Error: tenant is NOT configured successfully")
+            elif  tenant_create is None:
+                if (re.match(r'None.*', self.cli_show_tenant(tenant))):
+                    helpers.test_log("tenant: %s  does not exist,  creating tenant")
+                    if not t5.rest_add_tenant(tenant):
+                        helpers.test_failure("USER Error: tenant is NOT configured successfully")
+
+            if vns_create == 'yes' :
+                helpers.test_log("creating tenant L2 vns")
+                if not t5.rest_add_vns_scale(tenant, vnscount, vname):
+                    helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant)
             if vns_ip is not None:
                 i = 1
-                while  (i<=int(vnscount)):
-                    vns=vname + str(i)
+                while  (i <= int(vnscount)):
+                    vns = vname + str(i)
                     l3.rest_add_router_intf(tenant, vns)
-                    if not l3.rest_add_vns_ip(tenant,vns,base,mask): 
-                        helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant) 
-                    ip_addr  = helpers.get_next_address('ipv4', base, step)
-                    base = ip_addr 
-                    i = i + 1                                 
-            c.cli('show running-config tenant')['content']                       
-            
+                    if not l3.rest_add_vns_ip(tenant, vns, base, mask):
+                        helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant)
+                    ip_addr = helpers.get_next_address('ipv4', base, step)
+                    base = ip_addr
+                    i = i + 1
+            c.cli('show running-config tenant')['content']
+
         return True
 
-    
+
     def cli_show_tenant(self, tenant):
         '''
         show tenant
-        Input: tenant  
-        Output:  
+        Input: tenant
+        Output:
         Author: Mingtao
         '''
         t = test.Test()
-        c = t.controller('master')         
-        cli= 'show tenant ' + tenant
-        content = c.cli(cli)['content']    
-        temp = helpers.strip_cli_output(content)        
+        c = t.controller('master')
+        cli = 'show tenant ' + tenant
+        content = c.cli(cli)['content']
+        temp = helpers.strip_cli_output(content)
         return temp
 
-    def cli_show_vns(self, tenant,vns):
+    def cli_show_vns(self, tenant, vns):
         '''
         show tenant
-        Input: tenant  
-        Output:  
+        Input: tenant
+        Output:
         Author: Mingtao
         '''
         t = test.Test()
-        c = t.controller('master')   
-       
-        cli= 'show tenant ' + tenant + ' segment ' + vns
-        content = c.cli(cli)['content']    
-        temp = helpers.strip_cli_output(content)        
+        c = t.controller('master')
+
+        cli = 'show tenant ' + tenant + ' segment ' + vns
+        content = c.cli(cli)['content']
+        temp = helpers.strip_cli_output(content)
         return temp
 
