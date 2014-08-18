@@ -206,10 +206,15 @@ Test run command (helpers)
     run cmd test      c1
 
 Test REST show version
-    #[Tags]  skipped
+    [Tags]  skipped
     get               c1    /api/v1/data/controller/core/version/appliance  retries=2  quiet=5
     cli               c1    show user  quiet=3
 
 Test console
     [Tags]  skipped
     test console      c1
+
+Test node reconnect
+    #[Tags]  skipped
+    test node reconnect   c1
+
