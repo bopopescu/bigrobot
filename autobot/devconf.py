@@ -10,6 +10,15 @@ import re
 
 
 class DevConf(object):
+    """
+    Quiet levels:
+      0 - display everything (default)
+      1 - suppress command output
+      2 - suppress command
+      3 - reserved
+      4 - reserved
+      5 - suppress all output
+    """
     def __init__(self, host=None, user=None, password=None,
                  port=None,
                  console_info=None,
@@ -38,6 +47,15 @@ class DevConf(object):
         self._mode = 'cli'
         self.is_prompt_changed = False
         self._lock = False
+
+        self._logpath = helpers.bigrobot_log_path_exec_instance()
+        if not self._logpath:
+            self._logpath = '/tmp'
+        self._logfile = ('%s/devconf_conversation.%s.log'
+                         % (self._logpath, self._name))
+        helpers.file_write_append_once(self._logfile,
+                                       "\n\n--------- %s Devconf '%s'\n\n"
+                                       % (helpers.ts_long_local(), self._name))
 
         self._timeout = timeout if timeout else 30  # default timeout
 
@@ -72,11 +90,11 @@ class DevConf(object):
                 if self._protocol == 'telnet':
                     helpers.log("Telnet to host %s, port %s (user:%s)"
                                 % (self._host, self._port, self._user))
-                    conn = Telnet(debug=self._debug)
+                    conn = Telnet(debug=self._debug, logfile=self._logfile)
                 elif self._protocol == 'ssh':
                     helpers.log("SSH connect to host %s, port %s %s"
                                     % (self._host, self._port, auth_info))
-                    conn = SSH2(debug=self._debug)
+                    conn = SSH2(debug=self._debug, logfile=self._logfile)
 
                 conn.connect(self._host, self._port)
 
@@ -93,6 +111,8 @@ class DevConf(object):
                     #       and manage it themself.
                 else:
                     conn.login(account)
+                helpers.log("Devconf conversation for '%s' logged to %s"
+                            % (self._name, self._logfile))
 
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
@@ -163,7 +183,7 @@ class DevConf(object):
         # print("!!!!!!! DEVCONF_LOCK: %s clear lock" % self.name())
         return self._lock
 
-    def send(self, cmd, no_cr=False, quiet=False, level=4):
+    def send(self, cmd, no_cr=False, quiet=0, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's send(). Use with caution!!!
@@ -177,7 +197,7 @@ class DevConf(object):
         if self.is_locked():
             helpers.sleep(3)
         self.set_lock()
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Send command: '%s'" % cmd, level=level)
         if no_cr is False:
             cmd = ''.join((cmd, '\r'))
@@ -211,16 +231,22 @@ class DevConf(object):
             _buffer = '\n' + self.conn.buffer.__str__()
         msg = ("\n"
                "==== Expect error (Start) ====\n"
-               "Error descr  : %s\n"
-               "Expect prompt: %s\n"
-               "Expect buffer: %s\n"
+               "Exception type     : %s\n"
+               "Exception value    : %s\n"
+               "Exception traceback:\n%s\n"
+               "Error descr        : %s\n"
+               "Expect prompt      : %s\n"
+               "Expect buffer      : %s\n"
                "==== Expect error (End) ===="
-               % (descr, self.prompt_str(prompt), _buffer))
+               % (helpers.exception_info_type(),
+                  helpers.exception_info_value(),
+                  helpers.indent_str(helpers.exception_info_traceback()),
+                  descr, self.prompt_str(prompt), _buffer))
         helpers.log(msg)
         self.clear_lock()
         helpers.test_error("Devconf expect exception", soft_error)
 
-    def expect(self, prompt=None, timeout=None, quiet=False, level=4):
+    def expect(self, prompt=None, timeout=None, quiet=0, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's expect(). Use with caution!!!
@@ -242,14 +268,14 @@ class DevConf(object):
             prompt = helpers.list_flatten(prompt)
 
         if timeout: self.timeout(timeout)
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Expecting prompt: %s" % self.prompt_str(prompt),
                         level=level)
 
         try:
             ret_val = self.conn.expect(prompt)
             self.last_result = {'content': self.conn.response}
-            if not quiet:
+            if helpers.not_matched(quiet, [1, 5]):
                 helpers.log("Expect content:\n%s%s"
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
@@ -262,13 +288,14 @@ class DevConf(object):
             raise
         if timeout: self.timeout()
 
-        helpers.log("Expect prompt matched (%s, '%s')"
-                    % (ret_val[0], helpers.re_match_str(ret_val[1])))
+        if helpers.not_matched(quiet, [1, 5]):
+            helpers.log("Expect prompt matched (%s, '%s')"
+                        % (ret_val[0], helpers.re_match_str(ret_val[1])))
 
         self.clear_lock()
         return ret_val
 
-    def waitfor(self, prompt, timeout=None, quiet=False, level=4):
+    def waitfor(self, prompt, timeout=None, quiet=0, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's waitfor(). Use with caution!!!
@@ -293,7 +320,7 @@ class DevConf(object):
             prompt = helpers.list_flatten(prompt)
 
         if timeout: self.timeout(timeout)
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Expecting waitfor prompt: %s"
                         % self.prompt_str(prompt), level=level)
 
@@ -301,7 +328,7 @@ class DevConf(object):
             ret_val = self.conn.waitfor(prompt)
 
             self.last_result = { 'content': self.conn.response }
-            if not quiet:
+            if helpers.not_matched(quiet, [2, 5]):
                 helpers.log("Waitfor (expect) content:\n%s%s"
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
@@ -315,14 +342,15 @@ class DevConf(object):
             raise
         if timeout: self.timeout()
 
-        helpers.log("Expect prompt matched (%s, '%s')"
-                    % (ret_val[0], helpers.re_match_str(ret_val[1])))
+        if helpers.not_matched(quiet, [1, 5]):
+            helpers.log("Expect prompt matched (%s, '%s')"
+                        % (ret_val[0], helpers.re_match_str(ret_val[1])))
 
         self.clear_lock()
         return ret_val
 
 
-    def cmd(self, cmd, quiet=False, mode=None, prompt=None,
+    def cmd(self, cmd, quiet=0, mode=None, prompt=None,
             timeout=None, level=5):
         if self.is_locked():
             helpers.sleep(3)
@@ -343,7 +371,7 @@ class DevConf(object):
                 helpers.log("Resetting expect prompt to default")
                 self.conn.set_prompt()
 
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Execute command: '%s' (timeout: %s)"
                         % (cmd, timeout), level=level)
 
@@ -353,7 +381,7 @@ class DevConf(object):
         self.conn.execute(cmd)
         self.last_result = { 'content': self.conn.response }
 
-        if not quiet:
+        if helpers.not_matched(quiet, [1, 5]):
             helpers.log("Command content:\n%s" % self.content(), level=level)
 
         if timeout: self.timeout()
@@ -428,10 +456,10 @@ class BsnDevConf(DevConf):
     def exit_bash_mode(self, new_mode):
         self.mode(self._mode_before_bash)
         helpers.log("Switching from bash to %s mode" % new_mode, level=5)
-        super(BsnDevConf, self).cmd('exit', mode='bash', quiet=True)
+        super(BsnDevConf, self).cmd('exit', mode='bash', quiet=5)
         helpers.log("Current mode is %s" % self.mode())
 
-    def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None,
+    def _cmd(self, cmd, quiet=0, mode='cmd', prompt=None,
              timeout=None, level=5):
 
         if helpers.is_extreme(self.platform()):
@@ -453,15 +481,15 @@ class BsnDevConf(DevConf):
                 helpers.log("Switching from enable to %s mode" % mode,
                             level=level)
                 super(BsnDevConf, self).cmd('exit', mode='enable',
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
             elif self.is_config():
                 if helpers.is_arista(self.platform()):
                     helpers.test_error("For Arista, you cannot switch from"
                                        " enable back to %s mode" % mode)
                 helpers.log("Switching from config to %s mode" % mode,
                             level=level)
-                super(BsnDevConf, self).cmd('end', mode='config', quiet=True)
-                super(BsnDevConf, self).cmd('exit', mode='enable', quiet=True)
+                super(BsnDevConf, self).cmd('end', mode='config', quiet=5)
+                super(BsnDevConf, self).cmd('exit', mode='enable', quiet=5)
         elif mode == 'enable':
             if self.is_bash():
                 self.exit_bash_mode(mode)
@@ -470,12 +498,12 @@ class BsnDevConf(DevConf):
                 helpers.log("Switching from cli to %s mode" % mode,
                             level=level)
                 super(BsnDevConf, self).cmd('enable', mode='cli',
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode,
                             level=level)
                 super(BsnDevConf, self).cmd('end', mode='config',
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
         elif mode == 'config':
             if self.is_bash():
                 self.exit_bash_mode(mode)
@@ -484,14 +512,14 @@ class BsnDevConf(DevConf):
                 helpers.log("Switching from cli to %s mode" % mode,
                             level=level)
                 super(BsnDevConf, self).cmd('enable', mode='cli',
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
                 super(BsnDevConf, self).cmd('configure', mode='enable',
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
             elif self.is_enable():
                 helpers.log("Switching from enable to %s mode" % mode,
                             level=level)
                 super(BsnDevConf, self).cmd('configure', mode=mode,
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
         elif mode == 'bash':
             if self.is_cli() or self.is_enable() or self.is_config():
                 if self.is_cli():
@@ -514,21 +542,21 @@ class BsnDevConf(DevConf):
                     bash_cmd = "debug bash"
                 super(BsnDevConf, self).cmd(bash_cmd,
                                             mode=self._mode_before_bash,
-                                            quiet=True, level=level)
+                                            quiet=5, level=level)
 
         self.mode(mode)
         # helpers.log("Current mode is %s" % self.mode(), level=level)
 
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
                         level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
-                                    timeout=timeout, quiet=True)
+                                    timeout=timeout, quiet=5)
 
-        if not quiet:
+        if helpers.not_matched(quiet, [1, 5]):
             helpers.log("%s content on '%s':\n%s%s"
                         % (mode, self.name(), self.content(),
                            br_utils.end_of_output_marker()),
@@ -572,23 +600,23 @@ class BsnDevConf(DevConf):
             self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
 
-    def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def cli(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def enable(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def enable(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='enable', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def config(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def config(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='config', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def bash(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def bash(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def sudo(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def sudo(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash',
                         prompt=prompt, timeout=timeout, level=level)
 
@@ -669,8 +697,8 @@ class ControllerDevConf(BsnDevConf):
         print("Test Monitor for ControllerDevConf '%s' - triggered session"
               " keepalive to avoid reauth"
               % (self.name()))
-        self.send("", quiet=True)
-        self.expect(quiet=True)
+        self.send("", quiet=5)
+        self.expect(quiet=5)
         content = self.content()
         print("Test Monitor for ControllerDevConf '%s' - output='%s'"
               % (self.name(), repr(content)))
@@ -752,7 +780,7 @@ class MininetDevConf(DevConf):
         else:
             # Warn user if there's already a screen session.
             self.send("screen -ls")
-            self.expect(quiet=True)
+            self.expect(quiet=5)
             if not helpers.any_match(self.content(), r'No Sockets found'):
                 helpers.environment_failure(
                     "There are other Mininet screen sessions running on %s."
@@ -762,7 +790,7 @@ class MininetDevConf(DevConf):
                 # Must specify a "sensible" term type to avoid the screen error
                 # "Clear screen capability required."
                 self.send("export TERM=vt100")
-                self.expect(quiet=False)
+                self.expect(quiet=0)
                 self.send("screen")
                 self.expect(r'.*Press Space or Return to end.*')
                 self.send(" ", no_cr=True)
@@ -783,10 +811,10 @@ class MininetDevConf(DevConf):
     def exit_bash_mode(self, new_mode):
         self.mode(self._mode_before_bash)
         helpers.log("Switching from bash to %s mode" % new_mode, level=5)
-        super(MininetDevConf, self).cmd('exit', mode='bash', quiet=True)
+        super(MininetDevConf, self).cmd('exit', mode='bash', quiet=5)
         helpers.log("Current mode is %s" % self.mode())
 
-    def _cmd(self, cmd, quiet=False, mode='cli', prompt=False, timeout=None,
+    def _cmd(self, cmd, quiet=0, mode='cli', prompt=False, timeout=None,
              level=4):
 
         if mode == 'cli':
@@ -799,22 +827,22 @@ class MininetDevConf(DevConf):
                             level=level)
                 super(MininetDevConf, self).cmd("sh bash",
                                                 mode=self._mode_before_bash,
-                                                quiet=True, level=level)
+                                                quiet=5, level=level)
         else:
             helpers.environment_failure("Mode '%s' is not supported for Mininet"
                                         % mode)
 
         self.mode(mode)
 
-        if not quiet:
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Execute command on '%s': %s (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
                         level=level)
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
-                                        timeout=timeout, quiet=True)
-        if not quiet:
+                                        timeout=timeout, quiet=5)
+        if helpers.not_matched(quiet, [1, 5]):
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
@@ -840,11 +868,11 @@ class MininetDevConf(DevConf):
             raise
         return result
 
-    def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def cli(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def bash(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def bash(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt,
                         timeout=timeout, level=level)
 
@@ -865,7 +893,7 @@ class MininetDevConf(DevConf):
                         % (self.name(), new_topology))
 
         _cmd = self.mininet_cmd()
-        content = self.cli(_cmd, quiet=False)['content']
+        content = self.cli(_cmd, quiet=0)['content']
         if not helpers.any_match(content, r'Starting CLI'):
             helpers.environment_failure("Mininet CLI did not start correctly")
         else:
@@ -878,7 +906,7 @@ class MininetDevConf(DevConf):
             return True
 
         helpers.log("Stopping Mininet on '%s'" % self.name())
-        self.cli("exit", quiet=False)
+        self.cli("exit", quiet=0)
         self.state = 'stopped'
 
     def restart_mininet(self, new_topology=None, sleep=5):
@@ -905,7 +933,7 @@ class MininetDevConf(DevConf):
         else:
             if self.is_screen_session:
                 helpers.log("Exiting 'screen' session")
-                self.send('exit', quiet=True)  # terminate screen session
+                self.send('exit', quiet=5)  # terminate screen session
             helpers.log("Closing MininetDevConf '%s' (%s)"
                         % (self.name(), self._host))
             super(MininetDevConf, self).close()
@@ -946,16 +974,16 @@ class HostDevConf(DevConf):
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
-    def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
-        if not quiet:
+    def _cmd(self, cmd, quiet=0, prompt=False, timeout=None, level=4):
+        if helpers.not_matched(quiet, [2, 5]):
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
                         level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, mode='bash',
-                                     timeout=timeout, quiet=True)
-        if not quiet:
+                                     timeout=timeout, quiet=5)
+        if helpers.not_matched(quiet, [1, 5]):
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
@@ -984,7 +1012,7 @@ class HostDevConf(DevConf):
     # Alias
     bash = cmd
 
-    def sudo(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+    def sudo(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
         return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt,
                          timeout=timeout, level=level)
 

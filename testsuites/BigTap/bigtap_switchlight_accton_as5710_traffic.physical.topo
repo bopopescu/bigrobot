@@ -8,11 +8,12 @@
 c1:
     ip: 10.9.18.7
 c2:
-    ip: 10.9.18.8
+    ip: 10.9.18.8    
 
+# Accton AS5710-52X 10G Switch
 s1:
-    ip: 10.9.19.5
-
+    ip: 10.9.19.7
+        
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
@@ -22,6 +23,6 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 2/3
+      name: 1/5
     b:
-      name: 2/4
+      name: 1/6    

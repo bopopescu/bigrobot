@@ -703,11 +703,10 @@ class AppController(object):
                     c.enable("show banner")
                     content = c.cli_content()
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.enable("show banner")
                     content = c_user.cli_content()
                     c_user.close()
-                    # t.node_reconnect(node='master')
             except:
                 return False
             else:
@@ -772,10 +771,8 @@ class AppController(object):
                 else:
                     c_user = t.node_reconnect(node='master', user=str(username), password=password)
                     c_user.put(url, data)
-                    if local is True:
-                        t.node_reconnect(node='master')
+                    c_user.close()
             except:
-                t.node_reconnect(node='master')
                 helpers.test_log(c.rest.error())
                 return False
             else:
@@ -931,10 +928,10 @@ class AppController(object):
             # Get encoded password from key
             try:
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.enable(command)
                     content = c_user.cli_content()
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.enable(command)
                     content = c.cli_content()

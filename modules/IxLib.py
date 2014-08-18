@@ -187,6 +187,7 @@ class Ixia(object):
             Ex Usage:
             IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
         '''
+        helpers.log("IP TYPE ------->: %s" % ip_type)
         helpers.log("### Adding %s device groups" % len(topology))
         handle = self._handle
         mac_mults = [s_cnt, d_cnt]
@@ -988,11 +989,11 @@ class Ixia(object):
 
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
-        if vlan_id is not None:
-            ethertype = '8100'
-            protocol = kwargs.get('protocol', 'UDP')
+#         if vlan_id is not None:
+#             ethertype = '8100'
+#             protocol = kwargs.get('protocol', 'UDP')
 
-        if ethertype == '86dd':
+        if ethertype.lower() == '86dd':
             src_ip = kwargs.get('src_ip', '2001:0:0:0:0:0:0:c4')
             dst_ip = kwargs.get('dst_ip', '2001:0:0:0:0:0:0:c5')
             src_gw_ip = kwargs.get('src_gw', '2001:0:0:0:0:0:0:c5')

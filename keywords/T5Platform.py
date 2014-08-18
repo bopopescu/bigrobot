@@ -3593,6 +3593,10 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+        if(kwargs.get('src-l4-port')):
+            url = url + '[src-l4-port=%s]' % (kwargs.get('src-l4-port'))
+        if(kwargs.get('dst-l4-port')):
+            url = url + '[dst-l4-port=%s]' % (kwargs.get('dst-l4-port'))
 
         result = c.rest.get(url)['content']
         try:
@@ -3632,6 +3636,11 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+        if(kwargs.get('src-l4-port')):
+            url = url + '[src-l4-port=%s]' % (kwargs.get('src-l4-port'))
+        if(kwargs.get('dst-l4-port')):
+            url = url + '[dst-l4-port=%s]' % (kwargs.get('dst-l4-port'))
+   
             
         result = c.rest.get(url)['content']
         try:

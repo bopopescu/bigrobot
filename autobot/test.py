@@ -919,7 +919,11 @@ class Test(object):
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_password,
+                                             prompt_device_cli,
+                                             spine_error,
+                                             reboot_needed],
+                                     timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
@@ -950,7 +954,12 @@ class Test(object):
 
         try:
             # Match login or CLI prompt.
-            match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_login,
+                                             prompt_device_cli,
+                                             spine_stack_trace,
+                                             spine_error,
+                                             reboot_needed],
+                                     timeout=60)
             if match[0] == 0:
                 login()  # Found login prompt. Attempt to authenticate.
             elif match[0] == 1:
@@ -1011,7 +1020,18 @@ class Test(object):
         n_console.cli('show version')
         return n_console
 
-    def power_cycle(self, node):
+    def _pdu_mgt(self, node, action):
+        """
+        action:  "on" | "off" | "reboot"
+        """
+        if action == "on":
+            action = "olOn"
+        elif action == "off":
+            action = "olOff"
+        elif action == "reboot":
+            action = "olReboot"
+        else:
+            helpers.test_error("Invalid PDU option '%s'" % action)
         pdu_ip = self.params(node, 'pdu')['ip']
         pdu_port = self.params(node, 'pdu')['port']
         tn = telnetlib.Telnet(pdu_ip)
@@ -1025,55 +1045,25 @@ class Test(object):
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        reboot_cmd = 'olReboot %s' % str(pdu_port)
+        reboot_cmd = '%s %s' % (action, str(pdu_port))
         tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
-        helpers.sleep(300)
+
+    def power_cycle(self, node, minutes=5):
+        self._pdu_mgt(node, 'reboot')
+        helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
     def power_down(self, node):
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        reboot_cmd = 'olOff %s' % str(pdu_port)
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        helpers.log("Powered down")
+        self._pdu_mgt(node, 'off')
+        helpers.log("Powered down '%s'" % node)
 
     def power_up(self, node):
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        reboot_cmd = 'olOn %s' % str(pdu_port)
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        helpers.log("Powered up")
+        self._pdu_mgt(node, 'on')
+        helpers.log("Powered up '%s'" % node)
 
     def initialize(self):
         """

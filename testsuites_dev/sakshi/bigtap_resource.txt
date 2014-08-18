@@ -323,7 +323,7 @@ ${action_menu_policy}											xpath=//div[text()='test-policy']/parent::div/pa
 ${action_menu_match}											xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::table[@data-dojo-attach-point='tableNode']/descendant::div[@class='action_menu']
 #text()='Policy77227']/parent::div/parent::td/preceding-sibling::td/preceding-sibling::td[@id='bsn_widgets_FunctionalTableBodyCell_40']/child::div/child::div
 ${BIGTAP POLICY FILTER INTERFACE GROUP PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='filterGroupTableNode']/descendant::div[@class='icon_node plus']
-${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}					xpath=//div[@title='Add Filter Interfaces Groups']/span[1]
+${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}					xpath=//div[@title='Add Filter Interface Group']/span[1]
 ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACE GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_24_label']
 ${BIGTAP POLICY DELIVERY INTERFACE GROUP PLUS BUTTON}					xpath=//div[@data-dojo-attach-point='deliveryGroupTableNode']/descendant::div[@class='icon_node plus']
 ${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}					xpath=//div[@title='Add Delivery Interfaces Groups']/span[1]
@@ -1272,6 +1272,7 @@ Configure Big Tap Policy
 
     Verify Element Invisible  ${CREATE POLICY POPUP}
     Verify Page Contains Text   ${policy}
+    Sleep  15
     
 Change Policy Action
 	[Arguments]  ${policy}  ${action}
@@ -2631,5 +2632,19 @@ Configure Big Tap User Defined Offsets
    Verify Element Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}  and don't wait 
     
-    
+ 
+Configure Big Tap Tunnels
+	[Arguments]  ${name}  ${rate-limit}  ${src-ip}  ${gateway}  ${dst-ip}  ${switch}  ${parent-if}  ${loopback-if}
+	
+	Go to Big Tap Controller Interfaces Page
+	Sleep  1
+	
+	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='interfaces_table']
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
+	
+  
     

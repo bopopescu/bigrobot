@@ -8,11 +8,12 @@
 c1:
     ip: 10.9.18.7
 c2:
-    ip: 10.9.18.8
+    ip: 10.9.18.8    
 
+# Quanta LB9 1G Switch 1G Switch
 s1:
     ip: 10.9.19.5
-
+        
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
@@ -24,4 +25,4 @@ tg1:
     a:
       name: 2/3
     b:
-      name: 2/4
+      name: 2/4    

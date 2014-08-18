@@ -194,16 +194,15 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
 	Cli Run  master  snmp-server enable traps
-#	${threshold_random}  Generate Random Threshold
-#	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-#	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-#	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
-#	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
-	${threshold_random}  Generate Random Threshold
 	Cli Run  master  snmp-server switch trap cpu-load 80
 	Cli Run  master  snmp-server switch trap fm-flow-table-util 80
 	Cli Run  master  snmp-server switch trap l2-flow-table-util 80
 	Cli Run  master  snmp-server switch trap mem-free 8080
+	${threshold_random}  Generate Random Threshold
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone
