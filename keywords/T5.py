@@ -646,7 +646,7 @@ class T5(object):
         else:
             return False
 
-    def rest_verify_endpoint_state(self, mac, vlan, state):
+    def rest_verify_endpoint_state(self, mac, state):
         '''Verify Dynamic Endpoint entry
 
             Input: mac, vlan , states (Valid states are: learned , unknown)
@@ -658,7 +658,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
+        if data[0]["mac"] == mac:
             if str(data[0]["attach-point-state"]) == "learned":
                 helpers.log("Expected endpoint states are showing learned")
                 return True
