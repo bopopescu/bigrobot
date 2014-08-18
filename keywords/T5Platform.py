@@ -4046,7 +4046,13 @@ class T5Platform(object):
                 if re.match(r'.*show controller.*', string) or re.match(r'.*no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue                                 
+                    continue
+                
+                # skip due to BSC-6135
+                if re.match(r'.*show local node interfaces.*', string):
+                    helpers.log("Ignoring line due to PR BSC-6135 - %s" % string)
+                    num = num - 1
+                    continue                                                 
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4248,6 +4254,12 @@ class T5Platform(object):
                     num = num - 1
                     continue                            
 
+                # skip due to BSC-6135
+                if re.match(r'.*show local node interfaces.*', string):
+                    helpers.log("Ignoring line due to PR BSC-6135 - %s" % string)
+                    num = num - 1
+                    continue  
+                
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
                     helpers.log("Issuing cmd:%s with timeout option.." % string)
@@ -4464,6 +4476,12 @@ class T5Platform(object):
                         num = num - 1
                         continue                                        
 
+                    # skip due to BSC-6135
+                    if re.match(r'.*show local node interfaces.*', string):
+                        helpers.log("Ignoring line due to PR BSC-6135 - %s" % string)
+                        num = num - 1
+                        continue  
+                
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
 
@@ -4492,11 +4510,17 @@ class T5Platform(object):
                     prompt1 = helpers.strip_ctrl_chars(prompt_str1)
                     prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
+                    #skip due to PR BSC-6137
+                    if re.match(r'.*member port-group.*', string):
+                        helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
+                        num = num - 1
+                        continue  
+                        
                     # Compare prompts.
                     if prompt1 != prompt2:
                         newstring = ''
                         helpers.log("***** Call the cli walk again with  --- '%s'" % string)
-
+                                                
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
                         c.config('show this')
                         self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
