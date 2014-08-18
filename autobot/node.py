@@ -199,7 +199,7 @@ class Node(object):
 
     def close(self):
         if self.devconf() == None:
-            helpers.log("Devconf is undefined for '%s' (%s) - no disconnect"
+            helpers.log("Devconf is undefined for '%s' - no disconnect"
                         % self.name())
         else:
             self.devconf().close()
