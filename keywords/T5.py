@@ -600,7 +600,25 @@ class T5(object):
                         helpers.log("No tenant are added")
                         return False
 
+    def rest_verify_specific_tenant(self, tenant):
+        '''Verify Speicifc tenant in BCF controller
 
+            Input:   Name of tenant to be expected
+
+            Return: true if it matches the added tenant
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        if str(data[0]["name"]) == tenant:
+            helpers.log("Expected tenant are present in the config")
+            return True
+        else:
+            helpers.test_log("Expected tenant are not present in the config")
+            return False
+    
     def rest_verify_endpoint(self, vns, vlan, mac, switch, intf):
         '''Verify Dynamic Endpoint entry
 
@@ -2713,8 +2731,9 @@ class T5(object):
         c = t.controller('master')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
-        c.rest.put(url, {"orchestration-mapping": "default"})
-        c.rest.patch(url, {"orchestration-mapping": "global"})
+        c.rest.get(url)
+        url1 = '/api/v1/data/controller/applications/bcf/global-setting'
+        c.rest.patch(url1, {"orchestration-mapping": "global"})
         return True
 
     def rest_fabric_setting_default(self):
@@ -2725,8 +2744,9 @@ class T5(object):
         c = t.controller('master')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
-        c.rest.put(url, {"orchestration-mapping": "global"})
-        c.rest.patch(url, {"orchestration-mapping": "default"})
+        c.rest.get(url)
+        url1 = '/api/v1/data/controller/applications/bcf/global-setting'
+        c.rest.patch(url1, {"orchestration-mapping": "default"})
         return True
 
     def rest_verify_segment_internal_vlan(self, tenant, vns, vlan_id):
