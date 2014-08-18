@@ -33,8 +33,10 @@ if [ ! -x "./gobot" ]; then
     err_exit "Error: Script can only be run from bin/ of bigrobot path."
 fi
 
+testsuites_formatted=''
 for suite in `echo $testsuites`; do
     ./bigrobot_sanity_wrapper.py "$suite" "$test_type"
+    testsuites_formatted="${testsuites_formatted}  - ${suite}\n"
 done
 
 # Generate BigRobot log/report.
@@ -63,7 +65,7 @@ curl -i -H "Content-Type: application/json" -X POST \
     -d "{\"from\":\"${sender}\",
          \"to\":\"${receiver}\",
          \"subject\":\"Dashboard stats '${BUILD_NAME}': $status: ${job_name}\",
-         \"message_body\":\"url: ${BUILD_URL}\\ntestsuites:\\n${testsuites}\"}" \
+         \"message_body\":\"build_name: '${BUILD_NAME}'\\nurl: ${BUILD_URL}\\ntestsuites:\\n${testsuites_formatted}status: ${failed_count} of ${total_count} FAILED\"}" \
     http://qa-rest.qa.bigswitch.com:5000/message
 
 
