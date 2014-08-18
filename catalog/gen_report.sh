@@ -63,6 +63,7 @@ while :
 do
     case "$1" in
     -no-scp) no_scp=1;;
+    -all) summary=1; detailed=1;;
     -summary) summary=1;;
     -detailed) detailed=1;;
     --) shift; break;;
