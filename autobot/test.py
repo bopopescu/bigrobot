@@ -908,9 +908,6 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
-        spine_stack_trace = r'Call Trace:'
-        spine_error = r'phy device not initialized'
-        reboot_needed = r'Fixing recursive fault but reboot is needed!'
         n_console.send('')
 
         def login():
@@ -921,101 +918,26 @@ class Test(object):
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
             match = n_console.expect(prompt=[prompt_password,
-                                             prompt_device_cli,
-                                             spine_error,
-                                             reboot_needed],
+                                             prompt_device_cli],
                                      timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
-                match = n_console.expect(prompt=[prompt_device_cli, spine_error])
-            elif match[0] == 2:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-#            elif match[0] == 3:
-#                helpers.log("Found a switch Crash Needs to power cycle...")
-#                helpers.log("Power cycling switch : %s " % node)
-#                self.power_cycle(node)
-#                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-#                n_console = self.dev_console(node, modeless=True)
-#                n_console.send('admin')
-#                helpers.sleep(2)
-#                n_console.send('adminadmin')
-#                helpers.sleep(2)
-#                n_console.send('enable;conf;no snmp-server enable')
-#                n_console = self.dev_console(node)
+                match = n_console.expect(prompt=[prompt_device_cli])
 
-        try:
-            # Match login or CLI prompt.
-            match = n_console.expect(prompt=[prompt_login,
-                                             prompt_device_cli,
-                                             spine_stack_trace,
-                                             spine_error,
-                                             reboot_needed],
-                                     timeout=60)
-            if match[0] == 0:
-                login()  # Found login prompt. Attempt to authenticate.
-            elif match[0] == 1:
-                helpers.log("Found the BSN device prompt. Exiting system.")
-                n_console.send('logout')
-                match = n_console.expect(prompt=[prompt_login])
-                login()
-            elif match[0] == 2:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-            elif match[0] == 3:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-            elif match[0] == 4:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-        except:
-            helpers.log("This Expect error may be due to Spine got Stuck Already in with Kernel ..Crash")
-            helpers.log("Trying Power Cycle and check any activity on Console...")
-            helpers.log("Power cycling switch : %s " % node)
-            self.power_cycle(node)
-            helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-            n_console = self.dev_console(node, modeless=True)
-            n_console.send('admin')
-            helpers.sleep(2)
-            n_console.send('adminadmin')
-            helpers.sleep(2)
-            n_console.send('enable;conf;no snmp-server enable')
-            n_console = self.dev_console(node)
+        # Match login or CLI prompt.
+        match = n_console.expect(prompt=[prompt_login,
+                                         prompt_device_cli,
+                                         ],
+                                 timeout=60)
+        if match[0] == 0:
+            login()  # Found login prompt. Attempt to authenticate.
+        elif match[0] == 1:
+            helpers.log("Found the BSN device prompt. Exiting system.")
+            n_console.send('logout')
+            match = n_console.expect(prompt=[prompt_login])
+            login()
+
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
