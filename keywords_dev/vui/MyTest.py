@@ -947,3 +947,9 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
                     helpers.log("No match")
         return {}
 
+    def test_node_reconnect(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.cli('show user')
+        n = t.node_reconnect(node)
+        n.bash('uptime')

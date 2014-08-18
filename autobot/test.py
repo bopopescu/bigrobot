@@ -849,6 +849,7 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
+        self.node(node).close()
         c = self.node_connect(node_name, **kwargs)
         if helpers.is_controller(node):
             c.rest.request_session_cookie()
