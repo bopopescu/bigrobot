@@ -3995,15 +3995,9 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
-            # skip 'show session' (PR BSC-5233)
-            if (re.match(r' show session', string)):
-                helpers.log("Ignoring line - %s" % string)
-                num = num - 1
-                continue
-
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)):
-                if key != 'leaf0a-eth1' and key != 'all':
+                if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
@@ -4049,16 +4043,10 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
-                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue
-                
-                #skip command below due to PR BVS-2170
-                if re.match(r'.*show logical-router incomplete.*', string):
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
-                    continue                                  
+                    continue                                 
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4168,7 +4156,7 @@ class T5Platform(object):
 
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)interface', string)):
-                if key != 'leaf0a-eth1' and key != 'all':
+                if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
@@ -4214,27 +4202,9 @@ class T5Platform(object):
                 num = num - 1
                 continue
 
-            if (re.match(r' clear tenant .* logical-router applied-policy counters', string)):
-                helpers.log("Ignoring line - %s" % string)
-                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2069")
-                num = num - 1
-                continue
-
-            if (re.match(r' show vft', string)):
-                helpers.log("Ignoring line - %s" % string)
-                helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
-                num = num - 1
-                continue
-
-            # skip 'show session' (PR BSC-5233)
-            if (re.match(r' show session', string)):
-                helpers.log("Ignoring line - %s" % string)
-                num = num - 1
-                continue
-
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)):
-                if key != 'leaf0a-eth1' and key != 'all':
+                if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
@@ -4273,16 +4243,10 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
-                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue
-                
-                #skip command below due to PR BVS-2170
-                if re.match(r'.*show logical-router incomplete.*', string):
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
-                    continue                              
+                    continue                            
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4416,10 +4380,7 @@ class T5Platform(object):
                     helpers.log("Ignore line - '%s'" % string)
                     num = num - 1
                     continue
-                if re.match(r'.*core-switch.*', string) and key == "<cr>" :
-                    helpers.log("Ignore line due to bug BSC-4903 - '%s'" % string)
-                    num = num - 1
-                    continue
+                
                 # Add check for origination and description. BVS-1959 explains why this will not work if under a sub-configuration.
                 if key == "origination" or key == "description" :
                     helpers.log("Ignore line - key '%s'" % key)
@@ -4467,25 +4428,8 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
-                if re.match(r'.*member port-group.*vlan.*', string):
-                    helpers.log("Ignoring line due to PR BVS-1623 - '%s'" % string)
-                    num = num - 1
-                    continue
-
                 if re.match(r' clear session session-id', string):
                     helpers.log("Ignoring line as it may effect the script execution..")
-                    num = num - 1
-                    continue
-
-                if (re.match(r' show vft', string)):
-                    helpers.log("Ignoring line - %s" % string)
-                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2066")
-                    num = num - 1
-                    continue
-
-                if (re.match(r'enable-endpoint-flap-protection', key)):
-                    helpers.log("Ignoring line - %s" % string)
-                    helpers.log("Skipping because of JIRA:\n https://bigswitch.atlassian.net/browse/BVS-2071")
                     num = num - 1
                     continue
 
@@ -4518,18 +4462,7 @@ class T5Platform(object):
 
                     if re.match(r'.*support.*', string) or re.match(r'.*show controller.*', string) or re.match(r'.*no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
                         num = num - 1
-                        continue
-
-                    if re.match(r'.*member port-group.*vlan.*', string):
-                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
-                        num = num - 1
-                        continue
-                    
-                    #skip command below due to PR BVS-2170
-                    if re.match(r'.*show logical-router incomplete.*', string):
-                        helpers.log("Ignoring line - %s" % string)
-                        num = num - 1
-                        continue                                          
+                        continue                                        
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
