@@ -749,16 +749,23 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
 		c.rest.get(url)
 		data = c.rest.content()
-		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
-		for i in range(0, len(data)):
-			if str(data[i]["ip-address"]) == str(instanceIp) and str(data[i]["state"]) == "Active":
-				helpers.log("Pass: Openstack endpoints are present in the BSN controller")
-				return True
-		helpers.test_failure("Expected openstack endpoints are not present in BSN controller")
-		return False
+		if len(data) != 0:
+			if str(data[0]["ip-address"][0]["ip-address"]) == str(instanceIp):
+				if str(data[0]["state"]) == "L2 Only":
+					helpers.log("Pass:VM Instance endpoints are present and state is L2 only")
+					return True
+				else:
+					helpers.test_failure("VM Instance Endpoint state is Attachement Down")
+			else:
+				helpers.test_failure("VM Instance endpoint IP does not match")
+				return False
+		else:
+			helpers.test_failure("Expected VM endpoints are not present in BCF controller")
+			return False
 
 	def openstack_verify_router(self, routerName):
 		'''verify router creation status through horizon
@@ -884,7 +891,7 @@ S
 			helpers.log("Pass:All router interface created as endpoint in BCF controller")
 			return True
 		else:
-			helpers.log("Fail:All router interface not present in BCF endpoint")
+			helpers.test_failure("Fail:All router interface not present in BCF endpoint")
 			return False
 	
 	def openstack_segment_scale_delete(self, count, name='n'):
@@ -924,7 +931,7 @@ S
 			helpers.test_log("All Openstack segments are present in controller")
 			return True	
 		else:
-			helpers.test_log("All Openstack segments are not present in controller")
+			helpers.test_failure("All Openstack segments are not present in controller")
 			return False
 		
 	def openstack_router_scale(self, extName, tName='p', rname='r', count=0):
