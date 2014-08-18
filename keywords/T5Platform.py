@@ -4058,12 +4058,6 @@ class T5Platform(object):
                 if re.match(r'.*show logical-router incomplete.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue  
-                
-                #skip command below due to PR BSC-6030
-                if re.match(r'.*show zerotouch velocity.*', string):
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
                     continue                                  
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
@@ -4288,13 +4282,7 @@ class T5Platform(object):
                 if re.match(r'.*show logical-router incomplete.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue    
-                
-                  #skip command below due to PR BSC-6030
-                if re.match(r'.*show zerotouch velocity.*', string):
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
-                    continue                            
+                    continue                              
 
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 if string == ' support':
@@ -4541,13 +4529,7 @@ class T5Platform(object):
                     if re.match(r'.*show logical-router incomplete.*', string):
                         helpers.log("Ignoring line - %s" % string)
                         num = num - 1
-                        continue    
-                    
-                    #skip command below due to PR BSC-6030
-                    if re.match(r'.*show zerotouch velocity.*', string):
-                        helpers.log("Ignoring line - %s" % string)
-                        num = num - 1
-                        continue                                       
+                        continue                                          
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
