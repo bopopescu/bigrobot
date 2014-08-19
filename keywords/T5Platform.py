@@ -4893,7 +4893,7 @@ class T5Platform(object):
         string = 'boot partition ' + option
 
         c.send(string)
-        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        c.expect(r'[\r\n].+ to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
