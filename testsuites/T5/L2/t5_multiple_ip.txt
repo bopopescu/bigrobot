@@ -79,7 +79,7 @@ Test to check multiple ip present in different segment
 	rest delete tenant  internal     
      
 verify endpoint timeout from one of the host in multiple IP scenario
-	[Tags]  L2  feature  skipped
+	[Tags]  L2  feature
 	rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -90,18 +90,21 @@ verify endpoint timeout from one of the host in multiple IP scenario
 	rest add vns ip  internal  v1  10.192.18.1  24
 	rest add vns ip  internal  v2  10.192.19.1  24
 	${stream1}=  L3 add  name=stream1  flow=a->c  src_ip=10.192.18.2  src_gw=10.192.18.1  dst_ip=10.192.19.2  dst_gw=10.192.19.1  src_mac=00:00:01:00:00:01 
+	delete traffic
 	${stream2}=  L3 add  name=stream2  flow=a->c  src_ip=10.192.18.3  src_gw=10.192.18.1  dst_ip=10.192.19.2  dst_gw=10.192.19.1  src_mac=00:00:01:00:00:01
+	delete traffic
 	${stream3}=  L3 add  name=stream3  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.2  dst_gw=10.192.18.1  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
     start traffic  
     rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
     rest_verify_endpoint_ip_state  internal  v1  10.192.18.3  00:00:01:00:00:01  -1  learned  
     verify traffic rate  tx_rate  rx_rate  c  a
-    stop stream  ${stream3}
+    stop traffic
+    delete traffic
     ${stream4}=  L3 add  name=stream4  flow=c->a  src_ip=10.192.19.2  src_gw=10.192.19.1  dst_ip=10.192.18.3  src_mac=00:00:02:00:00:01  frame_rate=1000  frame_size=68
-    start traffic  {stream4} 
+    start traffic 
 	verify traffic rate  tx_rate  rx_rate  c  a
 	stop traffic  
-	delete traffic  ${stream1}
+	delete traffic
 	sleep  600
 	${result}=  rest_verify_endpoint_ip_state  internal  v1  10.192.18.2  00:00:01:00:00:01  -1  learned
 	Should not be True  ${result}
