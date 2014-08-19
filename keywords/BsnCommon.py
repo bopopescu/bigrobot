@@ -606,16 +606,16 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url_get_ntp = '/api/v1/data/controller/os/config/global/time-config?config=true'
+                url_get_ntp = '/api/v1/data/controller/os/config/global/time?config=true'
                 c.rest.get(url_get_ntp)
                 content = c.rest.content()
                 if ('ntp-server' in content[0]):
                     ntp_list = content[0]['ntp-server']
                     ntp_list.append(ntp_server)
-                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                     c.rest.patch(url, ntp_list)
                 else:
-                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                     helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
                     c.rest.patch(url, [str(ntp_server)])
                 if not c.rest.status_code_ok():
@@ -684,7 +684,7 @@ class BsnCommon(object):
             elif helpers.is_t5(n.platform()):
                 # T5 Controller NTP Server Deletion goes here
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config'
+                url = '/api/v1/data/controller/os/config/global/time'
                 helpers.log("URL is %s" % url)
                 c.rest.delete(url, {"ntp-servers": [ntp_server]})
                 if not c.rest.status_code_ok():
@@ -767,7 +767,7 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config'
+                url = '/api/v1/data/controller/os/config/global/time'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.patch(url, {"time-zone": str(time_zone)})
                 if not c.rest.status_code_ok():
@@ -814,7 +814,7 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config/time-zone'
+                url = '/api/v1/data/controller/os/config/global/time/time-zone'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.delete(url, {})
                 if not c.rest.status_code_ok():
