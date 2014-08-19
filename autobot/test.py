@@ -849,6 +849,7 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
+        self.node(node).close()
         c = self.node_connect(node_name, **kwargs)
         if helpers.is_controller(node):
             c.rest.request_session_cookie()
@@ -907,110 +908,53 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
-        spine_stack_trace = r'Call Trace:'
-        spine_error = r'phy device not initialized'
-        reboot_needed = r'Fixing recursive fault but reboot is needed!'
         n_console.send('')
 
         def login():
-            helpers.log("Found the login prompt. Sending user name.")
+            helpers.log("Found the login prompt. Sending user name ('%s')"
+                        % user)
             n_console = n.console()
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_password,
+                                             prompt_device_cli],
+                                     timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
-                match = n_console.expect(prompt=[prompt_device_cli, spine_error])
-            elif match[0] == 2:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-#            elif match[0] == 3:
-#                helpers.log("Found a switch Crash Needs to power cycle...")
-#                helpers.log("Power cycling switch : %s " % node)
-#                self.power_cycle(node)
-#                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-#                n_console = self.dev_console(node, modeless=True)
-#                n_console.send('admin')
-#                helpers.sleep(2)
-#                n_console.send('adminadmin')
-#                helpers.sleep(2)
-#                n_console.send('enable;conf;no snmp-server enable')
-#                n_console = self.dev_console(node)
+                match = n_console.expect(prompt=[prompt_device_cli])
 
-        try:
-            # Match login or CLI prompt.
-            match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error, reboot_needed], timeout=60)
-            if match[0] == 0:
-                login()  # Found login prompt. Attempt to authenticate.
-            elif match[0] == 1:
-                helpers.log("Found the BSN device prompt. Exiting system.")
-                n_console.send('logout')
-                match = n_console.expect(prompt=[prompt_login])
-                login()
-            elif match[0] == 2:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-            elif match[0] == 3:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-            elif match[0] == 4:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-        except:
-            helpers.log("This Expect error may be due to Spine got Stuck Already in with Kernel ..Crash")
-            helpers.log("Trying Power Cycle and check any activity on Console...")
-            helpers.log("Power cycling switch : %s " % node)
-            self.power_cycle(node)
-            helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-            n_console = self.dev_console(node, modeless=True)
-            n_console.send('admin')
-            helpers.sleep(2)
-            n_console.send('adminadmin')
-            helpers.sleep(2)
-            n_console.send('enable;conf;no snmp-server enable')
-            n_console = self.dev_console(node)
+        # Match login or CLI prompt.
+        match = n_console.expect(prompt=[prompt_login,
+                                         prompt_device_cli,
+                                         ],
+                                 timeout=60)
+        if match[0] == 0:
+            login()  # Found login prompt. Attempt to authenticate.
+        elif match[0] == 1:
+            helpers.log("Found the BSN device prompt. Exiting system.")
+            n_console.send('logout')
+            match = n_console.expect(prompt=[prompt_login])
+            login()
+
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
         return n_console
 
-    def power_cycle(self, node):
+    def _pdu_mgt(self, node, action):
+        """
+        action:  "on" | "off" | "reboot"
+        """
+        if action == "on":
+            action = "olOn"
+        elif action == "off":
+            action = "olOff"
+        elif action == "reboot":
+            action = "olReboot"
+        else:
+            helpers.test_error("Invalid PDU option '%s'" % action)
         pdu_ip = self.params(node, 'pdu')['ip']
         pdu_port = self.params(node, 'pdu')['port']
         tn = telnetlib.Telnet(pdu_ip)
@@ -1024,55 +968,25 @@ class Test(object):
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        reboot_cmd = 'olReboot %s' % str(pdu_port)
+        reboot_cmd = '%s %s' % (action, str(pdu_port))
         tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
-        helpers.sleep(300)
+
+    def power_cycle(self, node, minutes=5):
+        self._pdu_mgt(node, 'reboot')
+        helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
     def power_down(self, node):
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        reboot_cmd = 'olOff %s' % str(pdu_port)
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        helpers.log("Powered down")
+        self._pdu_mgt(node, 'off')
+        helpers.log("Powered down '%s'" % node)
 
     def power_up(self, node):
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        reboot_cmd = 'olOn %s' % str(pdu_port)
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        helpers.log("Powered up")
+        self._pdu_mgt(node, 'on')
+        helpers.log("Powered up '%s'" % node)
 
     def initialize(self):
         """

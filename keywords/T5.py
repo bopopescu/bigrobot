@@ -600,7 +600,25 @@ class T5(object):
                         helpers.log("No tenant are added")
                         return False
 
+    def rest_verify_specific_tenant(self, tenant):
+        '''Verify Speicifc tenant in BCF controller
 
+            Input:   Name of tenant to be expected
+
+            Return: true if it matches the added tenant
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        if str(data[0]["name"]) == tenant:
+            helpers.log("Expected tenant are present in the config")
+            return True
+        else:
+            helpers.test_log("Expected tenant are not present in the config")
+            return False
+    
     def rest_verify_endpoint(self, vns, vlan, mac, switch, intf):
         '''Verify Dynamic Endpoint entry
 
@@ -628,7 +646,7 @@ class T5(object):
         else:
             return False
 
-    def rest_verify_endpoint_state(self, mac, vlan, state):
+    def rest_verify_endpoint_state(self, mac, state):
         '''Verify Dynamic Endpoint entry
 
             Input: mac, vlan , states (Valid states are: learned , unknown)
@@ -640,7 +658,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
+        if data[0]["mac"] == mac:
             if str(data[0]["attach-point-state"]) == "learned":
                 helpers.log("Expected endpoint states are showing learned")
                 return True
@@ -681,7 +699,7 @@ class T5(object):
             helpers.log("Given segment does not match in the controller")
             return False
 
-    def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
+    def rest_verify_endpoint_static(self, tenant, vns, vlan, mac):
         '''Verify Static Endpoint entry
 
             Input: vns name , vlan ID , mac , switch name, expected switch interface
@@ -690,25 +708,20 @@ class T5(object):
          '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint' % ()
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
-        if len(data) != 0:
-            for i in range(0, len(data)):
-                if str(data[i]["segment"]) == vns:
-                    if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                        if (data[i]["mac"] == str(mac)) :
-                            if (data[i]["attachment-point"]["name"] == switch) :
-                                if (data[i]["attachment-point"]["interface"] == str(intf)) :
-                                    if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
-                                        return True
-                                    else:
-                                        helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
-                                        return False
-        else:
-                helpers.test_failure("Expected vns are not added %s" % vns)
-                return False
+        if str(data[0]["segment"]) == str(vns) and data[0]["mac"] == mac and int(data[0]["vlan"]) == int(vlan) and data[0]["tenant"] == tenant:
+            if str(data[0]["attachment-point-state"]) == "static":
+                if str(data[0]["state"]) == "L2 Only":
+                    helpers.log("static endpoint state is proper")
+                    return True
+                else:
+                    helpers.log("static endpoint state is down")
+                    return False
+        
+        helpers.test_log("Given static endpoints are not present in the config")
+        return False
 
 
     def rest_verify_endpoint_portgroup(self, vns, vlan, mac, pg):
@@ -2718,8 +2731,9 @@ class T5(object):
         c = t.controller('master')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
-        c.rest.put(url, {"orchestration-mapping": "default"})
-        c.rest.patch(url, {"orchestration-mapping": "global"})
+        c.rest.get(url)
+        url1 = '/api/v1/data/controller/applications/bcf/global-setting'
+        c.rest.patch(url1, {"orchestration-mapping": "global"})
         return True
 
     def rest_fabric_setting_default(self):
@@ -2730,8 +2744,9 @@ class T5(object):
         c = t.controller('master')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
-        c.rest.put(url, {"orchestration-mapping": "global"})
-        c.rest.patch(url, {"orchestration-mapping": "default"})
+        c.rest.get(url)
+        url1 = '/api/v1/data/controller/applications/bcf/global-setting'
+        c.rest.patch(url1, {"orchestration-mapping": "default"})
         return True
 
     def rest_verify_segment_internal_vlan(self, tenant, vns, vlan_id):
