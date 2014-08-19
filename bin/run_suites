@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # Description: Runs the smoke tests in the BigRobot suites during pre-merge.
 # Assumption: The current working directory is bin/ under bigrobot path.
 #
@@ -6,12 +6,8 @@
 #echo "Disable BVS smoke test for the interim."
 #exit 0
 
-#sender="bigrobot@regress.bigswitch.com"
 sender="vui.le@bigswitch.com"
-#receiver="vui.le@bigswitch.com, aruna.mallina@bigswitch.com"
 receiver="bigrobot_stats_collection@bigswitch.com"
-testsuites=$1
-test_type=$2
 
 mesg() {
     ts=$(date "+%Y-%m-%d %H:%M:%S")
@@ -23,15 +19,37 @@ err_exit() {
     exit 1
 }
 
+usage() {
+    echo "Usage: BUILD_NAME=\"bvs master #<id>\" $0 <testsuites> <test_type>"
+    echo ""
+    echo "testsuites - A whitespace-separated list of test suites"
+    echo "test_type  - A BigRobot tag; only test cases with matching tag are executed"
+    exit 1
+    0
+}
+
+if [ ! -x "./gobot" ]; then
+    err_exit "Error: Script can only be run from bin/ of bigrobot path."
+fi
+
+if [ $# -eq 0 ]; then
+    usage
+fi
+
+if [ "$BUILD_NAME"x = x ]; then
+    usage
+fi
+
+
+set -x
+testsuites=$1
+test_type=$2
+
 testlogs_path=../testlogs
 
 timestamp=$(date "+%Y-%m-%d,%H%M%S")
 
 mesg "$0 (`pwd`): Pre-merge execution of smoke tests in BigRobot."
-
-if [ ! -x "./gobot" ]; then
-    err_exit "Error: Script can only be run from bin/ of bigrobot path."
-fi
 
 testsuites_formatted=''
 for suite in `echo $testsuites`; do
@@ -68,6 +86,7 @@ curl -i -H "Content-Type: application/json" -X POST \
          \"message_body\":\"build_name: '${BUILD_NAME}'\\nurl: ${BUILD_URL}\\ntestsuites:\\n${testsuites_formatted}status: ${failed_count} of ${total_count} FAILED\"}" \
     http://qa-rest.qa.bigswitch.com:5000/message
 
-
+mesg "Generating QA Dashboard reports."
+(cd ../catalog; ./gen_report.sh -all)
 exit $failed_count
 
