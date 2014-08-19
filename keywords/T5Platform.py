@@ -345,7 +345,7 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "after")
 
 
-    def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs):
+    def verify_fabric_with_disruption(self, disruptMode="switchReboot", disruptTime="", failoverMode="", **kwargs):
         '''
             This function will carry out different disruptions during failovers & verify fabric
             integrity. Disruptions will carry out in distributed manner. For eg. if disruptMode is "switchReboot", this
@@ -358,9 +358,10 @@ class T5Platform(object):
                 disruptTime : Disruptions happens 'during' or 'before" the HA event
 
                 failoverMode : "failover"     - Failover by issuing failover command (default)
-                               "masterReboot" - Failover by rebooting active controller
+                               "activeReboot" - Failover by rebooting active controller
+                               "standbyReboot" - Reboot standby controller
 
-                kwargs: "switch=spien0 leaf0-a"
+                kwargs: "switch=spine0 leaf0-a"
 
         '''
 
@@ -375,6 +376,12 @@ class T5Platform(object):
             for i, switchName in enumerate(switchList):
                 threadList.append("thread" + '%s' % threadCounter)
                 threadList[i] = T5PlatformThreads(threadCounter, "switchReboot", switch=switchName)
+                threadCounter += 1
+        elif (disruptMode == "switchPowerCycle"):
+            switchList = kwargs.get('switch').split(' ')
+            for i, switchName in enumerate(switchList):
+                threadList.append("thread" + '%s' % threadCounter)
+                threadList[i] = T5PlatformThreads(threadCounter, "switchPowerCycle", switch=switchName)
                 threadCounter += 1
 
         disruptThreadCounter = threadCounter
@@ -408,6 +415,11 @@ class T5Platform(object):
                 thread.start()
                 if (i == disruptThreadCounter - 1):
                     sleep(45)
+        else:
+            for thread in threadList:
+                helpers.log("Starting thread: %s" % thread)
+                thread.start()
+            
 
         for thread in threadList:
             helpers.log("Joining thread: %s" % thread)
