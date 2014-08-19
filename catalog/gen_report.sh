@@ -22,10 +22,11 @@ usage() {
     if [ $# -ne 0 ]; then
         echo `basename $0`: ERROR: $* 1>&2
     fi
-    echo usage: `basename $0` '[-summary] [-detailed] [-no-scp] [-out <file>]' 1>&2
+    echo usage: `basename $0` '[-summary] [-detailed] [-all] [-no-scp] [-out <file>]' 1>&2
     echo ''
     echo '  -summary  : provide summary report'
     echo '  -detailed : provide detailed report'
+    echo '  -all      : equivalent to -summary and -detailed'
     echo '  -no-scp   : do not copy the report (using scp) to the web server'
     echo ''
 
