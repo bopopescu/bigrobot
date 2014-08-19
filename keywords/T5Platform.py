@@ -1705,8 +1705,7 @@ class T5Platform(object):
             helpers.log("INFO: system NOT have image, or ignore check,   will copy image")
             c.config('')
 #            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
-            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
-
+            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/2060/archive/controller-upgrade-*-SNAPSHOT.pkg"'
             c.send(string + ' image://')
 #            c.expect(r'[\r\n].+password: ')
 
@@ -1987,7 +1986,7 @@ class T5Platform(object):
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
 
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("y" or "yes" to continue\):'])
+        options = c.expect([r'fabric is redundant', r'.*\("y" or "yes" to continue\):'])
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
         if options[0] == 1:
@@ -4665,7 +4664,7 @@ class T5Platform(object):
         c = t.controller(node)
 
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'           
             helpers.log("get switch fabric connection state")
 
             c.rest.get(url)
@@ -4674,12 +4673,15 @@ class T5Platform(object):
             if (data):
                 for i in range(0, len(data)):
                     switch.append(data[i]['name'])
+        else:
+            switch = switch.split(',')            
+
         helpers.log("USER INFO - switches are:  %s" % switch)
 
         for sw in switch:
             c.enable('')
             c.send("system reboot switch %s" % sw)
-            c.expect(r'.*\(y or yes to continue\):')
+            c.expect(r'.*\("y" or "yes" to continue\):')
             c.send("yes")
             c.expect()
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
@@ -4705,7 +4707,7 @@ class T5Platform(object):
         c = t.controller(node)
 
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
             helpers.log("get switch fabric connection state")
 
             c.rest.get(url)
@@ -4717,8 +4719,9 @@ class T5Platform(object):
                         switch.append(data[i]['inet-address']['ip'])
                     else:
                         helpers.log("ERROR:  there is no ip address for: %s" % data[i]['name'])
-
-        helpers.log("USER INFO - switches are:  %s" % switch)
+        else:
+            switch = switch.split(',')            
+        helpers.log("USER INFO - switches are:  %s" % switch)      
         for ip in switch:
             c.enable("system reboot switch %s" % ip)
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
@@ -4741,7 +4744,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         if switch is None:
-            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
+            url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
             helpers.log("get switch fabric connection state")
 
             c.rest.get(url)
@@ -4753,12 +4756,16 @@ class T5Platform(object):
                         macs = data[i]['dpid'].split(':', 2)
                         mac = macs[2]
                         switch.append(mac)
+                        
+        else:
+            switch = switch.split(',')            
+
         helpers.log("USER INFO - switches are:  %s" % switch)
 
         for mac in switch:
             c.enable('')
             c.send("system reboot switch %s" % mac)
-            c.expect(r'.*\(y or yes to continue\):')
+            c.expect(r'.*\("y" or "yes" to continue\):')
             c.send("yes")
             c.expect()
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
@@ -4780,7 +4787,11 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-        c.enable("system reboot switch all")
+        c.enable('')
+        c.send("system reboot switch all")
+        c.expect(r'.*\("y" or "yes" to continue\):')
+        c.send("yes")
+        c.expect()
 
         helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
         if "Error" in c.cli_content():
@@ -4894,7 +4905,7 @@ class T5Platform(object):
         string = 'boot partition ' + option
 
         c.send(string)
-        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        c.expect(r'[\r\n].+ to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
