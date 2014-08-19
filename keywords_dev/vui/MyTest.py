@@ -630,7 +630,7 @@ vui@Vuis-MacBook-Pro$
         is_pending = True
         iterations = 0
         max_tries = 10
-        while is_pending and iterations <= max_tries:
+        while is_pending and iterations < max_tries:
             is_pending = False
             iterations += 1
             helpers.sleep(1)
@@ -645,7 +645,7 @@ vui@Vuis-MacBook-Pro$
                                 % (iterations, res.task_id, action))
                     is_pending = True
         if is_pending and iterations > max_tries:
-            helpers.log("Not able to retrielve results from ESB")
+            helpers.log("Not able to retrieve results from ESB")
             return False
 
         helpers.log("*** Parallel tasks completed")
