@@ -57,11 +57,15 @@ class DevConf(object):
         self._logpath = helpers.bigrobot_log_path_exec_instance()
         if not self._logpath:
             self._logpath = '/tmp'
+        else:
+            # Create directory if it doesn't exist
+            if not helpers.file_exists(self._logpath):
+                helpers.mkdir_p(self._logpath)
         self._logfile = ('%s/devconf_conversation.%s.log'
                          % (self._logpath, self._name))
         helpers.file_write_append_once(self._logfile,
-                                       "\n\n--------- %s Devconf '%s'\n\n"
-                                       % (helpers.ts_long_local(), self._name))
+                "\n\n--------- %s New devconf conversation for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
 
         self._timeout = timeout if timeout else 30  # default timeout
 
