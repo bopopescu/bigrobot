@@ -39,6 +39,10 @@ class Node(object):
 
         self._port = self.node_params.get('port', None)
         self._protocol = self.node_params.get('protocol', 'ssh')
+        self._privatekey = self.node_params.get('privatekey', None)
+        self._privatekey_password = self.node_params.get(
+                                            'privatekey_password', None)
+        self._privatekey_type = self.node_params.get('privatekey_type', None)
 
         if not ip:
             if helpers.params_is_false('set_session_ssh', self.node_params):
@@ -46,8 +50,9 @@ class Node(object):
                 # defined
                 pass
             else:
-                helpers.environment_failure("Node IP address is not defined for '%s'"
-                                            % name)
+                helpers.environment_failure(
+                            "Node IP address is not defined for '%s'"
+                            % name)
         else:
             self._ip = ip.lower()  # IP might be 'dummy'
 
@@ -122,8 +127,9 @@ class Node(object):
         if 'console' in self.node_params:
             self._console_info = self.node_params['console']
         else:
-            helpers.environment_failure("Console info is not defined for node '%s'"
-                                        % self.name())
+            helpers.environment_failure(
+                            "Console info is not defined for node '%s'"
+                            % self.name())
 
         if 'ip' in self._console_info:
             if 'port' in self._console_info:
@@ -294,14 +300,18 @@ class ControllerNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol,
-                                         is_monitor_reauth=self._monitor_reauth,
-                                         debug=self.dev_debug_level)
+        return devconf.ControllerDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            is_monitor_reauth=self._monitor_reauth,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
@@ -493,31 +503,39 @@ class MininetNode(Node):
             protocol = self._protocol
 
         if self.mn_type == 't6':
-            return devconf.T6MininetDevConf(name=name,
-                                            host=host,
-                                            user=user,
-                                            password=password,
-                                            controller=self.controller_ip,
-                                            controller2=self.controller_ip2,
-                                            topology=self.topology,
-                                            openflow_port=self.openflow_port,
-                                            debug=self.dev_debug_level,
-                                            is_start_mininet=self._start_mininet,
-                                            port=port,
-                                            protocol=protocol)
+            return devconf.T6MininetDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            controller=self.controller_ip,
+                            controller2=self.controller_ip2,
+                            topology=self.topology,
+                            openflow_port=self.openflow_port,
+                            debug=self.dev_debug_level,
+                            is_start_mininet=self._start_mininet,
+                            port=port,
+                            protocol=protocol,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
         elif self.mn_type == 'basic':
-            return devconf.MininetDevConf(name=name,
-                                          host=host,
-                                          user=user,
-                                          password=password,
-                                          controller=self.controller_ip,
-                                          controller2=self.controller_ip2,
-                                          topology=self.topology,
-                                          openflow_port=self.openflow_port,
-                                          debug=self.dev_debug_level,
-                                          is_start_mininet=self._start_mininet,
-                                          port=port,
-                                          protocol=protocol)
+            return devconf.MininetDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            controller=self.controller_ip,
+                            controller2=self.controller_ip2,
+                            topology=self.topology,
+                            openflow_port=self.openflow_port,
+                            debug=self.dev_debug_level,
+                            is_start_mininet=self._start_mininet,
+                            port=port,
+                            protocol=protocol,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
@@ -566,13 +584,17 @@ class HostNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.HostDevConf(name=name,
-                                   host=host,
-                                   user=user,
-                                   password=password,
-                                   port=port,
-                                   protocol=protocol,
-                                   debug=self.dev_debug_level)
+        return devconf.HostDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
@@ -673,13 +695,17 @@ class SwitchNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.SwitchDevConf(name=name,
-                                     host=host,
-                                     user=user,
-                                     password=password,
-                                     port=port,
-                                     protocol=protocol,
-                                     debug=self.dev_debug_level)
+        return devconf.SwitchDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev

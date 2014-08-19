@@ -1030,6 +1030,14 @@ def re_match_str(data):
         environment_failure("'%s' is not a regex match" % data)
 
 
+def get(var, default):
+    """
+    Return var if is True/non-zero/non-empty. Else return default.
+    This is similar to dictionary's get() method.
+    """
+    return var if var else default
+
+
 def get_path(filename):
     """
     Extract the path from the filename.
