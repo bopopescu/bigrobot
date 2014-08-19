@@ -46,8 +46,10 @@ class SendMail(object):
 
             if len(input_text) > 100000:
                 lines = 200
-                input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
-                              % lines + '\n'.join(helpers.str_to_list(input_text)[-lines:]))
+                input_text = ("... Attention: File is greater than 100K bytes."
+                              " Send the last %s lines of file ...\n\n"
+                              % lines + '\n'.join(helpers.str_to_list(
+                                                        input_text)[-lines:]))
             formatted_message += "\n\n<<<File: %s>>>\n" % infile + input_text
 
         h = httplib2.Http()
@@ -75,7 +77,7 @@ Send an email. Example:
 % ./send_mail.py \\
         --sender vui.le@bigswitch.com \\
         --receiver bigrobot_stats_collection@bigswitch.com \\
-        --subject "Dashboard stats collected for 'bvs master #2806' - suite 123" \\
+        --subject "Dashboard stats for 'bvs master #2806' - suite 123" \\
         --message "test suites: xyz executed"
 """
     parser = argparse.ArgumentParser(
@@ -85,7 +87,8 @@ Send an email. Example:
     parser.add_argument('--sender', required=True,
                         help=("The sender, e.g., 'vui.le@bigswitch.com'"))
     parser.add_argument('--receiver', required=True,
-                        help=("The receiver, e.g., 'bigrobot_stats_collection@bigswitch.com'"))
+                        help=("The receiver, e.g.,"
+                              " 'bigrobot_stats_collection@bigswitch.com'"))
     parser.add_argument('--subject', required=True,
                         help=("The email subject line'"))
     parser.add_argument('--message', required=True,

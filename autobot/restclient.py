@@ -62,7 +62,8 @@ class RestClient(object):
             password = self.password
 
         base64str = base64.encodestring('%s:%s' % (user, password))
-        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        self.default_header['authorization'] = ('Basic %s'
+                                                % base64str.replace('\n', ''))
         return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
@@ -237,8 +238,9 @@ class RestClient(object):
                 helpers.log('HTTP request error:\n%s'
                             % helpers.exception_info())
                 if retries > 0:
-                    helpers.log('Retrying HTTP request in %s seconds (retries=%s)'
-                                % (sleep_time, retries))
+                    helpers.log(
+                        'Retrying HTTP request in %s seconds (retries=%s)'
+                        % (sleep_time, retries))
                     retries -= 1
                     helpers.sleep(sleep_time)
                 else:
