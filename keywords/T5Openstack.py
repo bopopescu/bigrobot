@@ -804,8 +804,11 @@ S
 				if str(data[0]["state"]) == "L2 Only":
 					helpers.log("Pass: Router interface creaetd as endpoint in controller and state is correct")
 					return True
-		helpers.test_failure("Fail:router interface not present in controller endpoint table")
-		return False
+				else:
+					helpers.test_failure("Router interface state is not L2 only")
+		else:
+			helpers.test_failure("Fail:router interface not present in controller endpoint table")
+			return False
 	
 	def openstack_tenant_scale(self, name='p', count=0):
 		'''Function to add multiple tenants based on count
@@ -871,28 +874,44 @@ S
 		t = test.Test()
 		c = t.controller('master')
 		os1 = t.openstack_server('os1')
-		result = os1.bash("neutron router-port-list %s" % (routerName))
-		output = result["content"]
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		ip_list = []
-		for key, value in out_dict.items():
-			fixed_ips_str = value['fixed_ips']
-			fixed_ips_dict = helpers.from_json(fixed_ips_str)
-			ip_list.append(fixed_ips_dict['ip_address'])
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
-		c.rest.get(url)
-		data = c.rest.content()
-		endpoint_ip_list = []
-		for i in range(0,len(data)):
-			for j in range(0,len(data[i]["ip-address"])):
+		content = os1.bash("neutron router-port-list %s" % (routerName))['content']
+		output = helpers.strip_cli_output(content).strip()
+		helpers.log("*** output: '%s'" % output)
+		if output != '':
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			ip_list = []
+			for key, value in out_dict.items():
+				fixed_ips_str = value['fixed_ips']
+				fixed_ips_dict = helpers.from_json(fixed_ips_str)
+				ip_list.append(fixed_ips_dict['ip_address'])
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+			c.rest.get(url)
+			data = c.rest.content()
+			endpoint_ip_list = []
+			for i in range(0,len(data)):
+				for j in range(0,len(data[i]["ip-address"])):
 					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])						
-		ip_common = list(set(ip_list).intersection(set(endpoint_ip_list)))
-		if len(ip_common) == len(ip_list):
-			helpers.log("Pass:All router interface created as endpoint in BCF controller")
-			return True
+			ip_common = list(set(ip_list).intersection(set(endpoint_ip_list)))
+			if len(ip_common) == len(ip_list):
+				helpers.log("Pass:All router interface created as endpoint in BCF controller")
+				return True
+			else:
+				helpers.test_failure("Fail:All router interface not present in BCF endpoint")
+				return False
 		else:
-			helpers.test_failure("Fail:All router interface not present in BCF endpoint")
-			return False
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+			c.rest.get(url)
+			data = c.rest.content()
+			endpoint_ip_list = []
+			for i in range(0,len(data)):
+				for j in range(0,len(data[i]["ip-address"])):
+					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])
+			if len(endpoint_ip_list) == 0:
+				helpers.log("Router gateway endpoints are removed from BCF controller")
+				return True
+			else:
+				helpers.log("Router gateway endpoints are not removed from BCF controller")
+				return False
 	
 	def openstack_segment_scale_delete(self, count, name='n'):
 		'''Function to create multiple segments in a given tenant
