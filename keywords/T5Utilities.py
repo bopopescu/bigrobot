@@ -127,18 +127,18 @@ class T5Utilities(object):
             if(cluster=="HA"):
                 slave_switchList_b4 = self._gather_switch_connectivity("slave")
             fabricLinks_b4 = self._gather_fabric_links()
-            endpoints_b4 = self._gather_endpoints()
+            #endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
             portgroups_b4 = self._gather_port_groups()
 
-            fwdARPTable_b4 = self._gather_forwarding('arp-table')
-            fwdEPTable_b4 = self._gather_forwarding('ep-table')
-            fwdL3CIDRTable_b4 = self._gather_forwarding('l3-cidr-table')
-            fwdL3HostTable_b4 = self._gather_forwarding('l3-host-table')
-            fwdMyStationTable_b4 = self._gather_forwarding('my-station-table')
-            fwdRouterIPTable_b4 = self._gather_forwarding('router-ip-table')
-            fwdEcmpTable_b4 = self._gather_forwarding('ecmp-table')
-            fwdDhcpTable_b4 = self._gather_forwarding('dhcp-table')
+            #fwdARPTable_b4 = self._gather_forwarding('arp-table')
+            #fwdEPTable_b4 = self._gather_forwarding('ep-table')
+            #fwdL3CIDRTable_b4 = self._gather_forwarding('l3-cidr-table')
+            #fwdL3HostTable_b4 = self._gather_forwarding('l3-host-table')
+            #fwdMyStationTable_b4 = self._gather_forwarding('my-station-table')
+            #fwdRouterIPTable_b4 = self._gather_forwarding('router-ip-table')
+            #fwdEcmpTable_b4 = self._gather_forwarding('ecmp-table')
+            #fwdDhcpTable_b4 = self._gather_forwarding('dhcp-table')
 
 
         else:
@@ -149,29 +149,29 @@ class T5Utilities(object):
                 warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
             fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
-            endpoints_after = self._gather_endpoints()
-            warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
+            #endpoints_after = self._gather_endpoints()
+            #warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
             fabricLags_after = self._gather_fabric_lags()
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
             portgroups_after = self._gather_port_groups()
             warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
 
-            fwdARPTable_after = self._gather_forwarding('arp-table')
-            warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
-            fwdEPTable_after = self._gather_forwarding('ep-table')
-            warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
-            fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
-            warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
-            fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
-            warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
-            fwdMyStationTable_after = self._gather_forwarding('my-station-table')
-            warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
-            fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
-            warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
-            fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
-            warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
-            fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
-            warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
+            #fwdARPTable_after = self._gather_forwarding('arp-table')
+            #warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
+            #fwdEPTable_after = self._gather_forwarding('ep-table')
+            #warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
+            #fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
+            #warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
+            #fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
+            #warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
+            #fwdMyStationTable_after = self._gather_forwarding('my-station-table')
+            #warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
+            #fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
+            #warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
+            #fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
+            #warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
+            #fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
+            #warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
 
         if(fabricErrorEncounteredFlag):
             helpers.warn("------- Fabric Error encountered during Fabric Integrity Checks. Returning False -------")
@@ -999,6 +999,8 @@ class T5PlatformThreads(Thread):
     def run(self):
         if(self.name == "switchReboot"):
             self.switch_reboot(self.kwargs.get("switch"))
+        if(self.name == "switchPowerCycle"):
+            self.switch_power_cycle(self.kwargs.get("switch"))
         if(self.name == "failover"):
             self.controller_failover()
         if(self.name == "activeReboot"):
@@ -1030,6 +1032,20 @@ class T5PlatformThreads(Thread):
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
             print ("Failure during switch:%s reboot" % (switchName))
             return False
+    
+    def switch_power_cycle(self, switchList):
+        try:
+            t = test.Test()
+            newSwitchList = switchList.split(' ')
+            for switchName in newSwitchList:
+                t.power_cycle(switchName, 0)
+            helpers.sleep(120)
+            return True
+        except:
+            helpers.test_failure("Failure during switch:%s power cycle" % (switchName))
+            print ("Failure during switch:%s power cycle" % (switchName))
+            return False
+        
 
     def controller_failover(self):
         from T5Platform import T5Platform

@@ -373,16 +373,15 @@ class T5Platform(object):
 
         if (disruptMode == "switchReboot"):
             switchList = kwargs.get('switch').split(' ')
+            threadList.append("thread" + '%s' % threadCounter)
             for i, switchName in enumerate(switchList):
                 threadList.append("thread" + '%s' % threadCounter)
                 threadList[i] = T5PlatformThreads(threadCounter, "switchReboot", switch=switchName)
                 threadCounter += 1
         elif (disruptMode == "switchPowerCycle"):
-            switchList = kwargs.get('switch').split(' ')
-            for i, switchName in enumerate(switchList):
-                threadList.append("thread" + '%s' % threadCounter)
-                threadList[i] = T5PlatformThreads(threadCounter, "switchPowerCycle", switch=switchName)
-                threadCounter += 1
+            threadList.append("thread" + '%s' % threadCounter)
+            threadList[0] = T5PlatformThreads(threadCounter, "switchPowerCycle", **kwargs)
+            threadCounter += 1
 
         disruptThreadCounter = threadCounter
         if(len(threadList) == 0):
