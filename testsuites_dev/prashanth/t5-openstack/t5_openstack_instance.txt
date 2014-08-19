@@ -28,10 +28,7 @@ add/delete VM instance single app network
 	openstack add instance  cirros  t5test  app  app-inst1
 	sleep  15
 	openstack show instance all
-	openstack verify endpoint  app1-inst1  app
-	openstack delete instance  app1-inst1
-	sleep  2
-	openstack delete net  app
+	openstack verify endpoint  app-inst1  app
 	   
 add/delete multiple VM instance single app network 
 	[Tags]   openstack
@@ -45,10 +42,6 @@ add/delete multiple VM instance single app network
 	openstack show instance all
 	openstack verify endpoint  app-inst1  app
 	openstack verify endpoint  app-inst2  app
-	openstack delete instance  app-inst1
-	openstack delete instance  app-inst2
-	sleep  2
-	openstack delete net  app
 
 Test 3 tier app in single tenant
 	[Tags]   openstack
@@ -76,17 +69,7 @@ Test 3 tier app in single tenant
 	openstack verify endpoint  web-inst2  web
 	openstack verify endpoint  db-inst1  db
 	openstack verify endpoint  db-inst2  db
-	openstack delete instance  app-inst1
-	openstack delete instance  app-inst2
-	openstack delete instance  web-inst1
-	openstack delete instance  web-inst2
-	openstack delete instance  db-inst1
-	openstack delete instance  db-inst2
-	openstack delete keypair  t5test
-	openstack delete net  app
-	openstack delete net  web
-	openstack delete net  db
-		
+
 * keywords
 T5 Functional Suite Setup
 	base suite setup
@@ -94,16 +77,11 @@ T5 Functional Suite Setup
   	openstack add tenant  t5test
   	openstack add user  t5test  t5test  t5test  t5test@t5test.com
   	sleep  2
-    openstack add keypair  t5test  /root/t5test
   	
 T5 Functional Suite Teardown
 	openstack source  keystonerc_admin
 	openstack delete tenant  t5test
 	openstack delete user  t5test
-	openstack delete instance  app-inst1
-	openstack delete net  app
-	openstack delete net  web
-	openstack delete net  db
 	base suite teardown
 	
 T5 base test setup
@@ -112,8 +90,12 @@ T5 base test setup
 	
 T5 base test teardown
 	openstack source  keystonerc_admin
-	openstack delete instance  app1-inst1
-	openstack delete instance  app1-inst2
+	openstack delete instance  app-inst1
+	openstack delete instance  app-inst2
+	openstack delete instance  web-inst1
+	openstack delete instance  web-inst2
+	openstack delete instance  db-inst1
+	openstack delete instance  db-inst2
 	openstack delete net  app
 	openstack delete net  web
 	openstack delete net  db
