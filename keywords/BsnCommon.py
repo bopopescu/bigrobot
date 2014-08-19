@@ -1053,7 +1053,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    url = '/api/v1/data/controller/os/config/global/snmp'
                     c.rest.get(url)
                 except:
                     helpers.test_failure(c.rest.error())
@@ -1177,7 +1177,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 try:
                     c = t.controller("master")
-                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    url = '/api/v1/data/controller/os/config/global/snmp'
                     if "trap-enabled" in keyword:
                         if "True" in value:
                             c.rest.patch(url, {"trap-enabled": True})
@@ -1249,7 +1249,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
                     c.rest.put(url, {"ipaddr": str(host), "udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
@@ -1312,7 +1312,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
                     c.rest.delete(url, {"udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
@@ -1407,9 +1407,9 @@ class BsnCommon(object):
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
-                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
-                    c1.rest.put(url, {"service-name": str(service)})
-                    c2.rest.put(url, {"service-name": str(service)})
+                    url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
+                    c1.rest.put(url, {"name": str(service)})
+                    c2.rest.put(url, {"name": str(service)})
                 except:
                     return False
                 else:
@@ -1499,7 +1499,7 @@ class BsnCommon(object):
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
-                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
+                    url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
                     c1.rest.delete(url, {})
                     c2.rest.delete(url, {})
                 except:
