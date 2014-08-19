@@ -34,11 +34,7 @@ add VM instance single network and verify sync
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
 	openstack verify endpoint  app-inst1  app	
-	sleep  2
-	openstack delete instance  app-inst1
-	sleep  2
-	openstack delete net  app
-
+	
 verify global tenant mapping
 	[Tags]   openstack  
 	openstack add net  t5test  app
@@ -62,9 +58,6 @@ verify global tenant mapping
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app  
 	openstack verify endpoint  app-inst1  app
-	openstack delete instance  app-inst1
-	sleep  2
-	openstack delete net  app
 		
 verify sync on default setting multiple segments
 	[Tags]  openstack  
@@ -96,13 +89,6 @@ verify sync on default setting multiple segments
 	openstack verify endpoint  app-inst1  app
 	openstack verify endpoint  web-inst1  web
 	openstack verify endpoint  db-inst1  db
-	openstack delete instance  app-inst1
-	openstack delete instance  web-inst1
-	openstack delete instance  db-inst1
-	sleep  2
-	openstack delete net  app
-	openstack delete net  web
-	openstack delete net  db
 
 * keywords
 T5 Functional Suite Setup
@@ -118,12 +104,6 @@ T5 Functional Suite Teardown
 	openstack source  keystonerc_admin
 	openstack delete tenant  t5test
 	openstack delete user  t5test
-	openstack delete instance  app-inst1
-	openstack delete instance  web-inst1
-	openstack delete instance  db-inst1
-	openstack delete net  app
-	openstack delete net  web
-	openstack delete net  db
 	base suite teardown
 	
 T5 base test setup
