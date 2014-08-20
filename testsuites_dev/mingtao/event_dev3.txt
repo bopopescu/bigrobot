@@ -57,7 +57,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine0} 
     \   sleep  ${inevent}
          
-	[Tags] 	longevity   traffic    event    
+	[Tags] 	longevity   traffic    event    skipped
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -72,7 +72,7 @@ T22 leaf switch node down/up event
     \   sleep  ${inevent}
     
          
-	[Tags] 	longevity   traffic    event    
+	[Tags] 	longevity   traffic    event    skipped
 
 	    
 T23 controller node event failover        
@@ -106,6 +106,7 @@ T27 data Link down/up event between leaf and spine
  	
    
 	[Tags] 	longevity     traffic     event   
+
 
   
 
@@ -192,6 +193,9 @@ data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
 
 
 disable links between nodes    [Arguments]   ${node1}   ${node2} 
+	cli  master   show running-config switch 
+	cli  master   show link
+	
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
 	\  	rest_disable_fabric_interface		${node1}  ${int}  
@@ -199,6 +203,8 @@ disable links between nodes    [Arguments]   ${node1}   ${node2}
  	Return From Keyword   ${list}
 
 enable links between nodes   [Arguments]   ${node1}   ${list} 
+	cli  master   show running-config switch
+	cli  master   show link	
  	: FOR    ${int}   IN   @{list}   
 	\  	rest_enable_fabric_interface		${node1}  ${int}  
 	\   sleep  ${medium}

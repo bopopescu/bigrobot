@@ -4853,8 +4853,10 @@ class T5Platform(object):
         if (data):
             for i in range(0, len(data)):
                 if data[i]['connected'] == True:
-                    if 'fabric-connection-state' in data[i].keys() and data[i]['fabric-connection-state'] == "not_connected":
-                        if 'handshake-state' in data[i].keys() and data[i]['handshake-state'] == "quarantine-state":
+                    if 'fabric-connection-state' in data[i].keys() and (
+                        data[i]['fabric-connection-state'] == "not_connected" or data[i]['fabric-connection-state'] == "suspended"):
+                        if 'handshake-state' in data[i].keys() and (
+                            data[i]['handshake-state'] == "quarantine-state" or data[i]['handshake-state'] == "master-state"):
                             info.append(data[i]['name'])
         helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)
         return info
