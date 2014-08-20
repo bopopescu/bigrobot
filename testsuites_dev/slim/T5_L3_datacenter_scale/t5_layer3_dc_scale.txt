@@ -148,9 +148,11 @@ SegLoop1
     \   ${ipAddr1} =                            BSNCommon.get next address              ipv4                                    ${ipAddr1}                              0.0.1.0
     \   ${nextHop1} =                           BSNCommon.get next address              ipv4                                    ${nextHop1}                             0.0.1.0
     \   ${staticRoute1} =                       BSNCommon.get next address              ipv4                                    ${staticRoute1}                         0.0.1.0
+    \   ${vlanId1} =                            evaluate                                ${vlanId1} + 1
     \   Set Test Variable                       ${ipAddr}                               ${ipAddr1}
     \   Set Test Variable                       ${nextHop}                              ${nextHop1}
     \   Set Test Variable                       ${staticRoute}                          ${staticRoute1}     
+    \   Set Test Variable                       ${vlanId}                               ${vlanId1} 
 
 Delete and add 2k VNS with traffic running with one host each
 
