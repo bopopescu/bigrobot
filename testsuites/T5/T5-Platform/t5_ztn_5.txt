@@ -384,6 +384,7 @@ T5.5.9. Connected, change config, double failover, reconnect, reload
 	Cli Run  master  show run
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	[Tags]  skipped
 
 T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
 	Sleep  15
@@ -396,6 +397,7 @@ T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
 	Sleep  30
 	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
+	[Tags]  skipped
 
 T5.5.11. Connected, change config, double failover, reboot
 	# extra time for switch to recover from previous test case
@@ -412,6 +414,7 @@ T5.5.11. Connected, change config, double failover, reboot
 	Sleep  30
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	[Tags]  skipped
 
 T5.5.12. Connected, delete, double failover, reboot
 	Sleep  15
@@ -423,6 +426,7 @@ T5.5.12. Connected, delete, double failover, reboot
 	Failover
 	Run Keyword and Expect Error  *  Verify Switch Connection State  False  ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
+	[Tags]  skipped
 
 # Switch in stand-by mode
 T5.6.1. Connected, change config, flap interface, reload
