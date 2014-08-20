@@ -1345,7 +1345,7 @@ class Test(object):
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
-
+        master = self.controller("master")
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
                 if helpers.is_controller(key):
@@ -1418,7 +1418,10 @@ class Test(object):
                               % helpers.prettify(params))
                 master = self.controller("master")
                 master.enable("show switch")
-
+        master.config("logging level org.projectfloodlight.db.data debug")
+        master.config("logging level org.projectfloodlight.sync.internal debug")
+        master.config("logging level org.projectfloodlight.ha debug")
+        master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())
