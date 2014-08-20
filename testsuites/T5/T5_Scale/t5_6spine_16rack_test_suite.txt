@@ -381,8 +381,9 @@ T1 Verify L2 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2 
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+	Manual passed
 	
 
 T2 Verify L3 Traffic Convergence with scale configuration first time
@@ -391,8 +392,9 @@ T2 Verify L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L3
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+    Manual passed
      
 T3 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Build scale configuration with Scale Config
@@ -407,15 +409,17 @@ T4 Verify L2 traffic drop time after deleting the scale config
     Log    Repeat T1
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+	Manual failed
 
 T5 Verify L3 traffic drop time after deleting the scale config
     Log    Repeat T2
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+    Manual failed
     
 T6 Verify L2/L3 traffic drop time after deleting the scale config
     Log    Repeat T3
@@ -432,8 +436,9 @@ T7 Reboot entire fabric to measure time all flows start forwarding without any t
     Log    Reboot entire fabric
     Log    Measure the time all traffic flows are forwarding without any packet drops
     Log    Repeat T7 for 32k/64k/96k/ L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+    Manual passed
     
 T8 Generate ARP requests from all L3 hosts
     Log    Copy scale configuration to master controller
@@ -450,9 +455,9 @@ T9 Controller HA fail-over via CLI
     Log    Perform controller fail-over
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
-	
+	Manual failed
 	
 T10 Controller HA fail-over/fail-back via CLI
     Log    Repeat T9
@@ -460,8 +465,9 @@ T10 Controller HA fail-over/fail-back via CLI
     Log    Perform controller fail-over/fail-back
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+	Manual failed
 	
 T11 Controller HA fail-over/fail-back via CLI
     Log    Repeat T9
@@ -469,8 +475,9 @@ T11 Controller HA fail-over/fail-back via CLI
     Log    Perform controller fail-over/fail-back
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+	Manual failed
 	
 T12 Controller master reboot    
     Log    Repeat T9
@@ -478,9 +485,9 @@ T12 Controller master reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
-	
+	Manual failed
 	
 T13 Controller slave reboot    
     Log    Repeat T9
@@ -488,9 +495,9 @@ T13 Controller slave reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
-	
+	Manual failed
 	    
 T14 Verify/Measure Non-Graceful operations    
     Log    Repeat T9
@@ -553,9 +560,9 @@ T19 Power off one spine
     Log   Power off one spine
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
-	
+	Manual failed
 	
 T20 Power on one spine    
     Log   Repeat T3    
@@ -661,9 +668,9 @@ T29 Fail management switch one at a time
     Log   Fail one management switch 
     Log   Verify controller/fabric stability
     Log   Measure time till traffic gets dropped
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
-	
+	Manual failed
 	
 T30 Restart ofad in spine
    Log   Repeat T3
@@ -671,9 +678,9 @@ T30 Restart ofad in spine
    Log   Verify no traffic loss
    Log   Restart ofad in one spine
    Log   Verify/measure traffic loss/convergence
-   Manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #Manual untested
+   [Tags] 	sanity    Manual-untested  scaling
+   Manual passed
 	
 T31 Restart ofad in leaf
    Log   Repeat T3
@@ -681,9 +688,9 @@ T31 Restart ofad in leaf
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #Manual untested
+   [Tags] 	sanity    Manual-untested  scaling
+   Manual passed
 	
 T32 Verify L2 learning rate
    Log   Repeat T3
