@@ -57,7 +57,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine0} 
     \   sleep  ${inevent}
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event    
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -72,7 +72,7 @@ T22 leaf switch node down/up event
     \   sleep  ${inevent}
     
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event    
 
 	    
 T23 controller node event failover        
@@ -81,7 +81,7 @@ T23 controller node event failover
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	longevity    traffic     event    skipped
+	[Tags] 	longevity    traffic     event     skipped
  
  
 T27 data Link down/up event between leaf and spine
@@ -105,7 +105,7 @@ T27 data Link down/up event between leaf and spine
   	\  sleep  ${inevent}  
  	
    
-	[Tags] 	longevity     traffic     event   skipped
+	[Tags] 	longevity     traffic     event   
 
   
 
@@ -250,13 +250,13 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     : FOR    ${j}    IN RANGE    1     ${vns}
     \ 	config    master    no interface segment V${j}   
 	config    master    no tenant FLAP0      
-	cli    master     show running-config tenant	 timeout=120	
+	enable    master     show running-config tenant	 timeout=120	
  
 
 clear stats in controller switch
-	cli    master  clear switch all interface all counters 
+	enable    master  clear switch all interface all counters 
 #	rest_clear_vns_stats
-	rest_clear_fabric_interface_stats
+#	rest_clear_fabric_interface_stats
  
 T5 longevity suite setup
    base suite setup

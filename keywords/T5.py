@@ -1267,10 +1267,14 @@ class T5(object):
         ''' Function to clear all the fabric interefaces
         Input: None
         Output: All connected switch interfaces will be cleared
+        DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-counter/interface {}  --- Aug 20
+
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats/interface'
+        
+        #url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats/interface'
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter/interface'
         c.rest.delete(url, {})
 
     def rest_show_fabric_switch(self):
@@ -2807,13 +2811,15 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
   } ],
   "switch-dpid" : "00:00:70:72:cf:b5:f0:e4"
 } ]"
+GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="ethernet30"][switch-dpid="00:00:70:72:cf:ab:3a:98"]?select=interface[name="ethernet30"] -- Aug 20
 
         '''
         t = test.Test()
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
         helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        #url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         try:
             c.rest.get(url)
         except:

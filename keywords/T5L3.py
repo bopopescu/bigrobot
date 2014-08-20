@@ -1282,7 +1282,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                          " action = %s " \
                          " ip-proto = %s " \
                          " segment-interface = %s" \
-                         " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
+                         " next-hop-group = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-list[name="%s"]/rule[seq=%s]' % (tenant, polname, seqnum)
         if (next_hop is None and ip_proto is None):
             if (srcdata is not None and dstdata is not None):
@@ -1390,7 +1390,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is not None and action is "next-hop"):
+        if (next_hop is not None and ip_proto is not None and action == "next-hop"):
             if (srcdata is not None and dstdata is not None):
                 if (segment is not None):
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
@@ -1459,74 +1459,76 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is None and action is "next-hop"):
-            if (srcdata is not None and dstdata is not None):
-                if (segment is not None):
-                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+        if (next_hop is not None and action == "next-hop" ):
+            if (ip_proto is None):
+                if (srcdata is not None and dstdata is not None):
+                    if (segment is not None):
+                        helpers.test_log("next hop is not none, ip proto is none and action is next-hop")
+                        data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (srcdata is None):
-                if (segment is not None):
-                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                if (srcdata is None):
+                    if (segment is not None):
+                        data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (dstdata is None):
-                if (segment is not None):
-                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (dstdata is None):
+                    if (segment is not None):
+                        data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (dstdata is None and srcdata is None):
-                if (segment is not None):
-                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (dstdata is None and srcdata is None):
+                    if (segment is not None):
+                        data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
     def rest_show_forwarding_dhcp_table(self):
         '''

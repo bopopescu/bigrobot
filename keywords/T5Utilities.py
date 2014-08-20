@@ -999,6 +999,8 @@ class T5PlatformThreads(Thread):
     def run(self):
         if(self.name == "switchReboot"):
             self.switch_reboot(self.kwargs.get("switch"))
+        if(self.name == "switchPowerCycle"):
+            self.switch_power_cycle(self.kwargs.get("switch"))
         if(self.name == "failover"):
             self.controller_failover()
         if(self.name == "activeReboot"):
@@ -1030,6 +1032,20 @@ class T5PlatformThreads(Thread):
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
             print ("Failure during switch:%s reboot" % (switchName))
             return False
+    
+    def switch_power_cycle(self, switchList):
+        try:
+            t = test.Test()
+            newSwitchList = switchList.split(' ')
+            for switchName in newSwitchList:
+                t.power_cycle(switchName, 0)
+            helpers.sleep(120)
+            return True
+        except:
+            helpers.test_failure("Failure during switch:%s power cycle" % (switchName))
+            print ("Failure during switch:%s power cycle" % (switchName))
+            return False
+        
 
     def controller_failover(self):
         from T5Platform import T5Platform

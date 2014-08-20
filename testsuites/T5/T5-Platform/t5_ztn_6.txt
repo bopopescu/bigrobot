@@ -53,13 +53,12 @@ Resource		t5_ztn_resource.txt
 *** Test Cases ***
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	Manual Failed
-	[Tags]  manual
+	[Tags]  skipped
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Failed
+	Manual Passed
 	[Tags]  manual
 T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Failed
+	Manual Passed
 	[Tags]  manual
 T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
 	Manual Untested
@@ -83,8 +82,8 @@ T6.10. Verify that controller caches information about switch from its manifest,
 	Manual Passed
 	[Tags]  manual
 T6.11. Verify that controller can get list of images stored at switch's flash, and after a failover the (new) master can gather the information using cached switch IP addresses
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.12. Verify what happens when switch's running-config changes while fabric is operating in headless mode
 	Manual Untested
 	[Tags]  manual-untested
@@ -101,8 +100,8 @@ T6.16. Verify that switch uses cached config after reboot and does not download 
 	Manual Passed
 	[Tags]  manual
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
 	Manual Untested
 	[Tags]  manual-untested
@@ -110,8 +109,9 @@ T6.19. Verify that manifest for given switch is no more accessible just after sw
 	Manual Passed
 	[Tags]  manual
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	#switch gets suspended due to runtime checksum mismatch
 T6.21. Downgrade process
 	Manual Untested
 	[Tags]  manual-untested
@@ -137,8 +137,8 @@ T6.28. Check what happens when switch boots when controllers in split-brain mode
 	Manual Untested
 	[Tags]  manual-untested
 T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, not IP addresses
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.30. Have DNS servers configured differently on two controllers in cluster - check what happens after failover...
 	Manual Untested
 	[Tags]  manual-untested
@@ -362,11 +362,11 @@ T9.5. Verify that all switch-related 'show' commands are accessible from the con
 	Manual Untested
 	[Tags]  manual-untested
 T9.6. Verify that there is appropriate command to show ztn status of each switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.7. Verify that admin can view version of SL running on each switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.8. ? Verify that admin can view all images stored on flash at given switch
 	Manual Untested
 	[Tags]  manual-untested
