@@ -1,4 +1,4 @@
-from Exscript import Account
+from Exscript import Account, PrivateKey
 from Exscript.protocols import SSH2, Telnet
 from Exscript.protocols.Exception import LoginFailure, TimeoutException
 import autobot.helpers as helpers
@@ -25,7 +25,10 @@ class DevConf(object):
                  name=None,
                  timeout=None,
                  protocol='ssh',
-                 debug=0):
+                 debug=0,
+                 privatekey=None,
+                 privatekey_password=None,
+                 privatekey_type=None):
         if host is None:
             helpers.environment_failure("Must specify a host.")
         if user is None:
@@ -41,6 +44,9 @@ class DevConf(object):
         self._protocol = protocol
         self._console_info = console_info
         self._debug = debug
+        self._privatekey = privatekey
+        self._privatekey_password = helpers.get(privatekey_password, '')
+        self._privatekey_type = helpers.get(privatekey_type, 'rsa')
         self._platform = None
         self.conn = None
         self.last_result = None
@@ -51,11 +57,15 @@ class DevConf(object):
         self._logpath = helpers.bigrobot_log_path_exec_instance()
         if not self._logpath:
             self._logpath = '/tmp'
+        else:
+            # Create directory if it doesn't exist
+            if not helpers.file_exists(self._logpath):
+                helpers.mkdir_p(self._logpath)
         self._logfile = ('%s/devconf_conversation.%s.log'
                          % (self._logpath, self._name))
         helpers.file_write_append_once(self._logfile,
-                                       "\n\n--------- %s Devconf '%s'\n\n"
-                                       % (helpers.ts_long_local(), self._name))
+                "\n\n--------- %s New devconf conversation for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
 
         self._timeout = timeout if timeout else 30  # default timeout
 
@@ -85,7 +95,19 @@ class DevConf(object):
             if self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user,
                                                          self._password)
-                account = Account(self._user, self._password)
+                if self._protocol == 'ssh' and self._privatekey:
+                    # User-specified identity file, e.g., ~/.ssh/id_rsa.
+                    # This is equivalent to 'ssh -i' option.
+                    helpers.debug("Using SSH identity in '%s' of type '%s'"
+                                  % (self._privatekey, self._privatekey_type))
+                    key = PrivateKey.from_file(
+                                filename=self._privatekey,
+                                password=self._privatekey_password,
+                                keytype=self._privatekey_type)
+                else:
+                    key = None
+
+                account = Account(self._user, self._password, key=key)
 
                 if self._protocol == 'telnet':
                     helpers.log("Telnet to host %s, port %s (user:%s)"
@@ -429,16 +451,8 @@ class DevConf(object):
 
 
 class BsnDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, console_info=None,
-                 timeout=None, protocol='ssh', debug=0):
-        super(BsnDevConf, self).__init__(host, user, password,
-                                         port=port,
-                                         console_info=console_info,
-                                         name=name,
-                                         timeout=timeout,
-                                         protocol=protocol,
-                                         debug=debug)
+    def __init__(self, *args, **kwargs):
+        super(BsnDevConf, self).__init__(*args, **kwargs)
         self._mode_before_bash = None
 
     def is_cli(self):
@@ -628,12 +642,7 @@ class BsnDevConf(DevConf):
 
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
-        if 'is_monitor_reauth' in kwargs:
-            is_monitor_reauth = kwargs['is_monitor_reauth']
-            del kwargs['is_monitor_reauth']
-        else:
-            is_monitor_reauth = True
-
+        is_monitor_reauth = kwargs.pop('is_monitor_reauth', True)
         super(ControllerDevConf, self).__init__(*args, **kwargs)
 
         self.test_monitor = None
@@ -752,29 +761,23 @@ class MininetDevConf(DevConf):
     """
     :param topology: str, in the form 'tree,4,2'
     """
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None, controller2=None, port=None, topology=None,
-                 openflow_port=None, timeout=None, protocol='ssh',
-                 debug=0, is_start_mininet=True):
-
-        if controller is None:
+    def __init__(self, *args, **kwargs):
+        self.controller = kwargs.pop('controller', None)
+        self.controller2 = kwargs.pop('controller2', None)
+        is_start_mininet = kwargs.pop('is_start_mininet', True)
+        if self.controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
-        if topology is None:
+
+        self.topology = kwargs.pop('topology', None)
+        if self.topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
 
         self._mode_before_bash = None
-        self.topology = topology
-        self.controller = controller
-        self.controller2 = controller2
-        self.openflow_port = openflow_port
+        self.openflow_port = kwargs.pop('openflow_port', None)
         self.state = 'stopped'  # or 'started'
         self.is_screen_session = False
 
-        super(MininetDevConf, self).__init__(host, user, password, name=name,
-                                             timeout=timeout,
-                                             port=port,
-                                             protocol=protocol,
-                                             debug=debug)
+        super(MininetDevConf, self).__init__(*args, **kwargs)
         if not is_start_mininet:
             helpers.log("Not starting Mininet session (is_start_mininet=%s)"
                         % is_start_mininet)
@@ -785,7 +788,7 @@ class MininetDevConf(DevConf):
             if not helpers.any_match(self.content(), r'No Sockets found'):
                 helpers.environment_failure(
                     "There are other Mininet screen sessions running on %s."
-                    " Please close them." % host)
+                    " Please close them." % self._host)
 
             if helpers.bigrobot_preserve_mininet_screen_session_on_fail().lower() == 'true':
                 # Must specify a "sensible" term type to avoid the screen error
@@ -967,7 +970,6 @@ class T6MininetDevConf(MininetDevConf):
         # helpers.log("Closing T6MininetDevConf '%s' (%s)"
         #            % (self.name(), self._host))
         super(T6MininetDevConf, self).close()
-
 
 
 class HostDevConf(DevConf):
