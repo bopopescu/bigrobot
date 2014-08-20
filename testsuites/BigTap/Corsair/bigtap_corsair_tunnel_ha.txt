@@ -269,7 +269,6 @@ TC9:Switch HA: Restart Process OFAD on app-as4600-2
     stop traffic  ${stream_21}                      
     bash restart process  s2  ofad
     Sleep  120
-    pause
     start traffic  ${stream_5710_5610}
     start traffic  ${stream_5610_5710}
     start traffic  ${stream_12}
@@ -348,8 +347,8 @@ TC11:Switch HA: Restart Process OFAD on as6700
     stop traffic  ${stream_5610_5710}
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}                      
-    bash restart process  s4  ofad
-    Sleep  120
+    bash restart process  s4  ofad  timeout=90
+    Sleep  60
     start traffic  ${stream_5710_5610}
     start traffic  ${stream_5610_5710}
     start traffic  ${stream_12}
@@ -362,7 +361,7 @@ TC11:Switch HA: Restart Process OFAD on as6700
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}               
     delete traffic  
-    [Tags]  ha  as6700  traffic  ofad  run
+    [Tags]  ha  as6700  traffic  ofad  runnow
 
 
 TC12:Switch HA: Restart Process networking on app-as4600-1
