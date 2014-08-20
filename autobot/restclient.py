@@ -8,6 +8,14 @@ import re
 class RestClient(object):
     """
     REST Client for talking to RESTful web services.
+
+    Quiet levels:
+      0 - display everything (default)
+      1 - suppress command output
+      2 - suppress command
+      3 - reserved
+      4 - reserved
+      5 - suppress all output
     """
 
     # Number of seconds to wait before timing out the REST call.
@@ -54,7 +62,8 @@ class RestClient(object):
             password = self.password
 
         base64str = base64.encodestring('%s:%s' % (user, password))
-        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        self.default_header['authorization'] = ('Basic %s'
+                                                % base64str.replace('\n', ''))
         return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
@@ -123,7 +132,7 @@ class RestClient(object):
                        level=level)
 
     def _http_request(self, url, verb='GET', data=None, session=None,
-                     quiet=False, save_last_result=True, log_level='info'):
+                     quiet=0, save_last_result=True, log_level='info'):
         """
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
@@ -140,15 +149,16 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
-                    level=5, log_level=log_level)
-        helpers.log("'%s' Headers = %s"
-                    % (self._name, helpers.to_json(headers)),
-                    level=5, log_level=log_level)
-        if data:
-            helpers.log("'%s' Data = %s"
-                        % (self._name, helpers.to_json(data)),
+        if helpers.not_matched(quiet, [2, 5]):
+            helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
                         level=5, log_level=log_level)
+            helpers.log("'%s' Headers = %s"
+                        % (self._name, helpers.to_json(headers)),
+                        level=5, log_level=log_level)
+            if data:
+                helpers.log("'%s' Data = %s"
+                            % (self._name, helpers.to_json(data)),
+                            level=5, log_level=log_level)
 
         prefix_str = '%s %s' % (self.name(), verb.lower())
         data_str = ''
@@ -179,7 +189,7 @@ class RestClient(object):
         if save_last_result:
             self.last_result = result
 
-        if not quiet:
+        if helpers.not_matched(quiet, [1, 5]):
             self.log_result(result=result, level=6, log_level=log_level)
 
         # ATTENTION: RESTclient will generate an exception when the
@@ -228,8 +238,9 @@ class RestClient(object):
                 helpers.log('HTTP request error:\n%s'
                             % helpers.exception_info())
                 if retries > 0:
-                    helpers.log('Retrying HTTP request in %s seconds (retries=%s)'
-                                % (sleep_time, retries))
+                    helpers.log(
+                        'Retrying HTTP request in %s seconds (retries=%s)'
+                        % (sleep_time, retries))
                     retries -= 1
                     helpers.sleep(sleep_time)
                 else:

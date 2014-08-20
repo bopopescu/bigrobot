@@ -12,8 +12,8 @@ Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
-Resource		testsuites_dev/slim/T5_L3_colo_scale/t5_layer3_colo_scale_variables.txt
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+Resource		testsuites_dev/slim/T5_L3_datacenter_scale/t5_layer3_dc_scale_variables.txt
+Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
 
 
 * Test Cases
@@ -110,26 +110,49 @@ One Tenant 4k VNS with one host each
     
 1k Tenant with 4k segment in global vlan mapping mode
     ${ipAddr} =                                 Set Variable                    20.0.0.1
+    ${nextHop} =                                Set Variable                    20.0.0.2
+    ${staticRoute} =                            Set Variable                    30.0.0.0
+    ${vlanId} =                                 Set Variable                    1
+    REST set vlan mapping mode                  global
+    REST add tenant                             system
     : FOR                                       ${i}                            IN RANGE                1                   998
     \   ${result} =                             REST add tenant                 T-${i}
+    \   REST add tenant routers intf to system          T-${i}
+    \   REST add system intf to tenant routers          T-${i}
     \   Should Be True                          ${result}
-    \   SegLoop1                                T-${i}                          ${ipAddr} 
+    \   REST add nexthop group                  T-${i}                          T-${i}-gp
+#    \   REST add static routes                  T-${i}                          ${staticRoute}/24                      {"next-hop-group": "T-${i}-gp"}
+    \   SegLoop1                                T-${i}                          ${ipAddr}                               ${nextHop}                              ${staticRoute}      ${vlanId}
     \   ${ipAddr} =                             Set Variable                    ${ipAddr}
+    \   ${nextHop} =                            Set Variable                    ${nextHop}
+    \   ${staticRoute} =                        Set Variable                    ${staticRoute}
+    \   ${vlanId} =                             Set Variable                    ${vlanId}
+#    \   ${staticRoute} =                       BSNCommon.get next address      ipv4                                    ${staticRoute}                              0.0.4.0
+
+
 
 SegLoop1
-    [Arguments]                                 ${j} 
-    
-    \   : FOR                                   ${k}                            IN RANGE                1               4
-    \   ${result} =                             REST add vns                            ${j}                                ${j}-${i}
+    [Arguments]                                 ${TenantName}                           ${ipAddr1}                              ${nextHop1}                             ${staticRoute1}                         ${vlanId1}
+    : FOR                                       ${segName}                              IN RANGE                                1                                       5
+    \   ${result} =                             REST add vns                            ${TenantName}                           ${TenantName}-${segName}
     \   Should Be True                          ${result}
-    \   ${result} =                             REST add router intf                    ${j}                                ${j}-${i}
+    \   ${result} =                             REST add vlan membership                ${TenantName}                           ${TenantName}-${segName}                ${vlanId1}
+    \   Should Be True                          ${result}
+    \   ${result} =                             REST add router intf                    ${TenantName}                           ${TenantName}-${segName}
     \   Should Be True                          ${result} 
-    \   ${result} =                             REST add vns ip                         ${j}                                ${j}-${i}                  ${ipAddr}           24
+    \   ${result} =                             REST add vns ip                         ${TenantName}                           ${TenantName}-${segName}                ${ipAddr}           24
     \   Should Be True                          ${result}
-    \   ${ipAddr} =                             BSNCommon.get next address              ipv4                                ${ipAddr}               0.0.1.0
-    \   Should Be True                          ${result}
-    \   [return]                                ${ipAddr}
-     
+    \   REST add nexthopGroup ip                ${TenantName}                           ${TenantName}-gp                        ${nextHop1}
+    \   REST add static routes                  ${TenantName}                           ${staticRoute1}/24                      {"next-hop-group": "${TenantName}-gp"}
+    \   REST add static routes                  system                                  ${staticRoute1}/24                      {"tenant": "${TenantName}"}
+    \   ${ipAddr1} =                            BSNCommon.get next address              ipv4                                    ${ipAddr1}                              0.0.1.0
+    \   ${nextHop1} =                           BSNCommon.get next address              ipv4                                    ${nextHop1}                             0.0.1.0
+    \   ${staticRoute1} =                       BSNCommon.get next address              ipv4                                    ${staticRoute1}                         0.0.1.0
+    \   ${vlanId1} =                            evaluate                                ${vlanId1} + 1
+    \   Set Test Variable                       ${ipAddr}                               ${ipAddr1}
+    \   Set Test Variable                       ${nextHop}                              ${nextHop1}
+    \   Set Test Variable                       ${staticRoute}                          ${staticRoute1}     
+    \   Set Test Variable                       ${vlanId}                               ${vlanId1} 
 
 Delete and add 2k VNS with traffic running with one host each
 

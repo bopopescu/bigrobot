@@ -22,39 +22,39 @@ Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack untagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack untagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 Inter tenant L3 tagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack tagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 inter tenant L3 tagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack tagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 Add and delete default route on tenant
     Add and delete default route on tenant router
-    [Tags]      feature         
+    [Tags]      feature         testpath
 
 Add and delete static route on tenant
     manual passed
-    [Tags]      manual         feature                          
+    [Tags]      manual         feature      
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
-    [Tags]      feature             
+    [Tags]      feature          testpath
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature             
+    [Tags]      feature          testpath
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
-    [Tags]      feature             
+    [Tags]      feature          testpath
 
 L3 ttl one forwarding
     Verify inter tenant L3 traffic with ttl value of one two and three
@@ -62,7 +62,7 @@ L3 ttl one forwarding
 
 L3 inter tenant forwarding with end host moved to another port
     L3 inter tenant host moved 
-    [Tags]      feature                 
+    [Tags]      feature        testpath         
 
 L3 inter tenant forwarding split horizon on the same port 
     manual passed
@@ -70,7 +70,7 @@ L3 inter tenant forwarding split horizon on the same port
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
     L3 inter tenant forwarding between endpoints on the same rack but different switch
-    [Tags]      feature             
+    [Tags]      feature    testpath         
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
@@ -110,7 +110,7 @@ One public IP and multiple private IP
 
 Verify private IP is able to communicate with other vns in the same tenant
     Verify private IP is able to communicate with other vns in the same tenant
-    [Tags]          feature         
+    [Tags]          feature    testpath   
 
 Controller HA failover via CLI
     Controller HA failover via CLI
@@ -174,7 +174,7 @@ Add and delete endpoints with L3 inter tenant traffic
 
 Verify private subnet cannot be routed via system router
     Verify private subnet cannot be routed via system router
-    [Tags]          feature         
+    [Tags]          feature    testpath       
 
 L3 inter tenant traffic with jumbo frame
     L3 inter tenant traffic with jumbo frame
@@ -238,7 +238,7 @@ Active Controller reboot with dhcp-relay
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
-    [Tags]          feature             runfailed
+    [Tags]          feature             runfailed    testpath
 
 Restart ofad on leaf switch with ecmp group
     manual passed
@@ -334,7 +334,7 @@ Verify routing loop is not causing packets to loop forever
 
 Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
-    [Tags]          feature                     runfailed
+    [Tags]          feature     testpath          runfailed
 
 Spine reboot
     Spine reboot
@@ -376,6 +376,13 @@ L3 inter tenant same rack untagged with dynamic endpoints
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test1  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.11
+    Should Be True  ${returnVal}
 #   ${stream1}=                                 L3 add                          name=stream1            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
 #   ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1                       
 #   start traffic                               ${stream1}
@@ -416,7 +423,14 @@ L3 inter tenant across rack untagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0   
+    rest clear testpath  
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test2  src-ip=10.252.1.11  dst-ip=10.251.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test2  HostPing  leaf  spine  leaf  host=h4  ip=10.251.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h4                              10.251.0.0/16           10.252.1.1
     
@@ -498,7 +512,14 @@ L3 inter tenant same rack tagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0   
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test3  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test3  HostPing  leaf  spine  leaf  host=h2  ip=10.251.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     
@@ -542,7 +563,14 @@ L3 inter tenant across rack tagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0    
+    rest clear testpath  
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test4  src-ip=10.252.1.11  dst-ip=10.251.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  spine  leaf  host=h3   ip=10.251.1.11
+    Should Be True  ${returnVal}  
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -578,16 +606,28 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0   
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-NullNextHop  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     REST add static routes                      X                               10.252.0.0/16  
     REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
+    ${returnVal}=  rest verify testpath error code  dropped by route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}       
     REST delete static routes                   X                               10.252.0.0/16   
     REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
     REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
+    # For this test test path is still active. So just probing the previous test
+    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -633,15 +673,26 @@ Add and delete default route on tenant router
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0        
-    REST delete static routes                   X                               10.252.0.0/16               
+    REST delete static routes                   X                               10.252.0.0/16              
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100      
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal} 
     REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0      
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}  
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-DefaultRoute  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-DefaultRoute  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     REST delete static routes                   X                               0.0.0.0/0               
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100      
+    Should Be True                              ${loss} == 100     
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -684,15 +735,26 @@ Add and delete tenant system interface on tenant router
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}     
     REST delete system intf to tenant routers       X
     sleep                                           1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100      
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal} 
     REST add system intf to tenant routers      X
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0  
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}       
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-SysInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-SysInterface  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -738,11 +800,20 @@ Add and delete tenant router interface on system tenant
     REST delete tenant routers intf to system   Y
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100      
+    Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}        
     REST add tenant routers intf to system      Y
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0   
+    rest clear testpath
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-TenantInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-TenantInterface  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -785,6 +856,8 @@ Add and delete more specific route on tenant over existing static route
     BASH ping                                   h1                              10.252.1.11             count=5
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h3                      10.252.1.1
@@ -799,9 +872,14 @@ Add and delete more specific route on tenant over existing static route
     Should Be True                              ${returnVal}    
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
     Should Be True                              ${loss} == 100
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    ## Here Test Path should show the forwarding as true, since route is directed to a garbage hop
+    Should Be True  ${returnVal}    
     REST delete static routes                   X                               10.252.1.0/24
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -897,6 +975,8 @@ L3 inter tenant host moved
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}    
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     sleep                                       5
     BASH init intf                              h2                              bond0.1002
     BASH ifdown intf                            h2                              bond0
@@ -910,6 +990,13 @@ L3 inter tenant host moved
     BASH ping                                   h3                              10.252.1.1              count=5
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
+    rest clear testpath
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-TenantMove  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-TenantMove  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -951,7 +1038,14 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     Should Contain                              ${attachpoint}                  ${leaf2b_host6}
     REST show endpoints     
     ${loss} =                                   BASH ping                       h5                      10.252.1.31             count=10
-    Should Be True                              ${loss} < 20        
+    Should Be True                              ${loss} < 20     
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.31  dst-ip=10.252.1.31
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-SameRackDifferentSwitch  src-ip=10.251.1.31  dst-ip=10.252.1.31 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-SameRackDifferentSwitch  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.31
+    Should Be True  ${returnVal}
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
     
@@ -1094,12 +1188,42 @@ Verify private IP is able to communicate with other vns in the same tenant
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath   
+    ${returnVal}=  rest verify testpath error code  ambiguous endpoints  src-ip=10.251.1.11  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}     
+    ${returnVal}=  rest configure testpath controller view  src-tenant=X  src-segment=X1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}       
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-1  src-tenant=X  src-segment=X1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-1   HostPing  leaf  spine  leaf  host=h5  ip=10.251.2.11
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-2  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11  
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-2  HostPing  leaf  spine  leaf  host=h3  ip=10.252.2.11  
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.251.2.11             count=10
-    Should Be True                              ${loss} == 100    
+    Should Be True                              ${loss} == 100   
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-3  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-3  HostPing  leaf  spine  leaf  host=h3  ip=10.251.2.11  
+    Should Be True  ${returnVal} 
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  spine  leaf  host=h6  ip=10.252.2.11
+    Should Be True  ${returnVal}   
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h5                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h6                              10.251.0.0/16           10.251.2.1
@@ -2596,11 +2720,22 @@ Verify private subnet cannot be routed via system router
     Should Be True                              ${result} 
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateSubnet  src-ip=10.251.1.11  dst-ip=10.251.2.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateSubnet  HostPing  leaf  host=h5  ip=10.251.2.11
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h5                      10.252.2.11             count=10
     Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  dropped due to private segment  src-ip=10.251.1.11  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}    
     ${loss} =                                   BASH ping                       h3                      10.251.1.11             count=10
     Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}    
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0    
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
@@ -2647,21 +2782,32 @@ Enable and disable tenant logical router interface
     REST disable router intf                    system                          Y
     sleep                                       1
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100    
+    Should Be True                              ${loss} == 100   
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}      
     REST enable router intf                     system                          Y
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 50    
     REST disable router intf                    X                               system
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}      
     REST enable router intf                     X                               system 
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
-    Should Be True                              ${loss} < 50    
+    Should Be True                              ${loss} < 50 
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-UninstalledInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-UninstalledInterface  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.11
+    Should Be True  ${returnVal}   
     BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
     BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
 
-    
-    
+
+
 initialize host
     BASH run command                                h1                                ifdown bond0
     BASH run command                                h2                                ifdown bond0

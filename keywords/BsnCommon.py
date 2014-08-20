@@ -124,6 +124,10 @@ class BsnCommon(object):
                     % helpers.prettify(t.topology_params()))
 
     def expr(self, s):
+        """
+        We implemented this keyword before becoming aware of the Robot
+        built-in 'evaluate' keyword. Please use 'evaluate' instead.
+        """
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
@@ -602,16 +606,16 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url_get_ntp = '/api/v1/data/controller/os/config/global/time-config?config=true'
+                url_get_ntp = '/api/v1/data/controller/os/config/global/time?config=true'
                 c.rest.get(url_get_ntp)
                 content = c.rest.content()
                 if ('ntp-server' in content[0]):
                     ntp_list = content[0]['ntp-server']
                     ntp_list.append(ntp_server)
-                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                     c.rest.patch(url, ntp_list)
                 else:
-                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                     helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
                     c.rest.patch(url, [str(ntp_server)])
                 if not c.rest.status_code_ok():
@@ -680,7 +684,7 @@ class BsnCommon(object):
             elif helpers.is_t5(n.platform()):
                 # T5 Controller NTP Server Deletion goes here
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config'
+                url = '/api/v1/data/controller/os/config/global/time'
                 helpers.log("URL is %s" % url)
                 c.rest.delete(url, {"ntp-servers": [ntp_server]})
                 if not c.rest.status_code_ok():
@@ -763,7 +767,7 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config'
+                url = '/api/v1/data/controller/os/config/global/time'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.patch(url, {"time-zone": str(time_zone)})
                 if not c.rest.status_code_ok():
@@ -810,7 +814,7 @@ class BsnCommon(object):
                 # T5 Controller
                 helpers.log("The node is a T5 Controller")
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time-config/time-zone'
+                url = '/api/v1/data/controller/os/config/global/time/time-zone'
                 helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
                 c.rest.delete(url, {})
                 if not c.rest.status_code_ok():
@@ -1049,7 +1053,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    url = '/api/v1/data/controller/os/config/global/snmp'
                     c.rest.get(url)
                 except:
                     helpers.test_failure(c.rest.error())
@@ -1173,7 +1177,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 try:
                     c = t.controller("master")
-                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    url = '/api/v1/data/controller/os/config/global/snmp'
                     if "trap-enabled" in keyword:
                         if "True" in value:
                             c.rest.patch(url, {"trap-enabled": True})
@@ -1245,7 +1249,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
                     c.rest.put(url, {"ipaddr": str(host), "udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
@@ -1308,7 +1312,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
                     c.rest.delete(url, {"udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
@@ -1403,9 +1407,9 @@ class BsnCommon(object):
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
-                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
-                    c1.rest.put(url, {"service-name": str(service)})
-                    c2.rest.put(url, {"service-name": str(service)})
+                    url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
+                    c1.rest.put(url, {"name": str(service)})
+                    c2.rest.put(url, {"name": str(service)})
                 except:
                     return False
                 else:
@@ -1495,7 +1499,7 @@ class BsnCommon(object):
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
-                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
+                    url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
                     c1.rest.delete(url, {})
                     c2.rest.delete(url, {})
                 except:

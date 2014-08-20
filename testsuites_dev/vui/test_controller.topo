@@ -4,3 +4,12 @@ c1:
   ip: dummy
   #http_port: 8080
   monitor_reauth: false
+
+  # Below is for console testing
+  #console:
+  #  ip: qa-tools3.qa.bigswitch.com
+  #  libvirt_vm_name: vui_c1_08010620
+  #  user: root
+  #  password: bsn
+  #set_init_ping: false
+  #set_session_ssh: false

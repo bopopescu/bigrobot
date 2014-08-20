@@ -214,14 +214,14 @@ Verify trace packet support in the Horizon
   
 
 Cinder: Volume create/Delete for block storage management
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Number of volumes to create??
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Cinder: Volume Attach/Detach of block storage to the server
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Cinder: Create/Delete Snapshots
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -229,14 +229,11 @@ Number of snapshots to create
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Cinder: Create a new Volume from Snapshot
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
-Cinder: Get the Volume Stats
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Ceph Storage sets
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Use seperate storage VLAN to provide a storage traffic going through the fabric (Most common used NFS,iSCSi traffic)
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
@@ -390,14 +387,14 @@ All Spine reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Process failure (OFAD) all leaf
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 Reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Process failure (OFAD) all spine
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual pased
 
 
 OVS - Nova Controller start/stop process
@@ -408,8 +405,8 @@ OVS - Compute node start/stop process
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 OVS - Storage if any process starts
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 Multiple failure: All servers fail and recover
 	[Tags]  solution  openstack  IronHorse  manual
@@ -424,8 +421,8 @@ Multiple failure: All Spine switches fail
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Multiple failure: reboot whole P domain
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 Host reboot
 	[Tags]  solution  openstack  IronHorse  manual
@@ -492,8 +489,8 @@ Replacing server with same host name and IP
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Test work flow of VM migration
-	[Tags]  solution  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual passed
 
 
 

@@ -1,0 +1,14 @@
+#c1:
+#  ip: 10.192.104.1
+#
+h1:
+  ip: dummy
+  user: vui
+  password: vuile999
+  #set_devconf_debug_level: 5
+  #protocol: ssh  # telnet
+  #privatekey: /Users/vui/.ssh/id_rsa_vuile999  # This must be an absolute path
+  #privatekey: /Users/vui/Documents/ws/myforks/bigrobot/testsuites_dev/vui/ssh_rsa_identity                  # This file is in same directory
+  privatekey: ssh_rsa_identity                  # This file is in same directory
+  privatekey_password: vuile999                # SSH password
+  #privatekey_type: rsa                        # Default: rsa
