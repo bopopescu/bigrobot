@@ -1418,10 +1418,13 @@ class Test(object):
                               % helpers.prettify(params))
                 master = self.controller("master")
                 master.enable("show switch")
-        master.config("logging level org.projectfloodlight.db.data debug")
-        master.config("logging level org.projectfloodlight.sync.internal debug")
-        master.config("logging level org.projectfloodlight.ha debug")
-        master.config("show logging level")
+
+        if helpers.get_env("HA_LOGGING").lower() == "true":
+            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            master.config("logging level org.projectfloodlight.db.data debug")
+            master.config("logging level org.projectfloodlight.sync.internal debug")
+            master.config("logging level org.projectfloodlight.ha debug")
+            master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())
