@@ -75,7 +75,11 @@ Add and delete nexthop members to nexthop group
 L3 inter tenant add nexthop ip to 16 nexthop group
     L3 inter tenant add nexthop ip to 16 nexthop group
     [Tags]                                  smoke               sanity              run14
-    
+  
+Add and delete config changes
+    Add and delete config changes
+    [Tags]                                  smoke               sanity              run15
+  
     
 More specific route for L3 inter tenant traffic to external host
     More specific route for L3 inter tenant traffic to external host
@@ -1769,6 +1773,154 @@ Verify add and delete a second member to nexthop group change to ecmp and back
     REST delete nexthop group                       External                                test 
 
 
+Add and delete config changes
+    ${value} =                                  REST enable endpoint flap protection
+    Log                                         ${value}
+    REST add portgroup to vns                   X                               X1                              leaf0-pc1           -1
+    REST add portgroup to vns                   X                               X3                              leaf0-pc2           -1  
+    REST add portgroup to vns                   X                               X1                              leaf1-pc2           -1  
+    REST add dhcp relay                         X                               X3                              10.251.1.9
+    sleep                                       1
+    ${result} =                                 REST show forwarding dhcp table
+    REST get l3 cidr route info                 10.251.1.0                      255.255.255.0
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Equal                             ${dhcpip}                       10.251.1.9
+    Should Be Equal                             ${routerip}                     10.251.3.1
+    BASH ifup intf                              h1-rack0                        bond0
+    BASH ifup intf                              h2-rack0                        bond0
+    BASH ifup intf                              h2-rack1                        bond0
+    BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0
+    sleep                                       1
+    BASH start service                          h1-rack0                        isc-dhcp-server
+    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
+    BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
+    BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
+    sleep                                       1
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr2} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Not Be Empty                         ${ipAddr2}
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Not Be Empty                         ${ipAddr3}
+    sleep                                       1
+    BASH ping                                   h1-rack0                        ${ipAddr2}               count=10
+    BASH ping                                   h1-rack0                        ${ipAddr3}               count=10
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    Should Be True                              ${loss} == 0    
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr3}           count=10
+    Should Be True                              ${loss} == 0    
+    REST delete portgroup from vns              X                               X1                       leaf1-pc2               -1
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr3}           count=10
+    Should Be True                              ${loss} == 100
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Be Empty                             ${ipAddr3}
+    sleep                                       1
+    REST add portgroup to vns                   X                               X1                      leaf1-pc2           -1
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Not Be Empty                         ${ipAddr3}
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr3}           count=10
+    Should Be True                              ${loss} < 50    
+    REST delete vns                             X                               X3
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    Should Be True                              ${loss} == 100    
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Be Empty                             ${ipAddr4}
+    REST add vns                                X                               X3
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Be Empty                             ${ipAddr4}
+    ${loss} =                                   BASH ping                       h1-rack0                        ${ipAddr2}               count=10
+    Should Be True                              ${loss} == 100
+    REST add portgroup to vns                   X                               X3                              leaf0-pc2           -1  
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Not Be Empty                         ${ipAddr4}
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    Should Be True                              ${loss} < 50    
+    REST delete vns ip                          X                               X1                      10.251.1.1              24
+    sleep                                       1    
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    Should Be True                              ${loss} == 100
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    Should Be True                              ${loss} == 0 
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Not Be Empty                         ${ipAddr3}
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Be Empty                             ${ipAddr4}
+    REST add vns ip                             X                               X1                      10.251.1.1              24
+    sleep                                       1    
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Not Be Empty                         ${ipAddr3}
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Not Be Empty                         ${ipAddr4}
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    Should Be True                              ${loss} == 0
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    Should Be True                              ${loss} == 0         
+    REST delete tenant                          X
+    sleep                                       1
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    sleep                                       1
+    ${ipAddr5} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Be Empty                             ${ipAddr5}
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    sleep                                       1
+    ${ipAddr6} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Be Empty                             ${ipAddr6}
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    Should Be True                              ${loss} == 100
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    Should Be True                              ${loss} == 100      
+    REST add tenant                             X
+    REST add vns                                X                           X1
+    REST add vns                                X                           X2
+    REST add vns                                X                           X3
+    REST add vns ip                             X                           X1              10.251.1.1              24  
+    REST add vns ip                             X                           X2              10.251.2.1              24  
+    REST add vns ip                             X                           X3              10.251.3.1              24  
+    REST add portgroup to vns                   X                           X1                              leaf0-pc1           -1
+    REST add portgroup to vns                   X                           X3                              leaf0-pc2           -1  
+    REST add portgroup to vns                   X                           X1                              leaf1-pc2           -1  
+    REST add dhcp relay                         X                           X3                              10.251.1.9
+    sleep                                       1
+    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
+    sleep                                       1
+    ${ipAddr5} =                                BASH renew dhcpv4 address       h2-rack1                bond0
+    Should Not Be Empty                         ${ipAddr5}
+    ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
+    sleep                                       1
+    ${ipAddr6} =                                BASH renew dhcpv4 address       h2-rack0                bond0
+    Should Not Be Empty                         ${ipAddr6}
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    Should Be True                              ${loss} == 0
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr6}           count=10
+    Should Be True                              ${loss} == 0     
+    
+    
+   
 
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
     REST add portgroup to vns                   X                               X1          leaf0-pc1           1001
@@ -2229,7 +2381,7 @@ T5 base suite setup
 	base suite setup
 	add fabric switch
 	sleep 											5
-	add ntp timezone                                master
+#	add ntp timezone                                master
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
 	${result} = 									CLI verify controller   	s1							c2
