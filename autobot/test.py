@@ -1419,7 +1419,7 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
 
-        if helpers.get_env("HA_LOGGING").lower() == "true":
+        if helpers.get_env("HA_LOGGING") == "True":
             helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
             master.config("logging level org.projectfloodlight.db.data debug")
             master.config("logging level org.projectfloodlight.sync.internal debug")
