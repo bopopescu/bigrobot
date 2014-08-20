@@ -106,18 +106,18 @@ Configure Multiple L2 Tenants With Single VNS
 
 T1 Fabric Robustness During All Switch Reboot & HA Failover
 	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1
+	${returnVal}=	verify fabric with disruption	switchReboot	during	failover  		switch=spine0 spine1
 	Should be true  ${returnVal}
 
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
 	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
+	${returnVal}=	verify fabric with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
 	Should be true  ${returnVal}
 	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
 	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
+	${returnVal}=	verify fabric with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
 	Should be true  ${returnVal}
 
 Verify HA Cluster Formation
@@ -209,9 +209,13 @@ Cluster Election Re-run Stress Test For 25 Times
 # Stub test cases for the Robustnesss Test Suite
 ###########################################################################################
 
-Consecutive connect/disconnect of switches 
+Consecutive connect/disconnect of switches
 	[Tags]  manual
 	manual passed
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a
+	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf1-a
+	Should be true  ${returnVal}
+	
 	
 Consecutive Power off controller
 	[Tags]  manual  jira-BSC-5972
@@ -230,16 +234,20 @@ Disconnect peer leaf switch lag links
 	manual untested
 	
 Reboot peer leaf switches. 
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual  don
+	manual passed
+	${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a leaf2-a spine0
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	#${returnVal}=	switch reboots  switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	Should be true  ${returnVal}
 	
 Add links / New traffic paths
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual
+	manual passed
 	
 Remove links
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual
+	manual passed
 	
 Bring back the controller. Verify the fabric integrity
 	[Tags]  manual
@@ -254,20 +262,20 @@ Split Brian Scenarios
 	manual untested
 	
 Changing VIP/IP /Cluster properties of the Controller cluster
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Traffic prioritization on the switch cpu to-controller traffic 
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Remove stdby controller & add another stdby controller with the same IP as earlier one
 	[Tags]    manual-untested
 	manual untested
 	
 Large VFT push during switch reboots 
-	[Tags]     manual-untested
-	manual untested
+	[Tags]     manual
+	manual passed
 	
 Enable log levels to Debug along with all the switch logs punting to the controller and controller push it to an external splunk server 
 	[Tags]    manual-untested
@@ -286,8 +294,8 @@ Reboot Management switch
 	manual untested
 	
 Interface Disable/Enable - Perhaps in a loop
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Bond/LAG configuration/ De-configuration
 	[Tags]    manual-untested
@@ -318,12 +326,12 @@ Consecutive reboot of peer leaf (dual-tor context)
 	manual untested
 
 Consecutive reboots of spines
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Consecutive reboots of leaves
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Traffic convergence during island forming
 	[Tags]    manual-untested
@@ -342,8 +350,8 @@ Switch go Full in Loggins
 	manual untested
 	
 Optics Pull/ Cable
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Switch - Open Ports - Penetration test
 	[Tags]    manual-untested
