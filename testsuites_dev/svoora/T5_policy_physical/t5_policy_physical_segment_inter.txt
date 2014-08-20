@@ -27,7 +27,7 @@ Library         Dialogs
 ###### Policy at tenant interface ############
 #---------------------------------------------
 
-T1 Interface tenant add/remove redirect policy src-ip to dest-ip to next-hop
+T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
 	[Tags]  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
@@ -47,25 +47,79 @@ T1 Interface tenant add/remove redirect policy src-ip to dest-ip to next-hop
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
+    pause  FREZZEE!!
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
 	sleep  2
-	#rest remove policy on tenant				${tenantX}		${tenant2_polname}
-	#${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
-    ...						#dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
-    #clear stats
-    #start traffic  ${stream}
-    #sleep                  5
-    #stop traffic   ${stream}
-    #sleep                  
-    #${report}=             fetch port stats  stream=${stream}
-    #verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T2 Interface sement-interface add/remove permit policy src-ip to dest-ip
+	[Tags]  feature
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict}  segment-interface=${vnsX2}
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    verify results   c   a
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
 
 
 
-
-
+T3 Interface sement-interface add/remove deny policy src-ip to dest-ip
+	[Tags]  feature
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict}  segment-interface=${vnsX2}
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    verify results false   c   a
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
 
 
 
@@ -76,6 +130,13 @@ verify results   [Arguments]  ${port_1}   ${port_2}
    ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
    Should be true  ${in_range}
+   
+verify results false   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should not be true  ${in_range}
    
 verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  1
