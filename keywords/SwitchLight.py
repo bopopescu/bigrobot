@@ -655,6 +655,7 @@ class SwitchLight(object):
             else:
                 helpers.log("This is the backup controller")
                 if (("SLAVE" in show_output) or ("EQUAL" in show_output)):
+
                     pass_count = pass_count + 1
 
             if pass_count == 4:
@@ -777,7 +778,6 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             else:
                 helpers.log("FAIL:MTU and Speed was not found in show interface output")
-            return True
 
             if pass_count == 7:
                 return True
@@ -1060,7 +1060,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            switch = t.switch(node)
+            # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
             console_ip = t.params(node, "console_ip")
@@ -1089,8 +1089,8 @@ class SwitchLight(object):
             return False
 
     # Alias
-    def cli_update_interface_ma1(self, console_ip, console_port):
-        return self.cli_add_interface_ma1(console_ip, console_port)
+    # def cli_update_interface_ma1(self, console_ip, console_port):
+    #    return self.cli_add_interface_ma1(console_ip, console_port)
 
 
     def cli_execute_command(self, node, cli_input):
