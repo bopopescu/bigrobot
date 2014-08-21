@@ -9,6 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
+Library         keywords/T5ZTN.py
 Library         keywords/T5Platform.py
 Library         keywords/T5Utilities.py
 Library         Collections.py
@@ -2565,7 +2566,7 @@ Controller HA failover via reboot
     BASH delete route                           h3                              10.251.1.0/24           10.251.3.1
     
         
-Reboot spine0 via CLI
+Reboot spine0 
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
     BASH ifup intf                              h3                              bond0
@@ -2601,7 +2602,8 @@ Reboot spine0 via CLI
     ...                                         dst_ip=10.251.2.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.2.1                       
     start traffic                               ${stream1}
     sleep  10
-    CLI restart switch                          s1
+#    CLI restart switch                          s1
+    power cycle switch                          s7
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
@@ -2611,7 +2613,7 @@ Reboot spine0 via CLI
     BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
     
 
-Reboot Leaf0 via CLI
+Reboot Leaf0
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
     BASH ifup intf                              h3                              bond0
@@ -2647,7 +2649,7 @@ Reboot Leaf0 via CLI
     ...                                         dst_ip=10.251.2.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.2.1                       
     start traffic                               ${stream1}
     sleep  10
-    CLI restart switch                          s3
+    power cycle switch                          s3
     sleep                                       30 
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
@@ -2655,10 +2657,8 @@ Reboot Leaf0 via CLI
     BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
 
 
-
-
-
 Connect and Disconnect spine to controller
+#### No longer valid as ztn will prevent config changes to switch
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
     BASH ifup intf                              h3                              bond0
@@ -2703,11 +2703,11 @@ Connect and Disconnect spine to controller
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     : FOR                                       ${i}                            IN RANGE                1                       5
-    \   CLI delete controller                   s1                              c1
-    \   CLI delete controller                   s1                              c2
+#    \   CLI delete controller                   s1                              c1
+#    \   CLI delete controller                   s1                              c2
     \   log traffic rate                        tx_rate                         rx_rate                 a                       c
-    \   CLI add controller                      s1                              c1
-    \   CLI add controller                      s1                              c2
+#    \   CLI add controller                      s1                              c1
+#    \   CLI add controller                      s1                              c2
     \   log traffic rate                        tx_rate                         rx_rate                 a                       c
     \   sleep                                   5
     stop traffic                                ${stream1}
@@ -2717,6 +2717,7 @@ Connect and Disconnect spine to controller
     
 
 Connect and disconnect one leaf in dual tor to controller
+#### no longer valid as ztn will prevent config changes to switch
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
     BASH ifup intf                              h3                              bond0
@@ -2818,7 +2819,6 @@ Flap link between leaf and spine
     sleep                                       5
 #    CLI disable interface                       s3                              ${leaf0a_spine0}    
     REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0}
-   
     sleep                                       5   
     log traffic rate                            tx_rate                         rx_rate                 a                       c
 #    CLI enable interface                        s3                              ${leaf0a_spine0}    
@@ -2946,9 +2946,11 @@ restart ofad on spine
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s1                              ofad                    timeout=60
+#    BASH restart process                        s1                              ofad                    timeout=60
+    console bash restart process                s7                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
+#    ${value} =                                  BASH check service status       s1                      ofad
+    ${value} =                                  console check service status       s7                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -3005,11 +3007,13 @@ restart ofad on leaf
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s3                              ofad
+#    BASH restart process                        s3                              ofad
+    console bash restart process                s1                              ofad                    timeout=60
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
 #   sleep                                       1
-    ${value} =                                  BASH check service status       s3                      ofad
+    ${value} =                                  console check service status    s3                      ofad
+#    ${value} =                                  BASH check service status      s1                      ofad
     Should Contain                              ${value}                        is started  
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
