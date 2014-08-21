@@ -976,7 +976,23 @@ class T5Utilities(object):
             return True
 
 
-
+    def cli_diff_running_configs(self, node, file1, file2):
+        ''' This function will compare 2 controller running configs. (Ideall between
+            active and a standby node.
+            It'll do a diff for the two files, and returns true if there are only
+            12 lines of diff
+        '''
+        
+        t = test.Test()
+        n = t.node(node)
+        output = n.sudo("diff %s %s | wc -l" % (file1, file2), timeout=120)['content']
+        if '12' in output:
+            helpers.log("Running Configs match between file1 & file2")
+            return True
+        else:
+            helpers.log("Running Configs didn't match between file1 & file2 ")
+            return False
+        
 
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform.
