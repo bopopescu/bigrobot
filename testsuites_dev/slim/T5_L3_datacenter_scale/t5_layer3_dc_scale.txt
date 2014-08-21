@@ -1,195 +1,149 @@
 * Setting
-Documentation   T5 L3 two spine three leaf rack with dual-tor Test Scaling Suite
+Documentation   T5 L3 regression Test Scaling and Performance Suite
 Suite Setup     T5 base suite setup
-#Suite Teardown  T5 base suite teardown
+Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-#Test Teardown   teardown topology
-Force Tags      T5 Sanity
-Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Host.py
+Test Teardown   teardown topology
+Force Tags      T5      L3       IronHorse
+Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
-Library         keywords_dev/animesh/BsnCommonShow.py
-Library         keywords_dev/slim/SwitchLight.py
-Library	        Collections.py
-Resource		testsuites_dev/slim/T5_L3_datacenter_scale/t5_layer3_dc_scale_variables.txt
-Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         Collections.py
+Resource        testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_scale_variables.txt
+#Resource       testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_resources.txt
 
 
 * Test Cases
-Intra tenant one Tenant 4k VNS 
-	One Tenant 4k VNS with one host each
-	[Tags]									scale							run							
+Configure 1k Tenant with 4k segment in global vlan-mapping mode
+    manual passed
+    [Tags]              manual          scale   
 
-1k Tenant with 4k segment in global vlan mapping mode
-    1k Tenant with 4k segment in global vlan mapping mode
-    [Tags]                                  scale                           run2
+L3 Arp learning rate
+    manual passed
+    [Tags]              manual          performance
     
-Delete and add tagged ports to one tenant 4k VNS
-	Delete and add tagged ports to one tenant 4k VNS with one host each
-	[Tags]									scale							
+L3 Arp discovery rate
+    manual passed
+    [Tags]              manual          performance
 
-Delete and add 2k VNS with traffic
-	Delete and add 2k VNS with traffic running with one host each
-	[Tags]									scale				
+Configure 1k Tenant with 4k segment in default vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale   
 
-L3 endpoint host move with traffic
-	Move 24k host endpoint to another tagged port
-	[Tags]									scale				
+Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale   
 
-48k L3 endpoint across one tenant two vns
-	Generate 48k L3 endpoint across one tenant two vns
-	[Tags]									scale				
-		
-Combined scaling one tenant 4k vns with 48k host
-	Combined scaling with one tenant 4k vns with 48k host
-	[Tags]									scale				
-		
-Delete and add scale 4k vns config multiple times
-	Delete and add scale config multiple times
-	[Tags]									scale				
+DHCP request from 48k host 
+    manual untested
+    [Tags]              manual          scale           
 
-DHCP request from 48k host across 4k vns
-	Generate dhcp request from 48k host across 4k vns
-	[Tags]									scale				
-						
-Create OneK tenant with four vns each
-	Create OneK tenant with four vns each
-	[Tags]									scale				
-	
-Add and delete config with 1k tenant with 4 vns each
-	Add and delete config with 1k tenant with 4 vns each
-	[Tags]									scale				
+Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale           
 
-Inject 16k cidr routes
-	Inject 16k cidr routes
-	[Tags]									scale				
-	
-Delete 16k cidr routes
-	Delete 16k cidr routes
-	[Tags]									scale				
-	
+Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
+    manual untested
+    [Tags]              manual         scale           
 
-* Keywords		
+Add and delete 10k cidr routes in spine switches
+    manual untested
+    [Tags]              manual          scale           PAN-1204
+    
+Add and delete 10k cidr routes in leaf switches
+    manual failed
+    [Tags]              manual          scale           PAN-1204
+
+Add and delete 16k cidr routes in system
+    manual untested
+    [Tags]              manual          scale   
+    
+Add and delete 1k nexthop group
+    manual untested
+    [Tags]              manual          scale           
+
+Add more than 1k tenant
+    manual passed
+    [Tags]              manual          scale           
+    
+Add more than 4k segment
+    manual passed
+    [Tags]              manual          scale           
+    
+Add more than 1k nexthop group
+    manual untested
+    [Tags]              manual          scale           
+    
+Add more than 16k cidr routes
+    manual untested
+    [Tags]              manual          scale           
+        
+
+* Keywords      
 One Tenant 4k VNS with one host each
-	REST delete tenant							X
-	REST delete tenant							Y
-	REST delete tenant							Z
-	REST add tenant								A
-	${ipAddr} =  								Set Variable					20.0.0.1
-	: FOR 										${i}							IN RANGE 				1					2001
-	\	${result} = 							REST add vns							A								A-${i}
-	\	Should Be True							${result}
-	\	${result} = 							REST add router intf					A								A-${i}
-	\	Should Be True							${result}
-	\	${result} = 							REST add vns ip							A								A-${i}					${ipAddr}			24
-	\	Should Be True							${result}
-	\	${ipAddr} =								BSNCommon.get next address				ipv4							${ipAddr}				0.0.1.0
-	\	Should Be True							${result}
-	\	${result} = 							REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}	
-	\	sleep									1		
-				
-	${ipAddr} =  								Set Variable					40.0.0.1
-	: FOR 										${i}							IN RANGE 				2001				4001
-	\	${result} = 							REST add vns							A								B-${i}
-	\	Should Be True							${result}
-	\	${result} = 							REST add router intf					A								B-${i}
-	\	Should Be True							${result}
-	\	${result} = 							REST add vns ip							A								B-${i}					${ipAddr}			24
-	\	Should Be True							${result}
-	\	${ipAddr} =								BSNCommon.get next address				ipv4							${ipAddr}				0.0.1.0
-	\	${result} = 							REST add interface to vns				A								B-${i}					leaf1-a				ethernet24		${i}			
-	\	Should Be True							${result}
-	\	sleep									1
-				
-# ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
-#    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
-#    ...						src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
-#    ...						dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
-    
-    
-1k Tenant with 4k segment in global vlan mapping mode
+    REST delete tenant                          X
+    REST delete tenant                          Y
+    REST delete tenant                          Z
+    REST add tenant                             A
     ${ipAddr} =                                 Set Variable                    20.0.0.1
-    ${nextHop} =                                Set Variable                    20.0.0.2
-    ${staticRoute} =                            Set Variable                    30.0.0.0
-    ${vlanId} =                                 Set Variable                    1
-    REST set vlan mapping mode                  global
-    REST add tenant                             system
-    : FOR                                       ${i}                            IN RANGE                1                   998
-    \   ${result} =                             REST add tenant                 T-${i}
-    \   REST add tenant routers intf to system          T-${i}
-    \   REST add system intf to tenant routers          T-${i}
-    \   Should Be True                          ${result}
-    \   REST add nexthop group                  T-${i}                          T-${i}-gp
-#    \   REST add static routes                  T-${i}                          ${staticRoute}/24                      {"next-hop-group": "T-${i}-gp"}
-    \   SegLoop1                                T-${i}                          ${ipAddr}                               ${nextHop}                              ${staticRoute}      ${vlanId}
-    \   ${ipAddr} =                             Set Variable                    ${ipAddr}
-    \   ${nextHop} =                            Set Variable                    ${nextHop}
-    \   ${staticRoute} =                        Set Variable                    ${staticRoute}
-    \   ${vlanId} =                             Set Variable                    ${vlanId}
-#    \   ${staticRoute} =                       BSNCommon.get next address      ipv4                                    ${staticRoute}                              0.0.4.0
+    : FOR                                       ${i}                            IN RANGE                1                   2000
+    \   REST add vns                            A                               A-${i}
+    \   REST add vns ip                         A                               A-${i}                  ${ipAddr}           24
+    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
+    \   REST add interface to vns               A                               A-${i}                  leaf0-a             ethernet40      ${i}            
+                
+    ${ipAddr} =                                 Set Variable                    40.0.0.1
+    : FOR                                       ${i}                            IN RANGE                2001                4000
+    \   REST add vns                            A                               B-${i}
+    \   REST add vns ip                         A                               B-${i}                  ${ipAddr}           24
+    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
+    \   REST add interface to vns               A                               B-${i}                  leaf1-a             ethernet40      ${i}            
 
-
-
-SegLoop1
-    [Arguments]                                 ${TenantName}                           ${ipAddr1}                              ${nextHop1}                             ${staticRoute1}                         ${vlanId1}
-    : FOR                                       ${segName}                              IN RANGE                                1                                       5
-    \   ${result} =                             REST add vns                            ${TenantName}                           ${TenantName}-${segName}
-    \   Should Be True                          ${result}
-    \   ${result} =                             REST add vlan membership                ${TenantName}                           ${TenantName}-${segName}                ${vlanId1}
-    \   Should Be True                          ${result}
-    \   ${result} =                             REST add router intf                    ${TenantName}                           ${TenantName}-${segName}
-    \   Should Be True                          ${result} 
-    \   ${result} =                             REST add vns ip                         ${TenantName}                           ${TenantName}-${segName}                ${ipAddr}           24
-    \   Should Be True                          ${result}
-    \   REST add nexthopGroup ip                ${TenantName}                           ${TenantName}-gp                        ${nextHop1}
-    \   REST add static routes                  ${TenantName}                           ${staticRoute1}/24                      {"next-hop-group": "${TenantName}-gp"}
-    \   REST add static routes                  system                                  ${staticRoute1}/24                      {"tenant": "${TenantName}"}
-    \   ${ipAddr1} =                            BSNCommon.get next address              ipv4                                    ${ipAddr1}                              0.0.1.0
-    \   ${nextHop1} =                           BSNCommon.get next address              ipv4                                    ${nextHop1}                             0.0.1.0
-    \   ${staticRoute1} =                       BSNCommon.get next address              ipv4                                    ${staticRoute1}                         0.0.1.0
-    \   ${vlanId1} =                            evaluate                                ${vlanId1} + 1
-    \   Set Test Variable                       ${ipAddr}                               ${ipAddr1}
-    \   Set Test Variable                       ${nextHop}                              ${nextHop1}
-    \   Set Test Variable                       ${staticRoute}                          ${staticRoute1}     
-    \   Set Test Variable                       ${vlanId}                               ${vlanId1} 
-
-Delete and add 2k VNS with traffic running with one host each
-
-
-Move 2k host endpoint to another tagged port
-
-
-Generate 48k L3 endpoint across one tenant two vns
-
-
-Combined scaling with one tenant 4k vns with 48k host
-
-
-Delete and add scale config multiple times
-
-
-Generate dhcp request from 48k host across 4k vns	
-
-
+#  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+#    ...                        src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+#    ...                        src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+#    ...                        dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+   
 
 initialize host
-    sleep                                           1
+    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
+    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
+    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
+    BASH delete tag                             h4                              bond0.1004              soft_error=${true}
+    BASH delete tag                             h5                              bond0.1005              soft_error=${true}
+    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
+    
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH init intf                              h3                              bond0
+    BASH init intf                              h4                              bond0
+    BASH init intf                              h5                              bond0
+    BASH init intf                              h6                              bond0
+    BASH ifdown intf                            h1                              bond0
+    BASH ifdown intf                            h2                              bond0
+    BASH ifdown intf                            h3                              bond0
+    BASH ifdown intf                            h4                              bond0
+    BASH ifdown intf                            h5                              bond0
+    BASH ifdown intf                            h6                              bond0   
+    BASH release dhcpv4 address                 h1                              bond0
+    BASH release dhcpv4 address                 h2                              bond0
+    BASH release dhcpv4 address                 h3                              bond0
+    BASH release dhcpv4 address                 h4                              bond0
+    BASH release dhcpv4 address                 h5                              bond0
+    BASH release dhcpv4 address                 h6                              bond0
 
-
-setup topology
-    sleep                                           1
-	
-	
-
-teardown topology
-    sleep                                           1
 
 T5 base suite setup
-    sleep                                           1
-
-
-  
+    sleep                                       1
+    
 T5 base suite teardown
-#	delete fabric switch
-    sleep           1  					
+    sleep                                       1
+ 
+setup topology
+    sleep                                       1
+
+teardown topology
+    sleep                                       1
+    
