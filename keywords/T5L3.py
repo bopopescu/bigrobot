@@ -1651,3 +1651,33 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
                     count = count + 1
         return count
         
+
+
+
+    def rest_get_logical_router_segment_interface(self, vnsName=None):
+        '''return segment interface information 
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router/segment-interface
+            Input: segment name
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router/segment-interface' 
+        c.rest.get(url)
+        data = c.rest.content()
+#        result = helpers.from_json(data)
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) == 0:
+            return {}
+        else:
+            if vnsName is None:
+                return data
+            else:     
+                for entry in data:
+                    helpers.log("entry is %s" % entry)
+                    if entry['segment'] == vnsName:
+                        helpers.log("Match segment '%s'" % vnsName)
+                        return entry
+                helpers.log("no Match")
+                return {}
+
