@@ -618,7 +618,7 @@ class T5(object):
         else:
             helpers.test_log("Expected tenant are not present in the config")
             return False
-    
+
     def rest_verify_endpoint(self, vns, vlan, mac, switch, intf):
         '''Verify Dynamic Endpoint entry
 
@@ -719,7 +719,7 @@ class T5(object):
                 else:
                     helpers.log("static endpoint state is down")
                     return False
-        
+
         helpers.test_log("Given static endpoints are not present in the config")
         return False
 
@@ -1272,8 +1272,8 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        
-        #url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats/interface'
+
+        # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats/interface'
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter/interface'
         c.rest.delete(url, {})
 
@@ -2483,7 +2483,7 @@ class T5(object):
         """
 
         info = self.rest_get_fabric_interface_info(switch, intf)
-        if info['state'] == "down" and info['downreason'] == "BPDU Guard":
+        if info['state'] == "down" and info['downreason'] == "BPDU Guard Error Disabled":
             return True
         else:
             return False
@@ -2818,7 +2818,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
         helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
-        #url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         try:
             c.rest.get(url)
@@ -2826,7 +2826,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-    
+
     def rest_set_vlan_mapping_mode(self, mode):
         '''
         Function to set vlan mapping to global mode
@@ -2845,7 +2845,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
 
     def rest_delete_vlan_mapping_mode(self, mode=None):
         '''
-           Function to delete vlan mapping 
+           Function to delete vlan mapping
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "global"}
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "default"}
         '''
@@ -2865,8 +2865,8 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             except:
                 return False
             else:
-                return True            
-    
+                return True
+
     def rest_add_vlan_membership(self, tenant, segment, vlanid):
         '''
             Function to add vlan membership rule to segment under global vlan-mapping mode
@@ -2875,14 +2875,14 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         t = test.Test()
         c = t.controller('master')
         helpers.test_log("Input arguments: tenant = %s segment = %s vlanid = %s" % (tenant, segment, vlanid))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]'  % (tenant, segment)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]' % (tenant, segment)
         try:
             c.rest.patch(url, {"member-vlan": vlanid})
         except:
             return False
         else:
             return True
-        
+
 
     def rest_delete_vlan_membership(self, tenant, segment):
         '''
@@ -2899,4 +2899,4 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             return False
         else:
             return True
-        
+
