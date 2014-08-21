@@ -21,6 +21,7 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
+import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -51,6 +52,20 @@ def ctrl(char):
     See http://stackoverflow.com/questions/6248766/how-to-enter-the-escape-characters-for-telnet-programmatically
     """
     return ascii.ctrl(char)
+
+
+def bigrobot_module_dependencies():
+    robot_framework_version = robot.version.VERSION
+    import Exscript
+    exscript_version = Exscript.version.__version__
+    s = "BigRobot version        %s\n" % get_version()
+    s += "Robot Framework version %s\n" % robot_framework_version
+    s += "Exscript version        %s\n" % exscript_version
+    pversion = sys.version_info
+    s += "Python version          %s.%s.%s" % (pversion.major,
+                                               pversion.minor,
+                                               pversion.micro)
+    return s
 
 
 # is_bool() needs to be defined before test_error() which uses it.

@@ -1003,6 +1003,14 @@ class Test(object):
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
+        helpers.log("BigRobot dependencies:\n%s%s"
+                    % (helpers.bigrobot_module_dependencies(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BigRobot repository (Git):\n%s%s"
+                    % (helpers.run_cmd2("/usr/bin/git branch -lvv",
+                                        shell=True,
+                                        quiet=True)[1],
+                       br_utils.end_of_output_marker()))
         helpers.log("Staging system uname:\n%s%s"
                     % (helpers.uname().strip(),
                        br_utils.end_of_output_marker()))
