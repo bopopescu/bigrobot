@@ -36,11 +36,11 @@ Static endpoint age test
 	rest add mac endpoint  internal  v1  e1  00:00:01:00:00:01
 	${stream}=   L3 add  flow=a<->c  src_mac=00:00:01:00:00:01   src_ip=10.192.18.100  dst_ip=10.192.18.101  src_gw=10.192.18.1  dst_gw=10.192.18.1  frame_rate=1000  frame_size=68  name=a_c_flow
 	start traffic
-	rest verify endpoint state  00:00:01:00:00:01  -1  learned
+	rest verify endpoint state  00:00:01:00:00:01  learned
 	verify traffic rate  tx_rate  rx_rate  a  c
 	stop traffic
 	sleep  600
-	rest verify endpoint state  00:00:01:00:00:01  -1  unknown
+	rest verify endpoint state  00:00:01:00:00:01  unknown
 	rest delete tenant  internal
 	
 static endpoint membership rule change test
@@ -55,7 +55,7 @@ static endpoint membership rule change test
 	rest add mac endpoint  internal  v1  e1  00:00:01:00:00:01
 	${stream}=   L3 add  flow=a<->c  src_mac=00:00:01:00:00:01   src_ip=10.192.18.100  dst_ip=10.192.18.101  src_gw=10.192.18.1  dst_gw=10.192.18.1  frame_rate=1000  frame_size=68  name=a_c_flow
 	start traffic
-	rest verify endpoint state  00:00:01:00:00:01  -1  learned
+	rest verify endpoint state  00:00:01:00:00:01  learned
 	verify traffic rate  tx_rate  rx_rate  a  c
 	stop traffic
 	rest delete interface from vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -64,7 +64,7 @@ static endpoint membership rule change test
 	start traffic  ${stream1}
 	start traffic  ${stream2}
 	verify traffic rate  tx_rate  rx_rate  a  c
-	rest verify endpoint state  00:00:01:00:00:01  1000  learned
+	rest verify endpoint state  00:00:01:00:00:01  learned
 	stop traffic
 	rest delete tenant  internal
 
