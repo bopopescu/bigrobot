@@ -31,21 +31,22 @@ ${tenant}=        testTenant
 Test Cluster formation with 2 different versions
     Log     Step 1 - Test Cluster formation with 2 different versions   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual  jira-bsc-5258  jira-bsc-6177
+    Manual Failed 
 
 Test Cluster formation with a disconnected/invalid NTP server
-    Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server   
+    Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server 
+    Log     Step 2 - Stby takes the ntp configuration from the active   - Reject configuration from stby for ntp
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed  
 
 Test Configuration requests originating from standby
     Log     Step 1 - Test Configuration requests originating from standby
     Log     Step 2 - Verify that the configuration should be rejected with error message   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual passed
+    Manual Passed 
 
 Test Controller behavior during high cpu spikes
     Log     Step 1 - Test Controller behavior during high cpu spikes   
@@ -85,10 +86,11 @@ Try to add more than 2 controllers in to a cluster
     Manual Failed 
 
 Test Active & Stdby controller configured in different time zones
-    Log     Step 1 - Test Active & Stdby controller configured in different time zones   
+    Log     Step 1 - Test Active & Stdby controller configured in different time zones 
+    Log     Step 2 - The configuration in stby for NTP is not being accepted. It rejects with proper error message  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed 
 
 Killing active deamons (eg: keepalived, ntpd, collectd)
     Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd)   
@@ -181,8 +183,8 @@ IP header with more than 1500 Bytes
 Killing OFAD
     Log     Step 1 - Killing OFAD
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed 
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
