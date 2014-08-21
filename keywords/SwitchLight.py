@@ -2183,6 +2183,57 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+###### L2GRE Tunnel
+    def cli_return_tunnel_info(self, node, tunnel_number, tunnel_variable):
+        '''
+            Objective:
+            - Return info specific to tunnel from switch after executing cli command "show tunnel X"
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | tunnel_number | Tunnel number |            
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show tunnel " + str(tunnel_number) + " "
+            switch.enable(cli_input)
+            cli_output = switch.cli_content()
+            content = string.split(cli_output, '\n')
+            helpers.log("Length of content %d" % (len(content)))
+            if tunnel_variable == "of_port":
+                content_row = content[2].split()
+                return content_row[2]
+            if tunnel_variable == "parent_port":
+                content_row = content[2].split()
+                return content_row[4]
+            if tunnel_variable == "loopback":
+                content_row = content[2].split()
+                return content_row[6]
+            if tunnel_variable == "rate_limit":
+                content_row = content[3].split()
+                return content_row[6]
+            if tunnel_variable == "vpn_id":
+                content_row = content[4].split()
+                return_value = int(content_row[1], 16)
+                return return_value
+            if tunnel_variable == "mac":
+                content_row = content[5].split()
+                return content_row[1]
+            if tunnel_variable == "nh_mac":
+                content_row = content[6].split()
+                return content_row[1]
+            if tunnel_variable == "sip":
+                content_row = content[7].split()
+                return content_row[1]
+            if tunnel_variable == "dip":
+                content_row = content[8].split()
+                return content_row[1]
+            return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+###### L2GRE Tunnel
 
 ############# CLI WALK : AUTHOR: CLIFF D
 

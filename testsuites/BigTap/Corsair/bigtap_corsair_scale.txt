@@ -19,8 +19,8 @@ Library  keywords/ThirdParty.py
 ####### TOPOLOGY
 
 * Variable
-${switch1_alias}                        app-ac4600-1  #Alias for switch 1
-${switch2_alias}                        app-ac4600-2  #Alias for switch 2
+${switch1_alias}                            app-as4600-1  #Alias for switch 1
+${switch2_alias}                            app-as4600-2  #Alias for switch 2
 ${number_of_tunnels}                        43
 
 ## Switch 1: app-ac4600-1
@@ -100,6 +100,8 @@ TC1: Create 42 bidirectional tunnels across same parent interface and verify sta
     \    Should be true  ${verify_tun_sw2}    
     #Configure policies as per Topology:
     ## Policies for traffic across ac4600's
+    #${output}=  cli return_tunnel info  s1  1  vpn_id
+    #Should be equal as integers  ${output}  ${1024}        
     rest add policy  admin-view  ${policy_name_2}   forward
     rest add policy match  admin-view  ${policy_name_2}   1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_2}   ${switch2_filter_alias}  filter
