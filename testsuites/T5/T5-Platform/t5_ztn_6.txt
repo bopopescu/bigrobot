@@ -61,11 +61,11 @@ T6.3. Manually change running-config on the switch while switch is disconnected.
 	Manual Passed
 	[Tags]  manual
 T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.5. Verify that switch stays in provisioned mode when all controllers go down (until rebooted)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
 	Manual Untested
 	[Tags]  manual-untested
@@ -85,8 +85,9 @@ T6.11. Verify that controller can get list of images stored at switch's flash, a
 	Manual Passed
 	[Tags]  manual
 T6.12. Verify what happens when switch's running-config changes while fabric is operating in headless mode
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# updated running-config is persisted on the switch until controller connects again
 T6.13. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
 	Manual Passed
 	[Tags]  manual
@@ -116,17 +117,18 @@ T6.21. Downgrade process
 	Manual Untested
 	[Tags]  manual-untested
 T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flavors of failover command will be eventually implemented)
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
+	# only one failover type implemented in CLI
 T6.23. Check behavior with bandwidt-limited pipe (many switches downloading images?)
 	Manual Untested
 	[Tags]  manual-untested
 T6.24. Check that switch and controllers can configure and use separate remote syslog servers
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
+	# not implemented in this release
 T6.25. Check if ZTN logs are implemented on switch/controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# logs are part of floodlight log
 T6.26. Check behavior when controller keeps more than one set of SL images
 	Manual Untested
 	[Tags]  manual-untested
@@ -140,8 +142,9 @@ T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, n
 	Manual Passed
 	[Tags]  manual
 T6.30. Have DNS servers configured differently on two controllers in cluster - check what happens after failover...
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# nothing bad happens
 T6.31. Check REST API call to get inventory of images at switch
 	Manual Untested
 	[Tags]  manual-untested
@@ -347,11 +350,11 @@ T8.6. Check if upgrade is possible when not all switches are in provisioned mode
 
 ### Show
 T9.1. Verify that switch configured state can be viewed on the switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.2. Verify that switch operational state can be viewed on the switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.3. Verify that switch configured state can be viewed on the controller
 	Manual Untested
 	[Tags]  manual-untested
@@ -359,8 +362,9 @@ T9.4. Verify that switch operational state can be viewed on the controller
 	Manual Untested
 	[Tags]  manual-untested
 T9.5. Verify that all switch-related 'show' commands are accessible from the controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# all relevant ones
 T9.6. Verify that there is appropriate command to show ztn status of each switch
 	Manual Passed
 	[Tags]  manual
