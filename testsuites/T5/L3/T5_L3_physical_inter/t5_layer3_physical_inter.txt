@@ -39,10 +39,7 @@ inter tenant L3 tagged traffic with dynamic endpoints across rack
 Add and delete default route on tenant
     Add and delete default route on tenant router
     [Tags]      feature         testpath
-
-Add and delete static route on tenant
-    manual passed
-    [Tags]      manual         feature      
+   
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
@@ -87,18 +84,10 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
     [Tags]      feature         dhcp-relay              runfailed1
-
-Inter tenant dhcp relay with duplicate circuitid
-    manual passed
-    [Tags]      feature         dhcp-relay          
     
 Host moved to another vns on another tenant and renew dhcp 
     Host moved to another vns on another tenant and renew dhcp 
     [Tags]      feature         dhcp-relay              runfailed
-
-DHCP request to external dhcp servers
-    manual passed
-    [Tags]          manual          feature         dhcp-relay      
 
 Overlapping IP subnet with and without private keyword
     Overlapping IP subnet with and without private keyword
@@ -119,22 +108,6 @@ Controller HA failover via CLI
 Controller HA failover via reboot of master
     Controller HA failover via reboot of master
     [Tags]          feature         HA
-    
-Traffic load balance across ECMP group
-    manual passed
-    [Tags]          manual          feature         ecmp        
-
-Add and delete one ECMP members with active traffic in ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp            
-
-Add and delete all ECMP members in ecmp group  
-    manual failed
-    [Tags]          manual          feature         ecmp            
-
-Delete existing one ECMP members and add new ECMP member
-    manual failed
-    [Tags]          manual          feature         ecmp            
 
 Verify L3 traffic honor more specific routes with ecmp group
     manual passed
@@ -220,18 +193,11 @@ Restart ofad on spine switch
     Restart ofad on spine switch
     [Tags]          feature         
 
-Controller HA failover with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp    
         
 Controller HA failover with dhcp-relay
     Controller HA failover with dhcp-relay
     [Tags]          feature         dhcp-relay      HA
 
-Active Controller reboot with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp    
-    
 Active Controller reboot with dhcp-relay
     Active Controller reboot with dhcp-relay
     [Tags]          feature         dhcp-relay          HA

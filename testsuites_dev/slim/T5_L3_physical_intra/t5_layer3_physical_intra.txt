@@ -3658,9 +3658,9 @@ T5 base suite setup
     REST add interface to portgroup                 leaf0-a                     ${leaf0_pc2_intf1}                  ${leaf0_pc2}
     REST add interface to portgroup                 leaf0-b                     ${leaf0_pc2_intf2}                  ${leaf0_pc2}
     REST add interface to portgroup                 leaf1-a                     ${leaf1_pc1_intf1}                  ${leaf1_pc1}
-    REST add interface to portgroup                 leaf1-b                     ${leaf1_pc1_intf2}                  ${leaf1_pc1}
+    REST add interface to portgroup                 leaf1-a                     ${leaf1_pc1_intf2}                  ${leaf1_pc1}
     REST add interface to portgroup                 leaf1-a                     ${leaf1_pc2_intf1}                  ${leaf1_pc2}
-    REST add interface to portgroup                 leaf1-b                     ${leaf1_pc2_intf2}                  ${leaf1_pc2}
+    REST add interface to portgroup                 leaf1-a                     ${leaf1_pc2_intf2}                  ${leaf1_pc2}
     REST add interface to portgroup                 leaf2-a                     ${leaf2_pc1_intf1}                  ${leaf2_pc1}
     REST add interface to portgroup                 leaf2-b                     ${leaf2_pc1_intf2}                  ${leaf2_pc1}
     REST add interface to portgroup                 leaf2-a                     ${leaf2_pc2_intf1}                  ${leaf2_pc2}
