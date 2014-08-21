@@ -464,12 +464,12 @@ Intra tenant L3 traffic same rack different leaf switch
 ### Host on board nic is 1gig interface, switch does not support autoneg at 1gig so test is failing
 #    BASH init intf                              h5                              bond0
 #    BASH init intf                              h6                              bond0
+    ${version} =                                Set Variable                    BASH lsb release
+    ${intf} =                                   Set Variable If                 ${version} == 12            eth1            em2
     BASH ifup intf                              h5                              eth1
-    BASH ifup intf                              h6                              em2
-#    BASH init intf                              h5                              eth1
-#    BASH init intf                              h6                              em2
+    BASH ifup intf                              h6                              ${intf}
     BASH ifconfig ip address                    h5                              10.251.1.31/24          eth1
-    BASH ifconfig ip address                    h6                              10.251.2.31/24          em2
+    BASH ifconfig ip address                    h6                              10.251.2.31/24          ${intf}
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
@@ -485,7 +485,7 @@ Intra tenant L3 traffic same rack different leaf switch
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2a_host5}
-    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${mac2} =                                   BASH get intf mac               h6                      ${intf}
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -493,8 +493,8 @@ Intra tenant L3 traffic same rack different leaf switch
     REST show endpoints     
     ${loss} =                                   BASH ping                       h5                      10.251.2.31             count=10
     Should Be True                              ${loss} < 20        
-#    BASH init intf                              h5                              eth1
-#    BASH init intf                              h6                              em2
+#    BASH init intf                             h5                              eth1
+#    BASH init intf                             h6                              ${intf}
     
 
 Activate and deactivate router interface
@@ -3518,6 +3518,7 @@ initialize host
     BASH init intf                              h5                              eth2
     BASH init intf                              h5                              eth3
     BASH init intf                              h6                              em2
+    BASH init intf                              h6                              eth1
     BASH init intf                              h6                              p1p1
     BASH init intf                              h6                              p1p2
     BASH init intf                              h1                              bond0
