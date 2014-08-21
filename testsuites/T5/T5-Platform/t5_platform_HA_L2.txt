@@ -361,7 +361,7 @@ T5 Platform test setup
 	start floodlight monitor
 
 T5 Platform test teardown 
-
+	base test teardown
 	stop floodlight monitor
 	
 
