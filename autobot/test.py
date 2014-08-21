@@ -1276,6 +1276,7 @@ class Test(object):
         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
         con.send('')
+        con.close()
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
@@ -1283,6 +1284,8 @@ class Test(object):
         '''
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
+        helpers.log(" NO MORE Re-connecting Switches with Console to get IP with recent ZTN work flows")
+        return True
         if not helpers.is_switch(name):
             return True
         if re.match(r'.*spine.*', self.params(name, 'alias')):
