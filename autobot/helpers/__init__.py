@@ -484,7 +484,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
 def bigrobot_topology(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    This env points to the topology file.
+    This env points to the topology file. In BigRobot, this is typically
+    the name of the script appended with '.virtual.topo' or '.physical.topo'.
     """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
