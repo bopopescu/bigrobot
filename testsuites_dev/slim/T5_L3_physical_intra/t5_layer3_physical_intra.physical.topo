@@ -135,8 +135,8 @@ s4:
     mac: 70:72:CF:A9:BA:72
     set_session_ssh: false
     set_init_ping: false
-    leaf-group: rack3
-    alias: leaf3-a
+    leaf-group: rack1
+    alias: leaf1-b
     user: admin
     password: adminadmin
     
