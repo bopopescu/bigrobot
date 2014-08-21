@@ -1096,7 +1096,7 @@ class T5Platform(object):
                 helpers.log("Successfully spawned VIP %s" % vip)
 
             helpers.log("Getting MAC address of the controller")
-            url = '/api/v1/data/controller/os/action/network-interface'
+            url = '/api/v1/data/controller/os/action/interface'
             c.rest.get(url)
             content = c.rest.content()
         except:
@@ -3175,7 +3175,7 @@ class T5Platform(object):
             c = t.node_spawn(ip=node)
         else:
             c = t.controller(node)
-        url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/ipv4/address[ip-address="%s"]' % ipaddr
+        url = '/api/v1/data/controller/os/config/local-node/network-config/interface[type="ethernet"][number=0]/ipv4/address[ip-address="%s"]' % ipaddr
         try:
             c.rest.put(url, {"prefix":netmask, "ip-address":ipaddr})
         except:
