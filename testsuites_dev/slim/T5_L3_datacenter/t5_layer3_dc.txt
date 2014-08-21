@@ -22,77 +22,96 @@ Resource		testsuites_dev/slim/T5_L3_datacenter/t5_layer3_dc_resources.txt
 * Test Cases
 L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
 	L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
-	[Tags]									smoke				sanity				run1
+	[Tags]						 dhcp-relay							sanity				run1
 
 L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run2
+    [Tags]                       dhcp-relay                          sanity              run2
 
 L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run3
+    [Tags]                       dhcp-relay                         sanity              run3
     
 L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay   
-    [Tags]                                  smoke               sanity              run4
+    [Tags]                       dhcp-relay                        sanity              run4
 
 L3 inter tenant same rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run5
+    [Tags]                       dhcp-relay                          sanity              run5
 
 L3 inter tenant across rack untagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack untagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run6
+    [Tags]                       dhcp-relay                           sanity              run6
 
 L3 inter tenant same rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant same rack tagged with dynamic endpoints via dhcp-relay
-    [Tags]                                  smoke               sanity              run7
+    [Tags]                       dhcp-relay                           sanity              run7
     
 L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     L3 intra tenant across rack tagged with dynamic endpoints via dhcp-relay   
-    [Tags]                                  smoke               sanity              run8
+    [Tags]                       dhcp-relay                           sanity              run8
     
 L3 intra tenant 16 hop ecmp group in same rack
     L3 intra tenant 16 hop ecmp group in same rack
-    [Tags]                                  smoke               sanity              run9
+    [Tags]                       ecmp                           sanity              run9
     
 L3 inter tenant 16 hop ecmp group in same rack
     L3 inter tenant 16 hop ecmp group in same rack
-    [Tags]                                  smoke               sanity              run10
+    [Tags]                       ecmp                          sanity              run10
 
 Verify L3 intra tenant ecmp group prefer local rack than remote rack
     Verify L3 intra tenant ecmp group prefer local rack than remote rack
-    [Tags]                                  smoke               sanity              run11
+    [Tags]                       ecmp                          sanity              run11
     
 Verify L3 intra tenant with no nexthop is dropped
     Verify L3 intra tenant with no nexthop is dropped
-    [Tags]                                  smoke               sanity              run12
+    [Tags]                       ecmp                          sanity              run12
     
 Add and delete nexthop members to nexthop group
     Add and delete nexthop members to nexthop group
-    [Tags]                                  smoke               sanity              run13
+    [Tags]                       ecmp                          sanity              run13
+
+Add and delete nexthop members to nexthop group with active traffic failover and failback
+    Add and delete nexthop members to nexthop group with active traffic failover and failback
+    [Tags]                       ecmp                          sanity              run14
+
+Add and delete all members in nexthop group  
+    Add and delete all members in nexthop group 
+    [Tags]          ecmp          feature         run15    
+
             
-L3 inter tenant add nexthop ip to 16 nexthop group
-    L3 inter tenant add nexthop ip to 16 nexthop group
-    [Tags]                                  smoke               sanity              run14
+L3 inter tenant add nexthop member to 16 nexthop group
+    L3 inter tenant add nexthop member to 16 nexthop group
+    [Tags]                       ecmp                           sanity              run20
   
 Add and delete config changes
     Add and delete config changes
-    [Tags]                                  smoke               sanity              run15
+    [Tags]                       smoke                          sanity              run30
   
+  
+
+Inter tenant dhcp relay with duplicate circuitid
+    Inter tenant dhcp relay with duplicate circuitid
+    [Tags]      feature         dhcp-relay              run32
+    
+DHCP request to external dhcp servers
+    DHCP request to external dhcp servers
+    [Tags]       feature         dhcp-relay             run33
+    
     
 More specific route for L3 inter tenant traffic to external host
     More specific route for L3 inter tenant traffic to external host
-    [Tags]                                  smoke               sanity              run88
+    [Tags]                                                 sanity              run88
     
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
     Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
-    [Tags]                                  smoke               sanity              run100
+    [Tags]                                                 sanity              run100
     
     
 Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
-    [Tags]                                  smoke               sanity              run101
+    [Tags]                                                 sanity              run101
     
     
             
@@ -623,7 +642,7 @@ L3 intra tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffB9} > 40000 
     #### Check that leaf to spine link is not receiving traffic from spine
     Should Be True                                  ${diffB12} < 1000 and ${diffB13} < 1000 and ${diffB14} < 1000 and ${diffB15} < 1000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     
 
 L3 inter tenant 16 hop ecmp group in same rack
@@ -804,7 +823,7 @@ L3 inter tenant 16 hop ecmp group in same rack
     Should Be True                                  ${diffA12} > 100000 or ${diffA13} > 100000 or ${diffB12} > 100000 or ${diffB13} > 100000
     #### Check that one leaf to spine link is receiving inter tenant traffic from spine 
     Should Be True                                  ${diffA14} > 100000 or ${diffA15} > 100000 or ${diffB14} > 100000 or ${diffB15} > 100000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
 
 Verify L3 intra tenant ecmp group prefer local rack than remote rack
     REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
@@ -859,7 +878,7 @@ Verify L3 intra tenant ecmp group prefer local rack than remote rack
     ### Current switch implementation for LAG hashing only hashes on src and dst ip add
     Should Be True                                  ${diffA1} > 200000 or ${diffA2} > 200000 or ${diffA3} > 200000 or ${diffA4} > 200000
     Should Be True                                  ${diffB1} < 100 and ${diffB2} < 100
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
 
 
 Verify L3 intra tenant with no nexthop is dropped
@@ -915,7 +934,7 @@ Verify L3 intra tenant with no nexthop is dropped
     ### Current switch implementation for LAG hashing only hashes on src and dst ip add
     Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 and ${diffA3} < 100 and ${diffA4} < 100
     Should Be True                                  ${diffB1} < 100 and ${diffB2} < 100
-    calculate loss                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST add nexthopGroup ip                        External                                test                    10.99.3.1
     sleep                                           1
     REST clear fabric interface stats
@@ -956,7 +975,7 @@ Verify L3 intra tenant with no nexthop is dropped
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 and ${diffA3} < 100 and ${diffA4} < 100
     Should Be True                                  ${diffB1} > 500000 or ${diffB2} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
 
 
@@ -1003,7 +1022,7 @@ Add and delete nexthop members to nexthop group
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 
     Should Be True                                  ${diffA3} > 5000000 or ${diffA4} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST add nexthopGroup ip                        External                                test                    10.99.1.1
     sleep                                           5
     REST clear fabric interface stats
@@ -1034,12 +1053,84 @@ Add and delete nexthop members to nexthop group
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
     Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthopGroup ip                     External                                test                    10.99.3.1
     sleep                                           1
     REST clear fabric interface stats
     sleep                                           1
     start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    stop traffic                                    ${stream1}
+    Should Be True                                  ${diffA3} < 100 and ${diffA4} < 100 
+    Should Be True                                  ${diffA1} > 5000000 or ${diffA2} > 500000
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
+    REST delete nexthop group                       External                                test 
+    
+
+Add and delete nexthop members to nexthop group with active traffic failover and failback
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
+    REST add nexthop group                          External                        test
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "test"}
+    REST add nexthopGroup ip                        External                        test                    10.99.3.1
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=g->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.254.99.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.254.99.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 
+    Should Be True                                  ${diffA3} > 5000000 or ${diffA4} > 500000
+    REST add nexthopGroup ip                        External                                test                    10.99.1.1
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
@@ -1062,13 +1153,150 @@ Add and delete nexthop members to nexthop group
     ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
     ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
     ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
+    Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
+    REST delete nexthopGroup ip                     External                                test                    10.99.3.1
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA3} < 100 and ${diffA4} < 100 
     Should Be True                                  ${diffA1} > 5000000 or ${diffA2} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
+        
+Add and delete all members in nexthop group 
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
+    REST add nexthop group                          External                        test
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "test"}
+    REST add nexthopGroup ip                        External                        test                    10.99.3.1
+    REST add nexthopGroup ip                        External                        test                    10.99.1.1
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=g->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.254.99.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.254.99.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           5
+    stop traffic                                    ${stream1}
+    sleep                                           1 
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           10
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
+    Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
+    REST delete nexthopGroup ip                     External                                test                    10.99.3.1
+    REST delete nexthopGroup ip                     External                                test                    10.99.1.1
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5    
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    stop traffic                                    ${stream1}
+    Should Be True                                  ${diffA3} < 100 and ${diffA4} < 100 and ${diffA1} < 100 and ${diffA2} < 100
+    calculate loss                                  transmitted_frames                      received_valid_frames             ${stream1}              stream1
+    sleep                                           1
+    REST add nexthopGroup ip                        External                        test                    10.99.3.1
+    REST add nexthopGroup ip                        External                        test                    10.99.1.1
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           10
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
+    ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
+    ${tx_17_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
+    ${diffA2} =                                     evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
+    Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
+    REST delete nexthop group                       External                                test 
+    
 
-L3 inter tenant add nexthop ip to 16 nexthop group
+L3 inter tenant add nexthop member to 16 nexthop group
     REST add interface to vns                       X                               X1                      leaf0-a         ethernet33          -1
     REST add static routes                          system                          10.99.255.0/24          {"tenant": "External"}
     ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0
@@ -1243,7 +1471,7 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     Should Be True                                  ${diffB9} > 40000
     #### Check that one leaf to spine link is receiving inter tenant traffic from spine 
     Should Be True                                  ${diffA14} > 100000 or ${diffA15} > 100000 or ${diffB14} > 100000 or ${diffB15} > 100000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.3.1
     Should Not Be True                              ${result}
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.5.1
@@ -1449,7 +1677,7 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     Should Be True                                  ${diffB8} > 20000
     Should Be True                                  ${diffB9} < 100
     Should Be True                                  ${diffC1} < 100 and ${diffC2} < 100 and ${diffC3} < 100 and ${diffC4} < 100 and ${diffC5} < 100 and ${diffC6} < 100 
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     sleep                                           1
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.3.1
     Should Be True                                  ${result}
@@ -1647,7 +1875,7 @@ L3 inter tenant add nexthop ip to 16 nexthop group
     Should Be True                                  ${diffB9} < 100
     Should Be True                                  ${diffC1} > 40000 or ${diffC2} > 40000
     Should Be True                                  ${diffC3} > 40000 or ${diffC4} > 40000 or ${diffC5}> 40000 or ${diffC6} > 40000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     
 Verify add and delete a second member to nexthop group change to ecmp and back
     REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
@@ -1697,7 +1925,7 @@ Verify add and delete a second member to nexthop group change to ecmp and back
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA1} < 100 and ${diffA2} < 100 
     Should Be True                                  ${diffA3} > 5000000 or ${diffA4} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST add nexthopGroup ip                        External                                test                    10.99.1.1
     sleep                                           1
     ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
@@ -1734,7 +1962,7 @@ Verify add and delete a second member to nexthop group change to ecmp and back
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA1} > 500000 or ${diffA2} > 500000
     Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthopGroup ip                     External                                test                    10.99.3.1
     sleep                                           1
     ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
@@ -1769,7 +1997,7 @@ Verify add and delete a second member to nexthop group change to ecmp and back
     stop traffic                                    ${stream1}
     Should Be True                                  ${diffA3} < 100 and ${diffA4} < 100 
     Should Be True                                  ${diffA1} > 5000000 or ${diffA2} > 500000
-    verify results                                  transmitted_frames                      received_frames         ${stream1}              stream1
+    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
 
 
@@ -1779,6 +2007,7 @@ Add and delete config changes
     REST add portgroup to vns                   X                               X1                              leaf0-pc1           -1
     REST add portgroup to vns                   X                               X3                              leaf0-pc2           -1  
     REST add portgroup to vns                   X                               X1                              leaf1-pc2           -1  
+    REST add portgroup to vns                   Y                               Y3                              leaf2-pc2           -1
     REST add dhcp relay                         X                               X3                              10.251.1.9
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table
@@ -1790,6 +2019,7 @@ Add and delete config changes
     BASH ifup intf                              h1-rack0                        bond0
     BASH ifup intf                              h2-rack0                        bond0
     BASH ifup intf                              h2-rack1                        bond0
+    BASH ifup intf                              h2-rack2                        bond0
     BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0
     sleep                                       1
     BASH start service                          h1-rack0                        isc-dhcp-server
@@ -1797,6 +2027,11 @@ Add and delete config changes
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
     sleep                                       1
+    ${value} =                                  BASH release dhcpv4 address     h2-rack2                bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr1} =                                BASH renew dhcpv4 address       h2-rack2                bond0
+    Should Not Be Empty                         ${ipAddr1}
     ${value} =                                  BASH release dhcpv4 address     h2-rack0                bond0
     Should Be True                              ${value}
     sleep                                       1
@@ -1852,7 +2087,7 @@ Add and delete config changes
     sleep                                       1    
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
     Should Be True                              ${loss} == 100
-    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr3}           count=10
     Should Be True                              ${loss} == 0 
     ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
     Should Be True                              ${value}
@@ -1892,7 +2127,7 @@ Add and delete config changes
     Should Be Empty                             ${ipAddr6}
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
     Should Be True                              ${loss} == 100
-    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr2}           count=10
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr3}           count=10
     Should Be True                              ${loss} == 100      
     REST add tenant                             X
     REST add vns                                X                           X1
@@ -1914,12 +2149,31 @@ Add and delete config changes
     sleep                                       1
     ${ipAddr6} =                                BASH renew dhcpv4 address       h2-rack0                bond0
     Should Not Be Empty                         ${ipAddr6}
-    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr4}           count=10
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr5}           count=10
     Should Be True                              ${loss} == 0
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr6}           count=10
     Should Be True                              ${loss} == 0     
-    
-    
+    ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr1}           count=10
+    Should Be True                              ${loss} < 40
+    REST delete static routes                   X                               0.0.0.0/0               {"tenant": "system"}
+    REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
+    ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr1}              count=10
+    Should Be True                              ${loss} < 40
+    REST delete static routes                   X                               10.252.0.0/16           {"tenant": "system"}
+    ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr1}              count=10
+    Should Be True                              ${loss} == 100
+    ${value} =                                  BASH release dhcpv4 address     h2-rack2                bond0
+    sleep                                       1
+    ${ipAddr7} =                                BASH renew dhcpv4 address       h2-rack2                bond0
+    Should Be Empty                             ${ipAddr7}
+    ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr1}              count=10
+    Should Be True                              ${loss} == 100
+    REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
+    ${ipAddr7} =                                BASH renew dhcpv4 address       h2-rack2                bond0
+    Should Be Empty                             ${ipAddr7}
+    ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr7}              count=10
+    Should Be True                              ${loss} < 40
+   
    
 
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
@@ -2039,7 +2293,7 @@ initialize host
     BASH run command                                h1-rack2                                ifdown bond0
     BASH run command                                h2-rack2                                ifdown bond0
     BASH run command                                h3-rack2                                ifdown bond0
-    sleep                                       1
+    sleep                                           1
     BASH run command                                h1-rack0                                ifup eth2
     sleep                                           1
     BASH run command                                h1-rack0                                ifup eth3
@@ -2381,7 +2635,7 @@ T5 base suite setup
 	base suite setup
 	add fabric switch
 	sleep 											5
-#	add ntp timezone                                master
+	add ntp timezone                                master
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
 	${result} = 									CLI verify controller   	s1							c2
@@ -2529,18 +2783,18 @@ T5 base suite teardown
     REST delete tenant                         Z
     REST delete tenant                         External
     REST delete tenant                         system
-    BASH restart networking service             h1-rack0            timeout=60
-    bash_restart_networking_service             h1-rack1            timeout=60
+    BASH restart networking service            h1-rack0            timeout=60
+    bash_restart_networking_service            h1-rack1            timeout=60
 
 
-verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name} 
     Sleep  5
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  
  	Log 		${in_range}
-   Should be true  ${in_range}	
+    Should be true  ${in_range}	
   	
 calculate loss	 [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  5

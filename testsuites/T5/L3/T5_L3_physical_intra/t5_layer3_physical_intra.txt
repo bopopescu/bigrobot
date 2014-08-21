@@ -241,13 +241,6 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
     [Tags]                  feature         HA      dhcp-relay          runfailed
 
-Trigger controller HA failover via CLI and verify ecmp is working
-    manual untested
-    [Tags]                  manual                  feature                 ecmp                 
-
-Trigger controller HA failover via reboot and verify ecmp is working
-    manual untested
-    [Tags]                  manual          feature                 ecmp            
 
 Verify dhcp-relay functionality in headless mode
     manual passed
@@ -269,10 +262,6 @@ Verify dhcp-relay functionality after controller upgrade
     manual failed
     [Tags]                  manual          feature                 
 
-Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
-    manual untested
-    [Tags]                  manual          feature                 
-
 Verify arp agent functionality after controller HA failover via CLI
     Verify arp agent functionality after controller HA failover via CLI
     [Tags]                  feature                 HA                     runfailed         
@@ -281,16 +270,10 @@ Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
     [Tags]                  feature                                       runfailed      
     
-Verify ecmp traffic will failover and failback to more specific routes with ecmp group
-    manual untested
-    [Tags]                  manual                  feature                 ecmp        
-    
-    
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
     [Tags]                  feature                         runfailed
-    
-
+ 
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
     [Tags]                  feature                        runfailed 
