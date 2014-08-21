@@ -371,15 +371,7 @@ def version_hidden_command(*args):
     Show the version of BigRobot.
     """
     _ = args  # unused, silent Pylint
-    robot_framework_version = robot.version.VERSION
-    import Exscript
-    exscript_version = Exscript.version.__version__
-    print("BigRobot version        %s" % helpers.get_version())
-    print("Robot Framework version %s" % robot_framework_version)
-    print("Exscript version        %s" % exscript_version)
-    pversion = sys.version_info
-    print("Python version          %s.%s.%s"
-          % (pversion.major, pversion.minor, pversion.micro))
+    print(helpers.bigrobot_module_dependencies())
 
 
 def cli_params_to_yaml_config(params, filename):
