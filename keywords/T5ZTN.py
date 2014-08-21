@@ -144,7 +144,7 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
-        #options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+        #options = s.expect([r'[\r\n]*.*login:',r'[Pp]assword:',r'root@.*:\~\#',
         #                   s.get_prompt()])
         #if options[0] == 0:  # login prompt
         #    s.send('admin')
@@ -326,7 +326,7 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
-        options = s.expect([r'[\r\n]*.*login:', r'root@.*:',
+        options = s.expect([r'[\r\n]*.*login:', r'root@.*:\~\#',
                             r'=> ', r'loader#', s.get_prompt()],
                            timeout=300)
         if options[0] == 0:  # login prompt
@@ -351,6 +351,7 @@ class T5ZTN(object):
         elif state == 'flap':
             helpers.log("Setting interface MA1 down and up")
             s.send('no interface ma1 ip-address dhcp')
+            helpers.sleep(10)
             s.send('interface ma1 ip-address dhcp')
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
@@ -766,7 +767,7 @@ class T5ZTN(object):
         #s.send(helpers.ctrl('c'))
         #s.send("\x03")
         #options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
-        #                    r'[\r\n]* root@.*\#:', s.get_prompt()])
+        #                    r'[\r\n]* root@.*:\~\#', s.get_prompt()])
         #if options[0] == 0:
         #    s.cli('admin')
         #if options[0] == 2:
@@ -1082,7 +1083,7 @@ class T5ZTN(object):
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+        options = s.expect([r'[\r\n]*.*login:',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell'],
                            timeout=300)
