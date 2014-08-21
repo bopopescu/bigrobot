@@ -1498,5 +1498,43 @@ class T5ZTN(object):
                 version = version + " (" + line + ")"
         return version
     
-                 
-      
+
+    def console_bash_restart_process(self, node, processName, timeout=None):
+        """
+        restart process 
+        Return Value:  True         
+        """
+        try:
+            t = test.Test()
+            s = t.dev_console(node)
+            bash_input = 'service ' + str(processName) + ' restart'
+            s.bash(bash_input, timeout=timeout)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+  
+    def console_check_service_status(self, node, processName):
+        """
+        check switch process status
+        """
+        t = test.Test()
+        s = t.dev_console(node)
+        output = s.bash("service %s status" % processName)['content']
+        helpers.log("output: %s" % output)
+        match = re.search(r'unrecognized service', output, re.S | re.I | re.M)
+        if match:
+            return 'unrecognized service'
+        match = re.search(r'is not running', output, re.S | re.I | re.M)
+        if match:
+            return 'is not running'
+        match = re.search(r'stop\/waiting', output, re.S | re.I | re.M)
+        if match:
+            return 'is stopped'
+        match = re.search(r'is running', output, re.S | re.I | re.M)
+        if match:
+            return 'is started'
+        match = re.search(r'start\/running', output, re.S | re.I | re.M)
+        if match:
+            return 'is started'  
+
