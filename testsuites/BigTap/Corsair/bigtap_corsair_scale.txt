@@ -1,0 +1,273 @@
+*Settings
+Documentation  Corsair Scaling Test Suite
+Suite Setup  corsair suite setup
+Suite Teardown   corsair suite teardown
+Test Setup   corsair test setup
+Test Teardown  corsair test teardown 
+Force Tags   Corsair  BigTap  Scale  tunnelling
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+Library  keywords/ThirdParty.py
+
+####### TOPOLOGY
+##
+##   ixia-->s1(ac4600-1) -->s3(extreme1)-->s2(ac4600-2)-->ixia
+##
+####### TOPOLOGY
+
+* Variable
+${switch1_alias}                        app-ac4600-1  #Alias for switch 1
+${switch2_alias}                        app-ac4600-2  #Alias for switch 2
+${number_of_tunnels}                        43
+
+## Switch 1: app-ac4600-1
+${switch1_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch1_filter_alias}                     ixia-2-1        #Alias for filter interface on switch scale-ac4600-1
+${vlan_rewrite_1}                           100
+${switch1_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch1_delivery_alias}                   ixia-2-2        #Alias for delivery interface on switch scale-ac4600-1
+
+${tunnel_sw1_name}                          tunnel                 #Tunnel Name
+${tunnel_sw1_parent_intf}                   ethernet5               #Tunnel Parent Interface
+${tunnel_sw1_sip}                           192.1.0.1               #Tunnel Source IP
+${tunnel_sw1_dip}                           192.2.0.1               #Tunnel Destination IP
+${tunnel_sw1_gip}                           192.1.0.250               #Tunnel Gateway IP
+${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_loopback}                      ethernet                #Tunnel Loopback Interface
+${tunnel_sw1_loopback_start}                5                       #Tunnel Parent Interface
+
+${tunnel_sw1_alias}                         extreme1_sw1_delivery_intf
+${extreme1_sw1_tunnel_name}                 tunnel1
+${extreme1_sw1_tunnel_intf1}                5
+${extreme1_sw1_tunnel_ip}                   192.1.0.250  
+${extreme1_sw1_tunnel_mask}                 255.255.255.0
+
+
+## Switch 1: app-ac4600-2
+${switch2_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch2_filter_alias}                     ixia-2-5        #Alias for filter interface on switch scale-ac4600-1
+${vlan_rewrite_2}                           101
+${switch2_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch2_delivery_alias}                   ixia-2-6        #Alias for delivery interface on switch scale-ac4600-1
+
+${tunnel_sw2_name}                          tunnel                 #Tunnel Name
+${tunnel_sw2_parent_intf}                   ethernet9               #Tunnel Parent Interface
+${tunnel_sw2_parent_start}                  9                       #Tunnel Parent Interface
+${tunnel_sw2_sip}                           192.2.0.1               #Tunnel Source IP
+${tunnel_sw2_dip}                           192.1.0.1               #Tunnel Destination IP
+${tunnel_sw2_gip}                           192.2.0.250               #Tunnel Gateway IP
+${tunnel_sw2_mask}                          255.255.255.0             #Tunnel Subnet Mask
+${tunnel_sw2_loopback}                      ethernet              #Tunnel Loopback Interface
+${tunnel_sw2_loopback_start}                9                       #Tunnel Parent Interface
+
+${tunnel_sw2_alias}                         extreme1_sw1_delivery_intf
+${extreme1_sw2_tunnel_name}                 tunnel2
+${extreme1_sw2_tunnel_intf1}                9
+${extreme1_sw2_tunnel_ip}                   192.2.0.250  
+${extreme1_sw2_tunnel_mask}                 255.255.255.0
+${policy_name_1}                            tunnel_based_policy_as4600_1_2
+${policy_name_2}                            tunnel_based_policy_as4600_2_1
+
+
+*Test Case
+
+TC1: Create 42 bidirectional tunnels across same parent interface and verify status
+    : FOR    ${INDEX}    IN RANGE    1    ${number_of_tunnels}
+    \    Log    ${INDEX}
+    \    ${tunnel_s1name}=  Catenate  SEPARATOR=  ${tunnel_sw1_name}  ${INDEX}
+    \    ${tunnel_s1loopback_no}=  Evaluate  ${tunnel_sw1_loopback_start}+${INDEX}
+    \    ${tunnel_s1loopback}=  Catenate  SEPARATOR=  ${tunnel_sw1_loopback}  ${tunnel_s1loopback_no}
+    \    ${tunnel_s1sip}=  Catenate  SEPARATOR=  192.1.0.  ${INDEX}      
+    \    ${tunnel_s1dip}=  Catenate  SEPARATOR=  192.2.0.  ${INDEX}      
+    \    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_s1name}  loopback=${tunnel_s1loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_s1sip}  dip=${tunnel_s1dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    \    Should be true  ${verify_add_tun_sw1}
+    \    sleep  1          
+    \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
+    \    ${tunnel_s2loopback_no}=  Evaluate  ${tunnel_sw2_loopback_start}+${INDEX}
+    \    ${tunnel_s2loopback}=  Catenate  SEPARATOR=  ${tunnel_sw2_loopback}  ${tunnel_s2loopback_no}
+    \    ${tunnel_s2sip}=  Catenate  SEPARATOR=  192.2.0.  ${INDEX}      
+    \    ${tunnel_s2dip}=  Catenate  SEPARATOR=  192.1.0.  ${INDEX}      
+    \    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_s2name}  loopback=${tunnel_s2loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_s2sip}  dip=${tunnel_s2dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    \    Should be true  ${verify_add_tun_sw2}
+    \    sleep  15
+    \    ${tunnel_number}=  Evaluate  ${199}+${INDEX}
+    \    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_s1name}  tunnel_number=${tunnel_number}  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_s1sip}  dip=${tunnel_s1dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    \    Should be true  ${verify_tun_sw1}
+    \    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_s2name}  tunnel_number=${tunnel_number}  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_s2sip}  dip=${tunnel_s2dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    \    Should be true  ${verify_tun_sw2}    
+    #Configure policies as per Topology:
+    ## Policies for traffic across ac4600's
+    rest add policy  admin-view  ${policy_name_2}   forward
+    rest add policy match  admin-view  ${policy_name_2}   1  {"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}   ${switch2_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_delivery_alias}  delivery
+    sleep  10
+    ${stream_12}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  ethertype=0800  no_arp=True
+    clear stats    
+    start traffic  ${stream_12}
+    sleep  10
+    stop traffic  ${stream_12} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames
+    clear stats                
+    ${stream_21}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=c_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  ethertype=0800  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_21}
+    sleep  10
+    stop traffic  ${stream_21} 
+    sleep  2    
+    verify results  b  c  transmitted_frames  received_data_integrity_frames
+    delete traffic  
+    : FOR    ${INDEX}    IN RANGE    1    ${number_of_tunnels}
+    \    Log    ${INDEX}
+    \    ${tunnel_s1name}=  Catenate  SEPARATOR=  ${tunnel_sw1_name}  ${INDEX}    
+    \    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_s1name}  
+    \    Should be true  ${verify_del_tun_sw1}     
+    \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
+    \    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_s2name}  
+    \    Should be true  ${verify_del_tun_sw2}   
+    [Tags]  bidirectional  one-to-one
+
+TC2: Create 42 transmit/receive tunnels across same parent interface and verify status
+    : FOR    ${INDEX}    IN RANGE    1    ${number_of_tunnels}
+    \    Log    ${INDEX}
+    \    ${tunnel_s1name}=  Catenate  SEPARATOR=  ${tunnel_sw1_name}  ${INDEX}
+    \    ${tunnel_s1loopback_no}=  Evaluate  ${tunnel_sw1_loopback_start}+${INDEX}
+    \    ${tunnel_s1loopback}=  Catenate  SEPARATOR=  ${tunnel_sw1_loopback}  ${tunnel_s1loopback_no}
+    \    ${tunnel_s1sip}=  Catenate  SEPARATOR=  192.1.0.  ${INDEX}      
+    \    ${tunnel_s1dip}=  Catenate  SEPARATOR=  192.2.0.  ${INDEX}      
+    \    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_s1name}  loopback=${tunnel_s1loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_s1sip}  dip=${tunnel_s1dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    \    Should be true  ${verify_add_tun_sw1}
+    \    sleep  1          
+    \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
+    \    ${tunnel_s2loopback_no}=  Evaluate  ${tunnel_sw2_loopback_start}+${INDEX}
+    \    ${tunnel_s2loopback}=  Catenate  SEPARATOR=  ${tunnel_sw2_loopback}  ${tunnel_s2loopback_no}
+    \    ${tunnel_s2sip}=  Catenate  SEPARATOR=  192.2.0.  ${INDEX}      
+    \    ${tunnel_s2dip}=  Catenate  SEPARATOR=  192.1.0.  ${INDEX}      
+    \    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_s2name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_s2sip}  dip=${tunnel_s2dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    \    Should be true  ${verify_add_tun_sw2}
+    \    sleep  15
+    \    ${tunnel_number}=  Evaluate  ${199}+${INDEX}
+    \    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_s1name}  tunnel_number=${tunnel_number}  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_s1sip}  dip=${tunnel_s1dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    \    Should be true  ${verify_tun_sw1}
+    \    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_s2name}  tunnel_number=${tunnel_number}  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_s2sip}  dip=${tunnel_s2dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    \    Should be true  ${verify_tun_sw2}    
+    #Configure policies as per Topology:
+    ## Policies for traffic across ac4600's
+    ${stream_12}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_d_flow
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  ethertype=0800  no_arp=True
+    clear stats    
+    start traffic  ${stream_12}
+    sleep  10
+    stop traffic  ${stream_12} 
+    sleep  2    
+    verify results  a  d  transmitted_frames  received_data_integrity_frames
+    delete traffic  
+    : FOR    ${INDEX}    IN RANGE    1    ${number_of_tunnels}
+    \    Log    ${INDEX}
+    \    ${tunnel_s1name}=  Catenate  SEPARATOR=  ${tunnel_sw1_name}  ${INDEX}    
+    \    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_s1name}  
+    \    Should be true  ${verify_del_tun_sw1}     
+    \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
+    \    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_s2name}  
+    \    Should be true  ${verify_del_tun_sw2}   
+    [Tags]  txrx  one-to-one
+            
+* Keyword
+corsair suite setup
+    base suite setup
+    ${enable_tunnel}=  rest enable feature  tunneling
+    Should be true  ${enable_tunnel}  
+    ${enable_fmm}=  rest enable feature  full-match
+    Should be true  ${enable_fmm}
+    extreme tunnel teardown
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    #CRC packets to be dropped
+    bash  s1  ofad-ctl crc enable
+    bash  s2  ofad-ctl crc enable
+    ## Delete port-channel on switch
+    ${s1_delete_portchannel}=  cli delete portchannel  s1  1
+    Should be true  ${s1_delete_portchannel}     
+    ${s2_delete_portchannel}=  cli delete portchannel  s2  1
+    Should be true  ${s2_delete_portchannel}       
+    #Configure IXIA ports as filter ports
+    ## On app-ac4600-1
+    ${result}=  rest add interface role  s1  ${switch1_filter_intf}  filter  ${switch1_filter_alias}  rewrite_vlan=${vlan_rewrite_1}
+    Should be true  ${result}  
+    ## On app-ac4600-2
+    ${result}=  rest add interface role  s2  ${switch2_filter_intf}  filter  ${switch2_filter_alias}  rewrite_vlan=${vlan_rewrite_2}
+    Should be true  ${result}
+    #Configure IXIA ports as delivery ports
+    ## On app-ac4600-1
+    ${result}=  rest add interface role  s1  ${switch1_delivery_intf}  delivery  ${switch1_delivery_alias}
+    Should be true  ${result}  
+    ## On app-ac4600-2
+    ${result}=  rest add interface role  s2  ${switch2_delivery_intf}  delivery  ${switch2_delivery_alias}
+    Should be true  ${result}
+
+extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${tunnel_address}  ${tunnel_mask}
+    config  ${node}  create vlan ${tunnel_name}
+    config  ${node}  configure vlan ${tunnel_name} add ports ${tunnel_port} untagged
+    config  ${node}  configure vlan ${tunnel_name} ipaddress ${tunnel_address} ${tunnel_mask}
+    config  ${node}  enable ipforwarding vlan ${tunnel_name}
+    config  ${node}  configure ip-mtu 9194 vlan ${tunnel_name} 
+    extreme save config  ${node}  
+    node disconnect  ${node}
+    
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+
+extreme tunnel teardown
+    config  s3  delete vlan ${extreme1_sw1_tunnel_name}
+    config  s3  delete vlan ${extreme1_sw2_tunnel_name}
+    Sleep  2
+    extreme save config  s3
+
+corsair test setup
+    extreme tunnel setup  s3  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask} 
+    extreme tunnel setup  s3  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask} 
+    rest add policy  admin-view  ${policy_name_1}   forward
+    rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch2_delivery_alias}  delivery 
+    delete traffic
+    sleep  10
+    
+corsair test teardown
+    delete traffic
+    extreme tunnel teardown
+    sleep  10
+    
+corsair suite teardown
+    ${result}=  cli add portchannel  s1  1  49-50  L2
+    Should be true  ${result}
+    ${result}=  cli add portchannel  s1  2  49-50  L2
+    Should be true  ${result}    
+    REST delete policy  admin-view  ${policy_name_1}
+    REST delete policy  admin-view  ${policy_name_2} 
+    rest delete interface role  s1  ${switch1_filter_intf}  filter 
+    rest delete interface role  s1  ${switch1_delivery_intf}   delivery    
+    rest delete interface role  s2  ${switch2_filter_intf}  filter 
+    rest delete interface role  s2  ${switch2_delivery_intf}   delivery    
+    rest delete interface  s1  ${switch1_filter_intf}        
+    rest delete interface  s1  ${switch1_delivery_intf}        
+    rest delete interface  s2  ${switch2_filter_intf}        
+    rest delete interface  s2  ${switch2_delivery_intf}        
+    rest delete switch alias  s1
+    rest delete switch  s1
+    rest delete switch alias  s2
+    rest delete switch  s2    
+    rest disable feature  tunneling    
+    base suite teardown                  
