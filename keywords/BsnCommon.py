@@ -132,15 +132,15 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def controller_postmortem(self, node, server, server_devconf,
-                              user, password, dest_path, test_descr=None):
+    def bcf_controller_postmortem(self, node, server, server_devconf,
+                                  user, password, dest_path, test_descr=None):
         """
         Executes the equivalence of
         https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        helpers.log("Collecting postmortem information for controller '%s'"
+        helpers.log("Collecting postmortem information for BCF controller '%s'"
                     % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
         # show_cmd_file is the log file on the BigRobot terminal (where
@@ -151,6 +151,7 @@ class BsnCommon(object):
         if not os.path.exists(d):
             os.makedirs(d)
         fh = open(show_cmd_file, 'w')
+
         cmdlist = [
                    'debug cli',
                    'show running-config details',
@@ -220,7 +221,11 @@ class BsnCommon(object):
             os.makedirs(d)
         fh = open(show_cmd_file, 'w')
 
+        # Mininet postmortem commands and output
+        # May need to separate this section if postmortem is different between
+        # T6 Mininet and BigTap Mininet.
         content = self.cli(node, 'bugreport')['content']
+
         match = re.search(r'^Tarball left at (.+)$', content, re.M)
         fh.write(content)
         fh.write('\n')
@@ -273,19 +278,26 @@ class BsnCommon(object):
             h.sudo('mkdir -p %s' % test_dest_path)
 
             if helpers.is_controller(node):
-                self.controller_postmortem(node,
-                                           server=server,
-                                           server_devconf=h,
-                                           user=user, password=password,
-                                           dest_path=test_dest_path,
-                                           test_descr=test_descr)
-            if helpers.is_mininet(node):
+                if helpers.is_bcf(t.node(node).platform()):
+                    self.bcf_controller_postmortem(node,
+                                               server=server,
+                                               server_devconf=h,
+                                               user=user, password=password,
+                                               dest_path=test_dest_path,
+                                               test_descr=test_descr)
+                elif helpers.is_bigtap(t.node(node).platform()):
+                    # Placeholder for BigTap postmortem
+                    pass
+            elif helpers.is_mininet(node):
                 self.mininet_postmortem(node,
                                         server=server,
                                         server_devconf=h,
                                         user=user, password=password,
                                         dest_path=test_dest_path,
                                         test_descr=test_descr)
+            elif helpers.is_switch(node):
+                # Placeholder for switch postmortem
+                pass
 
         # Only print the postmortem URL once.
         if t.settings('postmortem_url_is_printed') == None:

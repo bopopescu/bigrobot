@@ -1345,7 +1345,7 @@ class Test(object):
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
-
+        master = self.controller("master")
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
                 if helpers.is_controller(key):
@@ -1389,6 +1389,7 @@ class Test(object):
                               % helpers.prettify(params))
                 master.config("show switch")
                 master.config("show running-config")
+                master.config("show logging level")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
                 helpers.log("########  Stand_by config after ZTN setup: ")
                 standby.config("show switch")
@@ -1401,6 +1402,7 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
                 master.enable("copy snapshot://ztn-base-config running-config ")
+                master.config("show logging level")
                 master.enable("show running-config")
                 master.enable("show switch")
                 helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
@@ -1411,6 +1413,12 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
 
+        if helpers.get_env("HA_LOGGING") == "True":
+            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            master.config("logging level org.projectfloodlight.db.data debug")
+            master.config("logging level org.projectfloodlight.sync.internal debug")
+            master.config("logging level org.projectfloodlight.ha debug")
+            master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())

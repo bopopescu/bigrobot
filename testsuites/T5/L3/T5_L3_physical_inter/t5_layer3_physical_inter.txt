@@ -1161,7 +1161,7 @@ Verify private IP is able to communicate with other vns in the same tenant
     Should Be True  ${returnVal}       
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-1  src-tenant=X  src-segment=X1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11 
     Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-1   HostPing  leaf  spine  leaf  host=h5  ip=10.251.2.11
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-1   HostPing  leaf  host=h5  ip=10.251.2.11
     Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0    
@@ -1170,7 +1170,7 @@ Verify private IP is able to communicate with other vns in the same tenant
     Should Be True  ${returnVal}           
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-2  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11  
     Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-2  HostPing  leaf  spine  leaf  host=h3  ip=10.252.2.11  
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-2  HostPing  leaf  host=h3  ip=10.252.2.11  
     Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.251.2.11             count=10
     Should Be True                              ${loss} == 100   
@@ -1179,7 +1179,7 @@ Verify private IP is able to communicate with other vns in the same tenant
     Should Be True  ${returnVal}           
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-3  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
     Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-3  HostPing  leaf  spine  leaf  host=h3  ip=10.251.2.11  
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-3  HostPing  leaf  host=h3  ip=10.251.2.11  
     Should Be True  ${returnVal} 
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0  
@@ -1188,7 +1188,7 @@ Verify private IP is able to communicate with other vns in the same tenant
     Should Be True  ${returnVal}           
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
     Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  spine  leaf  host=h6  ip=10.252.2.11
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  host=h6  ip=10.252.2.11
     Should Be True  ${returnVal}   
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h5                              10.251.0.0/16           10.251.1.1
