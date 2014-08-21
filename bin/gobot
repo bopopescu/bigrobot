@@ -484,6 +484,14 @@ def test_command(*args):
         for tc in args.testmatch:
             options['test'].append("*" + tc + "*")
 
+    if re.match(r'.*\.virtual\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'virtual'
+    elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'physical'
+    else:
+        # If not specified, assume it is physical
+        options['settag'] = 'physical'
+
     print("Robot options:\n%s" % helpers.prettify(options))
 
     exit_if_suite_not_defined()
