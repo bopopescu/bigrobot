@@ -10,7 +10,8 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5ZTN.py
-Library         keywords/T5Platform.py
+Library         keywords_dev/slim/T5Platform.py
+
 Library         keywords/T5Utilities.py
 Library         Collections.py
 Library         keywords/Ixia.py
@@ -3634,29 +3635,29 @@ T5 base suite setup
     #BASH network restart                            h5                                timeout=60
     #BASH restart service                            h6                                networking              timeout=60   
     sleep                                           5
-    ${result} =                                     CLI verify controller       s1                          c1      
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s1                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c2
+#    ${result} =                                     CLI verify controller       s1                          c1      
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s1                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s2                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s2                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s3                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s3                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s4                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s4                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s5                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s5                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s6                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s6                          c2
     Should Be True                                  ${result}       
     REST add portgroup                              ${leaf0_pc1}
     REST add portgroup                              ${leaf0_pc2}
