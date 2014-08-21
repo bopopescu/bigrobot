@@ -25,144 +25,144 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack untagged with dynamic endpoints
-    [Tags]              feature         sanity  
+    [Tags]              feature         sanity          run2
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack tagged with dynamic endpoints
-    [Tags]              feature         sanity          
+    [Tags]              feature         sanity          run3
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature         sanity  
+    [Tags]              feature         sanity      run4
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
-    [Tags]              feature             sanity                  
+    [Tags]              feature             sanity      run5            
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                feature             sanity                              
+    [Tags]                feature             sanity        run6                      
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature                  
+    [Tags]                 feature                  run7
     
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                  feature                 
+    [Tags]                  feature                run8 
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature         sanity          
+    [Tags]                  feature         sanity          run9
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature         sanity  
+    [Tags]                  feature         sanity      run10
 
 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
-    [Tags]                  feature         sanity          
+    [Tags]                  feature         sanity          run11
 
 Intra tenant L3 tagged traffic with static endpoints across rack
     L3 intra tenant across rack tagged with static endpoints
-    [Tags]                  feature         sanity  
+    [Tags]                  feature         sanity          run12
 
 Dhcp discover on the same vns as server with dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-    [Tags]                   feature            sanity                  dhcp-relay
+    [Tags]                   feature            sanity                  dhcp-relay      run13
 
 Dhcp discover on the same vns as server without dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-    [Tags]                              feature                 dhcp-relay  
+    [Tags]                              feature                 dhcp-relay          run14
 
 Intra tenant dhcp relay 
     L3 intra tenant dhcp relay on same rack
-    [Tags]                   feature            sanity                  dhcp-relay  
+    [Tags]                   feature            sanity                  dhcp-relay          run15
     
 Intra tenant dhcp relay with circuit id
     L3 intra tenant dhcp relay with circuit id on same rack
-    [Tags]                   feature            sanity                  dhcp-relay  
+    [Tags]                   feature            sanity                  dhcp-relay          run16
 
 Intra tenant dhcp relay across rack
     L3 intra tenant dhcp relay across rack
-    [Tags]                   feature            feature                 dhcp-relay  
+    [Tags]                   feature            feature                 dhcp-relay          run17
     
 Intra tenant dhcp relay with circuit id across rack
     L3 intra tenant dhcp relay with circuit id across rack
-    [Tags]                   feature            feature                 dhcp-relay  
+    [Tags]                   feature            feature                 dhcp-relay          run18
 
 Delete and Add dhcp relay
     L3 dhcp request without dhcp relay enabled
-    [Tags]                   feature                    dhcp-relay  
+    [Tags]                   feature                    dhcp-relay          run19
     
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
     Move host from one vns to another vns in the same tenant and verify dhcp request is working
-    [Tags]                  feature                 dhcp-relay              
+    [Tags]                  feature                 dhcp-relay              run20
 
 Verify dhcp host is not aged out
     Verify dhcp host is not being aged out
-    [Tags]              feature                 dhcp-relay          
+    [Tags]              feature                 dhcp-relay          run21
 
 Dhcp relay with dhcp server configured as static endpoint
     Dhcp relay with static dhcp server endpoint
-    [Tags]              feature                 dhcp-relay  
+    [Tags]              feature                 dhcp-relay      run22
     
 Verify add and delete of dhcp server config works
     Verify add and delete of dhcp server config works
-    [Tags]             feature                 dhcp-relay  
+    [Tags]             feature                 dhcp-relay       run23
         
     
 Add and delete untagged endpoints with existing host
     L3 add and delete untagged endpoints with existing host
-    [Tags]              feature 
+    [Tags]              feature                                 run24
     
 Add and delete tagged endpoints with existing host
     L3 add and delete tagged endpoints with existing host
-    [Tags]              feature 
+    [Tags]              feature                                 run25
         
 Change L3 endpoint from untagged to tagged and back     
     L3 change endpoint from untagged to tagged and back 
-    [Tags]              feature 
+    [Tags]              feature                                 run26
 
 Verify L3 endpoint aging
     Check L3 endpoint aging 
-    [Tags]              feature 
+    [Tags]              feature                                 run27
     
 Verify L3 ttl 1 is not being forwarded
     Check L3 ttl 1 is dropped
-    [Tags]              feature         
+    [Tags]              feature                                 run28
 
 Verify icmpa is sending destination unreachable for L3 destination miss
     Verify icmpa is sending destination unreachable for L3 destination miss
-    [Tags]              feature      sanity         
+    [Tags]              feature      sanity                     run29
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature     
+    [Tags]              feature                                 run30
 
 Delete and add router vns ip
     Delete and add router vns ip 
-    [Tags]              feature         
+    [Tags]              feature                                 run31
 
 Set 32bit full mask on vns router ip
     Set 32bit full mask on vns router ip
-    [Tags]              feature     
+    [Tags]              feature                                 run32
     
 Change tagged endpoint IP address
     Change tagged host endpoint IP address
-    [Tags]              feature                 
+    [Tags]              feature                                 run33
 
 Configure static endpoint with host showing up on another port
     Static endpoint with dynamic host showing up on another port
-    [Tags]                  feature                 
+    [Tags]                  feature                             run34
 
 Verify subnet mask is properly applied on router vns
     Verify subnet mask on vns router ip
-    [Tags]                  feature     
+    [Tags]                  feature                             run35
 
 Verify vlsm forwarding
     Verify vlsm forwarding
-    [Tags]                  feature     
+    [Tags]                  feature                             run36
 
 Verify split horizon forwarding
     manual passed
@@ -170,142 +170,142 @@ Verify split horizon forwarding
     
 Configure overlapping router IP     
     Configure overlapping IP on same tenant across VNS  
-    [Tags]                  feature         negative    
+    [Tags]                  feature         negative        run38
 
 Configure overlapping IP with private keyword on the same tenant
     Configure overlapping IP with private keyword on the same tenant
-    [Tags]                  feature     
+    [Tags]                  feature                     run39
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
     L3 intra tenant traffic between private and public subnet with overlapping IP
-    [Tags]                      feature             
+    [Tags]                      feature             run40
     
 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
-    [Tags]                      feature                    run
+    [Tags]                      feature                    run41
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature                            run
+    [Tags]              feature                            run42
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature                            run
+    [Tags]              feature                            run43
 
 Spine reboot
     Reboot spine0 via CLI
-    [Tags]              feature         
+    [Tags]              feature         run44
 
 Leaf reboot
     Reboot Leaf0 via CLI
-    [Tags]              feature         
+    [Tags]              feature         run45
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
-    [Tags]              feature         
+    [Tags]              feature         run46
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
-    [Tags]              feature         
+    [Tags]              feature         run47
 
 Spine to leaf link flap
     Flap link between leaf and spine
-    [Tags]              feature         
+    [Tags]              feature         run48
 
 Leaf to host link flap
     Flap bond interface towards host
-    [Tags]              feature                 run 
+    [Tags]              feature                 run49 
     
 Restart ofad process on spine
     restart ofad on spine
-    [Tags]              feature                 run
+    [Tags]              feature                 run50
     
 Restart ofad process on leaf    
     restart ofad on leaf
-    [Tags]              feature         
+    [Tags]              feature         run51
     
 L3 intra tenant traffic behavior in headless mode 
     manual passed
-    [Tags]                  manual              feature         
+    [Tags]                  manual              feature     run52         
 
 L3 intra tenant traceroute
     L3 intra tenant traceroute
-    [Tags]                  feature     
+    [Tags]                  feature         run53
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature             
+    [Tags]                                  feature             run54
     
 Verify host on private segment is able to get dhcp address from tenant dhcp server
     Verify host on private segment is able to get dhcp address from tenant dhcp server
-    [Tags]                                  feature           dhcp-relay            run5
+    [Tags]                                  feature           dhcp-relay            run55
                                 
         
 Trigger controller HA failover via CLI and verify dhcp-relay is working
     Trigger controller HA failover via CLI and verify dhcp-relay is working
-    [Tags]                  feature         HA      dhcp-relay          
+    [Tags]                  feature         HA      dhcp-relay          run56     
 
 Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
-    [Tags]                  feature         HA      dhcp-relay          
+    [Tags]                  feature         HA      dhcp-relay          run57
 
 Trigger controller HA failover via CLI and verify ecmp is working
     manual untested
-    [Tags]                  manual                  feature                 ecmp            run     
+    [Tags]                  manual                  feature                 ecmp            run58     
 
 Trigger controller HA failover via reboot and verify ecmp is working
     manual untested
-    [Tags]                  manual          feature                 ecmp            run
+    [Tags]                  manual          feature                 ecmp            run59
 
 Verify dhcp-relay functionality in headless mode
     manual passed
-    [Tags]                  manual              feature                 dhcp-relay          
+    [Tags]                  manual              feature                 dhcp-relay       run60   
 
 Verify ecmp forwarding in headless mode
     manual untested
-    [Tags]                  manual          feature                 ecmp    
+    [Tags]                  manual          feature                 ecmp        run61
             
 Verify L3 intra tenant forwarding after controller upgrade
     manual failed
-    [Tags]                  manual          feature                 
+    [Tags]                  manual          feature                 run62
 
 Verify ecmp forwarding after controller upgrade
     manual failed
-    [Tags]                  manual          feature                 
+    [Tags]                  manual          feature                 run63
 
 Verify dhcp-relay functionality after controller upgrade
     manual failed
-    [Tags]                  manual          feature                 
+    [Tags]                  manual          feature            run64     
 
 Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
     manual untested
-    [Tags]                  manual          feature                 
+    [Tags]                  manual          feature                 run65
 
 Verify arp agent functionality after controller HA failover via CLI
     Verify arp agent functionality after controller HA failover via CLI
-    [Tags]                  feature                 HA                              
+    [Tags]                  feature                 HA                   run66           
 
 Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
-    [Tags]                  feature                                             
+    [Tags]                  feature                                           run67  
     
 Verify ecmp traffic will failover and failback to more specific routes with ecmp group
     manual untested
-    [Tags]                  manual                  feature                 ecmp        
+    [Tags]                  manual                  feature                 ecmp    run68     
     
     
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
-    [Tags]                  feature                         
+    [Tags]                  feature                         run69
     
 
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
-    [Tags]                  feature                         
+    [Tags]                  feature                         run70
     
 Verify blocked endpoint should be automatically cleared
     Verify blocked endpoint should be automatically cleared
-    [Tags]                  feature                         
+    [Tags]                  feature                         run71
     
     
 * Keywords
@@ -556,17 +556,17 @@ Verify static endpoint state
     Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
-    Should Contain                              ${ipState1}                     Unknown 
+#    ${ipState1} =                               Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
+#    Should Contain                              ${ipState1}                     Unknown 
     REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Member Rule Error
     REST add endpoint ip                        X                               X1                      X1_pc1                  10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipState1} =                               Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${ipState1}                     static 
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -592,14 +592,14 @@ Verify static endpoint state
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
     ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -626,8 +626,8 @@ Verify host with same IP as vrf is having L2 service only
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    ${state} =                                  Set Variable                    ${result[0]['state']}   
-    Should Contain                              ${state}                        L2 Only    
+    ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
+    Should Contain                              ${ipstate}                      learned-inactive    
     REST add vns ip                             X                               X1                      10.251.1.1              24
     sleep                                       1
     BASH ping                                   h5                              10.251.1.2              count=5
@@ -636,9 +636,8 @@ Verify host with same IP as vrf is having L2 service only
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    ${state} =                                  Set Variable                    ${result[0]['state']}   
-#    Should Contain                              ${state}                        Active    
-    Should Contain                              ${state}                        L2 Only    
+    ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
+    Should Contain                              ${ipstate}                      learned-inactive  
     BASH ifconfig ip address                    h5                              10.251.1.22/24           bond0   
     BASH ping                                   h5                              10.251.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac5}
@@ -683,14 +682,14 @@ L3 intra tenant same rack untagged with static endpoints
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
     ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
     REST show endpoints 
@@ -1336,7 +1335,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     BASH ping                                   h5                              10.252.1.9              count=5
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     ${segment} =                                Set Variable                    ${result[0]['segment']}
     Should Contain                              ${ipAddr}                       10.252.2
     Should Contain                              ${segment}                      Y2
@@ -1398,7 +1397,7 @@ Verify dhcp host is not being aged out
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}    
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
 #   Should Contain                              ${ipAddr1}                      ${ipAddr}
     Should Be Equal As Strings                  ${ipAddr1}                      ${ipAddr}
     BASH delete route                           h1                              10.252.3.0/24           10.252.1.1
@@ -1879,11 +1878,11 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${ipAddr1}                      10.251.4.11
 #   Should Contain                              ${result}                       10.251.4.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11
 #   Should Contain                              ${result}                       10.251.2.11
     REST add vns ip                             X                               X1                      10.251.1.1              24  
@@ -1898,10 +1897,10 @@ Change router ip address
     Should Be True                              ${loss} == 0        
     sleep                               1
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac2}
-    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address']['ip-address']}  
+    ${ipAddr2} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${ipAddr2}                      10.251.2.11         
     BASH delete route                           h3                              10.251.2.0/24           10.251.1.1
     BASH delete route                           h4                              10.251.4.0/24           10.251.2.1
@@ -2104,7 +2103,7 @@ Static endpoint with dynamic host showing up on another port
     Log                                         attachpoint = ${attachpoint}                
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
     ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
-    ${ipState} =                                Set Variable                    ${result[0]['ip-address']['ip-state']}
+    ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${loss} =                                   BASH ping                       h2                      10.251.1.11             count=10

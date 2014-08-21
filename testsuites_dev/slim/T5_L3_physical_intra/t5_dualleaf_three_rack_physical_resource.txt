@@ -34,10 +34,10 @@ add fabric switch
     rest add leaf group  leaf2-b  rack2
     rest add dpid  leaf2-b  00:00:70:72:cf:b5:e5:9e
 
-    rest add switch  leaf1-b 
-    rest add fabric role  leaf1-b  leaf
-    rest add leaf group  leaf1-b  rack1 
-    rest add dpid  leaf1-b  00:00:70:72:cf:a9:ba:72
+    rest add switch  leaf3-a 
+    rest add fabric role  leaf3-a  leaf
+    rest add leaf group  leaf3-a  rack3 
+    rest add dpid  leaf3-a  00:00:70:72:cf:a9:ba:72
 
   
 delete fabric switch  
@@ -48,4 +48,4 @@ delete fabric switch
   rest delete fabric switch  leaf0-a 
   rest delete fabric switch  leaf0-b 
   rest delete fabric switch  leaf1-a 
-  rest delete fabric switch  leaf1-b 
+  rest delete fabric switch  leaf3-a 
