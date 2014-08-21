@@ -659,10 +659,10 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["mac"] == mac:
-            if str(data[0]["attach-point-state"]) == "learned":
+            if str(data[0]["attachment-point-state"]) == "learned":
                 helpers.log("Expected endpoint states are showing learned")
                 return True
-            elif str(data[0]["attach-point-state"]) == "unknown":
+            elif str(data[0]["attachment-point-state"]) == "unknown":
                 helpers.log("Expected endpoint states are unknown")
                 return True
             else:
