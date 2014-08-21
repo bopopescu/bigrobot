@@ -1246,7 +1246,7 @@ class Test(object):
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.sleep(10)
-        if helpers.get_env("ZTN_RELOAD") != "True":
+        if helpers.bigrobot_ztn_reload().lower() != "true":
             return True
         if not ('ip' in console and 'port' in console):
             return True
@@ -1416,7 +1416,7 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
 
-        if helpers.get_env("HA_LOGGING") == "True":
+        if helpers.bigrobot_ha_logging().lower() == "true":
             helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
             master.config("logging level org.projectfloodlight.db.data debug")
             master.config("logging level org.projectfloodlight.sync.internal debug")
