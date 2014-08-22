@@ -114,8 +114,9 @@ T6.20. Upgrade network/SL images on controller while switch is disconnected. Che
 	[Tags]  manual
 	#switch gets suspended due to runtime checksum mismatch
 T6.21. Downgrade process
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# after reboot switch gets downgraded image
 T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flavors of failover command will be eventually implemented)
 	[Tags]  skipped
 	# only one failover type implemented in CLI
@@ -137,8 +138,9 @@ T6.27. Verify that there are no limits on the number of pre-provisioned switches
 	Manual Passed
 	[Tags]  manual
 T6.28. Check what happens when switch boots when controllers in split-brain mode
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# I guess behavior is as expected... Switches will do ZTN transaction with controller they contact first.
 T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, not IP addresses
 	Manual Passed
 	[Tags]  manual
@@ -274,9 +276,7 @@ T7.29.2 - while SWI download - switch undefined (suspended)
 T7.29.3 - while image startup - switch undefined (suspended)
 	Manual Untested
 	[Tags]  manual-untested
-# 7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
-	Manual Untested
-	[Tags]  manual-untested
+#7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
 #7.30. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
 	Manual Untested
 	[Tags]  manual-untested
