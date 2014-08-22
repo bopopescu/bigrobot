@@ -1426,9 +1426,10 @@ class Test(object):
 
         if helpers.bigrobot_ha_logging().lower() == "true":
             helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
-            master.config("logging level org.projectfloodlight.db.data debug")
-            master.config("logging level org.projectfloodlight.sync.internal debug")
             master.config("logging level org.projectfloodlight.ha debug")
+            master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
+            master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
+            master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
             master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
