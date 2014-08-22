@@ -2648,18 +2648,43 @@ initialize host
     BASH init intf                              h6                              em2
     BASH init intf                              h6                              p1p1
     BASH init intf                              h6                              p1p2
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
-    BASH init intf                              h3                              bond0
-    BASH init intf                              h4                              bond0
-    BASH init intf                              h5                              bond0
-    BASH init intf                              h6                              bond0
-    BASH ifdown intf                            h1                              bond0
-    BASH ifdown intf                            h2                              bond0
-    BASH ifdown intf                            h3                              bond0
-    BASH ifdown intf                            h4                              bond0
-    BASH ifdown intf                            h5                              bond0
-    BASH ifdown intf                            h6                              bond0   
+    BASH run command                            h1                              ifdown bond0
+    BASH run command                            h2                              ifdown bond0
+    BASH run command                            h3                              ifdown bond0
+    BASH run command                            h4                              ifdown bond0
+    BASH run command                            h5                              ifdown bond0
+    BASH run command                            h6                              ifdown bond0
+    ${version} =                                BASH lsb release                h1
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h1                              ifup ${intf1}
+    BASH run command                            h1                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h2
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h2                              ifup ${intf1}
+    BASH run command                            h2                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h3
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h3                              ifup ${intf1}
+    BASH run command                            h3                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h4
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h4                              ifup ${intf1}
+    BASH run command                            h4                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h5
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h5                              ifup ${intf1}
+    BASH run command                            h5                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h6
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h6                              ifup ${intf1}
+    BASH run command                            h6                              ifup ${intf2}
+
     BASH release dhcpv4 address                 h1                              bond0
     BASH release dhcpv4 address                 h2                              bond0
     BASH release dhcpv4 address                 h3                              bond0
