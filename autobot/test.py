@@ -1255,6 +1255,7 @@ class Test(object):
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.sleep(10)
         if helpers.bigrobot_ztn_reload().lower() != "true":
+            helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):
             return True
