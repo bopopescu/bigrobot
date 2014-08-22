@@ -810,7 +810,7 @@ S
 			helpers.test_failure("Fail:router interface not present in controller endpoint table")
 			return False
 	
-	def openstack_tenant_scale(self, name='p', count=0):
+	def openstack_tenant_scale(self, count, name='p'):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -826,7 +826,7 @@ S
 			i = i + 1
 		return True
 
-	def openstack_tenant_scale_delete(self, name='p', count=0):
+	def openstack_tenant_scale_delete(self, count, name='p'):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -1047,7 +1047,7 @@ S
 			i = i + 1
 		return True
 	
-	def openstack_multiple_scale(self, tname, subnet, tcount, ncount, name='n'):
+	def openstack_multiple_scale(self, subnet, tcount, ncount, tname='p', name='n'):
 		'''Function to create multiple segments in a given tenant
 			Input: tenantName , count , name starts with segment
 			Output: given number of segments created in neutron server using neutron command
@@ -1059,14 +1059,15 @@ S
 		i = 1
 		j = 0
 		k = 0
-		l = 1
+		h = 1
 		while (i <= tcount):
-			tname = tname
-			tname += str(i)
-			while (l <= ncount):
-				tenantId = self.openstack_show_tenant(tname)
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				tenantId = self.openstack_show_tenant(tenant)
+				name += str(i)
 				netName = name
-				netName += str(l)
+				netName += str(h)
 				try:
 					os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
 					helpers.sleep(1)
@@ -1087,7 +1088,37 @@ S
 				if k == 254:
 					j = j + 1
 					k = 0
-				l = l + 1
+				h = h + 1
 			i = i + 1
+			h = 1
 		return True
-	
+
+	def openstack_multiple_scale_delete(self, tcount, ncount, tname='p', name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		h = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				name += str(i)
+				netName = name
+				netName += str(h)
+				try:
+					os1.bash("neutron net-delete %s " % (netName))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				h = h + 1
+			i = i + 1
+			h = 1
+		return True

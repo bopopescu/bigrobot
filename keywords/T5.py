@@ -2910,9 +2910,9 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
         c.rest.get(url)
         data = c.rest.content()
-        if len(data) == tcount:
+        if int(len(data)) == int(tcount):
             for i in range(0,len(data)):
-                if data[i]["segment-count"] != ncount:
+                if int(data[i]["segment-count"]) != int(ncount):
                     helpers.test_failure("Expected segement count not correct in the tenant=%s" % (data[i]["name"]))
                     return False
         else:
