@@ -21,6 +21,7 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
+import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -51,6 +52,20 @@ def ctrl(char):
     See http://stackoverflow.com/questions/6248766/how-to-enter-the-escape-characters-for-telnet-programmatically
     """
     return ascii.ctrl(char)
+
+
+def bigrobot_module_dependencies():
+    robot_framework_version = robot.version.VERSION
+    import Exscript
+    exscript_version = Exscript.version.__version__
+    s = "BigRobot version        %s\n" % get_version()
+    s += "Robot Framework version %s\n" % robot_framework_version
+    s += "Exscript version        %s\n" % exscript_version
+    pversion = sys.version_info
+    s += "Python version          %s.%s.%s" % (pversion.major,
+                                               pversion.minor,
+                                               pversion.micro)
+    return s
 
 
 # is_bool() needs to be defined before test_error() which uses it.
@@ -484,7 +499,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
 def bigrobot_topology(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    This env points to the topology file.
+    This env points to the topology file. In BigRobot, this is typically
+    the name of the script appended with '.virtual.topo' or '.physical.topo'.
     """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
@@ -573,7 +589,19 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
+def bigrobot_ztn_reload(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using needed reboot of all the switchs with new ZTN controllers.
+    """
+    return _env_get_and_set('BIGROBOT_ZTN_RELOAD', new_val, default)
 
+def bigrobot_ha_logging(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if needed extra HA logging to debug HA relates issues during script Runs.
+    """
+    return _env_get_and_set('BIGROBOT_HA_LOGGING', new_val, default)
 def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.

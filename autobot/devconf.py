@@ -703,14 +703,14 @@ class ControllerDevConf(BsnDevConf):
         is that helpers.log() doesn't work - Robot Framework logger is a
         bit funky. Workaround is to simply print to stdout.
         """
-        print("Test Monitor for ControllerDevConf '%s' - triggered session"
+        print("%s - Test Monitor '%s' - triggered session"
               " keepalive to avoid reauth"
-              % (self.name()))
+              % (helpers.ts_logger(), self.name()))
         self.send("", quiet=5)
         self.expect(quiet=5)
         content = self.content()
-        print("Test Monitor for ControllerDevConf '%s' - output='%s'"
-              % (self.name(), repr(content)))
+        print("%s - Test Monitor '%s' - output='%s'"
+              % (helpers.ts_logger(), self.name(), repr(content)))
 
     def close(self):
         if self.test_monitor:

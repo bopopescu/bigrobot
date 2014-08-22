@@ -209,7 +209,7 @@ T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
 
-T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioning
+T4.3. Replace provisioned switch's MAC with MAC of stand-by switch, verify correct commissioning
 	Cli Run  master  switch ${s1_alias}; no fabric-role spine
 	Sleep  15
 	Verify Switch in Standby Mode  ${s1_alias}
@@ -224,24 +224,92 @@ T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify corr
 	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
 
 T4.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-	Manual Untested
-	[Tags]  manual-untested
+	Sleep  60
+	Cli Run  master  switch ${s5_alias}; no fabric-role spine
+	Sleep  15
+	Verify Switch in Standby Mode  ${s5_alias}
+	Telnet Reboot Switch  s1
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
 T4.5. Replace stand-by switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
-	Manual Untested
-	[Tags]  manual-untested
-T4.6. Replace stand-by switch's MAC with MAC of suspended switch, verify correct commissioned
-	Manual Untested
-	[Tags]  manual-untested
+	Cli Run  master  switch ${s2_alias}; no leaf-group rack0; no fabric-role leaf
+	Sleep  15
+	Verify Switch in Standby Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
+	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
+	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
+	Telnet Set MA1 State  s2  up
+	Telnet Wait For Switch To Reload  s3
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
+
+T4.6. Replace stand-by switch's MAC with MAC of provisioned switch, verify correct commissioned
+	Cli Run  master  switch ${s1_alias}; no fabric-role spine
+	Sleep  15
+	Verify Switch in Standby Mode  ${s1_alias}
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
 T4.7. Swap MAC addresses of two stand-by switches
-	Manual Untested
-	[Tags]  manual-untested
+	Sleep  60
+	Cli Run  master  switch ${s1_alias}; no fabric-role spine
+	Cli Run  master  switch ${s5_alias}; no fabric-role spine
+	Sleep  15
+	Verify Switch in Standby Mode  ${s1_alias}
+	Verify Switch in Standby Mode  ${s5_alias}
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
 T4.8. Swap MAC addresses of two provisioned switches
-	Manual Untested
-	[Tags]  manual-untested
+	Sleep  60
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
+	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
 # potential race conditions
-T4.9 Provision two switches, power them both off, swap MACs, power them both on
-	Manual Untested
-	[Tags]  manual-untested
+T4.9. Provision two switches, power them both off, swap MACs, power them both on
+	Sleep  60
+	Telnet Reboot Switch  s2
+	Telnet Reboot Switch  s3
+	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
+	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
+	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
+	Telnet Wait For Switch To Reload  s3
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
 
 
 ### ZTN handling config changes

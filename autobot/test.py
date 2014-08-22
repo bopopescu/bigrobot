@@ -1003,6 +1003,14 @@ class Test(object):
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
+        helpers.log("BigRobot dependencies:\n%s%s"
+                    % (helpers.bigrobot_module_dependencies(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BigRobot repository (Git):\n%s%s"
+                    % (helpers.run_cmd2("/usr/bin/git branch -lvv",
+                                        shell=True,
+                                        quiet=True)[1],
+                       br_utils.end_of_output_marker()))
         helpers.log("Staging system uname:\n%s%s"
                     % (helpers.uname().strip(),
                        br_utils.end_of_output_marker()))
@@ -1246,7 +1254,8 @@ class Test(object):
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.sleep(10)
-        if helpers.get_env("ZTN_RELOAD") != "True":
+        if helpers.bigrobot_ztn_reload().lower() != "true":
+            helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):
             return True
@@ -1276,6 +1285,7 @@ class Test(object):
         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
         con.send('')
+        con.close()
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
@@ -1283,6 +1293,8 @@ class Test(object):
         '''
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
+        helpers.log(" NO MORE Re-connecting Switches with Console to get IP with recent ZTN work flows")
+        return True
         if not helpers.is_switch(name):
             return True
         if re.match(r'.*spine.*', self.params(name, 'alias')):
@@ -1413,11 +1425,12 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
 
-        if helpers.get_env("HA_LOGGING") == "True":
+        if helpers.bigrobot_ha_logging().lower() == "true":
             helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
-            master.config("logging level org.projectfloodlight.db.data debug")
-            master.config("logging level org.projectfloodlight.sync.internal debug")
             master.config("logging level org.projectfloodlight.ha debug")
+            master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
+            master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
+            master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
             master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
