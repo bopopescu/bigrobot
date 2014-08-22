@@ -7,7 +7,6 @@
 
 c1:
   ip: 192.168.190.25
-  monitor_reauth: false
   
 mn:
   ip: 192.168.250.148
