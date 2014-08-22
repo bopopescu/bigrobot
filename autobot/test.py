@@ -1287,7 +1287,6 @@ class Test(object):
         con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
-        con.close()
         helpers.log("Finish sending Reboot on switch : %s" % name)
         return True
 
