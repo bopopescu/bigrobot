@@ -1283,6 +1283,8 @@ class Test(object):
         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+        helpers.log("Disabling switch config auto-reloads...")
+        con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
         con.close()
@@ -1293,8 +1295,8 @@ class Test(object):
         '''
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
-        helpers.log(" NO MORE Re-connecting Switches with Console to get IP with recent ZTN work flows")
-        return True
+#         helpers.log(" NO MORE Re-connecting Switches with Console to get IP with recent ZTN work flows")
+#         return True
         if not helpers.is_switch(name):
             return True
         if re.match(r'.*spine.*', self.params(name, 'alias')):
@@ -1309,20 +1311,8 @@ class Test(object):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
         helpers.log("Re-Login in console of switch after reboot...")
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
-        else:
-            fabric_role = 'leaf'
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
+        helpers.log("Initializaing leafs and Spines normally..")
+        con = self.dev_console(name)
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
