@@ -10,6 +10,7 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5ZTN.py
+Library         keywords/T5Platform.py
 Library         keywords_dev/slim/T5Platform.py
 
 Library         keywords/T5Utilities.py
@@ -554,7 +555,7 @@ Verify static endpoint state
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
 #    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
-    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
@@ -563,7 +564,8 @@ Verify static endpoint state
     REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
-    Should Contain                              ${state1}                       Member Rule Error
+#    Should Contain                              ${state1}                       Member Rule Error
+    Should Contain                              ${state1}                       Attach Point Down
     REST add endpoint ip                        X                               X1                      X1_pc1                  10.251.1.11
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${ipState1} =                               Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
@@ -571,6 +573,7 @@ Verify static endpoint state
     ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${ipAddr1}                      10.251.1.11
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Active 
@@ -621,6 +624,7 @@ Verify host with same IP as vrf is having L2 service only
     REST delete vns ip                          X                               X1                      10.251.1.1              24
     sleep                                       1  
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    sleep                                       5
     BASH ifconfig ip address                    h5                              10.251.1.1/24           bond0   
     BASH ping                                   h5                              10.251.1.2              count=5
     ${mac5} =                                   BASH get intf mac               h5                      bond0

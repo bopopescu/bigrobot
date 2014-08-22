@@ -893,12 +893,6 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y
                 `vnsname`         name of vns interface
                 `dhcpserverip`       DHCP server IP, can be anything since it will delete everything under the vns
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay {"dhcp-relay-enable": false}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay done 0:00:00.008562
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip {}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip done 0:00:00.008065
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-relay-enable {}
-
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/segment-interface[segment="B1"]/dhcp-server-ip {}
 <<<<<<< HEAD
 
@@ -914,9 +908,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
+            return False
         else:
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
+            #return c.rest.content()
+            return True
 
     def rest_show_forwarding_switch_l3_host_route(self, switch):
         '''
