@@ -885,7 +885,7 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y
             return c.rest.content()
 
 
-    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip, dhcpcircuitid=None):
+    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip=None, dhcpcircuitid=None):
         '''Delete dhcp server "
 
             Input:
@@ -902,6 +902,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/server-ip' % (tenant, vnsname)
+        if dhcpserverip is not None:
+            url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay[server-ip="%s"]' % (tenant, vnsname, dhcpserverip)
+            c.rest.get(url1)
+            data = c.rest.content()
+            helpers.log ("result: %s" % helpers.prettify(data)) 
+            if len(data) == 0:
+                helpers.log ("dhcp server ip is not configured on this segment") 
+                return False
         try:
 
 #            self.rest_disable_dhcp_relay(tenant, vnsname)
