@@ -755,7 +755,7 @@ S
 		data = c.rest.content()
 		if len(data) != 0:
 			if str(data[0]["ip-address"][0]["ip-address"]) == str(instanceIp):
-				if str(data[0]["state"]) == "L2 Only":
+				if str(data[0]["state"]) == "Active":
 					helpers.log("Pass:VM Instance endpoints are present and state is L2 only")
 					return True
 				else:
@@ -801,7 +801,7 @@ S
 		c.rest.get(url)
 		data = c.rest.content()		
 		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
-				if str(data[0]["state"]) == "L2 Only":
+				if str(data[0]["state"]) == "Active":
 					helpers.log("Pass: Router interface creaetd as endpoint in controller and state is correct")
 					return True
 				else:
@@ -1063,9 +1063,9 @@ S
 		while (i <= tcount):
 			tenant = tname
 			tenant += str(i)
+			name += str(i)
 			while (h <= ncount):
 				tenantId = self.openstack_show_tenant(tenant)
-				name += str(i)
 				netName = name
 				netName += str(h)
 				try:
