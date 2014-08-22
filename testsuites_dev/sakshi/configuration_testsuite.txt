@@ -199,17 +199,17 @@ T8.4 Enable Policy Overlap
 T8.5 Disable Policy Overlap
 	Configure Match Mode										!Policy Overlap
 		
-T8.6 Enable Inport Mask
-	Configure Match Mode										Inport Mask	
+T8.6 Disable Inport Mask
+	Configure Match Mode										!Inport Mask	
 	
-T8.7 Disable Inport Mask
-	Configure Match Mode										!Inport Mask
+T8.7 Enable Inport Mask
+	Configure Match Mode										Inport Mask
 	
-T8.8 Enable CRC Check
-	Configure Match Mode										CRC Check
-	
-T8.9 Disable CRC Check
+T8.8 Disable CRC Check
 	Configure Match Mode										!CRC Check
+	
+T8.9 Enable CRC Check
+	Configure Match Mode										CRC Check
 	
 T8.10 Enable Tunneling
 	Configure Match Mode										Tunneling

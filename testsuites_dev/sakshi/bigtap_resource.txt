@@ -256,6 +256,29 @@ ${INTERFACE NAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${SUBMIT INTERFACE NAME BUTTON}			xpath=//span[@class='dijit dijitReset dijitInline submit_button dijitButton']/descendant::span[@id='dijit_form_Button_4_label']
 
 
+#### Controller Interfaces Tunnel Page
+${TUNNEL TABLE BUTTON}				xpath=//div[@class='name' and (text()='Tunnel')]
+${CREATE TUNNEL MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Create Tunnel')]
+${CONFIGURE GRE TUNNEL POPUP}		xpath=//div[@title='Configure GRE Tunnel']/child::span[@data-dojo-attach-point='titleNode']	
+${TUNNEL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TUNNEL RATE LIMIT CHECKBOX}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rate Limit')]/parent::h2/parent::div/following-sibling::div/child::div/child::div/input
+${TUNNEL RATE LIMIT FIELD}			xpath=//input[@id='dijit_form_NumberSpinner_0']
+${LIST TYPE KNOB}					xpath=//div[@class='knob_icon']
+${TUNNEL SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source IP')]/parent::h2/parent::div/following-sibling::div/div/div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input		
+${TUNNEL SOURCE PREFIX FIELD}		xpath=//input[@id='dijit_form_NumberSpinner_1']
+${TUNNEL GATEWAY IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Gateway IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
+${TUNNEL DESTINATION IP FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
+${TUNNEL SWITCH DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[1]/input	
+${TUNNEL SWITCH LIST}				xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${TUNNEL SWITCH FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]		
+${TUNNEL PARENT INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Parent Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
+${TUNNEL PARENT INTERFACE LIST}  	xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${TUNNEL PARENT INTERFACE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Parent Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${TUNNEL LOOPBACK INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Loopback Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
+${TUNNEL LOOPBACK INTERFACE LIST}  	xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
+${TUNNEL LOOPBACK INTERFACE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Loopback Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${SUBMIT BUTTON}					xpath=//span[@id='dijit_form_Button_4_label']
+
 ### Big Tap Policies Page
 ${CREATE POLICY POPUP}					xpath=//div[@title='Create Policy']
 #${POLICYNAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
@@ -326,7 +349,7 @@ ${BIGTAP POLICY FILTER INTERFACE GROUP PLUS BUTTON}						xpath=//div[@data-dojo-
 ${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}					xpath=//div[@title='Add Filter Interface Group']/span[1]
 ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACE GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_24_label']
 ${BIGTAP POLICY DELIVERY INTERFACE GROUP PLUS BUTTON}					xpath=//div[@data-dojo-attach-point='deliveryGroupTableNode']/descendant::div[@class='icon_node plus']
-${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}					xpath=//div[@title='Add Delivery Interfaces Groups']/span[1]
+${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}					xpath=//div[@title='Add Delivery Interface Group']/span[1]
 ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACE GROUP BUTTON}		xpath=//span[@id='dijit_form_Button_29_label']
 ${filter_group_checkbox}												xpath=//div[text()='filter-group']/parent::td/preceding-sibling::td/child::div/child::div/input
 ${delivery_group_checkbox}												xpath=//div[text()='delivery-group']/parent::td/preceding-sibling::td/child::div/child::div/input
@@ -354,10 +377,10 @@ ${BIG TAP INTERFACES CONFIRM POPUP}						xpath=//div[@title='Confirm']
 
 ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}		xpath=//div[@data-dojo-attach-point='offsetMatchNode']/descendant::div[@class='icon_node plus']
 
-${BIG TAP CONFIGURE OFFSET MATCH POPUP}	xpath=//div[@title='Configure Offset Match']/child::span[1]
+${BIG TAP CONFIGURE OFFSET MATCH POPUP}  	xpath=//div[@title='Configure Offset Match']/child::span[1]
 ${ANCHOR OFFSET DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[1]/input		
-${ANCHOR OFFSET TYPE LIST} 				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Anchor:')]/parent::div
-${ANCHOR OFFSET TYPE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]
+${ANCHOR OFFSET TYPE LIST} 					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Anchor:')]/parent::div
+${ANCHOR OFFSET TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]
 ${OFFSET MATCH VALUE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Value')]/parent::h2/parent::div/following-sibling::div[2]/descendant::input[2]
 ${OFFSET MATCH MASK FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mask')]/parent::h2/parent::div/following-sibling::div[2]/descendant::input[2]		
 #${APPEND OFFSET MATCH BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
@@ -365,8 +388,8 @@ ${APPEND OFFSET MATCH BUTTON}		xpath=//span[@id='dijit_form_Button_14_label']
 #${RBAC APPEND SELECTED MATCHES BUTTON}
 
 ${BIGTAP POLICY ACTION DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
-${BIGTAP POLICY ACTION LIST}  		xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Forward')]/parent::div
-${BIGTAP POLICY ACTION FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${BIGTAP POLICY ACTION LIST}  			xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Forward')]/parent::div
+${BIGTAP POLICY ACTION FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
 
 ${BIGTAP POLICY START DROPDOWN BUTTON} 		 	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Start Policy')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
 ${BIGTAP POLICY START LIST}						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Immediately')]/parent::div
@@ -743,7 +766,12 @@ Generate Action Menu Xpath Interfaces
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
-    
+
+Generate Action Menu Xpath Interfaces Tunnels
+	[Arguments]  ${attachment_point}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='actions']/descendant::div[@class='icon_node menu']
+    [Return]  ${xpath}
+        
 Generate Action Menu Xpath Interface Controller
 	[Arguments]  ${attachment_point}  ${id}  ${switch}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/div[@class='content' and (text()='  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
@@ -1600,12 +1628,13 @@ Edit Big Tap Policy for TCP Flags
     ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
     ... 	TCP (6)
     
-    Sleep  2
+    #Sleep  2
     
 	Run Keyword If  '${fin}' == 'FIN'
 	...		 Click Element  ${RBAC MATCH TCP FIN CHECKBOX}  and don't wait
 	Run Keyword If  '${fin}' == 'FIN'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'FIN')]  SET_FIN
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'FIN')]  SET_FIN
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_23']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_FIN
 	Run Keyword If  '${fin}' == 'FIN'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_FIN	
 	
@@ -1613,12 +1642,13 @@ Edit Big Tap Policy for TCP Flags
     #Verify Element Visible  ${RBAC MATCH TCP FIN CHECKBOX}
     Run Keyword If  '${fin}' == '!FIN'
 	...		 Click Element  ${RBAC MATCH TCP FIN CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Run Keyword If  '${syn}' == 'SYN'
 	...		 Click Element  ${RBAC MATCH TCP SYN CHECKBOX}  and don't wait
 	Run Keyword If  '${syn}' == 'SYN'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'SYN')]  SET_SYN
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'SYN')]  SET_SYN
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_26']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_SYN
 	Run Keyword If  '${syn}' == 'SYN'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_SYN	
 	
@@ -1626,12 +1656,13 @@ Edit Big Tap Policy for TCP Flags
 	#Verify Element Visible  ${RBAC MATCH TCP SYN CHECKBOX}
 	Run Keyword If  '${syn}' == '!SYN'
 	...		 Click Element  ${RBAC MATCH TCP SYN CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Run Keyword If  '${rst}' == 'RST'
 	...		 Click Element  ${RBAC MATCH TCP RST CHECKBOX}  and don't wait
 	Run Keyword If  '${rst}' == 'RST'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'RST')]  SET_RST
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'RST')]  SET_RST
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_29']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_RST
 	Run Keyword If  '${rst}' == 'RST'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_RST
 	
@@ -1639,12 +1670,13 @@ Edit Big Tap Policy for TCP Flags
 	#Verify Element Visible  ${RBAC MATCH TCP RST CHECKBOX}
 	Run Keyword If  '${rst}' == '!RST'
 	...		 Click Element  ${RBAC MATCH TCP RST CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Run Keyword If  '${psh}' == 'PSH'
 	...		 Click Element  ${RBAC MATCH TCP PSH CHECKBOX}  and don't wait
 	Run Keyword If  '${psh}' == 'PSH'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'PSH')]  SET_PSH
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'PSH')]  SET_PSH
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_32']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_PSH
 	Run Keyword If  '${psh}' == 'PSH'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_PSH
 	
@@ -1652,12 +1684,13 @@ Edit Big Tap Policy for TCP Flags
 	#Verify Element Visible  ${RBAC MATCH TCP PSH CHECKBOX}
 	Run Keyword If  '${psh}' == '!PSH'
 	...		 Click Element  ${RBAC MATCH TCP PSH CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Run Keyword If  '${ack}' == 'ACK'
 	...		 Click Element  ${RBAC MATCH TCP ACK CHECKBOX}  and don't wait
 	Run Keyword If  '${ack}' == 'ACK'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'ACK')]  SET_ACK
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'ACK')]  SET_ACK
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_35']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_ACK
 	Run Keyword If  '${ack}' == 'ACK'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_ACK
 	
@@ -1665,12 +1698,13 @@ Edit Big Tap Policy for TCP Flags
 	#Verify Element Visible  ${RBAC MATCH TCP ACK CHECKBOX}
 	Run Keyword If  '${ack}' == '!ACK'
 	...		 Click Element  ${RBAC MATCH TCP ACK CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Run Keyword If  '${urg}' == 'URG'
 	...		 Click Element  ${RBAC MATCH TCP URG CHECKBOX}  and don't wait
 	Run Keyword If  '${urg}' == 'URG'
-    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'URG')]  SET_URG
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'URG')]  SET_URG
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_38']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_URG
 	Run Keyword If  '${urg}' == 'URG'
 	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_URG
 	
@@ -1678,7 +1712,7 @@ Edit Big Tap Policy for TCP Flags
 	#Verify Element Visible  ${RBAC MATCH TCP URG CHECKBOX}
 	Run Keyword If  '${urg}' == '!URG'
 	...		 Click Element  ${RBAC MATCH TCP URG CHECKBOX}  and don't wait
-	Sleep  2
+	#Sleep  2
 	
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
@@ -2630,21 +2664,102 @@ Configure Big Tap User Defined Offsets
 	  Sleep  1
 	  
    Verify Element Visible  ${SAVE BUTTON}
-    Click Element  ${SAVE BUTTON}  and don't wait 
+   Click Element  ${SAVE BUTTON}  and don't wait 
     
  
 Configure Big Tap Tunnels
-	[Arguments]  ${name}  ${rate-limit}  ${src-ip}  ${gateway}  ${dst-ip}  ${switch}  ${parent-if}  ${loopback-if}
+	[Arguments]  ${name}  ${rate-limit}  ${direction}  ${src-ip}  ${prefix}  ${gateway}  ${dst-ip}  ${switch}  ${parent-if}  ${loopback-if}
 	
-	Go to Big Tap Controller Interfaces Page
-	Sleep  1
-	
-	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='interfaces_table']
+	Go to Controller Interfaces Page
+	Sleep  20
+	Click Element  ${TUNNEL TABLE BUTTON}  and don't wait
+	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='interfaces_table']
     Verify Element Visible  ${action_menu}
+    Highlight Element   ${action_menu}
+    Sleep  10
     Click Element  ${action_menu}  and don't wait
-
-    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
-    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
+    #Click Element  ${action_menu}  and don't wait
+	Sleep  2
+    #Verify Element Visible  ${CREATE TUNNEL MENU ITEM}
+    Click Element  ${CREATE TUNNEL MENU ITEM}  and don't wait
+    
+    Verify Element Visible  ${CONFIGURE GRE TUNNEL POPUP}
+    
+    Click Element  ${TUNNEL NAME FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL NAME FIELD}  ${name}
 	
-  
+	Run Keyword Unless  '${rate-limit}' == '${EMPTY}'
+	...		Click Element  ${TUNNEL RATE LIMIT CHECKBOX}  and don't wait
+	 
+	Click Element  ${TUNNEL RATE LIMIT FIELD}  and don't wait
+	Click Element  ${TUNNEL RATE LIMIT FIELD}  and don't wait
+	Run Keyword Unless  '${rate-limit}' == '${EMPTY}'
+	...		Input Text And Verify  ${TUNNEL RATE LIMIT FIELD}  ${rate-limit}
+	
+	Run Keyword If  '${direction}'=='Receive'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]      Receive_Only
+	Run Keyword If  '${direction}'=='Receive'
+	...			Assign ID to Element   xpath=//div[@class='nowrap']/descendant::div[@id='bsn_widgets_InputLabel_6']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      Not_Transmit
+	Run Keyword If  '${direction}'=='Transmit'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
+	Run Keyword If  '${direction}'=='Transmit'
+	...			Assign ID to Element   xpath=//div[@class='nowrap']/descendant::div[@id='bsn_widgets_InputLabel_4']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]	 Not_Receive
+	
+	
+    Run Keyword If  '${direction}'=='Receive'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    
+    Run Keyword If  '${direction}'=='Receive'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Transmit
+    
+    Run Keyword If  '${direction}'=='Transmit'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    
+    Run Keyword If  '${direction}'=='Transmit'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Receive
+    
+    Run Keyword If  '${direction}'=='Bidirectional'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    
+    Run Keyword If  '${direction}'=='Bidirectional'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    
+    Click Element  ${TUNNEL SOURCE IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL SOURCE IP FIELD}  ${src-ip}
+	
+	Click Element  ${TUNNEL SOURCE PREFIX FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL SOURCE PREFIX FIELD}  ${prefix}
+	
+	Click Element  ${TUNNEL GATEWAY IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL GATEWAY IP FIELD}  ${gateway}
+	
+	Click Element  ${TUNNEL DESTINATION IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL DESTINATION IP FIELD}  ${dst-ip}
+	  
+	Run Keyword Unless  '${switch}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL SWITCH DROPDOWN BUTTON}
+	...		${TUNNEL SWITCH LIST}  
+	... 	${TUNNEL SWITCH FIELD}
+	... 	${switch}
+	
+	Sleep  5
+	
+	Run Keyword Unless  '${parent-if}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL PARENT INTERFACE DROPDOWN BUTTON}
+	...		${TUNNEL PARENT INTERFACE LIST}  
+	... 	${TUNNEL PARENT INTERFACE FIELD}
+	... 	${parent-if}
+	
+	Run Keyword Unless  '${loopback-if}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL LOOPBACK INTERFACE DROPDOWN BUTTON}
+	...		${TUNNEL LOOPBACK INTERFACE LIST}  
+	... 	${TUNNEL LOOPBACK INTERFACE FIELD}
+	... 	${loopback-if}
+	  
+   Verify Element Visible  ${SUBMIT BUTTON}
+   Click Element  ${SUBMIT BUTTON}  and don't wait 
+   Sleep   30
     
