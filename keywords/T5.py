@@ -1907,13 +1907,13 @@ class T5(object):
             helpers.test_failure("Interface did not go down:state is still Up, open the bug for inteface disable status")
             return False
 
-    def rest_enable_fabric_interface(self, switch, intf):
+    def rest_enable_fabric_interface(self, switch, intf,timeout=15):
         t = test.Test()
         c = t.controller('master')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(10)
+        helpers.sleep(int(timeout))
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
