@@ -11,13 +11,7 @@ import re
 
 class DevConf(object):
     """
-    Quiet levels:
-      0 - display everything (default)
-      1 - suppress command output
-      2 - suppress command
-      3 - reserved
-      4 - reserved
-      5 - suppress all output
+    DevConf for talking to devices via the CLI (SSH, Telnet).
     """
     def __init__(self, host=None, user=None, password=None,
                  port=None,
@@ -192,17 +186,20 @@ class DevConf(object):
         checks if there's a command execution in progress.
         """
         if self._lock:
-            print("!!!!!!! DEVCONF_LOCK: %s is locked" % self.name())
+            print("%s - !!!!!!! DEVCONF_LOCK: %s is locked"
+                  % (helpers.ts_logger(), self.name()))
         return self._lock
 
     def set_lock(self):
         self._lock = True
-        # print("!!!!!!! DEVCONF_LOCK: %s set lock" % self.name())
+        # print("%s - !!!!!!! DEVCONF_LOCK: %s set lock"
+        #      % (helpers.ts_logger(), self.name()))
         return self._lock
 
     def clear_lock(self):
         self._lock = False
-        # print("!!!!!!! DEVCONF_LOCK: %s clear lock" % self.name())
+        # print("%s - !!!!!!! DEVCONF_LOCK: %s clear lock"
+        #      % (helpers.ts_logger(), self.name()))
         return self._lock
 
     def send(self, cmd, no_cr=False, quiet=0, level=4):
@@ -219,7 +216,7 @@ class DevConf(object):
         if self.is_locked():
             helpers.sleep(3)
         self.set_lock()
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Send command: '%s'" % cmd, level=level)
         if no_cr is False:
             cmd = ''.join((cmd, '\r'))
@@ -290,14 +287,14 @@ class DevConf(object):
             prompt = helpers.list_flatten(prompt)
 
         if timeout: self.timeout(timeout)
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Expecting prompt: %s" % self.prompt_str(prompt),
                         level=level)
 
         try:
             ret_val = self.conn.expect(prompt)
             self.last_result = {'content': self.conn.response}
-            if helpers.not_matched(quiet, [1, 5]):
+            if helpers.not_quiet(quiet, [1, 5]):
                 helpers.log("Expect content:\n%s%s"
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
@@ -310,7 +307,7 @@ class DevConf(object):
             raise
         if timeout: self.timeout()
 
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Expect prompt matched (%s, '%s')"
                         % (ret_val[0], helpers.re_match_str(ret_val[1])))
 
@@ -342,7 +339,7 @@ class DevConf(object):
             prompt = helpers.list_flatten(prompt)
 
         if timeout: self.timeout(timeout)
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Expecting waitfor prompt: %s"
                         % self.prompt_str(prompt), level=level)
 
@@ -350,7 +347,7 @@ class DevConf(object):
             ret_val = self.conn.waitfor(prompt)
 
             self.last_result = { 'content': self.conn.response }
-            if helpers.not_matched(quiet, [2, 5]):
+            if helpers.not_quiet(quiet, [2, 5]):
                 helpers.log("Waitfor (expect) content:\n%s%s"
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
@@ -364,7 +361,7 @@ class DevConf(object):
             raise
         if timeout: self.timeout()
 
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Expect prompt matched (%s, '%s')"
                         % (ret_val[0], helpers.re_match_str(ret_val[1])))
 
@@ -393,7 +390,7 @@ class DevConf(object):
                 helpers.log("Resetting expect prompt to default")
                 self.conn.set_prompt()
 
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Execute command: '%s' (timeout: %s)"
                         % (cmd, timeout), level=level)
 
@@ -403,7 +400,7 @@ class DevConf(object):
         self.conn.execute(cmd)
         self.last_result = { 'content': self.conn.response }
 
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Command content:\n%s" % self.content(), level=level)
 
         if timeout: self.timeout()
@@ -561,7 +558,7 @@ class BsnDevConf(DevConf):
         self.mode(mode)
         # helpers.log("Current mode is %s" % self.mode(), level=level)
 
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
@@ -570,7 +567,7 @@ class BsnDevConf(DevConf):
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                     timeout=timeout, quiet=5)
 
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("%s content on '%s':\n%s%s"
                         % (mode, self.name(), self.content(),
                            br_utils.end_of_output_marker()),
@@ -703,14 +700,18 @@ class ControllerDevConf(BsnDevConf):
         is that helpers.log() doesn't work - Robot Framework logger is a
         bit funky. Workaround is to simply print to stdout.
         """
-        print("%s - Test Monitor '%s' - triggered session"
-              " keepalive to avoid reauth"
-              % (helpers.ts_logger(), self.name()))
+        msg = ("%s - Test Monitor '%s' - triggered session"
+               " keepalive to avoid reauth"
+               % (helpers.ts_logger(), self.name()))
+        # print msg
+        helpers.log(msg)
         self.send("", quiet=5)
         self.expect(quiet=5)
         content = self.content()
-        print("%s - Test Monitor '%s' - output='%s'"
-              % (helpers.ts_logger(), self.name(), repr(content)))
+        msg = ("%s - Test Monitor '%s' - output='%s'"
+               % (helpers.ts_logger(), self.name(), repr(content)))
+        print msg
+        helpers.log(msg)
 
     def close(self):
         if self.test_monitor:
@@ -838,7 +839,7 @@ class MininetDevConf(DevConf):
 
         self.mode(mode)
 
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Execute command on '%s': %s (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
@@ -846,7 +847,7 @@ class MininetDevConf(DevConf):
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                         timeout=timeout, quiet=5)
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
@@ -978,7 +979,7 @@ class HostDevConf(DevConf):
         self.bash('uname -a')
 
     def _cmd(self, cmd, quiet=0, prompt=False, timeout=None, level=4):
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
                         % (self.name(), cmd,
                            timeout or self.default_timeout()),
@@ -986,7 +987,7 @@ class HostDevConf(DevConf):
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, mode='bash',
                                      timeout=timeout, quiet=5)
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
