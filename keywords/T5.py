@@ -1067,7 +1067,7 @@ class T5(object):
 
         return False
 
-    def rest_add_endpoint_scale(self, tenant, vns, mac, endpoint, switch, intf, vlan, count):
+    def rest_add_endpoint_scale(self, tenant, vns, mac, endpoint, switch, intf, vlan, count, quiet=1):
         ''' Adding static endpoint in a scale
             Input: tenant , vns , switch , interface , vlan , count (how many static endpoint), starting letter for the endpoint name
             Output: Static creation of endpoint in a given tenant and vns with switch/interface
@@ -1080,15 +1080,15 @@ class T5(object):
             mac = EUI(mac).value
             mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
             url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint' % (tenant, vns)
-            c.rest.post(url, {"name": endpoint_new})
+            c.rest.post(url, {"name": endpoint_new}, quiet=quiet)
             url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
-            c.rest.put(url1, {"switch": switch, "interface": intf, "vlan": vlan})
+            c.rest.put(url1, {"switch": switch, "interface": intf, "vlan": vlan}, quiet=quiet)
             url2 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint_new)
-            c.rest.patch(url2, {"mac": mac})
+            c.rest.patch(url2, {"mac": mac}, quiet=quiet)
             i = i + 1
         return True
 
-    def rest_verify_endpoints_in_vns(self, vns, count):
+    def rest_verify_endpoints_in_vns(self, vns, count, quiet=0):
         ''' Function to count no of endoint in the given VNS
          Input : Expected Count and vns
          Output: No of endoints match aginst the specifed count in vns table
@@ -1096,7 +1096,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"]' % (vns)
-        c.rest.get(url)
+        c.rest.get(url, quiet=quiet)
         data = c.rest.content()
         if data[0]["endpoint-count"] == int(count):
             helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["endpoint-count"]))
@@ -1907,7 +1907,7 @@ class T5(object):
             helpers.test_failure("Interface did not go down:state is still Up, open the bug for inteface disable status")
             return False
 
-    def rest_enable_fabric_interface(self, switch, intf,timeout=15):
+    def rest_enable_fabric_interface(self, switch, intf, timeout=15):
         t = test.Test()
         c = t.controller('master')
 
