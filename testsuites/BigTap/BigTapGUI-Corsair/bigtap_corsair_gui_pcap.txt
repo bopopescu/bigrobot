@@ -14,8 +14,8 @@ Library       		String
 
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
 TC1 Set Up
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-2 		delivery		ixia-2-15
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15
 TC1.1 Create Policy
 	Configure Big Tap Policy					test-policy1		admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T1.2 Schedule policy to start now and run always  
@@ -36,7 +36,7 @@ T1.8 Teardown
 
 ##Packet capture								Policy	 		Action		Start Policy 		AfterDelayOfTime	Run Policy		Duration		Packets
 TC2 Set Up
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
 T2.1 Create Policy
 	Configure Big Tap Policy					test-policy2		admin-view			Capture			ixia-2-9		${EMPTY}		${EMPTY}		${EMPTY}	 
 T2.2 Schedule policy to start now and run always  
@@ -71,8 +71,8 @@ Setup
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
+	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
 Teardown
 	Close Browser
     #Stop Selenium Server

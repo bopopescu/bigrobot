@@ -15,9 +15,9 @@ Library       		String
 
 ### Configure Big Tap Policy with DPM									policy		ipprotocol    udf0			value0   	mask0   	udf1   		value1   	mask1    	udf2		value2		mask2		src-port   	dst-port   	VLAN Header
 TC Set up
-		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
-		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
-		Configure Big Tap Interface from Big Tap Menu					ethernet2			qa-corsair-2 		delivery		ixia-4-8
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 		delivery		ixia-4-8
 		Configure Big Tap Policy					 					policy-gtp			admin-view			Forward			ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	
 TC1 Policy with offset match on GTP' v1 (Protocol UDP)
 		Associate DPM Rule									 			policy-gtp	UDP (17)     Offset: 8		20000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
@@ -106,9 +106,9 @@ TC28 Offset match on VXLAN VNI
 
 TC Set up 2
 		Delete All Bigtap Resources
-		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
-		Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
-		Configure Big Tap Interface from Big Tap Menu					ethernet2			qa-corsair-2 		delivery		ixia-4-8
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 		delivery		ixia-4-8
 		Configure Big Tap User Defined Offsets							udf0					L4 Start			36
 		Configure Big Tap User Defined Offsets							udf1					L4 Start			40
 		Configure Big Tap User Defined Offsets							udf2					L4 Start			44
@@ -155,8 +155,8 @@ Setup
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
+	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
 Teardown
 	Close Browser
     #Stop Selenium Server
