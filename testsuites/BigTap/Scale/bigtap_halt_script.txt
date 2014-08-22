@@ -77,7 +77,7 @@ halt suite setup
     \    Log    ${INDEX}
     \    ${d1intf}=  Catenate  SEPARATOR=-   s2  ${INDEX}    
     \    ${d2intf}=  Catenate  SEPARATOR=-   s3  ${INDEX}    
-    \    setup bigtap policies  ${INDEX}
+    \    setup bigtap policies  ${INDEX}  ${d1intf}  ${d2intf}
     sleep  600   
 
 
