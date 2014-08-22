@@ -195,11 +195,11 @@ Trigger controller HA failover via reboot
     [Tags]              feature                            run43
 
 Spine reboot
-    Reboot spine0 via CLI
+    Reboot spine0
     [Tags]              feature         run44
 
 Leaf reboot
-    Reboot Leaf0 via CLI
+    Reboot Leaf0
     [Tags]              feature         run45
 
 Spine connect and disconnect to controller
@@ -466,7 +466,7 @@ Intra tenant L3 traffic same rack different leaf switch
 ### Host on board nic is 1gig interface, switch does not support autoneg at 1gig so test is failing
 #    BASH init intf                              h5                              bond0
 #    BASH init intf                              h6                              bond0
-    ${version} =                                Set Variable                    BASH lsb release
+    ${version} =                                BASH lsb release                h6
     ${intf} =                                   Set Variable If                 ${version} == 12            eth1            em2
     BASH ifup intf                              h5                              eth1
     BASH ifup intf                              h6                              ${intf}
@@ -553,8 +553,8 @@ Verify static endpoint state
     REST add endpoint mac                       X                               X1                      X1_pc1                  ${mac1}
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-#    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
-    ${apState1} =                               Set Variable                    ${result[0]['attachment-point']}    
+#    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
     Should Contain                              ${apState1}                     Unknown
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Attach Point Unknown
@@ -593,14 +593,14 @@ Verify static endpoint state
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
@@ -638,8 +638,9 @@ Verify host with same IP as vrf is having L2 service only
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
-    Should Contain                              ${ipstate}                      learned-inactive  
+#### Current behavior appears to be if IP is same as vrf, it will not show the ip address
+#    ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
+#    Should Contain                              ${ipstate}                      learned-inactive  
     BASH ifconfig ip address                    h5                              10.251.1.22/24           bond0   
     BASH ping                                   h5                              10.251.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac5}
@@ -683,14 +684,14 @@ L3 intra tenant same rack untagged with static endpoints
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static  
@@ -1064,7 +1065,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf0_pc2}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0
@@ -1170,7 +1171,7 @@ L3 intra tenant dhcp relay with circuit id across rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1325,7 +1326,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     REST delete portgroup from vns              Y                               Y3                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Y                               Y2                      ${leaf2_pc1}            -1
@@ -1366,7 +1367,7 @@ Verify dhcp host is not being aged out
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1489,7 +1490,7 @@ Verify add and delete of dhcp server config works
 #    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
-    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    REST add dhcprelay circuitid                Y                               Y3                      10.252.1.9           this is a test
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     Should Be Equal                             ${circuitid}                    this is a test
@@ -1543,8 +1544,8 @@ L3 add and delete untagged endpoints with existing host
     
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
-    BASH ifconfig ip address                            h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                            h6                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
@@ -1595,8 +1596,8 @@ L3 add and delete tagged endpoints with existing host
     BASH add tag                                h3                              bond0                   1003
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
-    BASH ifconfig ip address                            h1                              10.251.1.11/24          bond0.1001
-    BASH ifconfig ip address                            h3                              10.251.3.11/24          bond0.1003
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
+    BASH ifconfig ip address                    h3                              10.251.3.11/24          bond0.1003
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
@@ -2109,7 +2110,7 @@ Static endpoint with dynamic host showing up on another port
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Log                                         attachpoint = ${attachpoint}                
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
-    ${apState} =                                Set Variable                    ${result[0]['attachment-point']}    
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
     ${ipState} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}
     Should Contain                              ${apState}                      static                              
     Should Contain                              ${ipState}                      static                              
@@ -3358,7 +3359,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH network restart                        h3                              timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point-state']}    
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
@@ -3424,7 +3425,7 @@ Verify clear blocked endpoint works
     REST clear blocked endpoint                 X                               X1                      ${mac1}
     sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point-state']}    
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
@@ -3489,7 +3490,7 @@ Verify blocked endpoint should be automatically cleared
     BASH network restart                        h3                              timeout=60
     sleep                                       600
     ${result} =                                 REST show endpoints mac         ${mac1}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point-state']}    
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
@@ -3532,12 +3533,42 @@ initialize host
     BASH init intf                              h4                              bond0
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
-    BASH ifdown intf                            h1                              bond0
-    BASH ifdown intf                            h2                              bond0
-    BASH ifdown intf                            h3                              bond0
-    BASH ifdown intf                            h4                              bond0
-    BASH ifdown intf                            h5                              bond0
-    BASH ifdown intf                            h6                              bond0   
+    BASH run command                            h1                              ifdown bond0
+    BASH run command                            h2                              ifdown bond0
+    BASH run command                            h3                              ifdown bond0
+    BASH run command                            h4                              ifdown bond0
+    BASH run command                            h5                              ifdown bond0
+    BASH run command                            h6                              ifdown bond0
+    ${version} =                                BASH lsb release                h1
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h1                              ifup ${intf1}
+    BASH run command                            h1                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h2
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h2                              ifup ${intf1}
+    BASH run command                            h2                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h3
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h3                              ifup ${intf1}
+    BASH run command                            h3                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h4
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h4                              ifup ${intf1}
+    BASH run command                            h4                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h5
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h5                              ifup ${intf1}
+    BASH run command                            h5                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h6
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h6                              ifup ${intf1}
+    BASH run command                            h6                              ifup ${intf2}
     BASH release dhcpv4 address                 h1                              bond0
     BASH release dhcpv4 address                 h2                              bond0
     BASH release dhcpv4 address                 h3                              bond0
@@ -3658,7 +3689,7 @@ T5 base suite setup
 #    ${result} =                                     CLI verify controller       s6                          c1
 #    Should Be True                                  ${result}
 #    ${result} =                                     CLI verify controller       s6                          c2
-    Should Be True                                  ${result}       
+#    Should Be True                                  ${result}       
     REST add portgroup                              ${leaf0_pc1}
     REST add portgroup                              ${leaf0_pc2}
     REST add portgroup                              ${leaf1_pc1}

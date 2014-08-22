@@ -52,7 +52,7 @@ Add and delete 10k cidr routes in spine switches
 	manual untested
 	[Tags]				manual			scale	
 	
-Add and delete 10k cidr routes in leaf switches
+Add and delete 10k cidr routes in leaf switches in one tenant
     manual failed
     [Tags]              manual          scale   
 
@@ -67,7 +67,11 @@ Add and delete 1k nexthop group
 Add more than 1k tenant
     manual passed
     [Tags]              manual          scale           
-    
+
+Remove and add 500 tenant out of 1k tenant
+    manual untested
+    [Tags]              manual          scale           
+        
 Add more than 4k segment
     manual passed
     [Tags]              manual          scale           
@@ -79,6 +83,11 @@ Add more than 1k nexthop group
 Add more than 16k cidr routes
     manual untested
     [Tags]              manual          scale           
+        
+Add and remove 8k cidr routes out of 16k cidr routes
+    manual untested
+    [Tags]              manual          scale           
+
         
 
 * Keywords		
