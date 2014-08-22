@@ -104,8 +104,8 @@ T6.17. Verify that discovery process succeeds when no NTP servers are available 
 	Manual Passed
 	[Tags]  manual
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
 	Manual Passed
 	[Tags]  manual
@@ -114,8 +114,9 @@ T6.20. Upgrade network/SL images on controller while switch is disconnected. Che
 	[Tags]  manual
 	#switch gets suspended due to runtime checksum mismatch
 T6.21. Downgrade process
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# after reboot switch gets downgraded image
 T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flavors of failover command will be eventually implemented)
 	[Tags]  skipped
 	# only one failover type implemented in CLI
@@ -130,14 +131,16 @@ T6.25. Check if ZTN logs are implemented on switch/controller
 	[Tags]  manual
 	# logs are part of floodlight log
 T6.26. Check behavior when controller keeps more than one set of SL images
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	# controller picks arbitrary SWI and installer images and serves them to switches
+	[Tags]  manual
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
 	Manual Passed
 	[Tags]  manual
 T6.28. Check what happens when switch boots when controllers in split-brain mode
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# I guess behavior is as expected... Switches will do ZTN transaction with controller they contact first.
 T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, not IP addresses
 	Manual Passed
 	[Tags]  manual
@@ -152,23 +155,23 @@ T6.32. Confirm that switch in stand-by mode sends NO packet-ins to the controlle
 	Manual Untested
 	[Tags]  manual-untested
 T6.33. Verify pre-staging of both SL installer and SWI before upgrade
-	Manual Untested
-	[Tags]  manual-untested
+	# moved out to Jack Frost
+	[Tags]  skipped
 T6.34. Check what happens when Switch is assigned new IP address (new DHCP lease) while being connected to controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.35. Check what happens when Switch is assigned new IP address (new DHCP lease) while being disconnected from controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 # Negative
 ### Verify that discovery process continues indefinitely when:
 T7.1. no DHCP servers are available in the network - before Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.2. no DHCP servers are available in the network - after Switch Light Install
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 #we don't guarantee switch behavior if DHCP is down. It may be the case that the switch gives up after a while.
 T7.3. no ZTN servers are available - before Switch Light Install
 	Manual Passed
@@ -201,14 +204,14 @@ T7.12. Verify that ZTN manifest search is resumed after connectivity flap
 	Manual Passed
 	[Tags]  manual
 T7.13. Verify that discovery process times out and restarts when all controllers go down during Switch Light Installer image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.14. Verify that discovery process times out and restarts when all controllers go down during SWI image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.15. Verify that discovery process times out and restarts when all controllers go down during ZTN manifest search
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.16. Verify that discovery process times out and restarts when connectivity goes down while Switch Light Installer download
 	Manual Passed
 	[Tags]  manual
@@ -273,9 +276,7 @@ T7.29.2 - while SWI download - switch undefined (suspended)
 T7.29.3 - while image startup - switch undefined (suspended)
 	Manual Untested
 	[Tags]  manual-untested
-# 7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
-	Manual Untested
-	[Tags]  manual-untested
+#7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
 #7.30. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
 	Manual Untested
 	[Tags]  manual-untested

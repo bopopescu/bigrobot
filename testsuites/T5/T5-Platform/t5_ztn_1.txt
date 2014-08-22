@@ -202,6 +202,9 @@ T1.15. Connected, three failovers
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 
+T1.16. Flap MA1 interface on all switches
+	Telnet Set All MA1 State  flap
+
 T0.1. BSC-5430
 	${mac1}=  Set Variable  12:22:22:44:55:66
 	${mac2}=  Set Variable  66:55:22:33:22:11
