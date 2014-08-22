@@ -1,0 +1,129 @@
+*Settings
+Documentation  High Availability and Longevity Test
+Suite Setup  halt suite setup
+#Suite Teardown   halt suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   bigtap  scale
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+### Switch Aliases
+${switch_alias_1}                                core-app-ly2-5
+${switch_alias_2}                                leaf-app-lb9-15
+${switch_alias_3}                                leaf-app-lb9-16
+${switch_alias_4}                                leaf-app-lb9-17
+${switch_alias_5}                                leaf-app-lb9-18
+${switch_alias_6}                                leaf-app-lb9-19
+${switch_alias_7}                                leaf-app-lb9-20
+${switch_alias_8}                                leaf-app-lb9-21
+${switch_alias_9}                                leaf-app-lb9-22
+${switch_alias_10}                               leaf-app-lb9-23
+${switch_alias_11}                               leaf-app-lb9-24
+${switch_alias_12}                               leaf-app-lb9-25
+${switch_alias_13}                               leaf-app-lb9-26
+${switch_alias_14}                               leaf-app-lb9-27
+${switch_alias_15}                               leaf-app-lb9-28
+${switch_alias_16}                               leaf-app-lb9-29
+${switch_alias_17}                               leaf-app-lb9-30
+###
+${number_of_switches}                            17
+${FINDEX}                                        1
+${DINDEX}                                        1
+
+* Test Case
+TC1: Verify Configuration
+    Log   Hello World
+
+* Keyword
+
+halt suite setup
+    ${disable_tunnel}=  rest disable feature  tunneling
+    Should be true  ${disable_tunnel} 
+    ${disable_overlap}=  rest disable feature  overlap
+    Should be true  ${disable_overlap}      
+    ${enable_fmm}=  rest enable feature  full-match
+    Should be true  ${enable_fmm}
+    rest add switch alias  s1   ${switch_alias_1}
+    rest add switch alias  s2   ${switch_alias_2}
+    rest add switch alias  s3   ${switch_alias_3}
+    rest add switch alias  s4   ${switch_alias_4}
+    rest add switch alias  s5   ${switch_alias_5}
+    rest add switch alias  s6   ${switch_alias_6}
+    rest add switch alias  s7   ${switch_alias_7}
+    rest add switch alias  s8   ${switch_alias_8}
+    rest add switch alias  s9   ${switch_alias_9}
+    rest add switch alias  s10  ${switch_alias_10}
+    rest add switch alias  s11  ${switch_alias_11}
+    rest add switch alias  s12  ${switch_alias_12}
+    rest add switch alias  s13  ${switch_alias_13}
+    rest add switch alias  s14  ${switch_alias_14}
+    rest add switch alias  s15  ${switch_alias_15}
+    rest add switch alias  s16  ${switch_alias_16}
+    rest add switch alias  s17  ${switch_alias_17}
+    : FOR    ${INDEX}    IN RANGE   2  4   
+    \    Log    ${INDEX}
+    \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    \    setup delivery switch   ${switch}
+    : FOR    ${INDEX}    IN RANGE   4  18   
+    \    Log    ${INDEX}
+    \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    \    setup filter switch   ${switch}
+    : FOR    ${INDEX}    IN RANGE   1  36      
+    \    Log    ${INDEX}
+    \    ${d1intf}=  Catenate  SEPARATOR=-   s2  ${INDEX}    
+    \    ${d2intf}=  Catenate  SEPARATOR=-   s3  ${INDEX}    
+    \    setup bigtap policies  ${INDEX}
+    sleep  600   
+
+
+        
+setup filter switch  [Arguments]  ${switch}
+    : FOR    ${INDEX}    IN RANGE   13  49      
+    \    Log    ${INDEX}
+    \    ${intf_name}=  Catenate  SEPARATOR=  ethernet  ${INDEX}
+    \    ${intf_alias}=  Catenate  SEPARATOR=-   ${switch}  ${FINDEX}  
+    \    ${result}=  rest add interface role  ${switch}  ${intf_name}  filter  ${intf_alias}
+    \    Should be true  ${result}  
+    \    ${FINDEX}=  Evaluate  ${FINDEX} + 1
+    \    sleep  1
+
+setup delivery switch  [Arguments]  ${switch}
+    : FOR    ${INDEX}    IN RANGE   13  49    
+    \    Log    ${INDEX}
+    \    ${intf_name}=  Catenate  SEPARATOR=  ethernet  ${INDEX}
+    \    ${intf_alias}=  Catenate  SEPARATOR=-   ${switch}  ${DINDEX}  
+    \    ${result}=  rest add interface role  ${switch}  ${intf_name}  delivery  ${intf_alias}
+    \    Should be true  ${result}
+    \    ${DINDEX}=  Evaluate  ${DINDEX} + 1      
+    \    sleep  1    
+
+setup bigtap policies  [Arguments]  ${count}  ${delivery_intf_1}  ${delivery_intf_2}  
+    : FOR    ${INDEX}    IN RANGE   4  11
+    \    Log    ${INDEX}     
+    \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    \    ${policy_identifier}=  Catenate  SEPARATOR=-  ${switch}  ${count}                              
+    \    ${policy}=  Catenate  SEPARATOR=-  halt-policy  ${policy_identifier}
+    \    ${fintf_alias}=  Catenate  SEPARATOR=-   ${switch}  ${count}
+    \    rest add policy  admin-view  ${policy}   forward
+    \    rest add policy match  admin-view  ${policy}   1  {"any-traffic": true, "sequence": 1}
+    \    rest add policy interface  admin-view  ${policy}   ${fintf_alias}      filter                            
+    \    rest add policy interface  admin-view  ${policy}   ${delivery_intf_1}  delivery
+    \    sleep  1    
+    : FOR    ${INDEX}    IN RANGE   11  18
+    \    Log    ${INDEX}     
+    \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    \    ${policy_identifier}=  Catenate  SEPARATOR=-  ${switch}  ${count}                              
+    \    ${policy}=  Catenate  SEPARATOR=-  halt-policy  ${policy_identifier}
+    \    ${fintf_alias}=  Catenate  SEPARATOR=-   ${switch}  ${count}
+    \    rest add policy  admin-view  ${policy}   forward
+    \    rest add policy match  admin-view  ${policy}   1  {"any-traffic": true, "sequence": 1}
+    \    rest add policy interface  admin-view  ${policy}   ${fintf_alias}      filter                            
+    \    rest add policy interface  admin-view  ${policy}   ${delivery_intf_2}  delivery    
+    \    sleep  1  
+  
+halt suite teardown
