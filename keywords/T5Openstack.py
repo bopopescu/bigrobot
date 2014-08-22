@@ -810,7 +810,7 @@ S
 			helpers.test_failure("Fail:router interface not present in controller endpoint table")
 			return False
 	
-	def openstack_tenant_scale(self, name='p', count=0):
+	def openstack_tenant_scale(self, count, name='p'):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -826,6 +826,22 @@ S
 			i = i + 1
 		return True
 
+	def openstack_tenant_scale_delete(self, count, name='p'):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			tenant = name
+			tenant += str(i)
+			os1.bash("keystone tenant-delete %s" % (tenant))
+			i = i + 1
+		return True
+	
 	def openstack_segment_scale(self, tenantName, subnet, count, name='n'):
 		'''Function to create multiple segments in a given tenant
 			Input: tenantName , count , name starts with segment
@@ -843,7 +859,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
-				helpers.sleep(5)
+				helpers.sleep(1)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -852,7 +868,7 @@ S
 			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
-				helpers.sleep(5)
+				helpers.sleep(1)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -1029,4 +1045,80 @@ S
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
 			i = i + 1
+		return True
+	
+	def openstack_multiple_scale(self, subnet, tcount, ncount, tname='p', name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		j = 0
+		k = 0
+		h = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				tenantId = self.openstack_show_tenant(tenant)
+				name += str(i)
+				netName = name
+				netName += str(h)
+				try:
+					os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				ipaddr = "%s.%s.%s.0" % (subnet, j, k)
+				subnet_ip = ipaddr + "/" + str(24)
+				try:
+					os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				k = k + 1
+				if k == 254:
+					j = j + 1
+					k = 0
+				h = h + 1
+			i = i + 1
+			h = 1
+		return True
+
+	def openstack_multiple_scale_delete(self, tcount, ncount, tname='p', name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		h = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				name += str(i)
+				netName = name
+				netName += str(h)
+				try:
+					os1.bash("neutron net-delete %s " % (netName))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				h = h + 1
+			i = i + 1
+			h = 1
 		return True

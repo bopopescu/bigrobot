@@ -15,8 +15,8 @@ Library       		String
 ***Test Cases***
 ### Configure Big Tap Policy Match for TCP Flags					policy		FIN			SYN				RST			PSH			ACK			URG
 TC Set up
-	Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu					ethernet1			qa-corsair-2 		delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
 	Configure Big Tap Policy					 					policy-tcp			admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}	  	${EMPTY}	
 
 TC1 Unset FIN														
@@ -70,8 +70,8 @@ Setup
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
+	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
 Teardown
 	Close Browser
     #Stop Selenium Server

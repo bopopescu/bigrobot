@@ -2899,4 +2899,22 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             return False
         else:
             return True
-
+        
+    def rest_verify_tenant_segment_scale(self, tcount, ncount):
+        '''Function to verify tenant and segemtn in each tenant
+        Input: no of tenant expected , no of segment expected
+        Output , Rest show tenant to verify each and number of segment in each tenant
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
+        c.rest.get(url)
+        data = c.rest.content()
+        if int(len(data)) == int(tcount):
+            for i in range(0,len(data)):
+                if int(data[i]["segment-count"]) != int(ncount):
+                    helpers.test_failure("Expected segement count not correct in the tenant=%s" % (data[i]["name"]))
+                    return False
+        else:
+            helpers.test_failure("Expected tenant count not correct Expected=%d , Actual=%d" % (int(tcount), int(len(data))))
+            return False

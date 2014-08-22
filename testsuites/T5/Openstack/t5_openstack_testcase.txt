@@ -42,8 +42,8 @@ Network and subnet (VNS), then delete and readd
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 create a network same as DHCP server interface
-	[Tags]  feature  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 2 more projects and corresponding networks and subnets, then delete and readd
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
