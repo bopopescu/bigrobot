@@ -755,11 +755,11 @@ S
 		data = c.rest.content()
 		if len(data) != 0:
 			if str(data[0]["ip-address"][0]["ip-address"]) == str(instanceIp):
-				if str(data[0]["state"]) == "Active":
-					helpers.log("Pass:VM Instance endpoints are present and state is L2 only")
+#				if str(data[0]["state"]) == "Active":
+					helpers.log("Pass:VM Instance endpoints are present")
 					return True
-				else:
-					helpers.test_failure("VM Instance Endpoint state is Attachement Down")
+#				else:
+#					helpers.test_failure("VM Instance Endpoint state is Attachement Down")
 			else:
 				helpers.test_failure("VM Instance endpoint IP does not match")
 				return False
@@ -801,11 +801,11 @@ S
 		c.rest.get(url)
 		data = c.rest.content()		
 		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
-				if str(data[0]["state"]) == "Active":
-					helpers.log("Pass: Router interface creaetd as endpoint in controller and state is correct")
+#				if str(data[0]["state"]) == "Active":
+					helpers.log("Pass: Router interface creaetd as endpoint in controller")
 					return True
-				else:
-					helpers.test_failure("Router interface state is not L2 only")
+#				else:
+#					helpers.test_failure("Router interface state is not L2 only")
 		else:
 			helpers.test_failure("Fail:router interface not present in controller endpoint table")
 			return False
@@ -1056,6 +1056,7 @@ S
 		os1 = t.openstack_server('os1')
 		tcount = int(tcount)
 		ncount = int(ncount)
+		ncount_increment = ncount
 		i = 1
 		j = 0
 		k = 0
@@ -1063,7 +1064,6 @@ S
 		while (i <= tcount):
 			tenant = tname
 			tenant += str(i)
-			name += str(i)
 			while (h <= ncount):
 				tenantId = self.openstack_show_tenant(tenant)
 				netName = name
@@ -1090,7 +1090,8 @@ S
 					k = 0
 				h = h + 1
 			i = i + 1
-			h = 1
+			ncount = ncount + ncount_increment 
+			
 		return True
 
 	def openstack_multiple_scale_delete(self, tcount, ncount, tname='p', name='n'):
