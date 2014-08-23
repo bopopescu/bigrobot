@@ -240,6 +240,36 @@ class T5ZTN(object):
         con.expect(r'.*login: $', timeout=60)
         return True
 
+    def telnet_wait_for_switch_to_find_manifest(self, node):
+        """
+        Test telnet access to given node
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - N/A
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("Discovered Switch Light manifest", timeout=300)
+        return True
+
+    def telnet_wait_for_switch_to_start_booting(self, node):
+        """
+        Test telnet access to given node
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - N/A
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("ZTN Manifest validated", timeout=300)
+        return True
+
     def telnet_verify_ztn_discovery_failed(self, node):
         """
         Verify that ZTN Discovery process failed
