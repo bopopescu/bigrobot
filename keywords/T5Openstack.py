@@ -973,7 +973,7 @@ S
 			helpers.test_failure("All Openstack segments are not present in controller")
 			return False
 		
-	def openstack_router_scale(self, extName, tName='p', rname='r', count=0):
+	def openstack_router_scale(self, extName, count, tName='p', rname='r'):
 		'''Function to add multiple routers to each tenant
 		   Input: count and external network
 		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
@@ -996,7 +996,7 @@ S
 			i = i + 1
 		return True
 	
-	def openstack_router_scale_delete(self, rname='r', count=0):
+	def openstack_router_scale_delete(self, count, rname='r'):
 		'''Function to delete all routers for each tenant
 		   Input: count 
 		   Output:routers will be deleted for each tenant
