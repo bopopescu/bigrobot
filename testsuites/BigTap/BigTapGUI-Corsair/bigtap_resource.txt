@@ -2537,7 +2537,7 @@ Set Switching Mode
 Configure Match Mode
 	[Arguments]  ${match-mode}
 	Go To Landing Page
-	Sleep  1
+	#Sleep  1
 	Run Keyword If  '${match-mode}'=='Policy Overlap'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
 	Run Keyword If  '${match-mode}'=='!Policy Overlap'
@@ -2561,7 +2561,7 @@ Configure Match Mode
     Run Keyword If  '${match-mode}'=='!Policy Overlap'
     ...		Click Element  ${DISABLE POLICY OVERLAP SUBMIT BUTTON}  and don't wait
     
-    Sleep  2
+    #Sleep  2
     
     Run Keyword If  '${match-mode}'=='Inport Mask'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Inport_Mask_Enabled
@@ -2586,7 +2586,7 @@ Configure Match Mode
     Run Keyword If  '${match-mode}'=='!Inport Mask'
     ...		Click Element  ${DISABLE INPORT MASK SUBMIT BUTTON}  and don't wait
     
-    Sleep  2
+    #Sleep  2
     
     
    Run Keyword If  '${match-mode}'=='CRC Check'
@@ -2612,7 +2612,7 @@ Configure Match Mode
     Run Keyword If  '${match-mode}'=='!CRC Check'
     ...		Click Element  ${DISABLE CRC CHECK SUBMIT BUTTON}  and don't wait
     
-    Sleep  2
+    #Sleep  2
     
     Run Keyword If  '${match-mode}'=='Tunneling'
 	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Tunneling_Enabled
@@ -2637,7 +2637,7 @@ Configure Match Mode
     Run Keyword If  '${match-mode}'=='!Tunneling'
     ...		Click Element  ${DISABLE TUNNELING SUBMIT BUTTON}  and don't wait
     
-    Sleep  2
+    #Sleep  2
     
 	
 Configure Big Tap User Defined Offsets
