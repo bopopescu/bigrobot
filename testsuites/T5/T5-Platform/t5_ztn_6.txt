@@ -192,8 +192,9 @@ T7.8. switch's MAC address is not configured on the controller - after Switch Li
 	Manual Passed
 	[Tags]  manual
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# Switch fails to download SWI for given platform type
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
 	Manual Passed
 	[Tags]  manual
