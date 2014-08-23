@@ -1,40 +1,39 @@
-*** Settings ***
-Documentation   	A test suite with a single test for valid login. This test has
-...             	a workflow that is created using keywords from the resource file.
-Force Tags      	GUI RBAC
-Suite Setup      	Setup
-Suite Teardown   	Teardown
+* Settings
+Documentation   	Test suite with tests for configuring policy, changing action, scheduling and associating rules. The tests
+...             	have a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags      	GUI Policy Config
 Library         	keywords/BsnCommon.py
-Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
 
-*** Test Cases *** 
+*Test Case 
  	
 ### Configure Big Tap Policy with different names	
 T1 Test set up:
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-2 		delivery		ixia-2-15	
-	Configure Big Tap Interface from Big Tap Menu			ethernet2			qa-corsair-2 		delivery		ixia-4-8	
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rly2-1 		delivery		ixia-4-8	
 	Configure Big Tap Interface Group from Big Tap Menu 	filter				filter-group		ixia-2-9
 	Configure Big Tap Interface Group from Big Tap Menu		delivery			delivery-group		ixia-2-15	
 	
-#Arguments												Policy	 				RBAC 			Action 			Filter			Delivery 		fg				dg	
+#Arguments												Policy	 				RBAC 			Action 			Ethertype				Filter			Delivery 		fg				dg	
 T1.1 Policy with policy name as alphabets
-	Configure Big Tap Policy					 		testpolicy				admin-view		Forward			ixia-2-9		ixia-2-15	  	 ${EMPTY}	  	${EMPTY}
+	Configure Big Tap Policy					 		testpolicy				admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	 ${EMPTY}	  	${EMPTY}
 T1.2 Policy with policy name as alphanumeric
-	Configure Big Tap Policy					 		testpolicy22			admin-view		Forward			ixia-2-9		ixia-2-15	  	${EMPTY}	  ${EMPTY}	  	
+	Configure Big Tap Policy					 		testpolicy22			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	${EMPTY}	  ${EMPTY}	  	
 T1.3 Policy with policy name as hypen in between
-	Configure Big Tap Policy					 		test-policy3			admin-view		Forward			ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
+	Configure Big Tap Policy					 		test-policy3			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
 T1.4 Policy with policy name as "_" in between
-	Configure Big Tap Policy					 		test_policy4			admin-view		Forward			ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
+	Configure Big Tap Policy					 		test_policy4			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
 T1.5 Policy with policy name as all CAPS
-	Configure Big Tap Policy					 		TESTPOLICY5				admin-view		Forward			ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
+	Configure Big Tap Policy					 		TESTPOLICY5				admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  ${EMPTY}	  	
 #T1.6 Policy with new rbac                
-#	Configure Big Tap Policy					 		test-policy6			__new__			Forward			ixia-2-9		ixia-2-15	  	${EMPTY}	  ${EMPTY}	  	
+#	Configure Big Tap Policy					 		test-policy6			__new__			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	${EMPTY}	  ${EMPTY}	  	
 T1.7 Policy with interfaces and interface groups
-	Configure Big Tap Policy					 		tesT-p0licy7			admin-view		Forward			ixia-2-9		ixia-2-15		filter-group	delivery-group	
+	Configure Big Tap Policy					 		tesT-p0licy7			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		filter-group	delivery-group	
 T1.8 Teardown
 	Delete All Big Tap Policies
 
@@ -42,7 +41,7 @@ T1.8 Teardown
 ##Change action
 
 T2.1 Create Policy
-	Configure Big Tap Policy					 	test-policy		admin-view		Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
+	Configure Big Tap Policy					 	test-policy		admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T2.2 Change action from forward to inactive
 	Change Policy Action					 		test-policy		Inactive				
 T2.3 Change action from inactive to capture
@@ -58,7 +57,7 @@ T2.6 Teardown
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
 
 TC3.1 Create Policy
-	Configure Big Tap Policy					test-policy1		admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
+	Configure Big Tap Policy					test-policy1		admin-view			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T3.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
 T3.3 Schedule policy to start now and run for 5 minutes
@@ -78,7 +77,7 @@ T3.8 Teardown
 ##Associate Rules
 
 T4.1 Create Policy
-	Configure Big Tap Policy					 		test-policy		admin-view		Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
+	Configure Big Tap Policy					 		test-policy		admin-view		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T4.2 Associate Match Rule for IPv4 and UDP 
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		UDP (17)		
 T4.3 Associate Match Rule for IPv4 and TCP
@@ -99,11 +98,6 @@ T4.10 Associate Match Rule for ARP
 	Associate Policy Match Rule					 		test-policy		ARP - 0x806 (2054)		${EMPTY}			
 T4.11 Teardown
 	Delete All Big Tap Policies
-
-
-
-
-
 
 ## Policy Overlap
 #T5 Test set up:	
@@ -128,22 +122,21 @@ T4.11 Teardown
 #	Configure Match Mode								!Policy Overlap	
 
 
-
-	
-*** Keywords ***
-Setup
-	base suite setup
-	${c1_ip}            params  node=c1  key=ip
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
-    CLI Start Mininet Server  tree,3
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
-Teardown
+    
+config suite teardown
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown
 

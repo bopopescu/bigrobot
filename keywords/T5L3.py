@@ -885,7 +885,7 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y
             return c.rest.content()
 
 
-    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip, dhcpcircuitid=None):
+    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip=None, dhcpcircuitid=None):
         '''Delete dhcp server "
 
             Input:
@@ -902,6 +902,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/server-ip' % (tenant, vnsname)
+        if dhcpserverip is not None:
+            url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay[server-ip="%s"]' % (tenant, vnsname, dhcpserverip)
+            c.rest.get(url1)
+            data = c.rest.content()
+            helpers.log ("result: %s" % helpers.prettify(data)) 
+            if len(data) == 0:
+                helpers.log ("dhcp server ip is not configured on this segment") 
+                return False
         try:
 
 #            self.rest_disable_dhcp_relay(tenant, vnsname)
@@ -1650,10 +1658,12 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
 
 
 
-    def rest_get_logical_router_segment_interface(self, vnsName=None):
+    def rest_get_logical_router_segment_interface(self, tenant, vnsName=None):
         '''return segment interface information 
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router/segment-interface
-            Input: segment name
+            
+            Input:  segment name
+                    tenant name
             Return: content if found
         '''
         t = test.Test()
@@ -1671,9 +1681,11 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
             else:     
                 for entry in data:
                     helpers.log("entry is %s" % entry)
-                    if entry['segment'] == vnsName:
-                        helpers.log("Match segment '%s'" % vnsName)
-                        return entry
-                helpers.log("no Match")
-                return {}
+                    if entry['logical-router'] == tenant:
+                        if entry['segment'] == vnsName:
+                            helpers.log("Match segment '%s'" % vnsName)
+                            return entry
+                        
+            helpers.log("no Match")
+            return {}
 

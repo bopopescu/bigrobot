@@ -1,23 +1,22 @@
-*** Settings ***
-Documentation   	A test suite with a single test for valid login. This test has
+* Settings
+Documentation   	This test suite covers packet capture and scheduling features for BigTap. The tests have
 ...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
 Force Tags      	GUI RBAC
-Suite Setup      	Setup
-Suite Teardown   	Teardown
 Library         	keywords/BsnCommon.py
-Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
 
-*** Test Cases *** 
+*Test Case
 
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
 TC1 Set Up
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-2 		delivery		ixia-2-15
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15
 TC1.1 Create Policy
-	Configure Big Tap Policy					test-policy1		admin-view			Forward			ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
+	Configure Big Tap Policy					test-policy1		admin-view			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}	 
 T1.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
 T1.3 Schedule policy to start now and run for 5 minutes
@@ -36,9 +35,9 @@ T1.8 Teardown
 
 ##Packet capture								Policy	 		Action		Start Policy 		AfterDelayOfTime	Run Policy		Duration		Packets
 TC2 Set Up
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			qa-corsair-1		filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
 T2.1 Create Policy
-	Configure Big Tap Policy					test-policy2		admin-view			Capture			ixia-2-9		${EMPTY}		${EMPTY}		${EMPTY}	 
+	Configure Big Tap Policy					test-policy2		admin-view			Capture			IPv4 - 0x800 (2048)		ixia-2-9		${EMPTY}		${EMPTY}		${EMPTY}	 
 T2.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy2	Capture		Immediately			${EMPTY}		${EMPTY}		${EMPTY}		${EMPTY}
 T2.3 Schedule policy to start now and run for 1 minutes
@@ -55,25 +54,23 @@ T2.8 Teardown
 	Delete All Big Tap Policies
 	
 
-	
-
-
-*** Keywords ***
-Setup
-	base suite setup
-	${c1_ip}            params  node=c1  key=ip
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
-    CLI Start Mininet Server  tree,3
+    #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			qa-corsair-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			qa-corsair-2
-Teardown
+	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+ 	
+config suite teardown
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown

@@ -199,6 +199,7 @@ helpers.bigrobot_esb()
 helpers.bigrobot_esb_broker()
 helpers.bigrobot_ztn_reload()
 helpers.bigrobot_ha_logging()
+helpers.bigrobot_quiet_output()
 
 
 def get_command_dict():

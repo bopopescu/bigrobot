@@ -8,14 +8,6 @@ import re
 class RestClient(object):
     """
     REST Client for talking to RESTful web services.
-
-    Quiet levels:
-      0 - display everything (default)
-      1 - suppress command output
-      2 - suppress command
-      3 - reserved
-      4 - reserved
-      5 - suppress all output
     """
 
     # Number of seconds to wait before timing out the REST call.
@@ -149,7 +141,7 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        if helpers.not_matched(quiet, [2, 5]):
+        if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
                         level=5, log_level=log_level)
             helpers.log("'%s' Headers = %s"
@@ -189,7 +181,7 @@ class RestClient(object):
         if save_last_result:
             self.last_result = result
 
-        if helpers.not_matched(quiet, [1, 5]):
+        if helpers.not_quiet(quiet, [1, 5]):
             self.log_result(result=result, level=6, log_level=log_level)
 
         # ATTENTION: RESTclient will generate an exception when the

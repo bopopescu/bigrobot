@@ -144,7 +144,7 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
-        #options = s.expect([r'[\r\n]*.*login:',r'[Pp]assword:',r'root@.*:\~\#',
+        #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
         #                   s.get_prompt()])
         #if options[0] == 0:  # login prompt
         #    s.send('admin')
@@ -237,7 +237,7 @@ class T5ZTN(object):
         t = test.Test()
         con = t.dev_console(node, modeless=True)
         con.expect("Starting OpenFlow Agent: ofad", timeout=300)
-        con.expect(r'.*login:.*$', timeout=60)
+        con.expect(r'.*login: $', timeout=60)
         return True
 
     def telnet_verify_ztn_discovery_failed(self, node):
@@ -311,7 +311,7 @@ class T5ZTN(object):
         con.expect("printenv")
         con.expect("=> ")
         con.send("boot")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def telnet_set_ma1_state(self, node, state):
         """
@@ -326,7 +326,7 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
-        options = s.expect([r'[\r\n]*.*login:', r'root@.*:\~\#',
+        options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
                             r'=> ', r'loader#', s.get_prompt()],
                            timeout=300)
         if options[0] == 0:  # login prompt
@@ -385,7 +385,7 @@ class T5ZTN(object):
             con.send(command)
         helpers.log("Entering loader shell")
         con.send("reboot")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def telnet_switch_reload_and_verify_using_cached_SWI_and_config(self, node):
         """
@@ -407,7 +407,7 @@ class T5ZTN(object):
         con.expect("Discovered Switch Light manifest from neighbor discovery")
         con.expect("Using cached ZTN SWI")
         con.expect("Using cached ZTN startup-config")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def telnet_switch_reload_and_verify_using_new_SWI_and_cached_config(self,
         node):
@@ -431,7 +431,7 @@ class T5ZTN(object):
         con.expect("Downloading new ZTN SWI")
         con.expect("Using cached ZTN startup-config")
         con.expect("Caching ZTN SWI")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def telnet_switch_reload_and_verify_using_cached_SWI_and_new_config(self,
         node):
@@ -455,7 +455,7 @@ class T5ZTN(object):
         con.expect("Using cached ZTN SWI")
         con.expect("Downloading new startup-config")
         con.expect("Caching ZTN startup-config")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def telnet_switch_reload_and_verify_using_new_SWI_and_config(self, node):
         """
@@ -479,7 +479,7 @@ class T5ZTN(object):
         con.expect("Downloading new startup-config")
         con.expect("Caching ZTN SWI")
         con.expect("Caching ZTN startup-config")
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login: $')
 
     def curl_get_switch_startup_config(self, mac):
         """
@@ -766,7 +766,7 @@ class T5ZTN(object):
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
         #s.send("\x03")
-        #options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:',
+        #options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
         #                    r'[\r\n]* root@.*:\~\#', s.get_prompt()])
         #if options[0] == 0:
         #    s.cli('admin')
@@ -1083,7 +1083,7 @@ class T5ZTN(object):
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:',r'[Pp]assword:',r'root@.*:\~\#',
+        options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell'],
                            timeout=300)
@@ -1148,7 +1148,7 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         helpers.sleep(1)
         s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login:', r'\=\>'], timeout=100)
+        options = s.expect([r'[\r\n]*.*login: $', r'\=\>'], timeout=100)
         if options[0] == 0:
             helpers.log("Something went wrong, trying again")
             s.send("admin")
