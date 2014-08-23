@@ -722,6 +722,28 @@ def bigrobot_monitor_reauth_init_timer(new_val=None, default=480):  # 8 minutes
                             new_val, default)
 
 
+def bigrobot_quiet_output(new_val=None, default=-1):  # disabled
+    """
+    Category: Get/set environment variables for BigRobot.
+
+    Quiet levels:
+      0 - display everything (default)
+      1 - suppress command output
+      2 - suppress command
+      3 - reserved
+      4 - reserved
+      5 - suppress all output. This is typically used by DevConf library to
+          suppresss output when switching modes. Users should avoid this level.
+
+    By default, quiet=0 means that for every command issued, the command and
+    its output are captured to the log file. The user can change the quiet
+    level when they issue a RestClient or DevConf command. To change the quiet
+    level globally, the user can set this environment variable to the value
+    0-5. By default, -1 means this env var is disabled.
+    """
+    return _env_get_and_set('BIGROBOT_QUIET_OUTPUT', new_val, default)
+
+
 def bigrobot_debug(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -1317,6 +1339,20 @@ def matched(val, match_list):
 
 def not_matched(val, match_list):
     return not matched(val, match_list)
+
+
+def not_quiet(val, quiet_levels):
+    """
+    Return True if val matches one of the quiet levels (list).
+    """
+    if val == 5:
+        # 5 - Suppress all output, is typically specified by DevConf
+        # to hide the details when mode switching, which can be quiet verbose.
+        # So if 5 is specified, we should not override it.
+        pass
+    elif int(bigrobot_quiet_output()) != -1:
+        val = int(bigrobot_quiet_output())
+    return not_matched(val, quiet_levels)
 
 
 def dict_compare(dict1, dict2, ignore_keys=None):

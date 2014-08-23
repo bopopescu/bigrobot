@@ -1,17 +1,17 @@
-*** Settings ***
-Documentation   	A test suite with a single test for valid login. This test has
+* Settings
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
 ...             	a workflow that is created using keywords from the resource file.
-Force Tags      	GUI RBAC
-Suite Setup      	Setup
-Suite Teardown   	Teardown
+Force Tags      	GUI Baseline
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
 Library         	keywords/BsnCommon.py
-Library         	keywords_dev/tomasz/BigTap.py
+#Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
 Library       		String
 Resource        	bigtap_resource.txt
 
 
-*** Test Cases *** 
+*Test Case
 ### Check Pages		
 T1.1 Check Main Landing Page
 	Go To Landing Page
@@ -95,20 +95,20 @@ T3.6 Topology View Pane
 	Check Element			${TOPOLOGY VIEW PANE}
 
 
-*** Keywords ***
-Setup
-	base suite setup
-    Start Selenium Server  -trustAllSSLCertificates
-    ${c1_ip}            params  node=c1  key=ip
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    CLI Start Mininet Server  tree,3
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
 
 
-Teardown
+config suite teardown
 	Close Browser
     Stop Selenium Server
     base suite teardown
