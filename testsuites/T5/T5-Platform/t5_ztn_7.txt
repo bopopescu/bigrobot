@@ -1,0 +1,128 @@
+*** Settings ***
+Documentation       Testing ZTN
+...              The purpose of this test suite is to check managing switches with ZTN. Small testbed will be used.
+...
+...              *Test topology*: pair of controllers, one spine switch, two leaf switches (Accton).
+...
+...              For tests which check correct installation of flows on the switches, simple forwarding configuration
+...              and small traffic rate will be used.
+...              Larger testbeds will be tested inherently in other testsuites.
+...
+...              In this Test Suite the following terms will be used:
+...
+...              * stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+...
+...              * provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+...
+...              * suspended switch - switch connected to fabric but not configured on the controller,
+...                or running wrong version of Swith Light, or with incorrect running-config
+...
+...              * ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
+...
+...              * ZTN configuration, which includes:
+...
+...                - configuration mirrored from controller's configuration to switches (NTP, Logging, SNMP)
+...
+...                - controllers' IP addresses
+...
+...                  - per-switch hostname (as switch name on the controller)
+...
+...                  - per-switch interface configuration (as assigned by DHCP server when switch booted)
+...
+...              * ZTN configuration change:
+...
+...                - any controller Cli change that affects the switch startup-config
+...
+...              * Switch mode change:
+...
+...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
+
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
+Test Setup		Test Setup
+Test Teardown	Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
+Library  		keywords/BsnCommon.py
+Library		keywords/T5Platform.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		String
+Resource		t5_ztn_resource.txt
+
+
+*** Test Cases ***
+#7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
+#7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
+T7.26.1 - while Installer download - no SWI download
+	Manual Passed
+	[Tags]  manual
+T7.26.2 - while SWI download - no startup-config download if not cached, if cached - switch undefined (suspended)
+	Manual Passed
+	[Tags]  manual
+T7.26.3 - while image startup - switch rebooted (starts up, gets removed)
+	Manual Passed
+	[Tags]  manual
+#7.27. Verify following behaviors when switch's name is changed during switch boot up
+T7.27.1 - while Installer download - correct SWI download and fabric join
+	Manual Passed
+	[Tags]  manual
+T7.27.2 - while SWI download - if startup-config not cached - checksum and retry, successful join eventually, if starutp-config cached - reload indicated
+	#retest
+	Manual Passed
+	[Tags]  manual
+T7.27.3 - while image startup - reload indicated
+	Manual Passed
+	[Tags]  manual
+#7.28. Verify following behaviors when ZTN config is changed during switch boot up
+T7.28.1 - while Installer download - correct SWI download and fabric join
+	Manual Passed
+	[Tags]  manual
+
+T7.28.2 - while SWI download - switch undefined (suspended)
+	Telnet Reboot Switch  s1
+	Telnet Wait For Switch To Find Manifest  s1
+	Randomize ZTN Configuration
+	Telnet Wait For Switch To Reload  s1
+	Sleep  30
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch In Provisioned Mode  ${s1_alias}
+	
+T7.28.3 - while image startup - switch undefined (suspended)
+	Telnet Reboot Switch  s2
+	Telnet Wait For Switch To Start Booting  s2
+	Randomize ZTN Configuration
+	Telnet Wait For Switch To Reload  s2
+	Sleep  30
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	
+#7.29. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
+T7.29.1 - while Installer download - correct SWI download and fabric join
+	Manual Passed
+	[Tags]  manual
+
+T7.29.2 - while SWI download - switch undefined (suspended)
+	Cli Reboot Switch  master  all
+	Telnet Wait For Switch To Find Manifest  s1
+	Set All Switches Mode Standby
+	Telnet Wait For Switch To Reload  s1
+	Sleep  30
+	Verify All Switches In Standby Mode
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T7.29.3 - while image startup - switch undefined (suspended)
+	Cli Reboot Switch  master  all
+	Telnet Wait For Switch To Start Booting  s1
+	Set All Switches Mode Standby
+	Telnet Wait For Switch To Reload  s1
+	Sleep  30
+	Verify All Switches In Standby Mode
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T7.30. Check what happens when switch's flash is full and it is supposed to download new SL image
+	Manual Passed
+	[Tags]  manual

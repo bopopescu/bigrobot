@@ -192,8 +192,9 @@ T7.8. switch's MAC address is not configured on the controller - after Switch Li
 	Manual Passed
 	[Tags]  manual
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# Switch fails to download SWI for given platform type
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
 	Manual Passed
 	[Tags]  manual
@@ -243,53 +244,6 @@ T7.25.1 Verify that discovery process restarts when specified Switch Light Insta
 	Manual Passed
 	[Tags]  manual
 T7.25.2 Verify that discovery process restarts when specified SWI image path is invalid
-	Manual Passed
-	[Tags]  manual
-#7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
-T7.27.1 - while Installer download - no SWI download
-	Manual Passed
-	[Tags]  manual
-T7.27.2 - while SWI download - no startup-config download if not cached, if cached - switch undefined (suspended)
-	Manual Passed
-	[Tags]  manual
-T7.27.3 - while image startup - switch rebooted (starts up, gets removed)
-	Manual Passed
-	[Tags]  manual
-#7.28. Verify following behaviors when switch's name is changed during switch boot up
-T7.28.1 - while Installer download - correct SWI download and fabric join
-	Manual Passed
-	[Tags]  manual
-T7.28.2 - while SWI download - if startup-config not cached - checksum and retry, successful join eventually, if starutp-config cached - reload indicated
-	#retest
-	Manual Passed
-	[Tags]  manual
-T7.28.3 - while image startup - reload indicated
-	Manual Passed
-	[Tags]  manual
-#7.29. Verify following behaviors when ZTN config is changed during switch boot up
-T7.29.1 - while Installer download - correct SWI download and fabric join
-	Manual Untested
-	[Tags]  manual-untested
-T7.29.2 - while SWI download - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-T7.29.3 - while image startup - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-#7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
-#7.30. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
-	Manual Untested
-	[Tags]  manual-untested
-T7.30.1 - while Installer download - correct SWI download and fabric join
-	Manual Untested
-	[Tags]  manual-untested
-T7.30.2 - while SWI download - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-T7.30.3 - while image startup - switch undefined (suspended)
-	Manual Untested
-	[Tags]  manual-untested
-T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image
 	Manual Passed
 	[Tags]  manual
 
