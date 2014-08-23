@@ -613,11 +613,11 @@ S
 		subnetId = self.openstack_show_subnet(subnetName)
 		try:
 			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			return True
 		except:
 			output = helpers.exception_info_value()
 			helpers.log("Output: %s" % output)
 			return False
-		return True
 
 	def openstack_delete_subnet_to_router(self, routerName, subnetName):
 		'''detach subnet from tenant router
@@ -799,15 +799,19 @@ S
 		subnetIp = self.openstack_show_subnet_ip(subnetName)
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
 		c.rest.get(url)
-		data = c.rest.content()		
-		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
+		data = c.rest.content()
+		if len(data) != 0:		
+			if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
 #				if str(data[0]["state"]) == "Active":
 					helpers.log("Pass: Router interface creaetd as endpoint in controller")
 					return True
 #				else:
 #					helpers.test_failure("Router interface state is not L2 only")
+			else:
+				helpers.log("Fail:router interface not present in controller endpoint table")
+				return False
 		else:
-			helpers.test_failure("Fail:router interface not present in controller endpoint table")
+			helpers.log("Expected endpoint is not present in BCF controller")
 			return False
 	
 	def openstack_tenant_scale(self, count, name='p'):
