@@ -27,6 +27,7 @@ ${fortyG_intf}              ethernet49
 ${pc_intf_1}                49
 ${pc_intf_2}                13-14
 ${pc_number}                1
+${pc_name}                  port-channel1
 
 *Test Case
 TC1: Configure and Verify Configuration via CLI   
@@ -131,7 +132,7 @@ TC24: Verify SNMP OID ifPhysAddress of 40Gig Data Port
 TC25: Verify SNMP OID ifDescr of PortChannel across 40G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1061  port-channel1
+    verify snmp attribute  s1  ifDescr.1061  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  40G  Lag
@@ -180,7 +181,7 @@ TC30: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface
 TC31: Verify SNMP OID ifPhysAddress of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    ${mac_address1}=  cli show interface macaddress  s1  port-channel3 
+    ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
     verify snmp attribute  s1  ifPhysAddress.1061  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
@@ -189,7 +190,7 @@ TC31: Verify SNMP OID ifPhysAddress of PortChannel across 40G Interface
 TC32: Verify SNMP OID ifDescr of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1061  port-channel1
+    verify snmp attribute  s1  ifDescr.1061  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  10G  Lag
@@ -237,24 +238,24 @@ TC37: Verify SNMP OID ifHighSpeed of PortChannel across 10G Interface
 TC38: Verify SNMP OID ifPhysAddress of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    ${mac_address1}=  cli show interface macaddress  s1  port-channel3 
+    ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
     verify snmp attribute  s1  ifPhysAddress.1061  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  10G  Lag
 
 TC39: Verify snmpgetnext works as expected 
-    ${snmp_key} =   snmp cmd  s1  snmpgetnext  public  ifDescr.1
+    ${snmp_key} =   snmp cmd  s1  snmpgetnext  ${snmp_community_1}  ifDescr.1
     Should Contain  ${snmp_key}  ma1
     [Tags]  snmpgetnext
 
 TC40: Verify snmpbulkget works as expected
-    ${snmp_key}=  snmp cmd opt   s1  snmpbulkget  -Cr1  public  ifDescr.1
+    ${snmp_key}=  snmp cmd opt   s1  snmpbulkget  -Cr1  ${snmp_community_1}  ifDescr.1
     Should Contain  ${snmp_key}  ma1
     [Tags]  snmpbulkget
             
 TC41: Verify snmpbulkwalk works as expected
-    ${snmp_key}=  snmp cmd opt   s1  snmpbulkwalk  -Cr2  public  ifDescr.2
+    ${snmp_key}=  snmp cmd opt   s1  snmpbulkwalk  -Cr2  ${snmp_community_1}  ifDescr.2
     Should Contain  ${snmp_key}  ma1
     [Tags]  snmpbulkwalk
 
@@ -312,13 +313,13 @@ TC46: Verify no snmp-server disables snmp
     Sleep  5
     ${snmp_output} =   cli show snmp  s1
     Should Contain  ${snmp_output}  disabled
-    ${snmp_key}=  snmp cmd  s1  snmpget   public  sysContact.0
+    ${snmp_key}=  snmp cmd  s1  snmpget   ${snmp_community_1}  sysContact.0
     Should Be Empty  ${snmp_key}  
     cli enable snmp  s1
     Sleep  5
     ${snmp_output} =   cli show snmp  s1
     Should Contain  ${snmp_output}  enabled
-    ${snmp_key}=  snmp cmd  s1  snmpget   public  sysContact.0
+    ${snmp_key}=  snmp cmd  s1  snmpget   ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1}
     [Tags]  snmp
 
@@ -328,7 +329,7 @@ TC47: Restart process SNMPD and verify SNMP Stats
     ${snmp_output}=  cli show snmp  s1
     Should Contain  ${snmp_output}  ${snmp_location_1}
     Should Contain  ${snmp_output}  ${snmp_contact_1}
-    Should Contain  ${snmp_output}  public
+    Should Contain  ${snmp_output}  ${snmp_community_1}
     ${snmp_key}=  snmp cmd  s1  snmpget  ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1} 
     [Tags]  process-restart
@@ -339,15 +340,15 @@ snmp suite setup
     cli add snmp keyword   s1   community   ${snmp_ccommunity_1}       
     cli add snmp keyword   s1   location    ${snmp_location_1}       
     cli add snmp keyword   s1   contact     ${snmp_contact_1}       
-    cli add snmp host   s1   ${snmp_trap_svr_1}   traps   public   162   
-    cli add snmp host   s1   ${snmp_trap_svr_1}   informs   public   162
+    cli add snmp host   s1   ${snmp_trap_svr_1}   traps   ${snmp_community_1}   162   
+    cli add snmp host   s1   ${snmp_trap_svr_1}   informs   ${snmp_community_1}   162
     cli delete portchannel  s1  1            
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
     Sleep   30             
 
 verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
-    ${snmp_key} =     snmp cmd   ${switch}   snmpget    public   ${attribute}  
+    ${snmp_key} =     snmp cmd   ${switch}   snmpget    ${snmp_community_1}   ${attribute}  
     Should Contain   ${snmp_key}   ${expected_value}
 
 verify config               
