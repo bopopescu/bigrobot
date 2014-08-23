@@ -17,6 +17,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import subprocess
 import re
+import string
 
 class AppController(object):
 
@@ -940,3 +941,8 @@ class AppController(object):
                 return False
             else:
                 return content
+
+    def strip_character_from_string(self, test_string, search, replace):
+        if str(replace) == 'blank':
+            replace = ''
+        return  test_string.replace(str(search), str(replace))
