@@ -328,12 +328,16 @@ T5.1.1. Power down, change config
 	Verify All Switches Connected
 
 T5.1.2. Power down, delete
-	Trigger All Switches Reboot
 	Cli Run  master  enable;config
+    Telnet Reboot Switch  s1
 	Cli Run  master  no switch ${s1_alias}
+    Telnet Reboot Switch  s2
 	Cli Run  master  no switch ${s2_alias}
+    Telnet Reboot Switch  s3
 	Cli Run  master  no switch ${s3_alias}
+    Telnet Reboot Switch  s4
 	Cli Run  master  no switch ${s4_alias}
+    Telnet Reboot Switch  s5
 	Cli Run  master  no switch ${s5_alias}
 	Cli Run  master  show run
 	Telnet Verify ZTN Discovery Failed  s1
@@ -344,13 +348,13 @@ T5.1.2. Power down, delete
 
 T5.1.3. Power down, change config, failover
 	Cli Reboot Switch  master  all
+	Sleep  10
+	Verify All Switches Disconnected
 	Randomize ZTN Configuration
 	Failover
-	Telnet Wait For Switch To Reload  s1
-	Telnet Wait For Switch To Reload  s5
+	Verify All Switches Connected
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
-	Verify All Switches Connected
 
 T5.1.4. Power down, delete, failover
 	Cli Reboot Switch  master  all
