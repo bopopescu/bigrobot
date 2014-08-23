@@ -769,7 +769,7 @@ class AppController(object):
                 if username == "admin":
                     c.rest.put(url, data)
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(username), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
                     c_user.close()
             except:
