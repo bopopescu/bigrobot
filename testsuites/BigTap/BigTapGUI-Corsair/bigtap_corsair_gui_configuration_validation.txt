@@ -1,17 +1,18 @@
-*** Settings ***
-Documentation   	A test suite with a single test for valid login. This test has
+* Settings
+Documentation   	A test suite test to configure interface from controller and bigtap menu, interface groups, udf's, 
+...					users, rbac, switch alias and switch match mode. The tests have
 ...             	a workflow that is created using keywords from the resource file.
-Force Tags      	GUI RBAC
-Suite Setup      	Setup
-Suite Teardown   	Teardown
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags      	GUI Config
 Library         	keywords/BsnCommon.py
-Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
 
 
-*** Test Cases *** 
+        
+*Test Case
 ### Configure Big Tap Interface from Controller Menu 		ID	 					Switch							Role				Name	 	
 T1.1 Interface with regular name-filter		
  	Configure Big Tap Interface from Controller Menu		ethernet1				00:00:08:9e:01:ce:b8:6a			filter				filter-1
@@ -76,7 +77,7 @@ T2.13 Delete regular name-delivery-1
 	Delete Big Tap Interface from Big Tap Menu																							filter-new-4
 T2.14 Delete regular name-delivery-2		
  	Delete Big Tap Interface from Big Tap Menu																							filter-new-5
-T1.15 Delete regular name-service-2			
+T2.15 Delete regular name-service-2			
  	Delete Big Tap Interface from Big Tap Menu																						service-new-2			
 T2 Teardown
  	Delete All Big Tap Resources
@@ -90,20 +91,20 @@ T3 Test set up:
 	
 T3.1 Filter Interface group with 1 filter interface and name filter-group		
  	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group		ixia-2-9
-T3.2 Delivery Interface with 1 delivery interface and name delivery-group	
-	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group		ixia-2-15
-T3.3 Another Filter Interface group with previous filter interface 					
+T3.2 Delivery Interface with 1 delivery interface and name delivery_group	
+	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery_group		ixia-2-15
+T3.3 Another Filter Interface group with previous filter interface and name filter group 1					
  	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group2		ixia-2-9
 T3.4 Another Delivery Interface group with previous delivery interface				
  	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group2		ixia-2-15	
 T3.5 Delete filter interface from Filter Interface group					
  	Delete Big Tap Interface from Interface Group				filter				filter-group		ixia-2-9
 T3.6 Delete delivery interface from Delivery Interface group				
- 	Delete Big Tap Interface from Interface Group				delivery			delivery-group		ixia-2-15
+ 	Delete Big Tap Interface from Interface Group				delivery			delivery_group		ixia-2-15
 T3.7 Delete Filter Interface group					
  	Delete Big Tap Interface group													filter-group		
 T3.8 Delete Delivery Interface group				
-	Delete Big Tap Interface group													delivery-group					
+	Delete Big Tap Interface group													delivery_group					
 T3.9 Teardown
 	Delete All Big Tap Resources
  
@@ -211,29 +212,31 @@ T8.8 Disable CRC Check
 T8.9 Enable CRC Check
 	Configure Match Mode										CRC Check
 	
-T8.10 Enable Tunneling
-	Configure Match Mode										Tunneling
-	
-T8.11 Disable Tunneling
+T8.10 Disable Tunneling
 	Configure Match Mode										!Tunneling
+	
+T8.11 Enable Tunneling
+	Configure Match Mode										Tunneling
 	
 T8.12 Enable L3-L4 Offset Match	 				
  	Set Switching Mode											L3-L4 Offset Match	
 
-*** Keywords ***
-Setup
-	base suite setup
-	${c1_ip}            params  node=c1  key=ip
+                        
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
-    CLI Start Mininet Server  tree,3
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode  L3-L4 Offset Match	
-Teardown
+	
+config suite teardown
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown
