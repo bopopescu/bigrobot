@@ -1166,9 +1166,9 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         if vns is None or vns is "all":
-            url = '/api/v1/data/controller/applications/bcf/info/stats/segment/stats'
+            url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter'
         else:
-            url = '/api/v1/data/controller/applications/bcf/info/stats/segment/stats[name="%s"]' % vns
+            url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter[name="%s"]' % vns
         c.rest.delete(url, {})
         return True
 
@@ -1181,7 +1181,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter[name="%s"][tenant-name="%s"]' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
@@ -1201,7 +1201,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/stats/segment/rates[name="%s"][tenant-name="%s"]' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-rate[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         try:
@@ -1228,7 +1228,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter[name="%s"][tenant-name="%s"]' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
@@ -1248,7 +1248,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/stats/segment/rates[name="%s"][tenant-name="%s"]' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-rate[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1936,7 +1936,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1965,7 +1965,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1994,7 +1994,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/rates[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-rate[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
@@ -2017,7 +2017,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         dpid = self.rest_get_dpid(switch)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/interface/rates[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-rate[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
@@ -2041,7 +2041,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/tenant/stats[name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-counter[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
@@ -2063,7 +2063,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/tenant/stats[name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-counter[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
@@ -2085,7 +2085,7 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/tenant/rates[name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-rate[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
@@ -2107,7 +2107,7 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bcf/info/stats/tenant/rates[name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-rate[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
