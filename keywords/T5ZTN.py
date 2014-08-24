@@ -236,7 +236,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Starting OpenFlow Agent: ofad", timeout=300)
+        con.expect("Starting OpenFlow Agent: ofad", timeout=120)
         con.expect(r'.*login: $', timeout=60)
         return True
 
@@ -252,7 +252,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest", timeout=300)
+        con.expect("Discovered Switch Light manifest", timeout=120)
         return True
 
     def telnet_wait_for_switch_to_start_booting(self, node):
@@ -267,7 +267,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Manifest validated", timeout=300)
+        con.expect("ZTN Manifest validated", timeout=120)
         return True
 
     def telnet_verify_ztn_discovery_failed(self, node):
@@ -282,7 +282,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Discovery Failed", timeout=300)
+        con.expect("ZTN Discovery Failed", timeout=120)
         con.expect("ZTN Discovery Failed", timeout=30)
         return True
 
@@ -298,7 +298,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest from url", timeout=300)
+        con.expect("Discovered Switch Light manifest from url", timeout=120)
         con.expect("ZTN Manifest validated")
         con.expect("Booting")
         return True
@@ -358,7 +358,7 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
                             r'=> ', r'loader#', s.get_prompt()],
-                           timeout=300)
+                           timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
         if options[0] == 1:  # bash mode
@@ -1116,7 +1116,7 @@ class T5ZTN(object):
         options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell'],
-                           timeout=300)
+                           timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1146,7 +1146,7 @@ class T5ZTN(object):
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
             else:
-                s.expect(r'Clock Configuration:', timeout=300)
+                s.expect(r'Clock Configuration:', timeout=120)
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
@@ -1270,10 +1270,10 @@ class T5ZTN(object):
             if options[0] == 0:
                 helpers.log("Switch has fabric role configured. Confirming.")
                 c.send("yes")
-                c.expect(c.get_prompt(), timeout=300)
+                c.expect(c.get_prompt(), timeout=120)
             if options[0] == 2:
                 helpers.log("Rebooting all switches. Waiting for CLI prompt...")
-                c.expect(c.get_prompt(), timeout=300)
+                c.expect(c.get_prompt(), timeout=120)
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
                 helpers.log("Error rebooting the switch")
