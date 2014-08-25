@@ -10,6 +10,7 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
+Library         keywords_dev/slim/T5Platform.py
 Library         keywords/T5Utilities.py
 Library         Collections.py
 Library         keywords/Ixia.py
@@ -192,11 +193,11 @@ Trigger controller HA failover via reboot
     [Tags]              feature                            run43
 
 Spine reboot
-    Reboot spine0
+    Reboot spine0 via CLI
     [Tags]              feature         run44
 
 Leaf reboot
-    Reboot Leaf0
+    Reboot Leaf0 via CLI
     [Tags]              feature         run45
 
 Spine connect and disconnect to controller
@@ -867,7 +868,7 @@ L3 intra tenant traceroute
     BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
-    sleep                                       1
+    sleep                                       5
     BASH ping                                   h5                              10.251.2.11             count=5
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} < 50        
@@ -1239,12 +1240,12 @@ L3 dhcp request without dhcp relay enabled
     Should Not Be True                          ${value}        
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
 #    BASH ping                                   h1                              10.252.1.1              count=5
-    ${result} =                                 REST show endpoints mac         ${h1_mac}
-    Should Not Be Empty                         ${result}
-    sleep                                       1
-    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
-    Should Be True                              ${value}        
-    sleep                                       1
+#    ${result} =                                 REST show endpoints mac         ${h1_mac}
+#    Should Not Be Empty                         ${result}
+#    sleep                                       1
+#    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
+#    Should Be True                              ${value}        
+#    sleep                                       1
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     sleep                                       1
@@ -1856,8 +1857,8 @@ Change router ip address
     BASH ifup intf                              h6                              bond0       
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf1_pc2}            -1
-    BASH ifconfig ip address                            h3                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                            h4                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h4                              10.251.2.11/24          bond0
     BASH add route                              h3                              10.251.2.0/24           10.251.1.1
     BASH add route                              h4                              10.251.1.0/24           10.251.2.1
     sleep                               5   
@@ -1905,13 +1906,13 @@ Change router ip address
 #   Should Contain                              ${result}                       10.251.2.11
     REST add vns ip                             X                               X1                      10.251.1.1              24  
     sleep                                       1
-    ${result} =                                 REST get logical router segment interface               X1
-    ${cidr} =                                   Set Variable                    ${result[0]['ip-cidr']}
-    Should Be Equal                             ${cidr}                         10.251.4.1/24
+    ${result} =                                 REST get logical router segment interface               X                   X1
+    ${cidr} =                                   Set Variable                    ${result['ip-cidr']}
+    Should Be Equal                             ${cidr}                         10.251.1.1/24
     BASH delete arp                             h3                              10.251.4.1
     ${value} =                                  BASH verify arp                 h3                      10.251.4.1
     Should Not Be True                          ${value} 
-    BASH ifconfig ip address                            h3                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0   
     BASH delete route                           h3                              10.251.2.0/24           10.251.4.1
     BASH add route                              h3                              10.251.2.0/24           10.251.1.1
     BASH ping                                   h3                              10.251.2.11             count=10
@@ -2051,7 +2052,8 @@ Change tagged host endpoint IP address
     ${result} =                                 REST show endpoints mac         ${mac2}
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
 #    ${ipAddr} =                                 Get From Dictionary             ${result[0]}            ip-address
-    Should Contain                              ${ipAddr}                       10.251.3.212
+#    Should Contain                              ${ipAddr}                       10.251.3.212
+    Should match regexp                         ${ipAddr}                      (10\.251\.3\.212|10\.251\.3\.11)
     ${loss} =                                   BASH ping                       h1                      10.251.3.212            count=10
     Should Be True                              ${loss} < 20                            
     BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
@@ -2184,7 +2186,7 @@ Verify subnet mask on vns router ip
     Should Be True                              ${result}                       
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
-    Should Be True                              ${result}                       
+    Should Not Be True                          ${result}                       
     REST show endpoints 
     BASH ping                                   h6                              10.251.2.212            count=10
     ${loss} =                                   BASH ping                       h6                      10.251.2.212            count=10
@@ -2210,20 +2212,21 @@ Verify vlsm forwarding
     BASH ifup intf                              h4                              bond0   
     BASH ifup intf                              h5                              bond0   
     BASH ifup intf                              h6                              bond0           
-    REST add vns ip                             X                               X1                      10.251.0.1              17
+    REST del router intf                        X                               X3  
     REST add vns ip                             X                               X2                      10.252.0.1              25
+    REST add vns ip                             X                               X1                      10.251.0.1              17
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc2}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc1}            -1
-    BASH ifconfig ip address                            h4                              10.251.2.212/17         bond0
-    BASH ifconfig ip address                            h5                              10.252.0.211/25         bond0   
+    BASH ifconfig ip address                    h4                              10.251.2.212/17         bond0
+    BASH ifconfig ip address                    h5                              10.252.0.11/25         bond0   
     BASH add route                              h4                              10.252.0.0/25           10.251.0.1
     BASH add route                              h5                              10.251.0.0/17           10.252.0.1
     sleep                                       5   
-    BASH ping                                   h5                              10.252.0.211            count=10
+    BASH ping                                   h4                              10.252.0.11            count=10
     ${value} =                                  BASH verify arp                 h5                      10.252.0.1
-    Should Not Be True                          ${value}        
+    Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h4                      10.251.0.1
-    Should Not Be True                          ${value} 
+    Should Be True                              ${value} 
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}                       
@@ -2231,7 +2234,7 @@ Verify vlsm forwarding
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
-    ${loss} =                                   BASH ping                       h5                      10.252.0.211            count=10
+    ${loss} =                                   BASH ping                       h5                      10.251.2.212            count=10
     Should Be True                              ${loss} == 0
     BASH delete route                           h4                              10.252.0.0/25           10.251.0.1
     BASH delete route                           h5                              10.251.0.0/17           10.252.0.1
@@ -2372,9 +2375,9 @@ Verify host with different IP on vns router is not getting L3 service
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   X                               X3                      ${leaf1_pc2}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
-    BASH ifconfig ip address                            h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                            h4                              10.251.3.11/24          bond0
-    BASH ifconfig ip address                            h6                              10.251.4.11/16          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h4                              10.251.3.11/24          bond0
+    BASH ifconfig ip address                    h6                              10.251.4.11/16          bond0
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h4                              10.251.1.0/24           10.251.3.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
@@ -2596,8 +2599,8 @@ Reboot spine0 via CLI
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   X                               X2                      ${leaf1_a}              ${ixia3}                -1
-    BASH ifconfig ip address                            h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                            h6                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
@@ -3148,7 +3151,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
     sleep                                       5
-    BASH run cmd                                h5                             route -n
+    BASH run command                            h5                             route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
@@ -3670,11 +3673,11 @@ test teardown topology
     REST delete tenant                              Y
     REST delete tenant                              Z
 #   Stop Floodlight Monitor 
-    initialize host
-    BASH ifdown intf                                    h3                          bond0
-    BASH restart networking service                 h1                          timeout=60
-    BASH restart networking service                 h3                          timeout=60
-    BASH restart networking service                 h6                          timeout=60
+#    initialize host
+#    BASH ifdown intf                                    h3                          bond0
+#    BASH restart networking service                 h1                          timeout=60
+#    BASH restart networking service                 h3                          timeout=60
+#    BASH restart networking service                 h6                          timeout=60
 
 
 T5 base suite setup
@@ -3687,30 +3690,30 @@ T5 base suite setup
     #BASH network restart                            h5                                timeout=60
     #BASH restart service                            h6                                networking              timeout=60   
     sleep                                           5
-    ${result} =                                     CLI verify controller       s1                          c1      
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s1                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c2
-    Should Be True                                  ${result}       
+#    ${result} =                                     CLI verify controller       s1                          c1      
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s1                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s2                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s2                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s3                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s3                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s4                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s4                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s5                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s5                          c2
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s6                          c1
+#    Should Be True                                  ${result}
+#    ${result} =                                     CLI verify controller       s6                          c2
+#    Should Be True                                  ${result}       
     REST add portgroup                              ${leaf0_pc1}
     REST add portgroup                              ${leaf0_pc2}
     REST add portgroup                              ${leaf1_pc1}

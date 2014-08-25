@@ -18,14 +18,14 @@ Library				Collections
 
 *** Test Cases ***
 T0 Basic check
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  snapshot://extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  extensive-file
 	Compare  extensive-file  snapshot://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  running-config
 	Compare  snapshot://extensive-config  running-config
 	Compare  extensive-file  running-config
 	Cli Copy  snapshot://startup-config  running-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
 
 T1 Deleting lines
 	${command}=  Set Variable  ntp time-zone America/Los_Angeles

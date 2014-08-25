@@ -37,11 +37,120 @@ ${DINDEX}                                        1
 
 * Test Case
 TC1: Verify Configuration
-    Log   Hello World
+    verify policies
+    [Tags]  skipped
+
+TC2: Flap a random filter interface
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}
+    \    ${random_switch}=  Evaluate  random.randint(4, 18)  random,sys      
+    \    Log  ${random_switch}     
+    \    ${random_interface}=  Evaluate  random.randint(13, 48)  random,sys    
+    \    Log  ${random_interface}
+    \    ${random_sleep_1}=  Evaluate  random.randint(15, 90)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    ${intf_name}=  Catenate  SEPARATOR=  ethernet  ${random_interface}
+    \    ${switch_name}=  Catenate  SEPARATOR=  s  ${random_switch}
+    \    cli disable interface  ${switch_name}  ${intf_name}
+    \    sleep  ${random_sleep_1}
+    \    cli enable interface  ${switch_name}  ${intf_name}
+    \    verify policies
+    \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
+    \    Log  ${random_sleep_2}
+    \    sleep  ${random_sleep_2}         
+    [Tags]  flap-filter          
+
+TC3: Flap a random delivery interface
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}
+    \    ${random_switch}=  Evaluate  random.randint(2, 3)  random,sys      
+    \    Log  ${random_switch}     
+    \    ${random_interface}=  Evaluate  random.randint(13, 48)  random,sys    
+    \    Log  ${random_interface}
+    \    ${random_sleep_1}=  Evaluate  random.randint(15, 90)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    ${intf_name}=  Catenate  SEPARATOR=  ethernet  ${random_interface}
+    \    ${switch_name}=  Catenate  SEPARATOR=  s  ${random_switch}
+    \    cli disable interface  ${switch_name}  ${intf_name}
+    \    sleep  ${random_sleep_1}
+    \    cli enable interface  ${switch_name}  ${intf_name}
+    \    verify policies
+    \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
+    \    Log  ${random_sleep_2}
+    \    sleep  ${random_sleep_2}         
+    [Tags]  flap-delivery 
+
+
+TC4: Flap a random core interface
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}    
+    \    ${random_interface}=  Evaluate  random.randint(2, 18)  random,sys    
+    \    Log  ${random_interface}
+    \    ${random_sleep_1}=  Evaluate  random.randint(15, 90)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    ${intf_name}=  Catenate  SEPARATOR=  port-channel  ${random_interface}
+    \    cli disable interface  s1  ${intf_name}
+    \    sleep  ${random_sleep_1}
+    \    cli enable interface  s1  ${intf_name}
+    \    verify policies
+    \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
+    \    Log  ${random_sleep_2}
+    \    sleep  ${random_sleep_2}         
+    [Tags]  flap-core 
+
+TC5: Reboot random filter switch at random interval between 5 and 10 minutes
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}
+    \    ${random_switch}=  Evaluate  random.randint(4, 18)  random,sys      
+    \    Log  ${random_switch}
+    \    ${switch_name}=  Catenate  SEPARATOR=  s  ${random_switch}    
+    \    ${random_sleep_1}=  Evaluate  random.randint(300, 600)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    cli restart switch  ${switch_name}  save_config=yes
+    \    sleep  ${random_sleep_1}
+    \    verify policies
+    [Tags]  filter-switch-restart 
+
+TC6: Reboot random delivery switch at random interval between 5 and 10 minutes
+    : FOR    ${INDEX}    IN RANGE   1  20   
+    \    Log    ${INDEX}
+    \    ${random_switch}=  Evaluate  random.randint(2, 3)  random,sys      
+    \    Log  ${random_switch}
+    \    ${switch_name}=  Catenate  SEPARATOR=  s  ${random_switch}    
+    \    ${random_sleep_1}=  Evaluate  random.randint(300, 600)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    cli restart switch  ${switch_name}  save_config=yes
+    \    sleep  ${random_sleep_1}
+    \    verify policies
+    [Tags]  filter-switch-restart
+
+TC7: Execute HA Failover at random interval between 5 and 10 minutes
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}    
+    \    ${random_sleep_1}=  Evaluate  random.randint(300, 600)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    rest execute ha failover
+    \    sleep  ${random_sleep_1}
+    \    verify policies
+    sleep  600    
+    [Tags]  failover 
+
+TC8: Reboot master controller at random interval between 5 and 10 minutes
+    : FOR    ${INDEX}    IN RANGE   1  100   
+    \    Log    ${INDEX}    
+    \    ${random_sleep_1}=  Evaluate  random.randint(300, 600)  random,sys    
+    \    Log  ${random_sleep_1}    
+    \    restart controller  Master
+    \    sleep  ${random_sleep_1}
+    \    verify policies
+    sleep  600    
+    [Tags]  master-restart 
+
 
 * Keyword
 
 halt suite setup
+    #base suite setup
     ${disable_tunnel}=  rest disable feature  tunneling
     Should be true  ${disable_tunnel} 
     ${disable_overlap}=  rest disable feature  overlap
@@ -65,23 +174,34 @@ halt suite setup
     rest add switch alias  s15  ${switch_alias_15}
     rest add switch alias  s16  ${switch_alias_16}
     rest add switch alias  s17  ${switch_alias_17}
-    : FOR    ${INDEX}    IN RANGE   2  4   
-    \    Log    ${INDEX}
-    \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
-    \    setup delivery switch   ${switch}
+    #: FOR    ${INDEX}    IN RANGE   2  4   
+    #\    Log    ${INDEX}
+    #\    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    #\    setup delivery switch   ${switch}
+    #: FOR    ${INDEX}    IN RANGE   4  18   
+    #\    Log    ${INDEX}
+    #\    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
+    #\    setup filter switch   ${switch}
+    #: FOR    ${INDEX}    IN RANGE   1  36      
+    #\    Log    ${INDEX}
+    #\    ${d1intf}=  Catenate  SEPARATOR=-   s2  ${INDEX}    
+    #\    ${d2intf}=  Catenate  SEPARATOR=-   s3  ${INDEX}    
+    #\    setup bigtap policies  ${INDEX}  ${d1intf}  ${d2intf}   
+
+verify policies
     : FOR    ${INDEX}    IN RANGE   4  18   
     \    Log    ${INDEX}
     \    ${switch}=  Catenate  SEPARATOR=  s  ${INDEX}
-    \    setup filter switch   ${switch}
-    : FOR    ${INDEX}    IN RANGE   1  36      
+    \    loop verify policies  ${switch}
+    
+loop verify policies  [Arguments]  ${switch}
+    : FOR    ${INDEX}    IN RANGE   1  36   
     \    Log    ${INDEX}
-    \    ${d1intf}=  Catenate  SEPARATOR=-   s2  ${INDEX}    
-    \    ${d2intf}=  Catenate  SEPARATOR=-   s3  ${INDEX}    
-    \    setup bigtap policies  ${INDEX}  ${d1intf}  ${d2intf}
-    sleep  600   
-
-
-        
+    \    ${policy_identifier}=  Catenate  SEPARATOR=-  ${switch}  ${INDEX}                              
+    \    ${policy}=  Catenate  SEPARATOR=-  halt-policy  ${policy_identifier}
+    \    ${verify_policy1}=  rest verify bigtap policy  ${policy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy1}
+            
 setup filter switch  [Arguments]  ${switch}
     : FOR    ${INDEX}    IN RANGE   13  49      
     \    Log    ${INDEX}

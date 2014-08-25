@@ -64,8 +64,8 @@ Suite Setup
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
-	Reboot Switches From CLI
-	Failover
+	Run Keyword and Ignore Error  Reboot Switches From CLI
+	Run Keyword and Ignore Error  Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
@@ -80,6 +80,7 @@ Test Setup
 Test Teardown
 	Sleep  15
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
+	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
 	Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
