@@ -412,6 +412,34 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 #            return data
         helpers.log("data: %s" % data)
         return data
+    
+    def rest_show_endpoints_ip_state(self, mac):
+        '''
+            GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="00:00:99:00:00:32"]
+            Input: mac address of endpoint
+            Return: state of endpoints IP address if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+#        str1 = mac.replace(":", "%3A")
+#        str3 = str2.replace("\n", "")
+#        str4 = str3.replace("\r", "")
+#        str1 = str4.replace(" ", "")
+#        mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D"
+#        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoints%s' % (mac_addr)
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
+
+        c.rest.get(url)
+        helpers.log("Output: %s" % c.rest.result_json())
+        data = c.rest.content()
+        if "ip-address" in data[0]:
+            state == data[0]["ip-address"][0]["ip-state"]
+            return state
+        else:    
+            return False
+                
+    
 
     def rest_count_endpoints_mac(self):
         data = self.rest_show_endpoints()
