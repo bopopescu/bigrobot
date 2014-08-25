@@ -285,20 +285,17 @@ T7.33.6. Verify that decommissioning the active node from the cluster does not i
 ### Upgrade - only a few general test cases
 # There is a separate test plan for upgrade process
 T8.1. Pre-staging - verify that works
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
 T8.2. Pre-staging - check behavior when downloading image for pre-staging fails
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
 T8.3. Pre-staging - verify that pre-staging result (success/fail) is visible from controller
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
 T8.4. Pre-staging - verify that pre-staging works if switches connected to controller A, and there was a failover to controller B
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
+# Pre-staging not supported in T5 Release
 T8.5. Upgrade Switch Light Installer
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T8.6. Check if upgrade is possible when not all switches are in provisioned mode
 	Manual Untested
 	[Tags]  manual-untested
@@ -311,8 +308,8 @@ T9.2. Verify that switch operational state can be viewed on the switch
 	Manual Passed
 	[Tags]  manual
 T9.3. Verify that switch configured state can be viewed on the controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.4. Verify that switch operational state can be viewed on the controller
 	Manual Untested
 	[Tags]  manual-untested
