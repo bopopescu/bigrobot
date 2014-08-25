@@ -52,6 +52,7 @@ def test_and_install_package():
                 'robotframework': 'robot',
                 'celery': 'celery',
                 'xmltodict': 'xmltodict',
+                'robotframework-seleniumlibrary': "SeleniumLibrary"
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
                 }
