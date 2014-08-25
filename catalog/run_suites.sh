@@ -44,13 +44,12 @@ rm -rf $BIGROBOT_LOG_PATH
 for x in `cat $f`; do
     echo Running $x
     y=`echo $x | sed 's/.txt//'`
-    echo $y
-    export BIGROBOT_SUITE=$y
 
     # Notes:
-    #   We include the test cases which are tagged as 'manual-untested'
+    #   We need to count the test cases which are tagged as 'manual-untested'
+    #   as well.
     set -x
-    ../bin/gobot test --dryrun --include-manual-untested
+    BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
     set +x
 done
 
