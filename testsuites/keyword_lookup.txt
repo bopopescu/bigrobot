@@ -10,6 +10,8 @@ Library           Screenshot.py
 Library           String.py
 Library           Telnet.py
 Library           XML.py
+# 3rd party Robot keyword libraries
+Library           SeleniumLibrary
 # BSN keyword libraries
 Library           keywords/AppController.py
 Library           keywords/BigChain.py
