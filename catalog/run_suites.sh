@@ -45,6 +45,8 @@ for x in `cat $f`; do
     echo Running $x
     y=`echo $x | sed 's/.txt//'`
 
+    ls -la ${y}*
+
     # Notes:
     #   We need to count the test cases which are tagged as 'manual-untested'
     #   as well.
