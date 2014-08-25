@@ -149,8 +149,8 @@ T6.30. Have DNS servers configured differently on two controllers in cluster - c
 	[Tags]  manual
 	# nothing bad happens
 T6.31. Check REST API call to get inventory of images at switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.32. Confirm that switch in stand-by mode sends NO packet-ins to the controller (before t5_pipeline_mode message is sent)
 	Manual Untested
 	[Tags]  manual-untested
@@ -311,8 +311,8 @@ T9.3. Verify that switch configured state can be viewed on the controller
 	Manual Passed
 	[Tags]  manual
 T9.4. Verify that switch operational state can be viewed on the controller
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T9.5. Verify that all switch-related 'show' commands are accessible from the controller
 	Manual Passed
 	[Tags]  manual
@@ -324,8 +324,8 @@ T9.7. Verify that admin can view version of SL running on each switch
 	Manual Passed
 	[Tags]  manual
 T9.8. ? Verify that admin can view all images stored on flash at given switch
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 ### Questions to ask
 # Separate ZTN log
