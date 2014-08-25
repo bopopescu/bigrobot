@@ -84,13 +84,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"]/shutdown {}
                 DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"]/shutdown {}
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"]/shutdown {}
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]/shutdown' % (tenant, tenantIntf)
         try:
             c.rest.delete(url, {})
         except:
@@ -111,13 +112,14 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
                 `netmask`       vns subnet mask
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"] {"shutdown": true}
                 PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"] {"shutdown": true}
+                PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/tenant-interface[remote-tenant="system"] {"shutdown": true}                
                 Return: true if configuration is successful, false otherwise
         '''
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[tenant-name="%s"]' % (tenant, tenantIntf)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/tenant-interface[remote-tenant="%s"]' % (tenant, tenantIntf)
         try:
             c.rest.patch(url, {"shutdown": True})
         except:
@@ -530,11 +532,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.post(url, {"ip-address": nexthop})
         except:
-            helpers.test_failure(c.rest.error())
+            #helpers.test_failure(c.rest.error())
+            return False
         else:
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-
+            #return c.rest.content()
+            return True
 
     def rest_delete_nexthopGroup_ip(self, tenant, groupName, nexthop):
         '''Delete nexthop IP in nexthop group"
@@ -557,11 +560,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 #            c.rest.put(url, {"ip-address": nexthop})
             c.rest.delete(url, {})
         except:
-            helpers.test_failure(c.rest.error())
+            #helpers.test_failure(c.rest.error())
+            return False
         else:
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-
+            #return c.rest.content()
+            return True
 
 
     def rest_add_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
@@ -881,7 +885,7 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y
             return c.rest.content()
 
 
-    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip, dhcpcircuitid=None):
+    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip=None, dhcpcircuitid=None):
         '''Delete dhcp server "
 
             Input:
@@ -889,12 +893,6 @@ PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="Y
                 `vnsname`         name of vns interface
                 `dhcpserverip`       DHCP server IP, can be anything since it will delete everything under the vns
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay {"dhcp-relay-enable": false}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay done 0:00:00.008562
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip {}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip done 0:00:00.008065
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interface%5Bsegment%3D%22Z1%22%5D/dhcp-relay/dhcp-relay-enable {}
-
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/segment-interface[segment="B1"]/dhcp-server-ip {}
 <<<<<<< HEAD
 
@@ -904,15 +902,25 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/server-ip' % (tenant, vnsname)
+        if dhcpserverip is not None:
+            url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay[server-ip="%s"]' % (tenant, vnsname, dhcpserverip)
+            c.rest.get(url1)
+            data = c.rest.content()
+            helpers.log ("result: %s" % helpers.prettify(data)) 
+            if len(data) == 0:
+                helpers.log ("dhcp server ip is not configured on this segment") 
+                return False
         try:
 
 #            self.rest_disable_dhcp_relay(tenant, vnsname)
             c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
+            return False
         else:
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
+            #return c.rest.content()
+            return True
 
     def rest_show_forwarding_switch_l3_host_route(self, switch):
         '''
@@ -930,21 +938,31 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         else:
             return c.rest.content()
 
-    def rest_show_forwarding_switch_l3_cidr_route(self, switch):
+    def rest_show_forwarding_switch_l3_cidr_route(self, switch=None):
         '''
     GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/switch%5Bswitch-name%3D%22leaf0a%22%5D/l3-cidr-route-table
+    GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table
         '''
         t = test.Test()
         c = t.controller('master')
-
-        helpers.test_log("Input arguments: switch = %s " % (switch))
-        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % (switch)
-        try:
-            c.rest.get(url)
-        except:
-            helpers.test_failure(c.rest.error())
+        if switch is not None:    
+            helpers.test_log("Input arguments: switch = %s " % (switch))
+            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % (switch)
+            try:
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+            else:
+                return c.rest.content()
         else:
-            return c.rest.content()
+            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table'
+            try:
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+            else:
+                return c.rest.content()
+            
 
     def rest_show_l3_cidr_table(self):
         '''
@@ -1268,7 +1286,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                          " action = %s " \
                          " ip-proto = %s " \
                          " segment-interface = %s" \
-                         " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
+                         " next-hop-group = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, segment, next_hop))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/policy-list[name="%s"]/rule[seq=%s]' % (tenant, polname, seqnum)
         if (next_hop is None and ip_proto is None):
             if (srcdata is not None and dstdata is not None):
@@ -1376,7 +1394,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is not None and action is "next-hop"):
+        if (next_hop is not None and ip_proto is not None and action == "next-hop"):
             if (srcdata is not None and dstdata is not None):
                 if (segment is not None):
                     data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop, "segment-interface":segment}
@@ -1445,74 +1463,76 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                     return True
 
-        if (next_hop is not None and ip_proto is None and action is "next-hop"):
-            if (srcdata is not None and dstdata is not None):
-                if (segment is not None):
-                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+        if (next_hop is not None and action == "next-hop" ):
+            if (ip_proto is None):
+                if (srcdata is not None and dstdata is not None):
+                    if (segment is not None):
+                        helpers.test_log("next hop is not none, ip proto is none and action is next-hop")
+                        data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (srcdata is None):
-                if (segment is not None):
-                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                if (srcdata is None):
+                    if (segment is not None):
+                        data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (dstdata is None):
-                if (segment is not None):
-                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (dstdata is None):
+                    if (segment is not None):
+                        data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
-            if (dstdata is None and srcdata is None):
-                if (segment is not None):
-                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
-                else:
-                    data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                if (dstdata is None and srcdata is None):
+                    if (segment is not None):
+                        data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    else:
+                        data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
 
-                try:
-                    c.rest.put(url, data)
+                    try:
+                        c.rest.put(url, data)
 
-                except:
+                    except:
                     # helpers.test_failure(c.rest.error())
-                    return False
-                else:
+                        return False
+                    else:
                     # helpers.test_log("Output: %s" % c.rest.result_json())
                     # return c.rest.content()
-                    return True
+                        return True
 
     def rest_show_forwarding_dhcp_table(self):
         '''
@@ -1585,4 +1605,87 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             # helpers.test_log("Output: %s" % c.rest.result_json())
             # return c.rest.content()
             return True
+
+
+    def rest_get_l3_cidr_route_info(self, ipaddress, netMask):
+        '''return specific route entry in l3 cidr table
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table
+
+            Input: ip, subnet mask
+
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table' 
+        c.rest.get(url)
+        data = c.rest.content()
+#        result = helpers.from_json(data)
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) == 0:
+            return {}
+        else:
+            for entry in data:
+                helpers.log("entry is %s" % entry)
+                if entry['ip'] == ipaddress:
+                    helpers.log("Match IP address '%s'" % ipaddress)
+                    if entry['ip-mask'] == netMask:
+                        helpers.log("Match IP address '%s', netmask '%s'" % (ipaddress, netMask))
+                        return entry
+        helpers.log("no Match")
+        return {}
+
+    def rest_ecmp_nexthop_count(self, ecmpIndex):
+        ''' return number of next hop in ecmp group
+            Input: ecmp index
+            Return: count or error
+GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/ecmp-table
+            
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        count=0
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/ecmp-table' 
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) != 0:
+            for entry in data:
+                if entry['ecmp-group-id'] == ecmpIndex:
+                    count = count + 1
+        return count
+        
+
+
+
+    def rest_get_logical_router_segment_interface(self, tenant, vnsName=None):
+        '''return segment interface information 
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router/segment-interface
+            
+            Input:  segment name
+                    tenant name
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router/segment-interface' 
+        c.rest.get(url)
+        data = c.rest.content()
+#        result = helpers.from_json(data)
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) == 0:
+            return {}
+        else:
+            if vnsName is None:
+                return data
+            else:     
+                for entry in data:
+                    helpers.log("entry is %s" % entry)
+                    if entry['logical-router'] == tenant:
+                        if entry['segment'] == vnsName:
+                            helpers.log("Match segment '%s'" % vnsName)
+                            return entry
+                        
+            helpers.log("no Match")
+            return {}
 

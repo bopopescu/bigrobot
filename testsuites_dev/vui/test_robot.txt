@@ -43,6 +43,7 @@ Test Setup      base test setup
 Test Teardown   base test teardown
 #Library         Reserve
 Library         keywords/BsnCommon.py
+#Library         keywords/T5Parallel.py
 Library         keywords_dev/vui/MyTest.py
 Library         OperatingSystem
 Library         Collections
@@ -253,16 +254,37 @@ Test strip control char
     strip control char test
 
 Test regexp match
-    #[Tags]           skipped
+    [Tags]           skipped
     ${ip_address}=       set variable   1.1.1.3
     log                  ip_address=${ip_address}
     should match regexp  ${ip_address}  (1\\.1\\.1\\.2|2\\.2\\.2\\.1)
 
 Test regexp match
-    #[Tags]           skipped
+    [Tags]           skipped
     ${ip_address}=       set variable   1.1.1.2
     log                  ip_address=${ip_address}
     should match regexp  ${ip_address}  (1\\.1\\.1\\.2|2\\.2\\.2\\.1)
+
+Test multiple conditions - OR condition results in truth
+    [Tags]           skipped
+    ${a}=            set variable   ${false}
+    ${b}=            set variable   ${true}
+    should be true   ${a} == ${true} or ${b} == ${true}
+
+Test multiple conditions - AND condition results in truth
+    [Tags]           skipped
+    ${a}=            set variable   ${true}
+    ${b}=            set variable   ${true}
+    should be true   ${a} == ${true} and ${b} == ${true}
+
+Test Song's function
+    #[Tags]           skipped
+    #${result}=       match dict entries   10.253.1.0   255.255.255.0
+    ${result}=       match dict entries   10.253.1.0   255.255.254.0
+    should not be empty   ${result}
+
+#Test 1 2 3
+#    upgrade_copy_image_HA_parallel   master   blah_image.img
 
 
 * Keywords

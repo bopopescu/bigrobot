@@ -84,5 +84,7 @@ ${h2_eth1_ip}	192.168.2.21/24
 ${h3_tag_single_ip}	  192.168.2.10
 ${h4_tag_single_ip}  	192.168.2.11
 ${h2_tag_single_ip} 	192.168.2.21
+${h6_eth0}  eth2
+${h6_eth1}  eth3  
 
 

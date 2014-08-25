@@ -33,7 +33,7 @@ Intra tenant L3 tagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature         sanity      runfailed
+    [Tags]              feature         sanity      
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
@@ -53,11 +53,11 @@ Activate and deactivate router interface
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature         sanity        runfailed  
+    [Tags]                  feature         sanity          
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature         sanity          runfailed
+    [Tags]                  feature         sanity          
 
 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
@@ -138,7 +138,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature            runfailed    
+    [Tags]              feature                
 
 Delete and add router vns ip
     Delete and add router vns ip 
@@ -186,15 +186,15 @@ Verify host with different IP on vns router is not getting L3 service
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature             runfailed               
+    [Tags]              feature                            
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature              runfailed              
+    [Tags]              feature                            
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
-    [Tags]              feature         runfailed
+    [Tags]              feature         
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
@@ -202,7 +202,7 @@ Leaf connect and disconnect to controller
 
 Spine to leaf link flap
     Flap link between leaf and spine
-    [Tags]              feature         runfailed
+    [Tags]              feature         
 
 Leaf to host link flap
     Flap bond interface towards host
@@ -214,7 +214,7 @@ Restart ofad process on spine
     
 Restart ofad process on leaf    
     restart ofad on leaf
-    [Tags]              feature         runfailed
+    [Tags]              feature         
     
 L3 intra tenant traffic behavior in headless mode 
     manual passed
@@ -241,13 +241,6 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
     [Tags]                  feature         HA      dhcp-relay          runfailed
 
-Trigger controller HA failover via CLI and verify ecmp is working
-    manual untested
-    [Tags]                  manual                  feature                 ecmp                 
-
-Trigger controller HA failover via reboot and verify ecmp is working
-    manual untested
-    [Tags]                  manual          feature                 ecmp            
 
 Verify dhcp-relay functionality in headless mode
     manual passed
@@ -269,10 +262,6 @@ Verify dhcp-relay functionality after controller upgrade
     manual failed
     [Tags]                  manual          feature                 
 
-Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
-    manual untested
-    [Tags]                  manual          feature                 
-
 Verify arp agent functionality after controller HA failover via CLI
     Verify arp agent functionality after controller HA failover via CLI
     [Tags]                  feature                 HA                     runfailed         
@@ -281,16 +270,10 @@ Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
     [Tags]                  feature                                       runfailed      
     
-Verify ecmp traffic will failover and failback to more specific routes with ecmp group
-    manual untested
-    [Tags]                  manual                  feature                 ecmp        
-    
-    
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
     [Tags]                  feature                         runfailed
-    
-
+ 
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
     [Tags]                  feature                        runfailed 
@@ -1489,7 +1472,7 @@ Verify add and delete of dhcp server config works
 #    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
-    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    REST add dhcprelay circuitid                Y                               Y3                  10.252.1.9        this is a test
     ${result} =                                 REST show forwarding dhcp table
     ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     Should Be Equal                             ${circuitid}                    this is a test
@@ -3124,7 +3107,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
     sleep                                       5
-    Log =                                       BASH run cmd                    route -n
+    BASH run cmd                                h5                             route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
@@ -3495,61 +3478,112 @@ Verify blocked endpoint should be automatically cleared
     
     
 initialize host
-    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
-    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
-    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
-    BASH delete tag                             h4                              bond0.1004              soft_error=${true}
-    BASH delete tag                             h5                              bond0.1005              soft_error=${true}
-    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
-    BASH init intf                              h1                              eth1
-    BASH init intf                              h1                              eth2
-    BASH init intf                              h1                              eth3
-    BASH init intf                              h2                              eth1
-    BASH init intf                              h2                              eth2
-    BASH init intf                              h2                              eth3
-    BASH init intf                              h3                              eth1
-    BASH init intf                              h3                              eth2
-    BASH init intf                              h3                              eth3
-    BASH init intf                              h4                              eth1
-    BASH init intf                              h4                              eth2
-    BASH init intf                              h4                              eth3
-    BASH init intf                              h5                              eth1
-    BASH init intf                              h5                              eth2
-    BASH init intf                              h5                              eth3
-    BASH init intf                              h6                              em2
-    BASH init intf                              h6                              p1p1
-    BASH init intf                              h6                              p1p2
-    BASH init intf                              h1                              bond0
-    BASH init intf                              h2                              bond0
-    BASH init intf                              h3                              bond0
-    BASH init intf                              h4                              bond0
-    BASH init intf                              h5                              bond0
-    BASH init intf                              h6                              bond0
-    BASH ifdown intf                            h1                              bond0
-    BASH ifdown intf                            h2                              bond0
-    BASH ifdown intf                            h3                              bond0
-    BASH ifdown intf                            h4                              bond0
-    BASH ifdown intf                            h5                              bond0
-    BASH ifdown intf                            h6                              bond0   
-    BASH release dhcpv4 address                 h1                              bond0
-    BASH release dhcpv4 address                 h2                              bond0
-    BASH release dhcpv4 address                 h3                              bond0
-    BASH release dhcpv4 address                 h4                              bond0
-    BASH release dhcpv4 address                 h5                              bond0
-    BASH release dhcpv4 address                 h6                              bond0
-    ${result} =                                 BASH run command                h1                     ifconfig
-    log                                         host1 ifconfig is ${result}
-    ${result} =                                 BASH run command                h2                     ifconfig
-    log                                         host2 ifconfig is ${result}
-    ${result} =                                 BASH run command                h3                     ifconfig
-    log                                         host3 ifconfig is ${result}
-    ${result} =                                 BASH run command                h4                     ifconfig
-    log                                         host4 ifconfig is ${result}
-    ${result} =                                 BASH run command                h5                     ifconfig
-    log                                         host5 ifconfig is ${result}
-    ${result} =                                 BASH run command                h6                     ifconfig
-    log                                         host6 ifconfig is ${result}
-    BASH stop service                           h1                              isc-dhcp-server
+    BASH run command                                h1                                ifdown bond0
+    BASH run command                                h2                                ifdown bond0
+    BASH run command                                h3                                ifdown bond0
+    BASH run command                                h4                                ifdown bond0
+    BASH run command                                h5                                ifdown bond0
+    BASH run command                                h6                                ifdown bond0
+    sleep                                           1
+    BASH run command                                h1                                ifup eth2
+    sleep                                           1
+    BASH run command                                h1                                ifup eth3
+    BASH run command                                h2                                ifup eth2
+    sleep                                           1
+    BASH run command                                h2                                ifup eth3
+    BASH run command                                h3                                ifup eth2
+    sleep                                           1
+    BASH run command                                h3                                ifup eth3
+    BASH run command                                h4                                ifup eth2
+    sleep                                           1
+    BASH run command                                h4                                ifup eth3
+    BASH run command                                h5                                ifup eth2
+    sleep                                           1
+    BASH run command                                h5                                ifup eth3
+    BASH run command                                h6                                ifup eth2
+    sleep                                           1
+    BASH run command                                h6                                ifup eth3
+    sleep                                           1
+    BASH run command                                h6                                ifup p1p1
+    sleep                                           1
+    BASH run command                                h6                                ifup p1p2
+    
+
+    BASH ifup intf                              h1                                bond0
+    BASH ifup intf                              h2                                bond0
+    BASH ifup intf                              h3                                bond0
+    BASH ifup intf                              h4                                bond0
+    BASH ifup intf                              h5                                bond0
+    BASH ifup intf                              h6                                bond0
+    BASH init intf                              h1                                bond0
+    BASH init intf                              h2                                bond0
+    BASH init intf                              h3                                bond0
+    BASH init intf                              h4                                bond0
+    BASH init intf                              h5                                bond0
+    BASH init intf                              h6                                bond0
+    BASH stop service                           h1                                isc-dhcp-server
+    BASH stop service                           h2                                isc-dhcp-server
+    BASH stop service                           h3                                isc-dhcp-server
+
+
+
+
+#    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
+#    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
+#    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
+#    BASH delete tag                             h4                              bond0.1004              soft_error=${true}
+#    BASH delete tag                             h5                              bond0.1005              soft_error=${true}
+#    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
+    # BASH init intf                              h1                              eth1
+    # BASH init intf                              h1                              eth2
+    # BASH init intf                              h1                              eth3
+    # BASH init intf                              h2                              eth1
+    # BASH init intf                              h2                              eth2
+    # BASH init intf                              h2                              eth3
+    # BASH init intf                              h3                              eth1
+    # BASH init intf                              h3                              eth2
+    # BASH init intf                              h3                              eth3
+    # BASH init intf                              h4                              eth1
+    # BASH init intf                              h4                              eth2
+    # BASH init intf                              h4                              eth3
+    # BASH init intf                              h5                              eth1
+    # BASH init intf                              h5                              eth2
+    # BASH init intf                              h5                              eth3
+    # BASH init intf                              h6                              em2
+    # BASH init intf                              h6                              p1p1
+    # BASH init intf                              h6                              p1p2
+    # BASH init intf                              h1                              bond0
+    # BASH init intf                              h2                              bond0
+    # BASH init intf                              h3                              bond0
+    # BASH init intf                              h4                              bond0
+    # BASH init intf                              h5                              bond0
+    # BASH init intf                              h6                              bond0
+    # BASH ifdown intf                            h1                              bond0
+    # BASH ifdown intf                            h2                              bond0
+    # BASH ifdown intf                            h3                              bond0
+    # BASH ifdown intf                            h4                              bond0
+    # BASH ifdown intf                            h5                              bond0
+    # BASH ifdown intf                            h6                              bond0   
+    # BASH release dhcpv4 address                 h1                              bond0
+    # BASH release dhcpv4 address                 h2                              bond0
+    # BASH release dhcpv4 address                 h3                              bond0
+    # BASH release dhcpv4 address                 h4                              bond0
+    # BASH release dhcpv4 address                 h5                              bond0
+    # BASH release dhcpv4 address                 h6                              bond0
+    # ${result} =                                 BASH run command                h1                     ifconfig
+    # log                                         host1 ifconfig is ${result}
+    # ${result} =                                 BASH run command                h2                     ifconfig
+    # log                                         host2 ifconfig is ${result}
+    # ${result} =                                 BASH run command                h3                     ifconfig
+    # log                                         host3 ifconfig is ${result}
+    # ${result} =                                 BASH run command                h4                     ifconfig
+    # log                                         host4 ifconfig is ${result}
+    # ${result} =                                 BASH run command                h5                     ifconfig
+    # log                                         host5 ifconfig is ${result}
+    # ${result} =                                 BASH run command                h6                     ifconfig
+    # log                                         host6 ifconfig is ${result}
+    # BASH stop service                           h1                              isc-dhcp-server
+    
     
 
 
@@ -3616,6 +3650,7 @@ test teardown topology
     REST delete tenant                              Z
 #   Stop Floodlight Monitor 
     initialize host
+    BASH ifdown intf                                    h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60

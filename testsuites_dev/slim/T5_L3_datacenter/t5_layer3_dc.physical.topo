@@ -201,3 +201,33 @@ h10:
    password: bsn
     
 
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.5
+  tcl_server_ip: 10.8.24.22
+  ports:
+    a:
+      name: 12/17
+### Connected to Arista1 port 33
+#    b:
+#      name: 12/18
+    c:
+      name: 12/19
+### Connected to Leaf0-a port 33      
+    d:
+      name: 12/20
+### Connected to Leaf0-b port 33      
+    e:
+      name: 12/21
+### Connected to Leaf1-a port 33      
+    f:
+      name: 12/22
+### Connected to Arista2 port 33      
+    g:
+      name: 12/23
+### Connected to Leaf2-a port 33      
+    h:
+      name: 12/24
+### Connected to Leaf2-b port 33      
+      
+        

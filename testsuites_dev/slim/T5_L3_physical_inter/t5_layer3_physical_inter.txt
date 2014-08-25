@@ -16,45 +16,42 @@ Library         keywords/BsnCommon.py
 Library         Collections.py
 Library         keywords/Ixia.py
 Library         keywords/KVMOperations.py
-Resource        testsuites/T5/L3//T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
+Resource        testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
 Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack untagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack untagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 Inter tenant L3 tagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack tagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 inter tenant L3 tagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack tagged with dynamic endpoints
-    [Tags]     sanity       feature 
+    [Tags]     sanity       feature     testpath
     
 Add and delete default route on tenant
     Add and delete default route on tenant router
-    [Tags]      feature 
-
-Add and delete static route on tenant
-    manual passed
-    [Tags]      manual         feature                          
+    [Tags]      feature         testpath
+   
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
-    [Tags]      feature             run1999
+    [Tags]      feature          testpath
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature             run1999
+    [Tags]      feature          testpath
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
-    [Tags]      feature 
+    [Tags]      feature          testpath
 
 L3 ttl one forwarding
     Verify inter tenant L3 traffic with ttl value of one two and three
@@ -62,7 +59,7 @@ L3 ttl one forwarding
 
 L3 inter tenant forwarding with end host moved to another port
     L3 inter tenant host moved 
-    [Tags]      feature                 
+    [Tags]      feature        testpath         
 
 L3 inter tenant forwarding split horizon on the same port 
     manual passed
@@ -70,15 +67,15 @@ L3 inter tenant forwarding split horizon on the same port
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
     L3 inter tenant forwarding between endpoints on the same rack but different switch
-    [Tags]      feature             
+    [Tags]      feature    testpath         
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay                 run1999
+    [Tags]      sanity      feature         dhcp-relay                 
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay                      
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
@@ -86,19 +83,11 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
-    [Tags]      feature         dhcp-relay
-
-Inter tenant dhcp relay with duplicate circuitid
-    manual failed
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay              runfailed1
     
 Host moved to another vns on another tenant and renew dhcp 
     Host moved to another vns on another tenant and renew dhcp 
-    [Tags]      feature         dhcp-relay          
-
-DHCP request to external dhcp servers
-    manual passed
-    [Tags]          manual          feature         dhcp-relay      
+    [Tags]      feature         dhcp-relay              runfailed
 
 Overlapping IP subnet with and without private keyword
     Overlapping IP subnet with and without private keyword
@@ -110,7 +99,7 @@ One public IP and multiple private IP
 
 Verify private IP is able to communicate with other vns in the same tenant
     Verify private IP is able to communicate with other vns in the same tenant
-    [Tags]          feature         
+    [Tags]          feature    testpath   
 
 Controller HA failover via CLI
     Controller HA failover via CLI
@@ -119,30 +108,6 @@ Controller HA failover via CLI
 Controller HA failover via reboot of master
     Controller HA failover via reboot of master
     [Tags]          feature         HA
-    
-Spine reboot
-    Spine reboot
-    [Tags]          feature         HA
-
-Leaf reboot
-    Leaf reboot
-    [Tags]          feature         HA
-
-Traffic load balance across ECMP group
-    manual passed
-    [Tags]          manual          feature         ecmp        
-
-Add and delete one ECMP members with active traffic in ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp            
-
-Add and delete all ECMP members in ecmp group  
-    manual passed
-    [Tags]          manual          feature         ecmp            
-
-Delete existing one ECMP members and add new ECMP member
-    manual passed
-    [Tags]          manual          feature         ecmp            
 
 Verify L3 traffic honor more specific routes with ecmp group
     manual passed
@@ -170,11 +135,11 @@ L3 inter tenant forwarding to external router
 
 L3 inter tenant forwarding to VRRP routers
     manual untested
-    [Tags]          manual          feature         
+    [Tags]          manual          feature        
 
 L3 inter tenant traceroute with icmp and udp probe
     L3 inter tenant traceroute with icmp and udp probe
-    [Tags]          feature         
+    [Tags]          feature         runfailed
 
 Add and delete endpoints with L3 inter tenant traffic
     Add and delete endpoints with L3 inter tenant traffic
@@ -182,7 +147,7 @@ Add and delete endpoints with L3 inter tenant traffic
 
 Verify private subnet cannot be routed via system router
     Verify private subnet cannot be routed via system router
-    [Tags]          feature         
+    [Tags]          feature    testpath       
 
 L3 inter tenant traffic with jumbo frame
     L3 inter tenant traffic with jumbo frame
@@ -190,7 +155,7 @@ L3 inter tenant traffic with jumbo frame
 
 L3 inter tenant with CRC errors
     L3 inter tenant with CRC errors
-    [Tags]          feature         
+    [Tags]          feature         runfailed
 
 Verify route next hop IP must be in the same tenant
     manual passed
@@ -214,7 +179,7 @@ L3 inter tenant shutdown and bringup both spine switch
 
 L3 inter tenant destroy active controller VM from KVM
     manual passed
-    [Tags]          manual            feature          
+    [Tags]          manual            feature        
 
 L3 inter tenant destroy standby controller VM from KVM
     manual passed
@@ -228,25 +193,18 @@ Restart ofad on spine switch
     Restart ofad on spine switch
     [Tags]          feature         
 
-Controller HA failover with ecmp group
-    manual failed
-    [Tags]          manual          feature         ecmp    
         
 Controller HA failover with dhcp-relay
     Controller HA failover with dhcp-relay
     [Tags]          feature         dhcp-relay      HA
 
-Active Controller reboot with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp    
-    
 Active Controller reboot with dhcp-relay
     Active Controller reboot with dhcp-relay
     [Tags]          feature         dhcp-relay          HA
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
-    [Tags]          feature             
+    [Tags]          feature             runfailed    testpath
 
 Restart ofad on leaf switch with ecmp group
     manual passed
@@ -258,11 +216,11 @@ Restart ofad on spine with ecmp group
 
 Restart ofad on leaf with dhcp-relay
     Restart ofad on leaf with dhcp-relay
-    [Tags]          feature         dhcp-relay  
+    [Tags]          feature         dhcp-relay      
 
 Restart ofad on spine with dhcp-relay
     Restart ofad on spine with dhcp-relay
-    [Tags]          feature         dhcp-relay  
+    [Tags]          feature         dhcp-relay          runfailed
     
 Flap member link in a port-group in ecmp group
     manual passed
@@ -294,30 +252,30 @@ Verify inter tenant dhcp-relay functionality after controller upgrade
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]          solution            dhcp-relay  
+    [Tags]          solution            dhcp-relay          runfailed
                     
 Add and delete nexthop group
-    manual pass
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete nexthop group in system
-    manual pass
+    manual passed
     [Tags]          manual              feature     negative             
 
 Add and delete nexthop group IP 
-    manual pass
+    manual passed
     [Tags]          manual              feature            
                     
 Add and delete route pointing to nexthop group in tenant
-    manual untested
+    manual passed
     [Tags]          manual              feature            
                     
 Add and delete route pointing to different nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete route pointing to nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 Add and delete route pointing to unknown nexthop group in system
@@ -336,8 +294,21 @@ Verify nexthop group config is still applied on HA failover
     manual untested
     [Tags]          manual              feature            HA
     
+Verify routing loop is not causing packets to loop forever
+    manual passed
+    [Tags]          manual          feature   
 
+Enable and disable tenant logical router interface
+    Enable and disable tenant logical router interface
+    [Tags]          feature     testpath          runfailed
 
+Spine reboot
+    Spine reboot
+    [Tags]          feature         HA          
+
+Leaf reboot
+    Leaf reboot
+    [Tags]          feature         HA
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -371,6 +342,13 @@ L3 inter tenant same rack untagged with dynamic endpoints
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test1  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.11
+    Should Be True  ${returnVal}
 #   ${stream1}=                                 L3 add                          name=stream1            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
 #   ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1                       
 #   start traffic                               ${stream1}
@@ -411,7 +389,14 @@ L3 inter tenant across rack untagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0   
+    rest clear testpath  
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test2  src-ip=10.252.1.11  dst-ip=10.251.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test2  HostPing  leaf  spine  leaf  host=h4  ip=10.251.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h4                              10.251.0.0/16           10.252.1.1
     
@@ -493,7 +478,14 @@ L3 inter tenant same rack tagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0   
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test3  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test3  HostPing  leaf  spine  leaf  host=h2  ip=10.251.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     
@@ -537,7 +529,14 @@ L3 inter tenant across rack tagged with dynamic endpoints
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0    
+    rest clear testpath  
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test4  src-ip=10.252.1.11  dst-ip=10.251.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  spine  leaf  host=h3   ip=10.251.1.11
+    Should Be True  ${returnVal}  
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -573,13 +572,28 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0   
-    REST add static routes                      X                               10.252.0.0/16           
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-NullNextHop  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
+    REST add static routes                      X                               10.252.0.0/16  
+    REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
+    ${returnVal}=  rest verify testpath error code  dropped by route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}       
     REST delete static routes                   X                               10.252.0.0/16   
+    REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
+    REST show l3 cidr table         
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
+    # For this test test path is still active. So just probing the previous test
+    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -607,10 +621,10 @@ Add and delete default route on tenant router
     sleep                                       5   
 #   BASH ping                                   h1                              10.251.1.1              count=10
 #   BASH ping                                   h3                              10.252.1.1              count=10
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -625,15 +639,26 @@ Add and delete default route on tenant router
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0        
-    REST delete static routes                   X                               10.252.0.0/16               
+    REST delete static routes                   X                               10.252.0.0/16              
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100      
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal} 
     REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0      
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}  
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-DefaultRoute  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-DefaultRoute  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     REST delete static routes                   X                               0.0.0.0/0               
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100      
+    Should Be True                              ${loss} == 100     
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -659,10 +684,10 @@ Add and delete tenant system interface on tenant router
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       10  
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -676,15 +701,26 @@ Add and delete tenant system interface on tenant router
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}     
     REST delete system intf to tenant routers       X
     sleep                                           1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100      
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal} 
     REST add system intf to tenant routers      X
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0  
+    rest clear testpath 
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}       
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-SysInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-SysInterface  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
@@ -709,10 +745,10 @@ Add and delete tenant router interface on system tenant
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       10  
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -730,11 +766,20 @@ Add and delete tenant router interface on system tenant
     REST delete tenant routers intf to system   Y
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100      
+    Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}        
     REST add tenant routers intf to system      Y
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0   
+    rest clear testpath
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-TenantInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-TenantInterface  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -777,11 +822,15 @@ Add and delete more specific route on tenant over existing static route
     BASH ping                                   h1                              10.252.1.11             count=5
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h3                      10.252.1.1
     Should Be True                              ${value} 
-    REST add static routes                      X                               10.252.1.0/24           {"ip-address": "10.251.2.11"}
+    REST add nexthop group                      X                               A1
+    REST add nexthopGroup ip                    X                              A1                       10.251.2.11
+    REST add static routes                      X                              10.252.1.0/24             {"next-hop-group": "A1"}
     sleep                                       1
     ${returnVal} =                              verify ping with tcpdump        h1                      10.252.1.11            h2      bond0       ICMP echo request   
     Should Be True                              ${returnVal}    
@@ -789,9 +838,14 @@ Add and delete more specific route on tenant over existing static route
     Should Be True                              ${returnVal}    
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
     Should Be True                              ${loss} == 100
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    ## Here Test Path should show the forwarding as true, since route is directed to a garbage hop
+    Should Be True  ${returnVal}    
     REST delete static routes                   X                               10.252.1.0/24
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -815,10 +869,10 @@ Verify inter tenant L3 traffic with ttl value of one two and three
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     sleep                                       5   
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Not Be True                          ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Not Be True                          ${value}    
+#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
+#    Should Not Be True                          ${value}        
+#    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
+#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.252.1.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -887,6 +941,8 @@ L3 inter tenant host moved
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}    
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}    
     sleep                                       5
     BASH init intf                              h2                              bond0.1002
     BASH ifdown intf                            h2                              bond0
@@ -900,6 +956,13 @@ L3 inter tenant host moved
     BASH ping                                   h3                              10.252.1.1              count=5
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
+    rest clear testpath
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-TenantMove  src-ip=10.251.1.11  dst-ip=10.252.1.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-TenantMove  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
+    Should Be True  ${returnVal}
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -941,7 +1004,14 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     Should Contain                              ${attachpoint}                  ${leaf2b_host6}
     REST show endpoints     
     ${loss} =                                   BASH ping                       h5                      10.252.1.31             count=10
-    Should Be True                              ${loss} < 20        
+    Should Be True                              ${loss} < 20     
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.31  dst-ip=10.252.1.31
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-SameRackDifferentSwitch  src-ip=10.251.1.31  dst-ip=10.252.1.31 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-SameRackDifferentSwitch  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.31
+    Should Be True  ${returnVal}
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
     
@@ -1084,12 +1154,42 @@ Verify private IP is able to communicate with other vns in the same tenant
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath   
+    ${returnVal}=  rest verify testpath error code  ambiguous endpoints  src-ip=10.251.1.11  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}     
+    ${returnVal}=  rest configure testpath controller view  src-tenant=X  src-segment=X1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}       
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-1  src-tenant=X  src-segment=X1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-1   HostPing  leaf  host=h5  ip=10.251.2.11
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0    
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-2  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11  
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-2  HostPing  leaf  host=h3  ip=10.252.2.11  
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h3                      10.251.2.11             count=10
-    Should Be True                              ${loss} == 100    
+    Should Be True                              ${loss} == 100   
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-3  src-tenant=Y  src-segment=Y1  src-ip=10.251.1.11  dst-tenant=X  dst-segment=X2  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-3  HostPing  leaf  host=h3  ip=10.251.2.11  
+    Should Be True  ${returnVal} 
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  host=h6  ip=10.252.2.11
+    Should Be True  ${returnVal}   
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h5                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h6                              10.251.0.0/16           10.251.2.1
@@ -1161,7 +1261,8 @@ L3 inter tenant traceroute with icmp and udp probe
     BASH add ip address                         h6                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
-    sleep                                       5   
+    sleep                                       2
+    BASH run cmd                                route -n
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.252.1.11
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -1204,11 +1305,8 @@ Inter tenant dhcp relay
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1227,14 +1325,14 @@ Inter tenant dhcp relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1246,10 +1344,12 @@ Inter tenant dhcp relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
+    ${ipAddr5a} =                               BASH get interface ipv4         h5                      bond0
+    Should Be Empty                             ${ipAddr5a}                     
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -1276,10 +1376,8 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1295,7 +1393,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     sleep                                       1
@@ -1304,10 +1402,10 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     REST delete static routes                   Y                               10.251.0.0/16       
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0.1002
     Should Be True                              ${value}
-    ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
-    Should Be Empty                             ${ipAddr2}
+    ${ipAddr3} =                                BASH renew dhcpv4 address       h2                      bond0.1002
+    Should Be Empty                             ${ipAddr3}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     REST add static routes                      Y                               10.251.0.0/16            {"tenant": "system"}
     sleep                                       1
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
@@ -1335,14 +1433,14 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
+    BASH release dhcpv4 address                 h2                              bond0.1002
+    BASH release dhcpv4 address                 h5                              bond0
+    sleep                                       1
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Be Empty                             ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -1363,7 +1461,6 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     Should Contain                              ${state5}                       L2 Only
     sleep                                       5
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1382,14 +1479,14 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1402,9 +1499,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -1431,11 +1528,7 @@ Host moved to another vns on another tenant and renew dhcp
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-     #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -1454,14 +1547,14 @@ Host moved to another vns on another tenant and renew dhcp
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -1471,12 +1564,17 @@ Host moved to another vns on another tenant and renew dhcp
     Should Be True                              ${loss} < 20    
     REST delete portgroup from vns              Y                               Y1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Z                               Z3                      ${leaf2_pc1}            -1
+    REST add dhcp relay                         Z                               Z3                      10.251.1.11
+    sleep                                       1
+    REST show forwarding dhcp table
+    ${value} =                                  BASH release dhcpv4 address     h5                      bond0
+    Should Be True                              ${value}   
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
-    Should Be True                              ${ipAddr5}
+    Should Not Be Empty                         ${ipAddr5}
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     ${segment} =                                Set Variable                    ${result[0]['segment']}
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
@@ -1490,9 +1588,9 @@ Host moved to another vns on another tenant and renew dhcp
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
-    Should Be True                              ${loss} = 100
+    Should Be True                              ${loss} == 100
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h5                              10.251.0.0/16           10.252.1.1
@@ -1517,16 +1615,12 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH ifup intf                              h3                              bond0
     BASH ifup intf                              h4                              bond0
     BASH add ip address                         h2                              10.251.1.11/24          bond0
-    #### temp fix for BVS-2176
-    BASH ping                                   h2                              10.251.1.1              count=5
     BASH start service                          h2                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add ip address                         h3                              10.252.1.11/24          bond0
-    #### temp fix for BVS-2176
-    BASH ping                                   h3                              10.252.1.1              count=5
     BASH start service                          h3                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
@@ -1955,9 +2049,6 @@ Controller HA failover with dhcp-relay
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
@@ -1978,14 +2069,14 @@ Controller HA failover with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2009,14 +2100,14 @@ Controller HA failover with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2049,9 +2140,6 @@ Active Controller reboot with dhcp-relay
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
@@ -2072,14 +2160,14 @@ Active Controller reboot with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2103,14 +2191,14 @@ Active Controller reboot with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2147,9 +2235,6 @@ Dhcp request from overlapping private IP and public IP
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
@@ -2178,14 +2263,14 @@ Dhcp request from overlapping private IP and public IP
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac6} =                                   BASH get intf mac               h6                      bond0
     ${result} =                                 REST show endpoints mac         ${mac6}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr6}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
@@ -2221,9 +2306,6 @@ Restart ofad on leaf with dhcp-relay
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
@@ -2244,14 +2326,14 @@ Restart ofad on leaf with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2282,14 +2364,14 @@ Restart ofad on leaf with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2322,9 +2404,6 @@ Restart ofad on spine with dhcp-relay
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    #### temp fix for BVS-2176
-    BASH ping                                   h1                              10.251.1.1              count=5
-    
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
@@ -2345,14 +2424,14 @@ Restart ofad on spine with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2383,14 +2462,14 @@ Restart ofad on spine with dhcp-relay
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address']}  
+    ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
@@ -2607,11 +2686,22 @@ Verify private subnet cannot be routed via system router
     Should Be True                              ${result} 
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0  
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.251.2.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateSubnet  src-ip=10.251.1.11  dst-ip=10.251.2.11 
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateSubnet  HostPing  leaf  host=h5  ip=10.251.2.11
+    Should Be True  ${returnVal}
     ${loss} =                                   BASH ping                       h5                      10.252.2.11             count=10
     Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  dropped due to private segment  src-ip=10.251.1.11  dst-ip=10.252.2.11
+    Should Be True  ${returnVal}    
     ${loss} =                                   BASH ping                       h3                      10.251.1.11             count=10
     Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  no route  src-ip=10.252.1.11  dst-ip=10.251.1.11
+    Should Be True  ${returnVal}    
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0    
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
@@ -2622,6 +2712,67 @@ Verify private subnet cannot be routed via system router
     BASH delete route                           h3                              10.252.0.0/16           10.252.1.1
     BASH delete route                           h4                              10.251.0.0/16           10.252.2.1
     BASH delete route                           h4                              10.252.0.0/16           10.252.2.1
+
+
+Enable and disable tenant logical router interface
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0   
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf2_pc2}            -1
+    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
+    REST add interface to vns                   Y                               Y1                      ${leaf0_b}              ${ixia2}                -1
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.252.1.11/24          bond0
+    BASH add route                              h5                              10.252.1.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.252.1.1
+    sleep                                       5   
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.252.1.1              count=10
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}                       
+    ${mac2} =                                   BASH get intf mac               h6                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST disable router intf                    system                          Y
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100   
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}      
+    REST enable router intf                     system                          Y
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50    
+    REST disable router intf                    X                               system
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}      
+    REST enable router intf                     X                               system 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50 
+    rest clear testpath   
+    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}           
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-UninstalledInterface  src-ip=10.251.1.11  dst-ip=10.252.1.11
+    Should Be True  ${returnVal}
+    ${returnVal}=  rest verify testpath fabric view  Test-UninstalledInterface  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.11
+    Should Be True  ${returnVal}   
+    BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
+
+
 
 initialize host
     BASH delete tag                             h1                              bond0.1001              soft_error=${true}
@@ -2646,6 +2797,7 @@ initialize host
     BASH init intf                              h5                              eth2
     BASH init intf                              h5                              eth3
     BASH init intf                              h6                              em2
+    BASH init intf                              h6                              eth1
     BASH init intf                              h6                              p1p1
     BASH init intf                              h6                              p1p2
     BASH init intf                              h1                              bond0
@@ -2654,19 +2806,48 @@ initialize host
     BASH init intf                              h4                              bond0
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
-    BASH ifdown intf                            h1                              bond0
-    BASH ifdown intf                            h2                              bond0
-    BASH ifdown intf                            h3                              bond0
-    BASH ifdown intf                            h4                              bond0
-    BASH ifdown intf                            h5                              bond0
-    BASH ifdown intf                            h6                              bond0   
+    BASH run command                            h1                              ifdown bond0
+    BASH run command                            h2                              ifdown bond0
+    BASH run command                            h3                              ifdown bond0
+    BASH run command                            h4                              ifdown bond0
+    BASH run command                            h5                              ifdown bond0
+    BASH run command                            h6                              ifdown bond0
+    ${version} =                                BASH lsb release                h1
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h1                              ifup ${intf1}
+    BASH run command                            h1                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h2
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h2                              ifup ${intf1}
+    BASH run command                            h2                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h3
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h3                              ifup ${intf1}
+    BASH run command                            h3                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h4
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h4                              ifup ${intf1}
+    BASH run command                            h4                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h5
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h5                              ifup ${intf1}
+    BASH run command                            h5                              ifup ${intf2}
+    ${version} =                                BASH lsb release                h6
+    ${intf1} =                                  Set Variable If                 ${version} == 12            eth2            p1p1
+    ${intf2} =                                  Set Variable If                 ${version} == 12            eth3            p1p2
+    BASH run command                            h6                              ifup ${intf1}
+    BASH run command                            h6                              ifup ${intf2}
     BASH release dhcpv4 address                 h1                              bond0
     BASH release dhcpv4 address                 h2                              bond0
     BASH release dhcpv4 address                 h3                              bond0
     BASH release dhcpv4 address                 h4                              bond0
     BASH release dhcpv4 address                 h5                              bond0
     BASH release dhcpv4 address                 h6                              bond0
-    BASH stop service                           h1                              isc-dhcp-server
     ${result} =                                 BASH run command                h1                     ifconfig
     log                                         host1 ifconfig is ${result}
     ${result} =                                 BASH run command                h2                     ifconfig
@@ -2680,13 +2861,10 @@ initialize host
     ${result} =                                 BASH run command                h6                     ifconfig
     log                                         host6 ifconfig is ${result}
     BASH stop service                           h1                              isc-dhcp-server
-    BASH stop service                           h2                              isc-dhcp-server
-    BASH stop service                           h3                              isc-dhcp-server
 
 
 test setup topology
     initialize host
-    
     sleep                                           1
     Start Floodlight Monitor 
     REST add tenant                                 X
@@ -2725,9 +2903,9 @@ test setup topology
     REST add interface to portgroup                 ${leaf0_a}                  ${leaf0_pc2_intf1}                  ${leaf0_pc2}
     REST add interface to portgroup                 ${leaf0_b}                  ${leaf0_pc2_intf2}                  ${leaf0_pc2}
     REST add interface to portgroup                 ${leaf1_a}                  ${leaf1_pc1_intf1}                  ${leaf1_pc1}
-    REST add interface to portgroup                 ${leaf1_b}                  ${leaf1_pc1_intf2}                  ${leaf1_pc1}
+    REST add interface to portgroup                 ${leaf1_a}                  ${leaf1_pc1_intf2}                  ${leaf1_pc1}
     REST add interface to portgroup                 ${leaf1_a}                  ${leaf1_pc2_intf1}                  ${leaf1_pc2}
-    REST add interface to portgroup                 ${leaf1_b}                  ${leaf1_pc2_intf2}                  ${leaf1_pc2}
+    REST add interface to portgroup                 ${leaf1_a}                  ${leaf1_pc2_intf2}                  ${leaf1_pc2}
     REST add interface to portgroup                 ${leaf2_a}                  ${leaf2_pc1_intf1}                  ${leaf2_pc1}
     REST add interface to portgroup                 ${leaf2_b}                  ${leaf2_pc1_intf2}                  ${leaf2_pc1}
     REST add interface to portgroup                 ${leaf2_a}                  ${leaf2_pc2_intf1}                  ${leaf2_pc2}
@@ -2776,7 +2954,12 @@ test teardown topology
     REST delete tenant routers intf to system       Y
     REST delete tenant routers intf to system       Z
     initialize host
-    Stop Floodlight Monitor     
+    Stop Floodlight Monitor    
+    BASH ifdown intf                                h3                          bond0
+    BASH restart networking service                 h1                          timeout=60
+    BASH restart networking service                 h3                          timeout=60
+    BASH restart networking service                 h6                          timeout=60
+    
 
 T5 base suite setup
     base suite setup

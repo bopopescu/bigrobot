@@ -5,10 +5,10 @@
 
 no_error=1
 
-packages='pep8 pylint httplib2 pyyaml pytz ipcalc netaddr pycrypto paramiko scp robotframework pexpect pymongo'
-modules='pep8 pylint httplib2 yaml pytz ipcalc Crypto paramiko scp robot robot.api blah'
+packages='pylint httplib2 pyyaml pytz ipcalc netaddr pycrypto paramiko scp robotframework pexpect pymongo celery xmltodict'
+modules='pylint httplib2 yaml pytz ipcalc Crypto paramiko scp robot robot.api pexpect pymongo celery xmltodict'
 
-sudo pip install $modules
+pip install $packages
 
 for x in `echo $modules`; do
     python -c "import $x"

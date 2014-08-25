@@ -234,19 +234,42 @@ class BigTap(object):
         """
         t = test.Test()
         c = t.controller('master')
-
+        c.rest.get('/rest/v1/system/version')
+        content = c.rest.content()
+        version_string = content[0]['controller']
+        helpers.log("version string is %s" % version_string)
         url = '/api/v1/data/controller/applications/bigtap/info'
         c.rest.get(url)
-
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
         data = c.rest.content()
-        if not data[0][feature]:
-            helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-            return "False"
-        helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
-        return str(data[0][feature])
+        if "4.0.0" in str(version_string):
+            if ("l3-l4" in feature) or ("full-match" in feature):
+                if "l3-l4-mode" in feature:
+                    matchcondition = "bigtap-l3l4"
+                elif "offset" in feature:
+                    matchcondition = "bigtap-offset-match"
+                else:
+                    matchcondition = "bigtap-full-match"
+                if (data[0]["match-mode"] == matchcondition):
+                    return "True"
+                else:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+            else:
+                if not data[0][feature]:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+                helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+                return str(data[0][feature])
+
+        else:
+            if not data[0][feature]:
+                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                return "False"
+            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+            return str(data[0][feature])
 
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
@@ -344,12 +367,12 @@ class BigTap(object):
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % str(policy_name)
             if "admin" not in user:
-                c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                 c_user.rest.get(url)
                 if not c_user.rest.status_code_ok():
                     helpers.test_failure(c_user.rest.error())
                 content = c_user.rest.content()
-                t.node_reconnect(node='master')
+                c_user.close()
             else:
                 c.rest.get(url)
                 if not c.rest.status_code_ok():
@@ -913,9 +936,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(group_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(group_name)})
             except:
@@ -952,9 +975,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -992,9 +1015,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(interface_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(interface_name)})
             except:
@@ -1032,9 +1055,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1079,10 +1102,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    # c_user.rest.patch(url, data)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     # c.rest.patch(url, data)
                     c.rest.put(url, data)
@@ -1123,9 +1145,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1157,9 +1179,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {'name':str(policy_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {'name':str(policy_name)})
             except:
@@ -1168,9 +1190,9 @@ class BigTap(object):
             else:
                 try:
                     if "admin" not in user:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                         c_user.rest.patch(url, {"action":str(policy_action)})
-                        t.node_reconnect(node='master')
+                        c_user.close()
                     else:
                         c.rest.patch(url, {"action":str(policy_action)})
                 except:
@@ -1201,9 +1223,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1327,9 +1349,9 @@ class BigTap(object):
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(intf_nickname)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(intf_nickname)})
             except:
@@ -1367,9 +1389,9 @@ class BigTap(object):
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1408,9 +1430,9 @@ class BigTap(object):
                     data_dict = data
                 helpers.log("Input dictionary is %s" % data_dict)
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data_dict)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, data_dict)
             except:
@@ -1441,9 +1463,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1476,9 +1498,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(filter_set_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(filter_set_name)})
             except:
@@ -1511,9 +1533,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1549,9 +1571,9 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
                 data_dict = helpers.from_json(data)
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data_dict)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, data_dict)
             except:
@@ -1584,9 +1606,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1619,9 +1641,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
             except:
@@ -1654,9 +1676,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {"filter-set-name": str(filter_set_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {"filter-set-name": str(filter_set_name)})
             except:
@@ -1690,9 +1712,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.patch(url, {"strip-vlan": True})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.patch(url, {"strip-vlan": True})
             except:
@@ -1725,9 +1747,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][strip-vlan="None"]/strip-vlan' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1775,9 +1797,9 @@ class BigTap(object):
                     # Add Pre-Service Interface
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(pre_service_intf_nickname))
                     if "admin" not in user:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                         c_user.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
-                        t.node_reconnect(node='master')
+                        c_user.close()
                     else:
                         c.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
                 except:
@@ -1788,9 +1810,9 @@ class BigTap(object):
                         # Add Post-Service Interface
                         url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(post_service_intf_nickname))
                         if "admin" not in user:
-                            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                            c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                             c_user.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
-                            t.node_reconnect(node='master')
+                            c_user.close()
                         else:
                             c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
                     except:
@@ -1823,9 +1845,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1867,9 +1889,9 @@ class BigTap(object):
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.post(url_add_intf, {"name":str(intf_nickname)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.post(url_add_intf, {"name":str(intf_nickname)})
             except:
@@ -1909,9 +1931,9 @@ class BigTap(object):
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url_add_intf, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url_add_intf, {})
             except:
@@ -1953,9 +1975,9 @@ class BigTap(object):
             try:
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
             except:
@@ -1988,9 +2010,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -2041,9 +2063,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.patch(url, {"action":str(policy_action)})
             except:
@@ -2080,14 +2102,32 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/feature'
-                c.rest.patch(url, {str(feature_name): False})
+                c.rest.get('/rest/v1/system/version')
+                content = c.rest.content()
+                version_string = content[0]['controller']
+                helpers.log("version string is %s" % version_string)
+                if "4.0.0" in str(version_string):
+                    if ("l3-l4" in str(feature_name)):
+                        matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
+                        helpers.log("Data to be patched is %s" % data)
+                    else:
+                        data = {str(feature_name): False}
+                        helpers.log("Data to be patched is %s" % data)
+                else:
+                    data = {str(feature_name): False}
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
-                return True
+                try:
+                    url = '/api/v1/data/controller/applications/bigtap/feature'
+                    c.rest.patch(url, data)
+                except:
+                    return False
+                else:
+                    helpers.test_log(c.rest.content_json())
+                    return True
 
 # Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self, feature_name):
@@ -2118,7 +2158,13 @@ class BigTap(object):
                 helpers.log("version string is %s" % version_string)
                 if "4.0.0" in str(version_string):
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
-                        data = {"match-mode": str(feature_name)}
+                        if "l3-l4-mode" in str(feature_name):
+                            matchcondition = "l3-l4-match"
+                        elif "offset" in str(feature_name):
+                            matchcondition = "l3-l4-offset-match"
+                        else:
+                            matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
                         helpers.log("Data to be patched is %s" % data)
                     else:
                         data = {str(feature_name): True}
@@ -2166,7 +2212,6 @@ class BigTap(object):
          """
         self.bigtap_delete_policy()
         self.bigtap_delete_address_group()
-
         return True
 
 # Mingtao
@@ -3033,7 +3078,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            t.node_reconnect(node='master')
+            # t.node_reconnect(node='master')
         except:
             return False
         else:
@@ -3392,10 +3437,10 @@ class BigTap(object):
         t = test.Test()
         c = t.controller('master')
         if "admin" not in user:
-            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+            c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
             c_user.rest.get(url)
             content = c_user.rest.content()
-            t.node_reconnect(node='master')
+            c_user.close()
         else:
             c.rest.get(url)
             content = c.rest.content()
@@ -3616,7 +3661,10 @@ class BigTap(object):
             c.send(helpers.ctrl('u'))
             c.expect()
             c.cli('')
-            num = len(temp)
+            if temp[-1] == '':
+                num = len(temp) - 1
+            else:
+                num = len(temp)
             helpers.log("Number of arguments in show command are %s" % num)
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
@@ -3659,20 +3707,27 @@ class BigTap(object):
             c.cli(command)
             content = c.cli_content()
             temp_content = content.split('\n')
+            # helpers.log("Output is %s \n " % temp_content)
             num = len(temp_content)
-            if (num != cmd_argument_count) :
-                helpers.log("Number of arguments in CLI Command Output is different")
+            # helpers.log("Length is %s and passed argument is %s \n" % (num, cmd_argument_count))
+            if (num != int(cmd_argument_count)) :
+                # helpers.log("Number of arguments in CLI Command Output is different")
                 return False
+            else:
+                helpers.log("Correct number of arguments found\n.")
             if ("None" in temp_content[0]) and (num == 1):
                 return True
             elif ("None" in temp_content[0]) and (num > 2):
                 helpers.log("Number of lines ")
                 return False
-
             if cmd_argument is not None :
+                # helpers.log("Argument passed is %s \n" % (cmd_argument))
                 for line in temp_content:
-                    if (cmd_argument in line) and (num == cmd_argument_count):
+                    # helpers.log("Line is %s \n" % line)
+                    if (cmd_argument in line) and (num == int(cmd_argument_count)):
                         return True
+                return False
+            return True
 
     def convert_integer_to_tcpflag(self, integer_passed):
         binary_number = bin(int(integer_passed))[2:].zfill(6)

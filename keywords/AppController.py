@@ -17,6 +17,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import subprocess
 import re
+import string
 
 class AppController(object):
 
@@ -699,14 +700,14 @@ class AppController(object):
         else:
             c = t.controller('master')
             try:
-                if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    c_user.enable("show banner")
-                    content = c_user.cli_content()
-                    t.node_reconnect(node='master')
-                else:
+                if user == "admin":
                     c.enable("show banner")
                     content = c.cli_content()
+                else:
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
+                    c_user.enable("show banner")
+                    content = c_user.cli_content()
+                    c_user.close()
             except:
                 return False
             else:
@@ -769,12 +770,10 @@ class AppController(object):
                 if username == "admin":
                     c.rest.put(url, data)
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(username), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
-                    if local is True:
-                        t.node_reconnect(node='master')
+                    c_user.close()
             except:
-                t.node_reconnect(node='master')
                 helpers.test_log(c.rest.error())
                 return False
             else:
@@ -930,10 +929,10 @@ class AppController(object):
             # Get encoded password from key
             try:
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.enable(command)
                     content = c_user.cli_content()
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.enable(command)
                     content = c.cli_content()
@@ -942,3 +941,8 @@ class AppController(object):
                 return False
             else:
                 return content
+
+    def strip_character_from_string(self, test_string, search, replace):
+        if str(replace) == 'blank':
+            replace = ''
+        return  test_string.replace(str(search), str(replace))

@@ -194,14 +194,28 @@ Test background ping
     ${result}=        bash ping background stop    c1  label=vui_bg_ping
     should be true    ${result} == 0
 
-Test run command (helpers)
+Test reauth monitor
     #[Tags]  skipped
-    monitor reauth    master  ${false}
+    #monitor reauth    master  ${false}
     run cmd test      c1
     sleep             20
     run cmd test      c1
-    log               ***** Renabling reauth monitor
-    monitor reauth    master  ${true}
+    #log               ***** Renabling reauth monitor
+    #monitor reauth    master  ${true}
     sleep             20
     run cmd test      c1
+    should be true    ${false}
+
+Test REST show version
+    [Tags]  skipped
+    get               c1    /api/v1/data/controller/core/version/appliance  retries=2  quiet=5
+    cli               c1    show user  quiet=3
+
+Test console
+    [Tags]  skipped
+    test console      c1
+
+Test node reconnect
+    [Tags]  skipped
+    test node reconnect   c1
 

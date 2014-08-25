@@ -1529,5 +1529,3 @@ class T5ZTN(object):
                 version = version + " (" + line + ")"
         return version
     
-                 
-      

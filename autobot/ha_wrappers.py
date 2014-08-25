@@ -148,6 +148,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.devconf(*args, **kwargs)
 
+    def is_master(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.is_master(*args, **kwargs)
+
     def cli(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.cli(*args, **kwargs)

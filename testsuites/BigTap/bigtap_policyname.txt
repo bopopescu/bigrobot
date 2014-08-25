@@ -1,5 +1,5 @@
 *Settings
-Documentation  BigTap Suite Release:Blackbird
+Documentation  Verify Policy Name Restrictions
 Suite Setup  bigtap suite setup
 Suite Teardown   bigtap suite teardown
 Test Setup   base test setup
@@ -11,7 +11,7 @@ Library  keywords/BigTap.py
 Library  keywords/BsnCommon.py
 
 * Variable
-${version_string}   Big Tap Controller 3.0.0
+${version_string}   Big Tap Controller 4.0.0
 
 * Test Case
 Verify policy name can have all lower-case alphabet in its name
@@ -276,11 +276,11 @@ Verify filter and delivery names can have alphanumeric name with a _ in their na
 
 bigtap suite setup
     base suite setup
-    rest add switch alias  s1  AF1-LB9    
+    rest add switch alias  s1  app-ras6700-1    
 
 setup interfaces  [Arguments]  ${filter_name}  ${delivery_name}  
-    rest add interface role  s1  ethernet1    filter        ${filter_name}  
-    rest add interface role  s1  ethernet2    delivery      ${delivery_name}
+    rest add interface role  s1  ethernet13    filter        ${filter_name}  
+    rest add interface role  s1  ethernet14    delivery      ${delivery_name}
     Sleep  2    
      
 setup policy  [Arguments]  ${policyName}  ${filter_name}  ${delivery_name}

@@ -190,22 +190,33 @@ def display_stats(args):
     total_tc = ih.total_testcases(release=ih.release_lowercase())
     total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
     total_tc_manual = ih.total_testcases_by_tag(["manual"])[0]
-    total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
+    # total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
     print_stat2("Total test cases:", total_tc)
     total['tests'] = total_tc
 
 
-    for functionality in cat.test_types() + ["manual", "manual-untested"]:
+    for functionality in cat.test_types() + ["virtual",
+                                             "physical",
+                                             "manual",
+                                             "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
-        total_tc_func_untested = ih.total_testcases_by_tag(
-                                    [functionality, "manual-untested"])[0]
-        total_tc_func_manual = ih.total_testcases_by_tag(
-                                    [functionality, "manual"])[0]
-        test_pct = percentage(total_tc_func - total_tc_func_untested,
-                              total_tc_func)
+        # total_tc_func_untested = ih.total_testcases_by_tag(
+        #                            [functionality, "manual-untested"])[0]
+        # total_tc_func_manual = ih.total_testcases_by_tag(
+        #                            [functionality, "manual"])[0]
+        # test_pct = percentage(total_tc_func - total_tc_func_untested,
+        #                      total_tc_func)
         total[functionality] = total_tc_func
 
 
+    total_virtual = ih.total_testcases_by_tag('virtual')[0]
+    print_stat3("Total virtual test cases:",
+                total_virtual,
+                percentage(total_virtual, total_tc))
+    total_physical = ih.total_testcases_by_tag('physical')[0]
+    print_stat3("Total physical test cases:",
+                total_physical,
+                percentage(total_physical, total_tc))
     total_manual = ih.total_testcases_by_tag('manual')[0]
     print_stat3("Total manual test cases:",
                 total_manual,
@@ -260,7 +271,7 @@ def display_stats(args):
 
 
     print ""
-    print "Test Summary                                                                                                                               exec%  pass%  auto%"
+    print "Test Summary                                                                                                                                 exec%  pass%  auto%"
     print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
     total_executed = ih.total_testcases_executed(build_name=build)
     total_untested = ih.total_testcases_by_tag(
@@ -284,7 +295,10 @@ def display_stats(args):
     if args.show_untested:
         print_testcases(ih.manual_untested_by_tag())
 
-    for functionality in cat.test_types() + ["manual", "manual-untested"]:
+    for functionality in cat.test_types() + ['virtual',
+                                             'physical',
+                                             "manual",
+                                             "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
@@ -312,7 +326,7 @@ def display_stats(args):
 
     if not args.no_show_functional_areas:
         print ""
-        print "Functional Areas                                                                                                                           exec%  pass%  auto%"
+        print "Functional Areas                                                                                                                             exec%  pass%  auto%"
         print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
         functionality = "feature"
         for feature in cat.features(release=ih.release_lowercase()):

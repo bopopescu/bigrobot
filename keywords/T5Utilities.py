@@ -354,7 +354,7 @@ class T5Utilities(object):
                 for k in range(0, len(result[i]['interface'])) :
                     switchName = result[i]['interface'][k]['switch-name']
                     interface = result[i]['interface'][k]['interface-name']
-                    leafGroup = result[i]['interface'][k]['leaf-group']
+                    #leafGroup = result[i]['interface'][k]['leaf-group']
                     state = result[i]['interface'][k]['state']
                     key = "%s-%s-%s-%s-%s-%s" % (name, mode, switchName, interface, leafGroup, state)
                     portgroups.append(key)
@@ -976,7 +976,23 @@ class T5Utilities(object):
             return True
 
 
-
+    def cli_diff_running_configs(self, node, file1, file2):
+        ''' This function will compare 2 controller running configs. (Ideall between
+            active and a standby node.
+            It'll do a diff for the two files, and returns true if there are only
+            12 lines of diff
+        '''
+        
+        t = test.Test()
+        n = t.node(node)
+        output = n.sudo("diff %s %s | wc -l" % (file1, file2), timeout=120)['content']
+        if '12' in output:
+            helpers.log("Running Configs match between file1 & file2")
+            return True
+        else:
+            helpers.log("Running Configs didn't match between file1 & file2 ")
+            return False
+        
 
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform.
@@ -999,6 +1015,8 @@ class T5PlatformThreads(Thread):
     def run(self):
         if(self.name == "switchReboot"):
             self.switch_reboot(self.kwargs.get("switch"))
+        if(self.name == "switchPowerCycle"):
+            self.switch_power_cycle(self.kwargs.get("switch"))
         if(self.name == "failover"):
             self.controller_failover()
         if(self.name == "activeReboot"):
@@ -1030,6 +1048,20 @@ class T5PlatformThreads(Thread):
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
             print ("Failure during switch:%s reboot" % (switchName))
             return False
+    
+    def switch_power_cycle(self, switchList):
+        try:
+            t = test.Test()
+            newSwitchList = switchList.split(' ')
+            for switchName in newSwitchList:
+                t.power_cycle(switchName, 0)
+            helpers.sleep(120)
+            return True
+        except:
+            helpers.test_failure("Failure during switch:%s power cycle" % (switchName))
+            print ("Failure during switch:%s power cycle" % (switchName))
+            return False
+        
 
     def controller_failover(self):
         from T5Platform import T5Platform

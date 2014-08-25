@@ -21,6 +21,7 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
+import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -51,6 +52,20 @@ def ctrl(char):
     See http://stackoverflow.com/questions/6248766/how-to-enter-the-escape-characters-for-telnet-programmatically
     """
     return ascii.ctrl(char)
+
+
+def bigrobot_module_dependencies():
+    robot_framework_version = robot.version.VERSION
+    import Exscript
+    exscript_version = Exscript.version.__version__
+    s = "BigRobot version        %s\n" % get_version()
+    s += "Robot Framework version %s\n" % robot_framework_version
+    s += "Exscript version        %s\n" % exscript_version
+    pversion = sys.version_info
+    s += "Python version          %s.%s.%s" % (pversion.major,
+                                               pversion.minor,
+                                               pversion.micro)
+    return s
 
 
 # is_bool() needs to be defined before test_error() which uses it.
@@ -145,7 +160,6 @@ def prettify_xml(xml_str):
     """
     with tempfile.NamedTemporaryFile() as f:
         filename = f.name
-        # print "**** filename: %s" % filename
         f.write(xml_str)
         f.flush()
         x = xml.dom.minidom.parse(filename)
@@ -164,7 +178,7 @@ def exception_info_type():
 
 
 def exception_info_value():
-    return str(sys.exc_info()[1]) + br_utils.end_of_output_marker()
+    return str(sys.exc_info()[1])
 
 
 def exception_info_traceback():
@@ -181,8 +195,9 @@ def exception_info():
     See http://docs.python.org/2/library/sys.html#sys.exc_info
     """
     (_type, _val, _) = sys.exc_info()
-    return ("type: %s\n\nvalue: %s%s"
-            % (_type, _val, br_utils.end_of_output_marker()))
+    return ("Exception type: %s\nException value: %s\nException traceback:\n%s%s"
+            % (_type, _val, exception_info_traceback(),
+               br_utils.end_of_output_marker()))
 
 
 def error_msg(msg):
@@ -484,7 +499,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
 def bigrobot_topology(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    This env points to the topology file.
+    This env points to the topology file. In BigRobot, this is typically
+    the name of the script appended with '.virtual.topo' or '.physical.topo'.
     """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
@@ -573,7 +589,19 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
+def bigrobot_ztn_reload(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using needed reboot of all the switchs with new ZTN controllers.
+    """
+    return _env_get_and_set('BIGROBOT_ZTN_RELOAD', new_val, default)
 
+def bigrobot_ha_logging(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if needed extra HA logging to debug HA relates issues during script Runs.
+    """
+    return _env_get_and_set('BIGROBOT_HA_LOGGING', new_val, default)
 def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -692,6 +720,28 @@ def bigrobot_monitor_reauth_init_timer(new_val=None, default=480):  # 8 minutes
     """
     return _env_get_and_set('BIGROBOT_MONITOR_REAUTH_INIT_TIMER',
                             new_val, default)
+
+
+def bigrobot_quiet_output(new_val=None, default=-1):  # disabled
+    """
+    Category: Get/set environment variables for BigRobot.
+
+    Quiet levels:
+      0 - display everything (default)
+      1 - suppress command output
+      2 - suppress command
+      3 - reserved
+      4 - reserved
+      5 - suppress all output. This is typically used by DevConf library to
+          suppresss output when switching modes. Users should avoid this level.
+
+    By default, quiet=0 means that for every command issued, the command and
+    its output are captured to the log file. The user can change the quiet
+    level when they issue a RestClient or DevConf command. To change the quiet
+    level globally, the user can set this environment variable to the value
+    0-5. By default, -1 means this env var is disabled.
+    """
+    return _env_get_and_set('BIGROBOT_QUIET_OUTPUT', new_val, default)
 
 
 def bigrobot_debug(new_val=None, default=None):
@@ -1030,6 +1080,14 @@ def re_match_str(data):
         environment_failure("'%s' is not a regex match" % data)
 
 
+def get(var, default):
+    """
+    Return var if is True/non-zero/non-empty. Else return default.
+    This is similar to dictionary's get() method.
+    """
+    return var if var else default
+
+
 def get_path(filename):
     """
     Extract the path from the filename.
@@ -1273,6 +1331,30 @@ def dict_merge(dict1, dict2):
     return dict(dict1.items() + dict2.items())
 
 
+def matched(val, match_list):
+    if not is_list(match_list):
+        match_list = [match_list]
+    return int(val) in match_list
+
+
+def not_matched(val, match_list):
+    return not matched(val, match_list)
+
+
+def not_quiet(val, quiet_levels):
+    """
+    Return True if val matches one of the quiet levels (list).
+    """
+    if val == 5:
+        # 5 - Suppress all output, is typically specified by DevConf
+        # to hide the details when mode switching, which can be quiet verbose.
+        # So if 5 is specified, we should not override it.
+        pass
+    elif int(bigrobot_quiet_output()) != -1:
+        val = int(bigrobot_quiet_output())
+    return not_matched(val, quiet_levels)
+
+
 def dict_compare(dict1, dict2, ignore_keys=None):
     """
     Compare to see whether dict1 is the same as dict2. You can provide a list
@@ -1473,6 +1555,8 @@ def scp_get(server, remote_file, local_path,
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     """
+    NOTE: Consider using run_cmd2() instead.
+
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
             '&') and/or command contains shell variables/wildcards.
@@ -1501,10 +1585,67 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
+def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+    """
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
+
+    In this version of run_cmd, the shell and non-shell modes are near
+    identical, resulting in more consistent behavior. Need to gradually phase
+    out the old run_cmd usage.
+
+    Returns tuple (Boolean, String)
+        success: (True,  "...success message...")
+        failure: (False, "...error message...")
+    """
+    if not quiet:
+        print("Executing '%s'" % cmd)
+    if shell:
+        # In general, should avoid shell mode due to security reasons.
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+    else:
+        cmd_list = cmd.split(' ')
+        p = subprocess.Popen(cmd_list,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, cwd=cwd)
+    out, err = p.communicate()
+    if err and not ignore_stderr:
+        return (False, err)
+
+    return (True, out)
+
+
+def uname():
+    """
+    Dump output from 'uname -a'.
+    """
+    _, output = run_cmd2('uname -a', shell=False, quiet=True)
+    return output
+
+
+def ulimit():
+    """
+    Dump output from 'ulimit -a'.
+    Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
+    built-in shell command. So let's execute it using shell mode.
+    """
+    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
+    return output
+
+
+def uptime():
+    """
+    Dump output from 'uptime'.
+    """
+    _, output = run_cmd2('uptime', shell=False, quiet=True)
+    return output
+
+
 def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None,
           interval=0.4, ping_output=None, background=False, label=None):
-
     if background:
         if node_handle == None or mode != 'bash':
             test_error("Background ping is only support for bash mode")
@@ -1589,7 +1730,7 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
 def _ping(*args, **kwargs):
     """
     Ping options:
-      :param host: (Str) ping hist host
+      :param host: (Str) ping this host
       :param count : (Int) number of packets to send, equivalent to -c <counter>
                       If count is -1 or None, disable count.
                       If background is specified, disable count.
@@ -1607,6 +1748,10 @@ def _ping(*args, **kwargs):
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
 
+    if args:
+        host = args[0]
+    else:
+        host = kwargs.get('host')
     output = kwargs.get('ping_output', None)
     if output == None:
         output = _run_ping_cmd(*args, **kwargs)
@@ -1654,7 +1799,7 @@ def _ping(*args, **kwargs):
         packets_received = int(match.group(2))
         loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
-             % (kwargs.get('host'), packets_transmitted, packets_received,
+             % (host, packets_transmitted, packets_received,
                 loss_pct))
 
         calculated_loss_pct = int((float(packets_transmitted) -
@@ -1689,14 +1834,14 @@ def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host, count=count, timeout=timeout,
+    actual_loss = _ping(host=host, count=count, timeout=timeout,
                         ping_output=ping_output, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=count, timeout=timeout,
+        actual_loss = _ping(host=host, count=count, timeout=timeout,
                             ping_output=ping_output, quiet=quiet)
         if actual_loss > loss:
             count -= 4
-            actual_loss = _ping(host, count=count, timeout=timeout,
+            actual_loss = _ping(host=host, count=count, timeout=timeout,
                                 ping_output=ping_output, quiet=quiet)
     return actual_loss
 
@@ -1779,7 +1924,8 @@ def send_mail(m, infile=None):
         input_text = file_read_once(infile)
         if len(input_text) > 100000:
             lines = 200
-            input_text = ("... Attention: File is greater than 100K bytes. Send the last %s lines of file ...\n\n"
+            input_text = ("... Attention: File is greater than 100K bytes."
+                          " Send the last %s lines of file ...\n\n"
                           % lines + '\n'.join(str_to_list(input_text)[-lines:]))
         m['message_body'] += "\n\n<<<File: %s>>>\n" % infile + input_text
 
@@ -1861,7 +2007,7 @@ def openstack_convert_table_to_dict(input_str):
     { 'OS-EXT-IMG-SIZE:size':
                   {'property': 'OS-EXT-IMG-SIZE:size', 'value': '243662848'},
       'created':  {'property': 'created',  'value': '2014-01-03T06:50:55Z'},
-      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-87f8-08674da401ff'},
+      'id':       {'property': 'id',       'value': '8caae5ae-66dd-4ee1-...'},
       'minDisk':  {'property': 'minDisk',  'value': '0'},
       'minRam':   {'property': 'minRam',   'value': '0'},
       'name':     {'property': 'name',     'value': 'Ubuntu.13.10'},
@@ -1959,6 +2105,17 @@ def str_to_list(input_str):
     Convert a multi-line string into a list of strings.
     """
     return input_str.splitlines()
+
+
+def indent_str(input_str, spaces='    '):
+    """
+    Indent a multi-lined string by the amount of spaces specified.
+    """
+    lines = str_to_list(input_str)
+    new_lines = []
+    for line in lines:
+        new_lines.append(spaces + line)
+    return "\n".join(new_lines)
 
 
 def split_and_strip(input_str, split_str=','):

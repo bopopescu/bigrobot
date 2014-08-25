@@ -101,16 +101,11 @@ class ManualVerificationBuild(object):
             return True
 
         for tc in test_cases:
-            # if self.is_test_case_verified(tc) == False:
-            #    print "Test case is not verified. No update made. (%s)" % tc
-            #    continue
-
             self.sanitize_test_case_data(tc)
             query = { "name": tc['name'],
                       "product_suite": tc['product_suite'],
                       "build_name": self.aggregated_build_name(),
                      }
-            # print("query:\n%s" % helpers.prettify(query))
 
             aggr_cursor = self.catalog().find_test_cases_archive(query)
             count = aggr_cursor.count()

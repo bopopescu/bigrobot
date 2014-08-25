@@ -51,6 +51,7 @@ def test_and_install_package():
                 'pexpect': 'pexpect',
                 'robotframework': 'robot',
                 'celery': 'celery',
+                'xmltodict': 'xmltodict',
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
                 }
@@ -196,6 +197,9 @@ helpers.bigrobot_ignore_mininet_exception_on_close()  # (default=False)
 helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
 helpers.bigrobot_esb()
 helpers.bigrobot_esb_broker()
+helpers.bigrobot_ztn_reload()
+helpers.bigrobot_ha_logging()
+helpers.bigrobot_quiet_output()
 
 
 def get_command_dict():
@@ -370,15 +374,7 @@ def version_hidden_command(*args):
     Show the version of BigRobot.
     """
     _ = args  # unused, silent Pylint
-    robot_framework_version = robot.version.VERSION
-    import Exscript
-    exscript_version = Exscript.version.__version__
-    print("BigRobot version        %s" % helpers.get_version())
-    print("Robot Framework version %s" % robot_framework_version)
-    print("Exscript version        %s" % exscript_version)
-    pversion = sys.version_info
-    print("Python version          %s.%s.%s"
-          % (pversion.major, pversion.minor, pversion.micro))
+    print(helpers.bigrobot_module_dependencies())
 
 
 def cli_params_to_yaml_config(params, filename):
@@ -482,6 +478,14 @@ def test_command(*args):
             options['test'] = []
         for tc in args.testmatch:
             options['test'].append("*" + tc + "*")
+
+    if re.match(r'.*\.virtual\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'virtual'
+    elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'physical'
+    else:
+        # If not specified, assume it is physical
+        options['settag'] = 'physical'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
