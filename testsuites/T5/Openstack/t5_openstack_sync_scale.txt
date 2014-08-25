@@ -25,7 +25,7 @@ verify 5 tenant 50 network sync
 	openstack multiple scale  70  5  10 
 	rest verify tenant segment scale  5  10
 	rest delete tenant all
-	sleep  80
+	sleep  130
 	rest verify tenant segment scale  5  10
     openstack segment scale delete  50
     openstack tenant scale delete  5
@@ -36,7 +36,7 @@ Delete 5 tenant/networks
     openstack tenant scale delete  5
 
 verify 1k tenant 4k segment sync
-	[Tags]   openstack  run 
+	[Tags]   openstack 
 	openstack tenant scale  1000
 	openstack multiple scale  70  1000  4  
 	rest verify tenant segment scale  1000  4
@@ -47,7 +47,7 @@ verify 1k tenant 4k segment sync
     openstack tenant scale delete  1000
 
 Delete all tenant/networks
-	[Tags]  openstack  run 
+	[Tags]  openstack
     openstack segment scale delete  4000
     openstack tenant scale delete  1000	
 
