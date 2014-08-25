@@ -1015,7 +1015,7 @@ S
 			i = i + 1
 		return True
 	
-	def openstack_interface_to_router_scale(self, routerName, name='n', count=0):
+	def openstack_interface_to_router_scale(self, routerName, count, name='n'):
 		'''Function to add multiple router interfaces to single tenant
 		   Input: count and name of the tenant router
 		   Output: L3 interfaces will be added to tenant router
@@ -1033,7 +1033,7 @@ S
 			i = i + 1
 		return True
 		
-	def openstack_interface_to_router_scale_delete(self, routerName, name='n', count=0):
+	def openstack_interface_to_router_scale_delete(self, routerName, count, name='n'):
 		'''Function to delete all router interfaces from tenant router
 		   Input: count and router name
 		   Output: all interfaces will be deleted from tenant router
