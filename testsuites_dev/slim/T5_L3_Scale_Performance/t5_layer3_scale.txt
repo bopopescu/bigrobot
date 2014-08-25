@@ -60,9 +60,13 @@ Add and delete 16k cidr routes in system
     manual untested
     [Tags]              manual          scale   
     
-Add and delete 1k nexthop group
+Add and delete 1000 nexthop group with multiple nexthop members
 	manual untested
 	[Tags]				manual			scale			
+	
+Add and delete 10k nexthop group with single nexthop members
+    manual untested
+    [Tags]              manual          scale           
 
 Add more than 1k tenant
     manual passed

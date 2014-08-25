@@ -22,293 +22,293 @@ Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack untagged with dynamic endpoints
-    [Tags]     sanity       feature     testpath
+    [Tags]     sanity       feature     testpath        run1
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack untagged with dynamic endpoints
-    [Tags]     sanity       feature     testpath
-    
+    [Tags]     sanity       feature     testpath        run2
+     
 Inter tenant L3 tagged traffic with dynamic endpoints same rack
     L3 inter tenant same rack tagged with dynamic endpoints
-    [Tags]     sanity       feature     testpath
+    [Tags]     sanity       feature     testpath        run3
     
 inter tenant L3 tagged traffic with dynamic endpoints across rack
     L3 inter tenant across rack tagged with dynamic endpoints
-    [Tags]     sanity       feature     testpath
+    [Tags]     sanity       feature     testpath        run4
     
 Add and delete default route on tenant
     Add and delete default route on tenant router
-    [Tags]      feature         testpath
+    [Tags]      feature         testpath                run5
    
 
 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
-    [Tags]      feature          testpath
+    [Tags]      feature          testpath               run6
 
 Add and delete tenant system interface on tenant router
     Add and delete tenant system interface on tenant router
-    [Tags]      feature          testpath
+    [Tags]      feature          testpath               run7
 
 Add and delete tenant router interface on system tenant
     Add and delete tenant router interface on system tenant
-    [Tags]      feature          testpath
+    [Tags]      feature          testpath               run8
 
 L3 ttl one forwarding
     Verify inter tenant L3 traffic with ttl value of one two and three
-    [Tags]      feature                 
+    [Tags]      feature                                run9
 
 L3 inter tenant forwarding with end host moved to another port
     L3 inter tenant host moved 
-    [Tags]      feature        testpath         
+    [Tags]      feature        testpath         run10   
 
 L3 inter tenant forwarding split horizon on the same port 
-    manual passed
-    [Tags]      feature     manual      
+    manual passed   
+    [Tags]      feature     manual              run11
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
     L3 inter tenant forwarding between endpoints on the same rack but different switch
-    [Tags]      feature    testpath         
+    [Tags]      feature    testpath             run12
     
 Inter tenant DHCP relay
     Inter tenant DHCP relay
-    [Tags]      sanity      feature         dhcp-relay                 
+    [Tags]      sanity      feature         dhcp-relay      run13                 
     
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
     Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-    [Tags]      feature         dhcp-relay                      
+    [Tags]      feature         dhcp-relay                      run14
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
     Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-    [Tags]      feature         dhcp-relay          
+    [Tags]      feature         dhcp-relay          run15
 
 Inter tenant dhcp relay with multiple dhcp servers
     Inter tenant dhcp relay with multiple dhcp servers
-    [Tags]      feature         dhcp-relay              runfailed1
+    [Tags]      feature         dhcp-relay              run16
     
 Host moved to another vns on another tenant and renew dhcp 
     Host moved to another vns on another tenant and renew dhcp 
-    [Tags]      feature         dhcp-relay              runfailed
+    [Tags]      feature         dhcp-relay              run17
 
 Overlapping IP subnet with and without private keyword
     Overlapping IP subnet with and without private keyword
-    [Tags]          feature         
+    [Tags]          feature             run18
 
 One public IP and multiple private IP
     One public IP and multiple private IP
-    [Tags]          feature         
+    [Tags]          feature         run19
 
 Verify private IP is able to communicate with other vns in the same tenant
     Verify private IP is able to communicate with other vns in the same tenant
-    [Tags]          feature    testpath   
+    [Tags]          feature    testpath     run20 
 
 Controller HA failover via CLI
     Controller HA failover via CLI
-    [Tags]          feature         HA  
+    [Tags]          feature         HA  run21
 
 Controller HA failover via reboot of master
     Controller HA failover via reboot of master
-    [Tags]          feature         HA
+    [Tags]          feature         HA  run22
 
 Verify L3 traffic honor more specific routes with ecmp group
     manual passed
-    [Tags]          manual          feature         ecmp        
+    [Tags]          manual          feature         ecmp    run23        
 
 Move ecmp endpoint to another attachment point and verify L3 forwarding
     manual passed
-    [Tags]          manual          feature         ecmp        
+    [Tags]          manual          feature         ecmp        run24
 
 Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
     manual passed
-    [Tags]          manual          feature         
+    [Tags]          manual          feature         run25
 
 L3 inter tenant traffic behavior in headless mode
     manual passed
-    [Tags]          manual          feature         
+    [Tags]          manual          feature         run26
 
 Link flap between leaf and spine
     Link flap between leaf and spine
-    [Tags]          feature         
+    [Tags]          feature         run27
 
 L3 inter tenant forwarding to external router
     manual passed
-    [Tags]          manual          feature         
+    [Tags]          manual          feature        run28 
 
 L3 inter tenant forwarding to VRRP routers
     manual untested
-    [Tags]          manual          feature        
+    [Tags]          manual          feature        run29
 
 L3 inter tenant traceroute with icmp and udp probe
     L3 inter tenant traceroute with icmp and udp probe
-    [Tags]          feature         runfailed
+    [Tags]          feature         run30
 
 Add and delete endpoints with L3 inter tenant traffic
     Add and delete endpoints with L3 inter tenant traffic
-    [Tags]          feature         
+    [Tags]          feature         run31
 
 Verify private subnet cannot be routed via system router
     Verify private subnet cannot be routed via system router
-    [Tags]          feature    testpath       
+    [Tags]          feature    testpath     run32     
 
 L3 inter tenant traffic with jumbo frame
     L3 inter tenant traffic with jumbo frame
-    [Tags]          feature         
+    [Tags]          feature         run33
 
 L3 inter tenant with CRC errors
     L3 inter tenant with CRC errors
-    [Tags]          feature         runfailed
+    [Tags]          feature         run34
 
 Verify route next hop IP must be in the same tenant
     manual passed
-    [Tags]          manual          feature         
+    [Tags]          manual          feature     run35        
 
 Verify ECMP next hop IP must be in the same tenant
     manual passed
-    [Tags]          manual                  feature         ecmp            
+    [Tags]          manual                  feature         ecmp        run36            
 
 L3 inter tenant forwarding with ecmp destination
     manual passed
-    [Tags]          manual                  feature         ecmp            
+    [Tags]          manual                  feature         ecmp            run37
 
 L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
     L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
-    [Tags]          feature         
+    [Tags]          feature         run38
 
 L3 inter tenant shutdown and bringup both spine switch 
     L3 inter tenant shutdown and bringup both spine switch
-    [Tags]          feature         
+    [Tags]          feature         run39
 
 L3 inter tenant destroy active controller VM from KVM
     manual passed
-    [Tags]          manual            feature        
+    [Tags]          manual            feature     run40   
 
 L3 inter tenant destroy standby controller VM from KVM
     manual passed
-    [Tags]          manual           feature            
+    [Tags]          manual           feature        run41    
 
 Restart ofad on leaf switch
     Restart ofad on leaf switch
-    [Tags]          feature         
+    [Tags]          feature         run42
 
 Restart ofad on spine switch
     Restart ofad on spine switch
-    [Tags]          feature         
+    [Tags]          feature         run43
 
         
 Controller HA failover with dhcp-relay
     Controller HA failover with dhcp-relay
-    [Tags]          feature         dhcp-relay      HA
+    [Tags]          feature         dhcp-relay      HA      run44
 
 Active Controller reboot with dhcp-relay
     Active Controller reboot with dhcp-relay
-    [Tags]          feature         dhcp-relay          HA
+    [Tags]          feature         dhcp-relay          HA      run45
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
-    [Tags]          feature             runfailed    testpath
+    [Tags]          feature             runfailed    testpath       run46
 
 Restart ofad on leaf switch with ecmp group
     manual passed
-    [Tags]          manual          feature         ecmp    
+    [Tags]          manual          feature         ecmp    run47
 
 Restart ofad on spine with ecmp group
     manual passed
-    [Tags]          manual          feature         ecmp    
+    [Tags]          manual          feature         ecmp    run48
 
 Restart ofad on leaf with dhcp-relay
     Restart ofad on leaf with dhcp-relay
-    [Tags]          feature         dhcp-relay      
+    [Tags]          feature         dhcp-relay      run49
 
 Restart ofad on spine with dhcp-relay
     Restart ofad on spine with dhcp-relay
-    [Tags]          feature         dhcp-relay          runfailed
+    [Tags]          feature         dhcp-relay          run50
     
 Flap member link in a port-group in ecmp group
     manual passed
-    [Tags]          manual          solution            ecmp    
+    [Tags]          manual          solution            ecmp    run51  
     
 Flap port group in ecmp group
     manual passed
-    [Tags]          manual          solution            ecmp
+    [Tags]          manual          solution            ecmp    run52
 
 inter tenant ecmp forwarding in headless mode
     manual passed
-    [Tags]          manual          solution            ecmp
+    [Tags]          manual          solution            ecmp    run53
 
 inter tenant dhcp relay in headless mode
-    manual passed
-    [Tags]          manual          solution            dhcp-relay  
+    manual passed   
+    [Tags]          manual          solution            dhcp-relay  run54  
 
 Verify L3 inter tenant forwarding after controller upgrade
     manual failed
-    [Tags]          manual          feature                 
+    [Tags]          manual          feature                 run55
 
 Verify inter tenant ecmp forwarding after controller upgrade
     manual failed
-    [Tags]          manual          feature                 
+    [Tags]          manual          feature                 run56
 
 Verify inter tenant dhcp-relay functionality after controller upgrade
     manual failed
-    [Tags]          manual          feature     
+    [Tags]          manual          feature     run57
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]          solution            dhcp-relay          runfailed
+    [Tags]          solution            dhcp-relay          run58
                     
 Add and delete nexthop group
     manual passed
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run59
 
 Add and delete nexthop group in system
     manual passed
-    [Tags]          manual              feature     negative             
+    [Tags]          manual              feature     negative    run60         
 
 Add and delete nexthop group IP 
     manual passed
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run61
                     
 Add and delete route pointing to nexthop group in tenant
     manual passed
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run62
                     
 Add and delete route pointing to different nexthop group in system
     manual passed
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run63
 
 Add and delete route pointing to nexthop group in system
     manual passed
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run64
 
 Add and delete route pointing to unknown nexthop group in system
     manual untested
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run65
 
 Add and delete route pointing to nexthop group defined in other tenant in system
     manual untested
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run66
 
 Add and delete route pointing to nexthop group defined in tenantX in tenantY
     manual untested
-    [Tags]          manual              feature            
+    [Tags]          manual              feature            run67
 
 Verify nexthop group config is still applied on HA failover
     manual untested
-    [Tags]          manual              feature            HA
+    [Tags]          manual              feature            HA       run68
     
 Verify routing loop is not causing packets to loop forever
     manual passed
-    [Tags]          manual          feature   
+    [Tags]          manual          feature   run69
 
 Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
-    [Tags]          feature     testpath          runfailed
+    [Tags]          feature     testpath          run70
 
 Spine reboot
     Spine reboot
-    [Tags]          feature         HA          
+    [Tags]          feature         HA        run71  
 
 Leaf reboot
     Leaf reboot
-    [Tags]          feature         HA
+    [Tags]          feature         HA      run72
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -977,11 +977,13 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
-    BASH ifup intf                              h6                              em2
+    ${version} =                                BASH lsb release                h6
+    ${intf} =                                   Set Variable If                 ${version} == 12            eth1            em2    
+    BASH ifup intf                              h6                              ${intf}
     BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+    BASH init intf                              h6                              ${intf}
     BASH add ip address                         h5                              10.251.1.31/24          eth1
-    BASH add ip address                         h6                              10.252.1.31/24          em2
+    BASH add ip address                         h6                              10.252.1.31/24          ${intf}
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
@@ -997,7 +999,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2a_host5}
-    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${mac2} =                                   BASH get intf mac               h6                      ${intf}
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -1013,7 +1015,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     ${returnVal}=  rest verify testpath fabric view  Test-SameRackDifferentSwitch  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.31
     Should Be True  ${returnVal}
     BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+    BASH init intf                              h6                              ${intf}
     
 
 Overlapping IP subnet with and without private keyword
@@ -1448,17 +1450,15 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${mac2} =                                   BASH get intf mac               h2                      bond0
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    ${state2} =                                 Set Variable                    ${result[0]['state']}   
-    Should Contain                              ${attachpoint}                  ${leaf0_pc2}
-    Should Contain                              ${state2}                       L2 Only
+    Should Not Be True                          REST show endpoints ip state    ${mac2}
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${state5} =                                 Set Variable                    ${result[0]['state']}   
-    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    Should Contain                              ${state5}                       L2 Only
+    Should Not Be True                          REST show endpoints ip state    ${mac5}
+#    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
+#    ${state5} =                                 Set Variable                    ${result[0]['state']}   
+#    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
+#    Should Contain                              ${state5}                       L2 Only
     sleep                                       5
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     sleep                                       5
@@ -2924,9 +2924,7 @@ test setup topology
 #   Should Be True                                  ${result}
     REST add static routes                          X                           10.252.0.0/16        {"tenant": "system"}
     REST add static routes                          Y                           10.251.0.0/16        {"tenant": "system"}
-        
-    
-
+  
 test teardown topology
     delete traffic
     REST delete vns ip                              X                           X1              10.251.1.1              24  
@@ -2956,9 +2954,9 @@ test teardown topology
     initialize host
     Stop Floodlight Monitor    
     BASH ifdown intf                                h3                          bond0
-    BASH restart networking service                 h1                          timeout=60
-    BASH restart networking service                 h3                          timeout=60
-    BASH restart networking service                 h6                          timeout=60
+#    BASH restart networking service                 h1                          timeout=60
+#    BASH restart networking service                 h3                          timeout=60
+#    BASH restart networking service                 h6                          timeout=60
     
 
 T5 base suite setup
