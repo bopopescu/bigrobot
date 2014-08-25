@@ -5095,3 +5095,39 @@ class T5Platform(object):
         temp = helpers.strip_cli_output(content)
         return temp
 
+
+    def fabric_consistency_checker(self, node):
+        ''' This function checks the consistency between active and standby nodes.
+            Specifically it'll look for:
+                1) running-config mismatches between active & standby. 
+                2) All the runtime fabric integrity verifications which includes:
+                        switchlists/endpoints/lags/links/forwarding tables etc
+                        
+            Arguments: node - linux host name from the topo file which it will use to scp the running configs
+        '''
+            
+        t = test.Test()
+        obj = utilities()
+        n = t.node(node)
+        nodeIP = n.ip()
+
+        scpLocation = "scp://root@" + nodeIP +":/root/autoConfig1.txt"
+        returnVal = self.cli_copy("running-config",  scpLocation)
+        if(returnVal):
+            scpLocation = "scp://root@" + nodeIP +":/root/autoConfig2.txt"
+            returnVal = self.cli_copy("running-config", scpLocation, "slave")
+            if(returnVal):
+                returnVal = utilities.cli_diff_running_configs(obj, node, "autoConfig1.txt", "autoConfig2.txt")
+                if(returnVal):
+                    helpers.log("Configs matches between 2 nodes. Moving on to run time state validations")
+                    utilities.fabric_integrity_checker(obj, "before", "single", "Yes")
+                    return utilities.fabric_integrity_checker(obj, "after", "single", "Yes")
+                else:
+                    helpers.log("Error verifying diff between two running config files. Looks like something is off")
+            else:
+                helpers.log("Error during Copying running config to autoConfig2.txt")
+                return False
+        else:
+            helpers.log("Error during Copying running config to autoConfig1.txt")
+            return False
+    
