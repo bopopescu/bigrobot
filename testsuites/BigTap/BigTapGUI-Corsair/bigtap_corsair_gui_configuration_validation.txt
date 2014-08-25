@@ -6,6 +6,7 @@ Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
 Force Tags      	GUI Config
 Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
