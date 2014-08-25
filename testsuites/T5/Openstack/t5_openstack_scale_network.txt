@@ -25,23 +25,10 @@ add/delete 100 network in a project
 	openstack verify tenant  admin
 	openstack verify segment scale  admin  100
 	rest delete tenant all
-	sleep  100
+	sleep  70
 	openstack verify segment scale  admin  100
 	openstack segment scale delete  100
-	sleep  10
-	${result}==  openstack verify tenant  admin
-	Should not be True  ${result}
-	
-add/delete 1000 network in a project
-	[Tags]  openstack  skipped	 
-	openstack segment scale  admin  70  1000
-	openstack verify tenant  admin
-	openstack verify segment scale  admin  1000
-	rest delete tenant all
-	sleep  100
-	openstack verify segment scale  admin  1000
-	openstack segment scale delete  1000
-	sleep  10
+	sleep  20
 	${result}==  openstack verify tenant  admin
 	Should not be True  ${result}
 	
@@ -51,9 +38,9 @@ add/delete 3998 network in a project
 	openstack verify tenant  admin
 	openstack verify segment scale  admin  3998
 	rest delete tenant all
-	sleep  100
+	sleep  400
 	openstack segment scale delete  3998
-	sleep  20
+	sleep  30
 	${result}==  openstack verify tenant  admin
 	Should not be True  ${result}
 	
