@@ -15,7 +15,7 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
-import SeleniumLibrary
+from robot.libraries.BuiltIn import BuiltIn
 
 
 class BsnSelenium(object):
@@ -25,10 +25,11 @@ class BsnSelenium(object):
 
     def title_should_contain(self, title):
         """Verifies that current page title contains `title`."""
-        # actual = self._selenium.get_title()
-        actual = SeleniumLibrary.SeleniumLibrary().get_title()
+
+        seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
+        actual = seleniumlib.get_title()
+
         if  not title in actual:
             raise AssertionError("Title %s should have contained '%s' but failed"
                                   % (actual, title))
-        helpers.log("Page title is '%s'." % title)
-        print("******** Page title is '%s'." % title)
+        helpers.log("Page title is '%s' (actual is '%s')." % (title, actual))
