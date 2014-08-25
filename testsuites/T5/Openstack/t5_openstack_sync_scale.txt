@@ -25,7 +25,7 @@ verify 5 tenant 50 network sync
 	openstack multiple scale  70  5  10 
 	rest verify tenant segment scale  5  10
 	rest delete tenant all
-	sleep  80
+	sleep  130
 	rest verify tenant segment scale  5  10
     openstack segment scale delete  50
     openstack tenant scale delete  5
