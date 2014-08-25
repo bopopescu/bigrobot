@@ -6,6 +6,7 @@ Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
 Library       		String
 Resource        	bigtap_resource.txt

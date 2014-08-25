@@ -5,8 +5,9 @@ Force Tags      	GUI RBAC
 Suite Setup      	Setup
 Suite Teardown   	Teardown
 Library         	keywords/BsnCommon.py
-Library         	keywords_dev/tomasz/BigTap.py
+#Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
+Library         	keywords/BsnSelenium.py
 Resource        	bigtap_resource.txt
 
 
@@ -46,7 +47,7 @@ T2.2 Controller Interfaces
 T2.3 BigTap Policies	
 	Check Hover					${BIG TAP MENU}				${POLICIES LABEL}		${POLICIES URL}				${POLICIES TITLE}
 T2.4 BigTap IP Lists	
-	Check Hover					${BIG TAP MENU}				${IP LISTS LABEL}		${IP LISTS URL}				${IP LISTS TITLE}
+	Check Hover					${BIG TAP MENU}				${IP LISTS LABEL}		${IP ADDRESS GROUPS URL}	${IP ADDRESS GROUPS TITLE}
 T2.5 BigTap Services	
 	Check Hover					${BIG TAP MENU}				${SERVICES LABEL}		${SERVICES URL}				${SERVICES TITLE}
 T2.6 BigTap Interfaces
@@ -87,7 +88,7 @@ Setup
     ${c1_ip}            params  node=c1  key=ip
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    CLI Start Mininet Server  tree,3
+    #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin

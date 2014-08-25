@@ -7,6 +7,7 @@ Force Tags      	GUI DPM
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
+Library        		keywords/BsnSelenium.py
 Resource        	bigtap_resource.txt
 Library       		String
 
