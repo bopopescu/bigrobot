@@ -34,6 +34,7 @@ T1 Interface tenant add/remove permit policy src-ip to dest-ip
 	rest add policy							${tenantX}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	ixia initialize  tg1  init=True
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
@@ -450,7 +451,7 @@ T15 Interface tenant add/remove permit policy src-tenant to any
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  srcdata=${src_dict}   
 	rest apply policy on tenant					X			${tenant1_polname}
 	#Re-initializing IXIA
-	ixia initialize  init=True
+	ixia initialize  tg1  init=True
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
@@ -900,7 +901,7 @@ T30 Interface tenant add/remove deny policy any to dest-vns
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  dstdata=${dst_dict} 
 	rest apply policy on tenant					X			${tenant1_polname}
 	#Re-initializing IXIA
-	ixia initialize  init=True
+	ixia initialize  tg1  init=True
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
@@ -1501,7 +1502,7 @@ T50 Interface system tenant add/remove permit policy src-ip to dest-vns
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
 	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
 	#Re-initializing IXIA
-	ixia initialize  init=True
+	ixia initialize  tg1  init=True
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
@@ -2370,7 +2371,7 @@ T80 Interface system tenant add/remove permit policy src-ip-port to dest-ip-port
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
 	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
 	#Re-initializing IXIA
-	ixia initialize  init=True
+	ixia initialize  tg1  init=True
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
