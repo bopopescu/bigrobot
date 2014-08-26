@@ -121,8 +121,9 @@ T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flav
 	[Tags]  skipped
 	# only one failover type implemented in CLI
 T6.23. Check behavior with bandwidt-limited pipe (many switches downloading images?)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
+	# Memory usage and CPU spike while download, but returns to normal after it's done. Tested with 38 parallel downloads (both SWI and Installer)
 T6.24. Check that switch and controllers can configure and use separate remote syslog servers
 	[Tags]  skipped
 	# not implemented in this release
@@ -249,38 +250,38 @@ T7.25.2 Verify that discovery process restarts when specified SWI image path is 
 
 # Single node cluster
 T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process
-	Manual Untested
-	[Tags]  manual-untested
+	# impossible to run "failover" command on active controller
+	[Tags]  skipped
 T7.32.2. Verify that rebooting controller while a switch is downloading Installer image is restarted after controller is up again
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.32.3. Verify that rebooting controller while a switch is downloading SWI image is restarted after controller is up again
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.32.3. Verify that rebooting controller while a switch is searching for manifest is restarted after controller is up again
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 # Two-nodes cluster
-T7.33.1. Verify that download process continues when controller failover (graceful) happens during Installer image download
-	Manual Untested
-	[Tags]  manual-untested
-T7.33.2. Verify that download process continues when controller failover (graceful) happens during SWI image download
-	Manual Untested
-	[Tags]  manual-untested
+T7.33.1. Verify that download process is restarted when controller failover (graceful) happens during Installer image download
+	Manual Passed
+	[Tags]  manual
+T7.33.2. Verify that download process is restarted when controller failover (graceful) happens during SWI image download
+	Manual Passed
+	[Tags]  manual
 T7.33.3. Verify that discovery process is restarted when controller failover (reboot) happens during Installer image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.33.4. Verify that discovery process is restarted when controller failover (reboot) happens during SWI image download
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 # Switch bootup may or may not succeed, since switch boot downloads two pieces (they need to both come from the same controller)
 T7.33.5. Verify that decommissioning a standby node from the cluster does not interrupt ZTN server activity (switch downloading an image finishes the process successfully)
 	Manual Untested
 	[Tags]  manual-untested
 T7.33.6. Verify that decommissioning the active node from the cluster does not interrupt ZTN server activity in other way than failing over (switch downloading an image restarts the process and downloads from new active controller)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 ### Upgrade - only a few general test cases
 # There is a separate test plan for upgrade process
