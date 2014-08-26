@@ -85,7 +85,8 @@ T3.6 Topology View Pane
 Setup
 	base suite setup
     Start Selenium Server  -trustAllSSLCertificates
-    ${c1_ip}            params  node=c1  key=ip
+    #${c1_ip}=            params  node=c1  key=ip
+    ${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     #CLI Start Mininet Server  tree,3
