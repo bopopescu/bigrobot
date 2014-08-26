@@ -605,7 +605,7 @@ TC29: Hash Mode:L3 - Disable two links and Verify destination IP address hashing
     sleep  1       
     [Tags]  l3dstip  L3
 
-T30: Hash Mode:L3 - Verify TCP source port hashing    
+TC30: Hash Mode:L3 - Verify TCP source port hashing    
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -626,7 +626,7 @@ T30: Hash Mode:L3 - Verify TCP source port hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3tcpsrcport  L3
 
-T31: Hash Mode:L3 - Disable two links and verify TCP source port hashing    
+TC31: Hash Mode:L3 - Disable two links and verify TCP source port hashing    
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -652,7 +652,7 @@ T31: Hash Mode:L3 - Disable two links and verify TCP source port hashing
     sleep  1       
     [Tags]  l3tcpsrcport  L3
 
-T32: Hash Mode:L3 - Verify TCP destination port hashing    
+TC32: Hash Mode:L3 - Verify TCP destination port hashing    
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -673,7 +673,7 @@ T32: Hash Mode:L3 - Verify TCP destination port hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3tcpdstport  L3
 
-T33: Hash Mode:L3 - Disable two links and verify TCP destination port hashing    
+TC33: Hash Mode:L3 - Disable two links and verify TCP destination port hashing    
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -700,7 +700,7 @@ T33: Hash Mode:L3 - Disable two links and verify TCP destination port hashing
     [Tags]  l3tcpdstport  L3       
 
 
-T34: Hash Mode:L3 - Verify UDP source port hashing    
+TC34: Hash Mode:L3 - Verify UDP source port hashing    
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -721,7 +721,7 @@ T34: Hash Mode:L3 - Verify UDP source port hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3UDPsrcport  L3
 
-T35: Hash Mode:L3 - Disable two links and verify UDP source port hashing    
+TC35: Hash Mode:L3 - Disable two links and verify UDP source port hashing    
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -747,7 +747,7 @@ T35: Hash Mode:L3 - Disable two links and verify UDP source port hashing
     sleep  1       
     [Tags]  l3UDPsrcport  L3
 
-T36: Hash Mode:L3 - Verify UDP destination port hashing    
+TC36: Hash Mode:L3 - Verify UDP destination port hashing    
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -768,7 +768,7 @@ T36: Hash Mode:L3 - Verify UDP destination port hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3UDPdstport  L3
 
-T37: Hash Mode:L3 - Disable two links and verify UDP destination port hashing    
+TC37: Hash Mode:L3 - Disable two links and verify UDP destination port hashing    
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -794,7 +794,7 @@ T37: Hash Mode:L3 - Disable two links and verify UDP destination port hashing
     sleep  1       
     [Tags]  l3UDPdstport  L3
 
-T38: Hash Mode:L3 - Verify source IPv6 address hashing
+TC38: Hash Mode:L3 - Verify source IPv6 address hashing
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -811,7 +811,7 @@ T38: Hash Mode:L3 - Verify source IPv6 address hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3srcipv6  L3
 
-T39: Hash Mode:L3 - Disable two links and verify source IPv6 address hashing
+TC39: Hash Mode:L3 - Disable two links and verify source IPv6 address hashing
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -833,7 +833,7 @@ T39: Hash Mode:L3 - Disable two links and verify source IPv6 address hashing
     sleep  1       
     [Tags]  l3srcipv6  L3    
 
-T40: Hash Mode:L3 - Verify destination IPv6 address hashing
+TC40: Hash Mode:L3 - Verify destination IPv6 address hashing
     configure lag interfaces with hash mode  L3
     ${stream1}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
@@ -850,7 +850,7 @@ T40: Hash Mode:L3 - Verify destination IPv6 address hashing
     send and verify traffic  True  True  True  True  
     [Tags]  l3dstipv6  L3
 
-T41: Hash Mode:L3 - Disable two links and verify destination IPv6 address hashing
+TC41: Hash Mode:L3 - Disable two links and verify destination IPv6 address hashing
     configure lag interfaces with hash mode  L3
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=0
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=0
@@ -1027,7 +1027,8 @@ TC48: Hash Mode:L3 - Verify IPv6 UDP destination port hashing
     ${stream4}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
-    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_c_flow    send and verify traffic  True  True  True  True  
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_c_flow    
+    send and verify traffic  True  True  True  True  
     [Tags]  l3ipv6udpdstport  L3
     
 TC49: Hash Mode:L3 - Disable two links and verify IPv6 UDP destination port hashing
@@ -1049,7 +1050,8 @@ TC49: Hash Mode:L3 - Disable two links and verify IPv6 UDP destination port hash
     ${stream4}=  L3 add  flow=a->c  frame_rate=1000  frame_size=64  frame_cnt=10000
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
-    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_c_flow    send and verify traffic  True  True  False  False
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_c_flow    
+    send and verify traffic  True  True  False  False
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=1
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=1
     sleep  1       
