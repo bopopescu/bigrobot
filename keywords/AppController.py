@@ -1,15 +1,15 @@
-''' 
+'''
 ###  WARNING !!!!!!!
-###  
+###
 ###  This is where common code for BigTap/BigWire Controllers will go in.
-###  
-###  To commit new code, please contact the Library Owner: 
+###
+###  To commit new code, please contact the Library Owner:
 ###  Animesh Patcha (animesh.patcha@bigswitch.com)
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
-###  
+###
 ###  Last Updated: 02/08/2014
-###  
+###
 ###  WARNING !!!!!!!
 '''
 
@@ -38,12 +38,12 @@ class AppController(object):
             - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
 
             Input:
-            | `package` |  URL to the upgrade package | 
-            | `node` |  Node to be upgraded. Leave empty to upgrade all nodes in your topology | 
-            | `timeout` |  Timeout (in seconds) for "upgrade" command to be execute | 
-            | `sleep` |  Time (in seconds) of sleep after upgrade, before next actions | 
-            
-            Return Value: 
+            | `package` |  URL to the upgrade package |
+            | `node` |  Node to be upgraded. Leave empty to upgrade all nodes in your topology |
+            | `timeout` |  Timeout (in seconds) for "upgrade" command to be execute |
+            | `sleep` |  Time (in seconds) of sleep after upgrade, before next actions |
+
+            Return Value:
             - True if configuration is successful
             - False otherwise
         '''
@@ -101,15 +101,15 @@ class AppController(object):
     def rest_return_switch_dpid_from_alias(self, switch_alias):
         '''
         Objective: Returns switch DPID, given a switch alias
-        
-        Input:  
-        | `switch_alias` |  User defined switch alias | 
-        
+
+        Input:
+        | `switch_alias` |  User defined switch alias |
+
         Description:
-        The function 
+        The function
         - executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch?select=alias
         - and greps for switch-alias, and returns switch-dpid
-        
+
         Return value
         - Switch DPID on success
         - False on failure
@@ -134,15 +134,15 @@ class AppController(object):
     def rest_return_switch_dpid_from_ip(self, node, soft_error=False):
         '''
         Objective: Returns switch DPID, given a switch alias
-        
-        Input:  
-        | `node` |  Reference to node as defined in .topo file | 
-        
+
+        Input:
+        | `node` |  Reference to node as defined in .topo file |
+
         Description:
-        The function 
+        The function
         - executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch?select=alias
         - and greps for switch-alias, and returns switch-dpid
-        
+
         Return value
         - Switch DPID on success
         - False on failure
@@ -168,9 +168,9 @@ class AppController(object):
 
     def rest_show_switch(self):
         '''Return dictionary containing DPID,IP Addresses for every switch connected to current controller
-        
+
             Input: N/A
-            
+
             Returns: Dictionary of Switch DPID and IP Addresses
         '''
         try:
@@ -199,11 +199,11 @@ class AppController(object):
         '''
             Objective:
             - Configure switch alias
-            
+
             Inputs:
             | node | Reference to switch as defined in .topo file |
             | switch_alias | alias of switch |
-            
+
             Return Value:
             | True | On configuration success|
             | False | On configuration failure |
@@ -246,13 +246,13 @@ class AppController(object):
         '''
             Objective:
             - Delete switch alias
-            
+
             Inputs:
             | node | Reference to switch as defined in .topo file |
-            
+
             Return Value:
             | True | On configuration success|
-            | False | On configuration failure |        
+            | False | On configuration failure |
         '''
         try:
             t = test.Test()
@@ -281,15 +281,15 @@ class AppController(object):
     def rest_delete_switch(self, node):
         '''
             Objective:
-            - Delete switch 
+            - Delete switch
             - Execute cli command 'switch 00:00:5c:16:c7:1c:16:f2'
-            
+
             Inputs:
             | node | Reference to switch as defined in .topo file |
-            
+
             Return Value:
             | True | On configuration success|
-            | False | On configuration failure |        
+            | False | On configuration failure |
         '''
         try:
             t = test.Test()
@@ -317,11 +317,11 @@ class AppController(object):
 
     def flap_eth0_controller(self, controller_role):
         ''' Flap eth0 on Controller
-        
+
             Input:
                controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
-           
-           Return Value:  True if the configuration is successful, false otherwise 
+
+           Return Value:  True if the configuration is successful, false otherwise
         '''
         try:
             t = test.Test()
@@ -375,12 +375,12 @@ class AppController(object):
 
     def restart_controller(self, controller_role):
         '''Restart a process on controller
-        
+
             Input:
                processName        Name of process to be restarted
                controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
-           
-           Return Value:  True if the configuration is successful, false otherwise 
+
+           Return Value:  True if the configuration is successful, false otherwise
         '''
         try:
             t = test.Test()
@@ -405,11 +405,11 @@ class AppController(object):
 ###################################################
     def rest_verify_interface_is_up(self, node, interface_name):
         '''Verify if a given interface on a given switch is up
-        
-            Input: 
+
+            Input:
                 `switch_dpid`       DPID of the Switch
                 `interface_name`    Interface Name e.g. ethernet13
-            
+
             Returns: True if the interface is up, false otherwise
         '''
         try:
@@ -438,7 +438,7 @@ class AppController(object):
 ############### SYSLOG SHOW COMMANDS ########################
     def rest_show_syslog(self):
         '''Execute CLI command "show syslog" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -460,7 +460,7 @@ class AppController(object):
 
     def cli_verify_syslog(self, syslog_server, syslog_level):
         '''Execute CLI command "show syslog" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -483,11 +483,11 @@ class AppController(object):
 ############### SYSLOG CONFIG COMMANDS ########################
     def rest_configure_syslog(self, syslog_server, log_level):
         '''Configure Syslog server
-        
+
             Inputs:
-                syslog_server: Name of Syslog server 
+                syslog_server: Name of Syslog server
                 log_level    :  Logging Level, 0-9
-            
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -508,11 +508,11 @@ class AppController(object):
 
     def rest_delete_syslog(self, syslog_server, log_level):
         '''Delete Syslog server
-        
+
             Inputs:
-                syslog_server: Name of Syslog server 
+                syslog_server: Name of Syslog server
                 log_level    :  Logging Level, 0-9
-            
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -535,7 +535,7 @@ class AppController(object):
 ############### NTP SHOW COMMANDS ########################
     def rest_show_ntp(self):
         '''Execute CLI command "show ntp" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -555,7 +555,7 @@ class AppController(object):
 
     def rest_verify_ntp(self):
         '''Execute CLI command "show ntp" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -574,7 +574,7 @@ class AppController(object):
 
     def cli_verify_ntp(self, ntp_server="0.bigswitch.pool.ntp.org"):
         '''Execute CLI command "show ntp" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -597,10 +597,10 @@ class AppController(object):
 
     def rest_configure_ntp(self, ntp_server):
         '''Configure NTP server
-        
+
             Inputs:
-                ntp_server: Name of NTP server 
-            
+                ntp_server: Name of NTP server
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -620,10 +620,10 @@ class AppController(object):
 
     def rest_delete_ntp(self, ntp_server):
         '''Delete NTP server
-        
+
             Inputs:
-                ntp_server: Name of NTP server 
-            
+                ntp_server: Name of NTP server
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -644,10 +644,10 @@ class AppController(object):
 # ##Banner
     def rest_set_banner(self, banner_message):
         '''Set Banner on controller
-        
+
             Inputs:
-                banner_message: Message to be set 
-            
+                banner_message: Message to be set
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -667,10 +667,10 @@ class AppController(object):
 
     def rest_verify_banner(self):
         '''Set Banner on controller
-        
+
             Inputs:
-                banner_message: Message to be set 
-            
+                banner_message: Message to be set
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -690,7 +690,7 @@ class AppController(object):
 
     def cli_verify_banner(self, banner_message, user="admin", password="adminadmin"):
         '''Execute CLI command "show ntp" and return o/p
-        
+
             Returns dictionary of o/p
         '''
         try:
@@ -718,10 +718,10 @@ class AppController(object):
 
     def rest_delete_banner(self):
         '''delete Banner on controller
-        
+
             Inputs:
-                banner_message: Message to be set 
-            
+                banner_message: Message to be set
+
             Returns: True if configuration is successful, false otherwise
         '''
         try:
@@ -741,10 +741,10 @@ class AppController(object):
     def rest_add_tacacs_authentication(self, tacacs=True, tacacs_priority=1, local=True, local_priority=2, username="admin", password="adminadmin"):
         '''
             Objective: Add TACACS configuration
-            
+
             Input:
             | tacacs_server |  Tacacs Server |
-            
+
             Return Value:
             True on Success
             False on Failure
@@ -772,7 +772,7 @@ class AppController(object):
                 else:
                     c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
-                    c_user.close()
+                    # c_user.close() Skip closing handling will check with Vui if it is required here or not
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -782,10 +782,10 @@ class AppController(object):
     def rest_delete_tacacs_authentication(self):
         '''
             Objective: Add TACACS configuration
-            
+
             Input:
             | tacacs_server |  Tacacs Server |
-            
+
             Return Value:
             True on Success
             False on Failure
@@ -810,10 +810,10 @@ class AppController(object):
     def rest_add_tacacs_authorization(self):
         '''
             Objective: Add TACACS configuration
-            
+
             Input:
             | tacacs_server |  Tacacs Server |
-            
+
             Return Value:
             True on Success
             False on Failure
@@ -837,10 +837,10 @@ class AppController(object):
     def rest_delete_tacacs_authorization(self):
         '''
             Objective: Add TACACS configuration
-            
+
             Input:
             | tacacs_server |  Tacacs Server |
-            
+
             Return Value:
             True on Success
             False on Failure

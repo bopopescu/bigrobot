@@ -29,14 +29,18 @@ ${tenant}=        testTenant
 
 # Controller Negative Test Cases 
 Test Cluster formation with 2 different versions
-    Log     Step 1 - Test Cluster formation with 2 different versions   
+    Log     Step 1 - Test Cluster formation with 2 different versions
+    Log     Step 2 - Bring up one controller with a version
+    Log     Step 3 - Bring up the stby controller and add it to the same cluster
+    Log     Step 4 - Verify that the stby controller can not be added to the same cluster    
     [Tags]  T5  controller  negative  
     [Tags]  Manual  jira-bsc-5258  jira-bsc-6177
     Manual Failed 
 
 Test Cluster formation with a disconnected/invalid NTP server
     Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server 
-    Log     Step 2 - Stby takes the ntp configuration from the active   - Reject configuration from stby for ntp
+    Log     Step 2 - Verify that Stby takes the ntp configuration from the active
+    Log     Step 3 - Verify that Stby Reject configuration for ntp
     [Tags]  T5  controller  negative  
     [Tags]  Manual
     Manual Passed  
@@ -95,14 +99,14 @@ Test Active & Stdby controller configured in different time zones
 Killing active deamons (eg: keepalived, ntpd, collectd)
     Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd)   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed 
 
 Test continuous floodlight restarts
     Log     Step 1 - Test continuous floodlight restarts   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed 
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
     Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
@@ -117,7 +121,7 @@ Changes in the switch role (leaf to spine / spine to leaf)
     [Tags]  Manual-untested
     Manual untested
 
-Misconfiguration in the leaf groups
+Misconfiguration in the leaf groups 
     Log     Step 1 - Misconfiguration in the leaf groups   
     [Tags]  T5  controller  negative  
     [Tags]  Manual-untested
@@ -132,14 +136,15 @@ Misconfiguration in the port-groups. Configuring disconnected/mismatch links
 Connect server ports to leaves in 2 different racks
     Log     Step 1 - Connect server ports to leaves in 2 different racks   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed 
     
-Connect server port to leaf & a spine
-    Log     Step 1 - Connect server port to leaf & a spine   
+Connect server port to leaf in same rack with different port group configuration
+    Log     Step 1 - Connect server port to leaf in the same rack with different port group configuration 
+    Log     Step 2 -   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
     
 
 # Switch Platform Negative Test Cases 
@@ -157,7 +162,9 @@ Connecting leaves in between racks
     Manual passed
 
 Add spine to spine direct links
-    Log     Step 1 - Add spine to spine direct links   
+    Log     Step 1 - Add spine to spine direct links  
+    Log     Step 2 - Verify that fabric error reports the error for invalid links
+    Log     Step 3 - Verify that the fabric error shows the misconfigured link is displayed in show fabric error  
     [Tags]  T5  switch  negative  
     [Tags]  Manual
     Manual passed

@@ -6,6 +6,7 @@ Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
 Library       		String
 Resource        	bigtap_resource.txt
@@ -98,7 +99,7 @@ T3.6 Topology View Pane
 * Keyword
 config suite setup
     base suite setup
-	${c1_ip}            get node ip   master
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates

@@ -7,6 +7,7 @@ Force Tags      	GUI DPM
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
+Library        		keywords/BsnSelenium.py
 Resource        	bigtap_resource.txt
 Library       		String
 
@@ -145,7 +146,7 @@ TC35 Teardown
 * Keyword
 config suite setup
     base suite setup
-	${c1_ip}            get node ip   master
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates

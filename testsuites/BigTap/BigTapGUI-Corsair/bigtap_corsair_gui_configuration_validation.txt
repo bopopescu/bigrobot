@@ -6,6 +6,7 @@ Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
 Force Tags      	GUI Config
 Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
@@ -225,7 +226,7 @@ T8.12 Enable L3-L4 Offset Match
 * Keyword
 config suite setup
     base suite setup
-	${c1_ip}            get node ip   master
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
