@@ -393,7 +393,8 @@ Check recovery user account behavior when floodlight is busy
 	manual failed
 
 Check Fabric Consistency
-	[Tags]  consistency
+	[Tags]  manual  consistency
+	manual passed
 	${returnVal}=  fabric consistency checker  h1
 	Should be true  ${returnVal}
 
