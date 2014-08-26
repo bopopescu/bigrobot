@@ -772,7 +772,7 @@ class AppController(object):
                 else:
                     c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
-                    # c_user.close() Skip closing handling will check with Vui if it is required here or not
+                    c_user.close()
             except:
                 helpers.test_log(c.rest.error())
                 return False
