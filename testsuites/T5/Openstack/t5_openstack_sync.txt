@@ -90,6 +90,29 @@ verify sync on default setting multiple segments
 	openstack verify endpoint  web-inst1  web
 	openstack verify endpoint  db-inst1  db
 
+verify sync after active controller failover
+	[Tags]  openstack
+	openstack add net  t5test  app
+	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	openstack verify tenant  t5test
+	openstack verify vns  t5test  app
+	openstack add instance  cirros  t5test  app  app-inst1
+	sleep  20
+	cli verify cluster master reboot
+	openstack add net  t5test  web
+	openstack add subnet  t5test  web  web  30.0.1.0/24 
+	openstack verify tenant  t5test
+	openstack verify vns  t5test  web
+	openstack add instance  cirros  t5test  web  web-inst1
+	sleep  20
+	openstack show instance all
+	openstack verify endpoint  app-inst1  app
+	openstack verify endpoint  web-inst1  web
+	rest delete tenant all
+	sleep  70
+	openstack verify endpoint  app-inst1  app
+	openstack verify endpoint  web-inst1  web
+
 * keywords
 T5 Functional Suite Setup
 	base suite setup
