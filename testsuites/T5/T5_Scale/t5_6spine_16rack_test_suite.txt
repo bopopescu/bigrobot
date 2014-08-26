@@ -402,7 +402,7 @@ T3 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2/L3 mixed
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual   scaling
 
 T4 Verify L2 traffic drop time after deleting the scale config
@@ -425,7 +425,7 @@ T6 Verify L2/L3 traffic drop time after deleting the scale config
     Log    Repeat T3
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 
 
@@ -446,7 +446,7 @@ T8 Generate ARP requests from all L3 hosts
     Log    Send ARP from all L3 hosts 2k ARPs per switch
     Log    Verify ARP resolve
     Log    Repeat T8 for 16k/32k/48k L3 hosts
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
     
     
@@ -505,7 +505,7 @@ T14 Verify/Measure Non-Graceful operations
     Log    Master Controller power off
     Log    Verify traffic loss/Standby take over
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	   
@@ -527,7 +527,7 @@ T16 Kill floodlight deamon in master contorller
     Log   kill floodlight with kill option 9 under master controller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -538,7 +538,7 @@ T17 Kill floodlight deamon in slave contorller
     Log   kill floodlight with kill option 9 under slave controller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -549,7 +549,7 @@ T18 Kill floodlight deamon in master/slave contorller
     Log   kill floodlight with kill option 9 under master/slave controller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -571,7 +571,7 @@ T20 Power on one spine
     Log   Power on one spine
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -582,7 +582,7 @@ T21 Power off/on spine
     Log   Power on one spine
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -593,7 +593,7 @@ T22 Power off one leaf
     Log   Power off one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -604,7 +604,7 @@ T23 Power on one leaf
     Log   Power on one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -615,7 +615,7 @@ T24 Power off/on leaf
     Log   Power on one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -626,7 +626,7 @@ T25 Power down 16th rack
     Log   Power down 16th rack (spines/leafs/servers)
     Log   Verify fabric stability
     Log   Measure traffic convergence/loss    
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	    
@@ -637,7 +637,7 @@ T26 Power up 16th rack
     Log   Power up 16th rack (spines/leafs/servers)
     Log   Verify fabric stability
     Log   Measure traffic convergence/loss
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -648,7 +648,7 @@ T27 Disconnect all switches from BSN controller
     Log   Disconnect all switch management ports
     Log   Verify controller stability
     Log   Measure time till traffic gets dropped
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -657,7 +657,7 @@ T28 Reconnect all switches from BSN controller
     Log   Reconnect all switch management ports
     Log   Verify controller stability
     Log   Measure time till traffic gets dropped
-    Manual untested
+    manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	           
@@ -698,7 +698,7 @@ T32 Verify L2 learning rate
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 T33 Verify L3 hosts ageout and relearn
@@ -707,7 +707,7 @@ T33 Verify L3 hosts ageout and relearn
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -717,7 +717,7 @@ T34 Verify traffic loss/convergence after removing static endpoints
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -737,7 +737,7 @@ T37 Verify parallel upgrades of all spines/leafs
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -747,7 +747,7 @@ T38 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -757,7 +757,7 @@ T39 Verify L3 hosts move with inter-tenant traffic (repeat with 16k/32k/48k L3 h
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -767,7 +767,7 @@ T40 Verify/measure traffic convergence/cli times for incremental config changes
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -777,7 +777,7 @@ T41 Verify fabric stability on spine/leaf interface continuous flap
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -787,7 +787,7 @@ T42 Verify traffic loss in headless mode of controller
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -797,7 +797,7 @@ T43 Verify traffic loss in controller split brain mode
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -807,7 +807,7 @@ T44 Verify traffic loss in half switches connected to master and rest have conne
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -817,7 +817,7 @@ T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -827,7 +827,7 @@ T46 Verify snmp polling (get/getnext/getbulk)
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -837,7 +837,7 @@ T47 Verify controller stability when switch sends line rate traffic to controlle
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -847,7 +847,7 @@ T48 Verify switch stability when controller sends line rate traffic switch
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -857,7 +857,7 @@ T49 Verify VIP changes
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
@@ -867,7 +867,7 @@ T50 Verify policy changes
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   manual-untested
 	[Tags] 	sanity    Manual  scaling
 	
 	
