@@ -2,24 +2,22 @@
 Documentation    T5 Test Suite
 Suite Setup      T5 longevity suite setup
 Suite Teardown   T5 longevity suite teardown
-Test Setup       base test setup 
-Test Teardown    base test teardown 
+Test Setup       T5 base test setup 
+Test Teardown    T5 base test teardown 
 Force Tags       IronHorse   T5
-Library          keywords/BsnCommon.py
-Library          keywords/Controller.py
-Library			 keywords/Mininet.py
-Library		     keywords/Host.py
-Library		     keywords/Ixia.py
-Library	         keywords/T5.py
-Library          keywords/T5L3.py
-Library	         keywords/T5Platform.py
-Library	         keywords/Controller.py
-Library	         keywords/SwitchLight.py
-Library	         keywords/T5Utilities.py
-
-Library	         keywords/T5ZTN.py
-
-Library          OperatingSystem
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
  
 * Variable
 ${short}  1
@@ -105,7 +103,7 @@ T27 data Link down/up event between leaf and spine
   	\  sleep  ${inevent}  
  	
    
-	[Tags] 	longevity     traffic     event   
+	[Tags] 	longevity     traffic     event    skipped
 
 
   
@@ -125,7 +123,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event     
+	[Tags] 	longevity     traffic    event     skipped
 
  
 T51 continues Event
@@ -143,7 +141,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
   	\  sleep  ${betweenevent}
    
-	[Tags] 	longevity    traffic  
+	[Tags] 	longevity    traffic    skipped
 
 
 
@@ -271,13 +269,28 @@ T5 longevity suite setup
 
 T5 longevity suite teardown
 #   base suite teardown
-	sleep  1
+    sleep  1
+
+
+T5 base test setup 
+   base test setup
+ 
+T5 base test teardown  
+    base test teardown   
+    Run Keyword If Test Failed    check controller top   c1
+    Run Keyword If Test Failed    check controller top   c2
+ 
  
  
 verify switch interface is up	[Arguments]  ${switch}   ${intf}  
 	${info}=  rest_get_fabric_interface_info   ${switch}  ${intf}
 	Should Be Equal as Strings 		up      ${info['state']}
  
+check controller top  [Arguments]  ${node}   
+    : FOR    ${j}    IN RANGE    0     5 
+    \ bash   ${node}  top -n 1 
+    \ sleep  2
+
  
  
 ######## test case keyword
