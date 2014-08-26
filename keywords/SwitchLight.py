@@ -302,7 +302,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_environment(self, node, element="System", hardware_element="Fan", hardware_element_number=1):
+    def cli_show_environment(self, node, hardware_element, hardware_element_number, element_name, element_number=0, sub_element="None"):
         '''
             Objective:
             -- Execute CLI command "show environment" on the switch and return requested element
@@ -336,206 +336,80 @@ class SwitchLight(object):
                     return False
                 else:
                     content = string.split(switch.cli_content(), '\n')
-                    flag_element_found = False
+                    for x in range(0, len(content)):
+                        content[x] = content[x].strip()
                     if "Fan" in hardware_element:
-                        element_id = str(hardware_element) + "  " + str(hardware_element_number)
-                    elif "Temp" in hardware_element:
+                        # element_id = " " + str(hardware_element) + " " + str(hardware_element_number) + "\r"
+                        element_id = str(hardware_element) + " " + str(hardware_element_number)
+                    elif "Thermal" in hardware_element:
+                        element_id = str(hardware_element) + " " + str(hardware_element_number)
+                    elif "PSU" in hardware_element:
                         element_id = str(hardware_element) + " " + str(hardware_element_number)
                     else:
-                        element_id = str(hardware_element)
-
-                    if ("System" in element):
-                        element_index = content.index('System:\r')
-                    elif ("PSU1" in element):
-                        element_index = content.index('PSU 1:\r')
-                    elif ("PSU2" in element):
-                        element_index = content.index('PSU 2:\r')
-                    else:
-                        helpers.log("Element does not exist")
+                        helpers.log("This Element Does not exist \n")
                         return False
+                    element_index = content.index(element_id)
                     for x in range(0, element_index):
                         content.pop(0)
-                    for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            if "Temp" in hardware_element:
-                                element1_array = element_array[2].split('.')
-                                if int(element1_array[1][:1]) == 0:
-                                    temperature = str(element1_array[0][1:])
-                                else:
-                                    temperature = str(element1_array[0][1:]) + "." + str(element1_array[1][:1])
-                                return int(temperature)
-                            elif (("Vin" in hardware_element) or ("Vout" in hardware_element) or ("Iin" in hardware_element) or ("Iout" in hardware_element)):
-                                helpers.log("Elemet array is %s" % element_array)
-                                return_value = element_array[2]
-                                return_value = return_value[1:]
-                                return float(return_value)
-                            elif (("Pin" in hardware_element) or ("Pout" in hardware_element)):
-                                helpers.log("Elemet array is %s" % element_array)
-                                return_value = element_array[2]
-                                return float(return_value)
-                            else:
-                                return element_array[2]
-                    if flag_element_found is False:
-                        helpers.log("Element %s was not found in show environment output" % str(element_id))
-                        return False
-            elif ("Description: Accton AS4600-54T" in switch_output):
-                helpers.log("Platform identified as Accton AS4600-54T")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
+                    if "Thermal" in hardware_element or "Fan" in hardware_element:
+                        for i in range(0, len(content)):
+                            if str(element_name) in content[i]:
+                                temp_value = content[i].split(':')
+                                if "RPM" in str(element_name) or "Status" in str(element_name):
+                                    temp_value[1] = temp_value[1].rstrip('.')
+                                if "Speed" in str(element_name):
+                                    temp_value[1] = temp_value[1].rstrip('.')
+                                    temp_value[1] = temp_value[1].rstrip('%')
+                                if "Airflow" in str(element_name):
+                                    temp_value[1] = temp_value[1].rstrip('.')
+                                    temp_value[1] = temp_value[1].strip()
+                                    if temp_value[1] == "Front-to-Back":
+                                        temp_value[1] = "f2b"
+                                    elif temp_value[1] == "Back-to-Front":
+                                        temp_value[1] = "b2f"
+                                    else:
+                                        return False
+                                if "Temperature" in str(element_name):
+                                    temperature_cli = temp_value[1].split()
+                                    temp_value[1] = temperature_cli[0]
+                                return_value = temp_value[1].strip()
+                                return return_value
+                    elif "PSU" in hardware_element:
+                        element_found = False
+                        if element_name == "Fan" :
+                            element_new_id = str(element_name) + " " + str(element_number)
+                            element_new_index = content.index(element_new_id)
+                            element_found = True
+                        elif element_name == "Thermal" :
+                            element_new_id = str(element_name) + " " + str(element_number)
+                            element_new_index = content.index(element_new_id)
+                            element_found = True
+                        if element_found is True:
+                            for x in range(0, element_new_index):
+                                content.pop(0)
+                            element_new_name = str(sub_element)
+                        else:
+                            element_new_name = str(element_name)
+                        for i in range(0, len(content)):
+                            if str(element_new_name) in content[i]:
+                                temp_value = content[i].split(':')
+                                if "Status" in str(element_new_name):
+                                    temp_value[1] = temp_value[1].rstrip('.')
+                                if "Airflow" in str(element_new_name):
+                                    temp_value[1] = temp_value[1].rstrip('.')
+                                    temp_value[1] = temp_value[1].strip()
+                                    if temp_value[1] == "Front-to-Back":
+                                        temp_value[1] = "f2b"
+                                    elif temp_value[1] == "Back-to-Front":
+                                        temp_value[1] = "b2f"
+                                    else:
+                                        return False
+                                if "Temperature" in str(element_new_name):
+                                    temperature_cli = temp_value[1].split()
+                                    temp_value[1] = temperature_cli[0]
+                                return_value = temp_value[1].strip()
+                                return return_value
                     return False
-                else:
-                    content = string.split(switch.cli_content(), '\n')
-                    if "Fan" in hardware_element and ("System" in element) :
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    elif "Fan" in hardware_element and ("PSU" in element) :
-                        element_id = "RPM:"
-                    elif "Temp" in hardware_element:
-                        element_id = "Temperature:"
-                    elif "Vout" in hardware_element:
-                        element_id = "Vout:"
-                    elif "Iout" in hardware_element:
-                        element_id = "Iout:"
-                    elif "Pout" in hardware_element:
-                        element_id = "Pout:"
-                    else:
-                        element_id = str(hardware_element)
-
-                    flag_element_found = False
-                    if ("System" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "Chassis Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "System"
-                    elif ("PSU1" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-1 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-1"
-                    elif ("PSU2" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-2 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-2"
-                    else:
-                        helpers.log("Element does not exist")
-                        return False
-                    for x in range(0, len(content)):
-                        if ((element_name in content[x]) and  ('Not present' in content[x])):
-                            helpers.log("This PSU does not exist or is not powered up")
-                            return False
-                        elif ((element_name in content[x]) and  ('Unplugged or Failed.' in content[x])):
-                            helpers.log("This PSU does not exist or is not powered up")
-                            return False
-                    helpers.log("element_name is %s " % element_name)
-                    for x in range(0, len(content)):
-                        stripped_value = content[x].lstrip()
-                        if (int(stripped_value.find(element_name)) == 0):
-                            element_index = x
-                            break
-                    helpers.log("element_index is %s " % element_index)
-                    for x in range(0, element_index):
-                        content.pop(0)
-                    for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            helpers.log("Element Array is %s" % element_array)
-                            if "Temp" in hardware_element:
-                                return element_array[1]
-                            elif "Fan" in hardware_element:
-                                return_value = element_array[1]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif "Vin" in hardware_element:
-                                return_value = element_array[3]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif "Vout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-                            elif "Iout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-                            elif "Pout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-
-            elif ('Description: Accton AS5610-52X' in switch_output):
-                helpers.log("Platform identified as Accton AS4600-54T")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
-                    return False
-                else:
-
-                    content = string.split(switch.cli_content(), '\n')
-                    if "Fan" in hardware_element:
-                        element_id = "RPM:"
-                    elif "Temp" in hardware_element:
-                        element_id = "Temperature:"
-                    elif "Vout" in hardware_element:
-                        element_id = "Vout:"
-                    elif "Iout" in hardware_element:
-                        element_id = "Iout:"
-                    elif "Pout" in hardware_element:
-                        element_id = "Pout:"
-                    else:
-                        element_id = str(hardware_element)
-
-                    flag_element_found = False
-                    if ("System" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "Chassis Thermal Sensor " + str(hardware_element_number)
-                        elif "Fan" in hardware_element:
-                            element_name = "Chassis Fan " + str(hardware_element_number)
-                        else:
-                            element_name = "System"
-                    elif ("PSU1" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-1 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-1"
-                    elif ("PSU2" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-2 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-2"
-
-                    for x in range(0, len(content)):
-                        if (int(content[x].find(element_name)) == 0):
-                            element_index = x
-                            break
-                    helpers.log("element_index is %s " % element_index)
-                    for x in range(0, element_index):
-                        content.pop(0)
-                    for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            helpers.log("Element Array is %s" % element_array)
-                            if "Temp" in hardware_element:
-                                return element_array[1]
-                            elif "Fan" in hardware_element:
-                                return_value = element_array[1]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif(("Vin" in hardware_element) or  ("Vout" in hardware_element) or  ("Iin" in hardware_element) or  ("Iout" in hardware_element) or  ("Pin" in hardware_element) or  ("Pout" in hardware_element)):
-                                return_value = element_array[1]
-                                helpers.log("Value of element as seen in CLI is %s" % return_value)
-                                return return_value
 
     def ping_from_local(self, node):
         '''
@@ -1987,7 +1861,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_members(self, node, pc_number, *intf_name_list):
+    def cli_verify_portchannel_members(self, node, pc_number, intf_name_list):
         '''
             Objective:
             - Verify if portchannel contains the member interface that was configured
@@ -2007,11 +1881,10 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
-            helpers.log("Length of content %d" % (len(content)))
-            helpers.log("Length of content %d" % (len(intf_name_list)))
+            member_intf = string.split(intf_name_list, ' ')
             if len(content) < 8 :
                 return False
-            elif len(intf_name_list) < 1:
+            elif len(member_intf) < 1:
                 helpers.test_failure("Passed interface list is empty !!")
                 return False
             else :
@@ -2019,12 +1892,12 @@ class SwitchLight(object):
                 for i in range(10, len(content) - 1):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
                     helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
-                    for intf_name in intf_name_list:
+                    for intf_name in member_intf:
                         helpers.log('value is %s' % intf_name)
                         if len(intfName) > 1 and intfName[1] == intf_name :
                             helpers.log("IntfName is %s \n" % (intfName[1]))
                             pass_count = pass_count + 1
-                if pass_count == len(intf_name_list):
+                if pass_count == len(member_intf):
                     return True
             return False
         except:
@@ -2070,7 +1943,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_member_state(self, node, pc_number, *intf_name_list):
+    def cli_verify_portchannel_member_state(self, node, pc_number, intf_name_list):
         '''
             Objective:
             - Verify if portchannel member interface is up
@@ -2092,23 +1965,22 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
-            helpers.log("Length of content %d" % (len(content)))
-            helpers.log("Length of content %d" % (len(intf_name_list)))
+            member_intf = string.split(intf_name_list, ' ')
             if len(content) < 8 :
                 return False
-            elif len(intf_name_list) < 1:
+            elif len(member_intf) < 1:
                 helpers.test_failure("Passed interface list is empty !!")
                 return False
             else :
                 pass_count = 0
                 for i in range(8, len(content)):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    for intf_name in intf_name_list:
+                    for intf_name in member_intf:
                         if len(intfName) > 1 and intfName[1] == intf_name:
                             if intfName[0] == "*":
                                 helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
                                 pass_count = pass_count + 1
-                if pass_count == len(intf_name_list):
+                if pass_count == len(member_intf):
                     return True
             return False
         except:

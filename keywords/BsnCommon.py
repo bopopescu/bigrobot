@@ -542,10 +542,11 @@ class BsnCommon(object):
                         return output_value
                 else:
                     try:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                         c_user.rest.get(url)
                         content = c_user.rest.content()
                         output_value = content[0][string]
+                        c_user.close()
                     except:
                         t.node_reconnect(node='master')
                         return False
@@ -1336,10 +1337,12 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def return_snmp_value(self, orignal_string):
+    def return_snmp_value(self, orignal_string, offset=1):
         temp_array = orignal_string.split()
         array_length = len(temp_array)
-        return temp_array[array_length - 1]
+        temp_array[array_length - int(offset)] = temp_array[array_length - int(offset)].strip()
+        temp_array[array_length - int(offset)] = temp_array[array_length - int(offset)].strip('"')
+        return temp_array[array_length - int(offset)]
 
     def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
         '''
