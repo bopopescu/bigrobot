@@ -434,7 +434,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
         if "ip-address" in data[0]:
-            state == data[0]["ip-address"][0]["ip-state"]
+            state = data[0]["ip-address"][0]["ip-state"]
             return state
         else:    
             return False
