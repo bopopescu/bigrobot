@@ -49,7 +49,8 @@ T2.6 Empty Username And Password
 Setup
     base suite setup
     Start Selenium Server  -trustAllSSLCertificates
-	${c1_ip}            params  node=c1  key=ip
+	#${c1_ip}=            params  node=c1  key=ip
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Rest Add Tacacs Server  10.2.3.201  secret

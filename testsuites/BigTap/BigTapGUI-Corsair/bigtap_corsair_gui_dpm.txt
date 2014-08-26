@@ -146,7 +146,7 @@ TC35 Teardown
 * Keyword
 config suite setup
     base suite setup
-	${c1_ip}            get node ip   master
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
