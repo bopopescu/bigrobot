@@ -1,0 +1,730 @@
+*Settings
+Documentation  BigTap LB9 Environment Test Suite
+#Suite Setup  environment suite setup
+#Suite Teardown   environment suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags  SwitchLight  switch-platform  BigTap  lb9
+Library  keywords/BsnCommon.py
+Library  keywords/SwitchLight.py
+Library  Collections.py
+
+* Variable
+${snmp_contact}  nw_admin@super_awesome_switch.com
+${snmp_location_1}  CS_214-6005
+
+
+
+* Test Case
+TC1: Verify Fan 1 description is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan  
+
+TC2: Verify Fan 2 description is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    Should be equal as strings  ${compare_value}  ${fan1_value}
+    [Tags]  lb9  platform  fan     
+
+TC3: Verify Fan 3 description is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.3
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    Should be equal as strings  ${compare_value}  ${fan1_value}
+    [Tags]  lb9  platform  fan     
+
+TC4: Verify Fan 4 description is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.4
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan
+    
+TC5: Verify Fan 1 State is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=State
+    Should be equal as strings  ${fan1_value}  Present 
+    [Tags]  lb9  platform  fan    
+
+TC6: Verify Fan 2 State is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=State
+    Should be equal as strings  ${fan1_value}  Present
+    [Tags]  lb9  platform  fan
+
+TC7: Verify Fan 3 State is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=State
+    Should be equal as strings  ${fan1_value}  Present     
+    [Tags]  lb9  platform  fan
+
+TC8: Verify Fan 4 State is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=State
+    Should be equal as strings  ${fan1_value}  Present
+    [Tags]  lb9  platform  fan
+    
+TC9: Verify Fan 1 Status is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=Status
+    Should be equal as strings  ${fan1_value}  Running   
+    [Tags]  lb9  platform  fan
+
+TC10: Verify Fan 2 Status is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Status
+    Should be equal as strings  ${fan1_value}  Running
+    [Tags]  lb9  platform  fan
+    
+TC11: Verify Fan 3 Status is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Status
+    Should be equal as strings  ${fan1_value}  Running     
+    [Tags]  lb9  platform  fan
+    
+TC12: Verify Fan 4 Status is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Status
+    Should be equal as strings  ${fan1_value}  Running
+    [Tags]  lb9  platform  fan
+    
+TC13: Verify Fan 1 RPM is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  1  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.1  0
+    [Tags]  lb9  platform  fan
+    
+TC14: Verify Fan 2 RPM is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  2  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.2  0
+    [Tags]  lb9  platform  fan
+    
+TC15: Verify Fan 3 RPM is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  3  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.3  0
+    [Tags]  lb9  platform  fan
+    
+TC16: Verify Fan 4 RPM is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  4  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.4  0
+    [Tags]  lb9  platform  fan
+    
+TC17: Verify Fan 1 Speed is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  1  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.1  1
+    [Tags]  lb9  platform  fan
+    
+TC18: Verify Fan 2 Speed is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  2  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.2  1
+    [Tags]  lb9  platform  fan
+    
+TC19: Verify Fan 3 Speed is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  3  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.3  1
+    [Tags]  lb9  platform  fan
+    
+TC20: Verify Fan 4 Speed is reported correctly in CLI and in SNMP Walk Output
+    Verify Fan Status  s1  Fan  4  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.4  1
+    [Tags]  lb9  platform  fan
+        
+TC21: Verify Fan 1 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan  airflow
+
+TC22: Verify Fan 2 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan  airflow        
+
+TC23: Verify Fan 3 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.3
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan  airflow
+
+TC24: Verify Fan 4 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.4
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  fan  airflow  
+
+TC25: Verify Description for Thermal Sensor 1 is reported correctly in CLI in SNMP Walk Output
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.1
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}      
+    Should be equal as strings  ${compare_value}  ${thermal_value}
+    [Tags]  lb9  platform  thermal  description 
+
+TC26: Verify Description for Thermal Sensor 2 is reported correctly in CLI in SNMP Walk Output
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.2
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}      
+    Should be equal as strings  ${compare_value}  ${thermal_value}
+    [Tags]  lb9  platform  thermal  description 
+
+TC27: Verify Description for Thermal Sensor 3 is reported correctly in CLI in SNMP Walk Output
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.3
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}      
+    Should be equal as strings  ${compare_value}  ${thermal_value}
+    [Tags]  lb9  platform  thermal  description 
+
+TC28: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SNMP Walk Output
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.4
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}      
+    Should be equal as strings  ${compare_value}  ${thermal_value}
+    [Tags]  lb9  platform  thermal  description 
+
+TC29: Verify Description for Thermal Sensor 5 is reported correctly in CLI in SNMP Walk Output
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.5
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}      
+    Should be equal as strings  ${compare_value}  ${thermal_value}
+    [Tags]  lb9  platform  thermal  description 
+
+TC30: Verify Status for Thermal Sensor 1 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  thermal  status
+
+TC31: Verify Status for Thermal Sensor 2 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  thermal  status
+
+TC32: Verify Status for Thermal Sensor 3 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  thermal  status
+    
+TC33: Verify Status for Thermal Sensor 4 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  thermal  status
+
+TC34: Verify Status for Thermal Sensor 5 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  thermal  status
+
+TC35: Verify temperature reading from thermal sensor 1 is same in CLI and in SNMP walk output        
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  thermal  temperature
+
+TC36: Verify temperature reading from thermal sensor 2 is same in CLI and in SNMP walk output        
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  thermal  temperature
+
+TC37: Verify temperature reading from thermal sensor 3 is same in CLI and in SNMP walk output        
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.3
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  thermal  temperature
+
+TC38: Verify temperature reading from thermal sensor 4 is same in CLI and in SNMP walk output        
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.4
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  thermal  temperature
+
+TC39: Verify temperature reading from thermal sensor 5 is same in CLI and in SNMP walk output        
+    ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.5
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  thermal  temperature
+
+TC40: Verify description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.2.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  description
+
+TC41: Verify description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.2.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  description    
+
+TC42: Verify State for PSU 1 is reported correctly in CLI
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=State
+    Should be equal as strings  ${psu_value}  Present 
+    [Tags]  lb9  platform  psu  state 
+
+TC43: Verify State for PSU 2 is reported correctly in CLI
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=State
+    Should be equal as strings  ${psu_value}  Present 
+    [Tags]  lb9  platform  psu  state     
+
+TC44: Verify State for PSU 1 is reported correctly in CLI
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Status
+    Should be equal as strings  ${psu_value}  Running 
+    [Tags]  lb9  platform  psu  status 
+
+TC45: Verify State for PSU 2 is reported correctly in CLI
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Status
+    Should be equal as strings  ${psu_value}  Running 
+    [Tags]  lb9  platform  psu  status      
+
+TC46: Verify model name for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Model
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  model
+
+TC47: Verify model name for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Model
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  model
+
+TC48: Verify type for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Type
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  description
+
+TC49: Verify type for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Type
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${psu_value}
+    [Tags]  lb9  platform  psu  description 
+
+TC50: Verify Voltage-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Vin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.6.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${voltage_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  vin
+    
+TC51: Verify Voltage-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
+    ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Vin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.6.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${voltage_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  vin
+    
+TC52: Verify Voltage-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Vout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.7.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${voltage_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  vout
+    
+TC53: Verify Voltage-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output 
+    ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Vout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.7.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${voltage_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  vout
+    
+TC54: Verify Current-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Iin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.8.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${current_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  iin
+    
+TC55: Verify Current-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
+    ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Iin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.8.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${current_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  iin
+    
+TC56: Verify Current-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Iout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.9.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${current_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  iout
+    
+TC57: Verify Current-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Iout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.9.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${current_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  iout
+    
+TC58: Verify Power-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Pin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.10.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${power_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  pin
+    
+TC59: Verify Power-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
+    ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Pin
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.10.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${power_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  pin
+    
+TC60: Verify Power-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Pout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.11.1
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${power_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  pout
+    
+TC61: Verify Power-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Pout
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.11.2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${power_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu  pout
+
+TC62: Verify Fan Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.5
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${fan_value}=  Convert To String  ${fan5_value}
+    Should be equal as strings  ${compare_value}  ${fan5_value}
+    [Tags]  lb9  platform  psu  fan  description
+
+TC63: Verify Fan Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.6
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${fan_value}=  Convert To String  ${fan5_value}
+    Should be equal as strings  ${compare_value}  ${fan_value}
+    [Tags]  lb9  platform  psu  fan  description 
+
+TC64: Verify Fan State for PSU 1 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=State
+    ${compare_value}=  Convert To String  ${fan1_value}
+    Should be equal as strings  ${compare_value}  Present 
+    [Tags]  lb9  platform  psu  fan  state      
+
+TC65: Verify Fan State for PSU 2 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=State
+    ${compare_value}=  Convert To String  ${fan1_value}
+    Should be equal as strings  ${compare_value}  Present 
+    [Tags]  lb9  platform  psu  fan  state
+
+TC66: Verify Fan Status for PSU 1 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Status
+    ${compare_value}=  Convert To String  ${fan1_value}
+    Should be equal as strings  ${compare_value}  Running
+    [Tags]  lb9  platform  psu  fan  status      
+
+TC67: Verify Fan Status for PSU 2 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Status
+    ${compare_value}=  Convert To String  ${fan1_value}
+    Should be equal as strings  ${compare_value}  Running 
+    [Tags]  lb9  platform  psu  fan  status
+
+TC68: Verify Fan RPM for PSU 1 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=RPM  
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.5.5
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  0
+    Should be true  ${in_range} 
+    [Tags]  lb9  platform  psu  fan  rpm
+
+TC69: Verify Fan RPM for PSU 2 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=RPM  
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.5.6
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  0
+    Should be true  ${in_range} 
+    [Tags]  lb9  platform  psu  fan  rpm    
+    
+TC70: Verify Fan 1 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.5
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  psu  fan  airflow  run
+
+TC71: Verify Fan 2 Airflow dircection is reported correctly in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.6
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should be equal as strings  ${compare_value_1}  ${fan1_value}
+    [Tags]  lb9  platform  psu  fan  airflow  run                   
+
+TC72: Verify First Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=6  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.6
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion 
+
+TC73: Verify Second Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=7  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.7
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion       
+
+TC74: Verify Third Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=8  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.8
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion       
+
+
+TC75: Verify First Thermal Sensor Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=9  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.9
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion 
+
+TC76: Verify Second Thermal Sensor Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.10
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion       
+
+TC77: Verify Third Thermal Sensor Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=11  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.11
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  3
+    ${compare_value_2}=  return snmp value  ${snmp_value1}  2
+    ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
+    ${comp_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
+    ${compare_value}=  Catenate  ${compare_value_3}  ${comp_value}    
+    ${psu_thermal}=  Convert To String  ${psu_thermal_1}
+    Should be equal as strings  ${compare_value}  ${psu_thermal}
+    [Tags]  lb9  platform  psu  thermal  descritpion 
+
+TC78: Verify Status for First Thermal Sensor on PSU 1 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=6  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status
+
+TC79: Verify Status for Second Thermal Sensor on PSU 1 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=7  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status
+
+TC80: Verify Status for Third Thermal Sensor on PSU 1 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=8  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status 
+
+TC81: Verify Status for First Thermal Sensor on PSU 2 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=9  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status 
+
+TC82: Verify Status for Second Thermal Sensor on PSU 2 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status 
+
+TC83: Verify Status for Third Thermal Sensor on PSU 2 is reported correctly in CLI
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=11  sub_element=Status
+    Should be equal as strings  ${thermal_value}  Good    
+    [Tags]  lb9  platform  psu thermal  status 
+    
+TC84: Verify Temperature is correctly repored by both CLI and SNMP Walk for the First Thermal Sensor on PSU 1
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=6  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.6
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+    
+TC85: Verify Temperature is correctly repored by both CLI and SNMP Walk for the Second Thermal Sensor on PSU 1
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=7  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.7
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+    
+
+TC86: Verify Temperature is correctly repored by both CLI and SNMP Walk for the Third Thermal Sensor on PSU 1
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=8  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.8
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+        
+TC87: Verify Temperature is correctly repored by both CLI and SNMP Walk for the First Thermal Sensor on PSU 2
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=9  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.9
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+    
+TC88: Verify Temperature is correctly repored by both CLI and SNMP Walk for the Second Thermal Sensor on PSU 2
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.10
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+    
+TC89: Verify Temperature is correctly repored by both CLI and SNMP Walk for the Third Thermal Sensor on PSU 2
+    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=11  sub_element=Temperature
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.4.11
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${thermal_value}  2
+    ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
+    Should be true  ${in_range}   
+    [Tags]  lb9  platform  psu thermal  temperature 
+        
+*Keywords
+Verify Fan Status  [Arguments]  ${node}  ${element}  ${hardware_element_number}  ${element_name}  ${snmp_community}   ${snmp_oid}  ${range}
+    ${fan1_value}=  cli show environment  ${node}  hardware_element=${element}  hardware_element_number=${hardware_element_number}  element_name=${element_name}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  ${range}
+    Should be true  ${in_range} 
