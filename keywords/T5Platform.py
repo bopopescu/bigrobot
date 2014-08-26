@@ -4977,7 +4977,7 @@ class T5Platform(object):
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \("y" or "yes" to continue\):'])
+        options = c.expect([r'fabric is redundant', r'.* \("y" or "yes" to continue\):'])
         if options[0] == 1:
             c.send("yes")
 
