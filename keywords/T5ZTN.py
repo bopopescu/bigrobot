@@ -1130,6 +1130,15 @@ class T5ZTN(object):
                 s.cli(password)
             s.cli('enable; config')
             s.send('reload now')
+        if options[0] == 1:  # password prompt
+            s.send(helpers.ctrl('c'))
+            s.send('admin')
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+            s.cli('enable; config')
+            s.send('reload now')
         if options[0] == 2:  # bash mode
             s.cli('exit')
             s.cli('enable; config')
