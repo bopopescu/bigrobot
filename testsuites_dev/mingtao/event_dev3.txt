@@ -55,7 +55,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine0} 
     \   sleep  ${inevent}
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event     
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -70,7 +70,7 @@ T22 leaf switch node down/up event
     \   sleep  ${inevent}
     
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event    
 
 	    
 T23 controller node event failover        
@@ -79,7 +79,7 @@ T23 controller node event failover
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	longevity    traffic     event     skipped
+	[Tags] 	longevity    traffic     event     
  
  
 T27 data Link down/up event between leaf and spine
@@ -103,7 +103,7 @@ T27 data Link down/up event between leaf and spine
   	\  sleep  ${inevent}  
  	
    
-	[Tags] 	longevity     traffic     event    skipped
+	[Tags] 	longevity     traffic     event    
 
 
   
@@ -123,7 +123,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event     skipped
+	[Tags] 	longevity     traffic    event      
 
  
 T51 continues Event
@@ -141,7 +141,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
   	\  sleep  ${betweenevent}
    
-	[Tags] 	longevity    traffic    skipped
+	[Tags] 	longevity    traffic     
 
 
 

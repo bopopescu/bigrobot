@@ -6,10 +6,14 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.5.6.20
+  ip: 10.5.6.20  
+  monitor_reauth: false  # default=true, set to false to disable  
+
+
    
 c2:
   ip: 10.5.6.21
+  monitor_reauth: false  # default=true, set to false to disable  
   
 s1:
   alias:  spine0
