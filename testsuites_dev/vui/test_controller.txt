@@ -195,7 +195,7 @@ Test background ping
     should be true    ${result} == 0
 
 Test reauth monitor
-    #[Tags]  skipped
+    [Tags]  skipped
     #monitor reauth    master  ${false}
     run cmd test      c1
     sleep             20
@@ -216,6 +216,6 @@ Test console
     test console      c1
 
 Test node reconnect
-    [Tags]  skipped
+    #[Tags]  skipped
     test node reconnect   c1
 
