@@ -546,6 +546,11 @@ def bigrobot_continuous_integration(new_val=None, default='False'):
 def bigrobot_params_input(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    Dynamic topology support. This env points to a file containing the
+    "reference" topology information. Format is:
+        BIGROBOT_PARAMS_INPUT=file:<path_and_file>
+    e.g.,
+        BIGROBOT_PARAMS_INPUT=file:/tmp/static.topo
     """
     return _env_get_and_set('BIGROBOT_PARAMS_INPUT', new_val, default)
 
@@ -677,11 +682,15 @@ def bigtest_path(new_val=None, default=None):
 def bigrobot_testbed(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    Possible values:
+    Set the testbed type. Possible values are:
         'bigtest'
         'libvirt'
         'static'
-        None - (default) assume static attributes are defined in .topo file
+    - Default is None which assumes attributes are hard coded in .topo file.
+    - Dynamic topology support:
+      - 'libvirt' and 'static' are nearly identical. 'libvirt' is primarily
+        used for virtual testbed whereas 'static' is used for physical testbed.
+      - BigRobot no longer requires BigTest testbeds. This is legacy support.
     """
     return _env_get_and_set('BIGROBOT_TESTBED', new_val, default)
 
@@ -1617,12 +1626,20 @@ def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     return (True, out)
 
 
+def id():
+    """
+    Dump output from 'id'.
+    """
+    _, output = run_cmd2('id', shell=False, quiet=True)
+    return output.strip()
+
+
 def uname():
     """
     Dump output from 'uname -a'.
     """
     _, output = run_cmd2('uname -a', shell=False, quiet=True)
-    return output
+    return output.strip()
 
 
 def ulimit():
@@ -1632,7 +1649,7 @@ def ulimit():
     built-in shell command. So let's execute it using shell mode.
     """
     _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
-    return output
+    return output.strip()
 
 
 def uptime():
@@ -1640,7 +1657,7 @@ def uptime():
     Dump output from 'uptime'.
     """
     _, output = run_cmd2('uptime', shell=False, quiet=True)
-    return output
+    return output.strip()
 
 
 def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,

@@ -1981,3 +1981,11 @@ class BsnCommon(object):
         n.expect(r'Do you want to save configuration .+ and overwrite it\? \(y/N\) ')
         n.send("y")
         n.expect()
+
+    def node_reconnect(self, node, user=None, password=None):
+        """
+        Reconnect to a node.
+        """
+        t = test.Test()
+        n = t.node_reconnect(node, user=user, password=password)
+        return n
