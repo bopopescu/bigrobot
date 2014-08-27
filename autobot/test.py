@@ -1017,6 +1017,9 @@ class Test(object):
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
+        helpers.log("BigRobot environment variables:\n%s%s"
+                    % (helpers.indent_str(helpers.bigrobot_env_variables()),
+                       br_utils.end_of_output_marker()))
         helpers.log("BigRobot dependencies:\n%s%s"
                     % (helpers.bigrobot_module_dependencies(),
                        br_utils.end_of_output_marker()))
