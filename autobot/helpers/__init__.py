@@ -54,6 +54,14 @@ def ctrl(char):
     return ascii.ctrl(char)
 
 
+def bigrobot_env_variables():
+    env_str = ''
+    for key in os.environ.keys():
+        if re.match(r'^BIGROBOT_', key):
+            env_str += "%s=%s\n" % (key, get_env(key))
+    return env_str
+
+
 def bigrobot_module_dependencies():
     robot_framework_version = robot.version.VERSION
     import Exscript
