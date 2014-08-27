@@ -537,7 +537,8 @@ class BsnCommon(object):
                         content = c.rest.content()
                         output_value = content[0][string]
                     except:
-                        return False
+                        return helpers.test_error("Node connect failed",
+                                                  soft_error=True)
                     else:
                         return output_value
                 else:
