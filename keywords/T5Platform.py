@@ -1458,6 +1458,9 @@ class T5Platform(object):
 
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
+        if "compare" in output[0]:
+            helpers.log("Skipping command that is still in first line")
+            output = output[1:]
         if options[0] < 2:
             for index, line in enumerate(output):
                 if '100%' in line:
