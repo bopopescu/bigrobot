@@ -20,7 +20,37 @@ s3:
     ip: 10.195.0.21
 
 s4:
-    ip: 10.195.0.22            
+    ip: 10.195.0.22   
+s7:
+#  ip: 10.195.0.21
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:cf:a3:c4:e0
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7007
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+#  ip: 10.195.0.22
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:cf:bd:45:6a
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7008
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 20
+  set_session_ssh: false
+  set_init_ping: false         
     
 tg1:
   platform: 'ixia'
