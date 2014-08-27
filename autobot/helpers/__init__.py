@@ -82,32 +82,32 @@ def is_bool(data):
     return isinstance(data, bool)
 
 
-def warn(s, level=2):
+def warn(s, level=2, all_levels=False):
     """
     Warn log.
     """
-    Log().warn(s, level)
+    Log().warn(s, level, all_levels=all_levels)
 
 
-def debug(s, level=2):
+def debug(s, level=2, all_levels=False):
     """
     Debug log.
     """
-    Log().debug(s, level)
+    Log().debug(s, level, all_levels=all_levels)
 
 
-def trace(s, level=2):
+def trace(s, level=2, all_levels=False):
     """
     Trace log.
     """
-    Log().trace(s, level)
+    Log().trace(s, level, all_levels=all_levels)
 
 
-def info(s, level=2, log_level="info"):
+def info(s, level=2, log_level="info", all_levels=False):
     """
     Info log.
     """
-    Log().log(s, level=level, log_level=log_level)
+    Log().log(s, level=level, log_level=log_level, all_levels=all_levels)
 
 
 # Alias
@@ -115,11 +115,11 @@ test_log = info
 log = info
 
 
-def summary_log(s, level=2):
+def summary_log(s, level=2, all_levels=False):
     """
     Similar to Info log, but also write the message to stderr as well.
     """
-    Log().info(s, level, also_console=True)
+    Log().info(s, level, also_console=True, all_levels=all_levels)
 
 
 def log_task_output(task_id):

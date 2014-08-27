@@ -955,3 +955,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         helpers.log("**** output: %s" % output)
         n = t.node_reconnect(node)
         n.bash('uptime')
+        n2 = t.node_spawn(ip=n.ip())
+        n2.cli('show session')
+        n.cli('show version')
+        helpers.test_error("I quit!!!", soft_error=True)
