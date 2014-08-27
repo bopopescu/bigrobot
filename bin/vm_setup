@@ -105,6 +105,8 @@ def main(*args):
     helpers.log("TERM Value: %s" % term)
     helpers.set_env("TERM", "xterm")
     helpers.log("New TERM Value: %s" % term)
+    helpers.bigrobot_test_ztn(False)
+    helpers.bigrobot_test_setup(True)
     if args.jenkins_qcow_path is None:
         args.jenkins_qcow_path = vmdk_name
 
