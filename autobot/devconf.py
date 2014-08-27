@@ -717,7 +717,7 @@ class ControllerDevConf(BsnDevConf):
         if self.test_monitor:
             self.test_monitor.off()
         helpers.log("Closing ControllerDevConf '%s' (%s)"
-                    % (self.name(), self._host))
+                    % (self.name(), self._host), level=4)
         super(ControllerDevConf, self).close()
 
 

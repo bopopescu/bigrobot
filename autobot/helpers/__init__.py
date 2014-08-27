@@ -196,7 +196,7 @@ def exception_info():
     """
     (_type, _val, _) = sys.exc_info()
     return ("Exception type: %s\nException value: %s\nException traceback:\n%s%s"
-            % (_type, _val, exception_info_traceback(),
+            % (_type, _val, indent_str(exception_info_traceback()),
                br_utils.end_of_output_marker()))
 
 
@@ -304,6 +304,7 @@ def test_error(msg, soft_error=False):
     if not is_bool(soft_error):
         environment_failure("helpers.test_error() argument 'soft_error' must"
                             " be a boolean.")
+    log("Dumping the error stack:\n" + exception_info())
     if soft_error:
         log("Soft test error: %s" % msg)
         return False
