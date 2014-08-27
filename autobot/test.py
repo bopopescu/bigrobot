@@ -1,3 +1,4 @@
+import os
 import autobot.helpers as helpers
 import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
@@ -647,6 +648,9 @@ class Test(object):
         if not node:
             node = 'node-%s' % ip
 
+        helpers.log("Spawning new node for '%s' (node name: '%s')"
+                    % (ip, node))
+
         if device_type == 'controller':
             helpers.log("Initializing controller '%s'" % node)
             user = self.controller_user() if not user else user
@@ -1012,14 +1016,18 @@ class Test(object):
                                         quiet=True)[1],
                        br_utils.end_of_output_marker()))
         helpers.log("Staging system uname:\n%s%s"
-                    % (helpers.uname().strip(),
+                    % (helpers.uname(),
                        br_utils.end_of_output_marker()))
         helpers.log("Staging system uptime:\n%s%s"
-                    % (helpers.uptime().strip(),
+                    % (helpers.uptime(),
                        br_utils.end_of_output_marker()))
-        helpers.log("Staging ulimit:\n%s%s"
-                    % (helpers.ulimit().strip(),
+        helpers.log("Staging system ulimit:\n%s%s"
+                    % (helpers.ulimit(),
                        br_utils.end_of_output_marker()))
+        helpers.log("Staging User ID:\n%s%s"
+                    % (helpers.id(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
 
         self._init_in_progress = True  # pylint: disable=W0201
 

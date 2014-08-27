@@ -30,7 +30,6 @@ if [ ! -f $f ]; then
     exit 1
 fi
 
-set -x
 unset BIGROBOT_TESTBED
 unset BIGROBOT_PARAMS_INPUT
 export BIGROBOT_CI=True
@@ -38,7 +37,6 @@ if [ "$BIGROBOT_PATH"x = x ]; then
     export BIGROBOT_PATH=`pwd`/..
 fi
 export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
-set +x
 
 rm -rf $BIGROBOT_LOG_PATH
 for x in `cat $f`; do
@@ -50,9 +48,7 @@ for x in `cat $f`; do
     # Notes:
     #   We need to count the test cases which are tagged as 'manual-untested'
     #   as well.
-    set -x
     BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
-    set +x
 done
 
 find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log
