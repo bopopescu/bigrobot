@@ -281,6 +281,21 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} running-config
+	...  hostname ${s1_alias}
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  master
+	...  show switch ${s1_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} environment
@@ -303,6 +318,21 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} running-config
+	...  hostname ${s2_alias}
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  master
+	...  show switch ${s2_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} environment
@@ -325,6 +355,21 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} running-config
+	...  hostname ${s3_alias}
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  master
+	...  show switch ${s3_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} environment
@@ -347,6 +392,21 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} running-config
+	...  hostname ${s4_alias}
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  master
+	...  show switch ${s4_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} environment
@@ -369,6 +429,21 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} running-config
+	...  hostname ${s5_alias}
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  master
+	...  show switch ${s5_alias} memory-use
+	...  Free
 
 T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
@@ -377,9 +452,9 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} version
 	...  Load average
-	Cli Run and Verify Output  slave
-	...  show switch ${s1_alias} inventory
-	...  40GBASE-CR4
+	#Cli Run and Verify Output  slave
+	#...  show switch ${s1_alias} inventory
+	#...  40GBASE-CR4
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} connections
 	...  2014
@@ -389,9 +464,24 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} switch-view connection
 	...  slave \ connected
+	#Cli Run and Verify Output  slave
+	#...  show switch ${s1_alias} switch-view controller
+	#...  CONNECTED
 	Cli Run and Verify Output  slave
-	...  show switch ${s1_alias} switch-view controller
-	...  CONNECTED
+	...  show switch ${s1_alias} running-config
+	...  hostname ${s1_alias}
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  slave
+	...  show switch ${s1_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} environment
@@ -414,6 +504,21 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} running-config
+	...  hostname ${s2_alias}
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  slave
+	...  show switch ${s2_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} environment
@@ -436,6 +541,21 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} running-config
+	...  hostname ${s3_alias}
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  slave
+	...  show switch ${s3_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} environment
@@ -458,6 +578,21 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} switch-view controller
 	...  CONNECTED
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} running-config
+	...  hostname ${s4_alias}
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  slave
+	...  show switch ${s4_alias} memory-use
+	...  Free
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} environment
@@ -480,4 +615,18 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} switch-view controller
 	...  CONNECTED
-
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} running-config
+	...  hostname ${s5_alias}
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} cpu-load
+	...  Load average
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} images
+	...  Swi Version
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} manifest
+	...  Runtime checksum
+	Cli Run and Verify Output  slave
+	...  show switch ${s5_alias} memory-use
+	...  Free
