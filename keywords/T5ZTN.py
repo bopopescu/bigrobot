@@ -798,15 +798,15 @@ class T5ZTN(object):
         missing_startup = []
         extra_startup = []
 
-        s = t.dev_console(hostname)
-        #s.send(helpers.ctrl('c'))
-        #s.send("\x03")
-        #options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
-        #                    r'[\r\n]* root@.*:\~\#', s.get_prompt()])
-        #if options[0] == 0:
-        #    s.cli('admin')
-        #if options[0] == 2:
-        #    s.cli('exit')
+        s = t.dev_console(hostname, modeless=True)
+        s.send(helpers.ctrl('c'))
+        s.send("\x03")
+        options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
+                            r'[\r\n]* root@.*:\~\#', s.get_prompt()])
+        if options[0] == 0:
+            s.cli('admin')
+        if options[0] == 2:
+            s.cli('exit')
         s.cli('enable')
         s.cli('config')
         running_config = s.cli("show running-config")['content']
