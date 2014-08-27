@@ -518,6 +518,7 @@ T7.3 Verify comparison function between running-config and scp://
 
 T7.4 Verify comparison function between file and snapshot://
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Cli Copy  running-config  ${config}
 	Compare  ${file}  ${config}
 	Modify Running Config
@@ -528,6 +529,7 @@ T7.4 Verify comparison function between file and snapshot://
 
 T7.5 Verify comparison function between file and running-config
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Compare  ${file}  running-config
 	Modify Running Config
 	Compare Negative  ${file}  running-config
