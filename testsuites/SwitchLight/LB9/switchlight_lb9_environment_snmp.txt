@@ -315,12 +315,12 @@ TC43: Verify State for PSU 2 is reported correctly in CLI
     Should be equal as strings  ${psu_value}  Present 
     [Tags]  psu  state     
 
-TC44: Verify State for PSU 1 is reported correctly in CLI
+TC44: Verify Status for PSU 1 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Status
     Should be equal as strings  ${psu_value}  Running 
     [Tags]  psu  status 
 
-TC45: Verify State for PSU 2 is reported correctly in CLI
+TC45: Verify Status for PSU 2 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Status
     Should be equal as strings  ${psu_value}  Running 
     [Tags]  psu  status      
