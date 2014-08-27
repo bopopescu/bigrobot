@@ -1,4 +1,4 @@
-Gods, Goblins, and Me*Settings
+*Settings
 Documentation  BigTap AS4600 Environment Test Suite
 Suite Setup  environment suite setup
 Suite Teardown   base suite teardown
