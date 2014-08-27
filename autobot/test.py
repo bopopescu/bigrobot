@@ -6,6 +6,7 @@ import autobot.utils as br_utils
 import re
 import telnetlib
 import time
+import uuid
 
 
 class Test(object):
@@ -643,13 +644,14 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller'):
+                   device_type='controller', quiet=0):
         t = self
         if not node:
-            node = 'node-%s' % ip
-
-        helpers.log("Spawning new node for '%s' (node name: '%s')"
-                    % (ip, node))
+            node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
+                                                str(uuid.uuid4())).group(1))
+        if helpers.not_quiet(quiet, [1]):
+            helpers.log("Node spawn for '%s' (node name: '%s')"
+                        % (ip, node))
 
         if device_type == 'controller':
             helpers.log("Initializing controller '%s'" % node)
@@ -672,12 +674,14 @@ class Test(object):
                 password = self.host_password()
             n = a_node.HostNode(node, ip, user, password, t)
         else:
+            # !!! FIXME: Need to support other device types (see the list of
+            #            devices in node_connect().
             helpers.environment_failure("You can only spawn nodes for device"
                                         " types: 'controller', 'switch', 'host'")
         return n
 
     def node_connect(self, node, user=None, password=None,
-                     controller_ip=None, controller_ip2=None):
+                     controller_ip=None, controller_ip2=None, quiet=0):
         # Matches the following device types:
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
@@ -690,6 +694,10 @@ class Test(object):
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
+
+        if helpers.not_quiet(quiet, [1]):
+            helpers.log("Node connect for '%s' (user:%s, password:%s)"
+                        % (node, user, password))
 
         host = None
         params = self.topology_params_nodes()
@@ -718,10 +726,12 @@ class Test(object):
 
         if helpers.is_controller(node):
             n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password, device_type='controller')
+                                password=password, device_type='controller',
+                                quiet=1)
         elif helpers.is_switch(node):
             n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password, device_type='switch')
+                                password=password, device_type='switch',
+                                quiet=1)
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -854,7 +864,7 @@ class Test(object):
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
         self.node(node).close()
-        c = self.node_connect(node_name, **kwargs)
+        c = self.node_connect(node_name, quiet=1, **kwargs)
         if helpers.is_controller(node):
             c.rest.request_session_cookie()
         return self.node(node)
