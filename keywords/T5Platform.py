@@ -1498,6 +1498,7 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
+        c.send("reauth admin adminadmin; enable; config")
         c.cli("enable")
         c.config("")
         c.send("copy %s %s" % (src, dst))
