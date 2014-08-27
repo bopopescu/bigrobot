@@ -357,8 +357,8 @@ class T5ZTN(object):
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
-                            r'=> ', r'loader#', s.get_prompt()],
-                           timeout=120)
+                            r'=> ', r'loader#', s.get_prompt(),
+                            r'ZTN Discovery'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
         if options[0] == 1:  # bash mode
@@ -369,6 +369,11 @@ class T5ZTN(object):
             return True
         if options[0] == 3:
             helpers.log("Switch in ZTN loader")
+            s.send('reboot')
+            return True
+        if options[0] == 5:
+            helpers.log("Switch in ZTN Discovery process")
+            s.send(helpers.ctrl('c'))
             s.send('reboot')
             return True
         s.send('enable; config')
