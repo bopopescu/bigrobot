@@ -328,88 +328,88 @@ class SwitchLight(object):
             switch_output = switch.cli_content()
             if (("Description: Quanta LY2" in switch_output) or ("Description: Quanta LB9" in switch_output)):
                 helpers.log("Platform identified as Quanta")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
-                    return False
+            try:
+                cli_input = "show environment"
+                switch.enable(cli_input)
+            except:
+                helpers.test_failure("Could not execute command. Please check log for errors")
+                return False
+            else:
+                content = string.split(switch.cli_content(), '\n')
+                for x in range(0, len(content)):
+                    content[x] = content[x].strip()
+                if "Fan" in hardware_element:
+                    # element_id = " " + str(hardware_element) + " " + str(hardware_element_number) + "\r"
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
+                elif "Thermal" in hardware_element:
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
+                elif "PSU" in hardware_element:
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
                 else:
-                    content = string.split(switch.cli_content(), '\n')
-                    for x in range(0, len(content)):
-                        content[x] = content[x].strip()
-                    if "Fan" in hardware_element:
-                        # element_id = " " + str(hardware_element) + " " + str(hardware_element_number) + "\r"
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    elif "Thermal" in hardware_element:
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    elif "PSU" in hardware_element:
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    else:
-                        helpers.log("This Element Does not exist \n")
-                        return False
-                    element_index = content.index(element_id)
-                    for x in range(0, element_index):
-                        content.pop(0)
-                    if "Thermal" in hardware_element or "Fan" in hardware_element:
-                        for i in range(0, len(content)):
-                            if str(element_name) in content[i]:
-                                temp_value = content[i].split(':')
-                                if "RPM" in str(element_name) or "Status" in str(element_name):
-                                    temp_value[1] = temp_value[1].rstrip('.')
-                                if "Speed" in str(element_name):
-                                    temp_value[1] = temp_value[1].rstrip('.')
-                                    temp_value[1] = temp_value[1].rstrip('%')
-                                if "Airflow" in str(element_name):
-                                    temp_value[1] = temp_value[1].rstrip('.')
-                                    temp_value[1] = temp_value[1].strip()
-                                    if temp_value[1] == "Front-to-Back":
-                                        temp_value[1] = "f2b"
-                                    elif temp_value[1] == "Back-to-Front":
-                                        temp_value[1] = "b2f"
-                                    else:
-                                        return False
-                                if "Temperature" in str(element_name):
-                                    temperature_cli = temp_value[1].split()
-                                    temp_value[1] = temperature_cli[0]
-                                return_value = temp_value[1].strip()
-                                return return_value
-                    elif "PSU" in hardware_element:
-                        element_found = False
-                        if element_name == "Fan" :
-                            element_new_id = str(element_name) + " " + str(element_number)
-                            element_new_index = content.index(element_new_id)
-                            element_found = True
-                        elif element_name == "Thermal" :
-                            element_new_id = str(element_name) + " " + str(element_number)
-                            element_new_index = content.index(element_new_id)
-                            element_found = True
-                        if element_found is True:
-                            for x in range(0, element_new_index):
-                                content.pop(0)
-                            element_new_name = str(sub_element)
-                        else:
-                            element_new_name = str(element_name)
-                        for i in range(0, len(content)):
-                            if str(element_new_name) in content[i]:
-                                temp_value = content[i].split(':')
-                                if "Status" in str(element_new_name):
-                                    temp_value[1] = temp_value[1].rstrip('.')
-                                if "Airflow" in str(element_new_name):
-                                    temp_value[1] = temp_value[1].rstrip('.')
-                                    temp_value[1] = temp_value[1].strip()
-                                    if temp_value[1] == "Front-to-Back":
-                                        temp_value[1] = "f2b"
-                                    elif temp_value[1] == "Back-to-Front":
-                                        temp_value[1] = "b2f"
-                                    else:
-                                        return False
-                                if "Temperature" in str(element_new_name):
-                                    temperature_cli = temp_value[1].split()
-                                    temp_value[1] = temperature_cli[0]
-                                return_value = temp_value[1].strip()
-                                return return_value
+                    helpers.log("This Element Does not exist \n")
                     return False
+                element_index = content.index(element_id)
+                for x in range(0, element_index):
+                    content.pop(0)
+                if "Thermal" in hardware_element or "Fan" in hardware_element:
+                    for i in range(0, len(content)):
+                        if str(element_name) in content[i]:
+                            temp_value = content[i].split(':')
+                            if "RPM" in str(element_name) or "Status" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                            if "Speed" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].rstrip('%')
+                            if "Airflow" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].strip()
+                                if temp_value[1] == "Front-to-Back":
+                                    temp_value[1] = "f2b"
+                                elif temp_value[1] == "Back-to-Front":
+                                    temp_value[1] = "b2f"
+                                else:
+                                    return False
+                            if "Temperature" in str(element_name):
+                                temperature_cli = temp_value[1].split()
+                                temp_value[1] = temperature_cli[0]
+                            return_value = temp_value[1].strip()
+                            return return_value
+                elif "PSU" in hardware_element:
+                    element_found = False
+                    if element_name == "Fan" :
+                        element_new_id = str(element_name) + " " + str(element_number)
+                        element_new_index = content.index(element_new_id)
+                        element_found = True
+                    elif element_name == "Thermal" :
+                        element_new_id = str(element_name) + " " + str(element_number)
+                        element_new_index = content.index(element_new_id)
+                        element_found = True
+                    if element_found is True:
+                        for x in range(0, element_new_index):
+                            content.pop(0)
+                        element_new_name = str(sub_element)
+                    else:
+                        element_new_name = str(element_name)
+                    for i in range(0, len(content)):
+                        if str(element_new_name) in content[i]:
+                            temp_value = content[i].split(':')
+                            if "Status" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                            if "Airflow" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].strip()
+                                if temp_value[1] == "Front-to-Back":
+                                    temp_value[1] = "f2b"
+                                elif temp_value[1] == "Back-to-Front":
+                                    temp_value[1] = "b2f"
+                                else:
+                                    return False
+                            if "Temperature" in str(element_new_name):
+                                temperature_cli = temp_value[1].split()
+                                temp_value[1] = temperature_cli[0]
+                            return_value = temp_value[1].strip()
+                            return return_value
+                return False
 
     def ping_from_local(self, node):
         '''
