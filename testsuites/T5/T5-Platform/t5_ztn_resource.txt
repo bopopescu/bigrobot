@@ -74,8 +74,8 @@ Test Setup
 	Cli Run  master  show switch
 	Cli Run  slave  show switch
 	Cli Run  master  show zerotouch devices
-	Cli Copy  running-config  snapshot://test-config
-	Cli Copy  running-config  snapshot://test-config  node=slave
+	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
+	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
 	Sleep  15

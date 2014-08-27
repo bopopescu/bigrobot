@@ -357,8 +357,8 @@ class T5ZTN(object):
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
-                            r'=> ', r'loader#', s.get_prompt()],
-                           timeout=120)
+                            r'=> ', r'loader#', s.get_prompt(),
+                            r'ZTN Discovery'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
         if options[0] == 1:  # bash mode
@@ -369,6 +369,11 @@ class T5ZTN(object):
             return True
         if options[0] == 3:
             helpers.log("Switch in ZTN loader")
+            s.send('reboot')
+            return True
+        if options[0] == 5:
+            helpers.log("Switch in ZTN Discovery process")
+            s.send(helpers.ctrl('c'))
             s.send('reboot')
             return True
         s.send('enable; config')
@@ -793,15 +798,15 @@ class T5ZTN(object):
         missing_startup = []
         extra_startup = []
 
-        s = t.dev_console(hostname)
-        #s.send(helpers.ctrl('c'))
-        #s.send("\x03")
-        #options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
-        #                    r'[\r\n]* root@.*:\~\#', s.get_prompt()])
-        #if options[0] == 0:
-        #    s.cli('admin')
-        #if options[0] == 2:
-        #    s.cli('exit')
+        s = t.dev_console(hostname, modeless=True)
+        s.send(helpers.ctrl('c'))
+        s.send("\x03")
+        options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
+                            r'[\r\n]* root@.*:\~\#', s.get_prompt()])
+        if options[0] == 0:
+            s.cli('admin')
+        if options[0] == 2:
+            s.cli('exit')
         s.cli('enable')
         s.cli('config')
         running_config = s.cli("show running-config")['content']
@@ -1118,6 +1123,15 @@ class T5ZTN(object):
                             r'press control-c now to enter loader shell'],
                            timeout=120)
         if options[0] == 0:  # login prompt
+            s.send('admin')
+            options = s.expect([r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+            s.cli('enable; config')
+            s.send('reload now')
+        if options[0] == 1:  # password prompt
+            s.send(helpers.ctrl('c'))
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
             if options[0] == 0:

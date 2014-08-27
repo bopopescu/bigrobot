@@ -143,7 +143,7 @@ T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	Telnet Set MA1 State  s3  up
 	Cli Run and Verify Output  master
 	...  show switch all
-	...  10.8.67.103 suspended (No fabric role configured)
+	...  ${s3_ip} suspended (No fabric role configured)
 	# add better validation of state here
 
 T5.4.3. Disconnect, change config, reboot
