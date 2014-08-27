@@ -13,6 +13,13 @@ c1:
     user: root
     password: bsn
 
+c2:
+  ip: 10.8.28.10  
+  console:
+    ip: 10.8.28.6
+    libvirt_vm_name: MY-T5-C10
+    user: root
+    password: bsn
 s1:
   alias:  spine0
   mac: 70:72:cf:ae:b3:28
