@@ -486,7 +486,7 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', timeout=90)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -501,11 +501,11 @@ class BsnCommon(object):
                         content = c_user.rest.content()
                         output_value = content[0]['controller']
                     except:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', timeout=90)
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='master', timeout=90)
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):
@@ -532,7 +532,7 @@ class BsnCommon(object):
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', timeout=90)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -548,11 +548,11 @@ class BsnCommon(object):
                         output_value = content[0][string]
                         c_user.close()
                     except:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', timeout=90)
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='master', timeout=90)
                         return output_value
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
