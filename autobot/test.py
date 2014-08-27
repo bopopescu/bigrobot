@@ -1347,6 +1347,7 @@ class Test(object):
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         master = self.controller("master")
+        standby = self.controller("slave")
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
                 if helpers.is_controller(key):
@@ -1369,7 +1370,7 @@ class Test(object):
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 master = self.controller("master")
-                standby = self.controller("c2")
+                standby = self.controller("slave")
                 for key in params:
                     self.setup_ztn_phase1(key)
                 helpers.log("Sleeping 2 mins..")
