@@ -1263,8 +1263,8 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
-                    c.rest.put(url, {"ipaddr": str(host), "udp-port": int(udp_port)})
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
+                    c.rest.put(url, {"server": str(host), "udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
                     return False
@@ -1326,7 +1326,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
                     c.rest.delete(url, {"udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
