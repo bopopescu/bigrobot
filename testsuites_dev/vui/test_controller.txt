@@ -216,6 +216,26 @@ Test console
     test console      c1
 
 Test node reconnect
-    #[Tags]  skipped
+    [Tags]  skipped
     test node reconnect   c1
+
+Test reauth timeout
+    #[Tags]  skipped
+    config            c1   show user
+    #bash              c1   id
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    #bash              c1   uname -a
+    config            c1   show session
+    cli               c1   show session
+
 

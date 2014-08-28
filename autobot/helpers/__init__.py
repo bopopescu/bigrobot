@@ -952,6 +952,10 @@ def is_switchlight(name):
     return name == 'switchlight'
 
 
+def is_bsn_controller(name):
+    return is_bvs(name) or is_bigtap(name) or is_bigwire(name)
+
+
 def is_arista(name):
     """
     Inspect the platform type for the node. Usage:
