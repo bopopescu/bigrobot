@@ -294,36 +294,36 @@ TC38: Verify description for PSU 2 is reported correctly in CLI and in SNMP Walk
 
 TC39: Verify State for PSU 1 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=State
-    Should be equal as strings  ${psu_value}  Missing 
+    Should be equal as strings  ${psu_value}  Present 
     [Tags]    psu  state  runthis   
 
 TC40: Verify State for PSU 2 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=State
-    Should be equal as strings  ${psu_value}  Present 
+    Should be equal as strings  ${psu_value}  Missing 
     [Tags]    psu  state  runthis       
 
-TC41: Verify Status for PSU 2 is reported correctly in CLI
-    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Status
+TC41: Verify Status for PSU 1 is reported correctly in CLI
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Status
     Should be equal as strings  ${psu_value}  Running 
     [Tags]    psu  status       
 
-TC42: Verify model name for PSU 2 is reported correctly in CLI and in SNMP Walk Output
-    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Model
-    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.2
+TC42: Verify model name for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Model
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
     [Tags]    psu  model  
 
-TC43: Verify type for PSU 2 is reported correctly in CLI and in SNMP Walk Output
-    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Type
-    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.2
+TC43: Verify type for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Type
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
     [Tags]    psu  description 
 
 TC44: Verify Fan Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
-    ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Description
-    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.6
+    ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.2.5
     ${compare_value_1}=  return snmp value  ${snmp_value1}  1
     ${compare_value_2}=  return snmp value  ${snmp_value1}  2
     ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
@@ -331,39 +331,34 @@ TC44: Verify Fan Description for PSU 2 is reported correctly in CLI and in SNMP 
     Should be equal as strings  ${compare_value}  ${fan5_value}
     [Tags]    psu  fan  description     
 
-TC45: Verify Fan State for PSU 2 is reported correctly in CLI
-    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=State
+TC45: Verify Fan State for PSU 1 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=State
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Present 
     [Tags]    psu  fan  state  
 
-TC46: Verify Fan Status for PSU 2 is reported correctly in CLI
-    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Status
+TC46: Verify Fan Status for PSU 1 is reported correctly in CLI
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Status
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Running 
     [Tags]    psu  fan  status  
 
-TC47: Verify Airflow direction is reported correctly for Fan in PSU 2 in CLI and in SNMP Walk Output
-    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=6  sub_element=Airflow
-    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.6
+TC47: Verify Airflow direction is reported correctly for Fan in PSU 1 in CLI and in SNMP Walk Output
+    ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=5  sub_element=Airflow
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.5
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
     [Tags]    psu  fan  airflow            
 
-TC48: Verify Second Thermal Sensor Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
-    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=6  sub_element=Description
-    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.6
+TC48: Verify Second Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
+    ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=5  sub_element=Description
+    ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.1.1.2.5
     ${compare_value_2}=  return snmp value  ${snmp_value1}  2
     ${compare_value_1}=  return snmp value  ${snmp_value1}  1    
     ${compare_value}=  Catenate  ${compare_value_2}  ${compare_value_1}  
     ${psu_thermal}=  Convert To String  ${psu_thermal_1}
     Should be equal as strings  ${compare_value}  ${psu_thermal}
     [Tags]    psu  thermal  descritpion  
-
-TC49: Verify Status for Second Thermal Sensor on PSU 2 is reported correctly in CLI
-    ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=6  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
-    [Tags]    psu thermal  status  
 
 
 
