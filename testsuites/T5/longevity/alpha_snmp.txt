@@ -4,21 +4,20 @@ Suite Setup      T5 longevity suite setup
 Suite Teardown   T5 longevity suite teardown
 Test Setup       base test setup 
 Test Teardown    base test teardown 
-Force Tags       IronHorse
-Library          keywords/BsnCommon.py
-Library          keywords/Controller.py
-Library			 keywords/Mininet.py
-Library		     keywords/Host.py
-Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py
-Library	         keywords/T5.py
-Library          keywords/T5L3.py
-Library	         keywords/T5Platform.py
-Library	         keywords/Controller.py
-Library	         keywords/SwitchLight.py
-Library	         keywords/T5Utilities.py
-
-Library          OperatingSystem
+Force Tags       IronHorse   T5
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
  
 * Variable
 ${short}  1
