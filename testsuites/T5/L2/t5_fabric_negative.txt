@@ -220,6 +220,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
 
 Test VFT push to when system has not connected switches
 	[Tags]  L2  IronHorse
+	reconnect_switch_ips
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -266,7 +267,6 @@ Test VFT push to when system has not connected switches
     BuiltIn.Sleep  	20
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
     rest verify fabric interface lacp  leaf2-b  ${h6_intf1}
-	reconnect_switch_ips
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
@@ -285,6 +285,7 @@ Test VFT push to when system has not connected switches
 	
 check forwarding port/lag table consisteny after switch mgmt remove/add
 	[Tags]  L2  IronHorse
+	reconnect_switch_ips
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -317,7 +318,6 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
 	rest verify fabric link common  5  
 	rest verify forwarding port source mac check  leaf2-a
 	rest verify forwarding port source mac check  leaf2-b
-	reconnect_switch_ips
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
