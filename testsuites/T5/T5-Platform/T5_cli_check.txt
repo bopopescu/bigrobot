@@ -79,17 +79,17 @@ T1 Setup Tenant and VNS
     [Tags] 	sanity   CLI  smoke     
        
 T2 Verify 'show switch' command completion
-    ${result}=  cli walk command  show switch  10  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1  
+    ${result}=  cli walk command  show switch  12  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1  
     Should be true  ${result}
     rest add switch  spine2
     rest add dpid  spine2  00:00:00:00:00:01:00:03
     rest add fabric role  spine2  spine
-    ${result}=  cli walk command  show switch  11  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1 spine2
+    ${result}=  cli walk command  show switch  13  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1 spine2
     Should be true  ${result}
     rest delete fabric switch  switch=spine2
-    ${result}=  cli walk command  show switch  10  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1
+    ${result}=  cli walk command  show switch  12  cmd_argument=<cr> all leaf0a leaf0b leaf1a leaf1b spine0 spine1
     Should be true  ${result}
-    ${result_1}=  cli walk command  show switch  10  cmd_argument=spine2
+    ${result_1}=  cli walk command  show switch  12  cmd_argument=spine2
     Should not be true  ${result_1}
     [Tags]  feature  CLI  cli-completion  smoke  
     
