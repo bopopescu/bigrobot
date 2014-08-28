@@ -21,7 +21,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  IronHorse  run 
+	[Tags]  L2  IronHorse
 	base suite setup   
     add fabric switch
     bring up h1 bond0
@@ -115,7 +115,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  IronHorse  run  
+    [Tags]  L2  IronHorse
     bigrobot test ztn  False
     rest add tenant  t1
     rest add vns  t1  v1
@@ -245,7 +245,7 @@ Test VFT push to when system has not connected switches
 	cli add controller  leaf2-a  c2
 	cli add controller  leaf2-b  c1
 	cli add controller  leaf2-b  c2
-	BuiltIn.Sleep  10
+	BuiltIn.Sleep  20
 	rest verify fabric switch  spine0
 	rest verify fabric switch  spine1
 	rest verify fabric switch  leaf2-a
@@ -264,7 +264,7 @@ Test VFT push to when system has not connected switches
     rest add portgroup lacp  p6
     rest add portgroup to vns  t1  v1  p5  -1
     rest add portgroup to vns  t1  v1  p6  -1
-    BuiltIn.Sleep  20
+    BuiltIn.Sleep  	20
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
     rest verify fabric interface lacp  leaf2-b  ${h6_intf1}
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
