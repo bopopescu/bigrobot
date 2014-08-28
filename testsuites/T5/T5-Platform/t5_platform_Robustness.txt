@@ -184,7 +184,7 @@ Master Reboot Stress Test For 200 Times
    
 Master System Failover Stress Test For 250 Times
    [Tags]  manual  stress  don
-   manual passed
+   #manual passed
    Stress Failover/Failback by failing over the master and verify connectivity
    
    
@@ -211,10 +211,10 @@ Cluster Election Re-run Stress Test For 25 Times
 ###########################################################################################
 
 Consecutive connect/disconnect of switches
-	[Tags]  manual
-	manual passed
+	[Tags]  skipped
+	#manual passed
 	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a
-	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf1-a
+	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
 	Should be true  ${returnVal}
 	
 	
@@ -231,8 +231,8 @@ Headless mode verifications
 	manual passed 
 
 Disconnect peer leaf switch lag links
-	[Tags]  manual-untested 			
-	manual untested
+	[Tags]  manual  BVS-2067
+	manual failed 
 	
 Reboot peer leaf switches. 
 	[Tags]  manual
@@ -277,7 +277,7 @@ Traffic prioritization on the switch cpu to-controller traffic
 	manual passed
 	
 Remove stdby controller & add another stdby controller with the same IP as earlier one
-	[Tags]    manual-untested 			 
+	[Tags]    manual-untested
 	manual untested
 	
 Large VFT push during switch reboots 
@@ -305,31 +305,33 @@ Interface Disable/Enable - Perhaps in a loop
 	manual passed
 	
 Bond/LAG configuration/ De-configuration
-	[Tags]    manual-untested 			
-	manual untested
+	[Tags]    manual		
+	manual passed
 
 Platform Switch: Add/Remove rack lag links
-	[Tags]    manual-untested 			 
-	manual untested
+	[Tags]    manual 
+	manual passed
 	
 Interface shutdowns / bringup
-	[Tags]    manual-untested 			 
+	[Tags]    manual-untested 
 	manual untested
 	
 Power down/up switch
 	[Tags]    manual
 	manual passed
+	Consecutive power cycle of all the spines
+	
 	
 Performance during VFT push from the controller
 	[Tags]    manual  BSC-6191
 	manual failed
 
 Add/Remove peer lags
-	[Tags]    manual-untested 			 
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Consecutive reboot of peer leaf (dual-tor context)
-	[Tags]    manual-untested 			 
+	[Tags]    manual-untested
 	manual untested
 
 Consecutive reboots of spines
@@ -465,7 +467,7 @@ Re-run the election and verify connectivity
 * Keywords      
 
 Stress Failover/Failback by rebooting the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    3
+   : FOR    ${Iteration}    IN RANGE    1    100
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
    \	${returnVal}=	cli verify cluster master reboot
    \	Should Be True  ${returnVal}
@@ -477,7 +479,7 @@ Stress Failover/Failback by rebooting the master and verify connectivity
    \	Should be true  ${returnVal}
 
 Stress Failover/Failback by failing over the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    3
+   : FOR    ${Iteration}    IN RANGE    1    200
    \	Log To Console   \n================ Failing Over Master - Iteration ${Iteration} ===============\n
    \	${returnVal}=	cli cluster take leader
    \	Should Be True  ${returnVal}
@@ -488,6 +490,14 @@ Stress Failover/Failback by failing over the master and verify connectivity
    \	${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
    \	Should be true  ${returnVal}
 
+
+Consecutive power cycle of all the spines
+	: FOR    ${Iteration}    IN RANGE    1    100
+   \	Log To Console   \n================ Power Cycling Spines - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+   \	Should be true  ${returnVal}
+
+
 Stress Failover/Failback by rebooting the slave and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    26
    \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
@@ -495,7 +505,6 @@ Stress Failover/Failback by rebooting the slave and verify connectivity
 
 
 Stress Failover/Failback by issuing take-leader in master & verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    26
    \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
    \	rest verify cluster election take leader
    \	platform ping all
