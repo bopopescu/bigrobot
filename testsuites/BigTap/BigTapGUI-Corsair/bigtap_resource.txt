@@ -278,6 +278,8 @@ ${TUNNEL LOOPBACK INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point
 ${TUNNEL LOOPBACK INTERFACE LIST}  	xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
 ${TUNNEL LOOPBACK INTERFACE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Loopback Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
 ${SUBMIT BUTTON}					xpath=//span[@id='dijit_form_Button_4_label']
+${CONFIRM DELETE POPUP}				xpath=//div[@title='Confirm']
+${DELETE TUNNEL MENU POPUP}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Delete Tunnel')]		
 
 ### Big Tap Policies Page
 ${CREATE POLICY POPUP}					xpath=//div[@title='Create Policy']
@@ -2674,12 +2676,12 @@ Configure Big Tap Tunnels
 	[Arguments]  ${name}  ${rate-limit}  ${direction}  ${src-ip}  ${prefix}  ${gateway}  ${dst-ip}  ${switch}  ${parent-if}  ${loopback-if}
 	
 	Go to Controller Interfaces Page
-	Sleep  20
+	#Sleep  20
 	Click Element  ${TUNNEL TABLE BUTTON}  and don't wait
 	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='interfaces_table']
     Verify Element Visible  ${action_menu}
     Highlight Element   ${action_menu}
-    Sleep  10
+    Sleep  1
     Click Element  ${action_menu}  and don't wait
     #Click Element  ${action_menu}  and don't wait
 	Sleep  2
@@ -2707,7 +2709,10 @@ Configure Big Tap Tunnels
 	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
 	Run Keyword If  '${direction}'=='Transmit'
 	...			Assign ID to Element   xpath=//div[@class='nowrap']/descendant::div[@id='bsn_widgets_InputLabel_4']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]	 Not_Receive
-	
+	Run Keyword If  '${direction}'=='Bidirectional'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]      Receive_Only
+	Run Keyword If  '${direction}'=='Bidirectional'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
 	
     Run Keyword If  '${direction}'=='Receive'
     ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
@@ -2746,7 +2751,7 @@ Configure Big Tap Tunnels
 	... 	${TUNNEL SWITCH FIELD}
 	... 	${switch}
 	
-	Sleep  5
+	Sleep  1
 	
 	Run Keyword Unless  '${parent-if}'=='${EMPTY}'
 	...		Select From List And Verify  
@@ -2763,6 +2768,25 @@ Configure Big Tap Tunnels
 	... 	${loopback-if}
 	  
    Verify Element Visible  ${SUBMIT BUTTON}
-   Click Element  ${SUBMIT BUTTON}  and don't wait 
-   Sleep   30
+   Click Element  ${SUBMIT BUTTON}  and don't wait
+   Verify Element Invisible  ${CONFIGURE GRE TUNNEL POPUP} 
+   Sleep   1
+   
+Delete Tunnel
+	[Arguments]  ${interface}  ${switch}
+	
+	Go To Controller Interfaces Page
+    Show All
+    Verify Page Contains Text  ${interface}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${interface}  ${switch}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    Verify Element Visible  ${DELETE TUNNEL MENU POPUP}
+    Click Element  ${DELETE TUNNEL MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIRM DELETE POPUP}
+	
+   Verify Element Visible  ${PROCEED DELTE BUTTON}
+   Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+   Sleep   1
+    
     
