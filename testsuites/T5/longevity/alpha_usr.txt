@@ -1,0 +1,72 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      T5 longevity suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
+Force Tags       IronHorse
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/T5Utilities.py
+
+Library          OperatingSystem
+ 
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}     120 
+${inevent}       30 
+${betweenevent}  60
+
+${Tflapnum}     50 
+${Vflapnum}     50 
+${bigconfigsleep}   60 
+
+
+${loop}    2
+${repeat}      10
+
+
+${leaf1-a}     dt-leaf1a
+${leaf1-b}     dt-leaf1b
+${leaf2-a}     dt-leaf2a
+${leaf2-b}     dt-leaf2b
+ 
+${spine1}      dt-spine1
+${spine2}      dt-spine2
+ 
+* Test Case
+ 
+ 
+T13 user login/logout (every 1 hour)
+	log  user login/logout 
+	spawn_log_in	 10
+	cli  master   show session  	
+	log  multiple user log in and not logout
+	
+	
+    
+	[Tags] 	   full  traffic   backgroupcheck
+	  
+
+* Keywords
+
+ 
+T5 longevity suite setup
+   base suite setup
+ 
+T5 longevity suite teardown
+#   base suite teardown
+	sleep  1
+ 
+    
