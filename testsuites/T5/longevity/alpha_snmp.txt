@@ -27,7 +27,10 @@ Library        OperatingSystem
  
 T12 SNMP(every 10 sec)
 	log  constant SNMP walk 	
-	 
+	log  ******** setup snmp and verify********
+	setup snmp	
+	verify snmp config	
+ 	 
 	: FOR    ${i}    IN RANGE    0    300	
 	\  ${result}=  snmp cmd  master  snmpbulkwalk  public   
 	\  log  ${result}   
@@ -50,4 +53,28 @@ T5 longevity suite teardown
 #   base suite teardown
 	sleep  1
  
-    
+setup snmp
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.8.28.6  162    
+    rest add firewall rule  service=snmp
+    Sleep  10        
+
+ 
+verify snmp config
+    ${snmp_output}=  rest show snmp
+    ${snmp_key}=  verify json key  ${snmp_output}  0  community
+    Should Be Equal As Strings  ${snmp_key}  public
+    ${snmp_key}=  verify json key  ${snmp_output}  0  contact
+    Should Be Equal As Strings  ${snmp_key}  Big Switch Networks
+    ${snmp_key}=  verify json key  ${snmp_output}  0  location
+    Should Be Equal As Strings  ${snmp_key}  Mountain View
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled
+    Should Be True  ${snmp_key}
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  server
+    Should Be Equal As Strings  ${new_snmp_key}  10.8.28.6
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port
+    Should Be Equal As Integers  ${new_snmp_key}  162    
