@@ -37,10 +37,10 @@ Documentation       Testing ZTN
 ...
 ...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
 
-Suite Setup		Suite Setup
-Suite Teardown		Suite Teardown
-Test Setup		Test Setup
-Test Teardown	Test Teardown
+Suite Setup		Base Suite Setup
+Suite Teardown		Base Suite Teardown
+Test Setup		Base Test Setup
+Test Teardown	Base Test Teardown
 Force Tags		T5  ZTN  Feature  IronHorse
 Library  		keywords/BsnCommon.py
 Library		keywords/T5Platform.py
@@ -53,7 +53,8 @@ Resource		t5_ztn_resource.txt
 *** Test Cases ***
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	[Tags]  skipped
+	Manual Passed
+	[Tags]  manual
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
 	Manual Passed
 	[Tags]  manual
@@ -277,8 +278,8 @@ T7.33.4. Verify that discovery process is restarted when controller failover (re
 	[Tags]  manual
 # Switch bootup may or may not succeed, since switch boot downloads two pieces (they need to both come from the same controller)
 T7.33.5. Verify that decommissioning a standby node from the cluster does not interrupt ZTN server activity (switch downloading an image finishes the process successfully)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T7.33.6. Verify that decommissioning the active node from the cluster does not interrupt ZTN server activity in other way than failing over (switch downloading an image restarts the process and downloads from new active controller)
 	Manual Passed
 	[Tags]  manual
