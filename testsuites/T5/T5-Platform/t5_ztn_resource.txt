@@ -79,6 +79,8 @@ Test Setup
 
 Test Teardown
 	Sleep  15
+	Cli Kill SSH Sessions  master
+	Cli Kill SSH Sessions  slave
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
 	Sleep  30
