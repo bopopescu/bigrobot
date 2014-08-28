@@ -761,7 +761,6 @@ class T5Utilities(object):
             ip_addr = bsn_common.get_node_ip(node)
             c = t.node_spawn(ip=ip_addr, user=user, password=password)
         try:
-            c.send("reauth %s %s" % (user, password))
             c.config(command, timeout=cmd_timeout)
             if "Error" in c.cli_content():
                 helpers.test_failure(c.cli_content(), soft_error)
