@@ -47,6 +47,7 @@ class DevConf(object):
         self._mode = 'cli'
         self.is_prompt_changed = False
         self._lock = False
+        self._last_matched_index = self._last_matched_object = None
 
         self._logpath = helpers.bigrobot_log_path_exec_instance()
         if not self._logpath:
@@ -397,7 +398,8 @@ class DevConf(object):
         prefix_str = '%s %s' % (self.name(), mode)
         helpers.bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
 
-        self.conn.execute(cmd)
+        self._last_matched_index, self._last_matched_object = self.conn.execute(cmd)
+
         self.last_result = { 'content': self.conn.response }
 
         if helpers.not_quiet(quiet, [1, 5]):
@@ -470,8 +472,39 @@ class BsnDevConf(DevConf):
         super(BsnDevConf, self).cmd('exit', mode='bash', quiet=5)
         helpers.log("Current mode is %s" % self.mode())
 
+    def _reset_mode(self):
+        matched_string = self._last_matched_object.group(self._last_matched_index)
+        is_matched_prompt = False
+        for prompt in self.conn.get_prompt():
+            if re.match(prompt, matched_string):
+                is_matched_prompt = True
+                break
+        is_mismatched = False
+        if is_matched_prompt:  # We found a prompt
+            # helpers.log("!!!!! We found a prompt ('%s')" % matched_string.lstrip())
+            if self.mode() != 'cli' and re.match(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?> ?$', matched_string):
+                # Detected mode mismatch, possibly caused by idle timeout.
+                # Restore to 'cli' mode.
+                helpers.warn("'%s' current mode is '%s' but prompt is '%s' ('cli')."
+                             " Possibly triggered by reauth. Resetting mode to 'cli'."
+                            % (self.name(), self.mode(), matched_string.lstrip()))
+                self.mode(new_mode='cli')
+                is_mismatched = True
+            else:
+                # helpers.log("!!!!! Current mode is '%s' and prompt is '%s'. All is well."
+                #            % (self.mode(), matched_string.lstrip()))
+                pass
+        return is_mismatched
+
     def _cmd(self, cmd, quiet=0, mode='cmd', prompt=None,
              timeout=None, level=5):
+
+        if helpers.is_bsn_controller(self.platform()):
+            content = super(BsnDevConf, self).cmd('', prompt=prompt,
+                                                 timeout=timeout, quiet=5)['content']
+            if self._reset_mode():
+                helpers.log("'%s' mode reset to 'cli'. Last output was:\n%s."
+                            % (self.name(), helpers.indent_str("'" + content + "'")))
 
         if helpers.is_extreme(self.platform()):
             if mode != 'config':
@@ -639,6 +672,14 @@ class BsnDevConf(DevConf):
 
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        # !!! FIXME 2014-08-28 Reauth monitoring is disabled because (for some
+        # still unknown reason) it causes Exscript to ignore the expect
+        # timeout, so a script may hang indefinitely while waiting for a
+        # matching prompt. Need to revisit this problem later. For now we
+        # have a workaround.
+        #
+        # Inside autobot/node.py is where we disabled this functionality.
+        #
         is_monitor_reauth = kwargs.pop('is_monitor_reauth', True)
         super(ControllerDevConf, self).__init__(*args, **kwargs)
 
