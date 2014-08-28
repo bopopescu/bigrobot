@@ -5134,4 +5134,17 @@ class T5Platform(object):
         if match:
             return 'is started'  
 
-
+    def console_bash_reboot_switch(self, node, timeout=None):
+        """
+            reboot switch
+            Return Value:  True         
+        """
+        try:
+            t = test.Test()
+            s = t.dev_console(node)
+            bash_input = 'reboot'
+            s.bash(bash_input, timeout=timeout)
+            return True
+        except:
+            helpers.test_failure("Could not execute reboot command. Please check log for errors")
+            return False

@@ -29,6 +29,7 @@ L3 Arp discovery rate
     [Tags]              manual          performance
 
 Configure 1k Tenant with 4k segment in default vlan-mapping mode
+    manual passed
 	[Tags]				manual			scale	
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
@@ -44,14 +45,12 @@ Delete and add config with 1k tenant with 4k segment in default vlan-mapping mod
     [Tags]              manual-untested          scale           
 
 Add and delete 10k cidr routes in spine switches
-	[Tags]				manual-untested          	scale	       
+    manual failed
+	[Tags]				manual          scale	   BSC-5991     
 	
 Add and delete 10k cidr routes in leaf switches
     manual failed
-    [Tags]              manual          scale         
-
-Add and delete 16k cidr routes in system
-    [Tags]              manual-untested           scale   
+    [Tags]              manual          scale      BSC-5991              
     
 Add and delete 1k nexthop group
 	[Tags]				manual-untested 			scale			
@@ -65,9 +64,7 @@ Add more than 4k segment
     [Tags]              manual          scale           
     
 Add more than 1k nexthop group
-    [Tags]              manual-untested           scale           
-    
-Add more than 16k cidr routes
+    manual untested
     [Tags]              manual-untested           scale           
         
 Test maximum number of dhcp relay enabled interfaces
