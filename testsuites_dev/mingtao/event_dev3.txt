@@ -55,7 +55,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine0} 
     \   sleep  ${inevent}
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event     
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -70,7 +70,7 @@ T22 leaf switch node down/up event
     \   sleep  ${inevent}
     
          
-	[Tags] 	longevity   traffic    event    skipped
+	[Tags] 	longevity   traffic    event    
 
 	    
 T23 controller node event failover        
@@ -79,7 +79,7 @@ T23 controller node event failover
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	longevity    traffic     event     skipped
+	[Tags] 	longevity    traffic     event     
  
  
 T27 data Link down/up event between leaf and spine
@@ -103,7 +103,7 @@ T27 data Link down/up event between leaf and spine
   	\  sleep  ${inevent}  
  	
    
-	[Tags] 	longevity     traffic     event    skipped
+	[Tags] 	longevity     traffic     event    
 
 
   
@@ -123,7 +123,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event     skipped
+	[Tags] 	longevity     traffic    event      
 
  
 T51 continues Event
@@ -141,7 +141,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
   	\  sleep  ${betweenevent}
    
-	[Tags] 	longevity    traffic    skipped
+	[Tags] 	longevity    traffic     
 
 
 
@@ -155,11 +155,13 @@ switch node down/up event   [Arguments]    ${node}
 	log  reload switch
 	Log To Console   ================ Rebooting ${node} ===============
 	cli_reboot_switch    master     ${node} 
+	cli   master   ''
 	sleep   ${long}	
 	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
 
 Verify all switches connected back
  	${switches}=  rest_get_disconnect_switch
+ 	cli   master   ''
 	log   the disconnected switches are ${switches}  	
 	Should Be Empty   ${switches}	
  
@@ -167,17 +169,21 @@ Verify all switches connected back
 controller node event HA failover    [Arguments]    ${during}=30
     Log To Console   =============HA failover ===============
     cli_cluster_take_leader
-    sleep  ${during}    
+    cli   master   ''
+    sleep  ${during}   
+    cli   master   '' 
     clear stats in controller switch	  
 
 controller node event reboot master    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
     cli_verify_cluster_master_reboot 
+    cli   master   ''
     sleep  ${during}
  
 controller node event reboot slave    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
     cli_verify_cluster_slave_reboot 
+    cli   master   ''
     sleep  ${during}
 
 
@@ -186,8 +192,10 @@ data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
 	log  disable/enable link from leaf to spine			 
 	${list}=  disable links between nodes   ${node1}    ${node2}
 	log   list is ${list} 
- 	sleep    ${medium}  	
+ 	sleep    ${medium}  
+ 	cli   master   ''	
 	enable links between nodes 	${node1}   ${list}
+	cli   master   ''
 
 
 disable links between nodes    [Arguments]   ${node1}   ${node2} 
@@ -206,7 +214,7 @@ enable links between nodes   [Arguments]   ${node1}   ${list}
  	: FOR    ${int}   IN   @{list}   
 	\  	rest_enable_fabric_interface		${node1}  ${int}  
 	\   sleep  ${medium}
-
+	cli   master   ''
 
 
  
@@ -214,6 +222,7 @@ tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${s
     Log To Console   ================tenant configuration changes: ${Tnumber}===============
  	clear stats in controller switch	     
 	enable  master  copy running-config config://config_tenant_old
+	cli     master   ''
 	log  big scale configuration tenant add	
 	rest_add_tenant_vns_scale    tenantcount=${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	cli  master  show running-config tenant FLAP0
@@ -238,13 +247,14 @@ tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${s
 vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     Log To Console   ================ vns configuration changes: ${Vnumber}===============
 	enable  master  copy running-config config://config_vns_old
+	cli     master  ''
 	${vlan}=    Set Variable   1000    
 	rest_add_tenant_vns_scale    tenantcount=1   tname=FLAP    vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	rest_add_interface_to_all_vns      FLAP0     ${leaf1-a}    ethernet3   vlan=${vlan}	
 	sleep   ${sleep}	 
 	cli    master     show running-config tenant	timeout=120
 	enable  master  copy running-config config://config_vns_new
-	
+	cli    master   ''
  	log  big scale configuration tenant delete
  	config    master   tenant FLAP0
 	${vns}=  expr  1 + ${Vnumber}
@@ -255,18 +265,20 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     \ 	config    master    no interface segment V${j}   
 	config    master    no tenant FLAP0      
 	enable    master     show running-config tenant	 timeout=120	
- 
+ 	cli       master   ''
 
 clear stats in controller switch
 	enable    master  clear switch all interface all counters 
 #	rest_clear_vns_stats
 #	rest_clear_fabric_interface_stats
- 
+ 	cli       master   ''
+ 	 
 T5 longevity suite setup
    base suite setup
     : FOR    ${j}    IN RANGE    0     500
     \ 	config    master     no tenant FLAP${j}
-
+ 	cli       master   ''
+ 		
 T5 longevity suite teardown
 #   base suite teardown
     sleep  1
@@ -288,9 +300,9 @@ verify switch interface is up	[Arguments]  ${switch}   ${intf}
  
 check controller top  [Arguments]  ${node}   
     : FOR    ${j}    IN RANGE    0     5 
-    \ bash   ${node}  top -n 1 
-    \ sleep  2
-
+    \  bash   ${node}  top -n 1 
+    \  sleep  2
+ 	cli       master   ''
  
  
 ######## test case keyword

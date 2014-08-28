@@ -393,8 +393,11 @@ class SwitchLight(object):
                     for i in range(0, len(content)):
                         if str(element_new_name) in content[i]:
                             temp_value = content[i].split(':')
-                            if "Status" in str(element_new_name):
+                            if "Status" in str(element_new_name) or "Type" in str(element_new_name):
                                 temp_value[1] = temp_value[1].rstrip('.')
+                            if "Speed" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].rstrip('%')
                             if "Airflow" in str(element_new_name):
                                 temp_value[1] = temp_value[1].rstrip('.')
                                 temp_value[1] = temp_value[1].strip()

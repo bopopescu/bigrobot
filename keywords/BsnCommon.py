@@ -486,7 +486,7 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', timeout=90)
+                        t.node_reconnect(node='master')
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -501,11 +501,11 @@ class BsnCommon(object):
                         content = c_user.rest.content()
                         output_value = content[0]['controller']
                     except:
-                        t.node_reconnect(node='master', timeout=90)
+                        t.node_reconnect(node='master')
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master', timeout=90)
+                            t.node_reconnect(node='master')
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):
@@ -532,7 +532,7 @@ class BsnCommon(object):
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', timeout=90)
+                        t.node_reconnect(node='master')
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -549,11 +549,11 @@ class BsnCommon(object):
                         output_value = content[0][string]
                         c_user.close()
                     except:
-                        t.node_reconnect(node='master', timeout=90)
+                        t.node_reconnect(node='master')
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master', timeout=90)
+                            t.node_reconnect(node='master')
                         return output_value
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
@@ -1263,8 +1263,8 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
-                    c.rest.put(url, {"ipaddr": str(host), "udp-port": int(udp_port)})
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
+                    c.rest.put(url, {"server": str(host), "udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
                     return False
@@ -1326,7 +1326,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller('master')
                 try:
-                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[ipaddr="%s"]' % str(host)
+                    url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
                     c.rest.delete(url, {"udp-port": int(udp_port)})
                 except:
                     helpers.log(c.rest.error())
@@ -1990,3 +1990,16 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node_reconnect(node, user=user, password=password)
         return n
+
+    def bigrobot_test_ztn(self, new_value=False):
+        return helpers.bigrobot_test_ztn(new_value)
+
+    def reconnect_switch_ips(self):
+        """
+        Reconnects the Switches IP by getting them from consoles
+        """
+        t = test.Test()
+        params = t.topology_params_nodes()
+        for key in params:
+            t.setup_ztn_phase2(key)
+        return True

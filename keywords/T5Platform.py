@@ -1458,6 +1458,9 @@ class T5Platform(object):
 
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
+        if "compare" in output[0] and len(output) > 2:
+            helpers.log("Skipping command that is still in first line")
+            output = output[1:]
         if options[0] < 2:
             for index, line in enumerate(output):
                 if '100%' in line:
@@ -1498,7 +1501,6 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
-        c.send("reauth admin adminadmin; enable; config")
         c.config("")
         c.send("copy %s %s" % (src, dst))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()],
@@ -1549,6 +1551,10 @@ class T5Platform(object):
         helpers.test_log("Comparing output of 'show running-config' with 'show file %s'" % filename)
         t = test.Test()
         c = t.controller('master')
+
+        if re.match(r'file://.*', filename):
+            name = re.split(r'file://', filename)
+            filename = name[1]
         try:
             rc = c.config("show running-config")['content']
             if "Error" in c.cli_content():
@@ -1637,6 +1643,9 @@ class T5Platform(object):
         elif re.match(r'snapshot://.*', filename):
             name = re.split(r'snapshot://', filename)
             cmd = "delete snapshot %s" % name[1]
+        elif re.match(r'file://.*', filename):
+            name = re.split(r'file://', filename)
+            cmd = "delete file %s" % name[1]
         else:
             cmd = "delete file %s" % filename
 

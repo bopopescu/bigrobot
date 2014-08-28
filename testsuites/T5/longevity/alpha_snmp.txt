@@ -1,0 +1,53 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      T5 longevity suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
+Force Tags       IronHorse   T5
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
+ 
+* Variable
+ 
+ 
+* Test Case
+ 
+ 
+T12 SNMP(every 10 sec)
+	log  constant SNMP walk 	
+	 
+	: FOR    ${i}    IN RANGE    0    300	
+	\  ${result}=  snmp cmd  master  snmpbulkwalk  public   
+	\  log  ${result}   
+	\  ${result}=  snmp cmd  master  snmpwalk  public      
+	\  log  ${result}   
+	\  sleep  10
+	 
+	[Tags] 	traffic   backgroupcheck
+ 
+
+	  
+
+* Keywords
+
+ 
+T5 longevity suite setup
+   base suite setup
+ 
+T5 longevity suite teardown
+#   base suite teardown
+	sleep  1
+ 
+    

@@ -25,7 +25,7 @@ ${scp switch}		scp://bsn@10.9.16.52:file-management-testsuite/scp-config-large
 ${scp image}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
 ${scp image corrupted}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
 ${scp image bigtap}		scp://bsn@10.9.16.52:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
-${file}				config-file
+${file}				file://config-file
 ${config}			snapshot://config-config
 ${config double}	snapshot://snapshot://config-config
 ${config name}		config-config
@@ -40,8 +40,8 @@ T0.1 Extensive config and file compare locally
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
 	...  snapshot://extensive-config
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  extensive-file
-	Compare  extensive-file  snapshot://extensive-config
+	...  file://extensive-file
+	Compare  file://extensive-file  snapshot://extensive-config
 
 T0.2 Extensive config remote copy
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
@@ -63,8 +63,8 @@ T0.3 Extensive file remote copy
 	Compare  snapshot://extensive-config  running-config
 	Sleep  10
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  extensive-file
-	Compare  extensive-file  running-config
+	...  file://extensive-file
+	Compare  file://extensive-file  running-config
 
 T0.4 Extensive config remote replace
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
@@ -101,12 +101,12 @@ T0.5 Extensive config local copy
 T0.6 Extensive file local copy
 	Rest Delete Tenant  TenantTest12345
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  extensive-file
-	Cli Copy  extensive-file  running-config
+	...  file://extensive-file
+	Cli Copy  file://extensive-file  running-config
 	Sleep  10
 	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
 	...  running-config
-	Compare  extensive-file  running-config
+	Compare  file://extensive-file  running-config
 
 T0.7 Extensive config local replace
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
@@ -193,21 +193,21 @@ T4.1.1 Copy running config to file, add elements to RC, restore, verify (new ele
 	Cli Copy  running-config  ${file}
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Rest Delete Tenant  TempTenant123
 	Cli Copy  ${file}  running-config
-	${status} =  Cli Compare Running Config with File Line By Line  backup
+	${status} =  Cli Compare Running Config with File Line By Line  file://backup
 	Should Be True  ${status}
-	Compare  running-config  backup
+	Compare  running-config  file://backup
 	[Tags]  Smoke
 T4.1.2 Copy running config to file, delete elements from RC, restore, verify (deleted elements are restored)
 	Cli Copy  running-config  ${file}
 	Cli Copy  snapshot://startup-config  running-config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Copy  ${file}  running-config
-	${status} =  Cli Compare Running Config with File Line By Line  backup
+	${status} =  Cli Compare Running Config with File Line By Line  file://backup
 	Should Not Be True  ${status}
-	Compare Negative  running-config  backup
+	Compare Negative  running-config  file://backup
 	[Tags]  Smoke
 
 T4.2 Copy running config to snapshot://, change RC, restore, verify old RC restored
@@ -223,30 +223,30 @@ T4.2 Copy running config to snapshot://, change RC, restore, verify old RC resto
 T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Cli Copy  running-config  ${scp}
 	Modify Running Config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Copy  ${scp}  running-config
-	${status} =  Cli Compare Running Config with File Line By Line  backup
+	${status} =  Cli Compare Running Config with File Line By Line  file://backup
 	Should Not Be True  ${status}
 	Compare Negative  running-config  ${scp}
-	Compare Negative  running-config  backup
+	Compare Negative  running-config  file://backup
 	[Tags]  SCP  Smoke
 
 T4.4 Copy from scp:// and compare with previous running-config
 	Rest Delete Tenant  TenantTest12345
 	Cli Copy  snapshot://startup-config  running-config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Copy  ${scp switch}  running-config
-	Compare Negative  backup  running-config
+	Compare Negative  file://backup  running-config
 	Compare  ${scp switch}  running-config
 	[Tags]  SCP
 
 
 T5.1 Copy running config to file, copy RC from file to other file, verify
 	Cli Copy  running-config  ${file}
-	Cli Copy  ${file}  file-new
-	${status} =  Cli Compare Running Config with File Line By Line  file-new
+	Cli Copy  ${file}  file://file-new
+	${status} =  Cli Compare Running Config with File Line By Line  file://file-new
 	Should Be True  ${status}
-	Compare  running-config  file-new
+	Compare  running-config  file://file-new
 
 T5.2 Copy running config to file, copy RC from file to scp://, verify
 	Cli Copy  running-config  ${file}
@@ -285,13 +285,13 @@ T5.6.2 Copy running config to scp://, copy RC from scp:// to image, verify
 T5.7 Copy running config to snapshot://, copy snapshot:// to scp://, copy from scp:// to file, copy file to snapshot://, copy snapshot:// to RC
 	Cli Copy  running-config  ${config}
 	Modify Running Config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Copy  ${config}  ${scp}
 	Cli Copy  ${scp}  ${file}
 	Cli Copy  ${file}  snapshot://config-new
 	Cli Copy  snapshot://config-new  running-config
 	Compare  ${config}  running-config
-	Compare Negative  backup  running-config
+	Compare Negative  file://backup  running-config
 	[Tags]  SCP
 
 T5.8.1 Verify: compare running-config scp://<running-config>
@@ -419,16 +419,16 @@ T5.9.9 Verify: copy scp://<snapshot://> config
 
 
 T6.1.1 Verify Filename containing ~
-	Validate Filename  test~test
+	Validate Filename  file://test~test
 	[Tags]  Filename
 T6.1.2 Verify Filename containing !
-	Validate Filename  test!test
+	Validate Filename  file://test!test
 	[Tags]  Filename
 T6.1.3 Verify Filename containing -
-	Validate Filename  test-test
+	Validate Filename  file://test-test
 	[Tags]  Filename
 T6.1.4 Verify Filename containing _
-	Validate Filename  test_test
+	Validate Filename  file://test_test
 	[Tags]  Filename
 
 T6.2.1 Verify snapshot:// name containing ~
@@ -496,6 +496,7 @@ T6.11 Verify image-double not correct in copy and compare
 ### and check verifications for empty file names + error messages
 T7.1 Verify comparison function between running-config and file
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Compare  running-config  ${file}
 	Modify Running Config
 	Compare Negative  running-config  ${file}
@@ -517,16 +518,18 @@ T7.3 Verify comparison function between running-config and scp://
 
 T7.4 Verify comparison function between file and snapshot://
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Cli Copy  running-config  ${config}
 	Compare  ${file}  ${config}
 	Modify Running Config
-	Cli Copy  running-config  file-new
+	Cli Copy  running-config  file://file-new
 	Cli Copy  running-config  snapshot://config-new
-	Compare Negative  file-new  ${config}
+	Compare Negative  file://file-new  ${config}
 	Compare Negative  ${file}  snapshot://config-new
 
 T7.5 Verify comparison function between file and running-config
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Compare  ${file}  running-config
 	Modify Running Config
 	Compare Negative  ${file}  running-config
@@ -536,20 +539,21 @@ T7.6 Verify comparison function between file and scp://
 	Cli Copy  running-config  ${scp}
 	Compare  ${file}  ${scp}
 	Modify Running Config
-	Cli Copy  running-config  file-new
+	Cli Copy  running-config  file://file-new
 	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
-	Compare Negative  file-new  ${scp}
+	Compare Negative  file://file-new  ${scp}
 	Compare Negative  ${file}  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
 	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
-	Cli Copy  running-config  file1
-	Cli Copy  running-config  file2
-	Compare  file1  file2
+	Cli Copy  running-config  file://file1
+	Sleep  1
+	Cli Copy  running-config  file://file2
+	Compare  file://file1  file://file2
 	Modify Running Config
 	Cli Copy  running-config  ${file}
-	Compare Negative  file1  ${file}
-	Compare Negative  file2  ${file}
+	Compare Negative  file://file1  ${file}
+	Compare Negative  file://file2  ${file}
 
 T7.8 Verify comparison function between scp:// and snapshot://
 	Cli Copy  running-config  ${config}
@@ -827,6 +831,7 @@ Compare RC with Snapshot Line By Line Negative
 Validate Filename
 	[Arguments]  ${file}
 	Cli Copy  running-config  ${file}
+	Sleep  1
 	Compare  running-config  ${file}
 	Cli Copy  ${file}  running-config
 	Cli Delete  ${file}

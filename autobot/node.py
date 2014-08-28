@@ -216,7 +216,7 @@ class ControllerNode(Node):
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
 
-        self._monitor_reauth = True  # default
+        self._monitor_reauth = False  # default
 
         # Note: Must be initialized before BsnRestClient since we need the
         # CLI for platform info and also to configure the firewall for REST

@@ -20,7 +20,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  IronHorse   
+	[Tags]  L2  IronHorse
 	base suite setup   
     add fabric switch
     bring up h1 bond0
@@ -29,9 +29,9 @@ Setup Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    sleep  10
+    BuiltIn.Sleep  10
     rest verify fabric switch all
-    sleep  10
+    BuiltIn.Sleep  10
 	rest verify fabric link common 	
 
 verify static endpoints with port-group
@@ -42,7 +42,7 @@ verify static endpoints with port-group
     rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
     rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
     rest add portgroup lacp  p6
-    sleep  5
+    BuiltIn.Sleep  5
 	rest add endpoint  t1  v1  e1 
     rest add portgroup to endpoint  t1   v1  e1  p6  1008
     rest add ip endpoint  t1  v1  e1  ${h6_ip}
@@ -51,12 +51,12 @@ verify static endpoints with port-group
     rest verify endpoint static  t1  v1  1008  ${h6_mac}
     bash ifdown intf  h6  ${h6_eth0}
     bash ifdown intf  h6  ${h6_eth1}
-    sleep  40  
+    BuiltIn.Sleep  40  
     ${result}==  rest verify endpoint static  t1  v1  1008  ${h6_mac}
     Should not be True  ${result}
     bash ifup intf  h6  ${h6_eth0}
     bash ifup intf  h6  ${h6_eth1}
-    sleep  20
+    BuiltIn.Sleep  20
     rest verify endpoint static  t1  v1  1008  ${h6_mac}
     rest delete tenant  t1 
 
@@ -64,14 +64,14 @@ restart ofad to verify the fabric link
 	[Tags]  L2  IronHorse
 	rest verify fabric link common
 	bash execute command  leaf2-a  service ofad restart
-	sleep  2
+	BuiltIn.Sleep  2
 	rest verify fabric link common  13
-	sleep  25
+	BuiltIn.Sleep  25
 	rest verify fabric link common
 	bash execute command  leaf1-a  service ofad restart
-	sleep  2
+	BuiltIn.Sleep  2
 	rest verify fabric link common  12
-	sleep  25
+	BuiltIn.Sleep  25
 	rest verify fabric link common    
 
 Test to check all the cidr routes are created in spine and leaf switches
@@ -100,7 +100,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest add nexthop group  external  test
 	rest add nexthopGroup ip  external  test  10.192.16.1
 	rest_add_static_routes  external  0.0.0.0/0  {"next-hop-group": "test"}
-	sleep  5
+	BuiltIn.Sleep  5
 	rest verify forwarding cidr route spine  spine0  4  
 	rest verify forwarding cidr route spine  spine1  4
 	rest verify forwarding cidr route leaf  leaf0-a  5
@@ -114,7 +114,8 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  IronHorse     
+    [Tags]  L2  IronHorse
+    bigrobot test ztn  False
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -126,23 +127,24 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify fabric link common
     rest delete fabric switch  leaf0-a
-    sleep  10
+    BuiltIn.Sleep  120
     rest verify endpoint in system  1000
     rest add switch  leaf0-a
     rest add dpid  leaf0-a  ${leaf0a_dpid}
     rest add fabric role  leaf0-a  leaf
     rest add leaf group  leaf0-a  rack0
-    sleep  10
+    BuiltIn.Sleep  120
     rest verify fabric switch  leaf0-a
-    sleep  10
+    BuiltIn.Sleep  10
     rest verify fabric link common
     rest verify forwarding vlan fabric tag members  leaf0-a
-    sleep  10
+    BuiltIn.Sleep  10
     verify traffic rate  tx_rate  rx_rate  a  e
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify endpoint in system  2000
     stop traffic  ${stream}
-    rest delete tenant  t1               
+    rest delete tenant  t1  
+    bigrobot test ztn  True             
      
 shut/no shut the switch with traffic forward
 	[Tags]  L2  IronHorse     
@@ -158,19 +160,19 @@ shut/no shut the switch with traffic forward
     rest add portgroup lacp  p5
     rest add portgroup to vns  t1  v1  p4  -1
     rest add portgroup to vns  t1  v1  p5  -1
-    sleep  15
+    BuiltIn.Sleep  15
     rest verify fabric link common
     rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
     rest add shutdown fabric switch  leaf2-a   
-    sleep  3
+    BuiltIn.Sleep  3
     rest verify fabric link common  13 
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
     rest delete shutdown fabric switch  leaf2-a
-    sleep  15
+    BuiltIn.Sleep  15
     rest verify fabric switch  leaf2-a 
     rest verify fabric link common 
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
@@ -183,24 +185,24 @@ reboot both the controllers to make sure all the switches indeed connected
 	[Tags]  L2  IronHorse   
 	rest verify fabric link common
 	cluster node reboot
-	sleep  3
+	BuiltIn.Sleep  3
 	rest verify fabric link common
-	sleep  15
+	BuiltIn.Sleep  15
 	cluster node reboot
-	sleep  3
+	BuiltIn.Sleep  3
 	rest verify fabric link common
 
 Test Data center falls below 50% link verify forwarding table for the switch removal update
 	[Tags]  L2  IronHorse  
 	rest verify fabric link common
 	rest delete fabric switch  spine1
-	sleep  5
+	BuiltIn.Sleep  5
 	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
 	rest delete fabric switch  spine0
-	sleep  5
+	BuiltIn.Sleep  5
 	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
 	rest delete fabric switch  leaf2-b
-	sleep  5
+	BuiltIn.Sleep  5
 	${result}=  rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a  
 	Should not be True  ${result}
 	rest add switch  spine0
@@ -213,11 +215,12 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest add dpid  leaf2-b  ${leaf2b_dpid}
     rest add fabric role  leaf2-b  leaf 
     rest add leaf group  leaf2-b  rack2
-    sleep  20
+    BuiltIn.Sleep  20
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
-	[Tags]  L2  IronHorse      
+	[Tags]  L2  IronHorse
+	reconnect_switch_ips
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -242,7 +245,7 @@ Test VFT push to when system has not connected switches
 	cli add controller  leaf2-a  c2
 	cli add controller  leaf2-b  c1
 	cli add controller  leaf2-b  c2
-	sleep  10
+	BuiltIn.Sleep  20
 	rest verify fabric switch  spine0
 	rest verify fabric switch  spine1
 	rest verify fabric switch  leaf2-a
@@ -254,14 +257,14 @@ Test VFT push to when system has not connected switches
     rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
     rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
     rest add portgroup lacp  p5 
-    sleep  6 
+    BuiltIn.Sleep  6 
     rest add portgroup  p6 
     rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
     rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
     rest add portgroup lacp  p6
     rest add portgroup to vns  t1  v1  p5  -1
     rest add portgroup to vns  t1  v1  p6  -1
-    sleep  20
+    BuiltIn.Sleep  	20
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
     rest verify fabric interface lacp  leaf2-b  ${h6_intf1}
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
@@ -281,7 +284,8 @@ Test VFT push to when system has not connected switches
     rest delete tenant  t1
 	
 check forwarding port/lag table consisteny after switch mgmt remove/add
-	[Tags]  L2  IronHorse   
+	[Tags]  L2  IronHorse
+	reconnect_switch_ips
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -306,7 +310,7 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
 	cli add controller  leaf2-a  c2
 	cli add controller  leaf2-b  c1
 	cli add controller  leaf2-b  c2
-	sleep  2
+	BuiltIn.Sleep  2
 	rest verify fabric switch  spine0
 	rest verify fabric switch  spine1
 	rest verify fabric switch  leaf2-a
@@ -331,9 +335,10 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
     Should be True  ${count} == 1
     
 check forwarding vlan table consistency after switch mgmt remove/add
-	[Tags]  L2  IronHorse    
+	[Tags]  L2  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
+	reconnect_switch_ips
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
@@ -342,7 +347,7 @@ check forwarding vlan table consistency after switch mgmt remove/add
 	rest add vns  t1  v2
 	cli add controller  leaf2-a  c1
 	cli add controller  leaf2-a  c2
-	sleep  5
+	BuiltIn.Sleep  5
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 3
@@ -354,11 +359,12 @@ check forwarding vlan table consistency after switch mgmt remove/add
     Should be True  ${count} == 3   
 
 verifying flow reconsilation when new switch is connected to the fabric
-	[Tags]  L2  IronHorse  
+	[Tags]  L2  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
-    sleep  3
+    BuiltIn.Sleep  3
+	reconnect switch ips
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
@@ -368,15 +374,15 @@ verifying flow reconsilation when new switch is connected to the fabric
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
     clean configuration
-    sleep  3
+    BuiltIn.Sleep  3
     rest add switch  leaf2-a
     rest add dpid  leaf2-a  ${leaf2a_dpid}
     rest add fabric role  leaf2-a  leaf
     rest add leaf group  leaf2-a  rack2
-    sleep  2
+    BuiltIn.Sleep  2
     cli add controller  leaf2-a  c1
     cli add controller  leaf2-a  c2
-    sleep  2
+    BuiltIn.Sleep  2
     rest verify fabric switch  leaf2-a
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
@@ -391,15 +397,15 @@ Tear down config and Topology
 * Keywords  
 	
 verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
-    Sleep  5
+    BuiltIn.Sleep  5
     ${report}=  fetch port stats
-    Log  ${report}
+    BuiltIn.Log  ${report}
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
     ixia verify traffic rate  ${tx_value}  ${rx_value}
     
 verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
-    Sleep  5
+    BuiltIn.Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
@@ -421,7 +427,7 @@ T5 test teardown
 T5 test setup
 	base test setup
 	add fabric switch
-	sleep  15
+	BuiltIn.Sleep  15
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25

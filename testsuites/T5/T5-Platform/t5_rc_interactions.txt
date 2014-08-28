@@ -19,11 +19,11 @@ Library				Collections
 *** Test Cases ***
 T0 Basic check
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  snapshot://extensive-config
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  extensive-file
-	Compare  extensive-file  snapshot://extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  file://extensive-file
+	Compare  file://extensive-file  snapshot://extensive-config
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  running-config
 	Compare  snapshot://extensive-config  running-config
-	Compare  extensive-file  running-config
+	Compare  file://extensive-file  running-config
 	Cli Copy  snapshot://startup-config  running-config
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
 
@@ -230,7 +230,7 @@ Suite Setup
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  file://extensive-file
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
 	Cli Copy  running-config  snapshot://test-config
 
@@ -279,10 +279,10 @@ Compare and Expect Diff
 
 Delete single running config line and verify
 	[Arguments]  ${command}  ${diff}  ${submode}=config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Run  master  enable
 	Cli Run  master  config
 	Cli Run  master  ${submode}
 	Cli Run  master  no ${command}
-	Compare and Expect Diff  running-config  backup
+	Compare and Expect Diff  running-config  file://backup
 	...  ${diff}
