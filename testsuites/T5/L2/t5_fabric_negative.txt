@@ -14,7 +14,6 @@ Library          keywords/T5Platform.py
 Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
 Library			 keywords/Host.py
-Library			 autobot/helpers/__init__.py
 Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Resource         testsuites/T5/t5_physical_variables.txt
 
@@ -267,6 +266,7 @@ Test VFT push to when system has not connected switches
     BuiltIn.Sleep  	20
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
     rest verify fabric interface lacp  leaf2-b  ${h6_intf1}
+	reconnect_switch_ips
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
@@ -284,7 +284,7 @@ Test VFT push to when system has not connected switches
     rest delete tenant  t1
 	
 check forwarding port/lag table consisteny after switch mgmt remove/add
-	[Tags]  L2  IronHorse   
+	[Tags]  L2  IronHorse
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -317,6 +317,7 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
 	rest verify fabric link common  5  
 	rest verify forwarding port source mac check  leaf2-a
 	rest verify forwarding port source mac check  leaf2-b
+	reconnect_switch_ips
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
@@ -334,9 +335,10 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
     Should be True  ${count} == 1
     
 check forwarding vlan table consistency after switch mgmt remove/add
-	[Tags]  L2  IronHorse    
+	[Tags]  L2  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
+	reconnect_switch_ips
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
@@ -357,11 +359,12 @@ check forwarding vlan table consistency after switch mgmt remove/add
     Should be True  ${count} == 3   
 
 verifying flow reconsilation when new switch is connected to the fabric
-	[Tags]  L2  IronHorse  
+	[Tags]  L2  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
     BuiltIn.Sleep  3
+	reconnect switch ips
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
