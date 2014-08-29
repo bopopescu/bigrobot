@@ -69,21 +69,27 @@ Suite Teardown
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
-	Base Test Setup
-	Cli Run  master  show run
-	Cli Run  master  show switch
-	Cli Run  slave  show switch
-	Cli Run  master  show zerotouch devices
+	Run Keyword and Ignore Error  Base Test Setup
+	Run Keyword and Ignore Error  Cli  c1  ''
+	Run Keyword and Ignore Error  Cli  c2  ''
+	Run Keyword and Ignore Error  Cli  c1  reauth admin adminadmin
+	Run Keyword and Ignore Error  Cli  c2  reauth admin adminadmin
+	Run Keyword and Ignore Error  Cli Run  master  show run
+	Run Keyword and Ignore Error  Cli Run  master  show switch
+	Run Keyword and Ignore Error  Cli Run  slave  show switch
+	Run Keyword and Ignore Error  Cli Run  master  show zerotouch devices
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	Sleep  15
-	Cli Kill SSH Sessions  master
-	Cli Kill SSH Sessions  slave
+	Run Keyword and Ignore Error  Sleep  15
+	Run Keyword and Ignore Error  Cli  c1  ''
+	Run Keyword and Ignore Error  Cli  c2  ''
+	Run Keyword and Ignore Error  Cli  c1  reauth admin adminadmin
+	Run Keyword and Ignore Error  Cli  c2  reauth admin adminadmin
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
-	Sleep  30
+	Run Keyword and Ignore Error  Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -342,22 +348,29 @@ Cli Reset Connection Switch All
     Cli Reset Connection Switch  master  ${s5_alias}
 
 Power Cycle All Switches
-	Power Cycle Switch  s1
-	Power Cycle Switch  s2
-	Power Cycle Switch  s3
-	Power Cycle Switch  s4
-	Power Cycle Switch  s5
+	Power Down All Switches
+	Power Up All Switches
 
 Power Down All Switches
 	Power Down Switch  s1
+	Sleep  5
 	Power Down Switch  s2
+	Sleep  5
 	Power Down Switch  s3
+	Sleep  5
 	Power Down Switch  s4
+	Sleep  5
 	Power Down Switch  s5
+	Sleep  5
 
 Power Up All Switches
 	Power Up Switch  s1
+	Sleep  5
 	Power Up Switch  s2
+	Sleep  5
 	Power Up Switch  s3
+	Sleep  5
 	Power Up Switch  s4
+	Sleep  5
 	Power Up Switch  s5
+	Sleep  5
