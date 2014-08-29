@@ -293,7 +293,7 @@ class DevConf(object):
                         level=level)
 
         try:
-            ret_val = self.conn.expect(prompt)
+            self._last_matched_index, self._last_matched_object = self.conn.expect(prompt)
             self.last_result = {'content': self.conn.response}
             if helpers.not_quiet(quiet, [1, 5]):
                 helpers.log("Expect content:\n%s%s"
@@ -310,10 +310,11 @@ class DevConf(object):
 
         if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Expect prompt matched (%s, '%s')"
-                        % (ret_val[0], helpers.re_match_str(ret_val[1])))
+                        % (self._last_matched_index,
+                           helpers.re_match_str(self._last_matched_object)))
 
         self.clear_lock()
-        return ret_val
+        return (self._last_matched_index, self._last_matched_object)
 
     def waitfor(self, prompt, timeout=None, quiet=0, level=4):
         """
@@ -345,7 +346,7 @@ class DevConf(object):
                         % self.prompt_str(prompt), level=level)
 
         try:
-            ret_val = self.conn.waitfor(prompt)
+            self._last_matched_index, self._last_matched_object = self.conn.waitfor(prompt)
 
             self.last_result = { 'content': self.conn.response }
             if helpers.not_quiet(quiet, [2, 5]):
@@ -364,10 +365,11 @@ class DevConf(object):
 
         if helpers.not_quiet(quiet, [1, 5]):
             helpers.log("Expect prompt matched (%s, '%s')"
-                        % (ret_val[0], helpers.re_match_str(ret_val[1])))
+                        % (self._last_matched_index,
+                           helpers.re_match_str(self._last_matched_object)))
 
         self.clear_lock()
-        return ret_val
+        return (self._last_matched_index, self._last_matched_object)
 
 
     def cmd(self, cmd, quiet=0, mode=None, prompt=None,
@@ -473,7 +475,10 @@ class BsnDevConf(DevConf):
         helpers.log("Current mode is %s" % self.mode())
 
     def _reset_mode(self):
+        if self._last_matched_object == None:
+            return False
         matched_string = self._last_matched_object.group(self._last_matched_index)
+        helpers.log("!!!!! matched_string: '%s'" % matched_string)
         is_matched_prompt = False
         for prompt in self.conn.get_prompt():
             if re.match(prompt, matched_string):
@@ -481,7 +486,7 @@ class BsnDevConf(DevConf):
                 break
         is_mismatched = False
         if is_matched_prompt:  # We found a prompt
-            # helpers.log("!!!!! We found a prompt ('%s')" % matched_string.lstrip())
+            helpers.log("!!!!! We found a prompt ('%s')" % matched_string.lstrip())
             if self.mode() != 'cli' and re.match(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?> ?$', matched_string):
                 # Detected mode mismatch, possibly caused by idle timeout.
                 # Restore to 'cli' mode.
@@ -491,21 +496,22 @@ class BsnDevConf(DevConf):
                 self.mode(new_mode='cli')
                 is_mismatched = True
             else:
-                # helpers.log("!!!!! Current mode is '%s' and prompt is '%s'. All is well."
-                #            % (self.mode(), matched_string.lstrip()))
+                helpers.log("!!!!! Current mode is '%s' and prompt is '%s'. All is well."
+                            % (self.mode(), matched_string.lstrip()))
                 pass
         return is_mismatched
 
     def _cmd(self, cmd, quiet=0, mode='cmd', prompt=None,
              timeout=None, level=5):
 
+        """
         if helpers.is_bsn_controller(self.platform()):
             content = super(BsnDevConf, self).cmd('', prompt=prompt,
-                                                 timeout=timeout, quiet=5)['content']
+                                                  timeout=timeout, quiet=5)['content']
             if self._reset_mode():
                 helpers.log("'%s' mode reset to 'cli'. Last output was:\n%s."
                             % (self.name(), helpers.indent_str("'" + content + "'")))
-
+        """
         if helpers.is_extreme(self.platform()):
             if mode != 'config':
                 helpers.test_error("For Extreme Networks switch, only"
@@ -605,6 +611,18 @@ class BsnDevConf(DevConf):
                         % (mode, self.name(), self.content(),
                            br_utils.end_of_output_marker()),
                            level=level)
+
+        if helpers.is_bsn_controller(self.platform()):
+            if re.search(r"^Timeout: exiting '\w+' mode to '\w+' mode", self.content(), re.M):
+                helpers.log("Found mode mismatch on '%s'. Possibly triggered by idle timeout."
+                            " Resetting mode to 'cli' and re-running command."
+                            % (self.name()))
+                self.mode('cli')
+                self.cmd(cmd, quiet=quiet, mode=mode, prompt=prompt,
+                         timeout=timeout, level=level)
+            else:
+                # helpers.log("!!!!! No mode mismatch. All is well!")
+                pass
         return self.result()
 
     def cmd(self, *args, **kwargs):

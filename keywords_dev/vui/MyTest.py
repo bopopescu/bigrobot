@@ -959,3 +959,38 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         n2.cli('show session')
         n.cli('show version')
         helpers.test_error("I quit!!!", soft_error=True)
+
+    def spawn_login_sessions(self, max_sessions):
+        helpers.log("***Entering==> spawn_login_sessions")
+        t = test.Test()
+        c = t.controller('master')
+        ip = c.ip()
+
+        n = []
+        for i in range (0, int(max_sessions)):
+            helpers.log('USR info:  this is loop: %d' % i)
+            node = t.node_spawn(ip)
+            n.append(node)
+            helpers.log("!!!! Executing command on node(%s, name=%s)" % (i, node.name()))
+            content = node.cli('show user')
+            c.bash('netstat | grep ssh; netstat | grep ssh | wc -l; w | grep floodlight-login')
+            helpers.sleep(3)
+
+        helpers.log("!!!! Total login sessions: %s" % len(n))
+
+        i = 0
+        for node in n:
+            helpers.log("!!!! Executing command on node(%s, name=%s)" % (i, node.name()))
+            node.cli('show ntp')
+            i += 1
+
+        helpers.log("***Exiting==> spawn_login_sessions")
+        return True
+
+    def reauth_trial(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        c.cli('')
+        c.send('reauth')
+        c.expect(r'Password: ')
+        c.cli('adminadmin')

@@ -220,7 +220,7 @@ Test node reconnect
     test node reconnect   c1
 
 Test reauth timeout
-    #[Tags]  skipped
+    [Tags]  skipped
     config            c1   show user
     #bash              c1   id
     sleep             60
@@ -238,4 +238,17 @@ Test reauth timeout
     config            c1   show session
     cli               c1   show session
 
+Test spawn login sessions
+    [Tags]  skipped
+    config            c1   show user
+    spawn login sessions    20
+    sleep             60
+    #bash              c1   uname -a
+    #config            c1   show session
+    #cli               c1   show session
+    Log                And we are done!!!
 
+Test reauth trial
+    #[Tags]  skipped
+    reauth trial      c1
+    config            c1   show session
