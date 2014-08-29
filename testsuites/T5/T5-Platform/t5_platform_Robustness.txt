@@ -177,13 +177,13 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]  manual  stress  don
-   manual passed
+   [Tags]   stress  don
+   #manual passed
    Stress Failover/Failback by rebooting the master and verify connectivity
   
    
 Master System Failover Stress Test For 250 Times
-   [Tags]  manual  stress  don
+   [Tags]   stress  don
    #manual passed
    Stress Failover/Failback by failing over the master and verify connectivity
    
@@ -277,8 +277,8 @@ Traffic prioritization on the switch cpu to-controller traffic
 	manual passed
 	
 Remove stdby controller & add another stdby controller with the same IP as earlier one
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Large VFT push during switch reboots 
 	[Tags]     manual  BSC-6191
@@ -363,20 +363,20 @@ Optics Pull/ Cable
 	manual passed
 
 Switch - Open Ports - Penetration test
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Controller- Bundle Image
 	[Tags]    manual-untested
 	manual untested
 	
 Power supplies - DC /AC Mix match
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Order of Bring up- All links - Peer LAg and then management
-	[Tags]    manual-untested 			 
-	manual untested
+	[Tags]    manual		 
+	manual passed
 	
 OFAD Packets - Malformed Packet
 	[Tags]    manual-untested
