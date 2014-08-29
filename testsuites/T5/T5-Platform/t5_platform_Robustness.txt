@@ -177,14 +177,14 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]   stress  don
-   #manual passed
+   [Tags]   manual  stress  don
+   manual passed
    Stress Failover/Failback by rebooting the master and verify connectivity
   
    
 Master System Failover Stress Test For 250 Times
-   [Tags]   stress  don
-   #manual passed
+   [Tags]   manual  stress  don
+   manual passed
    Stress Failover/Failback by failing over the master and verify connectivity
    
    
