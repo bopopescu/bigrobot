@@ -33,262 +33,262 @@ Intra tenant L3 tagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature  run_fail         sanity      
+    [Tags]              feature  run_pass         sanity      
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
-    [Tags]              feature  run_fail             sanity                  
+    [Tags]              feature  run_pass             sanity                  
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                feature  run_fail             sanity                              
+    [Tags]                feature  run_pass             sanity                              
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature  run_fail                            
+    [Tags]                 feature  run_fail  skipped                          
     
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                  feature  run_fail                 
+    [Tags]                  feature  run_pass                 
 
 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature  run_fail         sanity          
+    [Tags]                  feature  run_pass         sanity          
 
 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature  run_fail         sanity          
+    [Tags]                  feature  run_pass         sanity          
 
 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
-    [Tags]                  feature  run_fail         sanity          
+    [Tags]                  feature  run_pass         sanity          
 
 Intra tenant L3 tagged traffic with static endpoints across rack
     L3 intra tenant across rack tagged with static endpoints
-    [Tags]                  feature  run_fail         sanity  
+    [Tags]                  feature  run_pass       sanity  
 
 Dhcp discover on the same vns as server with dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-    [Tags]                   feature  run_fail            sanity                  dhcp-relay
+    [Tags]                   feature  run_pass            sanity                  dhcp-relay
 
 Dhcp discover on the same vns as server without dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-    [Tags]                              feature  run_fail                 dhcp-relay  
+    [Tags]                              feature  run_pass                 dhcp-relay  
 
 Intra tenant dhcp relay 
     L3 intra tenant dhcp relay on same rack
-    [Tags]                   feature  run_fail            sanity                  dhcp-relay  
+    [Tags]                   feature  run_pass            sanity                  dhcp-relay  
     
 Intra tenant dhcp relay with circuit id
     L3 intra tenant dhcp relay with circuit id on same rack
-    [Tags]                   feature  run_fail            sanity                  dhcp-relay      
+    [Tags]                   feature  run_pass         sanity                  dhcp-relay
 
 Intra tenant dhcp relay across rack
     L3 intra tenant dhcp relay across rack
-    [Tags]                   feature  run_fail            feature  run_fail                 dhcp-relay  
+    [Tags]                   feature  run_pass            feature  run_pass                 dhcp-relay  
     
 Intra tenant dhcp relay with circuit id across rack
     L3 intra tenant dhcp relay with circuit id across rack
-    [Tags]                   feature  run_fail            feature  run_fail                 dhcp-relay      
+    [Tags]                   feature  run_fail            feature  run_pass                 dhcp-relay  
 
 Delete and Add dhcp relay
     L3 dhcp request without dhcp relay enabled
-    [Tags]                   feature  run_fail                    dhcp-relay  
+    [Tags]                   feature  run_pass                    dhcp-relay  
     
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
     Move host from one vns to another vns in the same tenant and verify dhcp request is working
-    [Tags]                  feature  run_fail                 dhcp-relay              
+    [Tags]                  feature  run_pass             dhcp-relay              
 
 Verify dhcp host is not aged out
     Verify dhcp host is not being aged out
-    [Tags]              feature  run_fail                 dhcp-relay          
+    [Tags]              feature  run_pass                 dhcp-relay         
 
 Dhcp relay with dhcp server configured as static endpoint
     Dhcp relay with static dhcp server endpoint
-    [Tags]              feature  run_fail                 dhcp-relay  
+    [Tags]              feature  run_pass                 dhcp-relay  
     
 Verify add and delete of dhcp server config works
     Verify add and delete of dhcp server config works
-    [Tags]             feature  run_fail                 dhcp-relay       runfailed
+    [Tags]             feature  run_pass                 dhcp-relay       runfailed
         
     
 Add and delete untagged endpoints with existing host
     L3 add and delete untagged endpoints with existing host
-    [Tags]              feature  run_fail 
+    [Tags]              feature  run_pass 
     
 Add and delete tagged endpoints with existing host
     L3 add and delete tagged endpoints with existing host
-    [Tags]              feature  run_fail                     runfailed
+    [Tags]              feature  run_pass
         
 Change L3 endpoint from untagged to tagged and back     
     L3 change endpoint from untagged to tagged and back 
-    [Tags]              feature  run_fail 
+    [Tags]              feature  run_pass 
 
 Verify L3 endpoint aging
     Check L3 endpoint aging 
-    [Tags]              feature  run_fail 
+    [Tags]              feature  run_pass 
     
 Verify L3 ttl 1 is not being forwarded
     Check L3 ttl 1 is dropped
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
 
 Verify icmpa is sending destination unreachable for L3 destination miss
     Verify icmpa is sending destination unreachable for L3 destination miss
-    [Tags]              feature  run_fail      sanity         
+    [Tags]              feature  run_pass      sanity         
 
 Change router vns ip
     Change router ip address
-    [Tags]              feature  run_fail                
+    [Tags]              feature  run_pass                
 
 Delete and add router vns ip
     Delete and add router vns ip 
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
 
 Set 32bit full mask on vns router ip
     Set 32bit full mask on vns router ip
-    [Tags]              feature  run_fail     
+    [Tags]              feature  run_pass     
     
 Change tagged endpoint IP address
     Change tagged host endpoint IP address
-    [Tags]              feature  run_fail            runfailed         
+    [Tags]              feature  run_pass        
 
 Configure static endpoint with host showing up on another port
     Static endpoint with dynamic host showing up on another port
-    [Tags]                  feature  run_fail                 runfailed
+    [Tags]                  feature  run_pass   
 
 Verify subnet mask is properly applied on router vns
     Verify subnet mask on vns router ip
-    [Tags]                  feature  run_fail     
+    [Tags]                  feature  run_pass     
     
 Verify vlsm forwarding
     Verify vlsm forwarding
-    [Tags]                  feature  run_fail     
+    [Tags]                  feature  run_pass     
 
 Verify split horizon forwarding
     manual passed
-    [Tags]                  feature  run_fail         manual      
+    [Tags]                  feature  run_pass         manual      
     
 Configure overlapping router IP     
     Configure overlapping IP on same tenant across VNS  
-    [Tags]                  feature  run_fail         negative    
+    [Tags]                  feature  run_pass         negative    
 
 Configure overlapping IP with private keyword on the same tenant
     Configure overlapping IP with private keyword on the same tenant
-    [Tags]                  feature  run_fail     
+    [Tags]                  feature  run_pass     
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
     L3 intra tenant traffic between private and public subnet with overlapping IP
-    [Tags]                      feature  run_fail             
+    [Tags]                      feature  run_pass             
     
 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
-    [Tags]                      feature  run_fail              runfailed      
+    [Tags]                      feature  run_fail  skipped  PAN-1116  Jack-Forest
     
 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature  run_fail                            
+    [Tags]              feature  run_pass                      
        
 Trigger controller HA failover via reboot
     Controller HA failover via reboot
-    [Tags]              feature  run_fail                            
+    [Tags]              feature  run_pass                            
 
 Spine connect and disconnect to controller
     Connect and Disconnect spine to controller
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass     
     
 Leaf connect and disconnect to controller   
     Connect and disconnect one leaf in dual tor to controller
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass 
 
 Spine to leaf link flap
     Flap link between leaf and spine
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
 
 Leaf to host link flap
     Flap bond interface towards host
-    [Tags]              feature  run_fail                 runfailed 
+    [Tags]              feature  run_pass 
     
 Restart ofad process on spine
     restart ofad on spine
-    [Tags]              feature  run_fail                 runfailed
+    [Tags]              feature  run_pass
     
 Restart ofad process on leaf    
     restart ofad on leaf
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
     
 L3 intra tenant traffic behavior in headless mode 
     manual passed
-    [Tags]                  manual              feature  run_fail         
+    [Tags]                  manual              feature  run_pass         
 
 L3 intra tenant traceroute
     L3 intra tenant traceroute
-    [Tags]                  feature  run_fail     
+    [Tags]                  feature  run_pass     
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature  run_fail              
+    [Tags]                                  feature  run_pass              
     
 Verify host on private segment is able to get dhcp address from tenant dhcp server
     Verify host on private segment is able to get dhcp address from tenant dhcp server
-    [Tags]                                  feature  run_fail           dhcp-relay            
+    [Tags]                                  feature  run_pass           dhcp-relay            
                                 
         
 Trigger controller HA failover via CLI and verify dhcp-relay is working
     Trigger controller HA failover via CLI and verify dhcp-relay is working
-    [Tags]                  feature  run_fail         HA      dhcp-relay          runfailed
+    [Tags]                  feature  run_pass       HA      dhcp-relay
 
 Trigger controller HA failover via reboot and verify dhcp-relay is working
     Trigger controller HA failover via reboot and verify dhcp-relay is working
-    [Tags]                  feature  run_fail         HA      dhcp-relay          runfailed
+    [Tags]                  feature  run_fail         HA      dhcp-relay
 
 
 Verify dhcp-relay functionality in headless mode
     manual passed
-    [Tags]                  manual              feature  run_fail                 dhcp-relay          
+    [Tags]                  manual              feature  run_pass                 dhcp-relay          
 
 Verify ecmp forwarding in headless mode
     manual untested
-    [Tags]                  manual          feature  run_fail                 ecmp    
+    [Tags]                  manual          feature  run_pass                 ecmp    
             
 Verify L3 intra tenant forwarding after controller upgrade
     manual failed
-    [Tags]                  manual          feature  run_fail                 
+    [Tags]                  manual          feature  run_pass                 
 
 Verify ecmp forwarding after controller upgrade
     manual failed
-    [Tags]                  manual          feature  run_fail                 
+    [Tags]                  manual          feature  run_pass                 
 
 Verify dhcp-relay functionality after controller upgrade
     manual failed
-    [Tags]                  manual          feature  run_fail                 
+    [Tags]                  manual          feature  run_pass                 
 
 Verify arp agent functionality after controller HA failover via CLI
     Verify arp agent functionality after controller HA failover via CLI
-    [Tags]                  feature  run_fail                 HA                     runfailed         
+    [Tags]                  feature  run_fail                HA                     runfailed         
 
 Verify arp agent functionality after controller HA failover via reboot
     Verify arp agent functionality after controller HA failover via reboot
-    [Tags]                  feature  run_fail                                       runfailed      
+    [Tags]                  feature  run_fail                                      runfailed      
     
 Verify same mac address showing up on two ports in the same segment is blocked
     Verify same mac address showing up on two ports in the same segment is blocked
-    [Tags]                  feature  run_fail                         runfailed
+    [Tags]                  feature  run_fail                        runfailed
  
 Verify clear blocked endpoint works
     Verify clear blocked endpoint works
-    [Tags]                  feature  run_fail                        runfailed 
+    [Tags]                  feature  run_fail                       runfailed 
     
 Verify blocked endpoint should be automatically cleared
     Verify blocked endpoint should be automatically cleared
-    [Tags]                  feature  run_fail                        runfailed 
+    [Tags]                  feature  run_fail                      runfailed 
     
 Spine reboot
     Reboot spine0 via CLI
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
 
 Leaf reboot
     Reboot Leaf0 via CLI
-    [Tags]              feature  run_fail         
+    [Tags]              feature  run_pass         
 
     
 * Keywords
@@ -323,6 +323,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} == 0    
+    ixia initialize  tg1  init=True
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=100000           frame_size=9216             frame_cnt=10000000
     ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.251.2.201     dst_gw=10.251.2.1                       
     start traffic                               ${stream1}
@@ -1046,7 +1047,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf0_pc2}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0
@@ -1152,7 +1153,7 @@ L3 intra tenant dhcp relay with circuit id across rack
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -1307,7 +1308,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     REST delete portgroup from vns              Y                               Y3                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Y                               Y2                      ${leaf2_pc1}            -1
@@ -1348,7 +1349,7 @@ Verify dhcp host is not being aged out
     REST add portgroup to vns                   Y                               Y2                      ${leaf1_pc1}            -1
     BASH add route                              h1                              10.252.2.0/24           10.252.1.1
     REST add dhcp relay                         Y                               Y2                      10.252.1.9
-    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              &#!ten Y vns Y2
+    REST add dhcprelay circuitid                Y                               Y2                      10.252.1.9              private vns Y2
     #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
@@ -2411,10 +2412,11 @@ Controller HA failover via CLI
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0  
+    ixia initialize  tg1  init=True      
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=100000           frame_size=128              frame_cnt=4000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1 
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1 
     start traffic                               ${stream1}
     sleep                                       5
     stop traffic                                ${stream1}
@@ -2528,7 +2530,8 @@ Controller HA failover via reboot
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0   
+    ixia initialize  tg1  init=True     
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=100000           frame_size=128              frame_cnt=4000000
     ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
     ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1 
@@ -2581,6 +2584,7 @@ Reboot spine0 via CLI
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
     Should Be True                              ${loss} == 0    
+    ixia initialize  tg1  init=True
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=4000000
     ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
     ...                                         dst_ip=10.251.2.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.2.1                       
@@ -2626,7 +2630,8 @@ Reboot Leaf0 via CLI
     Should Be True                              ${result}                       
     REST show endpoints 
     ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
-    Should Be True                              ${loss} == 0    
+    Should Be True                              ${loss} == 0   
+    ixia initialize  tg1  init=True 
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000
     ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
     ...                                         dst_ip=10.251.2.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.2.1                       
@@ -2680,10 +2685,11 @@ Connect and Disconnect spine to controller
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0      
+    ixia initialize  tg1  init=True  
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -2739,9 +2745,10 @@ Connect and disconnect one leaf in dual tor to controller
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
+    ixia initialize  tg1  init=True
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -2795,10 +2802,11 @@ Flap link between leaf and spine
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} == 0       
+    ixia initialize  tg1  init=True 
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=4000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
 #    CLI disable interface                       s3                              ${leaf0a_spine0}    
@@ -2925,16 +2933,18 @@ restart ofad on spine
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
+    ixia initialize  tg1  init=True
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     BASH restart process                        s1                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
-    Should Contain                              ${value}                        is started
+    reconnect switch ips
+    ${value} =                                  bash execute command       s1                      service ofad status
+    Should Contain                              ${value}                        is running
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       10
@@ -2984,9 +2994,10 @@ restart ofad on leaf
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
     Should Be True                              ${loss} == 0        
+    ixia initialize  tg1  init=True
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.3.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.3.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.3.101             dst_gw=10.251.3.1                       
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -2994,8 +3005,8 @@ restart ofad on leaf
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
 #   sleep                                       1
-    ${value} =                                  BASH check service status       s3                      ofad
-    Should Contain                              ${value}                        is started  
+    reconnect switch ips
+    ${value} =                                  bash execute command       s3                      service ofad status
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       10
@@ -3107,7 +3118,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
     ${ipAddr} =                                 BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr}
     sleep                                       5
-    BASH run cmd                                h5                             route -n
+    bash run command                                h5                             route -n
     BASH ping                                   h1                              ${ipAddr}               count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
