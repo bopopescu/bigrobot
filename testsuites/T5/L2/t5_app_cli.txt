@@ -134,7 +134,7 @@ add same interface to multiple tag onto same VNS
 	add a tenant  t1
 	add a vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
-	${result}=  rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  101 
+	${result}=  rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  101  patch 
 	Should not be True  ${result}
 	delete a tenant  t1
 
