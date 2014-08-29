@@ -379,7 +379,7 @@ class BsnCommon(object):
             helpers.log("Pass: Value is in range")
             return True
         else:
-            helpers.test_failure("Fail:Value is not in range")
+            helpers.test_log("Fail:Value is not in range")
             return False
 
     def verify_value_is_in_range(self, count1, range1=0, range2=30):
@@ -390,7 +390,7 @@ class BsnCommon(object):
             helpers.log("Pass: Value is in range")
             return True
         else:
-            helpers.test_failure("Fail:Value is not in range")
+            helpers.test_log("Fail:Value is not in range")
             return False
 
     def rest_return_dictionary_from_get(self, url):
@@ -598,7 +598,7 @@ class BsnCommon(object):
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
                 helpers.test_log("Ouput: %s" % c.rest.result_json())
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
@@ -611,7 +611,7 @@ class BsnCommon(object):
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
                 helpers.test_log("Ouput: %s" % c.rest.result_json())
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
@@ -678,7 +678,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                     c.rest.delete(url, {})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
@@ -690,7 +690,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                     c.rest.delete(url, {})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
@@ -748,7 +748,7 @@ class BsnCommon(object):
                     url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
                     c.rest.put(url1, {"time-zone": str(time_zone)})
                     if not c.rest.status_code_ok():
-                        helpers.test_failure(c.rest.error())
+                        helpers.test_log(c.rest.error())
                         return False
                     else:
                         count = count + 1
@@ -769,7 +769,7 @@ class BsnCommon(object):
                     url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
                     c.rest.put(url1, {"time-zone": str(time_zone)})
                     if not c.rest.status_code_ok():
-                        helpers.test_failure(c.rest.error())
+                        helpers.test_log(c.rest.error())
                         return False
                     else:
                         count = count + 1
@@ -897,7 +897,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/ntp-server/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -917,7 +917,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/ntp-server/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -937,7 +937,7 @@ class BsnCommon(object):
                     url = '/api/v1/data/controller/os/action/time/ntp'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1040,7 +1040,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/snmp-server-config/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1055,7 +1055,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/snmp-server-config/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1070,7 +1070,7 @@ class BsnCommon(object):
                     url = '/api/v1/data/controller/os/config/global/snmp'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1101,7 +1101,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1116,7 +1116,7 @@ class BsnCommon(object):
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.get(url)
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     content = c.rest.content()
@@ -1560,7 +1560,7 @@ class BsnCommon(object):
             (out, _) = returnVal.communicate()
             return out
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def snmp_cmd_opt(self, node, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
@@ -1591,7 +1591,7 @@ class BsnCommon(object):
             helpers.log("URL: %s Output: %s" % (url, out))
             return out
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def snmp_get(self, node, snmp_community, snmp_oid):
@@ -1682,7 +1682,7 @@ class BsnCommon(object):
             helpers.log("Restarting %s on '%s'" % (process_name, node))
             c.sudo("service %s restart" % process_name)
         except:
-            helpers.test_failure("Unable to restart process '%s'"
+            helpers.test_log("Unable to restart process '%s'"
                                  % process_name, soft_error)
             return False
         else:

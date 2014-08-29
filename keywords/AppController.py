@@ -64,7 +64,7 @@ class AppController(object):
         helpers.log("Number of controllers %s" % controller_qty)
 
         if controller_qty > 2 or controller_qty < 1:
-            helpers.test_failure("More than two controllers or no controller configured")
+            helpers.test_log("More than two controllers or no controller configured")
             return False
 
 
@@ -93,7 +93,7 @@ class AppController(object):
                 n.send("yes")
                 helpers.sleep(sleep_time)
             except:
-                helpers.test_failure("Output: %s" % n.cli_content())
+                helpers.test_log("Output: %s" % n.cli_content())
                 return False
         return True
 
@@ -183,7 +183,7 @@ class AppController(object):
                 url = '/api/v1/data/controller/core/switch'
                 c.rest.get(url)
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 content = c.rest.content()
@@ -334,7 +334,7 @@ class AppController(object):
                 else:
                     c = t.controller('slave')
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 try:
@@ -349,7 +349,7 @@ class AppController(object):
                     c.bash("echo 'sleep 10' >> test.sh")
                     c.bash("sh test.sh &")
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     return True
@@ -367,7 +367,7 @@ class AppController(object):
                 url1 = '/rest/v1/system/ha/failback'
                 c.rest.put(url1, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 helpers.test_log(c.rest.content_json())
@@ -395,7 +395,7 @@ class AppController(object):
             c.bash("sh test_reboot.sh &")
             helpers.sleep(300)
         except:
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
         else:
             return True
@@ -423,11 +423,12 @@ class AppController(object):
                 url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (interface_name, switch_dpid, interface_name)
                 c.rest.get(url)
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
+                    return False
                 content = c.rest.content()
                 if (content[0]['interface'][0]['state-flags'] == 0):
                         return True
@@ -452,7 +453,7 @@ class AppController(object):
                 helpers.log("URL is %s  " % url)
                 c.rest.get(url)
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 content = c.rest.content()
@@ -500,7 +501,7 @@ class AppController(object):
                 url = '/rest/v1/model/syslog-server/'
                 c.rest.put(url, {"logging-enabled": True, "logging-server": str(syslog_server), "logging-level":int(log_level)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 helpers.test_log(c.rest.content_json())
@@ -525,7 +526,7 @@ class AppController(object):
                 url = '/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server), int(log_level))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 helpers.test_log(c.rest.content_json())
