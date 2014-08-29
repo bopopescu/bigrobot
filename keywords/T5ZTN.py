@@ -236,7 +236,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Starting OpenFlow Agent: ofad", timeout=120)
+        con.expect("Switch Light OS", timeout=120)
         con.expect(r'.*login: $', timeout=60)
         return True
 
@@ -1120,8 +1120,8 @@ class T5ZTN(object):
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
-                            r'press control-c now to enter loader shell'],
-                           timeout=120)
+                            r'press control-c now to enter loader shell',
+                            r'ZTN Discovery'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1153,6 +1153,10 @@ class T5ZTN(object):
             s.cli('enable; config')
             s.send('reload now')
         if options[0] == 7:  # SL Loader
+            s.send(helpers.ctrl('c'))
+            s.send("\x03")
+            s.send('reboot')
+        if options[0] == 8:  # SL Loader
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.send('reboot')
