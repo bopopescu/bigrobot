@@ -387,7 +387,7 @@ class BigTap(object):
                     if content[0]['name'] == str(policy_name):
                         helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
                     else:
-                        helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+                        helpers.test_log("Policy does not correctly report policy name  : %s" % content[0]['name'])
                         return False
 
                     if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
@@ -397,7 +397,7 @@ class BigTap(object):
                     elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
                         helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                        helpers.test_log("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
                         return False
 
                     if content[0]['type'] == "Configured":
@@ -415,20 +415,20 @@ class BigTap(object):
                     elif "inactive" in content[0]['runtime-status'] and flag is True:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                        helpers.test_log("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
                         return False
 
                     if (num_delivery_intf is not None):
                         if content[0]['delivery-interface-count'] == int(num_delivery_intf):
                             helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
                         else:
-                            helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                            helpers.test_log("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
                             return False
                     if (num_filter_intf is not None):
                         if content[0]['filter-interface-count'] == int(num_filter_intf):
                             helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
                         else:
-                            helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                            helpers.test_log("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
                             return False
 
                     if "installed to forward" in content[0]['detailed-status']:
@@ -440,7 +440,7 @@ class BigTap(object):
                     elif "inactive" in content[0]['detailed-status'] and flag is True:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                        helpers.test_log("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
                         return False
                     return True
 
