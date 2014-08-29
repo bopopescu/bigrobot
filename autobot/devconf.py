@@ -687,8 +687,9 @@ class ControllerDevConf(BsnDevConf):
         if is_monitor_reauth:
             self.monitor_reauth_init()
         else:
-            helpers.log("Params attribute 'monitor_reauth' is false."
-                        " Reauth monitoring is disabled.")
+            # helpers.log("Params attribute 'monitor_reauth' is false."
+            #            " Reauth monitoring is disabled.")
+            pass
 
     def monitor_reauth_init(self):
         init_timer = helpers.bigrobot_monitor_reauth_init_timer()
