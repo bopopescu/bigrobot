@@ -18,11 +18,6 @@ Library         String
 
 *Variables
 ${switchlight_version}  SwitchLight
-${netmask}  18
-${gateway}  10.8.0.1
-${gateway1}  10.192.60.1
-${dns_server}  10.3.0.4
-${dns_domain}  qa.bigswitch.com
 ${j}    1
 ${switch1_name}=  leaf0-a
 ${switch3_name}=  leaf1-a
@@ -34,14 +29,14 @@ ${intf_1}=        ethernet1
 ${intf_2}=        ethernet2
 ${intf_3}=        ethernet3
 ${intf_4}=        ethernet4
-${interface1g}=   ethernet10
+${interface1g}=   ethernet24
 ${leafmodel}=     AS5710
 ${spinemodel}=    AS6700
 ${intf_6}=        ethernet45
 ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
-${interface10g}=  ethernet25
+${interface10g}=  ethernet5
 ${PSU1}=            PSU1
 ${PSU2}=            PSU2
 ${PSUnotup}=        PSU1
