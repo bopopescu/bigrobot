@@ -644,6 +644,7 @@ class T5ZTN(object):
         missing_startup = []
         extra_startup = []
 
+        c.cli('reauth admin adminadmin')
         c.config("")
         ztn_config = c.config("show running-config")['content']
         ztn_config = helpers.strip_cli_output(ztn_config)
