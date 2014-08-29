@@ -59,10 +59,10 @@ _prompt_re = [re.compile(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+
 # Error: Bad command description: show this not configured for current submode
 
 _error_re = [re.compile(r'%Error'),
-             re.compile(r'Error: running command'),
-             re.compile(r'Error: unknown command'),
-             re.compile(r'Error: Unexpected additional arguments'),
-             re.compile(r'Error: Bad command', re.I),
+             re.compile(r'error: running command', re.I),
+             re.compile(r'error: unknown command', re.I),
+             re.compile(r'error: unexpected additional arguments', re.I),
+             re.compile(r'error: bad command', re.I),
              re.compile(r'invalid input', re.I),
              re.compile(r'(?:incomplete|ambiguous) command', re.I),
              re.compile(r'connection timed out', re.I),
