@@ -64,7 +64,7 @@ class BigTap(object):
                 c.rest.get(url)
                 content = c.rest.content()
             except:
-                helpers.test_failure("Could not execute command")
+                helpers.test_log("Could not execute command")
                 return False
             else:
                 if return_value is not None:
@@ -104,7 +104,7 @@ class BigTap(object):
                 c.rest.get(url)
                 content = c.rest.content()
             except:
-                helpers.test_failure("Could not execute command")
+                helpers.test_log("Could not execute command")
                 return False
             else:
                 return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]
@@ -166,7 +166,7 @@ class BigTap(object):
             temp = content[0]['optimized-match'].strip()
             temp = temp.split('\n')
         else:
-            helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+            helpers.test_log("Policy does not correctly report policy name  : %s" % content[0]['name'])
             return False
         return len(temp)
 # Mingtao
@@ -187,9 +187,9 @@ class BigTap(object):
             if c.rest.content()[0]['policy'][0]['name'] == str(policy):
                 return c.rest.content()[0]['policy'][0]
             else:
-                helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])
+                helpers.test_log("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])
                 return False
-        helpers.test_failure("ERROR: Policy does not correctly report ")
+        helpers.test_log("ERROR: Policy does not correctly report ")
         return False
 
 # Mingtao
@@ -203,7 +203,7 @@ class BigTap(object):
         if input_dict['name'] == str(policy):
             helpers.test_log("INFO: Policy correctly reports policy name as : %s" % input_dict['name'])
         else:
-            helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])
+            helpers.test_log("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])
             return False
 
         if match:
@@ -241,7 +241,7 @@ class BigTap(object):
         url = '/api/v1/data/controller/applications/bigtap/info'
         c.rest.get(url)
         if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
         data = c.rest.content()
         if "4.0.0" in str(version_string):
@@ -289,7 +289,7 @@ class BigTap(object):
             # return "True"
             return True
         else:
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
 
     def cli_show_l3_l4(self):
@@ -362,7 +362,7 @@ class BigTap(object):
             t = test.Test()
             c = t.controller('master')
         except:
-            helpers.test_failure("Could not execute command")
+            helpers.test_log("Could not execute command")
             return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % str(policy_name)
@@ -370,13 +370,15 @@ class BigTap(object):
                 c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                 c_user.rest.get(url)
                 if not c_user.rest.status_code_ok():
-                    helpers.test_failure(c_user.rest.error())
+                    helpers.test_log(c_user.rest.error())
+                    return False
                 content = c_user.rest.content()
                 c_user.close()
             else:
                 c.rest.get(url)
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
+                    return False
                 content = c.rest.content()
             if len(content) == 0:
                 return False
@@ -405,7 +407,7 @@ class BigTap(object):
                     elif content[0]['type'] == "Dynamic":
                         helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
                     else:
-                        helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
+                        helpers.test_log("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
                         return False
 
                     if "installed" in content[0]['runtime-status']:
@@ -451,13 +453,14 @@ class BigTap(object):
             AppCommon = AppController.AppController()
 
         except:
-            helpers.test_failure("Could not execute command")
+            helpers.test_log("Could not execute command")
             return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/service-interface' % str(policy_name)
             c.rest.get(url)
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
+                return False
             content = c.rest.content()
 
 
@@ -1790,7 +1793,7 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.put(url, {"name":str(service_name)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 try:
@@ -1803,7 +1806,7 @@ class BigTap(object):
                     else:
                         c.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     try:
@@ -2236,13 +2239,14 @@ class BigTap(object):
             url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (rbac_view, policy)
             c.rest.delete(url)
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
+                return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy?select=info'
             c.rest.get(url)
             content = c.rest.content()
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             helpers.log("Output: %s" % c.rest.result_json())
             length = len(content)
@@ -2253,7 +2257,7 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(name))
                 c.rest.delete(url)
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
         return True
 
