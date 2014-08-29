@@ -1178,6 +1178,7 @@ def ts_long_local():
     local_datetime = datetime.datetime.now(_TZ)
     return local_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
+
 def ts_logger():
     """
     Return the current timestamp in local time (string format which is
@@ -1193,6 +1194,34 @@ def time_now():
     Return the current time.
     """
     return time.time()
+
+
+def week_num():
+    """
+    Return the week number.
+    """
+    return datetime.datetime.now().isocalendar()[1]
+
+
+def year():
+    """
+    Return the year.
+    """
+    return datetime.date.today().year
+
+
+def month():
+    """
+    Return the month.
+    """
+    return datetime.date.today().month
+
+
+def day():
+    """
+    Return the day's number.
+    """
+    return datetime.date.today().day
 
 
 def format_robot_timestamp(timestamp, is_datestamp=False):
