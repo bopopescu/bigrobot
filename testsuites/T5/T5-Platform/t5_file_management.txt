@@ -577,10 +577,10 @@ T7.9 Verify comparison function between snapshot:// and snapshot://
 	Compare Negative  snapshot://config-new2  ${config}
 
 T7.10 Verify comparison function between running-config and inexistent file
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  running-config  inexistent
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  inexistent  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  running-config  file://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  file://inexistent  running-config
 
 T7.11 Verify comparison function between running-config and inexistent snapshot://file
 	Run Keyword and Expect Error  *Error: Invalid Use: snapshot://inexistent does not exist*
@@ -612,21 +612,21 @@ T7.14 Verify comparison function between file and inexistent scp://
 
 T7.15 Verify comparison function between file and inexistent file
 	Cli Copy  running-config  ${file}
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  ${file}  inexistent
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  inexistent  ${file}
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  ${file}  file://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  file://inexistent  ${file}
 
 T7.16 Verify comparison function between inexistent file and inexistent file
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent1 does not exist*
-	...  Cli Compare  master  inexistent1  inexistent2
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent1 does not exist*
+	...  Cli Compare  master  file://inexistent1  file://inexistent2
 
 T7.17 Verify comparison function between snapshot://file and inexistent file
 	Cli Copy  running-config  ${config}
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  ${config}  inexistent
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  inexistent  ${config}
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  ${config}  file://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  file://inexistent  ${config}
 
 T7.18 Verify comparison function between snapshot://file and inexistent scp://
 	Cli Copy  running-config  ${config}
@@ -649,10 +649,10 @@ T7.20 Verify comparison function between inexistent snapshot://file and inexiste
 
 T7.21 Verify comparison function between scp:// and inexistent file
 	Cli Copy  running-config  ${scp}
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  ${scp}  inexistent
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  master  inexistent  ${scp}
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  ${scp}  file://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: file://inexistent does not exist*
+	...  Cli Compare  master  file://inexistent  ${scp}
 	[Tags]  SCP
 
 T7.22 Verify comparison function between scp:// and inexistent snapshot://file
