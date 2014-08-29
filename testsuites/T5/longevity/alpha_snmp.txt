@@ -34,10 +34,10 @@ T12 SNMP(every 10 sec)
 	: FOR    ${i}    IN RANGE    0    10	
 	\  ${result}=  snmp cmd  master  snmpbulkwalk  public   
 	\  log  ${result}   
-	\  sleep  60
-	\  ${result}=  snmp cmd  master  snmpwalk  public      
-	\  log  ${result}   
-	\  sleep  60
+	\  sleep  300
+#	\  ${result}=  snmp cmd  master  snmpwalk  public      
+#	\  log  ${result}   
+#	\  sleep  60
 	 
 	[Tags] 	traffic   backgroupcheck
  
