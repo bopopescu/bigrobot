@@ -277,7 +277,7 @@ TC10:Verify BigTap policy with tunnel as a bidirectional delivery interface
     sleep   3
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                                
-    [Tags]  feature  run
+    [Tags]  feature 
 
 TC11:Verify BigTap policy with tunnel as a bidirectional filter interface
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_ixia_delivery}  
@@ -1044,6 +1044,157 @@ TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gatewa
     Should be true  ${verify_tun_sw1}  
     [Tags]  negative  ipv6
 
+TC45: Verify tunnel can be setup with bidirectional on one side and receive-only on other-end
+    tunnel teardown
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_delivery_alias}  delivery
+    sleep   5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}            
+    [Tags]  feature  runthis
+
+TC46: Verify bigtap policy is installed with transmit only tunnel on one side and receive-only on other-end
+    tunnel teardown
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_delivery_alias}  delivery
+    sleep   5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}            
+    [Tags]  feature  runthis
+
+TC47: With bigtap policy installed with transmit only tunnel on one side and receive-only on other-end, flap interface on extreme
+    tunnel teardown
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_delivery_alias}  delivery
+    sleep   5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    config  s6  disable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6      
+    sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    config  s6  enable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6 
+    sleep  20 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}                        
+    [Tags]  feature  runthis
+
+TC48: With bigtap policy installed with bidirectional tunnel on one side and receive-only on other-end, flap interface on extreme
+    tunnel teardown
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_delivery_alias}  delivery
+    sleep   5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    config  s6  disable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6      
+    sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    config  s6  enable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6 
+    sleep  20 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}                        
+    [Tags]  feature  runthis
+
+TC49: With bigtap policy installed with bidirectional tunnels, flap interface on extreme
+    tunnel teardown
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  10
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_delivery_alias}  delivery
+    sleep   5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    config  s6  disable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6      
+    sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    config  s6  enable port ${extreme1_sw1_tunnel_intf1}
+    extreme save config  s6  
+    node disconnect  s6 
+    sleep  20 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}                        
+    [Tags]  feature  runthis
+    
 * Keyword
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -1185,18 +1336,22 @@ corsair suite setup
 tunnel teardown
     ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
     Should be true  ${verify_del_tun_sw1}      
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name_ixia_filter}  
+    Should be true  ${verify_del_tun_sw2}      
     ${verify_del_tun_sw3}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name_ixia_delivery}  
     Should be true  ${verify_del_tun_sw3}    
     ${verify_del_tun_sw4}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name}  
     Should be true  ${verify_del_tun_sw4}  
-    ${verify_del_tun_sw5}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name}  
-    Should be true  ${verify_del_tun_sw5}    
-    ${verify_del_tun_sw6}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name_ixia_filter}  
+    ${verify_del_tun_sw5}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_ixia_delivery}  
+    Should be true  ${verify_del_tun_sw5}       
+    ${verify_del_tun_sw6}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name}  
     Should be true  ${verify_del_tun_sw6}    
-    ${verify_del_tun_sw7}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name_ixia_delivery}  
+    ${verify_del_tun_sw7}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name_ixia_filter}  
     Should be true  ${verify_del_tun_sw7}    
-    ${verify_del_tun_sw8}=  rest delete tunnel interface  node=s4  tunnel_name=${tunnel_sw4_name}  
-    Should be true  ${verify_del_tun_sw8}      
+    ${verify_del_tun_sw8}=  rest delete tunnel interface  node=s3  tunnel_name=${tunnel_sw3_name_ixia_delivery}  
+    Should be true  ${verify_del_tun_sw8}    
+    ${verify_del_tun_sw9}=  rest delete tunnel interface  node=s4  tunnel_name=${tunnel_sw4_name}  
+    Should be true  ${verify_del_tun_sw9}      
     Sleep  2
     
 corsair suite teardown
