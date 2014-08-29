@@ -68,8 +68,10 @@ T6.5. Verify that switch stays in provisioned mode when all controllers go down 
 	Manual Passed
 	[Tags]  manual
 T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
-	Manual Untested
-	[Tags]  manual-untested
+	# LY2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it downloaded correct image and was let into the fabric.
+	# LB2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it was unable to download SWI because of wrong platform.
+	Manual Passed
+	[Tags]  manual
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
 	Manual Passed
 	[Tags]  manual
@@ -154,8 +156,8 @@ T6.31. Check REST API call to get inventory of images at switch
 	Manual Passed
 	[Tags]  manual
 T6.32. Confirm that switch in stand-by mode sends NO packet-ins to the controller (before t5_pipeline_mode message is sent)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T6.33. Verify pre-staging of both SL installer and SWI before upgrade
 	# moved out to Jack Frost
 	[Tags]  skipped
@@ -231,8 +233,8 @@ T7.20. Verify that discovery process restarts when downloaded SWI image is corru
 	Manual Passed
 	[Tags]  manual
 T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
-	Manual Untested
-	[Tags]  manual-untested
+	# skipping for the time being, until I figure out how to corrupt a manifest
+	[Tags]  skipped
 T7.22. Verify that discovery process restarts when switch reboots during Switch Light Installer image download
 	Manual Passed
 	[Tags]  manual
@@ -299,8 +301,7 @@ T8.5. Upgrade Switch Light Installer
 	Manual Passed
 	[Tags]  manual
 T8.6. Check if upgrade is possible when not all switches are in provisioned mode
-	Manual Untested
-	[Tags]  manual-untested
+	[Tags]  skipped
 
 ### Show
 T9.1. Verify that switch configured state can be viewed on the switch
