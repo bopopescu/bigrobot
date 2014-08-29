@@ -5140,3 +5140,22 @@ class T5Platform(object):
             helpers.log("Error during Copying running config to autoConfig1.txt")
             return False
     
+    
+    def spawn_log_in(self,sessions):
+       
+        bsn = bsnCommon()
+        helpers.log("***Entering==> spawn_log_in   \n" )
+        
+        t = test.Test()
+        ip = bsn.get_node_ip('master')
+  
+        for loop in range (0, int(sessions)): 
+            helpers.log('USR info:  this is loop:  %d' % loop )
+            n = t.node_spawn(ip)                    
+            content= n.cli('show session')
+            
+        helpers.log("***Exiting==> spawn_log_in   \n" )
+
+        return True
+    
+    

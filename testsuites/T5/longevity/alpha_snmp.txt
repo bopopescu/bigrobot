@@ -31,12 +31,13 @@ T12 SNMP(every 10 sec)
 	setup snmp	
 	verify snmp config	
  	 
-	: FOR    ${i}    IN RANGE    0    300	
+	: FOR    ${i}    IN RANGE    0    10	
 	\  ${result}=  snmp cmd  master  snmpbulkwalk  public   
 	\  log  ${result}   
+	\  sleep  60
 	\  ${result}=  snmp cmd  master  snmpwalk  public      
 	\  log  ${result}   
-	\  sleep  10
+	\  sleep  60
 	 
 	[Tags] 	traffic   backgroupcheck
  
