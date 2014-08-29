@@ -236,7 +236,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Starting OpenFlow Agent: ofad", timeout=120)
+        con.expect("Switch Light OS", timeout=120)
         con.expect(r'.*login: $', timeout=60)
         return True
 
@@ -644,6 +644,7 @@ class T5ZTN(object):
         missing_startup = []
         extra_startup = []
 
+        c.cli('reauth admin adminadmin')
         c.config("")
         ztn_config = c.config("show running-config")['content']
         ztn_config = helpers.strip_cli_output(ztn_config)
@@ -802,7 +803,8 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
-                            r'[\r\n]* root@.*:\~\#', s.get_prompt()])
+                            r'[\r\n]* root@.*:\~\#', s.get_prompt()],
+                           timeout=30)
         if options[0] == 0:
             s.cli('admin')
         if options[0] == 2:
@@ -1120,8 +1122,8 @@ class T5ZTN(object):
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
-                            r'press control-c now to enter loader shell'],
-                           timeout=120)
+                            r'press control-c now to enter loader shell',
+                            r'ZTN Discovery'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1153,6 +1155,10 @@ class T5ZTN(object):
             s.cli('enable; config')
             s.send('reload now')
         if options[0] == 7:  # SL Loader
+            s.send(helpers.ctrl('c'))
+            s.send("\x03")
+            s.send('reboot')
+        if options[0] == 8:  # SL Loader
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.send('reboot')

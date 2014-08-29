@@ -52,7 +52,7 @@ class SwitchLight(object):
             helpers.log("DPID of switch %s is %s" % (switch.ip(), dpid[1]))
             return dpid[1]
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_interface_macaddress(self, node, intf_name):
@@ -80,7 +80,7 @@ class SwitchLight(object):
             helpers.log("Value in content[1] is %s \n and mac address is %s" % (content[1], mac_address))
             return mac_address
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_clear_interface_statistics(self, node):
@@ -93,7 +93,7 @@ class SwitchLight(object):
             switch.enable(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
@@ -115,7 +115,7 @@ class SwitchLight(object):
             cli_input = "show interface"
             switch.enable(cli_input)
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
         else:
             content = string.split(switch.cli_content(), '\n')
@@ -192,7 +192,7 @@ class SwitchLight(object):
                 intf_state = lastvalue.rstrip('\n')
             return intf_state
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_interface_statistics(self, node, intf_name):
@@ -225,7 +225,7 @@ class SwitchLight(object):
                     return_array["sent_packets"] = int(re.split(' ', value)[3])
             return return_array
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_all_interfaces(self, node, intf_count=52):
@@ -260,7 +260,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_ip_address(self, console_ip, console_port):
@@ -299,7 +299,7 @@ class SwitchLight(object):
             tn.close()
             return ip_address_subnet
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_environment(self, node, hardware_element, hardware_element_number, element_name, element_number=0, sub_element="None"):
@@ -322,7 +322,7 @@ class SwitchLight(object):
         try:
             switch.cli("show version")
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
         else:
             switch_output = switch.cli_content()
@@ -332,7 +332,7 @@ class SwitchLight(object):
                 cli_input = "show environment"
                 switch.enable(cli_input)
             except:
-                helpers.test_failure("Could not execute command. Please check log for errors")
+                helpers.test_log("Could not execute command. Please check log for errors")
                 return False
             else:
                 content = string.split(switch.cli_content(), '\n')
@@ -437,7 +437,7 @@ class SwitchLight(object):
             else:
                 return True
         except:
-            helpers.test_failure("Could not execute ping. Please check log for errors")
+            helpers.test_log("Could not execute ping. Please check log for errors")
             return False
 
     def cli_ping_from_switch(self, node, remote):
@@ -469,7 +469,7 @@ class SwitchLight(object):
                 helpers.test_log(cli_output)
                 return True
         except:
-            helpers.test_failure("Could not execute ping. Please check log for errors")
+            helpers.test_log("Could not execute ping. Please check log for errors")
             return False
 #######################################################################
 # All Common Controller Verification Commands Go Here:
@@ -540,7 +540,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_ofaux_channel_count(self, node, controller):
@@ -717,7 +717,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_crc_forwarding_is_disabled(self, node):
@@ -757,7 +757,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_crc_forwarding_is_enabled(self, node):
@@ -782,7 +782,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -827,7 +827,7 @@ class SwitchLight(object):
                     helpers.log('Exiting from loop')
                     return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_interface(self, node, interface_name):
@@ -850,7 +850,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_interface(self, node, interface_name):
@@ -873,7 +873,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_disable_interface_bshell(self, node, interface_num):
@@ -896,7 +896,7 @@ class SwitchLight(object):
             s1.bash(bash_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_enable_interface_bshell(self, node, interface_num):
@@ -919,7 +919,7 @@ class SwitchLight(object):
             s1.bash(bash_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_flap_interface_ma1(self, node):
@@ -962,7 +962,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     # Alias
@@ -997,7 +997,7 @@ class SwitchLight(object):
             helpers.log("Input is '%s' \n Output is %s" % (cli_input, cli_output))
             return cli_output
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_controller(self, node, controller):
@@ -1023,7 +1023,7 @@ class SwitchLight(object):
             helpers.sleep(float(30))
             return True
         except:
-            helpers.test_failure("Configuration of controller failed")
+            helpers.test_log("Configuration of controller failed")
             return False
 
     def cli_delete_controller(self, node, controller):
@@ -1049,7 +1049,7 @@ class SwitchLight(object):
             helpers.sleep(float(30))
             return True
         except:
-            helpers.test_failure("Configuration delete failed")
+            helpers.test_log("Configuration delete failed")
             return False
 
     def cli_add_static_ip(self, node, subnet, gateway):
@@ -1133,7 +1133,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_dhcp_ip(self, console_ip, console_port):
@@ -1171,7 +1171,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_dhcp_ip(self, console_ip, console_port, ip_address, subnet, gateway):
@@ -1207,7 +1207,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+            helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
     def cli_add_dns_server_domain(self, node, dns_server, dns_domain):
@@ -1242,7 +1242,7 @@ class SwitchLight(object):
                 tn.write(password + "\r\n")
                 tn.read_until('')
             except:
-                helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+                helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
                 return False
             else:
                 tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
@@ -1320,7 +1320,7 @@ class SwitchLight(object):
             helpers.test_log(s1.cli_content)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1343,7 +1343,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_crc_forwarding(self, node):
@@ -1365,7 +1365,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1443,7 +1443,7 @@ class SwitchLight(object):
             return True
         except:
             tn.close()
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_execute_command(self, node, command):
@@ -1499,7 +1499,7 @@ class SwitchLight(object):
             helpers.sleep(150)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_restart_process(self, node, processName, timeout=None):
@@ -1523,7 +1523,7 @@ class SwitchLight(object):
             switch.bash(bash_input, timeout=timeout)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_upgrade_switch(self, node, image_path):
@@ -1559,7 +1559,7 @@ class SwitchLight(object):
             switch.bash(bash_input_5)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_upgrade_switch(self, node, image_path, netdns='10.192.3.1', netdomain='bigswitch.com', netmask='255.255.192.0', netgw='10.192.64.1'):
@@ -1602,7 +1602,7 @@ class SwitchLight(object):
             switch.config(cli_input_9)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############################################################################
@@ -1629,7 +1629,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             return s1.cli_content()
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1657,7 +1657,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1682,7 +1682,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
@@ -1713,7 +1713,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
@@ -1743,7 +1743,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_snmp(self, node):
@@ -1764,7 +1764,7 @@ class SwitchLight(object):
             s1.config("snmp-server enable")
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_switch_snmp(self, node):
@@ -1785,7 +1785,7 @@ class SwitchLight(object):
             s1.config("no snmp-server enable")
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_trap_keyword(self, node, keyword):
@@ -1806,7 +1806,7 @@ class SwitchLight(object):
             s1.config(str(keyword))
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_trap_keyword(self, node, keyword):
@@ -1828,7 +1828,7 @@ class SwitchLight(object):
             s1.config(delete_key)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############# PORT-CHANNEL SHOW COMMANDS##############################
@@ -1861,7 +1861,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_portchannel_members(self, node, pc_number, intf_name_list):
@@ -1888,7 +1888,7 @@ class SwitchLight(object):
             if len(content) < 8 :
                 return False
             elif len(member_intf) < 1:
-                helpers.test_failure("Passed interface list is empty !!")
+                helpers.test_log("Passed interface list is empty !!")
                 return False
             else :
                 pass_count = 0
@@ -1904,7 +1904,7 @@ class SwitchLight(object):
                     return True
             return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_member_interface_stats(self, node, pc_number, sub_interface, txrx, packet_byte="packet"):
@@ -1943,7 +1943,7 @@ class SwitchLight(object):
                     else:
                         return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_portchannel_member_state(self, node, pc_number, intf_name_list):
@@ -1972,7 +1972,7 @@ class SwitchLight(object):
             if len(content) < 8 :
                 return False
             elif len(member_intf) < 1:
-                helpers.test_failure("Passed interface list is empty !!")
+                helpers.test_log("Passed interface list is empty !!")
                 return False
             else :
                 pass_count = 0
@@ -1987,7 +1987,7 @@ class SwitchLight(object):
                     return True
             return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############# PORT-CHANNEL CONFIGURATION COMMANDS##############################
@@ -2028,7 +2028,7 @@ class SwitchLight(object):
                 return False
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_portchannel(self, node, pcNumber):
@@ -2055,7 +2055,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ###### L2GRE Tunnel
@@ -2106,7 +2106,7 @@ class SwitchLight(object):
                 return content_row[1]
             return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 ###### L2GRE Tunnel
 
