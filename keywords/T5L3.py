@@ -339,6 +339,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.252.0.0/16"][next-hop/tenant="system"] {}
             cli delete route only:
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.252.0.0/16"] {}
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="0.0.0.0/0"][next-hop/tenant="system"] {}
         '''
 
         t = test.Test()
