@@ -187,7 +187,8 @@ class TestSuite(object):
         suite = self.data()['robot']['suite']
         timestamp = helpers.format_robot_timestamp(
                             self.data()['robot']['@generated'])
-        datestamp = helpers.format_robot_datestamp( self.data()['robot']['@generated']) source = source_file = helpers.utf8(suite['@source'])
+        datestamp = helpers.format_robot_datestamp(self.data()['robot']['@generated'])
+        source = source_file = helpers.utf8(suite['@source'])
         match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
         if match:
             source = "bigrobot/" + match.group(1)
