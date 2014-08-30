@@ -1727,3 +1727,27 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
             helpers.log("no Match")
             return {}
 
+    def rest_get_tracked_endpoint(self, ipaddr=None):
+        '''
+            get tracked endpoint and return the result
+         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/endpoint-manager/tracked-endpoint
+         '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tracked-endpoint'
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if ipaddr is None:
+            if len(data) == 0:
+                return {}
+            else: 
+                return data    
+        else:    
+            for entry in data:
+                helpers.log("entry is %s" % entry)
+                if entry['ip-address'] == ipaddr:
+                    return entry
+        helpers.log("no Match")
+        return {}
+        

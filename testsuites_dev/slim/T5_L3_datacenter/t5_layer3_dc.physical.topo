@@ -139,6 +139,20 @@ s9:
     alias: leaf3-a
     user: admin
     password: adminadmin
+   
+s11:
+  ip: 10.8.24.5
+  console_ip: 10.1.8.96
+  console_port: 7023
+  user: admin
+  password: bsn
+  
+s12:
+  ip: 10.8.24.6
+  console_ip: 10.1.8.96
+  console_port: 7024
+  user: admin
+  password: bsn
     
 h1:
    ip: 10.8.24.31
