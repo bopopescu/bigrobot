@@ -1562,19 +1562,28 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
                     # return c.rest.content()
                         return True
 
-    def rest_show_forwarding_dhcp_table(self):
+    def rest_show_forwarding_dhcp_table(self, routerip=None):
         '''
        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/dhcp-table
      '''
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/dhcp-table'
-        try:
-            c.rest.get(url)
-        except:
-            helpers.test_failure(c.rest.error())
-        else:
-            return c.rest.content()
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if routerip is None:
+            if len(data) == 0:
+                return {}
+            else: 
+                return data    
+        else:    
+            for entry in data:
+                helpers.log("entry is %s" % entry)
+                if entry['router-ip'] == routerip:
+                    return entry
+        helpers.log("no Match")
+        return {}
 
     def rest_show_forwarding_ecmp_table(self):
         '''
