@@ -158,24 +158,24 @@ ${policy_overlap}                       _ZP1_o_P1
 
 *Test Case
 
-AS4600:Verify bidirectional tunnel interface
+TC001: AS4600:Verify bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     [Tags]  feature
 
-AS5710:Verify bidirectional tunnel interface
+TC002: AS5710:Verify bidirectional tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw3}
     [Tags]  feature
     
-AS6700:Verify bidirectional tunnel interface   
+TC003: AS6700:Verify bidirectional tunnel interface   
     ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw4}
     [Tags]  feature  
 
-AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
+TC004: AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -200,7 +200,7 @@ AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel interf
     delete traffic  
     [Tags]  feature  L2  traffic    
 
-AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
+TC005: AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -228,7 +228,7 @@ AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional tunnel
     delete traffic        
     [Tags]  feature  L2  traffic
     
-AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
+TC006: AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -253,7 +253,7 @@ AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel interf
     delete traffic  
     [Tags]  feature  L2  traffic    
 
-AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
+TC007: AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -281,7 +281,7 @@ AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional tunnel
     delete traffic        
     [Tags]  feature  L2  traffic
         
-AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
+TC008: AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -306,7 +306,7 @@ AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
     delete traffic  
     [Tags]  feature  L2  traffic        
 
-AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
+TC009: AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -334,7 +334,7 @@ AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunnel inter
     delete traffic        
     [Tags]  feature  L2  traffic
     
-AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
+TC010: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -360,7 +360,7 @@ AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunn
     [Tags]  feature  L2  traffic        
 
 
-AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
+TC011: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -388,7 +388,7 @@ AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidirection
     delete traffic        
     [Tags]  feature  L2  traffic
     
-AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+TC012: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -415,7 +415,7 @@ AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel in
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+TC013: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -444,7 +444,7 @@ AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tu
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4    
     
-AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
+TC014: AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -471,7 +471,7 @@ AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel in
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
+TC015: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -500,7 +500,7 @@ AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tu
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4 
     
-AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+TC016: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -527,7 +527,7 @@ AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel in
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
+TC017: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -556,7 +556,7 @@ AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tu
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6    
     
-AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
+TC018: AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -583,7 +583,7 @@ AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel in
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
+TC019: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -612,7 +612,7 @@ AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tu
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6       
 
-AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC020: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -639,7 +639,7 @@ AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirection
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC021: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -668,7 +668,7 @@ AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidi
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4
 
-AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC022: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -695,7 +695,7 @@ AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectio
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC023: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -724,7 +724,7 @@ AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bid
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6
 
-AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC024: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -751,7 +751,7 @@ AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidirection
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC025: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -780,7 +780,7 @@ AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across bidi
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4
 
-AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC026: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -807,7 +807,7 @@ AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectio
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC027: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -837,7 +837,7 @@ AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bid
     [Tags]  feature  L3  traffic  ipv6
 
 
-AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC028: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -864,7 +864,7 @@ AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirection
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC029: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -893,7 +893,7 @@ AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidi
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4
 
-AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC030: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -920,7 +920,7 @@ AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectio
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC031: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -949,7 +949,7 @@ AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bid
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6
 
-AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC032: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -976,7 +976,7 @@ AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidirection
     [Tags]  feature  L3  traffic  ipv4        
 
 
-AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
+TC033: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -1005,7 +1005,7 @@ AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across 
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4
 
-AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC034: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -1032,7 +1032,7 @@ AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectio
     [Tags]  feature  L3  traffic  ipv6        
 
 
-AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
+TC035: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -1062,7 +1062,7 @@ AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bid
     [Tags]  feature  L3  traffic  ipv6
              
 
-AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
+TC036: AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -1089,7 +1089,7 @@ AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunnel inter
     [Tags]  feature  L3  traffic  ipv4  flags        
 
 
-AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
+TC037: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -1119,7 +1119,7 @@ AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectional tunne
     [Tags]  feature  L3  traffic  ipv4  flags
              
 
-AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
+TC038: AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
@@ -1146,7 +1146,7 @@ AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel inte
     [Tags]  feature  L3  traffic  ipv6  flags        
 
 
-AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
+TC039: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
@@ -1175,7 +1175,7 @@ AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirectional tunn
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6  flags
 
-AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
+TC040: AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1202,7 +1202,7 @@ AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
     [Tags]  feature  L2  traffic  txrx
 
 
-AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
+TC041: AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1232,7 +1232,7 @@ AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tunnel int
     delete traffic        
     [Tags]  feature  L2  traffic  txrx
     
-AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
+TC042: AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1259,7 +1259,7 @@ AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
     delete traffic  
     [Tags]  feature  L2  traffic  txrx    
 
-AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
+TC043: AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1289,7 +1289,7 @@ AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tunnel int
     delete traffic        
     [Tags]  feature  L2  traffic  txrx
         
-AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
+TC044: AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1316,7 +1316,7 @@ AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     delete traffic  
     [Tags]  feature  L2  traffic  txrx        
 
-AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
+TC045: AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1346,7 +1346,7 @@ AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     delete traffic        
     [Tags]  feature  L2  traffic  txrx
     
-AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
+TC046: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1374,7 +1374,7 @@ AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel i
     [Tags]  feature  L2  traffic  txrx        
 
 
-AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
+TC047: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1406,7 +1406,7 @@ AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx t
     [Tags]  feature  L2  traffic  txrx
 
     
-AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+TC048: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1435,7 +1435,7 @@ AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interf
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+TC049: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1466,7 +1466,7 @@ AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx    
     
-AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
+TC050: AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1495,7 +1495,7 @@ AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interf
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
+TC051: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1526,7 +1526,7 @@ AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx 
     
-AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+TC052: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1555,7 +1555,7 @@ AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interf
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
+TC053: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1586,7 +1586,7 @@ AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6  txrx    
     
-AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
+TC054: AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1615,7 +1615,7 @@ AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interf
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
+TC055: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1646,7 +1646,7 @@ AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6  txrx       
 
-AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC056: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1675,7 +1675,7 @@ AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx t
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC057: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1706,7 +1706,7 @@ AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx a
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx
 
-AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC058: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1735,7 +1735,7 @@ AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx 
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC059: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1766,7 +1766,7 @@ AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx 
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6  txrx
 
-AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC060: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1795,7 +1795,7 @@ AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx t
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC061: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1826,7 +1826,7 @@ AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx a
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx
 
-AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC062: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1855,7 +1855,7 @@ AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx 
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC063: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1887,7 +1887,7 @@ AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx 
     [Tags]  feature  L3  traffic  ipv6  txrx
 
 
-AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC064: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1916,7 +1916,7 @@ AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx t
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC065: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -1947,7 +1947,7 @@ AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx a
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx
 
-AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC066: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1976,7 +1976,7 @@ AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx 
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC067: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -2007,7 +2007,7 @@ AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx 
     delete traffic        
     [Tags]  feature  L3  traffic  ipv6  txrx
 
-AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC068: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -2036,7 +2036,7 @@ AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx and rx t
     [Tags]  feature  L3  traffic  ipv4  txrx        
 
 
-AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
+TC069: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -2067,7 +2067,7 @@ AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across 
     delete traffic        
     [Tags]  feature  L3  traffic  ipv4  txrx
 
-AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC070: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -2096,7 +2096,7 @@ AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx 
     [Tags]  feature  L3  traffic  ipv6  txrx        
 
 
-AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
+TC071: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -2128,7 +2128,7 @@ AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx 
     [Tags]  feature  L3  traffic  ipv6  txrx
              
 
-AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
+TC072: AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -2157,7 +2157,7 @@ AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
     [Tags]  feature  L3  traffic  ipv4  flags  txrx        
 
 
-AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
+TC073: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx
@@ -2189,7 +2189,7 @@ AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tunnel in
     [Tags]  feature  L3  traffic  ipv4  flags  txrx
              
 
-AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
+TC074: AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -2218,7 +2218,7 @@ AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interfac
     [Tags]  feature  L3  traffic  ipv6  flags  txrx        
 
 
-AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
+TC075: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
     change tunnel direction to txrx

@@ -155,8 +155,9 @@ class TestSuite(object):
         if output in authors:
             return authors[output]
         else:
-            helpers.environment_failure(
-                    "Author '%s' does not exist" % output)
+            helpers.log(
+                    "ERROR: Author '%s' does not exist. Using 'unknown' author." % output)
+            return authors['Unknown']
 
     def check_topo_type(self, suite):
         """
@@ -186,8 +187,7 @@ class TestSuite(object):
         suite = self.data()['robot']['suite']
         timestamp = helpers.format_robot_timestamp(
                             self.data()['robot']['@generated'])
-        datestamp = helpers.format_robot_datestamp(
-                            self.data()['robot']['@generated'])
+        datestamp = helpers.format_robot_datestamp(self.data()['robot']['@generated'])
         source = source_file = helpers.utf8(suite['@source'])
         match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
         if match:

@@ -6,29 +6,31 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.9.18.5
+  ip: 10.9.18.5
+
 c2:
-    ip: 10.9.18.6
+  ip: 10.9.18.6
 
+
+#### app-ras5610-1
 s1:
-    ip: 10.9.19.18
-    console_ip: cs-214
-    console_port: 6018    
+  ip: 10.9.19.2
 
+#### app-rs4810-1
 s2:
-    ip: 10.9.19.19
-    console_ip: cs-214
-    console_port: 6019
+  ip: 10.9.19.4
 
+#### app-ras6700-1
 s3:
-    ip: 10.9.19.13
-    console_ip: cs-214
-    console_port: 6013
+  ip: 10.9.19.8  
 
+### Arista app-arista-1
 s4:
-    ip: 10.9.19.4
-    console_ip: cs-214
-    console_port: 6004
+    ip: 10.9.19.3
+    console_ip: 10.1.8.97
+    console_port: 6003
+    user: admin
+    password: arastra
 
 tg1:
   platform: 'ixia'
@@ -38,11 +40,15 @@ tg1:
   ix_version: '7.10'
   set_init_ping: false
   ports:
+  
+#### app-rlb9-1  
     a:
-      name: 4/4
+      name: 1/1
     b:
-      name: 4/5
+      name: 1/2
+         
+#### app-rlb9-4
     c:
-      name: 3/4
+      name: 1/4
     d:
-      name: 2/14
+      name: 1/3 
