@@ -18,7 +18,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse          
+	[Tags]  Fabric  feature  IronHorse     
 	base suite setup  
     add fabric switch
     bring up h1 bond0
@@ -210,7 +210,7 @@ Verify broadcast forwarding with edge port link enable/disable
     rest delete tenant  t1
 
 Verify broadcast traffic forwarding with single peer-link enable/disable
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -222,11 +222,11 @@ Verify broadcast traffic forwarding with single peer-link enable/disable
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
     rest disable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
-    sleep  2
+    sleep  5
     rest verify fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     verify traffic rate negative  tx_rate  rx_rate  a  b
     rest enable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
-    sleep  2
+    sleep  5
     rest verify fabric interface  leaf0-a   ${leaf0a_leaf0b_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     stop traffic  ${stream}
@@ -483,6 +483,7 @@ T5 test setup
 	base test setup
 
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete portgroup  p1
 	rest delete portgroup  p2

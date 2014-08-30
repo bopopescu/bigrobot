@@ -1458,9 +1458,10 @@ class T5Platform(object):
 
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
-        if "compare" in output[0] and len(output) > 2:
-            helpers.log("Skipping command that is still in first line")
-            output = output[1:]
+        if len(output) > 2:
+            if "compare" in output[0]:
+                helpers.log("Skipping command that is still in first line")
+                output = output[1:]
         if options[0] < 2:
             for index, line in enumerate(output):
                 if '100%' in line:
@@ -5139,4 +5140,23 @@ class T5Platform(object):
         else:
             helpers.log("Error during Copying running config to autoConfig1.txt")
             return False
+    
+    
+    def spawn_log_in(self,sessions):
+       
+        bsn = bsnCommon()
+        helpers.log("***Entering==> spawn_log_in   \n" )
+        
+        t = test.Test()
+        ip = bsn.get_node_ip('master')
+  
+        for loop in range (0, int(sessions)): 
+            helpers.log('USR info:  this is loop:  %d' % loop )
+            n = t.node_spawn(ip)                    
+            content= n.cli('show session')
+            
+        helpers.log("***Exiting==> spawn_log_in   \n" )
+
+        return True
+    
     

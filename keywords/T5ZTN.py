@@ -236,7 +236,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Switch Light OS", timeout=120)
+        con.expect(r'[\r\n]Switch Light OS', timeout=120)
         con.expect(r'.*login: $', timeout=60)
         return True
 
@@ -803,7 +803,8 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
-                            r'[\r\n]* root@.*:\~\#', s.get_prompt()])
+                            r'[\r\n]* root@.*:\~\#', s.get_prompt()],
+                           timeout=30)
         if options[0] == 0:
             s.cli('admin')
         if options[0] == 2:
@@ -1131,7 +1132,7 @@ class T5ZTN(object):
                 s.cli(password)
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 1:  # password prompt
+        elif options[0] == 1:  # password prompt
             s.send(helpers.ctrl('c'))
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1140,24 +1141,24 @@ class T5ZTN(object):
                 s.cli(password)
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 2:  # bash mode
+        elif options[0] == 2:  # bash mode
             s.cli('exit')
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 3:  # ONIE loader
+        elif options[0] == 3:  # ONIE loader
             s.send('reboot')
-        if options[0] == 4:  # U-boot
+        elif options[0] == 4:  # U-boot
             s.send('boot')
-        if options[0] == 5:  # SL Loader
+        elif options[0] == 5:  # SL Loader
             s.send('reboot')
-        if options[0] == 6:  # CLI
+        elif options[0] == 6:  # CLI
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 7:  # SL Loader
+        elif options[0] == 7:  # SL Loader
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.send('reboot')
-        if options[0] == 8:  # SL Loader
+        elif options[0] == 8:  # SL Loader
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.send('reboot')

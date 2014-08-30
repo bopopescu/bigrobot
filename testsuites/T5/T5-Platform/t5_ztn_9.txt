@@ -110,6 +110,7 @@ T5.6.4. Connected, delete, reboot
 	Telnet Verify ZTN Discovery Failed  s5
 
 T5.6.5. Connected, change config, failover, reconnect, reload
+	Sleep  100
 	Set All Switches Mode Standby
 	Sleep  30
 	Randomize ZTN Configuration
@@ -170,6 +171,7 @@ T5.6.8. Connected, delete, failover, reboot
 	Telnet Verify ZTN Discovery Failed  s5
 
 T5.6.9. Connected, change config, double failover, reconnect, reload
+	Sleep  100
 	Set All Switches Mode Standby
 	Sleep  30
 	Randomize ZTN Configuration
