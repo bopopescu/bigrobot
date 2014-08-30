@@ -2013,14 +2013,14 @@ Add and delete config changes
     sleep                                       1
     ${result} =                                 REST show forwarding dhcp table     10.251.3.1
     REST get l3 cidr route info                 10.251.1.0                      255.255.255.0
-    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
-    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    ${dhcpip} =                                 Set Variable                    ${result['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result['router-ip']}
     Should Be Equal                             ${dhcpip}                       10.251.1.9
     Should Be Equal                             ${routerip}                     10.251.3.1
     ${result} =                                 REST show forwarding dhcp table     10.252.3.1
     REST get l3 cidr route info                 10.251.1.0                      255.255.255.0
-    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
-    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    ${dhcpip} =                                 Set Variable                    ${result['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result['router-ip']}
     Should Be Equal                             ${dhcpip}                       10.251.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
     BASH ifup intf                              h1-rack0                        bond0
@@ -2033,6 +2033,8 @@ Add and delete config changes
     ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
     BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
     BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
+    BASH add route                              h1-rack0                        10.252.0.0/16           10.251.1.1
+    BASH add route                              h1-rack0                        10.253.0.0/16           10.251.1.1
     sleep                                       1
     ${value} =                                  BASH release dhcpv4 address     h2-rack2                bond0
     Should Be True                              ${value}
@@ -2140,6 +2142,9 @@ Add and delete config changes
     REST add vns                                X                           X1
     REST add vns                                X                           X2
     REST add vns                                X                           X3
+    REST add router intf                        X                           X1
+    REST add router intf                        X                           X2
+    REST add router intf                        X                           X3    
     REST add vns ip                             X                           X1              10.251.1.1              24  
     REST add vns ip                             X                           X2              10.251.2.1              24  
     REST add vns ip                             X                           X3              10.251.3.1              24  
@@ -2147,6 +2152,8 @@ Add and delete config changes
     REST add portgroup to vns                   X                           X3                              leaf0-pc2           -1  
     REST add portgroup to vns                   X                           X1                              leaf1-pc2           -1  
     REST add dhcp relay                         X                           X3                              10.251.1.9
+    REST add system intf to tenant routers      X
+    REST add static routes                      X                           0.0.0.0/0           {"tenant": "system"}
     sleep                                       1
     ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0
     sleep                                       1
@@ -2157,16 +2164,16 @@ Add and delete config changes
     ${ipAddr6} =                                BASH renew dhcpv4 address       h2-rack0                bond0
     Should Not Be Empty                         ${ipAddr6}
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr5}           count=10
-    Should Be True                              ${loss} == 0
+    Should Be True                              ${loss} <= 40
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr6}           count=10
-    Should Be True                              ${loss} == 0     
+    Should Be True                              ${loss} <= 40     
     ${loss} =                                   BASH ping                       h1-rack0                 ${ipAddr1}           count=10
     Should Be True                              ${loss} < 40
-    REST delete static routes                   X                               0.0.0.0/0               {"tenant": "system"}
+    REST delete static routes                   X                               0.0.0.0/0               system
     REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
     ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr1}              count=10
     Should Be True                              ${loss} < 40
-    REST delete static routes                   X                               10.252.0.0/16           {"tenant": "system"}
+    REST delete static routes                   X                               10.252.0.0/16          	system
     ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr1}              count=10
     Should Be True                              ${loss} == 100
     ${value} =                                  BASH release dhcpv4 address     h2-rack2                bond0
@@ -2177,7 +2184,7 @@ Add and delete config changes
     Should Be True                              ${loss} == 100
     REST add static routes                      X                               10.252.0.0/16           {"tenant": "system"}
     ${ipAddr7} =                                BASH renew dhcpv4 address       h2-rack2                bond0
-    Should Be Empty                             ${ipAddr7}
+    Should Not Be Empty                         ${ipAddr7}
     ${loss} =                                   BASH ping                       h1-rack0                ${ipAddr7}              count=10
     Should Be True                              ${loss} < 40
    
