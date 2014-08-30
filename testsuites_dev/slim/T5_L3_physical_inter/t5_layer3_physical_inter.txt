@@ -1201,7 +1201,7 @@ Verify private IP is able to communicate with other vns in the same tenant
     Should Be True  ${returnVal}           
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11
     Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  host=h6  ip=10.252.2.11
+    ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  spine  leaf  host=h6  ip=10.252.2.11
     Should Be True  ${returnVal}   
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h5                              10.251.0.0/16           10.251.1.1
@@ -1832,7 +1832,8 @@ Spine reboot
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
-    CLI restart switch                          s1
+#    CLI restart switch                          s1
+    Console bash reboot switch                  s7
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
@@ -1882,7 +1883,8 @@ Leaf reboot
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
-    CLI restart switch                          s5
+#    CLI restart switch                          s5
+    Console bash reboot switch                  s1
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5

@@ -1037,7 +1037,7 @@ Add and delete nexthop members to nexthop group
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    sleep                                           10
+    sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
@@ -1214,7 +1214,7 @@ Add and delete all members in nexthop group
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    sleep                                           10
+    sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
@@ -2009,13 +2009,20 @@ Add and delete config changes
     REST add portgroup to vns                   X                               X1                              leaf1-pc2           -1  
     REST add portgroup to vns                   Y                               Y3                              leaf2-pc2           -1
     REST add dhcp relay                         X                               X3                              10.251.1.9
+    REST add dhcp relay                         Y                               Y3                              10.251.1.9
     sleep                                       1
-    ${result} =                                 REST show forwarding dhcp table
+    ${result} =                                 REST show forwarding dhcp table     10.251.3.1
     REST get l3 cidr route info                 10.251.1.0                      255.255.255.0
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
     Should Be Equal                             ${dhcpip}                       10.251.1.9
     Should Be Equal                             ${routerip}                     10.251.3.1
+    ${result} =                                 REST show forwarding dhcp table     10.252.3.1
+    REST get l3 cidr route info                 10.251.1.0                      255.255.255.0
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Equal                             ${dhcpip}                       10.251.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
     BASH ifup intf                              h1-rack0                        bond0
     BASH ifup intf                              h2-rack0                        bond0
     BASH ifup intf                              h2-rack1                        bond0
@@ -2284,6 +2291,12 @@ Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     Should Be True                              ${loss} == 0    
     
 initialize host
+    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
+    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
+    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
+    BASH delete tag                             h4                              bond0.1004              soft_error=${true}
+    BASH delete tag                             h5                              bond0.1005              soft_error=${true}
+    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
     BASH run command                                h1-rack0                                ifdown bond0
     BASH run command                                h2-rack0                                ifdown bond0
     BASH run command                                h3-rack0                                ifdown bond0
