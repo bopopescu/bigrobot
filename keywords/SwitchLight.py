@@ -1853,13 +1853,16 @@ class SwitchLight(object):
             cli_input = "show interface " + intf_name
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            helpers.log("Multiline is %s" % (string.split(cli_output, '\n')))
-            lagNumber = 60 + int(pcNumber)
-            input1 = str(lagNumber) + "* " + intf_name
-            if str(input1) in cli_output:
-                return True
+            if "Error: "  in cli_output:
+                    return False
             else:
-                return False
+                helpers.log("Multiline is %s" % (string.split(cli_output, '\n')))
+                lagNumber = 60 + int(pcNumber)
+                input1 = str(lagNumber) + "* " + intf_name
+                if str(input1) in cli_output:
+                    return True
+                else:
+                    return False
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
@@ -1883,26 +1886,29 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            member_intf = string.split(intf_name_list, ' ')
-            if len(content) < 8 :
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                member_intf = string.split(intf_name_list, ' ')
+                if len(content) < 8 :
+                    return False
+                elif len(member_intf) < 1:
+                    helpers.test_log("Passed interface list is empty !!")
+                    return False
+                else :
+                    pass_count = 0
+                    for i in range(10, len(content) - 1):
+                        intfName = ' '.join(content[i].split()).split(" ", 2)
+                        helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
+                        for intf_name in member_intf:
+                            helpers.log('value is %s' % intf_name)
+                            if len(intfName) > 1 and intfName[1] == intf_name :
+                                helpers.log("IntfName is %s \n" % (intfName[1]))
+                                pass_count = pass_count + 1
+                    if pass_count == len(member_intf):
+                        return True
                 return False
-            elif len(member_intf) < 1:
-                helpers.test_log("Passed interface list is empty !!")
-                return False
-            else :
-                pass_count = 0
-                for i in range(10, len(content) - 1):
-                    intfName = ' '.join(content[i].split()).split(" ", 2)
-                    helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
-                    for intf_name in member_intf:
-                        helpers.log('value is %s' % intf_name)
-                        if len(intfName) > 1 and intfName[1] == intf_name :
-                            helpers.log("IntfName is %s \n" % (intfName[1]))
-                            pass_count = pass_count + 1
-                if pass_count == len(member_intf):
-                    return True
-            return False
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
@@ -1926,22 +1932,25 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            for i in range(0, len(content)):
-                if sub_interface in content[i]:
-                    txrx_value = re.split('\s+', content[i])
-                    if  "tx" in txrx.lower():
-                        if "packet" in packet_byte:
-                            return txrx_value[2]
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                for i in range(0, len(content)):
+                    if sub_interface in content[i]:
+                        txrx_value = re.split('\s+', content[i])
+                        if  "tx" in txrx.lower():
+                            if "packet" in packet_byte:
+                                return txrx_value[2]
+                            else:
+                                return txrx_value[3]
+                        elif "rx" in txrx.lower():
+                            if "packet" in packet_byte:
+                                return txrx_value[4]
+                            else:
+                                return txrx_value[5]
                         else:
-                            return txrx_value[3]
-                    elif "rx" in txrx.lower():
-                        if "packet" in packet_byte:
-                            return txrx_value[4]
-                        else:
-                            return txrx_value[5]
-                    else:
-                        return False
+                            return False
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
@@ -1967,25 +1976,28 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            member_intf = string.split(intf_name_list, ' ')
-            if len(content) < 8 :
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                member_intf = string.split(intf_name_list, ' ')
+                if len(content) < 8 :
+                    return False
+                elif len(member_intf) < 1:
+                    helpers.test_log("Passed interface list is empty !!")
+                    return False
+                else :
+                    pass_count = 0
+                    for i in range(8, len(content)):
+                        intfName = ' '.join(content[i].split()).split(" ", 2)
+                        for intf_name in member_intf:
+                            if len(intfName) > 1 and intfName[1] == intf_name:
+                                if intfName[0] == "*":
+                                    helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                                    pass_count = pass_count + 1
+                    if pass_count == len(member_intf):
+                        return True
                 return False
-            elif len(member_intf) < 1:
-                helpers.test_log("Passed interface list is empty !!")
-                return False
-            else :
-                pass_count = 0
-                for i in range(8, len(content)):
-                    intfName = ' '.join(content[i].split()).split(" ", 2)
-                    for intf_name in member_intf:
-                        if len(intfName) > 1 and intfName[1] == intf_name:
-                            if intfName[0] == "*":
-                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                                pass_count = pass_count + 1
-                if pass_count == len(member_intf):
-                    return True
-            return False
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
@@ -2021,6 +2033,8 @@ class SwitchLight(object):
                 s1.config(input_value)
                 cli_output = s1.cli_content()
                 if "is not a valid interface" in cli_output:
+                    return False
+                elif "Error: "  in cli_output:
                     return False
                 else:
                     return True
@@ -2074,37 +2088,40 @@ class SwitchLight(object):
             cli_input = "show tunnel " + str(tunnel_number) + " "
             switch.enable(cli_input)
             cli_output = switch.cli_content()
-            content = string.split(cli_output, '\n')
-            helpers.log("Length of content %d" % (len(content)))
-            if tunnel_variable == "of_port":
-                content_row = content[2].split()
-                return content_row[2]
-            if tunnel_variable == "parent_port":
-                content_row = content[2].split()
-                return content_row[4]
-            if tunnel_variable == "loopback":
-                content_row = content[2].split()
-                return content_row[6]
-            if tunnel_variable == "rate_limit":
-                content_row = content[3].split()
-                return content_row[6]
-            if tunnel_variable == "vpn_id":
-                content_row = content[4].split()
-                return_value = int(content_row[1], 16)
-                return return_value
-            if tunnel_variable == "mac":
-                content_row = content[5].split()
-                return content_row[1]
-            if tunnel_variable == "nh_mac":
-                content_row = content[6].split()
-                return content_row[1]
-            if tunnel_variable == "sip":
-                content_row = content[7].split()
-                return content_row[1]
-            if tunnel_variable == "dip":
-                content_row = content[8].split()
-                return content_row[1]
-            return False
+            if "Error: "  in cli_output or "Cannot" in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                helpers.log("Length of content %d" % (len(content)))
+                if tunnel_variable == "of_port":
+                    content_row = content[2].split()
+                    return content_row[2]
+                if tunnel_variable == "parent_port":
+                    content_row = content[2].split()
+                    return content_row[4]
+                if tunnel_variable == "loopback":
+                    content_row = content[2].split()
+                    return content_row[6]
+                if tunnel_variable == "rate_limit":
+                    content_row = content[3].split()
+                    return content_row[6]
+                if tunnel_variable == "vpn_id":
+                    content_row = content[4].split()
+                    return_value = int(content_row[1], 16)
+                    return return_value
+                if tunnel_variable == "mac":
+                    content_row = content[5].split()
+                    return content_row[1]
+                if tunnel_variable == "nh_mac":
+                    content_row = content[6].split()
+                    return content_row[1]
+                if tunnel_variable == "sip":
+                    content_row = content[7].split()
+                    return content_row[1]
+                if tunnel_variable == "dip":
+                    content_row = content[8].split()
+                    return content_row[1]
+                return False
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
