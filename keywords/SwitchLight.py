@@ -182,13 +182,17 @@ class SwitchLight(object):
             s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
             s1.enable(cli_input)
-            content = string.split(s1.cli_content(), '\n')
-            helpers.log("Value in content[1] is '%s' " % (content[1]))
+            new_content = string.split(s1.cli_content(), '\n')
+            helpers.log("Value in content[1] is '%s' " % (new_content[1]))
+            content = new_content[1].rstrip()
+            helpers.log("Value in content is '%s' " % (content))
             if admin_down:
-                (firstvalue, secondvalue, thirdvalue, lastvalue) = content[1].rstrip('\n').strip().split(' ')
-                intf_state = thirdvalue + " " + lastvalue.rstrip('\n')
+                helpers.log("Admin Down is True")
+                (firstvalue, secondvalue, thirdvalue, lastvalue) = content.split()
+                intf_state = thirdvalue + " " + lastvalue
             else:
-                (firstvalue, colon, lastvalue) = content[1].rstrip('\n').strip().split(' ')
+                helpers.log("Admin Down is False")
+                (firstvalue, colon, lastvalue) = content.split()
                 intf_state = lastvalue.rstrip('\n')
             return intf_state
         except:
