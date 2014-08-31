@@ -406,9 +406,13 @@ TC027:Match on packet with TOS Precedence:NetworkControl, Binary:111000
 verify packet count
     ${input_filter}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${policy_name_1}"]/filter-interface
     ${input_count}=  verify json key  ${input_filter}  0  packet-count
+    ${input_value}=  Convert To Integer  ${input_count}
+    Should Not Be Equal As Integers  ${input_value}  0  
     ${output_delivery}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="${policy_name_1}"]/delivery-interface
     ${output_count}=    verify json key  ${output_delivery}  0  packet-count
-    ${in_range}=  ixia verify traffic rate  ${input_count}  ${output_count}
+    ${output_value}=  Convert To Integer  ${output_count}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${in_range}=  ixia verify traffic rate  ${input_value}  ${output_value}
     Should be true  ${in_range}
 
 iptos suite setup
