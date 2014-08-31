@@ -18,6 +18,7 @@ Library  keywords/ThirdParty.py
 ##                                                                   ##
 ######################### TOPOLOGY ####################################
 
+###  Based on http://www.tucny.com/Home/dscp-tos 
 * Variable
 ${switch_alias}                            app-s4810-2     #Alias for switch 1
 ${switch_filter_intf}                      ethernet11      #filter interface on switch app-s4810-2
