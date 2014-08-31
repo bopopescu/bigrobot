@@ -60,7 +60,7 @@ class ThirdParty(object):
                 switch.config("exit")
             return True
 
-    def cli_arista_delete_portchannel(self, node, pc_number, pc_list, pc_priority=15000):
+    def cli_arista_delete_portchannel(self, node, pc_number, pc_list, pc_mode="active", pc_priority=15000):
         '''Configure Port Channel
         
             Input: 
@@ -79,7 +79,7 @@ class ThirdParty(object):
             for x in port_list:
                 cli_input_2 = "interface ethernet" + str(x)
                 switch.config(cli_input_2)
-                cli_input_3 = "no channel-group " + str(pc_number) + " mode active"
+                cli_input_3 = "no channel-group " + str(pc_number) + " mode " + str(pc_mode)
                 switch.config(cli_input_3)
                 cli_input_4 = "no lacp port-priority " + str(pc_priority)
                 switch.config(cli_input_4)
