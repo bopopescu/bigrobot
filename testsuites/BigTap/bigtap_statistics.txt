@@ -12,7 +12,6 @@ Library                                 keywords/SwitchLight.py
 Library                                 keywords/Ixia.py
 Library                                 Collections.py
 
-
 * Variables
 #### Switch 1: app-ras4600-1
 ${sw1_alias}                            app-ras4600-1
@@ -609,37 +608,34 @@ TC008: Verify policy statistics across monitoring fabric with a overlapping poli
 TC009: Verify drop counters work when delivery interface is over-subscribed
     Log     "To Be Scripted"
 
-TC010: Verify drop counters work when service interface is over-subscribed
+TC010: Verify drop counters work when pre-service interface is over-subscribed
     Log     "To Be Scripted"
 
-TC011: Verify drop counters work when service interface is over-subscribed
+TC011: Verify switch interface statistics on controller, when filter and delivery interface are on same switch     
     Log     "To Be Scripted" 
 
-TC012: Repet TC1 and verify switch interface statistics on controller     
+TC012: Verify switch interface statistics on controller, when filter and delivery interface are on different switches       
     Log     "To Be Scripted" 
 
-TC013: Repet TC3 and verify switch interface statistics on controller       
+TC013: Verify switch interface statistics on controller, when multiple policies traverse the core.       
     Log     "To Be Scripted" 
 
-TC014: Repet TC4 and verify switch interface statistics on controller       
+TC014: Verify switch interface statistics on controller, when policy has one service on core switch S3       
     Log     "To Be Scripted" 
 
-TC015: Repet TC5 and verify switch interface statistics on controller       
+TC015: Verify switch interface statistics on controller, when policy has two services chained on filter switch S1 and delivery switch S5        
     Log     "To Be Scripted" 
 
-TC016: Repet TC6 and verify switch interface statistics on controller        
+TC016: Verify switch interface statistics on controller, when two policies use same mandatory service.       
     Log     "To Be Scripted" 
 
-TC017: Repet TC7 and verify switch interface statistics on controller       
+TC017: Verify switch interface statistics on controller, with an overlapping policy       
     Log     "To Be Scripted" 
 
-TC018: Repet TC8 and verify switch interface statistics on controller       
+TC018: Verify switch interface statistics on controller, when delivery interface is over-subscribed       
     Log     "To Be Scripted" 
 
-TC019: Repet TC9 and verify switch interface statistics on controller       
-    Log     "To Be Scripted" 
-
-TC020: Repet TC10 and verify switch interface statistics on controller       
+TC019: Verify switch interface statistics on controller, when pre-service interface is over-subscribed       
     Log     "To Be Scripted" 
 
                                                       
