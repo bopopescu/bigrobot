@@ -3757,3 +3757,42 @@ class BigTap(object):
                 return False
             else:
                 return True
+
+    def rest_return_policy_stats(self, policy, interface_type='filter', interface_name=None, stat_info='packet-count', switch_dpid=None, interface_direction=None, service_name=None):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            if str(interface_type) == "filter":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/filter-interface' % str(policy)
+            elif str(interface_type) == "delivery":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/delivery-interface' % str(policy)
+            elif str(interface_type) == "core":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/core-interface' % str(policy)
+            elif str(interface_type) == "service":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/service-interface' % str(policy)
+            else:
+                helpers.log("The value passed to function for interface_type is not supported\n")
+                return False
+            c.rest.get(url)
+            content = c.rest.content()
+            if len(content) == 1:
+                return content[0][str(stat_info)]
+            else:
+                if str(interface_type) == "core":
+                    for i in range(0, len(content)):
+                        if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction):
+                            return content[i][str(stat_info)]
+                elif str(interface_type) == "service":
+                    for i in range(0, len(content)):
+                        if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction) and content[i]['service-name'] == str(service_name):
+                            return content[i][str(stat_info)]
+                else:
+                    for i in range(0, len(content)):
+                        if content[i]['bigtapinterface'] == str(interface_name):
+                            return content[i][str(stat_info)]
+                return False
