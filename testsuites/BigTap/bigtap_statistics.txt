@@ -12,7 +12,6 @@ Library                                 keywords/SwitchLight.py
 Library                                 keywords/Ixia.py
 Library                                 Collections.py
 
-
 * Variables
 #### Switch 1: app-ras4600-1
 ${sw1_alias}                            app-ras4600-1
