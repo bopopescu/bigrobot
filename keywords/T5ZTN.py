@@ -1123,7 +1123,7 @@ class T5ZTN(object):
         options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell',
-                            r'ZTN Discovery'], timeout=120)
+                            r'Trying manifest'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1159,9 +1159,8 @@ class T5ZTN(object):
             s.send("\x03")
             s.send('reboot')
         elif options[0] == 8:  # SL Loader
-            s.send(helpers.ctrl('c'))
-            s.send("\x03")
-            s.send('reboot')
+            helpers.log("Switch %s is already rebooting. Doing nothing." % switch)
+            return True
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
