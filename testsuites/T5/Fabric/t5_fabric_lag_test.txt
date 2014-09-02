@@ -18,7 +18,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse     
+	[Tags]  Fabric  feature  IronHorse  run
 	base suite setup  
     add fabric switch
     bring up h1 bond0
@@ -119,7 +119,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest verify rack lag from leaf  leaf0-a  spine1
 
 Verify broadcast traffic forwarding on the lag
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  
 	sleep  15
 	rest verify fabric link common  
 	rest add tenant  t1
@@ -129,6 +129,7 @@ Verify broadcast traffic forwarding on the lag
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
 	sleep  3  	
+    ixia initialize  tg1  init=True
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_rate=1000  frame_size=68  name=a_b_flow
     start traffic  ${stream}  
     sleep  10
@@ -403,7 +404,7 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  5    
 
 Master node reboot failover with broadcast traffic forwarding
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse  run
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
