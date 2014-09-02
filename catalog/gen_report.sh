@@ -99,7 +99,7 @@ if [ "$detailed"x != x ]; then
     echo "Build: $build" >> $output
     echo "Output: $output" >> $output
     echo ""
-    ./db_collect_stats.py --release $release --build "$build" --show-suites --show-untested | tee -a $output
+    ./db_collect_stats.py --release $release --build "$build" --show-suites --show-untested --show-manual | tee -a $output
     echo ""
     scp_to_web $no_scp $output $output_detailed_no_timestamp
 fi
