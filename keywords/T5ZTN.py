@@ -236,8 +236,16 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect(r'[\r\n]Switch Light OS', timeout=120)
-        con.expect(r'.*login: $', timeout=60)
+        #con.expect(r'[\r\n]Switch Light OS', timeout=120)
+        con.send("\n")
+        options = con.expect([r'=> ', r'[\r\n].*login: $', con.get_prompt()],
+                  timeout=120)
+        if options[0] == 0:  # Uboot prompt
+            con.send('boot')
+            con.expect(r'[\r\n].*login: $', timeout=120)
+        elif options[0] == 2:
+            helpers.test_failure("Switch did not reboot. Returning False")
+            return False
         return True
 
     def telnet_wait_for_switch_to_find_manifest(self, node):
@@ -1123,7 +1131,7 @@ class T5ZTN(object):
         options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell',
-                            r'ZTN Discovery'], timeout=120)
+                            r'Trying manifest'], timeout=120)
         if options[0] == 0:  # login prompt
             s.send('admin')
             options = s.expect([r'[Pp]assword:', s.get_prompt()])
@@ -1159,9 +1167,8 @@ class T5ZTN(object):
             s.send("\x03")
             s.send('reboot')
         elif options[0] == 8:  # SL Loader
-            s.send(helpers.ctrl('c'))
-            s.send("\x03")
-            s.send('reboot')
+            helpers.log("Switch %s is already rebooting. Doing nothing." % switch)
+            return True
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
