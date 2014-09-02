@@ -33,6 +33,7 @@ Configure 1k Tenant with 4k segment in default vlan-mapping mode
 	[Tags]				manual			scaling	
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
+    manual untested
     [Tags]              manual-untested           scaling     
 
 DHCP request from 48k host 
@@ -40,9 +41,11 @@ DHCP request from 48k host
 	[Tags]				manual 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
+    manual untested
 	[Tags]				manual-untested 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
+    manual untested
     [Tags]              manual-untested          scaling           
 
 Add and delete 10k cidr routes in spine switches
