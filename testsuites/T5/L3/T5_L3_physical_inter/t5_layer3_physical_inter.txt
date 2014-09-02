@@ -1184,9 +1184,9 @@ Verify private IP is able to communicate with other vns in the same tenant
     ${loss} =                                   BASH ping                       h6                      10.252.2.11             count=10
     Should Be True                              ${loss} == 0  
     rest clear testpath   
-    ${returnVal}=  rest configure testpath controller view   src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    ${returnVal}=  rest configure testpath controller view   src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11
     Should Be True  ${returnVal}           
-    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=X=Y2  dst-ip=10.252.2.11
+    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-PrivateIPtoOtherVNS-4  src-tenant=X  src-segment=X2  src-ip=10.251.2.11  dst-tenant=Y  dst-segment=Y2  dst-ip=10.252.2.11
     Should Be True  ${returnVal}
     ${returnVal}=  rest verify testpath fabric view  Test-PrivateIPtoOtherVNS-4  HostPing  leaf  host=h6  ip=10.252.2.11
     Should Be True  ${returnVal}   
@@ -1238,7 +1238,7 @@ L3 inter tenant with CRC errors
     stop traffic                                ${stream1}
     verify results                              transmitted_frames              received_valid_frames   ${stream1}              stream1
     sleep                                       1
-    ${stream2}=                                 L3 add                          name=stream1            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
+    ${stream2}=                                 L3 add                          name=stream2            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
     ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1           crc=True                    
     start traffic                               ${stream2}
     sleep  10
@@ -1262,7 +1262,7 @@ L3 inter tenant traceroute with icmp and udp probe
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     sleep                                       2
-    BASH run cmd                                route -n
+    BASH run command                            route -n
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.252.1.11
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -1451,14 +1451,14 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     ${state2} =                                 Set Variable                    ${result[0]['state']}   
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
-    Should Contain                              ${state2}                       L2 Only
+#    Should Contain                              ${state2}                       L2 Only
     ${mac5} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
     ${state5} =                                 Set Variable                    ${result[0]['state']}   
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    Should Contain                              ${state5}                       L2 Only
+#    Should Contain                              ${state5}                       L2 Only
     sleep                                       5
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     sleep                                       5
@@ -1528,6 +1528,7 @@ Host moved to another vns on another tenant and renew dhcp
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
+    BASH add route                              h1                              10.253.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
@@ -1634,15 +1635,15 @@ Inter tenant dhcp relay with multiple dhcp servers
     #REST enable dhcp relay                      Y                               Y2  
     sleep                                       5
     ${mac1} =                                   BASH get intf mac               h1                      bond0
-    ${result} =                                 REST show endpoints mac         ${mac1}
-    Should Not Be Empty                         ${result}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    Should Contain                              ${attachpoint}                  ${leaf0_pc1}
-    ${mac3} =                                   BASH get intf mac               h3                      bond0
-    ${result} =                                 REST show endpoints mac         ${mac3}
-    Should Not Be Empty                         ${result}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    Should Contain                              ${attachpoint}                  ${leaf1_pc1}
+#    ${result} =                                 REST show endpoints mac         ${mac1}
+#    Should Not Be Empty                         ${result}
+#    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+#    Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+#    ${mac3} =                                   BASH get intf mac               h3                      bond0
+#    ${result} =                                 REST show endpoints mac         ${mac3}
+#    Should Not Be Empty                         ${result}
+#    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+#    Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Not Be Empty                         ${ipAddr1}
     ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0

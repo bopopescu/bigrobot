@@ -2412,7 +2412,6 @@ Verify nexthop group uses only one member when the other member is on another ra
     ${rx_49_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${rx_50_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    stop traffic                                    ${stream1}
     ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
     ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
     ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
@@ -2437,7 +2436,7 @@ Verify nexthop group uses only one member when the other member is on another ra
     Should Be True                                  ${diffA7} > 500000 or ${diffA8} > 500000
     Should Be True                                  ${diffA9} < 100 and ${diffA10} < 100 and ${diffA11} < 100 and ${diffA12} < 100
 	Should Be True                                  ${diffA13} < 100 and ${diffA14} < 100
-    Should Be True                                  ${diffA15} < 100 and ${diffA16} 
+    Should Be True                                  ${diffA15} < 100 and ${diffA16} < 100
 	sleep											1
 	REST add nexthopGroup ip                        External                        		ecmp-A1                 	10.99.1.1	
     ${result} =                                     REST get tracked endpoint               10.99.1.1
@@ -2509,7 +2508,6 @@ Verify nexthop group uses only one member when the other member is on another ra
     ${rx_49_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${rx_50_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    stop traffic                                    ${stream1}
     ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
     ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
     ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
