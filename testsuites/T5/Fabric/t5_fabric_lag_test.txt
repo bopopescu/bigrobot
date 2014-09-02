@@ -18,7 +18,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse  run
+	[Tags]  Fabric  feature  IronHorse  
 	base suite setup  
     add fabric switch
     bring up h1 bond0
@@ -404,7 +404,7 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  5    
 
 Master node reboot failover with broadcast traffic forwarding
-	[Tags]  Fabric  feature  IronHorse  run
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
