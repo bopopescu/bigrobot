@@ -286,6 +286,7 @@ Test Song's function
 Test Robot variable
     ${var}           set variable   1.2.3.X
     log              var=${var}
+    test failed
 
 
 * Keywords
