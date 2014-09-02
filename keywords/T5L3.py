@@ -297,7 +297,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.255.11.0/24"] {"next-hop": {"next-hop-group": "ecmp-aa"}, "dst-ip-subnet": "10.255.11.0/24"}
             routes pointing to null:
             PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="X"]/logical-router/static-route[dst-ip-subnet="10.255.11.0/24"] {"dst-ip-subnet": "10.255.11.0/24"}
-
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="system"]/logical-router/static-route[dst-ip-subnet="10.99.255.0/24"] 
+            {"next-hop": {"next-hop-group": "ecmp-A1", "tenant": "External"}, "dst-ip-subnet": "10.99.255.0/24"}
         '''
 
         t = test.Test()

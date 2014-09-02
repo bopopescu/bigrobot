@@ -40,15 +40,19 @@ export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
 
 rm -rf $BIGROBOT_LOG_PATH
 for x in `cat $f`; do
-    echo Running $x
-    y=`echo $x | sed 's/.txt//'`
+    if [ `expr $x : '.*/deprecated/.*'` -gt 0 ]; then
+        echo "Ignoring $x (deprecated)"
+    else
+        echo Running $x
+        y=`echo $x | sed 's/.txt//'`
 
-    ls -la ${y}*
+        ls -la ${y}*
 
-    # Notes:
-    #   We need to count the test cases which are tagged as 'manual-untested'
-    #   as well.
-    BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
+        # Notes:
+        #   We need to count the test cases which are tagged as 'manual-untested'
+        #   as well.
+        BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
+    fi
 done
 
 find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log

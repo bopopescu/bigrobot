@@ -1800,7 +1800,7 @@ class T5Platform(object):
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
-                    return False
+                    return ("Error: %s" % line)
                 else:
                     helpers.test_failure("Error: %s" % line)
             elif re.match(r'Image added:.* build: (\d+)', line):
@@ -4691,9 +4691,11 @@ class T5Platform(object):
         for sw in switch:
             c.enable('')
             c.send("system reboot switch %s" % sw)
-            c.expect(r'.*\("y" or "yes" to continue\):')
-            c.send("yes")
-            c.expect()
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
+            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
 
             if "Error" in c.cli_content():
@@ -4734,6 +4736,12 @@ class T5Platform(object):
         helpers.log("USER INFO - switches are:  %s" % switch)
         for ip in switch:
             c.enable("system reboot switch %s" % ip)
+            
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
+
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch")
@@ -4775,9 +4783,11 @@ class T5Platform(object):
         for mac in switch:
             c.enable('')
             c.send("system reboot switch %s" % mac)
-            c.expect(r'.*\("y" or "yes" to continue\):')
-            c.send("yes")
-            c.expect()
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
+                
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch")

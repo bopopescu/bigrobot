@@ -7,10 +7,19 @@
   
 
 c1:
-  ip: dummy
+  ip: 10.8.28.10  
   monitor_reauth: false  # default=true, set to false to disable 
+  console:
+    ip: 10.8.28.6
+    libvirt_vm_name: MY-T5-C10
+    user: root
+    password: bsn
 c2:
-  ip: dummy
+  ip: 10.8.28.11   
   monitor_reauth: false  # default=true, set to false to disable
+  console:
+    ip: 10.8.28.6
+    libvirt_vm_name: MY-T5-C11
+    user: root
+    password: bsn
  
-  
