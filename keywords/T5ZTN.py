@@ -236,8 +236,16 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect(r'[\r\n]Switch Light OS', timeout=120)
-        con.expect(r'.*login: $', timeout=60)
+        #con.expect(r'[\r\n]Switch Light OS', timeout=120)
+        con.send("\n")
+        options = con.expect([r'=> ', r'[\r\n].*login: $', con.get_prompt()],
+                  timeout=120)
+        if options[0] == 0:  # Uboot prompt
+            con.send('boot')
+            con.expect(r'[\r\n].*login: $', timeout=120)
+        elif options[0] == 2:
+            helpers.test_failure("Switch did not reboot. Returning False")
+            return False
         return True
 
     def telnet_wait_for_switch_to_find_manifest(self, node):
