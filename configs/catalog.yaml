@@ -32,6 +32,12 @@ features:
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
 aggregated_builds:
+  'bvs master aggregated 2014 wk36':          # week of 2014-09-01
+    [ 
+      'bvs master #3183',
+      'bvs master #3184',
+      'bvs master #3185',
+    ] 
   'bvs master aggregated 2014 wk35':          # week of 2014-08-25
     [ 
       'bvs master #3115',
