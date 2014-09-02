@@ -1250,6 +1250,33 @@ class T5ZTN(object):
         s.expect("Hit any key to stop autoboot", timeout=100)
         return True
 
+    def telnet_reinstall_switchlight(self, switch):
+        """
+        Enter switch u-boot shell while switch is booting up
+        and request switchlight reinstall
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully requested switchlight reinstall, False otherwise
+        """
+        t = test.Test()
+        self.telnet_reboot_switch(switch)
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        s.send("")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("setenv onie_boot_reason install")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("run onie_bootcmd")
+        s.expect("Loading Open Network Install Environment")
+        return True
+
     def enter_loader_shell(self, switch):
         """
         Enter Switch Light loader shell while switch is booting up
