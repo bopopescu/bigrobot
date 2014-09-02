@@ -152,13 +152,13 @@ class T5Platform(object):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
         obj = utilities()
-        utilities.fabric_integrity_checker(obj, "after")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
         # sleep(30)
         sleep(60)
-        return utilities.fabric_integrity_checker(obj, "before")
+        return utilities.fabric_integrity_checker(obj, "after")
 
 
     def cluster_node_reboot(self, masterNode=True):

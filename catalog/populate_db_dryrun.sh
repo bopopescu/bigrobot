@@ -20,6 +20,7 @@ fi
 ts=`date "+%Y-%m-%d_%H%M%S"`
 outfile=raw_data.`basename $0`_output.$ts.log
 
+./mv_logs.sh
 ./_doit.sh > $outfile 2>&1
 
 ../bin/send_mail.py \

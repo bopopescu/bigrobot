@@ -109,6 +109,29 @@ class BuildStats(object):
             self._authors[product_suite] = author
         return self._authors
 
+    def manual_by_tag(self, tag=None, collection="test_cases"):
+        authors = self.suite_authors()
+
+        if tag == None:
+            tags = helpers.list_flatten([self.release_lowercase(),
+                                         "manual"])
+        else:
+            tags = helpers.list_flatten([self.release_lowercase(),
+                                         "manual", tag])
+
+        query = {"tags": { "$all": tags },
+                 "build_name": self._build_name}
+        testcases = self.catalog().db()[collection]
+        cases = testcases.find(query)
+        tests = []
+        for x in cases:
+            tests.append("%s %s %s %s"
+                         % (authors[x['product_suite']],
+                            x['product_suite'],
+                            x['name'],
+                            [helpers.utf8(tag) for tag in x['tags']]))
+        return tests
+
     def manual_untested_by_tag(self, tag=None, collection="test_cases"):
         authors = self.suite_authors()
 
