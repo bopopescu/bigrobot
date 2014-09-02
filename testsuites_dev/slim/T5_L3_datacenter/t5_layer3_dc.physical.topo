@@ -144,6 +144,7 @@ s11:
   ip: 10.8.24.5
   console_ip: 10.1.8.96
   console_port: 7023
+  alias: arista-1
   user: admin
   password: bsn
   
@@ -151,6 +152,7 @@ s12:
   ip: 10.8.24.6
   console_ip: 10.1.8.96
   console_port: 7024
+  alias: arista-2
   user: admin
   password: bsn
     

@@ -18,7 +18,7 @@ Resource		testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_scale_variables.txt
 * Test Cases
 Configure 1k Tenant with 4k segment in global vlan-mapping mode
 	manual passed
-	[Tags]				manual			scale	
+	[Tags]				manual			scaling	
 
 L3 Arp learning rate
     manual passed
@@ -30,45 +30,48 @@ L3 Arp discovery rate
 
 Configure 1k Tenant with 4k segment in default vlan-mapping mode
     manual passed
-	[Tags]				manual			scale	
+	[Tags]				manual			scaling	
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
-    [Tags]              manual-untested           scale     
+    [Tags]              manual-untested           scaling     
 
 DHCP request from 48k host 
-	[Tags]				manual-untested 			scale			
+    manual passed
+	[Tags]				manual 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
-	[Tags]				manual-untested 			scale			
+	[Tags]				manual-untested 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
-    [Tags]              manual-untested          scale           
+    [Tags]              manual-untested          scaling           
 
 Add and delete 10k cidr routes in spine switches
     manual failed
-	[Tags]				manual          scale	   BSC-5991     
+	[Tags]				manual          scaling	   BSC-5991     
 	
 Add and delete 10k cidr routes in leaf switches
     manual failed
-    [Tags]              manual          scale      BSC-5991              
+    [Tags]              manual          scaling      BSC-5991              
     
 Add and delete 1k nexthop group
-	[Tags]				manual-untested 			scale			
+    manual untested
+	[Tags]				manual-untested 			scaling			
 
 Add more than 1k tenant
     manual passed
-    [Tags]              manual          scale           
+    [Tags]              manual          scaling           
     
 Add more than 4k segment
     manual passed
-    [Tags]              manual          scale           
+    [Tags]              manual          scaling           
     
 Add more than 1k nexthop group
     manual untested
-    [Tags]              manual-untested           scale           
+    [Tags]              manual-untested           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
-    [Tags]              manual-untested           scale           
+    manual untested
+    [Tags]              manual-untested           scaling           
         
 
 

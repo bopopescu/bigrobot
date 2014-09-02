@@ -103,6 +103,12 @@ class BsnCommon(object):
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
 
+    def test_passed(self):
+        print("TEST PASSED")
+
+    def test_failed(self):
+        helpers.test_failure("TEST FAILED")
+
     def summary_log(self, msg):
         helpers.summary_log(msg, level=2)
 
