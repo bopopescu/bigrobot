@@ -18,84 +18,84 @@ ${projectname}  Big Cloud Fabric Appliance
 ${version}      2.0.0
     
 * Test Case
-Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.2.3.201  300
+TC001: Verify Running-Configuration
+    Verify Tacacs Configuration  0  10.2.3.201  30
     Verify AAA Authentication Configuration 
     config  c1  show tacacs
     cli  c1  show tacacs                  
     [Tags]  feature
 
-Verify tacacs server key is not shown in clear text 
+TC002: Verify tacacs server key is not shown in clear text 
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
     ${value}=  Get from dictionary  ${myDictionary[0]}  server
     ${secret}=  Get from dictionary  ${value[0]}  secret
     Should not be equal as strings  ${secret}  secret
     [Tags]  feature
         
-Add user tacacsadmin to group admin and verify access
+TC003: Add user tacacsadmin to group admin and verify access
     verify version  tacacsadmin  adminadmin  ${true}
     [Tags]  feature
 
-Verify remote authentication with open source tacacs
+TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  300
+    ${result}=  rest add tacacs server  10.9.18.2  secret  30
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.9.18.2    
     Should be true  ${result}
-    [Tags]  feature  skipped
+    [Tags]  feature  runthis 
 
-Verify multiple tacacs servers can be configured 
+TC005: Verify multiple tacacs servers can be configured 
     ${result}=  rest add tacacs server  10.9.18.2  secret  200
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.2.3.201  300
+    Verify Tacacs Configuration  0  10.2.3.201  30
     Verify Tacacs Configuration  1  10.9.18.2  200
     ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
 
-Verify second tacacs server is used when the first is unreachable   
+TC006: Verify second tacacs server is used when the first is unreachable   
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201   secret  300
+    ${result}=  rest add tacacs server  10.1.18.2  secret  200 
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  200 
+    ${result}=  rest add tacacs server  10.2.3.201   secret  30
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.9.18.2  200
-    Verify Tacacs Configuration  1  10.2.3.201   300   
+    Verify Tacacs Configuration  0  10.1.18.2  200
+    Verify Tacacs Configuration  1  10.2.3.201   30   
     verify version  tacacsadmin  adminadmin  ${true}
-    ${result}=  rest delete tacacs server  10.9.18.2
+    ${result}=  rest delete tacacs server  10.1.18.2
     Should be true  ${result}
     ${result}=  rest delete tacacs server  10.2.3.201 
     Should be true  ${result}
-    [Tags]  feature  skipped
+    [Tags]  feature    
             
-Configure mismatched tacacs secret and verify tacacs user cannot login
+TC007: Configure mismatched tacacs secret and verify tacacs user cannot login
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  300
+    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  30
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  feature  skipped
+    [Tags]  feature  
 
-Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
+TC008: Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
     ${result}=  rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
     verify version  tacacsadmin  adminadmin   ${false}
     ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
     Should not be true  ${content}            
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${true}  local_priority=2  username=tacacsadmin  password=adminadmin
-    [Tags]  feature
+    [Tags]  feature  
                 
-Delete tacacs server from configuration and verify tacacs user has no access
+TC009: Delete tacacs server from configuration and verify tacacs user has no access
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  feature  skipped
+    [Tags]  feature  
 
-Delete user tacacsadmin from group admin and verify access
+TC010: Delete user tacacsadmin from group admin and verify access
     ${result}=  cli delete user from group  tacacsadmin  admin
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
@@ -107,7 +107,7 @@ Delete user tacacsadmin from group admin and verify access
 * Keywords
 
 tacacs test setup
-    ${result}=  rest add tacacs server  10.2.3.201  secret  300
+    ${result}=  rest add tacacs server  10.2.3.201  secret  30
     Should be true  ${result}
     ${result}=  rest add tacacs authentication
     Should be true  ${result}
@@ -122,7 +122,6 @@ Verify Tacacs Configuration  [Arguments]  ${index}  ${tacacs-server}  ${timeout}
     ${tacacs-timeout}=  Convert to Integer  ${timeout}  
     Should be equal as strings  ${server-address}  ${tacacs-server}
     Should be equal as integers  ${tacacs-timeout}  ${timeout}
-    summary log  Verify tacacs configuration is a PASS    
 
 Verify AAA Authentication Configuration    
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/authenticator
@@ -136,7 +135,6 @@ Verify AAA Authentication Configuration
     ${priority}=  Get from dictionary  ${myDictionary[1]}  priority
     ${tacacs-priority}=  Convert to Integer  ${priority}
     Should be equal as integers  ${tacacs-priority}  2
-    summary log  Verify AAA Authentication configuration is a PASS
 
 verify version  [Arguments]  ${username}  ${new_password}  ${local}
     ${content}=  rest show version  string=version  user=${username}  password=${new_password}  local=${local}

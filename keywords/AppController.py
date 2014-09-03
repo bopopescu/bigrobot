@@ -709,6 +709,7 @@ class AppController(object):
                     c_user.enable("show banner")
                     content = c_user.cli_content()
                     c_user.close()
+                    t.node_reconnect(node='master')
             except:
                 return False
             else:
@@ -774,6 +775,7 @@ class AppController(object):
                     c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
                     c_user.close()
+                    t.node_reconnect(node='master')
             except:
                 helpers.test_log(c.rest.error())
                 return False
