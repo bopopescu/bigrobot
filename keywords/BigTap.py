@@ -3796,3 +3796,18 @@ class BigTap(object):
                         if content[i]['bigtapinterface'] == str(interface_name):
                             return content[i][str(stat_info)]
                 return False
+
+    def rest_return_switch_interface_stats(self, switch_dpid, switch_interface, stat_info):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/core/switch[stats/interface/interface/name="%s"][dpid="%s"]?select=stats/interface[interface/name="%s"]' % (str(switch_interface), str(switch_dpid), str(switch_interface))
+            helpers.log("URL is %s" % url)
+            c.rest.get(url)
+            content = c.rest.content()
+            return content[0]['stats']['interface'][0][str(stat_info)]
