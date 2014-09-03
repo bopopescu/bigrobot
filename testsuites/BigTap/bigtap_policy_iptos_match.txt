@@ -14,17 +14,17 @@ Library  keywords/ThirdParty.py
 
 ############################ TOPOLOGY #################################
 ##                                                                   ##
-##   linux-->s1(app-s4810-2)-->ixia                                  ##
+##   linux-->s1(app-rlb9-1)-->ixia                                  ##
 ##                                                                   ##
 ######################### TOPOLOGY ####################################
 
 ###  Based on http://www.tucny.com/Home/dscp-tos 
 * Variable
-${switch_alias}                            app-as4600-1     #Alias for switch 1
-${switch_filter_intf}                      ethernet4      #filter interface on switch app-s4810-2
-${switch_filter_alias}                     pandora-eth1    #Alias for filter interface on switch app-s4810-2
+${switch_alias}                            app-rlb9-1     #Alias for switch 1
+${switch_filter_intf}                      ethernet5      #filter interface on switch app-s4810-2
+${switch_filter_alias}                     pandora-eth3    #Alias for filter interface on switch app-s4810-2
 ${switch_delivery_intf}                    ethernet2       #Delivery interface on switch app-s4810-2
-${switch_delivery_alias}                   ixia-2-2        #Alias for delivery interface on switch app-s4810-2
+${switch_delivery_alias}                   ixia-2-4        #Alias for delivery interface on switch app-s4810-2
 
 ${policy_name_1}                            P1
 ${policy_name_2}                            ZP1
@@ -46,7 +46,7 @@ TC002:Match on packet with TOS Precedence:Routine Binary:000000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00000000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00000000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-0
@@ -60,7 +60,7 @@ TC003:Match on packet with TOS Precedence:Routine, Reliability:High Binary:00000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00000100.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00000100.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-1
@@ -74,7 +74,7 @@ TC004:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00001000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00001000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-2
@@ -88,7 +88,7 @@ TC005:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00001100.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00001100.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-3
@@ -102,7 +102,7 @@ TC006:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00010000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00010000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-4
@@ -116,7 +116,7 @@ TC007:Match on packet with TOS Precedence:Priority, Binary:001000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00100000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00100000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-8
@@ -130,7 +130,7 @@ TC008:Match on packet with TOS Precedence:Priority, Throughput:High, Binary:0010
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00101000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00101000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-10
@@ -144,7 +144,7 @@ TC009:Match on packet with TOS Precedence:Priority, Delay:Low, Binary:001100
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00110000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00110000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-12
@@ -158,7 +158,7 @@ TC010:Match on packet with TOS Precedence:Priority, Delay:Low, Throughput:High, 
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos00111000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00111000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-14    
@@ -172,7 +172,7 @@ TC011:Match on packet with TOS Precedence:Immediate, Binary:010000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01000000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01000000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-16 
@@ -186,7 +186,7 @@ TC012:Match on packet with TOS Precedence:Immediate, Throughput:High, Binary:010
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01001000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01001000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-18
@@ -200,7 +200,7 @@ TC013:Match on packet with TOS Precedence:Immediate, Delay:Low, Binary:010100
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01010000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01010000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-20
@@ -214,7 +214,7 @@ TC014:Match on packet with TOS Precedence:Immediate, Delay:Low, Throughput:High,
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01011000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01011000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-22
@@ -228,7 +228,7 @@ TC015:Match on packet with TOS Precedence:Flash, Binary:011000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01100000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01100000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-24
@@ -242,7 +242,7 @@ TC016:Match on packet with TOS Precedence:Flash, Throughput:High, Binary:011010
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01101000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01101000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-26
@@ -256,7 +256,7 @@ TC017:Match on packet with TOS Precedence:Flash, Delay:Low, Binary:011100
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01110000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01110000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-28    
@@ -270,7 +270,7 @@ TC018:Match on packet with TOS Precedence:Flash, Delay:Low, Throughput:High, Bin
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos01111000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01111000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-30
@@ -284,7 +284,7 @@ TC019:Match on packet with TOS Precedence:FlashOverride, Binary:100000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10000000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10000000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-32
@@ -298,7 +298,7 @@ TC020:Match on packet with TOS Precedence:FlashOverride, Throughput:High, Binary
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10001000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10001000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-34
@@ -312,7 +312,7 @@ TC021:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Binary:10010
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10010000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10010000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-36
@@ -326,7 +326,7 @@ TC022:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Throughput:H
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10011000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10011000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-38
@@ -340,7 +340,7 @@ TC023:Match on packet with TOS Precedence:Critical, Binary:101000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10100000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10100000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-40
@@ -354,7 +354,7 @@ TC024:Match on packet with TOS Precedence:Critical, Delay:Low, Binary:101100
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10110000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10110000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-44
@@ -368,7 +368,7 @@ TC025:Match on packet with TOS Precedence:Critical, Delay:Low, Throughput:High, 
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos10111000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10111000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-46          
@@ -382,7 +382,7 @@ TC026:Match on packet with TOS Precedence:InterNetworkControl, Binary:110000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos11000000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos11000000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-48
@@ -396,7 +396,7 @@ TC027:Match on packet with TOS Precedence:NetworkControl, Binary:111000
     sleep  1    
     rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
     sleep  1
-    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth2 -l 2 /root/pcaps/tos11100000.pcap
+    bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos11100000.pcap
     sleep  30
     verify packet count 
     [Tags]  tos-value-56
