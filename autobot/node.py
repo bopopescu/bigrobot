@@ -132,13 +132,13 @@ class Node(object):
                             % self.name())
 
         if 'ip' in self._console_info:
-            if 'port' in self._console_info:
-                self._console_info['type'] = 'telnet'
-                self._console_info['protocol'] = 'telnet'
-            elif 'libvirt_vm_name' in self._console_info:
+            if self._console_info.get('libvirt_vm_name', None):
                 self._console_info['type'] = 'libvirt'
                 self._console_info['protocol'] = 'ssh'
                 self._console_info['port'] = None
+            elif self._console_info.get('port', None):
+                self._console_info['type'] = 'telnet'
+                self._console_info['protocol'] = 'telnet'
             else:
                 helpers.environment_failure("Supported console types are"
                                             " telnet (IP and port) and libvirt"
@@ -163,10 +163,12 @@ class Node(object):
             self._console_info['driver'] = None
 
         helpers.log("Using devconf driver '%s' for console to '%s'"
-                    % (driver, self.name()))
+                    % (self._console_info['driver'], self.name()))
 
         # This is where we need to instantiate a devconf object,
         # if applicable.
+
+        return self.dev_console
 
     def console_reconnect(self, driver=None):
         raise NotImplementedError()
@@ -187,6 +189,8 @@ class Node(object):
             h.send(helpers.ctrl(']'))
             h.expect(r'telnet> ')
             h.send('quit')
+        h.close()
+        self.dev_console = None
 
     def connect(self, user, password, port=None, protocol='ssh', host=None,
                 name=None):
@@ -370,6 +374,8 @@ class ControllerNode(Node):
 
         super(ControllerNode, self).console(driver)
 
+        helpers.log("'%s' console type: %s" % (self.name(),
+                                               self._console_info['type']))
         if self._console_info['type'] == 'telnet':
             # For telnet console, requirements are an IP address and a port
             # number.
@@ -386,8 +392,13 @@ class ControllerNode(Node):
             # For libvirt console, requirements are an IP address (of the
             # KVM server) and the libvirt VM name (libvirt_vm_name). We will
             # first SSH to the KVM server, then execute 'virsh console <name>'.
-            self.dev_console = devconf.HostDevConf(
-                                    name=self.name(),
+            #
+            # Note: We're using ControllerDevConf even though the libvirt
+            # server is Ubuntu. This is because once we get on the controller
+            # console, we want to be able to issue commands in different
+            # modes: cli, enable, config, bash, etc.
+            self.dev_console = devconf.ControllerDevConf(
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
@@ -402,6 +413,13 @@ class ControllerNode(Node):
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s" %
                                   self._console_info['libvirt_vm_name'])
+            try:
+                self.dev_console.expect(r'Escape character is.*', timeout=10)
+            except:
+                helpers.log("Could not find console signature"
+                            " 'Escape character is ^]' - matching everything"
+                            " as last resort")
+                self.dev_console.expect(r'.*', timeout=10)
 
         # FIXME!!! The code below is not working. Figure out why...
 
@@ -418,6 +436,14 @@ class ControllerNode(Node):
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s"
                                   % self._console_info['libvirt_vm_name'])
+            try:
+                self.dev_console.expect(r'Escape character is.*', timeout=10)
+            except:
+                helpers.log("Could not find console signature"
+                            " 'Escape character is ^]' - matching everything"
+                            " as last resort")
+                self.dev_console.expect(r'.*', timeout=10)
+
             return self.dev_console
 
     def monitor_reauth(self, state):
