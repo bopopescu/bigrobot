@@ -1481,7 +1481,7 @@ class Ixia(object):
         helpers.log('result:\n%s' % helpers.prettify(result))
         return True
 
-    def ix_check_vport_state(self, vports_not_connected=False, **kwargs):
+    def ix_check_vport_state(self, vports_not_connected=False, retry_count=0, **kwargs):
         handle = self._handle
         for vport in self._vports:
             helpers.log("Checking Connection State of Vport: %s" % str(vport))
@@ -1496,10 +1496,14 @@ class Ixia(object):
                 helpers.log("Ports still connected ..No IXIA connection issues")
                 vports_not_connected = False
         if vports_not_connected:
+            if retry_count == 10:
+                helpers.log("Already tried 10 times to re-connect Release IXIA Ports , Aborting tests please check IXNETWORK on Corresponding Windows RDP...")
+                helpers.exit_robot_immediately("Aborting tests Due to IXIA Ports got Released / disconnected even after trying 10 times to re-connect")
+                return False
             helpers.log("Waiting for IXIA ports to connecte back ....")
             helpers.sleep(10)
             helpers.log("vports state..after connecting back")
-            self.ix_check_vport_state(vports_not_connected)
+            self.ix_check_vport_state(vports_not_connected, retry_count=retry_count + 1)
         return True
 
     def ix_delete_traffic(self, **kwargs):
