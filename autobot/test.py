@@ -1414,6 +1414,9 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(300)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1423,9 +1426,6 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")
