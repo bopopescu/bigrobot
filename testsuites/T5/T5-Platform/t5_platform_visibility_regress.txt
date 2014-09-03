@@ -757,21 +757,12 @@ Tracking with multiple test paths
 ################## 		Visibility		################## 	
 
 Verify LED support:  “beacon switch”
-	[Tags]  visibility  feature  manual-untested
-	manual untested
+	[Tags]  visibility  feature  manual
+	manual passed
 
 OF packet capture details
-	[Tags]  visibility  feature  manual-untested
-	manual untested
-	
-Wireshark capabilities from the controller
-	[Tags]  visibility  feature  manual-untested
-	manual untested
-
-
-
-
-
+	[Tags]  visibility  feature  manual
+	manual passed
 
 
 ########################################################################################################################################
