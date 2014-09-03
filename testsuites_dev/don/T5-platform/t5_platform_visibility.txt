@@ -55,7 +55,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  feature  setup  skipped
+	[Tags]  feature  setup
 	#bash network restart  h1
 	#bash add tag  h1  bond0  10 
 	#bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -117,7 +117,7 @@ T0 Setup
     bash add ip address  h6  ${h6_single_ip}/24  eth1
     bash ifup intf  h6  eth1
     
-    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+    #Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
