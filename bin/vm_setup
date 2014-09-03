@@ -123,7 +123,7 @@ def main(*args):
                                  vm_host_name=vm_host_name,
                                  build_number=args.build_number,
                                  cluster_ip=args.cluster_ip,
-                                 network_interface=args.network_interface)
+                                 network_interface=args.network_interface, vm_ram=args.vm_ram)
 
     if not active_vm['status_code']:
         helpers.error_exit("Issue seen during VM setup\n%s"
@@ -165,7 +165,7 @@ def main(*args):
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
                                       build_number=args.build_number,
-                                      network_interface=args.network_interface)
+                                      network_interface=args.network_interface, vm_ram=args.vm_ram)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         # temporarily setting STANDBY_VM env for jenkins vm_setup
         helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
@@ -204,6 +204,8 @@ if __name__ == '__main__':
                         help="This used for gateway for VMs")
     parser.add_argument("--network_interface",
                         help="This used for virtual network interface on the KVM HOST Server")
+    parser.add_argument("--vm_ram",
+                        help="This used for vm RAM on  the KVM HOST Server")
     main()
     print "Success!!!"
     sys.exit(0)
