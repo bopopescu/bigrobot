@@ -187,8 +187,8 @@ class Node(object):
             h.send(helpers.ctrl(']'))
         elif self._console_info['type'] == 'telnet':
             h.send(helpers.ctrl(']'))
-            h.expect(r'telnet> ')
-            h.send('quit')
+            # h.expect(r'telnet> ')
+            # h.send('quit')
         h.close()
         self.dev_console = None
 
