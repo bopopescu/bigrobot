@@ -1308,7 +1308,21 @@ class Test(object):
         con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
-        helpers.log("Finish sending Reboot on switch : %s" % name)
+        if helpers.bigrobot_ztn_installer().lower() != "true":
+            helpers.log("Finish sending Reboot on switch : %s" % name)
+            return
+        try:
+            con.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        con.send("")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("setenv onie_boot_reason install")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("run onie_bootcmd")
+        con.expect("Loading Open Network Install Environment")
+        helpers.log("Finish sending Reboot on switch : %s with installer option" % name)
         return True
 
     def setup_ztn_phase2(self, name):
@@ -1394,8 +1408,15 @@ class Test(object):
                 standby = self.controller("slave")
                 for key in params:
                     self.setup_ztn_phase1(key)
-                helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
+                if helpers.bigrobot_ztn_installer().lower() != "true":
+                    helpers.log("Sleeping 2 mins..")
+                    helpers.sleep(120)
+                else:
+                    helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
+                    helpers.sleep(300)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1405,9 +1426,6 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")

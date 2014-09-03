@@ -603,6 +603,7 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
+
 def bigrobot_ztn_reload(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -610,12 +611,21 @@ def bigrobot_ztn_reload(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_ZTN_RELOAD', new_val, default)
 
+def bigrobot_ztn_installer(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using needed reboot of all the switchs with new ZTN controllers and install Loader.
+    """
+    return _env_get_and_set('BIGROBOT_ZTN_INSTALLER', new_val, default)
+
 def bigrobot_ha_logging(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'True' if needed extra HA logging to debug HA relates issues during script Runs.
     """
     return _env_get_and_set('BIGROBOT_HA_LOGGING', new_val, default)
+
+
 def bigrobot_log_archiver(new_val=None, default='qa-tools1.qa.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.

@@ -517,7 +517,7 @@ T15 Verify/Measure Non-Graceful operations
     Log    Verify traffic loss/Standby take over
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	
 	   
 T16 Kill floodlight deamon in master contorller

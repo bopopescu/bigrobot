@@ -60,21 +60,22 @@ Test Controller behavior during high cpu spikes
 
 Test Simulate with large configs / issuing failover etc
     Log     Step 1 - Test Simulate with large configs / issuing failover etc   
+    Log     Step 2 - Configuration - 200 tenants, 200 segments, 4K endpoints 
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Test Continuous SNMP Walks
     Log     Step 1 - Test Continuous SNMP Walks   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Test Continuous switch connect/disconnect
     Log     Step 1 - Test Continuous switch connect/disconnect   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Test Continuous switch connect/disconnectTest Without removing the stdby controller add another stdby controller with the same IP
     Log     Step 1 - Test Without removing the stdby controller add another stdby controller with the same IP   
@@ -86,18 +87,18 @@ Try to add more than 2 controllers in to a cluster
     Log     Step 1 - Try to add more than 2 controllers in to a cluster 
     Log     Step 2 - Verify that it should not be allowed and 3rd controller should not join cluster  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual  jira-bsc-5662
-    Manual Failed 
+    [Tags]  Manual  
+    Manual passed 
 
 Test Active & Stdby controller configured in different time zones
     Log     Step 1 - Test Active & Stdby controller configured in different time zones 
     Log     Step 2 - The configuration in stby for NTP is not being accepted. It rejects with proper error message  
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual Passed 
+    Manual passed 
 
 Killing active deamons (eg: keepalived, ntpd, collectd)
-    Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd)   
+    Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd, rsyslog)   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
     Manual passed 
@@ -110,7 +111,7 @@ Test continuous floodlight restarts
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
     Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
-    Log     Step 2 - Verify that the configuration get rejected with error message 
+    Log     Step 2 - Verify that the configuration get rejected with proper error message 
     [Tags]  T5  controller  negative  
     [Tags]  Manual
     Manual passed
@@ -124,14 +125,14 @@ Changes in the switch role (leaf to spine / spine to leaf)
 Misconfiguration in the leaf groups 
     Log     Step 1 - Misconfiguration in the leaf groups   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
     
 Misconfiguration in the port-groups. Configuring disconnected/mismatch links
     Log     Step 1 - Misconfiguration in the port-groups. Configuring disconnected/mismatch links   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Connect server ports to leaves in 2 different racks
     Log     Step 1 - Connect server ports to leaves in 2 different racks   

@@ -152,13 +152,13 @@ class T5Platform(object):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
         obj = utilities()
-        utilities.fabric_integrity_checker(obj, "after")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
         # sleep(30)
         sleep(60)
-        return utilities.fabric_integrity_checker(obj, "before")
+        return utilities.fabric_integrity_checker(obj, "after")
 
 
     def cluster_node_reboot(self, masterNode=True):
@@ -236,17 +236,17 @@ class T5Platform(object):
 
         if(singleNode):
             if(masterID == newMasterID):
-                obj.restart_floodlight_monitor("master")
+                #obj.restart_floodlight_monitor("master")
                 helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
                 helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
                     After the reboot Master is: %s " % (masterID, newMasterID))
         else:
-            if(masterNode):
-                obj.restart_floodlight_monitor("slave")
-            else:
-                obj.restart_floodlight_monitor("master")
+            #if(masterNode):
+            #    obj.restart_floodlight_monitor("slave")
+            #else:
+            #    obj.restart_floodlight_monitor("master")
 
             if(masterNode):
                 if(masterID == newSlaveID and slaveID == newMasterID):
@@ -255,7 +255,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
-                    obj.stop_floodlight_monitor()
+                    #obj.stop_floodlight_monitor()
                     return False
             else:
                 if(masterID == newMasterID and slaveID == newSlaveID):
@@ -264,7 +264,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
-                    obj.stop_floodlight_monitor()
+                    #obj.stop_floodlight_monitor()
                     return False
 
 
@@ -425,7 +425,7 @@ class T5Platform(object):
             helpers.log("Joining thread: %s" % thread)
             thread.join()
 
-        sleep(30)
+        sleep(60)
         return utilities.fabric_integrity_checker(obj, "after")
 
         # Create new threads
@@ -1800,7 +1800,7 @@ class T5Platform(object):
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
-                    return False
+                    return ("Error: %s" % line)
                 else:
                     helpers.test_failure("Error: %s" % line)
             elif re.match(r'Image added:.* build: (\d+)', line):
@@ -4691,9 +4691,11 @@ class T5Platform(object):
         for sw in switch:
             c.enable('')
             c.send("system reboot switch %s" % sw)
-            c.expect(r'.*\("y" or "yes" to continue\):')
-            c.send("yes")
-            c.expect()
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
+            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
 
             if "Error" in c.cli_content():
@@ -4734,6 +4736,12 @@ class T5Platform(object):
         helpers.log("USER INFO - switches are:  %s" % switch)
         for ip in switch:
             c.enable("system reboot switch %s" % ip)
+            
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
+
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch")
@@ -4775,9 +4783,11 @@ class T5Platform(object):
         for mac in switch:
             c.enable('')
             c.send("system reboot switch %s" % mac)
-            c.expect(r'.*\("y" or "yes" to continue\):')
-            c.send("yes")
-            c.expect()
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
+            if options[0] == 0:  # login prompt
+                c.send("yes")
+                c.expect()
+                
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch")

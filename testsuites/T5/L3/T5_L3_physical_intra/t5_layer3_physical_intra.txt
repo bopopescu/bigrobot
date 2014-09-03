@@ -2633,8 +2633,8 @@ Reboot Leaf0 via CLI
     Should Be True                              ${loss} == 0   
     ixia initialize  tg1  init=True 
     ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=128              frame_cnt=2000000
-    ...                                         src_ip=10.251.1.101             src_cnt=10              src_ip_step=0.0.0.1     src_gw=10.251.1.1       
-    ...                                         dst_ip=10.251.2.101             dst_cnt=10              dst_ip_step=0.0.0.1     dst_gw=10.251.2.1                       
+    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       
+    ...                                         dst_ip=10.251.2.101             dst_gw=10.251.2.1                       
     start traffic                               ${stream1}
     sleep  10
     CLI restart switch                          s3
@@ -2643,9 +2643,6 @@ Reboot Leaf0 via CLI
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
     BASH delete route                           h5                              10.251.2.0/24           10.251.1.1
     BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
-
-
-
 
 
 Connect and Disconnect spine to controller
@@ -3320,7 +3317,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
-    sleep                                       1
+    sleep                                       5
     BASH ping                                   h3                              10.251.1.1              count=10
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -3407,7 +3404,16 @@ Verify clear blocked endpoint works
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        h3                              timeout=60
+#    BASH network restart                        h3                              timeout=60
+    BASH init intf                              h3                              bond0.1003
+    BASH run command                            h3                              ifdown bond0
+    BASH run command                            h3                              ifdown bond0.1003
+    sleep                                       1
+    BASH run command                            h3                              ifup eth2
+    BASH run command                            h3                              ifup eth3
+    BASH run command                            h3                              ifup p1p1
+    BASH run command                            h3                              ifup p1p2
+    BASH run command                            h3                              ifup bond0    
     sleep                                       5
     REST clear blocked endpoint                 X                               X1                      ${mac1}
     sleep                                       5
@@ -3474,6 +3480,7 @@ Verify blocked endpoint should be automatically cleared
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
+    
     BASH network restart                        h3                              timeout=60
     sleep                                       600
     ${result} =                                 REST show endpoints mac         ${mac1}

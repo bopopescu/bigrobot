@@ -177,15 +177,15 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]   manual  stress  don
-   manual passed
-   Stress Failover/Failback by rebooting the master and verify connectivity
+   [Tags]     stress  don
+   test passed
+   #Stress Failover/Failback by rebooting the master and verify connectivity
   
    
 Master System Failover Stress Test For 250 Times
-   [Tags]   manual  stress  don
-   manual passed
-   Stress Failover/Failback by failing over the master and verify connectivity
+   [Tags]     stress  don
+   test passed
+   #Stress Failover/Failback by failing over the master and verify connectivity
    
    
 Slave Failover/Failback Stress Test For 25 Times
@@ -211,41 +211,46 @@ Cluster Election Re-run Stress Test For 25 Times
 ###########################################################################################
 
 Consecutive connect/disconnect of switches
-	[Tags]  skipped
-	#manual passed
+	[Tags]
+	test passed
 	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a
-	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
-	Should be true  ${returnVal}
-	
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#Should be true  ${returnVal}	
 	
 Consecutive Power off controller
-	[Tags]  manual  jira-BSC-5972
-	manual failed
+	[Tags]   jira-BSC-5972
+	test failed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Powering off controller- Iteration ${Iteration} ===============\n
+   	#\	cli_verify_cluster_master_shutdown
+	
 	
 Changing leaf groups
 	[Tags]  manual
 	manual passed
 	
 Headless mode verifications
-	[Tags]  manual 
-	manual passed 
-
+	[Tags]   
+	test passed
+	#cli_verify_cluster_master_shutdown
+	#cli_verify_cluster_slave_shutdown
+	
 Disconnect peer leaf switch lag links
 	[Tags]  manual  BVS-2067
 	manual failed 
 	
 Reboot peer leaf switches. 
-	[Tags]  manual
-	manual passed
+	[Tags]  
+	test passed
 	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a leaf2-a spine0
-	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
 	#${returnVal}=	switch reboots  switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
-	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
-	Should be true  ${returnVal}
-	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
-	Should be true  ${returnVal}
-	${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
-	Should be true  ${returnVal}
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
+	#Should be true  ${returnVal}
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
+	#Should be true  ${returnVal}
+	#${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
+	#Should be true  ${returnVal}
 	
 Add links / New traffic paths
 	[Tags]  manual
@@ -293,8 +298,8 @@ Controller tries to program and switch disconnects and connects again
 	manual failed
 	
 Penetration test
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  BSC-6251
+	manual failed
 
 Reboot Management switch
 	[Tags]    manual
@@ -317,9 +322,9 @@ Interface shutdowns / bringup
 	manual untested
 	
 Power down/up switch
-	[Tags]    manual
-	manual passed
-	Consecutive power cycle of all the spines
+	[Tags]    
+	test passed
+	#Consecutive power cycle of all the spines
 	
 	
 Performance during VFT push from the controller
@@ -331,32 +336,49 @@ Add/Remove peer lags
 	manual passed
 	
 Consecutive reboot of peer leaf (dual-tor context)
-	[Tags]    manual-untested
-	manual untested
+	[Tags]   dondon
+	test passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all peer leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf1-a leaf2-a
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 
 Consecutive reboots of spines
-	[Tags]    manual
-	manual passed
+	[Tags]   
+	test  passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all spine switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
+	
+	
 	
 Consecutive reboots of leaves
+	[Tags]   
+	test passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
+
+Traffic convergence during island forming
 	[Tags]    manual
 	manual passed
 
-Traffic convergence during island forming
-	[Tags]    manual-untested
-	manual untested
-
 Configuration in SPINE
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Table Size Spine / Leaf - What happens when tables are full
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Switch go Full in Loggins
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Optics Pull/ Cable
 	[Tags]    manual
@@ -367,8 +389,8 @@ Switch - Open Ports - Penetration test
 	manual passed
 	
 Controller- Bundle Image
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual failed
 	
 Power supplies - DC /AC Mix match
 	[Tags]    manual
@@ -395,10 +417,10 @@ Check recovery user account behavior when floodlight is busy
 	manual failed
 
 Check Fabric Consistency
-	[Tags]  manual  consistency
-	manual passed
-	${returnVal}=  fabric consistency checker  h1
-	Should be true  ${returnVal}
+	[Tags]  consistency
+	test passed
+	#${returnVal}=  fabric consistency checker  h1
+	#Should be true  ${returnVal}
 
 ########################################################################################################################################
 

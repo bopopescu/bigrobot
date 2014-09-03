@@ -373,6 +373,4 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	  
-   
- 	
+	
