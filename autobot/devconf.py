@@ -698,7 +698,7 @@ class ControllerDevConf(BsnDevConf):
         #
         # Inside autobot/node.py is where we disabled this functionality.
         #
-        is_monitor_reauth = kwargs.pop('is_monitor_reauth', True)
+        is_monitor_reauth = kwargs.pop('is_monitor_reauth', False)
         super(ControllerDevConf, self).__init__(*args, **kwargs)
 
         self.test_monitor = None

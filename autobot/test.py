@@ -922,6 +922,8 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+
+        helpers.log("Sending carriage return and checking for matching prompt/output")
         n_console.send('')
 
         def login():
