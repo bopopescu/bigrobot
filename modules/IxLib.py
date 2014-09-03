@@ -1481,9 +1481,8 @@ class Ixia(object):
         helpers.log('result:\n%s' % helpers.prettify(result))
         return True
 
-    def ix_check_vport_state(self, **kwargs):
+    def ix_check_vport_state(self, vports_not_connected=False, **kwargs):
         handle = self._handle
-        vports_not_connected = False
         for vport in self._vports:
             helpers.log("Checking Connection State of Vport: %s" % str(vport))
             vport_state = handle.getAttribute(vport, '-isConnected')
@@ -1495,13 +1494,12 @@ class Ixia(object):
                 helpers.log("Executed vport connected")
             else:
                 helpers.log("Ports still connected ..No IXIA connection issues")
+                vports_not_connected = False
         if vports_not_connected:
             helpers.log("Waiting for IXIA ports to connecte back ....")
             helpers.sleep(10)
-        helpers.log("vports state..after connecting back")
-        for vport in self._vports:
-            vport_state = handle.getAttribute(vport, '-isConnected')
-            helpers.log("Connection State: %s" % str(vport_state))
+            helpers.log("vports state..after connecting back")
+            self.ix_check_vport_state(vports_not_connected)
         return True
 
     def ix_delete_traffic(self, **kwargs):
