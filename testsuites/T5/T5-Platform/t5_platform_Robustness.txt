@@ -179,13 +179,13 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 Master Reboot Stress Test For 200 Times
    [Tags]     stress  don
    test passed
-   Stress Failover/Failback by rebooting the master and verify connectivity
+   #Stress Failover/Failback by rebooting the master and verify connectivity
   
    
 Master System Failover Stress Test For 250 Times
    [Tags]     stress  don
    test passed
-   Stress Failover/Failback by failing over the master and verify connectivity
+   #Stress Failover/Failback by failing over the master and verify connectivity
    
    
 Slave Failover/Failback Stress Test For 25 Times
@@ -214,15 +214,15 @@ Consecutive connect/disconnect of switches
 	[Tags]
 	test passed
 	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a
-	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
-	Should be true  ${returnVal}	
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#Should be true  ${returnVal}	
 	
 Consecutive Power off controller
 	[Tags]   jira-BSC-5972
 	test failed
-	: FOR    ${Iteration}    IN RANGE    1    5
-   	\	Log To Console   \n================ Powering off controller- Iteration ${Iteration} ===============\n
-   	\	cli_verify_cluster_master_shutdown
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Powering off controller- Iteration ${Iteration} ===============\n
+   	#\	cli_verify_cluster_master_shutdown
 	
 	
 Changing leaf groups
@@ -232,8 +232,8 @@ Changing leaf groups
 Headless mode verifications
 	[Tags]   
 	test passed
-	cli_verify_cluster_master_shutdown
-	cli_verify_cluster_slave_shutdown
+	#cli_verify_cluster_master_shutdown
+	#cli_verify_cluster_slave_shutdown
 	
 Disconnect peer leaf switch lag links
 	[Tags]  manual  BVS-2067
@@ -243,14 +243,14 @@ Reboot peer leaf switches.
 	[Tags]  
 	test passed
 	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a leaf2-a spine0
-	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
 	#${returnVal}=	switch reboots  switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
-	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
-	Should be true  ${returnVal}
-	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
-	Should be true  ${returnVal}
-	${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
-	Should be true  ${returnVal}
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
+	#Should be true  ${returnVal}
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
+	#Should be true  ${returnVal}
+	#${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
+	#Should be true  ${returnVal}
 	
 Add links / New traffic paths
 	[Tags]  manual
@@ -324,7 +324,7 @@ Interface shutdowns / bringup
 Power down/up switch
 	[Tags]    
 	test passed
-	Consecutive power cycle of all the spines
+	#Consecutive power cycle of all the spines
 	
 	
 Performance during VFT push from the controller
@@ -338,32 +338,31 @@ Add/Remove peer lags
 Consecutive reboot of peer leaf (dual-tor context)
 	[Tags]   dondon
 	test passed
-	: FOR    ${Iteration}    IN RANGE    1    5
-   	\	Log To Console   \n================ Rebooting all peer leaf switches - Iteration ${Iteration} ===============\n
-	\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf1-a leaf2-a
-	\	Should be true  ${returnVal}
-	\	sleep  120
-	#manual untested
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all peer leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf1-a leaf2-a
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 
 Consecutive reboots of spines
 	[Tags]   
 	test  passed
-	: FOR    ${Iteration}    IN RANGE    1    5
-   	\	Log To Console   \n================ Rebooting all spine switches - Iteration ${Iteration} ===============\n
-	\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
-	\	Should be true  ${returnVal}
-	\	sleep  120
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all spine switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 	
 	
 	
 Consecutive reboots of leaves
 	[Tags]   
 	test passed
-	: FOR    ${Iteration}    IN RANGE    1    5
-   	\	Log To Console   \n================ Rebooting all leaf switches - Iteration ${Iteration} ===============\n
-	\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
-	\	Should be true  ${returnVal}
-	\	sleep  120
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 
 Traffic convergence during island forming
 	[Tags]    manual
@@ -420,8 +419,8 @@ Check recovery user account behavior when floodlight is busy
 Check Fabric Consistency
 	[Tags]  consistency
 	test passed
-	${returnVal}=  fabric consistency checker  h1
-	Should be true  ${returnVal}
+	#${returnVal}=  fabric consistency checker  h1
+	#Should be true  ${returnVal}
 
 ########################################################################################################################################
 
