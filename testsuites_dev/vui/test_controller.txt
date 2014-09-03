@@ -215,6 +215,10 @@ Test console
     [Tags]  skipped
     test console      c1
 
+Test controller console
+    #[Tags]  skipped
+    test controller console      c1
+
 Test node reconnect
     [Tags]  skipped
     test node reconnect   c1
@@ -235,6 +239,7 @@ Test reauth timeout
     sleep             60
     sleep             60
     #bash              c1   uname -a
+    cli               c1   show session
     config            c1   show session
     cli               c1   show session
 
@@ -249,6 +254,6 @@ Test spawn login sessions
     Log                And we are done!!!
 
 Test reauth trial
-    #[Tags]  skipped
+    [Tags]  skipped
     reauth trial      c1
     config            c1   show session
