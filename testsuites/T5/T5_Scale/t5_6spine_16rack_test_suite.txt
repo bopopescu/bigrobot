@@ -539,9 +539,9 @@ T17 Kill floodlight deamon in slave contorller
     Log   kill floodlight with kill option 9 under slave controller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+	manual passed
 	
 T18 Kill floodlight deamon in master/slave contorller
     Log   Repeat T3
