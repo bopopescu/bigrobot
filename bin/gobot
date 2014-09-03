@@ -201,6 +201,7 @@ helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
 helpers.bigrobot_esb()
 helpers.bigrobot_esb_broker()
 helpers.bigrobot_ztn_reload()
+helpers.bigrobot_ztn_installer()
 helpers.bigrobot_ha_logging()
 helpers.bigrobot_quiet_output()
 
