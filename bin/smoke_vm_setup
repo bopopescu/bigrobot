@@ -117,7 +117,7 @@ def main(*args):
                                  vm_host_name=vm_host_name,
                                  build_number=args.build_number,
                                  gateway=args.gateway,
-                                 network_interface=args.network_interface)
+                                 network_interface=args.network_interface, vm_ram=args.vm_ram)
 
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
@@ -148,7 +148,7 @@ def main(*args):
                                       vm_host_name=vm_host_name,
                                       build_number=args.build_number,
                                       gateway=args.gateway,
-                                      network_interface=args.network_interface)
+                                      network_interface=args.network_interface, vm_ram=args.vm_ram)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -409,5 +409,7 @@ if __name__ == '__main__':
                         help="This used for gateway for VMs")
     parser.add_argument("--network_interface",
                         help="This used for virtual network interface on the KVM HOST Server")
+    parser.add_argument("--vm_ram",
+                        help="This used for vm RAM on  the KVM HOST Server")
     main()
     sys.exit(0)
