@@ -580,6 +580,23 @@ vui@Vuis-MacBook-Pro$
         # connections won't get confused.
         n_console.cli("")
 
+    def test_switch_console(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = t.dev_console(node)
+
+        n_console.cli("show version")
+        n.console_close()  # **** Closing the console
+
+        helpers.log("***** Re-establishing connection to console for '%s'" % node)
+        n_console = t.dev_console(node)
+        n_console.enable("show running-config")
+
+        # IMPORTANT: Be sure to get back to CLI mode so future console
+        # connections won't get confused.
+        n_console.cli("")
+
+
     def test_console2(self, node):
         t = test.Test()
         n = t.node(node)
