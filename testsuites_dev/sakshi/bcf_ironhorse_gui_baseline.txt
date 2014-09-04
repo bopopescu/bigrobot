@@ -1,5 +1,5 @@
 * Settings
-Documentation   	Test suite with tests to match TCP Flags. The tests have
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
