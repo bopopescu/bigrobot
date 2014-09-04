@@ -1195,11 +1195,11 @@ class T5(object):
             return False
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
-            if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+            if (int(data[0]["rate"][0]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"][0]["rx-packet-rate"]) <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"][0]["rx-packet-rate"])))
                 return True
             else:
-                helpers.test_failure("Vns rate value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+                helpers.test_failure("Vns rate value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"][0]["rx-packet-rate"])))
                 return False
         else:
             helpers.log("Given tenant name and vns name does not match in the config")
@@ -1239,11 +1239,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
-            if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+            if (int(data[0]["rate"][0]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"][0]["tx-packet-rate"]) <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"][0]["tx-packet-rate"])))
                 return True
             else:
-                helpers.test_failure("vns rates does not match, Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+                helpers.test_failure("vns rates does not match, Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"][0]["tx-packet-rate"])))
                 return False
         else:
             helpers.log("Given tenant name and vns name does not match in the config")
@@ -2074,11 +2074,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
-                    if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+                    if (int(data[0]["rate"][0]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"][0]["rx-packet-rate"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"][0]["rx-packet-rate"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"][0]["rx-packet-rate"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
@@ -2096,11 +2096,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == tenant:
-                    if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+                    if (int(data[0]["rate"][0]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"][0]["tx-packet-rate"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"][0]["tx-packet-rate"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"][0]["tx-packet-rate"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
