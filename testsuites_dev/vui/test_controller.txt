@@ -216,7 +216,7 @@ Test console
     test console      c1
 
 Test controller console
-    [Tags]  skipped
+    #[Tags]  skipped
     test controller console      c1
 
 Test node reconnect
@@ -259,7 +259,7 @@ Test reauth trial
     config            c1   show session
 
 Test REST commands
-    #[Tags]  skipped
+    [Tags]  skipped
     get               c1   /api/v1/data/controller/core/version/appliance
     get               c1   /api/v1/data/controller/core/aaa/local-user
     get               c1   /api/v1/data/controller/core/aaa/group

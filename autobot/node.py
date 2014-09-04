@@ -115,6 +115,15 @@ class Node(object):
         self.is_pingable = True
         return True
 
+    def _match_console_banner(self):
+        try:
+            self.dev_console.expect(r'Escape character is.*', timeout=10)
+        except:
+            helpers.log("Could not find console signature"
+                        " 'Escape character is ^]' - matching everything"
+                        " as last resort")
+            self.dev_console.expect(r'.*', timeout=10)
+
     def console(self, driver=None, force_reconnect=False):
         """
         Inheriting class needs to further extend this method.
@@ -366,7 +375,7 @@ class ControllerNode(Node):
                                        % node)
         return nodeid
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -413,13 +422,8 @@ class ControllerNode(Node):
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s" %
                                   self._console_info['libvirt_vm_name'])
-            try:
-                self.dev_console.expect(r'Escape character is.*', timeout=10)
-            except:
-                helpers.log("Could not find console signature"
-                            " 'Escape character is ^]' - matching everything"
-                            " as last resort")
-                self.dev_console.expect(r'.*', timeout=10)
+            if expect_console_banner:
+                self._match_console_banner()
 
         # FIXME!!! The code below is not working. Figure out why...
 
@@ -430,19 +434,14 @@ class ControllerNode(Node):
 
         return self.dev_console
 
-    def console_reconnect(self, driver=None):
+    def console_reconnect(self, driver=None, expect_console_banner=False):
         # Delay for 1 second to allow the output to settle.
         helpers.sleep(1)
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s"
                                   % self._console_info['libvirt_vm_name'])
-            try:
-                self.dev_console.expect(r'Escape character is.*', timeout=10)
-            except:
-                helpers.log("Could not find console signature"
-                            " 'Escape character is ^]' - matching everything"
-                            " as last resort")
-                self.dev_console.expect(r'.*', timeout=10)
+            if expect_console_banner:
+                self._match_console_banner()
 
             return self.dev_console
 
@@ -625,7 +624,7 @@ class HostNode(Node):
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -651,6 +650,8 @@ class HostNode(Node):
         else:
             helpers.test_error("Unsupported console type '%s'"
                                % self._console_info['type'])
+            if expect_console_banner:
+                self._match_console_banner()
 
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
@@ -736,7 +737,7 @@ class SwitchNode(Node):
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -759,6 +760,8 @@ class SwitchNode(Node):
         else:
             helpers.test_error("Unsupported console type '%s'"
                                % self._console_info['type'])
+            if expect_console_banner:
+                self._match_console_banner()
 
         # FIXME!!! The code below is not working. Figure out why...
 

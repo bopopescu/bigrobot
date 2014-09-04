@@ -869,7 +869,7 @@ class Test(object):
             c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node, modeless=False):
+    def dev_console(self, node, modeless=False, expect_console_banner=False):
         """
         Telnet to the console of a BSN controller or switch.
 
@@ -907,7 +907,7 @@ class Test(object):
         """
         t = self
         n = t.node(node)
-        n_console = n.console()
+        n_console = n.console(expect_console_banner=expect_console_banner)
 
         if modeless:
             return n_console
@@ -929,7 +929,7 @@ class Test(object):
         def login():
             helpers.log("Found the login prompt. Sending user name ('%s')"
                         % user)
-            n_console = n.console()
+            n_console = n.console(expect_console_banner=expect_console_banner)
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
