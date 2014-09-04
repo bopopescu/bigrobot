@@ -518,6 +518,7 @@ MIS: T112 VIP in upgrade
   	[Tags] 	full    upgrade_ztn   
   	
 MIS: T113 non admin user
+        manual untested
   	[Tags] 	full  manual-untested   upgrade_ztn 
 
   
