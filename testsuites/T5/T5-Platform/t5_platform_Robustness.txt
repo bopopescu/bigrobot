@@ -318,8 +318,8 @@ Platform Switch: Add/Remove rack lag links
 	manual passed
 	
 Interface shutdowns / bringup
-	[Tags]    manual-untested 
-	manual untested
+	[Tags]    manual   rerun   dondon
+	manual passed
 	
 Power down/up switch
 	[Tags]    
@@ -401,16 +401,16 @@ Order of Bring up- All links - Peer LAg and then management
 	manual passed
 	
 OFAD Packets - Malformed Packet
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  dondon  rerun
+	manual passed
 	
-OSPF/ BGP / PAcket-IN to controller
-	[Tags]    manual-untested
-	manual untested
+OSPF/ BGP /DHCP PAcket-IN to controller
+	[Tags]    manual
+	manual passed
 	
 IP header malformation
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  dondon  rerun
+	manual passed
 
 Check recovery user account behavior when floodlight is busy
 	[Tags]  manual  jira-BSC-5097
