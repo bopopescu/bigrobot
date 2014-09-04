@@ -39,15 +39,15 @@ Verify default qos weight for CPU queue in all switches
 	[Tags] 	sanity  feature  fabric_QOS
 
 Verify qos weight for CPU queue in all switches when qos enabled
-	config   master   fabric-setting
+	config   master   fabric
     config   master   qos
-    cli      master   show running-config fabric-setting 
+    cli      master   show running-config fabric 
  	${switches}=  get_all_switch_nodes  
  	@{expect}=    Create List   50  20  15  15  5  5  5  1
 	log   switches are ${switches}
  	: FOR    ${switch}   IN   @{switches}   
 	\   Verify to cpu queue weight    ${switch}   ${expect}
-	config   master   fabric-setting
+	config   master   fabric
     config   master   no qos
 
  		 
