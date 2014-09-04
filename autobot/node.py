@@ -250,7 +250,7 @@ class ControllerNode(Node):
             self.http_port = self.node_params['http_port']
         else:
             if helpers.is_bvs(self.platform()):
-                self.http_port = 8080
+                self.http_port = 8443
             elif helpers.is_bigtap(self.platform()):
                 self.http_port = 8000
 
