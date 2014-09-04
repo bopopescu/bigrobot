@@ -391,8 +391,8 @@ class T5ZTN(object):
             return True
         if options[0] == 5:
             helpers.log("Switch in ZTN Discovery process. Doing nothing")
-            #s.send(helpers.ctrl('c'))
-            #s.send('reboot')
+            s.send(helpers.ctrl('c'))
+            s.send('reboot')
             n.console_close()
             return True
         s.send('enable; config')
