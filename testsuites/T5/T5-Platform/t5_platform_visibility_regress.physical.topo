@@ -145,7 +145,7 @@ h6:
   user: root
   password: bsn
 
-#tg1:
+tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.5
   tcl_server_ip: 10.9.19.242
