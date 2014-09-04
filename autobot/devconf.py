@@ -163,6 +163,9 @@ class DevConf(object):
     def default_timeout(self):
         return self._timeout
 
+    def default_prompt(self):
+        return self.conn.get_prompt()
+
     def timeout(self, seconds=None):
         """
         Set the expect timeout to 'seconds'. If not specified, reset to

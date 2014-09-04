@@ -380,7 +380,7 @@ class ControllerNode(Node):
             # For telnet console, requirements are an IP address and a port
             # number.
             self.dev_console = devconf.ControllerDevConf(
-                                    name=self.name(),
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
@@ -640,7 +640,7 @@ class HostNode(Node):
             # For libvirt console, requirements are an IP address (of the
             # KVM server) and the libvirt VM name (libvirt_vm_name). We will
             # first SSH to the KVM server, then execute 'virsh console <name>'.
-            self.dev_console = devconf.HostDevConf(name=self.name(),
+            self.dev_console = devconf.HostDevConf(name=self.name() + "_console",
                                                    host=self._console_info['ip'],
                                                    port=self._console_info['port'],
                                                    user=self._console_info['user'],
@@ -748,7 +748,7 @@ class SwitchNode(Node):
             # For telnet console, requirements are an IP address and a port
             # number.
             self.dev_console = devconf.SwitchDevConf(
-                                    name=self.name(),
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
