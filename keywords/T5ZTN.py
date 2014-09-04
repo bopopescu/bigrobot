@@ -142,7 +142,7 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
-        n = t.node(node)
+        n = t.node(hostname)
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
         #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
@@ -294,9 +294,15 @@ class T5ZTN(object):
         - True if ZTN Discovery process failed
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        s.expect("ZTN Discovery Failed", timeout=120)
+        s.send("\n")
+        options = s.expect([r'=> ', "ZTN Discovery Failed"], timeout=120)
+        if options[0] == 0:
+            s.send("boot")
+            s.expect("ZTN Discovery Failed", timeout=120)
         s.expect("ZTN Discovery Failed", timeout=30)
+        n.console_close()
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -398,15 +404,26 @@ class T5ZTN(object):
         s.send('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
-            s.send('interface ma1 ip-address dhcp')
+            #s.send('interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 up")
+            s.send("exit")
         elif state == 'down':
             helpers.log("Setting interface MA1 down")
-            s.send('no interface ma1 ip-address dhcp')
+            #s.send('no interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 down")
+            s.send("exit")
         elif state == 'flap':
             helpers.log("Setting interface MA1 down and up")
-            s.send('no interface ma1 ip-address dhcp')
+            #s.send('no interface ma1 ip-address dhcp')
+            #helpers.sleep(10)
+            #s.send('interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 down")
             helpers.sleep(10)
-            s.send('interface ma1 ip-address dhcp')
+            s.send("ifconfig ma1 up")
+            s.send("exit")
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
             n.console_close()
@@ -1154,7 +1171,7 @@ class T5ZTN(object):
         - True if reboot triggered successfully, False otherwise
         """
         t = test.Test()
-        n = t.node(node)
+        n = t.node(switch)
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
@@ -1203,8 +1220,8 @@ class T5ZTN(object):
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
-            else:
-                s.expect(r'Clock Configuration:', timeout=120)
+            #else:
+            #    s.expect(r'Clock Configuration:', timeout=120)
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
