@@ -11,6 +11,7 @@ Documentation       T5 GUI Test Plan
 
 Library  	keywords/BsnCommon.py
 Library		String
+Force Tags      T5  GUI  Feature  IronHorse
 
 *** Test Cases ***
 #Workflows:
