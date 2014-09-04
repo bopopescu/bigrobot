@@ -142,6 +142,7 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
         #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
@@ -173,7 +174,7 @@ class T5ZTN(object):
                 if ' ' in line:
                     line = line.replace(' ', '')
                 version = version + " (" + line + ")"
-        #s.close()
+        n.console_close()
         return version
 
     def bash_get_supported_platforms(self, image):
@@ -236,6 +237,7 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
         #s.expect(r'[\r\n]Switch Light OS', timeout=120)
         s.send("\n")
@@ -245,10 +247,10 @@ class T5ZTN(object):
             s.send('boot')
             s.expect(r'[\r\n].*login: $', timeout=120)
         elif options[0] == 2:
-            #s.close()
+            n.console_close()
             helpers.test_failure("Switch did not reboot. Returning False")
             return False
-        #s.close()
+        n.console_close()
         return True
 
     def telnet_wait_for_switch_to_find_manifest(self, node):
@@ -325,9 +327,11 @@ class T5ZTN(object):
         - True if ONIE Discovery process succeeded
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
         s.expect("ONIE: Starting ONIE Service Discovery")
         s.expect("ONIE: Starting ONIE Service Discovery")
+        n.console_close()
         return True
 
     def modeless_console(self, node):
@@ -365,6 +369,7 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
@@ -377,18 +382,18 @@ class T5ZTN(object):
         if options[0] == 2:
             helpers.log("Switch rebooting")
             s.send('boot')
-            #s.close()
+            n.console_close()
             return True
         if options[0] == 3:
             helpers.log("Switch in ZTN loader")
             s.send('reboot')
-            #s.close()
+            n.console_close()
             return True
         if options[0] == 5:
             helpers.log("Switch in ZTN Discovery process. Doing nothing")
             #s.send(helpers.ctrl('c'))
             #s.send('reboot')
-            #s.close()
+            n.console_close()
             return True
         s.send('enable; config')
         if state == 'up':
@@ -404,9 +409,9 @@ class T5ZTN(object):
             s.send('interface ma1 ip-address dhcp')
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
-            #s.close()
+            n.console_close()
             return helpers.test_failure("Wrong state of interface")
-        #s.close()
+        n.console_close()
         return True
 
     def telnet_switch_reload_and_execute_loader_shell_commands(self,
@@ -810,6 +815,7 @@ class T5ZTN(object):
         """
 
         t = test.Test()
+        n = t.node(hostname)
 
         startup_config = self.curl_get_switch_startup_config(mac)
         missing_startup = []
@@ -828,7 +834,7 @@ class T5ZTN(object):
             s.cli('exit')
         elif options[0] == 3:
             s.cli('reboot')
-            helpers.test_failure("Switch is rebooting. Waiting for full reboot")
+            helpers.log("Switch is rebooting. Waiting for full reboot")
             helpers.sleep(100)
             s.expect(r'[\r\n]*.*login: $', timeout=30)
             s.send('admin')
@@ -944,11 +950,11 @@ class T5ZTN(object):
                 helpers.log("Running-config is missing line: %s" % line)
 
         if len(missing_startup) > 0 or len(extra_startup) > 0:
-            #s.close()
+            n.console_close()
             return helpers.test_failure("Failure due to missing lines")
         else:
             helpers.log("Startup-config for switch %s is correct" % mac)
-            #s.close()
+            n.console_close()
             return True
 
     def rest_get_switch_fabric_role(self, node, switch):
@@ -1148,6 +1154,7 @@ class T5ZTN(object):
         - True if reboot triggered successfully, False otherwise
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
@@ -1191,7 +1198,7 @@ class T5ZTN(object):
             s.send('reboot')
         elif options[0] == 8:  # SL Loader
             helpers.log("Switch %s is already rebooting. Doing nothing." % switch)
-            #s.close()
+            n.console_close()
             return True
         try:
             if options[0] == 4:
@@ -1201,10 +1208,10 @@ class T5ZTN(object):
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
-            #s.close()
+            n.console_close()
             return helpers.test_failure("Error rebooting switch %s" % switch)
 
-        #s.close()
+        n.console_close()
         return True
 
     def telnet_stop_autoboot(self, switch):
@@ -1338,6 +1345,7 @@ class T5ZTN(object):
         - True if successfully executed reboot command, False otherwise
         """
         t = test.Test()
+        n = t.node(node)
         c = t.controller(node)
         c.config("")
         helpers.log("Executing 'system reboot switch %s' command"
@@ -1357,16 +1365,16 @@ class T5ZTN(object):
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
                 helpers.log("Error rebooting the switch")
-                #s.close()
+                n.console_close()
                 return False
         except:
             helpers.log(c.cli_content())
             helpers.log("Error rebooting the switch")
-            #s.close()
+            n.console_close()
             return False
 
         helpers.log("Reboot command executed successfully")
-        #s.close()
+        n.console_close()
         return True
 
     def cli_reset_connection_switch(self, node, switch):
