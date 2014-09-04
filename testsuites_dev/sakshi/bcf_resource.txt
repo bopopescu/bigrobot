@@ -30,7 +30,7 @@ ${SIGNOUT TITLE}  			Login
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
-${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_4']
+${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_5']
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 
@@ -62,10 +62,17 @@ ${CONTROLLER STATS PANE}		xpath=//div[@data-dojo-attach-point='statsNode']
 ${CONTROLLER SEGMENTS PANE}  	xpath=//div[@id='bcf_widgets_dashboard_SegmentUsage_0']
 ${CONTROLLER TENANTS PANE}		xpath=//div[@id='bcf_widgets_dashboard_TenantUsage_0']
 ${CONTROLLER INTERFACES PANE}	xpath=//div[@id='bcf_widgets_dashboard_InterfaceUsage_0']
-${CONFIGURE SWITCHING MODE BUTTON}					xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
-${MATCH MODE EDIT POPUP}							xpath=//div[@title='Configure Switching Mode']/span[1]
+${CONFIGURE SWITCHING MODE BUTTON}	xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
+${MATCH MODE EDIT POPUP}		xpath=//div[@title='Configure Switching Mode']/span[1]
 
 
+### Tenants Page
+
+${ADD TENANT PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
+${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
+${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_5']
 
 *** Keywords ***
 Set URLs
@@ -171,7 +178,27 @@ Go To Signout Page
     Title Should Contain  ${SIGNOUT TITLE}
     Sleep  1
     
+Delete All Tenants
+	Go To Tenants Page
+    Delete All
 
+Delete All
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	#Show All
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #unselecting
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #selecting again
+	Verify Element Visible  ${CHECKBOX ALL SELECTED}
+	Verify Element Visible  ${MAIN MINUS BUTTON}
+	Click Element  ${MAIN MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+	
 Select Checkbox
 	[Arguments]  ${selected}  ${unselected}
 	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
@@ -212,23 +239,6 @@ Get Matching Xpath Count Tokenize
 Show All
 	Verify Element Visible  ${SHOW ALL BUTTON}
 	Click Element  ${SHOW ALL BUTTON}  and don't wait
-
-
-Delete All
-	Verify Element Visible  ${CHECKBOX ALL}
-	Click Element  ${CHECKBOX ALL}  and don't wait
-	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
-	Return From Keyword If  '${selected checkbox}' == '0' 
-	#Show All
-	#Click Element  ${CHECKBOX ALL}  and don't wait  #unselecting
-	#Click Element  ${CHECKBOX ALL}  and don't wait  #selecting again
-	Verify Element Visible  ${CHECKBOX ALL SELECTED}
-	Verify Element Visible  ${MAIN MINUS BUTTON}
-	Click Element  ${MAIN MINUS BUTTON}  and don't wait
-	Verify Element Visible  ${CONFIRM DELETION POPUP}
-	Verify Element Visible   ${PROCEED DELTE BUTTON}
-	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
-	Verify Element Invisible  ${CONFIRM DELETION POPUP}
 
 
 Input Username  [Arguments]  ${username}
@@ -399,5 +409,26 @@ Check Hover
 	Click Element  ${label}
 	Location Should Be  ${dst}
 	Title Should Contain  ${title}
+	
+	
+	
+Create Tenant
+	[Arguments]  ${tenant-name}  ${description}
+	Go To Tenants Page
+	Verify Page Contains Element  ${ADD TENANT PLUS BUTTON}
+	Click Element  ${ADD TENANT PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT POPUP}
+	
+	Input Text And Verify  ${TENANT NAME FIELD}  ${tenant-name}
+	Click Element  ${TENANT DESCRIPTION FIELD}  and don't wait
+	
+	Run Keyword Unless  '${description}' == '${EMPTY}'
+	...		Input Text And Verify   ${TENANT DESCRIPTION FIELD}  ${description}
+	
+	Verify Page Contains Element  ${SAVE BUTTON}
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE TENANT POPUP}
+	
 	
 
