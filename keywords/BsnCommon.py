@@ -704,14 +704,28 @@ class BsnCommon(object):
             elif helpers.is_t5(n.platform()):
                 # T5 Controller NTP Server Deletion goes here
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time'
+                url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                 helpers.log("URL is %s" % url)
-                c.rest.delete(url, {"ntp-servers": [ntp_server]})
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
+                ntp_servers = c.rest.get(url)['content']
+                helpers.log("Currently configured servers are %s" % ntp_servers)
+                temp_servers = []
+                if ntp_server in ntp_servers:
+                    for server in ntp_servers:
+                        if server != ntp_server:
+                            temp_servers.append(server)
+                            helpers.log("Keeping server %s" % server)
+                        else:
+                            helpers.log("Skipping server %s" % server)
+                    ntp_servers = temp_servers
+                    c.rest.put(url, ntp_servers)
+                    if not c.rest.status_code_ok():
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        helpers.sleep(1)
+                        return True
                 else:
-                    helpers.sleep(1)
+                    helpers.log("NTP server not configured. Nothing to delete.")
                     return True
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
