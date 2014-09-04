@@ -117,7 +117,8 @@ T0 Setup
     bash add ip address  h6  ${h6_single_ip}/24  eth1
     bash ifup intf  h6  eth1
     
-    #Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+    sleep  90
 	Configure Tenants For SPAN & Test Path
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
