@@ -36,7 +36,7 @@ delete and verify 100 network
 	Should not be True  ${result}
 	
 add/delete 3998 network in a project
-	[Tags]  openstack  skipped	 
+	[Tags]  openstack	 
 	openstack segment scale  admin  70  3998
 	openstack verify tenant  admin
 	openstack verify segment scale  admin  3998

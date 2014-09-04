@@ -55,7 +55,7 @@ class T5Parallel(object):
 
 
 
-    def upgrade_copy_image_HA_parallel(self, nodes, image):
+    def upgrade_copy_image_HA_parallel(self, nodes, image,finish='yes'):
         '''
         upgrade_copy_image_HA_parallel
         Input:  
@@ -76,17 +76,20 @@ class T5Parallel(object):
             res1 = task.cli_copy_upgrade_pkg.delay(t.params(), src=image, node=node)
             results.append(res1)
             task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+            result_dict[task_id] = { "node": node, "action": "upgrade_copy" }
 
         # Check task status - are we done yet?
         #
+        if finish == 'yes':
+            self.task_finish_check_parallel(results, result_dict)
+            helpers.log("***Exiting==> upgrade_copy_image_HA_parallel,  all nodes done  \n")
+            return True
+        else:
+            helpers.log("***Exiting==> upgrade_copy_image_HA_parallel NOT checking task finish status\n")
+            return { 'results': results, 'result_dict': result_dict }
+            
 
-        self.task_finish_check_parallel(results, result_dict)
-        helpers.log("***Exiting==> upgrade_copy_image_HA_parallel  \n")
-
-        return True
-
-    def upgrade_statge_image_HA_parallel(self, nodes):
+    def upgrade_statge_image_HA_parallel(self, nodes,finish='yes'):
         '''
         upgrade_statge_image_HA_parallel
         Input:  
@@ -107,16 +110,19 @@ class T5Parallel(object):
             res1 = task.cli_stage_upgrade_pkg.delay(t.params(), node=node)
             results.append(res1)
             task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+            result_dict[task_id] = { "node": node, "action": "upgrade_statge" }
 
         # Check task status - are we done yet?
-        self.task_finish_check_parallel(results, result_dict)
-
-        helpers.log("***Exiting==> upgrade_statge_image_HA_parallel  \n")
-
-        return True
-
-    def upgrade_launch_image_HA_parallel(self, nodes, option=''):
+        if finish == 'yes':
+            self.task_finish_check_parallel(results, result_dict)
+            helpers.log("***Exiting==> upgrade_statge_image_HA_parallel,  all nodes done  \n")
+            return  True
+        else:
+            helpers.log("***Exiting==> upgrade_statge_image_HA_parallel  NOT checking task finish status \n")
+            return { 'results': results, 'result_dict': result_dict }
+ 
+  
+    def upgrade_launch_image_HA_parallel(self, nodes, option='',finish='yes'):
         '''
         upgrade_launch_image_HA_parallel
         Input:    
@@ -137,14 +143,13 @@ class T5Parallel(object):
             res1 = task.cli_launch_upgrade_pkg.delay(t.params(), node=node, option=option)
             results.append(res1)
             task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
+            result_dict[task_id] = { "node": node, "action": "upgrade_launch" }
 
         # Check task status - are we done yet?
-        self.task_finish_check_parallel(results, result_dict)
-
-        helpers.log("***Exiting==> upgrade_launch_image_HA_parallel  \n")
-
-        return True
-
-
-
+        if finish == 'yes':
+            self.task_finish_check_parallel(results, result_dict, timer=30, timeout=900)
+            helpers.log("***Exiting==> upgrade_launch_image_HA_parallel,  all node done  \n")
+            return True
+        else: 
+            helpers.log("***Exiting==> upgrade_copy_image_HA_parallel NOT checking task finish status  \n")
+            return { 'results': results, 'result_dict': result_dict }
