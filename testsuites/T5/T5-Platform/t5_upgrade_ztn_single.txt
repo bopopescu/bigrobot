@@ -67,34 +67,34 @@ UPGRADE: T1.1 Verify upgrade (controller - upgrade, switch - upgrade )
 	${result}=   Verify single node upgrade    ${image1}
 	Run Keyword if   '${result}' != 'True'    Fatal Error    stop all the remain testcases
 	
-	[Tags] 	sanity  upgrade_ztn     
+	[Tags] 	sanity  feature  upgrade_ztn     
 
 
 UPGRADE: T1.2 Verify upgrade(controller - upgrade, switch image/config - no need) 
 	Run Keyword if   '${image1}' != '${image2}'      Verify single node upgrade    ${image2} 	 	
  
   		
-	[Tags] 	sanity  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn    
 
 UPGRADE: T1.3 Verify upgrade for same version(same image) 
 	Run Keyword if   '${image1}' != '${image3}'		Verify single node upgrade    ${image3}  		
-	[Tags] 	sanity  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn    
 
     
 
 UPGRADE: T1.5 upgrade launch suspend
 	Verify single node upgrade    ${image}    suspend    		
-	[Tags] 	sanity  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn    
    
 UPGRADE: T1.6 upgrade launch timeout
 	Verify single node upgrade    ${image}    switch-timeout 900   		
-	[Tags] 	sanity  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn    
 
     
 
 UPGRADE: T1.8 upgrade launch suspend timeout
 	Verify single node upgrade    ${image}    suspend switch-timeout 900   		
-	[Tags] 	sanity  upgrade_ztn     
+	[Tags] 	sanity  feature  upgrade_ztn     
    
 
 UPGRADE: T1.9 Verify upgrade rollback  
@@ -133,7 +133,7 @@ UPGRADE: T1.9 Verify upgrade rollback
  		fabric_integrity_checker    after   single   		
 		Verify Ping   h1     ${h2ip} 				
  			  		   		
-	[Tags] 	sanity  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn    
 
 
 UPGRADE: T1.10 standby switch behavior during upgrade 
@@ -162,14 +162,14 @@ UPGRADE: T1.10 standby switch behavior during upgrade
 		Reboot all the suspended switch	
 		Verify switch are booted with correct image	
 						      	      
-	[Tags] 	full   upgrade_ztn     run
+	[Tags] 	full   feature  upgrade_ztn     run
 
 UPGRADE: T1.11 disconnected switch behavior during upgrade 
 	log  step 0 - config an no existing switch				
  	log  step 1 - upgrade controller
 	Manual passed
  		      	      
-	[Tags] 	full   upgrade_ztn   manual 
+	[Tags] 	full   feature  upgrade_ztn   manual 
  
 
  
@@ -187,7 +187,7 @@ SYNC: T2.1 Verify switch config in controller is pushed to swith(event trigger r
 		Default ZTN related config (NTP,SNMP,LOGGING)	 
 		Verify All Switch Running Config 
  		Verify All Switch Startup Config				
-	[Tags] 	sanity    upgrade_ztn  
+	[Tags] 	sanity    feature  upgrade_ztn  
 
 
 SYNC: T2.2 Verify switch config in controller is pushed to switch(through cli reload) 
@@ -197,7 +197,7 @@ SYNC: T2.2 Verify switch config in controller is pushed to switch(through cli re
 	log  step 3 - verify switch running config all revert back
 	log  need to wait couple sec after zerotouch leaf0-a config-push
 	Manual passed	       
-	[Tags]  full    manual   upgrade_ztn    
+	[Tags]  full    manual   feature  upgrade_ztn    
 
 SYNC: T2.3 Verify controller reboot with config changes in switch
 	log  step 1 - modify switch related config in controller(NTP, Logging, SNMP) 
@@ -205,7 +205,7 @@ SYNC: T2.3 Verify controller reboot with config changes in switch
 	log  step 3 - verify switch startup config and running config all updated
 	Manual passed	 	 
 		
-	[Tags] 	full    manual   upgrade_ztn  
+	[Tags] 	full    manual   feature  upgrade_ztn  
  
 
 EVENT: T3.1 controller reboot 
@@ -222,7 +222,7 @@ EVENT: T3.1 controller reboot
    	log  step 3 - no traffic loss
 		Verify Ping   h1     ${h2ip}		
  		
-	[Tags] 	full   upgrade_ztn 
+	[Tags] 	full   feature  upgrade_ztn 
 
 EVENT: T3.2 switch reboot options (switch should use image cash locally)
 	log  step 0 - check all switches are connected
@@ -263,7 +263,7 @@ EVENT: T3.2 switch reboot options (switch should use image cash locally)
    	log  step 6 - check traffic loss
  		Verify Ping   h1     ${h2ip}	
  		      
-	[Tags] 	sanity     upgrade_ztn 
+	[Tags] 	sanity     feature  upgrade_ztn 
 	
 EVENT: T3.3 switch disconnected/connected during controller upgrade
 	log  step 1 - check all switches are connected
@@ -279,7 +279,7 @@ EVENT: T3.3 switch disconnected/connected during controller upgrade
    	log  step 6 - switch disconnected during controller reboot
    	log  step 7 - switch connected back after controller come back
   	      
-	[Tags] 	full  manual-untested   upgrade_ztn 
+	[Tags] 	full  manual-untested   feature  upgrade_ztn 
 	
 	
 
@@ -302,7 +302,7 @@ EVENT: T3.6 new switch join as provisioned switch after upgrade (1 - swi upgrade
 #		Verify All Switch Startup Config 
 #		Verify All Switch Running Config 
 	Manual passed       	      
-	[Tags] 	full   upgrade_ztn    manual
+	[Tags] 	full   feature  upgrade_ztn    manual
 
 
 EVENT: T3.7 new switch join as standby switch after upgrade (1 - swi upgrade, 1 - loader install)
@@ -328,7 +328,7 @@ EVENT: T3.7 new switch join as standby switch after upgrade (1 - swi upgrade, 1 
 #		Should Be Equal   	No fabric role configured     ${reason}
 	Manual passed 	 
 	  
-	[Tags]  full   upgrade_ztn    manual 
+	[Tags]  full   feature  upgrade_ztn    manual 
 
  	
 EVENT: T3.8 new switch join as suspended switch (1 - swi upgrade, 1 - loader install)
@@ -336,7 +336,7 @@ EVENT: T3.8 new switch join as suspended switch (1 - swi upgrade, 1 - loader ins
     log  step 2 - switch join during/after controller image launch
 	Manual passed	 
    	      
-	[Tags] 	sanity  manual  upgrade_ztn 
+	[Tags] 	sanity  manual  feature  upgrade_ztn 
  
  
  
