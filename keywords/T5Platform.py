@@ -3643,7 +3643,13 @@ class T5Platform(object):
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
         if(kwargs.get('ip-protocol')):
-            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+            if(kwargs.get('ip-protocol') == "icmp"):
+                url = url + '[ip-protocol=1]'
+            elif(kwargs.get('ip-protocol') == "tcp"):
+                url = url + '[ip-protocol=6]'
+            elif(kwargs.get('ip-protocol') == "udp"):
+                url = url + '[ip-protocol=17]'
+            #url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
         if(kwargs.get('src-segment')):
@@ -3685,8 +3691,15 @@ class T5Platform(object):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        #if(kwargs.get('ip-protocol')):
+        #    url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('ip-protocol')):
-            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+            if(kwargs.get('ip-protocol') == "icmp"):
+                url = url + '[ip-protocol=1]'
+            elif(kwargs.get('ip-protocol') == "tcp"):
+                url = url + '[ip-protocol=6]'
+            elif(kwargs.get('ip-protocol') == "udp"):
+                url = url + '[ip-protocol=17]'
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
         if(kwargs.get('src-segment')):
@@ -3767,8 +3780,15 @@ class T5Platform(object):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        #if(kwargs.get('ip-protocol')):
+        #    url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('ip-protocol')):
-            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+            if(kwargs.get('ip-protocol') == "icmp"):
+                url = url + '[ip-protocol=1]'
+            elif(kwargs.get('ip-protocol') == "tcp"):
+                url = url + '[ip-protocol=6]'
+            elif(kwargs.get('ip-protocol') == "udp"):
+                url = url + '[ip-protocol=17]'
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
         if(kwargs.get('src-segment')):
