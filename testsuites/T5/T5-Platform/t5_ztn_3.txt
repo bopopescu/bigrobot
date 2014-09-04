@@ -190,7 +190,7 @@ T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify c
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Telnet Wait For Switch To Reload  s5
+	Telnet Wait For Switch To Reload  s1
 	Sleep  30
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
@@ -203,7 +203,7 @@ T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with
 	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
 	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
 	Telnet Set MA1 State  s2  up
-	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s2
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
@@ -216,7 +216,7 @@ T4.3. Replace provisioned switch's MAC with MAC of stand-by switch, verify corre
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Telnet Wait For Switch To Reload  s5
+	Telnet Wait For Switch To Reload  s1
 	Sleep  30
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
@@ -232,7 +232,7 @@ T4.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify corr
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Telnet Wait For Switch To Reload  s5
+	Telnet Wait For Switch To Reload  s1
 	Sleep  30
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
@@ -278,7 +278,7 @@ T4.7. Swap MAC addresses of two stand-by switches
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Telnet Wait For Switch To Reload  s5
+	Telnet Wait For Switch To Reload  s1
 	Sleep  30
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
@@ -290,7 +290,7 @@ T4.8. Swap MAC addresses of two provisioned switches
 	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
 	Cli Run  master  switch ${s5_alias}; mac ${s1_mac}
 	Cli Run  master  switch ${s1_alias}; mac ${s5_mac}
-	Telnet Wait For Switch To Reload  s5
+	Telnet Wait For Switch To Reload  s1
 	Sleep  30
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}

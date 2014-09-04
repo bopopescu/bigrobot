@@ -179,6 +179,7 @@ T5.6.9. Connected, change config, double failover, reconnect, reload
 	Failover
 	Telnet Set All MA1 State  flap
 	Sleep  30
+	Cli Run  master  show switch all details
 	Verify All Switches Connected
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
