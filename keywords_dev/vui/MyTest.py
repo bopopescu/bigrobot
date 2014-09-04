@@ -565,7 +565,7 @@ vui@Vuis-MacBook-Pro$
         """
         t = test.Test()
         n = t.node(node)
-        n_console = t.dev_console(node)
+        n_console = t.dev_console(node, expect_console_banner=True)
 
         n_console.bash("w")
         n_console.sudo("cat /etc/shadow")
@@ -573,7 +573,7 @@ vui@Vuis-MacBook-Pro$
         n.console_close()  # **** Closing the console
 
         helpers.log("***** Re-establishing connection to console for '%s'" % node)
-        n_console = t.dev_console(node)
+        n_console = t.dev_console(node, expect_console_banner=True)
         n_console.enable("show running-config")
 
         # IMPORTANT: Be sure to get back to CLI mode so future console
