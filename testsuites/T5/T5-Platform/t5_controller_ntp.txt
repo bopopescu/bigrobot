@@ -24,12 +24,17 @@ Configure and Verify Configuration on Slave
     Should be true  ${status}
     [Tags]  feature    
 
-Delete NTP server and verify 
+Delete NTP server and verify
+    add ntp server  c1  0.bigswitch.pool.ntp.org
+    add ntp server  c1  time-c.nist.gov
     ${status}=  delete ntp server  c1  time-c.nist.gov
     Should be true  ${status}
     Sleep  5
     ${status}=  verify ntp  c1  time-c.nist.gov
     Should not be true  ${status}
+    # Delete inexistent server
+    ${status}=  delete ntp server  c1  foo.foo
+    Should be true  ${status}
     [Tags]  feature
 
 Verify Time Zone
