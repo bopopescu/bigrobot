@@ -262,7 +262,7 @@ T0.3. BSC-5568
 T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} version
 	...  Load average
@@ -299,7 +299,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} version
 	...  Load average
@@ -336,7 +336,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} version
 	...  Load average
@@ -373,7 +373,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} version
 	...  Load average
@@ -410,7 +410,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} version
 	...  Load average
@@ -448,7 +448,7 @@ T0.4. Show remote on Active
 T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} version
 	...  Load average
@@ -485,7 +485,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} version
 	...  Load average
@@ -522,7 +522,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} version
 	...  Load average
@@ -559,7 +559,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} version
 	...  Load average
@@ -596,7 +596,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} version
 	...  Load average
