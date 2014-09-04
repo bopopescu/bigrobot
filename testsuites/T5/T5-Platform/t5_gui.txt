@@ -289,7 +289,9 @@ T4.2.9. Toggle through Interfaces table with arrows/links
 T4.2.10. Toggle through Links table with arrows/links
 	Manual Passed
 	[Tags]  manual
-T4.2.1. Toggle through Port groups table with arrows/links
+T4.2.11. Toggle through Port groups table with arrows/links
+	Manual Untested
+	[Tags]  manual-untested
 
 #Main pane:
 T4.3.1. Add Spine Switch - empty/invalid/reserved/long mac, name
