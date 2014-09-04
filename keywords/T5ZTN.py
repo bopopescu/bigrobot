@@ -1362,7 +1362,6 @@ class T5ZTN(object):
         - True if successfully executed reboot command, False otherwise
         """
         t = test.Test()
-        n = t.node(node)
         c = t.controller(node)
         c.config("")
         helpers.log("Executing 'system reboot switch %s' command"
@@ -1382,16 +1381,13 @@ class T5ZTN(object):
             if 'Error' in c.cli_content():
                 helpers.log(c.cli_content())
                 helpers.log("Error rebooting the switch")
-                n.console_close()
                 return False
         except:
             helpers.log(c.cli_content())
             helpers.log("Error rebooting the switch")
-            n.console_close()
             return False
 
         helpers.log("Reboot command executed successfully")
-        n.console_close()
         return True
 
     def cli_reset_connection_switch(self, node, switch):
