@@ -142,7 +142,7 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
-        n = t.node(node)
+        n = t.node(hostname)
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
         #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
@@ -1154,7 +1154,7 @@ class T5ZTN(object):
         - True if reboot triggered successfully, False otherwise
         """
         t = test.Test()
-        n = t.node(node)
+        n = t.node(switch)
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
