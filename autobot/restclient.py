@@ -28,7 +28,7 @@ class RestClient(object):
     # feature).
     def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json', name=None):
-        self.http = httplib2.Http(timeout=RestClient.default_timeout)
+        self.http = httplib2.Http(".cache", disable_ssl_certificate_validation=True, timeout=RestClient.default_timeout)
 
         self._name = name
         self.base_url = base_url
@@ -161,9 +161,14 @@ class RestClient(object):
                 data_str = ' %s' % helpers.to_json(data)
         helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
                                       % (prefix_str, url, data_str))
+        if helpers.is_dict(data) or helpers.is_list(data):
+            formatted_data = helpers.to_json(data)
+        else:
+            formatted_data = data
+
         resp, content = self.http.request(url,
                                           verb,
-                                          body=helpers.to_json(data),
+                                          body=formatted_data,
                                           headers=headers
                                           )
         code = resp['status']
@@ -175,6 +180,7 @@ class RestClient(object):
 
         result = {'content': python_content}
         result['http_verb'] = verb
+        result['http_data'] = formatted_data
         result['status_code'] = int(code)
         result['request_url'] = url
 

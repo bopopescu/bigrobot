@@ -216,7 +216,7 @@ Test console
     test console      c1
 
 Test controller console
-    #[Tags]  skipped
+    [Tags]  skipped
     test controller console      c1
 
 Test node reconnect
@@ -257,3 +257,11 @@ Test reauth trial
     [Tags]  skipped
     reauth trial      c1
     config            c1   show session
+
+Test REST commands
+    #[Tags]  skipped
+    get               c1   /api/v1/data/controller/core/version/appliance
+    get               c1   /api/v1/data/controller/core/aaa/local-user
+    get               c1   /api/v1/data/controller/core/aaa/group
+    #patch             c1   /api/v1/data/controller/core/aaa/local-user[user-name="vui"]   {"full-name": "Vui Bob Le"}
+    patch             c1   /api/v1/data/controller/core/aaa/local-user%5Buser-name%3D%22vui%22%5D   {"full-name": "Vui Bob Le"}
