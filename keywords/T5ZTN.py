@@ -294,9 +294,14 @@ class T5ZTN(object):
         - True if ZTN Discovery process failed
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        s.expect("ZTN Discovery Failed", timeout=120)
+        options = s.expect([r'=> ', "ZTN Discovery Failed"], timeout=120)
+        if options[0] == 0:
+            s.send("boot")
+            s.expect("ZTN Discovery Failed", timeout=120)
         s.expect("ZTN Discovery Failed", timeout=30)
+        n.console_close()
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
