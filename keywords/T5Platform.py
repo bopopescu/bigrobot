@@ -1917,7 +1917,7 @@ class T5Platform(object):
 
     def cli_upgrade_stage(self, node='master', image=None):
         '''
-          upgrade stage  -  1 step of upgrade
+          upgrade stage  -  2 step of upgrade
           Author: Mingtao
           input:  node  - controller
                           master, slave, c1 c2
@@ -1973,12 +1973,11 @@ class T5Platform(object):
 
     def cli_upgrade_stage_negative(self, node='master',breakpoint='yes'):
         '''
-          upgrade stage  -  1 step of upgrade
+          upgrade stage  -  2 step of upgrade
           Author: Mingtao
           input:  node  - controller
                           master, slave, c1 c2
-                  image - build number to be staged
-                          None - pick the biggest build number
+                  breakpoint -  yes or ctrl-c
           usage:
           output: True  - upgrade staged successfully
                   False  -upgrade staged Not successfully
@@ -1990,7 +1989,7 @@ class T5Platform(object):
         c.config('')
         c.send('upgrade stage')
         options = c.expect(r'[\r\n].*to continue.*' )
-        if breakpoint is 'yes': 
+        if breakpoint == 'yes': 
             c.send("no")
             helpers.log('INFO: send NO to break the stage') 
             c.expect(timeout=900)            
@@ -2003,7 +2002,7 @@ class T5Platform(object):
             c.send("yes")
             c.expect(r'.* copying image into alternate partition',timeout=900) 
                
-        if breakpoint.lower() is 'ctrl-c':   
+        if breakpoint.lower() == 'ctrl-c':   
             c.send(helpers.ctrl('c'))
             helpers.summary_log('Ctrl C is hit during stage')
             c.expect(timeout=900)
