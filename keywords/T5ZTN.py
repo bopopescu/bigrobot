@@ -296,6 +296,7 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
+        s.send("\n")
         options = s.expect([r'=> ', "ZTN Discovery Failed"], timeout=120)
         if options[0] == 0:
             s.send("boot")
@@ -1219,8 +1220,8 @@ class T5ZTN(object):
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
-            else:
-                s.expect(r'Clock Configuration:', timeout=120)
+            #else:
+            #    s.expect(r'Clock Configuration:', timeout=120)
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
