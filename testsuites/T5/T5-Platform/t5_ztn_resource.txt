@@ -64,7 +64,7 @@ Suite Setup
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
-	Run Keyword and Ignore Error  Reboot Switches From CLI
+	Run Keyword and Ignore Error  Power Cycle All Switches
 	Run Keyword and Ignore Error  Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
