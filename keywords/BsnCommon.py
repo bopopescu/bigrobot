@@ -708,22 +708,24 @@ class BsnCommon(object):
                 helpers.log("URL is %s" % url)
                 ntp_servers = c.rest.get(url)['content']
                 helpers.log("Currently configured servers are %s" % ntp_servers)
-                temp_servers = []
                 if ntp_server in ntp_servers:
-                    for server in ntp_servers:
-                        if server != ntp_server:
-                            temp_servers.append(server)
-                            helpers.log("Keeping server %s" % server)
-                        else:
-                            helpers.log("Skipping server %s" % server)
-                    ntp_servers = temp_servers
+                    while ntp_server in ntp_servers:
+                        ntp_servers.remove(ntp_server)
+                    helpers.log("List of servers after deleting %s is %s"
+                                % (ntp_server, ntp_servers))
                     c.rest.put(url, ntp_servers)
                     if not c.rest.status_code_ok():
                         helpers.test_log(c.rest.error())
                         return False
-                    else:
-                        helpers.sleep(1)
+                    updated_ntp_servers = c.rest.get(url)['content']
+                    if helpers.list_compare(ntp_servers, updated_ntp_servers):
+                        helpers.log("Successfully removed '%s'"
+                                    " from NTP server list." % ntp_server)
                         return True
+                    else:
+                        helpers.log("Unsuccessfully removed '%s'"
+                                    " from NTP server list." % ntp_server)
+                        return False
                 else:
                     helpers.log("NTP server not configured. Nothing to delete.")
                     return True
