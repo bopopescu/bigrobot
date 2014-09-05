@@ -645,6 +645,37 @@ class T5ZTN(object):
         return config
 
 
+    def curl_get_switch_manifest(self, mac):
+        """
+        Get manifest for given switch by executing CURL command
+        against the active controller
+
+        Inputs:
+        | mac | MAC address of switch |
+
+        Return Value:
+        - List with manifest lines or None
+        """
+        t = test.Test()
+        bsn_common = bsnCommon()
+        master_ip = bsn_common.get_node_ip('master')
+
+        url = ("http://%s/ztn/switch/%s/switch_light_manifest?platform=powerpc-as5710-54x-r0b"
+               % (str(master_ip), str(mac)))
+        helpers.log("Trying to get switch manifest at %s" % url)
+        try:
+            req = urllib2.Request(url)
+            res = urllib2.urlopen(req)
+            helpers.log("Response is: %s" % res)
+            manifest = res.read()
+            helpers.log("Response is: %s" % ''.join(manifest))
+        except:
+            helpers.log(traceback.print_exc())
+            return helpers.test_failure("Error trying to get manifest"
+                   " from Master")
+        return manifest
+
+
     def verify_switch_startup_config(self, mac, hostname):
         """
         Fetch startup-config for switch and compare with running-config
@@ -828,7 +859,7 @@ class T5ZTN(object):
         | hostname | Alias of switch |
 
         Return Value:
-        - True if startup config is correct, False otherwise
+        - True if running config is correct, False otherwise
         """
 
         t = test.Test()
@@ -970,7 +1001,7 @@ class T5ZTN(object):
             n.console_close()
             return helpers.test_failure("Failure due to missing lines")
         else:
-            helpers.log("Startup-config for switch %s is correct" % mac)
+            helpers.log("Running-config for switch %s is correct" % mac)
             n.console_close()
             return True
 
