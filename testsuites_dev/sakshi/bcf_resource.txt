@@ -33,7 +33,7 @@ ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
 ${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_5']
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
-
+${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -264,67 +264,7 @@ Login Should Have Failed
     Title Should Contain  ${LOG IN TITLE}
 
 
-Generate Random Name
-	[Arguments]  ${prefix}  ${suffix_len}
-    ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
-    ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
-    [Return]  ${name}
 
-#xpath=//div[text()='delivery-group']/parent::td/preceding-sibling::td/child::div/child::div/input
-Generate Checkbox Xpath IGroup
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  and contains(text(), '  ${text}  ')]/parent::td/preceding-sibling::td/child::div/child::div/input
-   #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
-    [Return]  ${xpath}
-    
-#Generate Checkbox Xpath
-#	[Arguments]  ${attachment_point}  ${text}
-#    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::input
-    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
-#    [Return]  ${xpath}
-    
-Generate Checkbox Xpath
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
-    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
-    [Return]  ${xpath}
-
-
-Generate Checkbox Xpath Nowrap
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
-    [Return]  ${xpath}
-
-
-Generate Action Menu Xpath
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
-    [Return]  ${xpath}
-
-Generate Action Menu Xpath Policy
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
-    [Return]  ${xpath}
-    
-Generate Overlapping Policy Xpath  
-	[Arguments]  ${attachment_point}  ${policy1}  ${policy2}
-	${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}   and contains(text(), '_${policy2}_o_${policy1}')]
-	[Return]  ${xpath}
-	
-Generate Action Menu Xpath Interfaces
-	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
-    [Return]  ${xpath}
-
-Generate Action Menu Xpath Interfaces Tunnels
-	[Arguments]  ${attachment_point}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='actions']/descendant::div[@class='icon_node menu']
-    [Return]  ${xpath}
-        
-Generate Action Menu Xpath Interface Controller
-	[Arguments]  ${attachment_point}  ${id}  ${switch}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/div[@class='content' and (text()='  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
-    [Return]  ${xpath}
     
 Input Text And Verify
 	[Arguments]  ${field}  ${text}
@@ -429,6 +369,23 @@ Create Tenant
 	Click Element  ${SAVE BUTTON}  and don't wait
 	
 	Verify Element Invisible  ${CREATE TENANT POPUP}
+	
+Change Controller State
+	[Arguments]  ${state}
+	
+	Go To Landing Page
+	
+	Run Keyword If  '${state}'=='STANDBY'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Standby')]  Standby
+
+    Run Keyword If  '${state}'=='STANDBY'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Standby
+    
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Active')]  Active
+
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Active
 	
 	
 
