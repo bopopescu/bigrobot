@@ -1,6 +1,6 @@
 * Variable
-${bsn_ctrl1}			10.210.160.2
-${bsn_ctrl2}			10.210.160.3
+${bsn_ctrl1}			10.8.22.10
+${bsn_ctrl2}			10.8.22.11
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z
@@ -49,12 +49,18 @@ ${leaf1-a}                      leaf1-a
 ${leaf1-b}                      leaf1-b
 ${leaf2-a}                      leaf2-a
 ${leaf2-b}                      leaf2-b
-${ixia1}                        ethernet1
-${ixia2}                        ethernet1
-${ixia3}                        ethernet3
-${ixia4}                        ethernet3
-${ixia7}                        ethernet3
-${ixia6}                        ethernet1
+${ixia1}                        ethernet17 
+#leaf0a
+${ixia2}                        ethernet17 
+#leaf0b
+${ixia3}                        ethernet18 
+#leaf0a
+${ixia4}                        ethernet17 
+#leaf1a
+${ixia7}                        ethernet18 
+#leaf1a
+${ixia6}                        ethernet17 
+#leaf1b
 
 
 ${ixia1_ip}			10.251.1.2/32
@@ -76,4 +82,7 @@ ${ixia6_mac}		00:66:01:00:00:00
 
 ${tenant1_polname}	x1-to-x3
 ${tenant2_polname}	x4-to-x1
-
+${next-hop-grp}		nhgrp
+${next-hop-ip}		10.251.3.2
+${next-hop-gw}		10.251.3.1
+${in_range}			10

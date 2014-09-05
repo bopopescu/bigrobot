@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # Usage:
 #   $ cd .../bigrobot/catalog
 #   $ ./run_suites.sh dump_suites_by_areas.sh.T5.text_files
@@ -9,14 +9,27 @@
 # Assumptions:
 #   - This script can only be executed inside the bigrobot/catalog/ directory.
 
+usage() {
+    echo "Usage: $0 <input_file>"
+    exit 0
+}
+
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
     exit 1
 fi
 
+if [ $# -ne 1 ]; then
+    usage
+fi
+
 f=$1
 
-set -x
+if [ ! -f $f ]; then
+    echo "Error: File '$f' is not found."
+    exit 1
+fi
+
 unset BIGROBOT_TESTBED
 unset BIGROBOT_PARAMS_INPUT
 export BIGROBOT_CI=True
@@ -24,20 +37,22 @@ if [ "$BIGROBOT_PATH"x = x ]; then
     export BIGROBOT_PATH=`pwd`/..
 fi
 export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
-set +x
 
 rm -rf $BIGROBOT_LOG_PATH
 for x in `cat $f`; do
-    echo Running $x
-    y=`echo $x | sed 's/.txt//'`
-    echo $y
-    export BIGROBOT_SUITE=$y
+    if [ `expr $x : '.*/deprecated/.*'` -gt 0 ]; then
+        echo "Ignoring $x (deprecated)"
+    else
+        echo Running $x
+        y=`echo $x | sed 's/.txt//'`
 
-    # Notes:
-    #   We include the test cases which are tagged as 'manual-untested'
-    set -x
-    ../bin/gobot test --dryrun --include-manual-untested
-    set +x
+        ls -la ${y}*
+
+        # Notes:
+        #   We need to count the test cases which are tagged as 'manual-untested'
+        #   as well.
+        BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
+    fi
 done
 
 find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log

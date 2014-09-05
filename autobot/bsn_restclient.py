@@ -23,9 +23,9 @@ class BsnRestClient(RestClient):
         """
         Special handling for Big Switch controllers.
         - For BVS (T5)
-          - port 8080
-          - http://host:8080/api/v1/auth/login
-          - http://host:8080/api/v1/data/controller/applications/bvs/tenant[name="%s"]
+          - port 8443
+          - https://host:8443/api/v1/auth/login
+          - https://host:8443/api/v1/data/controller/applications/bvs/tenant[name="%s"]
         - For BigWire/BigTap
           - port 8082 for API URL
           - port 8000 for REST URL
@@ -41,8 +41,8 @@ class BsnRestClient(RestClient):
 
         if helpers.is_bvs(self.platform):
             if re.match(r'^/api/v1/', url):
-                http_port = 8080 if self.http_port == None else self.http_port
-                return "http://%s:%s%s" % (self.host, http_port, url)
+                http_port = 8443 if self.http_port == None else self.http_port
+                return "https://%s:%s%s" % (self.host, http_port, url)
             else:
                 helpers.environment_failure("Platform=%s, unmatched URL=%s"
                                             % (self.platform, url))

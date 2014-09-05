@@ -523,24 +523,9 @@ T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	
 	
 T24 Configure SPAN session for DST-MAC - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-
-	sleep  3
+	[Tags]  span  feature  manual
+	manual passed
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.2  IP 
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.1  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.3  IP
-	Should not be true  ${returnVal}
-
-
-
 T25 Configure SPAN session for IP-Proto - Direction Ingress
 	[Tags]  span  feature  manual
 	manual passed
@@ -557,12 +542,12 @@ T27 Configure SPAN session for IP-ECN - Direction Ingress
 	
 T28 Configure SPAN session for Ethertype - Direction Ingress
 	[Tags]  span  feature  manual
-	manual failed 
+	manual passed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
 	[Tags]  span  feature  manual
-	manual failed
+	manual passed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
@@ -571,7 +556,8 @@ T30 Configure SPAN session with multiple options - Direction Ingress
 
 
 T31 Configure SPAN session with Different VLANs
-	[Tags]  span  feature  manual-untested
+	[Tags]  span  feature  manual
+	manual passed
 
 
 T32 Configure SPAN session with Spine switches 
@@ -590,12 +576,13 @@ T34 Configure SPAN session with multiple destination interfaces
 
 
 T35 Configure multiple SPAN sessions in multiple switches
-	[Tags]  span  feature  manual-untested
+	[Tags]  span  feature  manual
+	manual passed
 	
 
 T36 Configure peer links as source interfaces
 	[Tags]  span  feature  manual
-	manual failed
+	manual passed
 
 	
 
@@ -910,13 +897,13 @@ Configure Tenants For SPAN & Test Path
    rest add system intf to tenant routers	Ixia6
    
    
-   rest add static routes	autoT1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	autoT2	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia3	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia4	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia5	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	Ixia6	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoT1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	autoT2	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia3	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia4	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia5	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	Ixia6	0.0.0.0/0	{"tenant": "system"}
       
    sleep  10
 

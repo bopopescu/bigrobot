@@ -430,8 +430,8 @@ Configure 2 Tenants with Multiple VNSs & Gateway Interfaces
    rest add tenant routers intf to system	autoT2
    rest add system intf to tenant routers	autoT1
    rest add system intf to tenant routers	autoT2
-   rest add static routes	autoT1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	autoT2	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoT1	0.0.0.0/0	{"tenant": "system"}
+   rest add static routes	autoT2	0.0.0.0/0	{"tenant": "system"}
    
    
 

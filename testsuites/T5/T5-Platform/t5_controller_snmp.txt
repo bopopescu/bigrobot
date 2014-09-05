@@ -11,9 +11,9 @@ Library  keywords/BsnCommon.py
 
     
 * Test Case
-Configure and Verify Configuration  
+Configure and Verify Configuration 
     verify config
-    [Tags]  feature  
+    [Tags]  feature  run
 
 Verify SNMP OID sysContact on Master  
     ${snmp_key}=  snmp get  master  public  sysContact.0
@@ -142,7 +142,7 @@ snmp suite setup
     rest add snmp keyword  contact  Big Switch Networks
     rest add snmp keyword  location  Mountain View
     rest add snmp keyword  trap-enabled  True
-    rest add snmp host  10.192.66.230  162    
+    rest add snmp host  10.9.18.2  162    
     rest add firewall rule  service=snmp
     Sleep  10        
 
@@ -157,8 +157,8 @@ verify config
     ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled  
     Should Be True  ${snmp_key}
     ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
-    ${new_snmp_key}=  verify json key  ${snmp_key}  0  ipaddr      
-    Should Be Equal As Strings  ${new_snmp_key}  10.192.66.230
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  server      
+    Should Be Equal As Strings  ${new_snmp_key}  10.9.18.2
     ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port       
     Should Be Equal As Integers  ${new_snmp_key}  162
            
@@ -167,7 +167,7 @@ snmp suite teardown
     rest add snmp keyword  contact  null
     rest add snmp keyword  location  null
     rest add snmp keyword  trap-enable  false
-    rest delete snmp host  10.192.66.230  162 
+    rest delete snmp host  10.9.18.2  162 
     rest delete firewall rule  service=snmp    
     base suite teardown
     

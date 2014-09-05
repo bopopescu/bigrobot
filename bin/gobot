@@ -51,6 +51,8 @@ def test_and_install_package():
                 'pexpect': 'pexpect',
                 'robotframework': 'robot',
                 'celery': 'celery',
+                'xmltodict': 'xmltodict',
+                'robotframework-seleniumlibrary': "SeleniumLibrary"
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
                 }
@@ -155,6 +157,8 @@ if helpers.bigrobot_suite():
         topo_file = _topo_u
 
     helpers.bigrobot_topology(default=topo_file)
+    print("BigRobot suite: %s" % helpers.bigrobot_suite())
+    print("BigRobot topology: %s" % helpers.bigrobot_topology())
 
 helpers.bigrobot_params(default='None')
 helpers.bigrobot_continuous_integration()
@@ -193,9 +197,13 @@ helpers.bigrobot_test_clean_config()  # (default=True)
 helpers.bigrobot_test_pause_on_fail()  # (default=False)
 helpers.bigrobot_test_ztn()  # (default=False)
 helpers.bigrobot_ignore_mininet_exception_on_close()  # (default=False)
-helpers.bigrobot_preserve_mininet_screen_session()  # (default=False)
+helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
 helpers.bigrobot_esb()
 helpers.bigrobot_esb_broker()
+helpers.bigrobot_ztn_reload()
+helpers.bigrobot_ztn_installer()
+helpers.bigrobot_ha_logging()
+helpers.bigrobot_quiet_output()
 
 
 def get_command_dict():
@@ -370,15 +378,7 @@ def version_hidden_command(*args):
     Show the version of BigRobot.
     """
     _ = args  # unused, silent Pylint
-    robot_framework_version = robot.version.VERSION
-    import Exscript
-    exscript_version = Exscript.version.__version__
-    print("BigRobot version        %s" % helpers.get_version())
-    print("Robot Framework version %s" % robot_framework_version)
-    print("Exscript version        %s" % exscript_version)
-    pversion = sys.version_info
-    print("Python version          %s.%s.%s"
-          % (pversion.major, pversion.minor, pversion.micro))
+    print(helpers.bigrobot_module_dependencies())
 
 
 def cli_params_to_yaml_config(params, filename):
@@ -483,6 +483,14 @@ def test_command(*args):
         for tc in args.testmatch:
             options['test'].append("*" + tc + "*")
 
+    if re.match(r'.*\.virtual\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'virtual'
+    elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
+        options['settag'] = 'physical'
+    else:
+        # If not specified, assume it is physical
+        options['settag'] = 'physical'
+
     print("Robot options:\n%s" % helpers.prettify(options))
 
     exit_if_suite_not_defined()
@@ -518,6 +526,15 @@ def test_command(*args):
     #    sys.exit(0)
     # else:
     sys.exit(rc)
+
+
+def validate_command(*args):
+    """
+    Validate correctness of test suite (useful for catching obvious errors).
+    """
+    new_args = list(*args)
+    new_args.extend(["--dryrun", "--include-manual-untested"])
+    test_command(new_args)
 
 
 def env_command(*args):

@@ -17,6 +17,16 @@ Library				Collections
 
 
 *** Test Cases ***
+T0 Basic check
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  snapshot://extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  file://extensive-file
+	Compare  file://extensive-file  snapshot://extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  running-config
+	Compare  snapshot://extensive-config  running-config
+	Compare  file://extensive-file  running-config
+	Cli Copy  snapshot://startup-config  running-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
+
 T1 Deleting lines
 	${command}=  Set Variable  ntp time-zone America/Los_Angeles
 	${diff}=  Create List  ntp time-zone America/Los_Angeles
@@ -33,8 +43,8 @@ T2 Deleting lines
 	...  ${diff}
 
 T3 Deleting lines
-	${command}=  Set Variable  logging enable remote
-	${diff}=  Create List  logging enable remote
+	${command}=  Set Variable  logging remote
+	${diff}=  Create List  logging remote
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
@@ -133,20 +143,13 @@ T17 Deleting lines
 	${diff}=  Create List
 	...  user test-user123
 	...  hashed-password
-	...  associate user test-user123
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
 T18 Deleting lines
-	${command}=  Set Variable  group test-group123
-	${diff}=  Create List
-	...  group test-group123
-	...  associate user remote1
-	...  associate user test-user123
-	Delete single running config line and verify
-	...  ${command}
-	...  ${diff}
+	[Tags]  skipped
+	# Not Applicable any more
 
 T19 Deleting lines
 	${command}=  Set Variable  virtual-ip
@@ -220,15 +223,8 @@ Suite Setup
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
-	#Compare  extensive-file  snapshot://extensive-config
-	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
-	#Compare  snapshot://extensive-config  running-config
-	#Compare  extensive-file  running-config
-	Cli Copy  snapshot://startup-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  file://extensive-file
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
-	#Compare  snapshot://extensive-config  running-config
-	Compare  extensive-file  running-config
 	Cli Copy  running-config  snapshot://test-config
 
 Test Setup
@@ -238,8 +234,6 @@ Test Setup
 Test Teardown
 	Bash Clear Known Hosts
 	Cli Copy  snapshot://test-config  running-config
-	#Compare  snapshot://extensive-config  running-config
-	Compare  extensive-file  running-config
 	Base Test Teardown
 
 Suite Teardown
@@ -278,10 +272,10 @@ Compare and Expect Diff
 
 Delete single running config line and verify
 	[Arguments]  ${command}  ${diff}  ${submode}=config
-	Cli Copy  running-config  backup
+	Cli Copy  running-config  file://backup
 	Cli Run  master  enable
 	Cli Run  master  config
 	Cli Run  master  ${submode}
 	Cli Run  master  no ${command}
-	Compare and Expect Diff  running-config  backup
+	Compare and Expect Diff  running-config  file://backup
 	...  ${diff}

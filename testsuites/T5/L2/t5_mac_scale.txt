@@ -79,7 +79,7 @@ Add 4000 dynamic mac into the system and check forwarding and make sure aging al
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     summary log  waiting 10 minutes for 4000 mac age
-    sleep  600
+    sleep  900
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -111,7 +111,7 @@ Add 10000 dynamic mac into the system and check forwarding and make sure aging a
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     summary log  waiting 10 minutes for 10000 mac age
-	sleep  600
+	sleep  1200
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -142,7 +142,7 @@ Add 16000 dynamic mac into the system and check forwarding and make sure aging a
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     summary log  waiting 10 minutes for 16000 mac age
-	sleep  600
+	sleep  1200
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -181,7 +181,7 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     verify traffic rate  tx_rate  rx_rate  e  d
     stop traffic  
     summary log  waiting 10 minutes for 48000 mac age
-	sleep  600
+	sleep  1200
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -569,7 +569,7 @@ Add 4k static endpoints and check the forwarding
     stop traffic  ${stream}
 	    
 Add 8k static endpoints and check the forwarding
-	[Tags]  L2  scaling  IronHorse  skipped  
+	[Tags]  L2  scaling  IronHorse
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  4000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  4000
 	sleep  5
@@ -582,7 +582,7 @@ Add 8k static endpoints and check the forwarding
     stop traffic  ${stream}
 
 Add 16k static endpoints and check the forwarding also check with master reboot
-	[Tags]  L2  scaling  IronHorse  skipped
+	[Tags]  L2  scaling  IronHorse
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  5

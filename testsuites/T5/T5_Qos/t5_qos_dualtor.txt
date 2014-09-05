@@ -132,8 +132,8 @@ T14 Repeat above all with two spines and 4 leafs, each source is from different 
 
 ## WITH CONTROL TRAFFIC 
 T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
-	[Tags]  manual-untested  feature
-	Manual untested
+	[Tags]  manual  feature
+	Manual passed
 ## WITH QoS
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T16 With QoS verify flow mappings to queues
@@ -194,8 +194,8 @@ T29 Repeat above all with two spines and 4 leafs, each source is from different 
 	
 ## WITH CONTROL TRAFFIC 
 T30 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
-	[Tags]  manual-untested  feature
-	Manual untested
+	[Tags]  manual  feature
+	Manual passed
 	
 T31 shut no shut switch interface
 	[Tags]  manual  feature
@@ -237,16 +237,16 @@ T39 poweron switch
 	Manual passed
 
 T40 poweroff master controller
-	[Tags]  manual-untested  feature
-	Manual untested
+	[Tags]  manual  feature
+	Manual passed
 
 T41 poweroff slave controller
-	[Tags]  manual-untested  feature
-	Manual untested
+	[Tags]  manual  feature
+	Manual passed
 
 T42 Shut Mgmt port in switch and connect back
-	[Tags]  manual-untested  feature
-	Manual untested
+	[Tags]  manual  feature
+	Manual passed
 
 T43 Verify syslogs for any scale errors
 	[Tags]  manual  feature

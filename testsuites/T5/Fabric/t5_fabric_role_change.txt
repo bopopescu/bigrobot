@@ -20,23 +20,24 @@ Resource  testsuites/T5/t5_physical_variables.txt
 
 add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse
+   bigrobot test ztn  False
    add fabric switch
-   sleep  5
+   sleep  125
    rest verify fabric switch all
 
 Verify the Fabric feature Role Spine0
 	[Tags]  Fabric  feature  IronHorse
-   sleep  5 
+   sleep  125
    verify fabric switch role  ${spine0_dpid}  spine  
 
 delete/add the Fabric role spine0
 	[Tags]  Fabric  feature  IronHorse 
   REST delete fabric role  spine0
-  sleep  3
+  sleep  125
   verify fabric switch role  ${spine0_dpid}  undefined
   rest verify fabric link
   REST add fabric role  spine0  spine   
-  sleep  5
+  sleep  125
   verify fabric switch role  ${spine0_dpid}  spine 
   rest verify fabric link
 
@@ -44,12 +45,12 @@ delete/add Fabric role leaf in dual leaf setup
 	[Tags]  Fabric  feature  IronHorse
    rest delete leaf group  leaf0-a  
    REST delete fabric role  leaf0-a  
-   sleep  5 
+   sleep  125 
    verify fabric switch role  ${leaf0a_dpid}  undefined
    rest verify fabric link   
    REST add fabric role  leaf0-a  leaf
    REST add leaf group  leaf0-a  rack0   
-   sleep  5
+   sleep  125
    verify fabric switch role  ${leaf0a_dpid}  leaf
    rest verify fabric link
    

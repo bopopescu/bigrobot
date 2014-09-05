@@ -1,0 +1,218 @@
+*Settings
+Documentation  Scale Limits for Dell S4810
+Suite Setup  scale suite setup
+Suite Teardown   scale suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   bigtap  scale
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+#### Dell S4810
+${switch1_alias}                        app-rs4810-1       #Alias for Dell S4810 switch
+${filter_intf_1}                        ethernet1
+${filter_alias_1}                       ixia-1-3
+${delivery_intf_1}                      ethernet2
+${delivery_alias_1}                     ixia-1-4
+${policy_s4810}                         policy-s4810
+${start_port}                           99
+
+*Test Case
+TC1: IPv4 Scaling test with 1019 policies in full-match mode
+    ${thost_enabled}=  rest enable feature  full-match
+    Should be true  ${thost_enabled}    
+    : FOR    ${INDEX}    IN RANGE    1    1020
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  600    
+    : FOR    ${INDEX}    IN RANGE    1    1020
+    \    ${NINDEX}=  Convert to string  ${INDEX}  
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}         
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    sleep  100
+    : FOR    ${INDEX}    IN RANGE    1    1020
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100    
+    [Tags]  ipv4  policy-scale  full-match
+
+TC2: IPv4 Scaling test with 2020 policies in l3-l4-match mode
+    ${thost_enabled}=  rest enable feature  l3-l4-match
+    Should be true  ${thost_enabled}    
+    : FOR    ${INDEX}    IN RANGE    1    2021
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  600    
+    : FOR    ${INDEX}    IN RANGE    1    2021
+    \    ${NINDEX}=  Convert to string  ${INDEX}  
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}         
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    sleep  100
+    : FOR    ${INDEX}    IN RANGE    1    2021
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100    
+    [Tags]  ipv4  policy-scale  l3-l4-match
+
+TC3: IPv4 Scaling test with 1015 policies in l3-l4-offset-match mode
+    ${thost_enabled}=  rest enable feature  l3-l4-offset-match
+    Should be true  ${thost_enabled}    
+    : FOR    ${INDEX}    IN RANGE    1    1016
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  ${INDEX}  {"sequence": ${INDEX}, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": ${INDEX}, "offset": 12}, "dst-tp-port": 2152}
+    sleep  600    
+    : FOR    ${INDEX}    IN RANGE    1    1016
+    \    ${NINDEX}=  Convert to string  ${INDEX}  
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}         
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    sleep  100
+    : FOR    ${INDEX}    IN RANGE    1    1016
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100    
+    [Tags]  ipv4  policy-scale  l3-l4-offset-match
+
+TC4: IPv4 Scaling test with 1 policy and 1015 match conditions in full-match mode
+    ${thost_enabled}=  rest enable feature  full-match
+    Should be true  ${thost_enabled}
+    rest add policy  admin-view  ${policy_s4810}  forward     
+    rest add policy interface  admin-view   ${policy_s4810}   ${filter_alias_1}    filter
+    rest add policy interface  admin-view   ${policy_s4810}   ${delivery_alias_1}  delivery        
+    : FOR    ${INDEX}    IN RANGE    1    1016
+    \    Log    ${INDEX}
+    \    rest add policy match  admin-view  ${policy_s4810}  ${INDEX}  {"src-tp-port": ${INDEX}, "ether-type": 2048, "ip-proto": 6, "sequence": ${INDEX}}
+    sleep  120    
+    ${verify_policy}=  rest verify bigtap policy  ${policy_s4810}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy}
+    sleep  120
+    rest delete policy  admin-view  ${policy_s4810}  
+    [Tags]  ipv4  policy-scale  full-match    
+
+TC5: IPv6 Scaling test with 895 policies in full-match mode
+    ${thost_enabled}=  rest enable feature  full-match
+    Should be true  ${thost_enabled}    
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  600    
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    ${NINDEX}=  Convert to string  ${INDEX}  
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}         
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    sleep  100
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100    
+    [Tags]  ipv6  policy-scale  full-match
+
+TC6: IPv6 Scaling test with 895 policies in l3-l4-match mode
+    ${thost_enabled}=  rest enable feature  l3-l4-match
+    Should be true  ${thost_enabled}    
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  600    
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    ${NINDEX}=  Convert to string  ${INDEX}  
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}         
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    sleep  100
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_s4810}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100    
+    [Tags]  ipv6  policy-scale  l3-l4-match
+
+TC7: IPv6 Scaling test with 1 policy and 895 match conditions in full-match mode
+    ${thost_enabled}=  rest enable feature  full-match
+    Should be true  ${thost_enabled}
+    rest add policy  admin-view  ${policy_s4810}  forward     
+    rest add policy interface  admin-view   ${policy_s4810}   ${filter_alias_1}    filter
+    rest add policy interface  admin-view   ${policy_s4810}   ${delivery_alias_1}  delivery        
+    : FOR    ${INDEX}    IN RANGE    1    896
+    \    Log    ${INDEX}
+    \    rest add policy match  admin-view  ${policy_s4810}  ${INDEX}  {"src-tp-port": ${INDEX}, "ether-type": 34525, "ip-proto": 6, "sequence": ${INDEX}}
+    sleep  120    
+    ${verify_policy}=  rest verify bigtap policy  ${policy_s4810}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy}
+    sleep  120
+    rest delete policy  admin-view  ${policy_s4810}  
+    [Tags]  ipv6  policy-scale  full-match   
+    
+* Keyword
+
+scale suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${filter_intf_1}       filter      intf_nickname=${filter_alias_1}
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${delivery_intf_1}     delivery    intf_nickname=${delivery_alias_1}
+    ${thost_enabled}=  rest disable feature  overlap
+    Should be true  ${thost_enabled} 
+    
+scale suite teardown
+    rest delete interface role  s1  ${filter_intf_1}       filter 
+    rest delete interface role  s1  ${delivery_intf_1}       delivery 
+    rest delete interface  s1  ${filter_intf_1}        
+    rest delete interface  s1  ${delivery_intf_1}        
+    rest delete switch alias  s1
+    rest delete switch  s1        
+    base suite teardown
+
+    

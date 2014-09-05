@@ -23,16 +23,16 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 def print_stat3(descr, val, pct=None):
     if pct != None:
-        print("%-74s %22s  %.1f%%" %
+        print("%-74s %24s  %.1f%%" %
               (descr, val, pct))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                 pass_pct=None, automation_pct=None):
     if automation_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%% %5.1f%% %5.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%% %5.1f%% %5.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
@@ -41,7 +41,7 @@ def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                pass_pct,
                automation_pct))
     elif pass_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%% %5.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%% %5.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
@@ -49,45 +49,50 @@ def print_stat2(descr, val, untested=None, manual=None, test_pct=None,
                test_pct,
                pass_pct))
     elif test_pct != None:
-        print("%-74s %22s  %-22s %-12s %8.1f%%" %
+        print("%-74s %24s  %-22s %-12s %8.1f%%" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                "manual(%s)" % manual,
                test_pct))
     elif manual != None:
-        print("%-74s %22s  %-22s %-12s" %
+        print("%-74s %24s  %-22s %-12s" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                "manual(%s)" % manual))
     elif untested != None:
-        print("%-74s %22s  %-22s" %
+        print("%-74s %24s  %-22s" %
               (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_stat(descr, val, untested=None, test_pct=None, manual=None):
     if manual != None:
-        print("%-74s %22s  %-22s %8.1f%%  %s" %
+        print("%-74s %24s  %-22s %8.1f%%  %s" %
               (descr,
                val,
                "manual-untested(%s)" % untested,
                test_pct,
                "manual(%s)" % manual))
     elif test_pct != None:
-        print("%-74s %22s  %-22s %8.1f%%" %
+        print("%-74s %24s  %-22s %8.1f%%" %
               (descr, val, "manual-untested(%s)" % untested, test_pct))
     elif untested != None:
-        print("%-74s %22s  %-22s" %
+        print("%-74s %24s  %-22s" %
               (descr, val, "manual-untested(%s)" % untested))
     else:
-        print("%-74s %22s" % (descr, val))
+        print("%-74s %24s" % (descr, val))
 
 
 def print_testcases(testcases):
-    print "\n".join(sorted(["\t%s" % helpers.utf8(x) for x in testcases]))
+    i = 0
+    for tc in sorted(testcases):
+        i += 1
+        print("\t%03d. %s" % (i, helpers.utf8(tc)))
+    if i > 0:
+        print("")
 
 
 def print_suites(suites):
@@ -138,6 +143,8 @@ Display test execution stats collected for a specific build.
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--show-untested', action='store_true', default=False,
                         help=("Show the manual-untested test cases"))
+    parser.add_argument('--show-manual', action='store_true', default=False,
+                        help=("Show the manual test cases"))
     parser.add_argument('--show-suites', action='store_true', default=False,
                         help=("Show the test suites"))
     parser.add_argument('--show-all', action='store_true', default=False,
@@ -169,6 +176,12 @@ def display_stats(args):
         print_stat("Total of all test suites:", ih.total_testsuites())
         print_stat("Total of all test cases:", ih.total_testcases())
 
+    suites_in_release = ih.testsuites(release=ih.release_lowercase())
+    product_suites = {}
+    for _suites in suites_in_release:
+        product_suites[_suites['product_suite']] = _suites
+
+
     print ""
     print "%s Release Metrics" % (ih.release())
     print "==================================================================="
@@ -176,31 +189,36 @@ def display_stats(args):
                release=ih.release_lowercase())
     print_stat("Total test suites:", total_testsuites_in_release)
 
-
     total_tc = ih.total_testcases(release=ih.release_lowercase())
     total_tc_untested = ih.total_testcases_by_tag(["manual-untested"])[0]
     total_tc_manual = ih.total_testcases_by_tag(["manual"])[0]
-    total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
-    # print_stat2("Total test cases:",
-    #           total_tc,
-    #           total_tc_untested,
-    #           total_tc_manual,
-    #           total_tc_pct,
-    #           )
+    # total_tc_pct = percentage(total_tc - total_tc_untested, total_tc)
     print_stat2("Total test cases:", total_tc)
     total['tests'] = total_tc
 
-    for functionality in cat.test_types() + ["manual", "manual-untested"]:
+
+    for functionality in cat.test_types() + ["virtual",
+                                             "physical",
+                                             "manual",
+                                             "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
-        total_tc_func_untested = ih.total_testcases_by_tag(
-                                    [functionality, "manual-untested"])[0]
-        total_tc_func_manual = ih.total_testcases_by_tag(
-                                    [functionality, "manual"])[0]
-        test_pct = percentage(total_tc_func - total_tc_func_untested,
-                              total_tc_func)
+        # total_tc_func_untested = ih.total_testcases_by_tag(
+        #                            [functionality, "manual-untested"])[0]
+        # total_tc_func_manual = ih.total_testcases_by_tag(
+        #                            [functionality, "manual"])[0]
+        # test_pct = percentage(total_tc_func - total_tc_func_untested,
+        #                      total_tc_func)
         total[functionality] = total_tc_func
 
 
+    total_virtual = ih.total_testcases_by_tag('virtual')[0]
+    print_stat3("Total virtual test cases:",
+                total_virtual,
+                percentage(total_virtual, total_tc))
+    total_physical = ih.total_testcases_by_tag('physical')[0]
+    print_stat3("Total physical test cases:",
+                total_physical,
+                percentage(total_physical, total_tc))
     total_manual = ih.total_testcases_by_tag('manual')[0]
     print_stat3("Total manual test cases:",
                 total_manual,
@@ -223,14 +241,15 @@ def display_stats(args):
     # total_tc_automated_executable = total_tc_executable - total_tc_manual
     print_stat3("Total test cases automated:",
                total_tc_automated,
-               # total_tc_automated_executable,
-               # percentage(total_tc_automated_executable,
-               #           total_tc_executable))
                percentage(total_tc_automated, total_tc))
 
 
     print ""
     print "Regression Run Results (Build: %s)" % (build)
+    i = 0
+    for a_build in cat.aggregated_build(build):
+        i += 1
+        print "\tBuild %02d: %s" % (i, a_build)
     print "==================================================================="
 
 
@@ -244,18 +263,18 @@ def display_stats(args):
                                build=build,
                                collection_testcases="test_cases_archive")
         print_suites(suites_executed)
+        print ""
 
-    print ""
     print_stat("Total test suites not executed:",
                total_testsuites_in_release - total_testsuites_in_release_executed)
+
     if args.show_suites:
-        suites_in_release = ih.testsuites(release=ih.release_lowercase())
         print_suites_not_executed(suites_in_release, suites_executed)
 
 
     print ""
-    print "Test Summary                                                                                                                               exec%  pass%  auto%"
-    print "--------------------------------------------------------------------------  ---------------------  --------------------   --------------   -----  -----  -----"
+    print "Test Summary                                                                                                                                 exec%  pass%  auto%"
+    print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
     total_executed = ih.total_testcases_executed(build_name=build)
     total_untested = ih.total_testcases_by_tag(
                                     ["manual-untested"])[0]
@@ -275,8 +294,17 @@ def display_stats(args):
                pass_pct,
                automation_pct,
                )
+    if args.show_untested and total_untested != 0:
+        print "\t----- manual-untested(%d)" % total_untested
+        print_testcases(ih.manual_untested_by_tag())
+    if args.show_manual and total_manual != 0:
+        print "\t----- manual(%d)" % total_manual
+        print_testcases(ih.manual_by_tag())
 
-    for functionality in cat.test_types() + ["manual", "manual-untested"]:
+    for functionality in cat.test_types() + ['virtual',
+                                             'physical',
+                                             "manual",
+                                             "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
         total_untested = ih.total_testcases_by_tag([functionality,
                                                     "manual-untested"])[0]
@@ -299,13 +327,17 @@ def display_stats(args):
                    pass_pct,
                    automation_pct,
                    )
-        if args.show_untested:
+        if args.show_untested and total_untested != 0:
+            print "\t----- manual-untested(%d)" % total_untested
             print_testcases(ih.manual_untested_by_tag(functionality))
+        if args.show_manual and total_manual != 0:
+            print "\t----- manual(%d)" % total_manual
+            print_testcases(ih.manual_by_tag(functionality))
 
     if not args.no_show_functional_areas:
         print ""
-        print "Functional Areas                                                                                                                           exec%  pass%  auto%"
-        print "--------------------------------------------------------------------------  ---------------------  --------------------   --------------   -----  -----  -----"
+        print "Functional Areas                                                                                                                             exec%  pass%  auto%"
+        print "--------------------------------------------------------------------------  -----------------------  --------------------   --------------   -----  -----  -----"
         functionality = "feature"
         for feature in cat.features(release=ih.release_lowercase()):
             total_tc = ih.total_testcases_by_tag([functionality, feature])[0]
@@ -328,9 +360,73 @@ def display_stats(args):
                        pass_pct,
                        automation_pct,
                        )
-            if args.show_untested:
+            if args.show_untested and total_untested != 0:
+                print "\t----- manual-untested(%d)" % total_untested
                 print_testcases(ih.manual_untested_by_tag([functionality,
                                                            feature]))
+            if args.show_manual and total_manual != 0:
+                print "\t----- manual(%d)" % total_manual
+                print_testcases(ih.manual_by_tag([functionality, feature]))
+
+    print ""
+    print "Manual Verification Details"
+    print "==================================================================="
+    test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
+    i = 0
+    pass_rate = {}
+    details_str = ""
+    for test_case in test_case_cursor:
+        # if (('jira' in test_case and test_case['jira']) or
+        #    ('notes' in test_case and test_case['notes'])):
+
+        if 'build_name_verified' in test_case:
+            i += 1
+
+            if test_case['product_suite'] in product_suites:
+                author = helpers.utf8(product_suites[test_case['product_suite']]['author'])
+            else:
+                author = 'unknown'
+
+            if author in pass_rate:
+                pass_rate[author][test_case['status']] += 1
+            else:
+                pass_rate[author] = { 'PASS':0, 'FAIL':0 }
+                pass_rate[author][test_case['status']] += 1
+
+            if 'build_name_verified' in test_case and test_case['build_name_verified']:
+                build_name_verified = test_case['build_name_verified']
+            else:
+                build_name_verified = None
+            if 'jira' in test_case and test_case['jira']:
+                jira = test_case['jira']
+            else:
+                jira = None
+            if 'notes' in test_case and test_case['notes']:
+                notes = test_case['notes']
+            else:
+                notes = None
+
+            if jira:
+                jira += " - https://bigswitch.atlassian.net/browse/%s" % jira
+
+            details_str += "%03d. %s  %s  %s\n" % (i, author, test_case['product_suite'], test_case['name'])
+            details_str += "\tverified in : %s\n" % build_name_verified
+            details_str += "\tstatus      : %s\n" % test_case['status']
+            details_str += "\tjira        : %s\n" % jira
+            details_str += "\tnotes       : %s\n" % notes
+            details_str += ""
+    if i == 0:
+        print "None"
+    else:
+        total_passes = total_fails = 0
+        for author, status in pass_rate.items():
+            print "Author: %10s  Passes: %3d  Fails: %3d  Total: %3d" % (author, status['PASS'], status['FAIL'], status['PASS'] + status['FAIL'])
+            total_passes += status['PASS']
+            total_fails += status['FAIL']
+        print "        %10s  Passes: %3d  Fails: %3d  Total: %3d" % ('Combined', total_passes, total_fails, total_passes + total_fails)
+        print ""
+        print details_str
 
 
 if __name__ == '__main__':

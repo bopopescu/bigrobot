@@ -148,6 +148,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.devconf(*args, **kwargs)
 
+    def is_master(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.is_master(*args, **kwargs)
+
     def cli(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.cli(*args, **kwargs)
@@ -219,6 +223,10 @@ class HaControllerNode(object):
     def console_close(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.console(*args, **kwargs)
+
+    def monitor_reauth(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.monitor_reauth(*args, **kwargs)
 
     def close(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)

@@ -7,6 +7,7 @@ Force Tags      GUI RBAC
 Library         keywords/BsnCommon.py
 Library         keywords/AppController.py
 Library         keywords_dev/tomasz/BigTap.py
+Library        	keywords/BsnSelenium.py
 Library        	SeleniumLibrary
 Resource        bigtap_resource.txt
 
@@ -17,8 +18,8 @@ T1.1 Local admin
 	Valid Login					admin          		adminadmin
 T1.2 Remote admin1  
 	Valid Login                 bt-admin       		adminadmin
-T1.3 Remote admin2
-	Valid Login                 admin          		Password1
+#T1.3 Remote admin2
+#	Valid Login                 admin          		Password1
 T1.4 Local user1 
 	Valid Login                 test           		adminadmin
 T1.5 Local user2      
@@ -48,10 +49,11 @@ T2.6 Empty Username And Password
 Setup
     base suite setup
     Start Selenium Server  -trustAllSSLCertificates
-	${c1_ip}            params  node=c1  key=ip
+	#${c1_ip}=            params  node=c1  key=ip
+	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    Rest Add Tacacs Server  10.192.4.91  secret
+    Rest Add Tacacs Server  10.2.3.201  secret
     Rest Add Tacacs Authentication
     Rest Add Tacacs Authorization
     CLI Configure User    tomasz

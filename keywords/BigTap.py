@@ -64,7 +64,7 @@ class BigTap(object):
                 c.rest.get(url)
                 content = c.rest.content()
             except:
-                helpers.test_failure("Could not execute command")
+                helpers.test_log("Could not execute command")
                 return False
             else:
                 if return_value is not None:
@@ -104,7 +104,7 @@ class BigTap(object):
                 c.rest.get(url)
                 content = c.rest.content()
             except:
-                helpers.test_failure("Could not execute command")
+                helpers.test_log("Could not execute command")
                 return False
             else:
                 return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]
@@ -166,7 +166,7 @@ class BigTap(object):
             temp = content[0]['optimized-match'].strip()
             temp = temp.split('\n')
         else:
-            helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+            helpers.test_log("Policy does not correctly report policy name  : %s" % content[0]['name'])
             return False
         return len(temp)
 # Mingtao
@@ -187,9 +187,9 @@ class BigTap(object):
             if c.rest.content()[0]['policy'][0]['name'] == str(policy):
                 return c.rest.content()[0]['policy'][0]
             else:
-                helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])
+                helpers.test_log("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])
                 return False
-        helpers.test_failure("ERROR: Policy does not correctly report ")
+        helpers.test_log("ERROR: Policy does not correctly report ")
         return False
 
 # Mingtao
@@ -203,7 +203,7 @@ class BigTap(object):
         if input_dict['name'] == str(policy):
             helpers.test_log("INFO: Policy correctly reports policy name as : %s" % input_dict['name'])
         else:
-            helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])
+            helpers.test_log("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])
             return False
 
         if match:
@@ -234,19 +234,42 @@ class BigTap(object):
         """
         t = test.Test()
         c = t.controller('master')
-
+        c.rest.get('/rest/v1/system/version')
+        content = c.rest.content()
+        version_string = content[0]['controller']
+        helpers.log("version string is %s" % version_string)
         url = '/api/v1/data/controller/applications/bigtap/info'
         c.rest.get(url)
-
         if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
         data = c.rest.content()
-        if not data[0][feature]:
-            helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-            return "False"
-        helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
-        return str(data[0][feature])
+        if "4.0.0" in str(version_string):
+            if ("l3-l4" in feature) or ("full-match" in feature):
+                if "l3-l4-mode" in feature:
+                    matchcondition = "bigtap-l3l4"
+                elif "offset" in feature:
+                    matchcondition = "bigtap-offset-match"
+                else:
+                    matchcondition = "bigtap-full-match"
+                if (data[0]["match-mode"] == matchcondition):
+                    return "True"
+                else:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+            else:
+                if not data[0][feature]:
+                    helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                    return "False"
+                helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+                return str(data[0][feature])
+
+        else:
+            if not data[0][feature]:
+                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                return "False"
+            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+            return str(data[0][feature])
 
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
@@ -266,7 +289,7 @@ class BigTap(object):
             # return "True"
             return True
         else:
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
 
     def cli_show_l3_l4(self):
@@ -339,21 +362,23 @@ class BigTap(object):
             t = test.Test()
             c = t.controller('master')
         except:
-            helpers.test_failure("Could not execute command")
+            helpers.test_log("Could not execute command")
             return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % str(policy_name)
             if "admin" not in user:
-                c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                 c_user.rest.get(url)
                 if not c_user.rest.status_code_ok():
-                    helpers.test_failure(c_user.rest.error())
+                    helpers.test_log(c_user.rest.error())
+                    return False
                 content = c_user.rest.content()
-                t.node_reconnect(node='master')
+                c_user.close()
             else:
                 c.rest.get(url)
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
+                    return False
                 content = c.rest.content()
             if len(content) == 0:
                 return False
@@ -364,7 +389,7 @@ class BigTap(object):
                     if content[0]['name'] == str(policy_name):
                         helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
                     else:
-                        helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+                        helpers.test_log("Policy does not correctly report policy name  : %s" % content[0]['name'])
                         return False
 
                     if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
@@ -374,7 +399,7 @@ class BigTap(object):
                     elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
                         helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                        helpers.test_log("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
                         return False
 
                     if content[0]['type'] == "Configured":
@@ -382,7 +407,7 @@ class BigTap(object):
                     elif content[0]['type'] == "Dynamic":
                         helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
                     else:
-                        helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
+                        helpers.test_log("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
                         return False
 
                     if "installed" in content[0]['runtime-status']:
@@ -392,20 +417,20 @@ class BigTap(object):
                     elif "inactive" in content[0]['runtime-status'] and flag is True:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                        helpers.test_log("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
                         return False
 
                     if (num_delivery_intf is not None):
                         if content[0]['delivery-interface-count'] == int(num_delivery_intf):
                             helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
                         else:
-                            helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                            helpers.test_log("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
                             return False
                     if (num_filter_intf is not None):
                         if content[0]['filter-interface-count'] == int(num_filter_intf):
                             helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
                         else:
-                            helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                            helpers.test_log("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
                             return False
 
                     if "installed to forward" in content[0]['detailed-status']:
@@ -417,7 +442,7 @@ class BigTap(object):
                     elif "inactive" in content[0]['detailed-status'] and flag is True:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     else:
-                        helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                        helpers.test_log("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
                         return False
                     return True
 
@@ -428,13 +453,14 @@ class BigTap(object):
             AppCommon = AppController.AppController()
 
         except:
-            helpers.test_failure("Could not execute command")
+            helpers.test_log("Could not execute command")
             return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/service-interface' % str(policy_name)
             c.rest.get(url)
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
+                return False
             content = c.rest.content()
 
 
@@ -913,9 +939,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(group_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(group_name)})
             except:
@@ -952,9 +978,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -992,9 +1018,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(interface_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(interface_name)})
             except:
@@ -1032,9 +1058,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1079,10 +1105,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    # c_user.rest.patch(url, data)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     # c.rest.patch(url, data)
                     c.rest.put(url, data)
@@ -1123,9 +1148,9 @@ class BigTap(object):
                 else:
                     return False
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1157,9 +1182,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {'name':str(policy_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {'name':str(policy_name)})
             except:
@@ -1168,9 +1193,9 @@ class BigTap(object):
             else:
                 try:
                     if "admin" not in user:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                         c_user.rest.patch(url, {"action":str(policy_action)})
-                        t.node_reconnect(node='master')
+                        c_user.close()
                     else:
                         c.rest.patch(url, {"action":str(policy_action)})
                 except:
@@ -1201,9 +1226,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1327,9 +1352,9 @@ class BigTap(object):
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(intf_nickname)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(intf_nickname)})
             except:
@@ -1367,9 +1392,9 @@ class BigTap(object):
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1408,9 +1433,9 @@ class BigTap(object):
                     data_dict = data
                 helpers.log("Input dictionary is %s" % data_dict)
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data_dict)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, data_dict)
             except:
@@ -1441,9 +1466,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1476,9 +1501,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"name": str(filter_set_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"name": str(filter_set_name)})
             except:
@@ -1511,9 +1536,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1549,9 +1574,9 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
                 data_dict = helpers.from_json(data)
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, data_dict)
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, data_dict)
             except:
@@ -1584,9 +1609,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1619,9 +1644,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
             except:
@@ -1654,9 +1679,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {"filter-set-name": str(filter_set_name)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {"filter-set-name": str(filter_set_name)})
             except:
@@ -1690,9 +1715,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.patch(url, {"strip-vlan": True})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.patch(url, {"strip-vlan": True})
             except:
@@ -1725,9 +1750,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][strip-vlan="None"]/strip-vlan' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1768,29 +1793,29 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.put(url, {"name":str(service_name)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 try:
                     # Add Pre-Service Interface
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(pre_service_intf_nickname))
                     if "admin" not in user:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                         c_user.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
-                        t.node_reconnect(node='master')
+                        c_user.close()
                     else:
                         c.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     try:
                         # Add Post-Service Interface
                         url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(post_service_intf_nickname))
                         if "admin" not in user:
-                            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                            c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                             c_user.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
-                            t.node_reconnect(node='master')
+                            c_user.close()
                         else:
                             c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
                     except:
@@ -1823,9 +1848,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -1867,9 +1892,9 @@ class BigTap(object):
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.post(url_add_intf, {"name":str(intf_nickname)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.post(url_add_intf, {"name":str(intf_nickname)})
             except:
@@ -1909,9 +1934,9 @@ class BigTap(object):
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url_add_intf, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url_add_intf, {})
             except:
@@ -1953,9 +1978,9 @@ class BigTap(object):
             try:
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
             except:
@@ -1988,9 +2013,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.delete(url, {})
             except:
@@ -2041,9 +2066,9 @@ class BigTap(object):
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
                     c_user.rest.delete(url, {})
-                    t.node_reconnect(node='master')
+                    c_user.close()
                 else:
                     c.rest.patch(url, {"action":str(policy_action)})
             except:
@@ -2080,14 +2105,32 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/feature'
-                c.rest.patch(url, {str(feature_name): False})
+                c.rest.get('/rest/v1/system/version')
+                content = c.rest.content()
+                version_string = content[0]['controller']
+                helpers.log("version string is %s" % version_string)
+                if "4.0.0" in str(version_string):
+                    if ("l3-l4" in str(feature_name)):
+                        matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
+                        helpers.log("Data to be patched is %s" % data)
+                    else:
+                        data = {str(feature_name): False}
+                        helpers.log("Data to be patched is %s" % data)
+                else:
+                    data = {str(feature_name): False}
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
-                return True
+                try:
+                    url = '/api/v1/data/controller/applications/bigtap/feature'
+                    c.rest.patch(url, data)
+                except:
+                    return False
+                else:
+                    helpers.test_log(c.rest.content_json())
+                    return True
 
 # Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self, feature_name):
@@ -2118,7 +2161,13 @@ class BigTap(object):
                 helpers.log("version string is %s" % version_string)
                 if "4.0.0" in str(version_string):
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
-                        data = {"match-mode": str(feature_name)}
+                        if "l3-l4-mode" in str(feature_name):
+                            matchcondition = "l3-l4-match"
+                        elif "offset" in str(feature_name):
+                            matchcondition = "l3-l4-offset-match"
+                        else:
+                            matchcondition = "full-match"
+                        data = {"match-mode": str(matchcondition)}
                         helpers.log("Data to be patched is %s" % data)
                     else:
                         data = {str(feature_name): True}
@@ -2166,7 +2215,6 @@ class BigTap(object):
          """
         self.bigtap_delete_policy()
         self.bigtap_delete_address_group()
-
         return True
 
 # Mingtao
@@ -2191,13 +2239,14 @@ class BigTap(object):
             url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (rbac_view, policy)
             c.rest.delete(url)
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
+                return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy?select=info'
             c.rest.get(url)
             content = c.rest.content()
             if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             helpers.log("Output: %s" % c.rest.result_json())
             length = len(content)
@@ -2208,7 +2257,7 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(name))
                 c.rest.delete(url)
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
         return True
 
@@ -3033,7 +3082,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            t.node_reconnect(node='master')
+            # t.node_reconnect(node='master')
         except:
             return False
         else:
@@ -3392,10 +3441,10 @@ class BigTap(object):
         t = test.Test()
         c = t.controller('master')
         if "admin" not in user:
-            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+            c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
             c_user.rest.get(url)
             content = c_user.rest.content()
-            t.node_reconnect(node='master')
+            c_user.close()
         else:
             c.rest.get(url)
             content = c.rest.content()
@@ -3616,7 +3665,10 @@ class BigTap(object):
             c.send(helpers.ctrl('u'))
             c.expect()
             c.cli('')
-            num = len(temp)
+            if temp[-1] == '':
+                num = len(temp) - 1
+            else:
+                num = len(temp)
             helpers.log("Number of arguments in show command are %s" % num)
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
@@ -3659,20 +3711,27 @@ class BigTap(object):
             c.cli(command)
             content = c.cli_content()
             temp_content = content.split('\n')
+            # helpers.log("Output is %s \n " % temp_content)
             num = len(temp_content)
-            if (num != cmd_argument_count) :
-                helpers.log("Number of arguments in CLI Command Output is different")
+            # helpers.log("Length is %s and passed argument is %s \n" % (num, cmd_argument_count))
+            if (num != int(cmd_argument_count)) :
+                # helpers.log("Number of arguments in CLI Command Output is different")
                 return False
+            else:
+                helpers.log("Correct number of arguments found\n.")
             if ("None" in temp_content[0]) and (num == 1):
                 return True
             elif ("None" in temp_content[0]) and (num > 2):
                 helpers.log("Number of lines ")
                 return False
-
             if cmd_argument is not None :
+                # helpers.log("Argument passed is %s \n" % (cmd_argument))
                 for line in temp_content:
-                    if (cmd_argument in line) and (num == cmd_argument_count):
+                    # helpers.log("Line is %s \n" % line)
+                    if (cmd_argument in line) and (num == int(cmd_argument_count)):
                         return True
+                return False
+            return True
 
     def convert_integer_to_tcpflag(self, integer_passed):
         binary_number = bin(int(integer_passed))[2:].zfill(6)
@@ -3698,3 +3757,57 @@ class BigTap(object):
                 return False
             else:
                 return True
+
+    def rest_return_policy_stats(self, policy, interface_type='filter', interface_name=None, stat_info='packet-count', switch_dpid=None, interface_direction=None, service_name=None):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            if str(interface_type) == "filter":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/filter-interface' % str(policy)
+            elif str(interface_type) == "delivery":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/delivery-interface' % str(policy)
+            elif str(interface_type) == "core":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/core-interface' % str(policy)
+            elif str(interface_type) == "service":
+                url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/service-interface' % str(policy)
+            else:
+                helpers.log("The value passed to function for interface_type is not supported\n")
+                return False
+            c.rest.get(url)
+            content = c.rest.content()
+            if len(content) == 1:
+                return content[0][str(stat_info)]
+            else:
+                if str(interface_type) == "core":
+                    for i in range(0, len(content)):
+                        if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction):
+                            return content[i][str(stat_info)]
+                elif str(interface_type) == "service":
+                    for i in range(0, len(content)):
+                        if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction) and content[i]['service-name'] == str(service_name):
+                            return content[i][str(stat_info)]
+                else:
+                    for i in range(0, len(content)):
+                        if content[i]['bigtapinterface'] == str(interface_name):
+                            return content[i][str(stat_info)]
+                return False
+
+    def rest_return_switch_interface_stats(self, switch_dpid, switch_interface, stat_info):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/core/switch[stats/interface/interface/name="%s"][dpid="%s"]?select=stats/interface[interface/name="%s"]' % (str(switch_interface), str(switch_dpid), str(switch_interface))
+            helpers.log("URL is %s" % url)
+            c.rest.get(url)
+            content = c.rest.content()
+            return content[0]['stats']['interface'][0][str(stat_info)]

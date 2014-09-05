@@ -1,7 +1,7 @@
 *Settings
 Documentation  Corsair Deep Packet Matching Test Suite
 Suite Setup  corsair suite setup
-#Suite Teardown   corsair suite teardown
+Suite Teardown   corsair suite teardown
 Test Setup   corsair test setup
 Test Teardown  corsair test teardown 
 Force Tags   Corsair  BigTap  DPM
@@ -51,9 +51,9 @@ TC2:Send GRE packets and verify match on inner source IP
     verify packet count 
     [Tags]  gre
 TC3:Send GRE packets and verify match on inner destination IP
-    ${set_udf}=  rest add bigtap udf  0  l3-start  48
+    ${set_udf}=  rest add bigtap udf  0  l3-start  40
     Should be true  ${set_udf}
-    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 48}}
+    ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 40}}
     Should be true  ${set_policy_match}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -64,7 +64,7 @@ TC3:Send GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  10
     verify packet count 
-    [Tags]  gre
+    [Tags]  gre  sandip
 
 TC4:Send GRE within GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  60
@@ -424,7 +424,7 @@ TC25: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
 TC26: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  44
     Should be true  ${set_udf_1}
-    ${set_udf_2}=  rest add bigtap udf  0  l3-start  48
+    ${set_udf_2}=  rest add bigtap udf  1  l3-start  48
     Should be true  ${set_udf_2}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 65535, "anchor": "l3-start", "value": 2048, "offset": 44}, "offset-match-1": {"mask": 4026531840, "anchor": "l3-start", "value": 1342177280, "offset": 48}}
     Should be true  ${set_policy_match}
@@ -541,7 +541,68 @@ TC32: Send BOOTP packets and match on Your(client) IP Address
     sleep  10
     verify packet count
     [Tags]  bootp  
-                                
+
+TC33: Send L2TP enacapsulated packets and match on Inner source IP Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  32    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  1  l4-start  28    
+    Should be true  ${set_udf_2}    
+    ${set_policy_match_1}=  rest add policy match  admin-view  ${policy_name_1}  1   {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3355509003, "offset": 32}, "dst-tp-port": 1701}
+    Should be true  ${set_policy_match_1}
+    ${set_policy_match_2}=  rest add policy match  admin-view  ${policy_name_1}  2   {"sequence": 2, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 4261478400, "offset": 32}, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 65535, "anchor": "l4-start", "value": 49930, "offset": 28}, "dst-tp-port": 1701}
+    Should be true  ${set_policy_match_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  l2tp  runthis    
+
+TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  1  l4-start  32    
+    Should be true  ${set_udf_2}    
+    ${set_policy_match_1}=  rest add policy match  admin-view  ${policy_name_1}  1   {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3272277505, "offset": 36}, "dst-tp-port": 1701}
+    Should be true  ${set_policy_match_1}
+    ${set_policy_match_2}=  rest add policy match  admin-view  ${policy_name_1}  2   {"sequence": 2, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 17498112, "offset": 36}, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 65535, "anchor": "l4-start", "value": 51201, "offset": 32}, "dst-tp-port": 1701}
+    Should be true  ${set_policy_match_2}
+    sleep  5
+    pause
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
+    sleep  10
+    verify packet count
+    [Tags]  l2tp  runthis  one  
+
+
+TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
+    ${set_udf_1}=  rest add bigtap udf  0  l4-start  8    
+    Should be true  ${set_udf_1}
+    ${set_policy_match_1}=  rest add policy match  admin-view  ${policy_name_1}  1   {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4278190080, "anchor": "l4-start", "value": 131072, "offset": 8}}
+    Should be true  ${set_policy_match_1}
+    ${set_policy_match_2}=  rest add policy match  admin-view  ${policy_name_1}  2   {"ip-proto": 17, "sequence": 2, "ether-type": 2048, "offset-match-0": {"mask": 4278190080, "anchor": "l4-start", "value": 33554432, "offset": 8}}
+    Should be true  ${set_policy_match_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    sleep  1    
+    rest execute generic get   /api/v1/data/controller/applications/bigtap/clear-stats
+    sleep  1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
+    sleep  10
+    verify packet count
+    pause
+    [Tags]  l2tp  runthis
+                                   
 * Keyword
 
 verify packet count
@@ -569,6 +630,14 @@ corsair test setup
     
 corsair test teardown
     REST delete policy  admin-view  ${policy_name_1}
+    ${set_udf_0}=  rest add bigtap udf  0  l4-start  8    
+    Should be true  ${set_udf_0}
+    ${set_udf_1}=  rest add bigtap udf  1  l4-start  12    
+    Should be true  ${set_udf_1}
+    ${set_udf_2}=  rest add bigtap udf  2  l4-start  20    
+    Should be true  ${set_udf_2}
+    ${set_udf_3}=  rest add bigtap udf  3  l4-start  24    
+    Should be true  ${set_udf_3}            
     sleep  5
 
 

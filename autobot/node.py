@@ -39,6 +39,10 @@ class Node(object):
 
         self._port = self.node_params.get('port', None)
         self._protocol = self.node_params.get('protocol', 'ssh')
+        self._privatekey = self.node_params.get('privatekey', None)
+        self._privatekey_password = self.node_params.get(
+                                            'privatekey_password', None)
+        self._privatekey_type = self.node_params.get('privatekey_type', None)
 
         if not ip:
             if helpers.params_is_false('set_session_ssh', self.node_params):
@@ -46,8 +50,9 @@ class Node(object):
                 # defined
                 pass
             else:
-                helpers.environment_failure("Node IP address is not defined for '%s'"
-                                            % name)
+                helpers.environment_failure(
+                            "Node IP address is not defined for '%s'"
+                            % name)
         else:
             self._ip = ip.lower()  # IP might be 'dummy'
 
@@ -110,6 +115,15 @@ class Node(object):
         self.is_pingable = True
         return True
 
+    def _match_console_banner(self):
+        try:
+            self.dev_console.expect(r'Escape character is.*', timeout=10)
+        except:
+            helpers.log("Could not find console signature"
+                        " 'Escape character is ^]' - matching everything"
+                        " as last resort")
+            self.dev_console.expect(r'.*', timeout=10)
+
     def console(self, driver=None, force_reconnect=False):
         """
         Inheriting class needs to further extend this method.
@@ -122,17 +136,18 @@ class Node(object):
         if 'console' in self.node_params:
             self._console_info = self.node_params['console']
         else:
-            helpers.environment_failure("Console info is not defined for node '%s'"
-                                        % self.name())
+            helpers.environment_failure(
+                            "Console info is not defined for node '%s'"
+                            % self.name())
 
         if 'ip' in self._console_info:
-            if 'port' in self._console_info:
-                self._console_info['type'] = 'telnet'
-                self._console_info['protocol'] = 'telnet'
-            elif 'libvirt_vm_name' in self._console_info:
+            if self._console_info.get('libvirt_vm_name', None):
                 self._console_info['type'] = 'libvirt'
                 self._console_info['protocol'] = 'ssh'
                 self._console_info['port'] = None
+            elif self._console_info.get('port', None):
+                self._console_info['type'] = 'telnet'
+                self._console_info['protocol'] = 'telnet'
             else:
                 helpers.environment_failure("Supported console types are"
                                             " telnet (IP and port) and libvirt"
@@ -157,10 +172,12 @@ class Node(object):
             self._console_info['driver'] = None
 
         helpers.log("Using devconf driver '%s' for console to '%s'"
-                    % (driver, self.name()))
+                    % (self._console_info['driver'], self.name()))
 
         # This is where we need to instantiate a devconf object,
         # if applicable.
+
+        return self.dev_console
 
     def console_reconnect(self, driver=None):
         raise NotImplementedError()
@@ -179,8 +196,10 @@ class Node(object):
             h.send(helpers.ctrl(']'))
         elif self._console_info['type'] == 'telnet':
             h.send(helpers.ctrl(']'))
-            h.expect(r'telnet> ')
-            h.send('quit')
+            # h.expect(r'telnet> ')
+            # h.send('quit')
+        h.close()
+        self.dev_console = None
 
     def connect(self, user, password, port=None, protocol='ssh', host=None,
                 name=None):
@@ -199,7 +218,7 @@ class Node(object):
 
     def close(self):
         if self.devconf() == None:
-            helpers.log("Devconf is undefined for '%s' (%s) - no disconnect"
+            helpers.log("Devconf is undefined for '%s' - no disconnect"
                         % self.name())
         else:
             self.devconf().close()
@@ -209,6 +228,8 @@ class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
+
+        self._monitor_reauth = False  # default
 
         # Note: Must be initialized before BsnRestClient since we need the
         # CLI for platform info and also to configure the firewall for REST
@@ -224,6 +245,9 @@ class ControllerNode(Node):
                         % name)
             return
 
+        if 'monitor_reauth' in self.node_params:
+            self._monitor_reauth = self.node_params['monitor_reauth']
+
         helpers.log("name=%s host=%s user=%s password=%s"
                     % (name, ip, user, password))
         self.dev = self.connect(name=name,
@@ -235,7 +259,7 @@ class ControllerNode(Node):
             self.http_port = self.node_params['http_port']
         else:
             if helpers.is_bvs(self.platform()):
-                self.http_port = 8080
+                self.http_port = 8443
             elif helpers.is_bigtap(self.platform()):
                 self.http_port = 8000
 
@@ -289,13 +313,18 @@ class ControllerNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol,
-                                         debug=self.dev_debug_level)
+        return devconf.ControllerDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            is_monitor_reauth=self._monitor_reauth,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
@@ -346,7 +375,7 @@ class ControllerNode(Node):
                                        % node)
         return nodeid
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -354,11 +383,13 @@ class ControllerNode(Node):
 
         super(ControllerNode, self).console(driver)
 
+        helpers.log("'%s' console type: %s" % (self.name(),
+                                               self._console_info['type']))
         if self._console_info['type'] == 'telnet':
             # For telnet console, requirements are an IP address and a port
             # number.
             self.dev_console = devconf.ControllerDevConf(
-                                    name=self.name(),
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
@@ -370,8 +401,13 @@ class ControllerNode(Node):
             # For libvirt console, requirements are an IP address (of the
             # KVM server) and the libvirt VM name (libvirt_vm_name). We will
             # first SSH to the KVM server, then execute 'virsh console <name>'.
-            self.dev_console = devconf.HostDevConf(
-                                    name=self.name(),
+            #
+            # Note: We're using ControllerDevConf even though the libvirt
+            # server is Ubuntu. This is because once we get on the controller
+            # console, we want to be able to issue commands in different
+            # modes: cli, enable, config, bash, etc.
+            self.dev_console = devconf.ControllerDevConf(
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
@@ -386,6 +422,8 @@ class ControllerNode(Node):
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s" %
                                   self._console_info['libvirt_vm_name'])
+            if expect_console_banner:
+                self._match_console_banner()
 
         # FIXME!!! The code below is not working. Figure out why...
 
@@ -396,13 +434,19 @@ class ControllerNode(Node):
 
         return self.dev_console
 
-    def console_reconnect(self, driver=None):
+    def console_reconnect(self, driver=None, expect_console_banner=False):
         # Delay for 1 second to allow the output to settle.
         helpers.sleep(1)
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s"
                                   % self._console_info['libvirt_vm_name'])
+            if expect_console_banner:
+                self._match_console_banner()
+
             return self.dev_console
+
+    def monitor_reauth(self, state):
+        return self.dev.monitor_reauth(state)
 
 
 class MininetNode(Node):
@@ -484,31 +528,39 @@ class MininetNode(Node):
             protocol = self._protocol
 
         if self.mn_type == 't6':
-            return devconf.T6MininetDevConf(name=name,
-                                            host=host,
-                                            user=user,
-                                            password=password,
-                                            controller=self.controller_ip,
-                                            controller2=self.controller_ip2,
-                                            topology=self.topology,
-                                            openflow_port=self.openflow_port,
-                                            debug=self.dev_debug_level,
-                                            is_start_mininet=self._start_mininet,
-                                            port=port,
-                                            protocol=protocol)
+            return devconf.T6MininetDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            controller=self.controller_ip,
+                            controller2=self.controller_ip2,
+                            topology=self.topology,
+                            openflow_port=self.openflow_port,
+                            debug=self.dev_debug_level,
+                            is_start_mininet=self._start_mininet,
+                            port=port,
+                            protocol=protocol,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
         elif self.mn_type == 'basic':
-            return devconf.MininetDevConf(name=name,
-                                          host=host,
-                                          user=user,
-                                          password=password,
-                                          controller=self.controller_ip,
-                                          controller2=self.controller_ip2,
-                                          topology=self.topology,
-                                          openflow_port=self.openflow_port,
-                                          debug=self.dev_debug_level,
-                                          is_start_mininet=self._start_mininet,
-                                          port=port,
-                                          protocol=protocol)
+            return devconf.MininetDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            controller=self.controller_ip,
+                            controller2=self.controller_ip2,
+                            topology=self.topology,
+                            openflow_port=self.openflow_port,
+                            debug=self.dev_debug_level,
+                            is_start_mininet=self._start_mininet,
+                            port=port,
+                            protocol=protocol,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
@@ -557,18 +609,22 @@ class HostNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.HostDevConf(name=name,
-                                   host=host,
-                                   user=user,
-                                   password=password,
-                                   port=port,
-                                   protocol=protocol,
-                                   debug=self.dev_debug_level)
+        return devconf.HostDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -583,7 +639,7 @@ class HostNode(Node):
             # For libvirt console, requirements are an IP address (of the
             # KVM server) and the libvirt VM name (libvirt_vm_name). We will
             # first SSH to the KVM server, then execute 'virsh console <name>'.
-            self.dev_console = devconf.HostDevConf(name=self.name(),
+            self.dev_console = devconf.HostDevConf(name=self.name() + "_console",
                                                    host=self._console_info['ip'],
                                                    port=self._console_info['port'],
                                                    user=self._console_info['user'],
@@ -594,6 +650,8 @@ class HostNode(Node):
         else:
             helpers.test_error("Unsupported console type '%s'"
                                % self._console_info['type'])
+            if expect_console_banner:
+                self._match_console_banner()
 
         if self._console_info['type'] == 'libvirt':
             self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
@@ -664,18 +722,22 @@ class SwitchNode(Node):
             port = self._port
         if not protocol:
             protocol = self._protocol
-        return devconf.SwitchDevConf(name=name,
-                                     host=host,
-                                     user=user,
-                                     password=password,
-                                     port=port,
-                                     protocol=protocol,
-                                     debug=self.dev_debug_level)
+        return devconf.SwitchDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
 
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None, force_reconnect=False):
+    def console(self, driver=None, force_reconnect=False, expect_console_banner=False):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
@@ -687,7 +749,7 @@ class SwitchNode(Node):
             # For telnet console, requirements are an IP address and a port
             # number.
             self.dev_console = devconf.SwitchDevConf(
-                                    name=self.name(),
+                                    name=self.name() + "_console",
                                     host=self._console_info['ip'],
                                     port=self._console_info['port'],
                                     user=self._console_info['user'],
@@ -698,6 +760,8 @@ class SwitchNode(Node):
         else:
             helpers.test_error("Unsupported console type '%s'"
                                % self._console_info['type'])
+            if expect_console_banner:
+                self._match_console_banner()
 
         # FIXME!!! The code below is not working. Figure out why...
 

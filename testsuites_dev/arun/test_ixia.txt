@@ -84,7 +84,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
 05_Uni-Directional L2 Traffic with more args
 # Currently Supported L2 Stream args will be adding more
     ${stream}=             L2 add  name=${stream_name}  flow=a->b  src_mac=${src_mac}  dst_mac=${dst_mac}  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -183,7 +183,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-	[Tags]  traffic  sanity  bigtap
+	[Tags]  traffic  sanity  bigtap  L3
 	
 13_Bi-Directional L3 Traffic with more args
 # Basis test case with L3 Flow with more details :)
@@ -196,7 +196,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
     
 14_Bi-Directional L3 Traffic with more detailed args
 # Basis test case with L3 Flow with more details :)
@@ -210,7 +210,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-	[Tags]  traffic  sanity  bigtap
+	[Tags]  traffic  sanity  bigtap  L3
 
 15_Verify L3 traffic: frame size 68 bytes
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -224,7 +224,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
     
 16_Verify BiDirectional L3 traffic
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -237,7 +237,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
     
 17_BiDirectional L3 Traffic with TCP
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -250,7 +250,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
  
 18_BiDirectional L3 Traffic with UDP
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -263,7 +263,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
  
 19_BiDirectional basic IPv6 L3 Traffic with defaults
     ${stream}=  L3 add  name=${stream_name}  flow=a->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  
@@ -275,7 +275,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity 
+    [Tags]  traffic  sanity  L3  ipv6
     
 20_BiDirectional basic IPv6 L3 Traffic with defaults and no_arp
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  no_arp=True  src_mac=${src_mac}  dst_mac=${dst_mac}
@@ -286,7 +286,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  L3  ipv6
 
 21_BiDirectional IPv6 L3 Traffic with more args and TCP
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd
@@ -299,7 +299,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  L3  ipv6
 
 22_UniDirectional IPv6 L3 Traffic with ICMP 
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd
@@ -312,7 +312,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  L3  skipped
     
 23_Bi-Driectional L3 Traffic with vlan_id
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -326,7 +326,7 @@ Test IXIA
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     clear stats
-    [Tags]  traffic  bigtap
+    [Tags]  traffic  bigtap  L3
 
 24_Bi-Directional L3 Traffic with multiple vlan_ids
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -339,7 +339,7 @@ Test IXIA
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     clear stats
-    [Tags]  traffic  bigtap
+    [Tags]  traffic  bigtap  L3
     
 25_Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -351,7 +351,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic
+    [Tags]  traffic  L3  skipped
 
 26_Bi-Directional L3 Traffic ICMP Echo
 # Basic test case with all default values and ICMP type and value
@@ -363,7 +363,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
 
 27_Bi-Driectional L3 Traffic with differnt ethertypes and streams
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -389,7 +389,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream1}
     verify results  transmitted_frames  received_frames  ${stream1}  ${stream_name}
-    [Tags]  traffic
+    [Tags]  traffic  L3  ipv6
  
 28_Bi-Directional L3 Traffic ICMP Echo with traffic learn
 # Basic test case with all default values and ICMP type and value
@@ -401,7 +401,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  L3
 
 29_Verify L3 ICMP traffic
     ${stream}=  L3 add  flow=a<->b  frame_size=1518   frame_rate=10000
@@ -431,7 +431,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  bigtap
+    [Tags]  traffic  bigtap  L3
 
 31_Basic L3 Add Hosts and Stop Hosts with chk Arp Resolution for Gateways
 	${H1}=  L3 add host  src_ip=${src_ip}  gw_ip=${dst_ip}  port_name=a
@@ -440,7 +440,7 @@ Test IXIA
 	L3 start hosts  port_name=b
 	${result}=  L3 chk gw arp
 	should be true  ${result}
-	[Tags]  traffic
+	[Tags]  traffic  L3
 
 32_BiDirectional L3 Traffic with TCP and custom Payload is always no ARP
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -453,7 +453,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  sanity  bigtap  run
+    [Tags]  traffic  sanity  bigtap  run  L3
     
 33_BiDirectional L3 Traffic with TCP and custom Payload with control Bits
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -466,7 +466,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  sanity  bigtap  run 
+    [Tags]  traffic  sanity  bigtap  L3
 *Keywords
 atest teardown
 	delete traffic

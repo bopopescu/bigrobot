@@ -125,9 +125,19 @@ class Log(object):
         local_datetime = datetime.datetime.now(_TZ)
         return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
 
-    def _format_log(self, s, level):
-        if level:
-            level += 1
+    def _indent_str(self, input_str, spaces='    '):
+        """
+        Indent a multi-lined string by the amount of spaces specified.
+        """
+        lines = input_str.splitlines()
+        new_lines = []
+        for line in lines:
+            new_lines.append(spaces + line)
+        return "\n".join(new_lines)
+
+    def _format_log(self, s, level, all_levels=False):
+        def _level_trace(level):
+            level += 2
             frm = inspect.stack()[level]
             mod = inspect.getmodule(frm[0])
             # filename = os.path.basename(frm[1])
@@ -139,9 +149,28 @@ class Log(object):
             else:
                 funcname = '.' + funcname
 
-            s = s.rstrip()
-            # return "[%s:%s%s:%d] %s\n" % (filename, mod.__name__, funcname, lineno, s)
-            return "[%s%s:%d] %s\n" % (mod.__name__, funcname, lineno, s)
+            return "[%s%s:%d]" % (mod.__name__, funcname, lineno)
+
+        s = s.rstrip()
+        if level:
+            if all_levels:
+                trace = ''
+                spacer = '  ==> '
+                new_level = level
+                count = 1
+                while True:
+                    trace_descr = _level_trace(new_level)
+                    if count > 7:
+                        break
+                    if re.match(r'^.*robot\.running\.handlers', trace_descr):
+                        break
+                    trace += "%s%s\n" % (spacer, trace_descr)
+                    spacer = '    ' + spacer
+                    new_level += 1
+                    count += 1
+                return "\n%s%s\n" % (trace, self._indent_str(s))
+            else:
+                return "%s %s\n" % (_level_trace(level), s)
         else:
             return "%s\n" % s
 
@@ -153,23 +182,23 @@ class Log(object):
                 f.write(formatted_msg)
                 f.close()
 
-    def log(self, s, level=1, to_stderr=False, log_level='info'):
+    def log(self, s, level=1, to_stderr=False, log_level='info', all_levels=False):
         """
         Write to INFO log by default.
         """
         level += 1
         log_level = log_level.lower()
         if log_level == 'info':
-            self.info(s, level=level, also_console=to_stderr)
+            self.info(s, level=level, also_console=to_stderr, all_levels=all_levels)
         elif log_level == 'warn':
-            self.warn(s, level=level)
+            self.warn(s, level=level, all_levels=all_levels)
         elif log_level == 'debug':
-            self.debug(s, level=level)
+            self.debug(s, level=level, all_levels=all_levels)
         else:
-            self.trace(s, level=level)  # last resort
+            self.trace(s, level=level, all_levels=all_levels)  # last resort
 
-    def info(self, s, level=1, also_console=False):
-        msg = self._format_log(s, level)
+    def info(self, s, level=1, also_console=False, all_levels=False):
+        msg = self._format_log(s, level, all_levels=all_levels)
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             if also_console:
@@ -179,8 +208,8 @@ class Log(object):
         else:
             robot_logger.info(msg, also_console=also_console)
 
-    def warn(self, s, level=1):
-        msg = self._format_log(s, level)
+    def warn(self, s, level=1, all_levels=False):
+        msg = self._format_log(s, level, all_levels=all_levels)
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             logging.warn(msg.strip())
@@ -188,8 +217,8 @@ class Log(object):
         else:
             robot_logger.warn(msg)
 
-    def debug(self, s, level=1):
-        msg = self._format_log(s, level)
+    def debug(self, s, level=1, all_levels=False):
+        msg = self._format_log(s, level, all_levels=all_levels)
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             logging.debug(msg.strip())
@@ -197,8 +226,8 @@ class Log(object):
         else:
             robot_logger.debug(msg)
 
-    def trace(self, s, level=1):
-        msg = self._format_log(s, level)
+    def trace(self, s, level=1, all_levels=False):
+        msg = self._format_log(s, level, all_levels=all_levels)
         if gobot.is_gobot() == False:
             self.set_autobot_log()
             # Python logging module doesn't support trace log level, so

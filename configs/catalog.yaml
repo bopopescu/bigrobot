@@ -3,6 +3,8 @@
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
 database: test_catalog3
+#database: test_catalog3_20140806
+
 products:
   - BigChain
   - BigTap
@@ -30,12 +32,61 @@ features:
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
 aggregated_builds:
-  'bvs master aggregated 2014 wk32':         # week of 2014-08-04
+  'bvs master aggregated 2014 wk36':          # week of 2014-09-01
     [ 
-      #'bvs master #2806',
-      #'bvs master #2821',
+      'bvs master #3183',
+      'bvs master #3184',
+      'bvs master #3185',
+      'bvs master #3206',
+      'bvs master #3217',
+    ] 
+  'bvs master aggregated 2014 wk35':          # week of 2014-08-25
+    [ 
+      'bvs master #3115',
+      'bvs master #3120',
+      'bvs master #3140',
+      'bvs master #3146',
+      'bvs master #3151',
+      'bvs master #3157',
+      'bvs master #3163',
+      'bvs master #3168',
     ]
-  'bvs master aggregated 2014 wk31':         # week of 2014-07-28
+  'bvs master aggregated 2014 wk34':          # week of 2014-08-18
+    [ 
+      'bvs master #3028',
+      'bvs master #3065',
+      'bvs master #3070',
+      'bvs master #3072',
+      'bvs master #3073',
+      'bvs master #3091',
+    ]
+  'bvs master aggregated 2014 wk33':          # week of 2014-08-11
+    [ 
+      'bvs master #2963',
+      'bvs master #2975',
+    ]
+  'bvs master ironhorse beta2 aggregated 2':  # 2014-08-09 IronHorse Beta 2
+    [ 
+      'bvs master #beta2_20',                 # to pick up good ZTN results
+      'bvs master #beta2_31',
+      'bvs master #beta2_36',
+    ] 
+  'bvs master ironhorse beta2 aggregated':    # 2014-08 IronHorse Beta 2
+                                              # too many issues, thrown out
+    [ 
+      'bvs master #beta2_14',
+      'bvs master #beta2_15',
+      'bvs master #beta2_17',
+      'bvs master #beta2_20',                 # to pick up good ZTN results
+      'bvs master #beta2_31',
+    ] 
+  'bvs master aggregated 2014 wk32':          # week of 2014-08-04
+    [ 
+      'bvs master #2806',
+      'bvs master #2821',
+      'bvs master #2837',
+    ]
+  'bvs master aggregated 2014 wk31':          # week of 2014-07-28
     [ 
       'bvs master #2685',
       'bvs master #2710',
@@ -47,7 +98,7 @@ aggregated_builds:
       'bvs master #beta1-27',
       'bvs master #beta1-31',
     ]
-  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta1
+  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta 1
     [ 
       'bvs master #2.0.0-beta1-SNAPSHOT',
       'bvs master #beta1-22',

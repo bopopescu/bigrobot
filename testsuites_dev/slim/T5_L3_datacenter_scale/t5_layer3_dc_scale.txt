@@ -1,0 +1,149 @@
+* Setting
+Documentation   T5 L3 regression Test Scaling and Performance Suite
+Suite Setup     T5 base suite setup
+Suite Teardown  T5 base suite teardown
+Test Setup      setup topology
+Test Teardown   teardown topology
+Force Tags      T5      L3       IronHorse
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         Collections.py
+Resource        testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_scale_variables.txt
+#Resource       testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_resources.txt
+
+
+* Test Cases
+Configure 1k Tenant with 4k segment in global vlan-mapping mode
+    manual passed
+    [Tags]              manual          scale   
+
+L3 Arp learning rate
+    manual passed
+    [Tags]              manual          performance
+    
+L3 Arp discovery rate
+    manual passed
+    [Tags]              manual          performance
+
+Configure 1k Tenant with 4k segment in default vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale   
+
+Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale   
+
+DHCP request from 48k host 
+    manual untested
+    [Tags]              manual          scale           
+
+Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
+    manual untested
+    [Tags]              manual          scale           
+
+Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
+    manual untested
+    [Tags]              manual         scale           
+
+Add and delete 10k cidr routes in spine switches
+    manual untested
+    [Tags]              manual          scale           PAN-1204
+    
+Add and delete 10k cidr routes in leaf switches
+    manual failed
+    [Tags]              manual          scale           PAN-1204
+
+Add and delete 16k cidr routes in system
+    manual untested
+    [Tags]              manual          scale   
+    
+Add and delete 1k nexthop group
+    manual untested
+    [Tags]              manual          scale           
+
+Add more than 1k tenant
+    manual passed
+    [Tags]              manual          scale           
+    
+Add more than 4k segment
+    manual passed
+    [Tags]              manual          scale           
+    
+Add more than 1k nexthop group
+    manual untested
+    [Tags]              manual          scale           
+    
+Add more than 16k cidr routes
+    manual untested
+    [Tags]              manual          scale           
+        
+
+* Keywords      
+One Tenant 4k VNS with one host each
+    REST delete tenant                          X
+    REST delete tenant                          Y
+    REST delete tenant                          Z
+    REST add tenant                             A
+    ${ipAddr} =                                 Set Variable                    20.0.0.1
+    : FOR                                       ${i}                            IN RANGE                1                   2000
+    \   REST add vns                            A                               A-${i}
+    \   REST add vns ip                         A                               A-${i}                  ${ipAddr}           24
+    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
+    \   REST add interface to vns               A                               A-${i}                  leaf0-a             ethernet40      ${i}            
+                
+    ${ipAddr} =                                 Set Variable                    40.0.0.1
+    : FOR                                       ${i}                            IN RANGE                2001                4000
+    \   REST add vns                            A                               B-${i}
+    \   REST add vns ip                         A                               B-${i}                  ${ipAddr}           24
+    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
+    \   REST add interface to vns               A                               B-${i}                  leaf1-a             ethernet40      ${i}            
+
+#  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+#    ...                        src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+#    ...                        src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+#    ...                        dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+   
+
+initialize host
+    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
+    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
+    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
+    BASH delete tag                             h4                              bond0.1004              soft_error=${true}
+    BASH delete tag                             h5                              bond0.1005              soft_error=${true}
+    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
+    
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH init intf                              h3                              bond0
+    BASH init intf                              h4                              bond0
+    BASH init intf                              h5                              bond0
+    BASH init intf                              h6                              bond0
+    BASH ifdown intf                            h1                              bond0
+    BASH ifdown intf                            h2                              bond0
+    BASH ifdown intf                            h3                              bond0
+    BASH ifdown intf                            h4                              bond0
+    BASH ifdown intf                            h5                              bond0
+    BASH ifdown intf                            h6                              bond0   
+    BASH release dhcpv4 address                 h1                              bond0
+    BASH release dhcpv4 address                 h2                              bond0
+    BASH release dhcpv4 address                 h3                              bond0
+    BASH release dhcpv4 address                 h4                              bond0
+    BASH release dhcpv4 address                 h5                              bond0
+    BASH release dhcpv4 address                 h6                              bond0
+
+
+T5 base suite setup
+    sleep                                       1
+    
+T5 base suite teardown
+    sleep                                       1
+ 
+setup topology
+    sleep                                       1
+
+teardown topology
+    sleep                                       1
+    

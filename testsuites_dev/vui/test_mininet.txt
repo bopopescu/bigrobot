@@ -8,17 +8,23 @@ Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/vui/MyTest.py
+Library         OperatingSystem
 
 * Test Case
 Test dummy
     #[Tags]     skipped
     [Tags]     smoke  sanity  T5
+    set environment variable    BIGROBOT_QUIET_OUTPUT   1
     cli         c1   show user
+    cli         c1   show version
+    set environment variable    BIGROBOT_QUIET_OUTPUT   -1
+    bash        c1   ls -la
+    #should be true   ${false}
 
 Test get all [$nodes]
     [Tags]     skipped
     test get all
-    base test postmortem
+    #base test postmortem
     #bash       c1    echo $COLUMNS
 
 Test get all [$nodes] #2

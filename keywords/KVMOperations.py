@@ -290,6 +290,7 @@ class KVMOperations(object):
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
+            vm_ram = kwargs.get("vm_ram", "8192")
             build_number = kwargs.get("build_number", None)
             if ip == 'None':
                 ip = None
@@ -353,7 +354,7 @@ class KVMOperations(object):
                                        vm_name=vm_name,
                                        kvm_handle=kvm_handle,
                                        kvm_host=kvm_host,
-                                       network_interface=network_interface)
+                                       network_interface=network_interface, vm_ram=vm_ram)
             result['vm_name'] = vm_name
             result['kvm_host'] = kvm_host
             result['image_path'] = qcow_vm_path
@@ -495,6 +496,7 @@ class KVMOperations(object):
         kvm_handle = kwargs.get("kvm_handle", None)
         kvm_host = kwargs.get("kvm_host", None)
         network_interface = kwargs.get("network_interface", None)
+        vm_ram = kwargs.get("vm_ram", "8192")
 
         vm_creation = False
 
@@ -503,7 +505,7 @@ class KVMOperations(object):
                                                 vm_name=vm_name, network_interface=network_interface)
         else:
             vm_creation = self._virt_install_vm(kvm_handle=kvm_handle, disk_path=kvm_vmdk_path,
-                                                vm_name=vm_name, ram="4096", cpus="8", network_interface=network_interface)
+                                                vm_name=vm_name, ram=vm_ram, cpus="8", network_interface=network_interface)
 
         if vm_creation:
             helpers.summary_log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))

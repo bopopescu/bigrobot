@@ -24,6 +24,10 @@ class Monitor(object):
         self._has_lock = False
         self.initial_on()
 
+    def _print(self, msg):
+        print msg
+        helpers.log(msg, level=2)
+
     def _start_daemon_thread(self, timer, callback):
         thread = threading.Timer(timer, callback)
 
@@ -36,18 +40,27 @@ class Monitor(object):
 
     def initial_on(self):
         self._counter += 1
-        print("Test Monitor '%s' - enabling (%s sec initial timer)"
-              % (self.name(), self._init_timer))
+        helpers.log("Test Monitor '%s' - enabling (%s sec initial timer)"
+                    % (self.name(), self._init_timer))
         self._thread = self._start_daemon_thread(self._init_timer, self.on)
 
-    def on(self):
+    def on(self, user_invoked=False):
         """
-        Execute the callback task.
+        Execute the callback task and set the timer for future execution.
         """
+
+        if user_invoked:
+            # Make sure if it's already on then turn it off first before
+            # turning it on again.
+            self.off()
+
         self._has_lock = True
         self._counter += 1
-        print("Test Monitor '%s' - running task #%s (timer=%s)"
-              % (self.name(), self.counter(), self._timer))
+        self._print("%s - Test Monitor '%s' - running task #%s (timer=%s)"
+                    % (helpers.ts_logger(),
+                       self.name(),
+                       self.counter(),
+                       self._timer))
         if self._callback_task:
             self._callback_task()
         self._thread = self._start_daemon_thread(self._timer, self.on)
@@ -60,13 +73,14 @@ class Monitor(object):
             count = 0
             while self.has_lock() and count < max_count:
                 count += 1
-                print("Test Monitor '%s' - found lock on task. Sleeping for"
-                      " %s before disabling (count=%s)."
-                      % (self.name(), sec, count))
+                helpers.log("Test Monitor '%s' - found lock on task."
+                            " Sleeping for %s before disabling (count=%s)."
+                            % (self.name(), sec, count))
                 helpers.sleep(sec)
-            print("Test Monitor '%s' - disabling (%s total events)"
-                  % (self.name(), self.counter()))
+            helpers.log("Test Monitor '%s' - disabling (%s total events)"
+                        % (self.name(), self.counter()))
             self._thread.cancel()
+            self._thread = None  # reset
 
     def name(self):
         return self._name

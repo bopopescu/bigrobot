@@ -182,7 +182,7 @@ class T5Openstack(object):
 			return ''
 		else:
 			out_dict = helpers.openstack_convert_table_to_dict(output)
-			subnetId = out_dict["network_id"]["value"]
+			subnetId = out_dict["id"]["value"]
 			return subnetId
 
 	def openstack_show_subnet_ip(self, subnetName):
@@ -509,7 +509,7 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		try:
-				os1.bash("neutron subnet-create %s --name %s %s %s" % (netName, subnetName, external_gateway_ip, subnet_ip))
+				os1.bash("neutron subnet-create %s --name %s --gateway %s %s" % (netName, subnetName, external_gateway_ip, subnet_ip))
 		except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -573,7 +573,7 @@ S
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		routerId = self.openstack_show_router(routerName)
-		extId = self.openstack_show_external_network(extName)
+		extId = self.openstack_show_net(extName)
 		os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
 		data = os1.bash_content()
 		return data
@@ -613,11 +613,11 @@ S
 		subnetId = self.openstack_show_subnet(subnetName)
 		try:
 			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			return True
 		except:
 			output = helpers.exception_info_value()
 			helpers.log("Output: %s" % output)
 			return False
-		return True
 
 	def openstack_delete_subnet_to_router(self, routerName, subnetName):
 		'''detach subnet from tenant router
@@ -749,16 +749,23 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
 		c.rest.get(url)
 		data = c.rest.content()
-		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
-		for i in range(0, len(data)):
-			if str(data[i]["ip-address"]) == str(instanceIp) and str(data[i]["state"]) == "Active":
-				helpers.log("Pass: Openstack endpoints are present in the BSN controller")
-				return True
-		helpers.test_failure("Expected openstack endpoints are not present in BSN controller")
-		return False
+		if len(data) != 0:
+			if str(data[0]["ip-address"][0]["ip-address"]) == str(instanceIp):
+#				if str(data[0]["state"]) == "Active":
+					helpers.log("Pass:VM Instance endpoints are present")
+					return True
+#				else:
+#					helpers.test_failure("VM Instance Endpoint state is Attachement Down")
+			else:
+				helpers.test_failure("VM Instance endpoint IP does not match")
+				return False
+		else:
+			helpers.test_failure("Expected VM endpoints are not present in BCF controller")
+			return False
 
 	def openstack_verify_router(self, routerName):
 		'''verify router creation status through horizon
@@ -792,14 +799,22 @@ S
 		subnetIp = self.openstack_show_subnet_ip(subnetName)
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
 		c.rest.get(url)
-		data = c.rest.content()		
-		if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "Active":
-				helpers.log("Pass: Router interface creaetd as endpoint in controller")
-				return True
-		helpers.test_failure("Fail:router interface not present in controller endpoint table")
-		return False
+		data = c.rest.content()
+		if len(data) != 0:		
+			if str(data[0]["ip-address"][0]["ip-address"]) == str(subnetIp) and str(data[0]["ip-address"][0]["ip-state"]) == "static":
+#				if str(data[0]["state"]) == "Active":
+					helpers.log("Pass: Router interface creaetd as endpoint in controller")
+					return True
+#				else:
+#					helpers.test_failure("Router interface state is not L2 only")
+			else:
+				helpers.log("Fail:router interface not present in controller endpoint table")
+				return False
+		else:
+			helpers.log("Expected endpoint is not present in BCF controller")
+			return False
 	
-	def openstack_tenant_scale(self, name='p', count=0):
+	def openstack_tenant_scale(self, count, name='p'):
 		'''Function to add multiple tenants based on count
 		   Input: count and name
 		   Output: project will be added to neutron server
@@ -815,7 +830,23 @@ S
 			i = i + 1
 		return True
 
-	def openstack_segment_scale(self, tenantName, subnet, count):
+	def openstack_tenant_scale_delete(self, count, name='p'):
+		'''Function to add multiple tenants based on count
+		   Input: count and name
+		   Output: project will be added to neutron server
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			tenant = name
+			tenant += str(i)
+			os1.bash("keystone tenant-delete %s" % (tenant))
+			i = i + 1
+		return True
+	
+	def openstack_segment_scale(self, tenantName, subnet, count, name='n'):
 		'''Function to create multiple segments in a given tenant
 			Input: tenantName , count , name starts with segment
 			Output: given number of segments created in neutron server using neutron command
@@ -824,24 +855,24 @@ S
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
 		count = int(count)
-		name = 's'
 		i = 1
 		j = 0
 		k = 0
-		helpers.log("Print:%d", count)
 		while (i <= count):
 			netName = name
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
+				helpers.sleep(1)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
 				return False
-			ipaddr = "%d.%d.%d.0" % (subnet, j, k)
-			subnet_ip = ipaddr + "/" + 24
+			ipaddr = "%s.%s.%s.0" % (subnet, j, k)
+			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
+				helpers.sleep(1)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -850,8 +881,8 @@ S
 			if k == 254:
 				j = j + 1
 				k = 0
-			else:
-				continue
+			#else:
+			#	continue
 			i = i + 1
 		return True
 			
@@ -863,27 +894,236 @@ S
 		t = test.Test()
 		c = t.controller('master')
 		os1 = t.openstack_server('os1')
-		result = os1.bash("neutron router-port-list %s" % (routerName))
-		output = result["content"]
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		ip_list = []
-		for key, value in out_dict.items():
-			fixed_ips_str = value['fixed_ips']
-			fixed_ips_dict = helpers.from_json(fixed_ips_str)
-			ip_list.append(fixed_ips_dict['ip_address'])
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+		content = os1.bash("neutron router-port-list %s" % (routerName))['content']
+		output = helpers.strip_cli_output(content).strip()
+		helpers.log("*** output: '%s'" % output)
+		if output != '':
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			ip_list = []
+			for key, value in out_dict.items():
+				fixed_ips_str = value['fixed_ips']
+				fixed_ips_dict = helpers.from_json(fixed_ips_str)
+				ip_list.append(fixed_ips_dict['ip_address'])
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+			c.rest.get(url)
+			data = c.rest.content()
+			endpoint_ip_list = []
+			for i in range(0,len(data)):
+				for j in range(0,len(data[i]["ip-address"])):
+					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])						
+			ip_common = list(set(ip_list).intersection(set(endpoint_ip_list)))
+			if len(ip_common) == len(ip_list):
+				helpers.log("Pass:All router interface created as endpoint in BCF controller")
+				return True
+			else:
+				helpers.test_failure("Fail:All router interface not present in BCF endpoint")
+				return False
+		else:
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+			c.rest.get(url)
+			data = c.rest.content()
+			endpoint_ip_list = []
+			for i in range(0,len(data)):
+				for j in range(0,len(data[i]["ip-address"])):
+					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])
+			if len(endpoint_ip_list) == 0:
+				helpers.log("Router gateway endpoints are removed from BCF controller")
+				return True
+			else:
+				helpers.log("Router gateway endpoints are not removed from BCF controller")
+				return False
+	
+	def openstack_segment_scale_delete(self, count, name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			netName = name
+			netName += str(i)
+			try:
+				os1.bash("neutron net-delete %s " % (netName))
+			except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+			i = i + 1
+		return True			
+		
+	def openstack_verify_segment_scale(self, tenantName, count):
+		'''Function to verify multiple segments in the controller
+			Input: tenantName , count , 
+			Output: show tenant will count the no of segments created in controller
+	    '''
+		t = test.Test()
+		c = t.controller('master')
+		tenantId = self.openstack_show_tenant(tenantName)
+		count = int(count)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
 		c.rest.get(url)
 		data = c.rest.content()
-		endpoint_ip_list = []
-		for i in range(0,len(data)):
-			for j in range(0,len(data[i]["ip-address"])):
-					endpoint_ip_list.append(data[i]["ip-address"][j]["ip-address"])						
-		ip_common = list(set(ip_list).intersection(set(endpoint_ip_list)))
-		if len(ip_common) == len(ip_list):
-			helpers.log("Pass:All router interface created as endpoint in BCF controller")
-			return True
+		if len(data) == count:
+			helpers.test_log("All Openstack segments are present in controller")
+			return True	
 		else:
-			helpers.log("Fail:All router interface not present in BCF endpoint")
+			helpers.test_failure("All Openstack segments are not present in controller")
 			return False
-				
 		
+	def openstack_router_scale(self, extName, count, tName='p', rname='r'):
+		'''Function to add multiple routers to each tenant
+		   Input: count and external network
+		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		extId = self.openstack_show_net(extName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			routerName = rname
+			tenantName = tName
+			tenantName += str(i)
+			routerName += str(i)
+			tenantId = self.openstack_show_tenant(tenantName)
+			os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))
+			helpers.sleep(5)
+			routerId = self.openstack_show_router(routerName)
+			os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
+			i = i + 1
+		return True
+	
+	def openstack_router_scale_delete(self, count, rname='r'):
+		'''Function to delete all routers for each tenant
+		   Input: count 
+		   Output:routers will be deleted for each tenant
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		count = int(count)
+		i = 1
+		while (i <= count):
+			routerName = rname
+			routerName += str(i)
+			routerId = self.openstack_show_router(routerName)
+			os1.bash("neutron router-gateway-clear %s" % (routerId))
+			helpers.sleep(5)
+			os1.bash("neutron router-delete %s" % (routerName))
+			i = i + 1
+		return True
+	
+	def openstack_interface_to_router_scale(self, routerName, count, name='n'):
+		'''Function to add multiple router interfaces to single tenant
+		   Input: count and name of the tenant router
+		   Output: L3 interfaces will be added to tenant router
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		routerId = self.openstack_show_router(routerName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			subnetName = name
+			subnetName += str(i)
+			subnetId = self.openstack_show_subnet(subnetName)
+			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			i = i + 1
+		return True
+		
+	def openstack_interface_to_router_scale_delete(self, routerName, count, name='n'):
+		'''Function to delete all router interfaces from tenant router
+		   Input: count and router name
+		   Output: all interfaces will be deleted from tenant router
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		routerId = self.openstack_show_router(routerName)
+		count = int(count)
+		i = 1
+		while (i <= count):
+			subnetName = name
+			subnetName += str(i)
+			subnetId = self.openstack_show_subnet(subnetName)
+			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+			i = i + 1
+		return True
+	
+	def openstack_multiple_scale(self, subnet, tcount, ncount, tname='p', name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		ncount_increment = ncount
+		i = 1
+		j = 0
+		k = 0
+		h = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				tenantId = self.openstack_show_tenant(tenant)
+				netName = name
+				netName += str(h)
+				try:
+					os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				ipaddr = "%s.%s.%s.0" % (subnet, j, k)
+				subnet_ip = ipaddr + "/" + str(24)
+				try:
+					os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				k = k + 1
+				if k == 254:
+					j = j + 1
+					k = 0
+				h = h + 1
+			i = i + 1
+			ncount = ncount + ncount_increment 
+			
+		return True
+
+	def openstack_multiple_scale_delete(self, tcount, ncount, tname='p', name='n'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		h = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			while (h <= ncount):
+				name += str(i)
+				netName = name
+				netName += str(h)
+				try:
+					os1.bash("neutron net-delete %s " % (netName))
+					helpers.sleep(1)
+				except:
+					output = helpers.exception_info_value()
+					helpers.log("Output: %s" % output)
+					return False
+				h = h + 1
+			i = i + 1
+			h = 1
+		return True

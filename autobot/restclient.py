@@ -28,7 +28,7 @@ class RestClient(object):
     # feature).
     def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json', name=None):
-        self.http = httplib2.Http(timeout=RestClient.default_timeout)
+        self.http = httplib2.Http(".cache", disable_ssl_certificate_validation=True, timeout=RestClient.default_timeout)
 
         self._name = name
         self.base_url = base_url
@@ -54,7 +54,8 @@ class RestClient(object):
             password = self.password
 
         base64str = base64.encodestring('%s:%s' % (user, password))
-        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        self.default_header['authorization'] = ('Basic %s'
+                                                % base64str.replace('\n', ''))
         return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
@@ -123,7 +124,7 @@ class RestClient(object):
                        level=level)
 
     def _http_request(self, url, verb='GET', data=None, session=None,
-                     quiet=False, save_last_result=True, log_level='info'):
+                     quiet=0, save_last_result=True, log_level='info'):
         """
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
@@ -140,15 +141,16 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
-                    level=5, log_level=log_level)
-        helpers.log("'%s' Headers = %s"
-                    % (self._name, helpers.to_json(headers)),
-                    level=5, log_level=log_level)
-        if data:
-            helpers.log("'%s' Data = %s"
-                        % (self._name, helpers.to_json(data)),
+        if helpers.not_quiet(quiet, [2, 5]):
+            helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
                         level=5, log_level=log_level)
+            helpers.log("'%s' Headers = %s"
+                        % (self._name, helpers.to_json(headers)),
+                        level=5, log_level=log_level)
+            if data:
+                helpers.log("'%s' Data = %s"
+                            % (self._name, helpers.to_json(data)),
+                            level=5, log_level=log_level)
 
         prefix_str = '%s %s' % (self.name(), verb.lower())
         data_str = ''
@@ -159,9 +161,14 @@ class RestClient(object):
                 data_str = ' %s' % helpers.to_json(data)
         helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
                                       % (prefix_str, url, data_str))
+        if helpers.is_dict(data) or helpers.is_list(data):
+            formatted_data = helpers.to_json(data)
+        else:
+            formatted_data = data
+
         resp, content = self.http.request(url,
                                           verb,
-                                          body=helpers.to_json(data),
+                                          body=formatted_data,
                                           headers=headers
                                           )
         code = resp['status']
@@ -173,13 +180,14 @@ class RestClient(object):
 
         result = {'content': python_content}
         result['http_verb'] = verb
+        result['http_data'] = formatted_data
         result['status_code'] = int(code)
         result['request_url'] = url
 
         if save_last_result:
             self.last_result = result
 
-        if not quiet:
+        if helpers.not_quiet(quiet, [1, 5]):
             self.log_result(result=result, level=6, log_level=log_level)
 
         # ATTENTION: RESTclient will generate an exception when the
@@ -218,25 +226,42 @@ class RestClient(object):
         return result
 
     def http_request(self, *args, **kwargs):
-        result = self._http_request(*args, **kwargs)
+        retries = int(kwargs.pop('retries', 0))
+        sleep_time = float(kwargs.pop('sleep_time_between_retries', 10))
 
-        # !!! FIXME: Handle case where session cookie is expired for
-        # Big Switch controllers. It really shouldn't be in the generic
-        # module. Should really reside in bsn_restclient.py.
-        if int(result['status_code']) == 401:
-            if self.session_cookie_loop > 5:
-                helpers.test_error("Detected session cookie loop.")
+        while True:
+            try:
+                result = self._http_request(*args, **kwargs)
+            except:
+                helpers.log('HTTP request error:\n%s'
+                            % helpers.exception_info())
+                if retries > 0:
+                    helpers.log(
+                        'Retrying HTTP request in %s seconds (retries=%s)'
+                        % (sleep_time, retries))
+                    retries -= 1
+                    helpers.sleep(sleep_time)
+                else:
+                    raise
             else:
-                self.session_cookie_loop += 1
+                # !!! FIXME: Handle case where session cookie is expired for
+                # Big Switch controllers. It really shouldn't be in the generic
+                # module. Should really reside in bsn_restclient.py.
+                if int(result['status_code']) == 401:
+                    if self.session_cookie_loop > 5:
+                        helpers.test_error("Detected session cookie loop.")
+                    else:
+                        self.session_cookie_loop += 1
 
-            helpers.log("It appears the session cookie has expired. Requesting"
-                        " new session cookie.")
-            self.request_session_cookie()
-            # helpers.sleep(2)
-            # Re-run command
-            result = self._http_request(*args, **kwargs)
-        else:
-            self.session_cookie_loop = 0
+                    helpers.log("It appears the session cookie has expired."
+                                "  Requesting new session cookie.")
+                    self.request_session_cookie()
+                    # helpers.sleep(2)
+                    # Re-run command
+                    result = self._http_request(*args, **kwargs)
+                else:
+                    self.session_cookie_loop = 0
+                break
         return result
 
     def post(self, url, *args, **kwargs):

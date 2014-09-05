@@ -26,8 +26,8 @@ T1 Config changes during controller disconnect is queued and processed during th
     manual passed
     
 T2 Verify controller can be decommissioned from a cluster. 
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual
+    manual passed
 
 T3 Controller Split Brain
 	[Tags]  feature  manual
@@ -66,8 +66,8 @@ T11 Flap eth0 of the management interface
     manual failed
     
 T12 Swap eth0 & eth1 in bare metal server 
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual  jira-BSC-6054
+    manual failed
     
 T13 Pump line rate traffic: look for split brain and other HA sync loss situations.
 	[Tags]  robustness 	manual

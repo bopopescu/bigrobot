@@ -386,10 +386,10 @@ T20.2 TACACS Default timeout
 	[Tags]  BSC-5088  AAA  TACACS  skipped
 
 T21 Escaping special characters in quoted strings
-	Cli Run  master  snmp-server community ro "tests\\n \\r \\n '''"
+	Cli Run  master  snmp-server contact "tests\\n \\r \\n '''"
 	Cli Run and Verify Output  master
 	...  show run snmp
-	...  snmp-server community ro "tests\\n \\r \\n '''"
+	...  snmp-server contact "tests\\n \\r \\n '''"
 	Cli Run  master  snmp-server location 'Location \\n \\r \\n """"'
 	Cli Run and Verify Output  master
 	...  show run snmp
@@ -447,6 +447,7 @@ T27 Interaction between snmp and banner commands
 	[Tags]  banner  snmp  BSC-5141
 
 T28 NTP sync command
+	Cli Run  master  ntp server 0.bigswitch.pool.ntp.org
 	Cli Run  master  ntp sync  cmd_timeout=15
 	Cli Run  master  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
 	[Tags]  NTP BSC-5169

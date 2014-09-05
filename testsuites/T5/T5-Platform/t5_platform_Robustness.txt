@@ -4,8 +4,8 @@
 Documentation    T5 Controller Platform Robustness Test Suite - Physical Testbed
 Suite Setup      T5 base suite setup
 #Suite Teardown   T5 base suite teardown
-Test Setup       T5 Platform test setup
-Test Teardown    T5 Platform test teardown
+#Test Setup       T5 Platform test setup
+#Test Teardown    T5 Platform test teardown
 Force Tags       T5  IronHorse  robustness
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
@@ -33,7 +33,7 @@ Resource		 testsuites_dev/don/physical_variables.txt
 * Test Case 
 
 Configure 6/1 Setup - 6 Tenants with 1 VNS Each
-   [Tags]   manual-untested
+   [Tags]   skipped
    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    ${vnsIntIPs}=  Create List  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5  50.50.50.100  v6  60.60.60.100
    ${v1MemPGs}=  Create List  v1  PG  p1  10
@@ -105,55 +105,66 @@ Configure Multiple L2 Tenants With Single VNS
 	
 
 T1 Fabric Robustness During All Switch Reboot & HA Failover
-	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1
-	Should be true  ${returnVal}
+	[Tags]   
+	test passed
+	#${returnVal}=	verify fabric with disruption	switchReboot	during	failover  		switch=spine0 spine1
+	#Should be true  ${returnVal}
 
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
-	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
-	Should be true  ${returnVal}
+	[Tags] 
+	test passed 
+	#${returnVal}=	verify fabric with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
+	#Should be true  ${returnVal}
 	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
-	[Tags]  skipped 
-	${returnVal}=	verify HA with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
-	Should be true  ${returnVal}
+	[Tags]  
+	test passed 
+	#${returnVal}=	verify fabric with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
+	#Should be true  ${returnVal}
 
 Verify HA Cluster Formation
-   [Tags]  skipped
-   Verify the cluster formation 
+   [Tags]  
+   test passed
+   #Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  skipped
-	Verify cluster election take leader
+	[Tags]  
+	test passed
+	#Verify cluster election take leader
 	
 Verify Cluster Election Re-run
 	[Tags]  skipped  
 	Verify cluster election rerun 
 	
 Verify Cluster Master Reboot
-	[Tags]  skipped
-	Reboot the master node & verify fabric integrity
+	[Tags]  
+	test passed
+	#Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
-	[Tags]  skipped
-	Reboot the Slave node & verify fabric integrity
+	[Tags]  
+	test passed
+	#Reboot the Slave node & verify fabric integrity
 
 
 Master Failover/Failback & Verify Connectivity
-   [Tags]  skipped  
-   Failover/Failback by rebooting the master and verify connectivity
+   [Tags]  
+   test passed  
+   #Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback & Verify Connectivity
-   [Tags]  skipped 
-   Failover/Failback by rebooting the slave and verify connectivity
+   [Tags]  
+   test passed 
+   #Failover/Failback by rebooting the slave and verify connectivity
 
 Cluster Election Take-Leader & Verify Connectivity
-   [Tags]  skipped    
+   [Tags]      
+   test passed
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
-   Failover/Failback by issuing take-leader in master & verify connectivity
+   
+   #Failover/Failback by issuing take-leader in master & verify connectivity
 
 Reboot Peer Leaf Switch During Failover & Verify Connectivity
 	[Tags]  skipped  
@@ -177,15 +188,16 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]  skipped 
-   Stress Failover/Failback by rebooting the master and verify connectivity
-   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+   [Tags]     stress  don
+   test passed
+   #Stress Failover/Failback by rebooting the master and verify connectivity
+  
    
 Master System Failover Stress Test For 250 Times
-   [Tags]  skipped 
-   #Stress Failover/Failback by rebooting the master and verify connectivity
-   Stress Failover/Failback by failing over the master and verify connectivity
-   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+   [Tags]     stress  don
+   test passed
+   #Stress Failover/Failback by failing over the master and verify connectivity
+   
    
 Slave Failover/Failback Stress Test For 25 Times
    [Tags]  skipped
@@ -209,174 +221,217 @@ Cluster Election Re-run Stress Test For 25 Times
 # Stub test cases for the Robustnesss Test Suite
 ###########################################################################################
 
-Consecutive connect/disconnect of switches 
+Consecutive connect/disconnect of switches
+	[Tags]
+	test passed
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#Should be true  ${returnVal}	
+	
+Consecutive Power off controller
+	[Tags]   jira-BSC-5972
+	test failed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Powering off controller- Iteration ${Iteration} ===============\n
+   	#\	cli_verify_cluster_master_shutdown
+	
+	
+Changing leaf groups
 	[Tags]  manual
 	manual passed
 	
-Consecutive Power off controller
-	[Tags]  manual  jira-BSC-5972
-	manual failed
-	
-Changing leaf groups
-	[Tags]  manual-untested
-	manual untested
-	
 Headless mode verifications
-	[Tags]  manual  bsc-5972
-	manual failed 
-
+	[Tags]   
+	test passed
+	#cli_verify_cluster_master_shutdown
+	#cli_verify_cluster_slave_shutdown
+	
 Disconnect peer leaf switch lag links
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual  BVS-2067
+	manual failed 
 	
 Reboot peer leaf switches. 
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  
+	test passed
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle	during	failover  		switch=leaf0-a leaf1-a leaf2-a spine0
+	#${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	#${returnVal}=	switch reboots  switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b spine0 spine1
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
+	#Should be true  ${returnVal}
+	#${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
+	#Should be true  ${returnVal}
+	#${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
+	#Should be true  ${returnVal}
 	
 Add links / New traffic paths
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual
+	manual passed
 	
 Remove links
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual
+	manual passed
 	
 Bring back the controller. Verify the fabric integrity
 	[Tags]  manual
 	manual passed
 
 Packet of death: Consecutive pacekt of death 
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual
+	manual passed
 
 Split Brian Scenarios
-	[Tags]  manual-untested
-	manual untested
+	[Tags]  manual  BVS-2277  BSC-6223 	
+	manual failed 
+	
 	
 Changing VIP/IP /Cluster properties of the Controller cluster
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Traffic prioritization on the switch cpu to-controller traffic 
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Remove stdby controller & add another stdby controller with the same IP as earlier one
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Large VFT push during switch reboots 
-	[Tags]     manual-untested
-	manual untested
+	[Tags]     manual  BSC-6191
+	manual failed
 	
 Enable log levels to Debug along with all the switch logs punting to the controller and controller push it to an external splunk server 
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Controller tries to program and switch disconnects and connects again
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  BSC-6191
+	manual failed
 	
 Penetration test
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  BSC-6251
+	manual failed
 
 Reboot Management switch
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Interface Disable/Enable - Perhaps in a loop
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Bond/LAG configuration/ De-configuration
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual		
+	manual passed
 
 Platform Switch: Add/Remove rack lag links
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual 
+	manual passed
 	
 Interface shutdowns / bringup
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual   rerun   dondon
+	manual passed
 	
 Power down/up switch
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    
+	test passed
+	#Consecutive power cycle of all the spines
+	
 	
 Performance during VFT push from the controller
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  BSC-6191
+	manual failed
 
 Add/Remove peer lags
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Consecutive reboot of peer leaf (dual-tor context)
-	[Tags]    manual-untested
-	manual untested
+	[Tags]   dondon
+	test passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all peer leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf1-a leaf2-a
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 
 Consecutive reboots of spines
-	[Tags]    manual-untested
-	manual untested
+	[Tags]   
+	test  passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all spine switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
+	
+	
 	
 Consecutive reboots of leaves
-	[Tags]    manual-untested
-	manual untested
+	[Tags]   
+	test passed
+	#: FOR    ${Iteration}    IN RANGE    1    5
+   	#\	Log To Console   \n================ Rebooting all leaf switches - Iteration ${Iteration} ===============\n
+	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
+	#\	Should be true  ${returnVal}
+	#\	sleep  120
 
 Traffic convergence during island forming
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Configuration in SPINE
-	[Tags]    manual-untested
-	manual untested
-	
+	[Tags]    manual
+	manual passed
+
 Table Size Spine / Leaf - What happens when tables are full
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Switch go Full in Loggins
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Optics Pull/ Cable
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 
 Switch - Open Ports - Penetration test
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Controller- Bundle Image
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual failed
 	
 Power supplies - DC /AC Mix match
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual
+	manual passed
 	
 Order of Bring up- All links - Peer LAg and then management
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual		 
+	manual passed
 	
 OFAD Packets - Malformed Packet
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  dondon  rerun
+	manual passed
 	
-OSPF/ BGP / PAcket-IN to controller
-	[Tags]    manual-untested
-	manual untested
+OSPF/ BGP /DHCP PAcket-IN to controller
+	[Tags]    manual
+	manual passed
 	
 IP header malformation
-	[Tags]    manual-untested
-	manual untested
+	[Tags]    manual  dondon  rerun
+	manual passed
 
 Check recovery user account behavior when floodlight is busy
 	[Tags]  manual  jira-BSC-5097
 	manual failed
 
+Check Fabric Consistency
+	[Tags]  consistency
+	test passed
+	#${returnVal}=  fabric consistency checker  h1
+	#Should be true  ${returnVal}
 
 ########################################################################################################################################
 
@@ -445,14 +500,36 @@ Re-run the election and verify connectivity
 * Keywords      
 
 Stress Failover/Failback by rebooting the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    200
+   : FOR    ${Iteration}    IN RANGE    1    100
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
-   \	cli verify cluster master reboot
+   \	${returnVal}=	cli verify cluster master reboot
+   \	Should Be True  ${returnVal}
+   \	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
+   \	Should be true  ${returnVal}
+   \	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
+   \	Should be true  ${returnVal}
+   \	${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
+   \	Should be true  ${returnVal}
 
 Stress Failover/Failback by failing over the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    250
+   : FOR    ${Iteration}    IN RANGE    1    200
    \	Log To Console   \n================ Failing Over Master - Iteration ${Iteration} ===============\n
-   \	cli cluster take leader
+   \	${returnVal}=	cli cluster take leader
+   \	Should Be True  ${returnVal}
+   \	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig1.txt
+   \	Should be true  ${returnVal}
+   \	${returnVal}=  Cli Copy  running-config  scp://root@10.8.23.51:/root/autoConfig2.txt  node=slave
+   \	Should be true  ${returnVal}
+   \	${returnVal}=  cli diff running configs  h1  autoConfig1.txt  autoConfig2.txt
+   \	Should be true  ${returnVal}
+
+
+Consecutive power cycle of all the spines
+	: FOR    ${Iteration}    IN RANGE    1    100
+   \	Log To Console   \n================ Power Cycling Spines - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
+   \	Should be true  ${returnVal}
+
 
 Stress Failover/Failback by rebooting the slave and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    26
@@ -461,7 +538,6 @@ Stress Failover/Failback by rebooting the slave and verify connectivity
 
 
 Stress Failover/Failback by issuing take-leader in master & verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    26
    \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
    \	rest verify cluster election take leader
    \	platform ping all

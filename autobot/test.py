@@ -1,3 +1,4 @@
+import os
 import autobot.helpers as helpers
 import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
@@ -5,6 +6,7 @@ import autobot.utils as br_utils
 import re
 import telnetlib
 import time
+import uuid
 
 
 class Test(object):
@@ -400,6 +402,15 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
+                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    if key == "console_ip":
+                        helpers.log("console_ip key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['ip']
+                    if key == "console_port":
+                        helpers.log("console_port key is not defined check another sub level")
+                        if "console" in self._topology_params[node]:
+                            return self._topology_params[node]['console']['port']
                     helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                        % (node, key))
                 else:
@@ -633,10 +644,14 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller'):
+                   device_type='controller', quiet=0):
         t = self
         if not node:
-            node = 'node-%s' % ip
+            node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
+                                                str(uuid.uuid4())).group(1))
+        if helpers.not_quiet(quiet, [1]):
+            helpers.log("Node spawn for '%s' (node name: '%s')"
+                        % (ip, node))
 
         if device_type == 'controller':
             helpers.log("Initializing controller '%s'" % node)
@@ -659,12 +674,14 @@ class Test(object):
                 password = self.host_password()
             n = a_node.HostNode(node, ip, user, password, t)
         else:
+            # !!! FIXME: Need to support other device types (see the list of
+            #            devices in node_connect().
             helpers.environment_failure("You can only spawn nodes for device"
                                         " types: 'controller', 'switch', 'host'")
         return n
 
     def node_connect(self, node, user=None, password=None,
-                     controller_ip=None, controller_ip2=None):
+                     controller_ip=None, controller_ip2=None, quiet=0):
         # Matches the following device types:
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
@@ -677,6 +694,10 @@ class Test(object):
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
+
+        if helpers.not_quiet(quiet, [1]):
+            helpers.log("Node connect for '%s' (user:%s, password:%s)"
+                        % (node, user, password))
 
         host = None
         params = self.topology_params_nodes()
@@ -705,10 +726,12 @@ class Test(object):
 
         if helpers.is_controller(node):
             n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password, device_type='controller')
+                                password=password, device_type='controller',
+                                quiet=1)
         elif helpers.is_switch(node):
             n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password, device_type='switch')
+                                password=password, device_type='switch',
+                                quiet=1)
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -840,12 +863,13 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        c = self.node_connect(node_name, **kwargs)
+        self.node(node).close()
+        c = self.node_connect(node_name, quiet=1, **kwargs)
         if helpers.is_controller(node):
             c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node, modeless=False):
+    def dev_console(self, node, modeless=False, expect_console_banner=False):
         """
         Telnet to the console of a BSN controller or switch.
 
@@ -883,7 +907,7 @@ class Test(object):
         """
         t = self
         n = t.node(node)
-        n_console = n.console()
+        n_console = n.console(expect_console_banner=expect_console_banner)
 
         if modeless:
             return n_console
@@ -898,110 +922,55 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
-        spine_stack_trace = r'Call Trace:'
-        spine_error = r'phy device not initialized'
-        reboot_needed = r'Fixing recursive fault but reboot is needed!'
+
+        helpers.log("Sending carriage return and checking for matching prompt/output")
         n_console.send('')
 
         def login():
-            helpers.log("Found the login prompt. Sending user name.")
-            n_console = n.console()
+            helpers.log("Found the login prompt. Sending user name ('%s')"
+                        % user)
+            n_console = n.console(expect_console_banner=expect_console_banner)
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
-            match = n_console.expect(prompt=[prompt_password, prompt_device_cli, spine_error, reboot_needed], timeout=60)
+            match = n_console.expect(prompt=[prompt_password,
+                                             prompt_device_cli],
+                                     timeout=60)
             if match[0] == 0:
                 helpers.log("Found the password prompt. Sending password.")
                 n_console.send(password)
-                match = n_console.expect(prompt=[prompt_device_cli, spine_error])
-            elif match[0] == 2:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-#            elif match[0] == 3:
-#                helpers.log("Found a switch Crash Needs to power cycle...")
-#                helpers.log("Power cycling switch : %s " % node)
-#                self.power_cycle(node)
-#                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-#                n_console = self.dev_console(node, modeless=True)
-#                n_console.send('admin')
-#                helpers.sleep(2)
-#                n_console.send('adminadmin')
-#                helpers.sleep(2)
-#                n_console.send('enable;conf;no snmp-server enable')
-#                n_console = self.dev_console(node)
+                match = n_console.expect(prompt=[prompt_device_cli])
 
-        try:
-            # Match login or CLI prompt.
-            match = n_console.expect(prompt=[prompt_login, prompt_device_cli, spine_stack_trace, spine_error, reboot_needed], timeout=60)
-            if match[0] == 0:
-                login()  # Found login prompt. Attempt to authenticate.
-            elif match[0] == 1:
-                helpers.log("Found the BSN device prompt. Exiting system.")
-                n_console.send('logout')
-                match = n_console.expect(prompt=[prompt_login])
-                login()
-            elif match[0] == 2:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-            elif match[0] == 3:
-                helpers.log("Found Spine Console Error: phy device not initialized !!!")
-                helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-                con = self.dev_console(node, modeless=True)
-                con.send('admin')
-                helpers.sleep(2)
-                con.send('adminadmin')
-                helpers.sleep(2)
-                con.send('enable;conf;no snmp-server enable')
-                con.send('')
-                con = self.dev_console(node)
-            elif match[0] == 4:
-                helpers.log("Found a switch Crash Needs to power cycle...")
-                helpers.log("Power cycling switch : %s " % node)
-                self.power_cycle(node)
-                helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-                n_console = self.dev_console(node, modeless=True)
-                n_console.send('admin')
-                helpers.sleep(2)
-                n_console.send('adminadmin')
-                helpers.sleep(2)
-                n_console.send('enable;conf;no snmp-server enable')
-                n_console = self.dev_console(node)
-        except:
-            helpers.log("This Expect error may be due to Spine got Stuck Already in with Kernel ..Crash")
-            helpers.log("Trying Power Cycle and check any activity on Console...")
-            helpers.log("Power cycling switch : %s " % node)
-            self.power_cycle(node)
-            helpers.log("Trying to connect Spine again after POWER CYCLE ....due to Spine Crash JIRA")
-            n_console = self.dev_console(node, modeless=True)
-            n_console.send('admin')
-            helpers.sleep(2)
-            n_console.send('adminadmin')
-            helpers.sleep(2)
-            n_console.send('enable;conf;no snmp-server enable')
-            n_console = self.dev_console(node)
+        # Match login or CLI prompt.
+        match = n_console.expect(prompt=[prompt_login,
+                                         prompt_device_cli,
+                                         ],
+                                 timeout=60)
+        if match[0] == 0:
+            login()  # Found login prompt. Attempt to authenticate.
+        elif match[0] == 1:
+            helpers.log("Found the BSN device prompt. Exiting system.")
+            n_console.send('logout')
+            match = n_console.expect(prompt=[prompt_login])
+            login()
+
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
         return n_console
 
-    def power_cycle(self, node):
+    def _pdu_mgt(self, node, action):
+        """
+        action:  "on" | "off" | "reboot"
+        """
+        if action == "on":
+            action = "olOn"
+        elif action == "off":
+            action = "olOff"
+        elif action == "reboot":
+            action = "olReboot"
+        else:
+            helpers.test_error("Invalid PDU option '%s'" % action)
         pdu_ip = self.params(node, 'pdu')['ip']
         pdu_port = self.params(node, 'pdu')['port']
         tn = telnetlib.Telnet(pdu_ip)
@@ -1015,13 +984,25 @@ class Test(object):
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        reboot_cmd = 'olReboot %s' % str(pdu_port)
+        reboot_cmd = '%s %s' % (action, str(pdu_port))
         tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
-        helpers.log("Sleeping 5 minutes for the switch to come up after power Cycle...")
-        helpers.sleep(300)
+
+    def power_cycle(self, node, minutes=5):
+        self._pdu_mgt(node, 'reboot')
+        helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
+
+    def power_down(self, node):
+        self._pdu_mgt(node, 'off')
+        helpers.log("Powered down '%s'" % node)
+
+    def power_up(self, node):
+        self._pdu_mgt(node, 'on')
+        helpers.log("Powered up '%s'" % node)
 
     def initialize(self):
         """
@@ -1037,6 +1018,31 @@ class Test(object):
         helpers.debug("Test object initialization begins.")
         if self._init_in_progress:  # pylint: disable=E0203
             return
+
+        helpers.log("BigRobot environment variables:\n%s%s"
+                    % (helpers.indent_str(helpers.bigrobot_env_variables()),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BigRobot dependencies:\n%s%s"
+                    % (helpers.bigrobot_module_dependencies(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BigRobot repository (Git):\n%s%s"
+                    % (helpers.run_cmd2("/usr/bin/git branch -lvv",
+                                        shell=True,
+                                        quiet=True)[1],
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system uname:\n%s%s"
+                    % (helpers.uname(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system uptime:\n%s%s"
+                    % (helpers.uptime(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system ulimit:\n%s%s"
+                    % (helpers.ulimit(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging User ID:\n%s%s"
+                    % (helpers.id(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
@@ -1247,18 +1253,19 @@ class Test(object):
         # n = self.topology(name)
         if not helpers.is_switch(name):
             return True
-        console = self.params(name, 'console')
-
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            fabric_role = 'spine'
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            fabric_role = 'leaf'
+            leaf_group = self.params(name, 'leaf-group')
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP")
+            return True
         c1_ip = self.params('c1', 'ip')
         c2_ip = self.params('c2', 'ip')
         helpers.log("First Adding Switch in master controller for ZTN Bootup...")
         master = self.controller("master")
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
-        else:
-            fabric_role = 'leaf'
-            leaf_group = self.params(name, 'leaf-group')
-
+        console = self.params(name, 'console')
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
@@ -1270,7 +1277,8 @@ class Test(object):
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.sleep(10)
-        if helpers.get_env("ZTN_RELOAD") != "True":
+        if helpers.bigrobot_ztn_reload().lower() != "true":
+            helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):
             return True
@@ -1298,36 +1306,49 @@ class Test(object):
         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+        helpers.log("Disabling switch config auto-reloads...")
+        con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
-        helpers.log("Finish sending Reboot on switch : %s" % name)
+        if helpers.bigrobot_ztn_installer().lower() != "true":
+            helpers.log("Finish sending Reboot on switch : %s" % name)
+            return
+        try:
+            con.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        con.send("")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("setenv onie_boot_reason install")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("run onie_bootcmd")
+        con.expect("Loading Open Network Install Environment")
+        helpers.log("Finish sending Reboot on switch : %s with installer option" % name)
         return True
 
     def setup_ztn_phase2(self, name):
         '''
             Reload the switch's and update IP's from switchs and reconnect switchs using ssh.
         '''
+#         helpers.log(" NO MORE Re-connecting Switches with Console to get IP with recent ZTN work flows")
+#         return True
         if not helpers.is_switch(name):
+            return True
+        if re.match(r'.*spine.*', self.params(name, 'alias')):
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Spines..")
+        elif re.match(r'.*leaf.*', self.params(name, 'alias')):
+            helpers.log("will perform setup_ztn_phase2, updating IP's for consoles for Leaf..")
+        else:
+            helpers.log("Not Leaf / Spine Ignore ZTN SETUP PHASE 2")
             return True
         console = self.params(name, 'console')
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
         helpers.log("Re-Login in console of switch after reboot...")
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            fabric_role = 'spine'
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
-        else:
-            fabric_role = 'leaf'
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
+        helpers.log("Initializaing leafs and Spines normally..")
+        con = self.dev_console(name)
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
@@ -1362,7 +1383,8 @@ class Test(object):
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
-
+        master = self.controller("master")
+        standby = self.controller("slave")
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
                 if helpers.is_controller(key):
@@ -1385,11 +1407,18 @@ class Test(object):
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 master = self.controller("master")
-                standby = self.controller("c2")
+                standby = self.controller("slave")
                 for key in params:
                     self.setup_ztn_phase1(key)
-                helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
+                if helpers.bigrobot_ztn_installer().lower() != "true":
+                    helpers.log("Sleeping 2 mins..")
+                    helpers.sleep(120)
+                else:
+                    helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
+                    helpers.sleep(400)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1399,13 +1428,11 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")
                 master.config("show running-config")
+                master.config("show logging level")
                 master.config("enable; config; copy running-config snapshot://ztn-base-config")
                 helpers.log("########  Stand_by config after ZTN setup: ")
                 standby.config("show switch")
@@ -1418,6 +1445,7 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
                 master.enable("copy snapshot://ztn-base-config running-config ")
+                master.config("show logging level")
                 master.enable("show running-config")
                 master.enable("show switch")
                 helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
@@ -1428,6 +1456,13 @@ class Test(object):
                 master = self.controller("master")
                 master.enable("show switch")
 
+        if helpers.bigrobot_ha_logging().lower() == "true":
+            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            master.config("logging level org.projectfloodlight.ha debug")
+            master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
+            master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
+            master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
+            master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())

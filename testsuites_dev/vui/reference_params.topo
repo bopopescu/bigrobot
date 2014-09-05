@@ -1,17 +1,18 @@
 c1:
-  #ip: 10.8.1.6       # vui_c1_07150904
-  #ip: 10.8.1.71      # vui_c1_07241352
-  ip: 10.8.1.103      # vui_c1_08010620
+  ip: 10.8.1.170      # vui_c1_08251734
 c2:
-  ip: 10.8.1.7       # vui_c2_07150908
+  ip: 10.8.1.171      # vui_c2_08251739
 mn:
-  ip: 10.8.1.16      # vui_mn1_07151044
+  ip: 10.8.1.172      # vui_mn_08251811
 s1:
   #ip: 10.210.64.44   # Song's switch
   ip: 10.192.75.177  # Animesh's switch
 h1:
-  ip: 10.192.20.6    # jenkins-w6
+  #ip: 10.192.20.6    # jenkins-w6
+  #ip: 10.9.16.23      # Song's 14.0.4
+  #ip: 10.9.16.15      # Song's 12.0.4
+  ip: qa-tools1.qa.bigswitch.com
   #protocol: telnet
-  user: bsn
-  password: bsn
+  #user: bsn
+  #password: bsn
 

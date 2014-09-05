@@ -28,7 +28,7 @@ Add Fabric Switch Spine and Verify the Status
   add switch  spine0 
   add dpid  spine0  ${spine0_dpid} 
   add fabric role  spine0  spine
-  sleep  5
+  sleep  125
   rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
@@ -37,13 +37,13 @@ Add Fabric Switch Leaf Group and Verify the status
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
   add leaf group  leaf0-a  rack0
-  sleep  5
+  sleep  125
   verify fabric switch  leaf0-a
   add switch  leaf0-b
   add dpid  leaf0-b  ${leaf0b_dpid} 
   add fabric role  leaf0-b  leaf
   add leaf group  leaf0-b  rack0
-  sleep  5
+  sleep  125
   verify fabric switch  leaf0-b 
  
 Add leaf group from 2 different rack and verify the status and check the fabric error
@@ -51,13 +51,15 @@ Add leaf group from 2 different rack and verify the status and check the fabric 
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
-	add leaf group  leaf0-a  rack0 
+	add leaf group  leaf0-a  rack0
+	sleep  125 
 	add switch  leaf1-a
 	add dpid  leaf1-a  ${leaf1a_dpid}
 	add fabric role  leaf1-a  leaf
 	add leaf group  leaf1-a  rack0
+	sleep  125
 	rest verify fabric link
-	sleep  5
+	sleep  125
 	rest verify fabric error missing link  leaf0-a  leaf1-a  rack0
 	
 add 2 different leaf groups with peer link added
@@ -65,11 +67,13 @@ add 2 different leaf groups with peer link added
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
-	add leaf group  leaf0-a  rack0 
+	add leaf group  leaf0-a  rack0
+	sleep  125 
 	add switch  leaf1-a
 	add dpid  leaf0-a  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
 	add leaf group  leaf0-b  rack1
+	sleep  125
 	rest verify fabric link 
 #	rest verify fabric error
    	rest verify forwarding port table  leaf0-a  
@@ -79,12 +83,12 @@ source mac check verification on spine and leaf switches
 	add switch  spine0  
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
-	sleep  5
+	sleep  125
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
 	add leaf group  leaf0-a  rack0
-	sleep  5
+	sleep  125
 	add switch  leaf0-b
 	add dpid  leaf0-b  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
@@ -104,6 +108,7 @@ add host port into spine switch and check the fabric error
 	add switch  leaf2-a
 	add dpid  leaf2-a  ${leaf2a_dpid} 
 	add fabric role  leaf2-a  spine
+	sleep  125
 	rest show fabric interface  leaf2-a  ${leaf2a_ixia_intf}
 	${result}=  rest verify fabric interface  leaf2-a  ${leaf2a_ixia_intf}
 	Should not be True  ${result}  
@@ -114,14 +119,14 @@ Delete Fabric switch and verify the status
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf
   	add leaf group  leaf0-a  rack0
-  	sleep  5
+  	sleep  125
   	verify fabric switch  leaf0-a
     REST delete fabric switch  leaf0-a
-  	sleep  5
+  	sleep  125
   	add switch  spine0
   	add dpid  spine0  ${spine0_dpid} 
   	add fabric role  spine0  spine
-  	sleep  5
+  	sleep  125
   	verify fabric switch  spine0
   	REST delete fabric switch  spine0
   	
@@ -131,22 +136,24 @@ Test invalid link status in fabric error
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf
   	add leaf group  leaf0-a  rack0
-  	sleep  5
+  	sleep  125
   	verify fabric switch  leaf0-a
   	add switch  leaf0-b
 	add dpid  leaf0-b  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
 	add leaf group  leaf0-b  rack1
+	sleep  125
 	rest verify fabric error invalid link  rack0  rack1
 
 
 * Keywords      
 T5 base test setup
+   bigrobot test ztn  False
    base test setup
       
 T5 base test teardown
-   delete fabric switch
    base test teardown
+   delete fabric switch
    sleep  5   
 
 verify fabric switch  [Arguments]  ${switch} 

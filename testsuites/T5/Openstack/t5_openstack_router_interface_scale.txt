@@ -1,0 +1,58 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BVS APP Functional Openstack interface router scale
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Library          keywords/T5Openstack.py
+Library			 Collections.py
+Resource         testsuites/T5/t5_openstack_variables.txt
+
+* Test Case 
+
+add/delete 5 network interfaces
+	[Tags]  openstack	 
+	openstack segment scale  admin  70  5
+	openstack verify segment scale  admin  5
+	openstack interface to router scale  r1  5
+	sleep  60
+	rest verify endpoint in system  5
+
+delete openstack 5 segment/routers leftovers
+	[Tags]  openstack
+	openstack interface to router scale delete  r1  5
+	openstack segment scale delete  5
+
+add/delete 3998 network interfaces
+	[Tags]  openstack	 
+	openstack segment scale  admin  70  3998
+	openstack verify segment scale  admin  3998
+	openstack interface to router scale  r1  3998
+	sleep  400
+	rest verify endpoint in system  3998
+	
+delete openstack 4k segment/routers leftovers
+	[Tags]  openstack 
+	openstack interface to router scale delete  r1  3998
+	openstack segment scale delete  3998
+	
+* keywords
+T5 Functional Suite Setup
+	base suite setup
+  	openstack source  keystonerc_admin
+  	openstack add router  admin  r1
+  	
+T5 Functional Suite Teardown
+	openstack source  keystonerc_admin
+	openstack delete router  r1
+	base suite teardown
+  

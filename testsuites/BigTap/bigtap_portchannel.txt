@@ -1,0 +1,811 @@
+*Settings
+Documentation       BigTap Port-Channel: Release:Blackbird 
+Suite Setup         portchannel suite setup
+Suite Teardown      portchannel suite teardown
+Test Setup          base test setup
+Test Teardown       base test teardown 
+Force Tags          feature  bigtap  portchannel
+
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             Collections.py
+Library             keywords/ThirdParty.py
+Library             String
+
+
+* Variables
+## Switch 1: Accton AS5610
+${sw1_alias}                                app-ras5610
+${arista_as5610_10G_port_range}             11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+${arista_as5610_10G_pc_number}              10
+${as5610_arista_10G_port_range}             11-26
+${as5610_arista_10G_pc_number}              10
+${as5610_arista_10G_pc_name}                port-channel10
+
+${arista_as5610_pre_service_range}          43 44
+${arista_as5610_pre_service_number}         9
+${as5610_arista_pre_service_range}          43-44
+${as5610_arista_pre_service_number}         9
+${as5610_arista_pre_service_name}           port-channel9
+
+${as5610_as6700_10G_port_range}             49-50
+${as5610_as6700_10G_pc_number}              2
+${as5610_as6700_10G_pc_name}                port-channel2
+
+${sw1_filter_intf_ixia}                     ethernet1                                                
+${sw1_filter_intf_alias}                    ixia-1-1
+${sw1_delivery_intf_ixia}                   ethernet2                                                
+${sw1_delivery_intf_alias}                  ixia-1-2
+## Switch 2: Dell S4810
+${sw2_alias}                                app-rs4810
+${arista_s4810_10G_port_range}              27 28 29 30 31 32 33 34
+${arista_s4810_10G_pc_number}               11
+${s4810_arista_10G_port_range}              29-36
+${s4810_arista_10G_pc_number}               11
+${s4810_arista_10G_pc_name}                 port-channel11
+
+${arista_s4810_pre_service_range}           37 39 40 41 42 43 44
+${arista_s4810_pre_service_number}          10
+${s4810_arista_pre_service_range}           37,39,40,41,42,43,44
+${s4810_arista_pre_service_number}          10
+${s4810_arista_pre_service_name}            port-channel10
+
+${s4810_as6700_10G_port_range}              50-52
+${s4810_as6700_10G_pc_number}               4
+${s4810_as6700_10G_pc_name}                 port-channel4
+
+${sw2_filter_intf_ixia}                     ethernet1                                                
+${sw2_filter_intf_alias}                    ixia-1-4
+${sw2_delivery_intf_ixia}                   ethernet2                                                
+${sw2_delivery_intf_alias}                  ixia-1-3
+
+## Switch 3: Accton AS6700
+${sw3_alias}                                app-ras6700
+${as6700_as5610_10G_port_range}             17-18
+${as6700_as5610_10G_pc_number}              2
+${as6700_as5610_10G_pc_name}                port-channel2
+${as6700_s4810_10G_port_range}              31-32
+${as6700_s4810_10G_pc_number}               4
+${as6700_s4810_10G_pc_name}                 port-channel4
+
+${filter_lag_alias}                         filter-port
+${delivery_lag_alias}                       delivery-port
+
+${policy_name}                              policy-portchannel
+${service_name}                             policy-service
+${preservice_name}                          policy-pre-service
+${postservice_name}                         policy-post-service
+
+* Test Case
+TC001: Verify port-channel interfaces are (hash-mode:L2) is up on switch  
+    verify portchannel interface is up  s1  ${as5610_arista_10G_pc_name}
+    verify portchannel interface is up  s2  ${s4810_arista_10G_pc_name}
+    [Tags]  base  
+
+TC002: Verify port-channel interface (hash-mode:L2) can be used as a filter interface
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}   filter      ${filter_lag_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${filter_lag_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}                     
+    [Tags]  filter  L2  
+
+TC003: Verify port-channel interface (hash-mode:L3) can be used as a filter interface
+    change portchannel hash-mode to  L3
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}   filter      ${filter_lag_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${filter_lag_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    change portchannel hash-mode to  L2                     
+    [Tags]  filter  L3  
+
+TC004: Verify port-channel interface (hash-mode:L2) can be used as a delivery interface
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    delivery    ${delivery_lag_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${delivery_lag_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}    delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}        
+    Should be true  ${return_value}                     
+    [Tags]  delivery  L2  
+
+TC005: Verify port-channel interface (hash-mode:L3) can be used as a delivery interface
+    change portchannel hash-mode to  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    delivery    ${delivery_lag_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}   ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}   ${delivery_lag_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}         filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}     delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}        
+    Should be true  ${return_value}
+    change portchannel hash-mode to  L2                     
+    [Tags]  delivery  L3 
+
+TC006: Verify port-channel interface (hash-mode:L2) can be used as a core interface
+    configure core interfaces as port-channel interfaces with hash-mode  L2
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    unconfigure core interfaces as port-channel interfaces                     
+    [Tags]  core  L2  
+
+TC007: Verify port-channel interface (hash-mode:L3) can be used as a core interface
+    configure core interfaces as port-channel interfaces with hash-mode  L3
+    change portchannel hash-mode to  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    Sleep  2
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}     
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}   
+    change portchannel hash-mode to  L2
+    unconfigure core interfaces as port-channel interfaces                     
+    [Tags]  core  L3
+
+TC008: Verify port-channel interface (hash-mode:L2) can be used as a service interface on filter switch 
+    configure port-channel as a service-interface with hash-mode  L2
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface       
+    [Tags]  service  L2
+
+TC009: Verify port-channel interface (hash-mode:L3) can be used as a service interface on filter switch 
+    configure port-channel as a service-interface with hash-mode  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface       
+    [Tags]  service  L3
+
+TC010: Verify port-channel interface (hash-mode:L2) can be used as a service interface on delivery switch 
+    configure port-channel as a service-interface with hash-mode  L2
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface       
+    [Tags]  service  L2
+
+TC011: Verify port-channel interface (hash-mode:L3) can be used as a service interface on delivery switch 
+    configure port-channel as a service-interface with hash-mode  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface       
+    [Tags]  service  L3  
+
+
+TC012: Verify bigtap policy with port-channel (hash-mode:L2) as service interface (filter-switch) and core-interface
+    configure core interfaces as port-channel interfaces with hash-mode  L2 
+    configure port-channel as a service-interface with hash-mode  L2
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface
+    unconfigure core interfaces as port-channel interfaces       
+    [Tags]  service  L2
+
+TC013: Verify bigtap policy with port-channel (hash-mode:L3) as service interface (filter-switch) and core-interface
+    configure core interfaces as port-channel interfaces with hash-mode  L3 
+    configure port-channel as a service-interface with hash-mode  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s1  ${as5610_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface
+    unconfigure core interfaces as port-channel interfaces       
+    [Tags]  service  L3
+
+TC014: Verify bigtap policy with port-channel (hash-mode:L2) as service interface (delivery-switch) and core-interface
+    configure core interfaces as port-channel interfaces with hash-mode  L2
+    configure port-channel as a service-interface with hash-mode  L2
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface
+    unconfigure core interfaces as port-channel interfaces       
+    [Tags]  service  L2
+
+TC015: Verify bigtap policy with port-channel (hash-mode:L3) as service interface (delivery-switch) and core-interface
+    configure core interfaces as port-channel interfaces with hash-mode  L3 
+    configure port-channel as a service-interface with hash-mode  L3
+    ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${sw2_delivery_intf_ixia}    delivery    ${sw2_delivery_intf_alias} 
+    Should be true  ${return_value} 
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_pre_service_name}    service    ${preservice_name}
+    Should be true  ${return_value}
+    ${return_value}=    rest add interface role  s2  ${s4810_arista_10G_pc_name}    service    ${postservice_name}
+    Should be true  ${return_value}        
+    Sleep  5
+    ${return_value}=    rest add service  ${service_name}  ${preservice_name}  ${postservice_name}
+    Should be true  ${return_value}
+    sleep  5
+    ${return_value}=    rest add service to policy      admin-view  ${policy_name}  ${service_name}  1
+    Should be true  ${return_value}    
+    ${return_value}=    rest add policy  admin-view  ${policy_name}  forward
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw1_filter_intf_alias}      filter
+    Should be true  ${return_value} 
+    ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${sw2_delivery_intf_alias}    delivery 
+    Should be true  ${return_value} 
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    Sleep  5
+    ${return_value}=    rest delete policy  admin-view  ${policy_name}     
+    Should be true  ${return_value}
+    ${return_value}=    rest delete service  ${service_name}
+    Should be true  ${return_value}    
+    ${return_value}=    rest delete interface role  s1  ${sw1_filter_intf_ixia}    filter 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${sw2_delivery_intf_ixia}    delivery   
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_pre_service_name}    service 
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface role  s2  ${s4810_arista_10G_pc_name}    service   
+    Should be true  ${return_value}         
+    ${return_value}=    rest delete interface  s1  ${sw1_filter_intf_ixia}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_pre_service_name}          
+    Should be true  ${return_value}
+    ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
+    Should be true  ${return_value}          
+    unconfigure port-channel as a service-interface
+    unconfigure core interfaces as port-channel interfaces       
+    [Tags]  service  L3  
+     
+              
+* Keywords
+portchannel suite setup
+    base suite setup
+    ${add_alias}=   rest add switch alias  s1  ${sw1_alias}
+    Should be true  ${add_alias}
+    ${add_alias}=   rest add switch alias  s2  ${sw2_alias}
+    Should be true  ${add_alias}
+    ${add_alias}=   rest add switch alias  s3  ${sw3_alias}
+    Should be true  ${add_alias}    
+    ### Configure port-channel interface between switches and arista
+    ${arista_lag_10G}=  cli arista add portchannel  s4  ${arista_as5610_10G_pc_number}  ${arista_as5610_10G_port_range}  pc_mode=on    
+    Should be true  ${arista_lag_10G}
+    ${as5610_lag_10G}=  cli add portchannel  s1  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  L2
+    Should be true  ${as5610_lag_10G}
+    ${arista_lag_10G}=  cli arista add portchannel  s4  ${arista_s4810_10G_pc_number}  ${arista_s4810_10G_port_range}  pc_mode=on    
+    Should be true  ${arista_lag_10G}
+    ${s4810_lag_10G}=  cli add portchannel  s2  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  10
+
+change portchannel hash-mode to    [Arguments]  ${hashmode}
+    ${as5610_lag_10G}=  cli add portchannel  s1  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  ${hashmode}
+    Should be true  ${as5610_lag_10G}
+    ${s4810_lag_10G}=  cli add portchannel  s2  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  ${hashmode}
+    Should be true  ${s4810_lag_10G}
+    ${s1s3_lag}=  cli add portchannel  s1  ${as5610_as6700_10G_pc_number}   ${as5610_as6700_10G_port_range}  ${hashmode}
+    Should be true  ${s1s3_lag}
+    ${s3s1_lag}=  cli add portchannel  s3  ${as6700_as5610_10G_pc_number}   ${as6700_as5610_10G_port_range}  ${hashmode}
+    Should be true  ${s3s1_lag}
+    ${s2s3_lag}=  cli add portchannel  s2  ${s4810_as6700_10G_pc_number}   ${s4810_as6700_10G_port_range}  ${hashmode}
+    Should be true  ${s2s3_lag}
+    ${s3s2_lag}=  cli add portchannel  s3  ${as6700_s4810_10G_pc_number}   ${as6700_s4810_10G_port_range}  ${hashmode}
+    Should be true  ${s3s2_lag}
+    sleep  10            
+
+configure core interfaces as port-channel interfaces with hash-mode    [Arguments]  ${hashmode}
+    ${s1s3_lag}=  cli add portchannel  s1  ${as5610_as6700_10G_pc_number}   ${as5610_as6700_10G_port_range}  ${hashmode}
+    Should be true  ${s1s3_lag}
+    ${s3s1_lag}=  cli add portchannel  s3  ${as6700_as5610_10G_pc_number}   ${as6700_as5610_10G_port_range}  ${hashmode}
+    Should be true  ${s3s1_lag}
+    ${s2s3_lag}=  cli add portchannel  s2  ${s4810_as6700_10G_pc_number}   ${s4810_as6700_10G_port_range}  ${hashmode}
+    Should be true  ${s2s3_lag}
+    ${s3s2_lag}=  cli add portchannel  s3  ${as6700_s4810_10G_pc_number}   ${as6700_s4810_10G_port_range}  ${hashmode}
+    Should be true  ${s3s2_lag}
+    sleep  10            
+    verify portchannel interface is up  s1  ${as5610_as6700_10G_pc_name}
+    verify portchannel interface is up  s3  ${as6700_as5610_10G_pc_name}
+    verify portchannel interface is up  s2  ${s4810_as6700_10G_pc_name}
+    verify portchannel interface is up  s3  ${as6700_s4810_10G_pc_name}
+
+unconfigure core interfaces as port-channel interfaces
+    ${return_value}=    cli delete portchannel  s1  ${as5610_as6700_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s2  ${s4810_as6700_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s3  ${as6700_s4810_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s3  ${as6700_as5610_10G_pc_number}     
+    Should be true  ${return_value}
+    sleep  10 
+
+configure port-channel as a service-interface with hash-mode    [Arguments]  ${hashmode}
+    ${s1s4_lag}=  cli add portchannel  s1  ${as5610_arista_pre_service_number}   ${as5610_arista_pre_service_range}  ${hashmode}
+    Should be true  ${s1s4_lag}
+    ${s4s1_lag}=  cli arista add portchannel  s4  ${arista_as5610_pre_service_number}  ${arista_as5610_pre_service_range}  pc_mode=on
+    Should be true  ${s4s1_lag}
+    ${s2s4_lag}=  cli add portchannel  s2  ${s4810_arista_pre_service_number}   ${s4810_arista_pre_service_range}  ${hashmode}
+    Should be true  ${s2s4_lag}
+    ${s4s2_lag}=  cli arista add portchannel  s4  ${arista_s4810_pre_service_number}  ${arista_s4810_pre_service_range}  pc_mode=on
+    Should be true  ${s4s2_lag}
+    sleep  10
+    verify portchannel interface is up  s1  ${as5610_arista_pre_service_name}
+    verify portchannel interface is up  s2  ${s4810_arista_pre_service_name}
+
+unconfigure port-channel as a service-interface
+    ${return_value}=    cli delete portchannel  s1  ${as5610_arista_pre_service_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s2  ${s4810_arista_pre_service_number}
+    Should be true  ${return_value}
+    ${return_value}=  cli arista delete portchannel  s4  ${arista_as5610_pre_service_number}  ${arista_as5610_pre_service_range}  pc_mode=on
+    Should be true  ${return_value}    
+    ${return_value}=  cli arista delete portchannel  s4  ${arista_s4810_pre_service_number}  ${arista_s4810_pre_service_range}  pc_mode=on
+    Should be true  ${return_value} 
+    sleep  10 
+        
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+    ${cintf_state}=  rest verify interface is up  ${switch}  ${interface_name}
+    Should Be True  ${cintf_state}
+  
+verify portchannel correctly reports member name  [Arguments]  ${switch}  ${portchannel_number}  ${interface_name_list}
+    ${member_exists0}=  cli verify portchannel members  ${switch}  ${portchannel_number}  ${interface_name_list}
+    Should Be True  ${member_exists0}
+ 
+verify portchannel correctly reports member interfaces  [Arguments]  ${switch}  ${portchannel_number}  ${interface_name_list}
+    ${member_isup0}=  cli verify portchannel member state   ${switch}  ${portchannel_number}  ${interface_name_list}
+    Should Be True  ${member_isup0} 
+
+portchannel suite teardown
+    ${arista_lag_10G}=  cli arista delete portchannel  s4  ${arista_as5610_10G_pc_number}  ${arista_as5610_10G_port_range}  pc_mode=on
+    Should be true  ${arista_lag_10G}
+    ${arista_lag_10G}=  cli arista delete portchannel  s4  ${arista_s4810_10G_pc_number}  ${arista_s4810_10G_port_range}  pc_mode=on    
+    Should be true  ${arista_lag_10G}
+    ${return_value}=    cli delete portchannel  s1  ${as5610_as6700_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s1  ${as5610_arista_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s2  ${s4810_arista_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s2  ${s4810_as6700_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s3  ${as6700_s4810_10G_pc_number}
+    Should be true  ${return_value}
+    ${return_value}=    cli delete portchannel  s3  ${as6700_as5610_10G_pc_number}     
+    Should be true  ${return_value}           
+    base suite teardown   

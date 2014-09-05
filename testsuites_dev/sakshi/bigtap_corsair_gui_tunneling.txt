@@ -1,0 +1,69 @@
+* Settings
+Documentation   	Test suite with tests to configure tunnels. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	GUI Tunneling
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
+Library        		SeleniumLibrary
+Library       		String
+Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+
+
+
+
+***Test Cases***
+### Configure Tunnels					 ${name}  ${rate-limit}  ${direction}  ${src-ip}  	${prefix}  ${gateway}  		${dst-ip}  		${switch}  		${parent-if}  ${loopback-if}					
+TC1 Configure Transmit Only tunnel	
+	  Configure Big Tap Tunnels			 tunnel1	${EMPTY}	Transmit		110.110.6.1	 	24		110.110.6.2		110.110.1.1		qa-corsair-1	ethernet9		ethernet5
+TC2 Configure Receive Only Tunnel														
+	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Receive			110.110.1.1	 	24		110.110.1.2		110.110.6.1		qa-corsair-2	ethernet10		${EMPTY}		
+TC3 Configure Bidirectional tunnel														
+	  Configure Big Tap Tunnels			 tunnel1	${EMPTY}	Bidirectional	110.110.1.3	 	24		110.110.1.2		110.110.2.1		qa-corsair-2	ethernet9		ethernet51		
+TC4 Configure Bidirectional tunnel	
+	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Bidirectional	110.110.2.1	 	24		110.110.2.2		110.110.1.3		qa-corsair-1	ethernet5		ethernet52
+TC5 Configure Bigtap role for tunnel1
+	  Configure Big Tap Interface from Controller Menu				 tunnel1	00:00:5c:16:c7:1e:f3:95	  service		pre-service				 
+TC6 Configure Bigtap role for tunnel1
+	  Configure Big Tap Interface from Controller Menu			 	 tunnel2	00:00:5c:16:c7:1c:16:f2   filter		filter-1	
+TC7 Configure Bigtap role for tunnel2
+	  Configure Big Tap Interface from Controller Menu				 tunnel1	00:00:5c:16:c7:1c:16:f2   service		post-service	
+TC8 Configure Bigtap role for tunnel2
+	  Configure Big Tap Interface from Controller Menu				 tunnel2	00:00:5c:16:c7:1e:f3:95   delivery		delivery-1	
+TC9 Remove BigTap Configuration from tunnel1				
+ 	  Edit Big Tap Interface from Controller Menu					 tunnel1	00:00:5c:16:c7:1e:f3:95	  ${EMPTY}		${EMPTY}
+TC10 Remove BigTap Configuration from tunnel2				
+ 	  Edit Big Tap Interface from Controller Menu					 tunnel2	00:00:5c:16:c7:1c:16:f2	  ${EMPTY}		${EMPTY}
+TC11 Remove BigTap Configuration from tunnel1				
+ 	  Edit Big Tap Interface from Controller Menu					 tunnel1	00:00:5c:16:c7:1c:16:f2	  ${EMPTY}		${EMPTY}
+TC12 Remove BigTap Configuration from tunnel2				
+ 	  Edit Big Tap Interface from Controller Menu					 tunnel2	00:00:5c:16:c7:1e:f3:95	  ${EMPTY}		${EMPTY}
+TC13 Delete Transmit only Tunnel
+	  Delete Tunnel													 tunnel1	00:00:5c:16:c7:1e:f3:95						
+TC14 Delete Receive only Tunnel
+	  Delete Tunnel													 tunnel2	00:00:5c:16:c7:1c:16:f2					
+TC15 Delete Bidirectional Tunnel1
+	  Delete Tunnel													 tunnel1	00:00:5c:16:c7:1c:16:f2						
+TC16 Delete Bidirectional Tunnel2
+	  Delete Tunnel													 tunnel2	00:00:5c:16:c7:1e:f3:95					
+
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+	#Delete All Big Tap Resources
+
+config suite teardown
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown
+

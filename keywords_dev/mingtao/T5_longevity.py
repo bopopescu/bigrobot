@@ -15,88 +15,7 @@ class T5_longevity(object):
 
 
 ################  start of commit #############
-    def rest_add_tenant_vns_scale(self, tenantcount='1', tname='T', tenant_create=None,
-                                        vnscount='1',  vname='V', vns_create='yes',
-                                        vns_ip=None, base="100.0.0.100", step="0.1.0.0", mask="24" 
-                                        ):
-        '''
-        Function to add l3 endpoint to all created vns
-        Input: tennat , switch , interface
-        The ip address is taken from the logical interface, the last byte is modified to 253
-        output : will add end into all vns in a tenant 
-        '''
-
-        t = test.Test()
-        c = t.controller('master')         
- 
-        t5 = T5.T5() 
-        l3 = T5L3.T5L3()           
-        helpers.test_log("Entering ==> rest_add_tenant_vns_scale " )  
-                
-        for count in range(0,int(tenantcount)):
-            tenant = tname+str(count)
-            
-            if tenant_create == 'yes':
-                if not t5.rest_add_tenant(tenant):      
-                    helpers.test_failure("USER Error: tenant is NOT configured successfully")           
-            elif  tenant_create is None:                 
-                if (re.match(r'None.*', self.cli_show_tenant(tenant))):                              
-                    helpers.test_log("tenant: %s  does not exist,  creating tenant" )      
-                    if not t5.rest_add_tenant(tenant):      
-                        helpers.test_failure("USER Error: tenant is NOT configured successfully")   
-                                                
-            if vns_create == 'yes' :  
-                helpers.test_log("creating tenant L2 vns" )            
-                if not t5.rest_add_vns_scale(tenant, vnscount,vname):
-                    helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant)  
-            if vns_ip is not None:
-                i = 1
-                while  (i<=int(vnscount)):
-                    vns=vname + str(i)
-                    l3.rest_add_router_intf(tenant, vns)
-                    if not l3.rest_add_vns_ip(tenant,vns,base,mask): 
-                        helpers.test_failure("USER Error: VNS is NOT configured successfully for tenant %s" % tenant) 
-                    ip_addr  = helpers.get_next_address('ipv4', base, step)
-                    base = ip_addr 
-                    i = i + 1                                 
-            content = c.cli('show running-config tenant')['content']                       
-            
-        return True
-
-                   
- 
-
-    def cli_show_tenant(self, tenant):
-        '''
-        show tenant
-        Input: tenant  
-        Output:  
-        Author: Mingtao
-        '''
-        t = test.Test()
-        c = t.controller('master')         
-        cli= 'show tenant ' + tenant
-        content = c.cli(cli)['content']    
-        temp = helpers.strip_cli_output(content)        
-        return temp
-
-    def cli_show_vns(self, tenant,vns):
-        '''
-        show tenant
-        Input: tenant  
-        Output:  
-        Author: Mingtao
-        '''
-        t = test.Test()
-        c = t.controller('master')   
-       
-        cli= 'show tenant ' + tenant + ' segment ' + vns
-        content = c.cli(cli)['content']    
-        temp = helpers.strip_cli_output(content)        
-        return temp
-
-
-                   
+  
  
     def console_switch_copy_config_start(self, node,password='adminadmin'):
         """
@@ -307,114 +226,41 @@ class T5_longevity(object):
                 return True
                 
                 
-    def upgrade_copy_image_HA_parallel(self,nodes,image):
-       
-        helpers.log("***Entering==> upgrade_copy_image_HA_parallel   \n" )
-        t = test.Test()
-        
-        results = []
-        result_dict = {}
-        task = tasks.UpgradeCommands()
-        #
-        # Parallel execution happens below
-        #     
-        for node in nodes:
-            res1 = task.cli_copy_upgrade_pkg.delay(t.params(),src=image,node=node)
-            results.append(res1)
-            task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
-  
-        # Check task status - are we done yet?
-        #
-        
-        self.task_finish_check_parallel(results,result_dict)        
-        helpers.log("***Exiting==> upgrade_copy_image_HA_parallel  \n" )
 
-        return True             
-    
-    def upgrade_statge_image_HA_parallel(self,nodes):
-       
-        helpers.log("***Entering==> upgrade_statge_image_HA_parallel   \n" )
+
+####### no use of this one    
+    def bash_get_blocked_thread(self, node):
+        ''' do df in debug bash
+        ouput: index:  directory  with all the field
+        '''
         t = test.Test()
+        n = t.node(node)
+        content = n.bash('sudo jps -l')['content']
+        lines = helpers.strip_cli_output(content, to_list=True) 
+        helpers.log("lines: %s" % lines)
+        for line in lines:
+            line = line.lstrip()
+            helpers.log(" line is - %s" % line) 
+            if (re.match(r'(\d+) org.projectfloodlight.core.Main', line)):
+                match = re.match(r'(\d+) .*projectfloodlight.*', line)
+                pid = match.group(1)
+                helpers.log("INFO: ***floodlight pid is \n  %s" % pid)
+                break
+        string = 'sudo jstack -F -l ' + pid + ' > /tmp/jstack.log'
+        content = n.bash(string, timeout=3600)['content']  
+        content = n.bash('cat /tmp/jstack.log | grep BLOCKED | wc -l' )['content'] 
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("*****Output list   is :\n%s" % temp)
+        temp.pop(0)
+        for line in temp:
+            line = line.lstrip()
+            helpers.log(" line is - %s" % line) 
+            if (re.match(r'(\d+).*', line)):               
+                helpers.log("INFO:blocked threads are \n  %s" % match.group(1))
+                return  match.group(1)
+                break        
+        return True
         
-        results = []
-        result_dict = {}
-        task = tasks.UpgradeCommands()
-        #
-        # Parallel execution happens below
-        #     
-        for node in nodes:
-            res1 = task.cli_stage_upgrade_pkg.delay(t.params(),node=node)
-            results.append(res1)
-            task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
-  
-        # Check task status - are we done yet?
-        self.task_finish_check_parallel(results,result_dict)
-        
-        helpers.log("***Exiting==> upgrade_statge_image_HA_parallel  \n" )
-       
-        return True      
-    
-    def upgrade_launch_image_HA_parallel(self,nodes):
-       
-        helpers.log("***Entering==> upgrade_launch_image_HA_parallel   \n" )
-        t = test.Test()
-        
-        results = []
-        result_dict = {}
-        task = tasks.UpgradeCommands()
-        #
-        # Parallel execution happens below
-        #     
-        for node in nodes:
-            res1 = task.cli_launch_upgrade_pkg.delay(t.params(),node=node)
-            results.append(res1)
-            task_id = results[-1].task_id
-            result_dict[task_id] = { "node": node, "action": "cli_copy_upgrade_pkg" }
-  
-        # Check task status - are we done yet?
-        self.task_finish_check_parallel(results,result_dict)
-        
-        helpers.log("***Exiting==> upgrade_launch_image_HA_parallel  \n" )
-       
-        return True      
-        
-           
-    
-    def task_finish_check_parallel(self,results,result_dict):
-       
-        helpers.log("***Entering==> task_finish_check_parallel   \n" )
-        is_pending = True
-        iteration = 0
-        while is_pending:
-            is_pending = False
-            iteration += 1
-            helpers.sleep(1)
-            helpers.log("USR INFO:  result is %s" %results)                             
-           
-            for res in results:
-                task_id = res.task_id
-                action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
-                if res.ready() == True:
-                    helpers.log("****** %d.READY     - task_id(%s)['%s']"
-                                % (iteration, res.task_id, action))
-                else:
-                    helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
-                                % (iteration, res.task_id, action))
-                    is_pending = True
-        helpers.log("*** Parallel tasks completed")
-        
-        #
-        # Check task output
-        #
-        for res in results:
-            task_id = res.task_id
-            helpers.log_task_output(task_id)
-            output = res.get()
-            result_dict[task_id]["result"] = output
-        helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
-        return True             
-    
 
   

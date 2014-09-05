@@ -52,7 +52,7 @@ class SwitchLight(object):
             helpers.log("DPID of switch %s is %s" % (switch.ip(), dpid[1]))
             return dpid[1]
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_interface_macaddress(self, node, intf_name):
@@ -80,7 +80,7 @@ class SwitchLight(object):
             helpers.log("Value in content[1] is %s \n and mac address is %s" % (content[1], mac_address))
             return mac_address
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_clear_interface_statistics(self, node):
@@ -93,7 +93,7 @@ class SwitchLight(object):
             switch.enable(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
@@ -115,7 +115,7 @@ class SwitchLight(object):
             cli_input = "show interface"
             switch.enable(cli_input)
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
         else:
             content = string.split(switch.cli_content(), '\n')
@@ -182,17 +182,21 @@ class SwitchLight(object):
             s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
             s1.enable(cli_input)
-            content = string.split(s1.cli_content(), '\n')
-            helpers.log("Value in content[1] is '%s' " % (content[1]))
+            new_content = string.split(s1.cli_content(), '\n')
+            helpers.log("Value in content[1] is '%s' " % (new_content[1]))
+            content = new_content[1].rstrip()
+            helpers.log("Value in content is '%s' " % (content))
             if admin_down:
-                (firstvalue, secondvalue, thirdvalue, lastvalue) = content[1].rstrip('\n').strip().split(' ')
-                intf_state = thirdvalue + " " + lastvalue.rstrip('\n')
+                helpers.log("Admin Down is True")
+                (firstvalue, secondvalue, thirdvalue, lastvalue) = content.split()
+                intf_state = thirdvalue + " " + lastvalue
             else:
-                (firstvalue, colon, lastvalue) = content[1].rstrip('\n').strip().split(' ')
+                helpers.log("Admin Down is False")
+                (firstvalue, colon, lastvalue) = content.split()
                 intf_state = lastvalue.rstrip('\n')
             return intf_state
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_interface_statistics(self, node, intf_name):
@@ -225,7 +229,7 @@ class SwitchLight(object):
                     return_array["sent_packets"] = int(re.split(' ', value)[3])
             return return_array
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_all_interfaces(self, node, intf_count=52):
@@ -260,7 +264,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_show_ip_address(self, console_ip, console_port):
@@ -299,10 +303,10 @@ class SwitchLight(object):
             tn.close()
             return ip_address_subnet
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_environment(self, node, element="System", hardware_element="Fan", hardware_element_number=1):
+    def cli_show_environment(self, node, hardware_element, hardware_element_number, element_name, element_number=0, sub_element="None"):
         '''
             Objective:
             -- Execute CLI command "show environment" on the switch and return requested element
@@ -322,220 +326,97 @@ class SwitchLight(object):
         try:
             switch.cli("show version")
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
         else:
             switch_output = switch.cli_content()
             if (("Description: Quanta LY2" in switch_output) or ("Description: Quanta LB9" in switch_output)):
                 helpers.log("Platform identified as Quanta")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
-                    return False
+            try:
+                cli_input = "show environment"
+                switch.enable(cli_input)
+            except:
+                helpers.test_log("Could not execute command. Please check log for errors")
+                return False
+            else:
+                content = string.split(switch.cli_content(), '\n')
+                for x in range(0, len(content)):
+                    content[x] = content[x].strip()
+                if "Fan" in hardware_element:
+                    # element_id = " " + str(hardware_element) + " " + str(hardware_element_number) + "\r"
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
+                elif "Thermal" in hardware_element:
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
+                elif "PSU" in hardware_element:
+                    element_id = str(hardware_element) + " " + str(hardware_element_number)
                 else:
-                    content = string.split(switch.cli_content(), '\n')
-                    flag_element_found = False
-                    if "Fan" in hardware_element:
-                        element_id = str(hardware_element) + "  " + str(hardware_element_number)
-                    elif "Temp" in hardware_element:
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    else:
-                        element_id = str(hardware_element)
-
-                    if ("System" in element):
-                        element_index = content.index('System:\r')
-                    elif ("PSU1" in element):
-                        element_index = content.index('PSU 1:\r')
-                    elif ("PSU2" in element):
-                        element_index = content.index('PSU 2:\r')
-                    else:
-                        helpers.log("Element does not exist")
-                        return False
-                    for x in range(0, element_index):
-                        content.pop(0)
+                    helpers.log("This Element Does not exist \n")
+                    return False
+                element_index = content.index(element_id)
+                for x in range(0, element_index):
+                    content.pop(0)
+                if "Thermal" in hardware_element or "Fan" in hardware_element:
                     for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            if "Temp" in hardware_element:
-                                element1_array = element_array[2].split('.')
-                                if int(element1_array[1][:1]) == 0:
-                                    temperature = str(element1_array[0][1:])
+                        if str(element_name) in content[i]:
+                            temp_value = content[i].split(':')
+                            if "RPM" in str(element_name) or "Status" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                            if "Speed" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].rstrip('%')
+                            if "Airflow" in str(element_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].strip()
+                                if temp_value[1] == "Front-to-Back":
+                                    temp_value[1] = "f2b"
+                                elif temp_value[1] == "Back-to-Front":
+                                    temp_value[1] = "b2f"
                                 else:
-                                    temperature = str(element1_array[0][1:]) + "." + str(element1_array[1][:1])
-                                return int(temperature)
-                            elif (("Vin" in hardware_element) or ("Vout" in hardware_element) or ("Iin" in hardware_element) or ("Iout" in hardware_element)):
-                                helpers.log("Elemet array is %s" % element_array)
-                                return_value = element_array[2]
-                                return_value = return_value[1:]
-                                return float(return_value)
-                            elif (("Pin" in hardware_element) or ("Pout" in hardware_element)):
-                                helpers.log("Elemet array is %s" % element_array)
-                                return_value = element_array[2]
-                                return float(return_value)
-                            else:
-                                return element_array[2]
-                    if flag_element_found is False:
-                        helpers.log("Element %s was not found in show environment output" % str(element_id))
-                        return False
-            elif ("Description: Accton AS4600-54T" in switch_output):
-                helpers.log("Platform identified as Accton AS4600-54T")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
-                    return False
-                else:
-                    content = string.split(switch.cli_content(), '\n')
-                    if "Fan" in hardware_element and ("System" in element) :
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
-                    elif "Fan" in hardware_element and ("PSU" in element) :
-                        element_id = "RPM:"
-                    elif "Temp" in hardware_element:
-                        element_id = "Temperature:"
-                    elif "Vout" in hardware_element:
-                        element_id = "Vout:"
-                    elif "Iout" in hardware_element:
-                        element_id = "Iout:"
-                    elif "Pout" in hardware_element:
-                        element_id = "Pout:"
+                                    return False
+                            if "Temperature" in str(element_name):
+                                temperature_cli = temp_value[1].split()
+                                temp_value[1] = temperature_cli[0]
+                            return_value = temp_value[1].strip()
+                            return return_value
+                elif "PSU" in hardware_element:
+                    element_found = False
+                    if element_name == "Fan" :
+                        element_new_id = str(element_name) + " " + str(element_number)
+                        element_new_index = content.index(element_new_id)
+                        element_found = True
+                    elif element_name == "Thermal" :
+                        element_new_id = str(element_name) + " " + str(element_number)
+                        element_new_index = content.index(element_new_id)
+                        element_found = True
+                    if element_found is True:
+                        for x in range(0, element_new_index):
+                            content.pop(0)
+                        element_new_name = str(sub_element)
                     else:
-                        element_id = str(hardware_element)
-
-                    flag_element_found = False
-                    if ("System" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "Chassis Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "System"
-                    elif ("PSU1" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-1 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-1"
-                    elif ("PSU2" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-2 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-2"
-                    else:
-                        helpers.log("Element does not exist")
-                        return False
-                    for x in range(0, len(content)):
-                        if ((element_name in content[x]) and  ('Not present' in content[x])):
-                            helpers.log("This PSU does not exist or is not powered up")
-                            return False
-                        elif ((element_name in content[x]) and  ('Unplugged or Failed.' in content[x])):
-                            helpers.log("This PSU does not exist or is not powered up")
-                            return False
-                    helpers.log("element_name is %s " % element_name)
-                    for x in range(0, len(content)):
-                        stripped_value = content[x].lstrip()
-                        if (int(stripped_value.find(element_name)) == 0):
-                            element_index = x
-                            break
-                    helpers.log("element_index is %s " % element_index)
-                    for x in range(0, element_index):
-                        content.pop(0)
+                        element_new_name = str(element_name)
                     for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            helpers.log("Element Array is %s" % element_array)
-                            if "Temp" in hardware_element:
-                                return element_array[1]
-                            elif "Fan" in hardware_element:
-                                return_value = element_array[1]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif "Vin" in hardware_element:
-                                return_value = element_array[3]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif "Vout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-                            elif "Iout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-                            elif "Pout" in hardware_element:
-                                return_value = element_array[1]
-                                return return_value
-
-            elif ('Description: Accton AS5610-52X' in switch_output):
-                helpers.log("Platform identified as Accton AS4600-54T")
-                try:
-                    cli_input = "show environment"
-                    switch.enable(cli_input)
-                except:
-                    helpers.test_failure("Could not execute command. Please check log for errors")
-                    return False
-                else:
-
-                    content = string.split(switch.cli_content(), '\n')
-                    if "Fan" in hardware_element:
-                        element_id = "RPM:"
-                    elif "Temp" in hardware_element:
-                        element_id = "Temperature:"
-                    elif "Vout" in hardware_element:
-                        element_id = "Vout:"
-                    elif "Iout" in hardware_element:
-                        element_id = "Iout:"
-                    elif "Pout" in hardware_element:
-                        element_id = "Pout:"
-                    else:
-                        element_id = str(hardware_element)
-
-                    flag_element_found = False
-                    if ("System" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "Chassis Thermal Sensor " + str(hardware_element_number)
-                        elif "Fan" in hardware_element:
-                            element_name = "Chassis Fan " + str(hardware_element_number)
-                        else:
-                            element_name = "System"
-                    elif ("PSU1" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-1 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-1"
-                    elif ("PSU2" in element):
-                        if "Temp" in hardware_element:
-                            element_name = "PSU-2 Thermal Sensor " + str(hardware_element_number)
-                        else:
-                            element_name = "PSU-2"
-
-                    for x in range(0, len(content)):
-                        if (int(content[x].find(element_name)) == 0):
-                            element_index = x
-                            break
-                    helpers.log("element_index is %s " % element_index)
-                    for x in range(0, element_index):
-                        content.pop(0)
-                    for i in range(0, len(content)):
-                        temp_element_string = content[i].lstrip()
-                        if(element_id in temp_element_string):
-                            flag_element_found = True
-                            temp_element_string = ' '.join(content[i].split())
-                            element_array = temp_element_string.split()
-                            helpers.log("Element Array is %s" % element_array)
-                            if "Temp" in hardware_element:
-                                return element_array[1]
-                            elif "Fan" in hardware_element:
-                                return_value = element_array[1]
-                                return_value = return_value[:-1]
-                                return return_value
-                            elif(("Vin" in hardware_element) or  ("Vout" in hardware_element) or  ("Iin" in hardware_element) or  ("Iout" in hardware_element) or  ("Pin" in hardware_element) or  ("Pout" in hardware_element)):
-                                return_value = element_array[1]
-                                helpers.log("Value of element as seen in CLI is %s" % return_value)
-                                return return_value
+                        if str(element_new_name) in content[i]:
+                            temp_value = content[i].split(':')
+                            if "Status" in str(element_new_name) or "Type" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                            if "Speed" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].rstrip('%')
+                            if "Airflow" in str(element_new_name):
+                                temp_value[1] = temp_value[1].rstrip('.')
+                                temp_value[1] = temp_value[1].strip()
+                                if temp_value[1] == "Front-to-Back":
+                                    temp_value[1] = "f2b"
+                                elif temp_value[1] == "Back-to-Front":
+                                    temp_value[1] = "b2f"
+                                else:
+                                    return False
+                            if "Temperature" in str(element_new_name):
+                                temperature_cli = temp_value[1].split()
+                                temp_value[1] = temperature_cli[0]
+                            return_value = temp_value[1].strip()
+                            return return_value
+                return False
 
     def ping_from_local(self, node):
         '''
@@ -560,7 +441,7 @@ class SwitchLight(object):
             else:
                 return True
         except:
-            helpers.test_failure("Could not execute ping. Please check log for errors")
+            helpers.test_log("Could not execute ping. Please check log for errors")
             return False
 
     def cli_ping_from_switch(self, node, remote):
@@ -592,7 +473,7 @@ class SwitchLight(object):
                 helpers.test_log(cli_output)
                 return True
         except:
-            helpers.test_failure("Could not execute ping. Please check log for errors")
+            helpers.test_log("Could not execute ping. Please check log for errors")
             return False
 #######################################################################
 # All Common Controller Verification Commands Go Here:
@@ -655,6 +536,7 @@ class SwitchLight(object):
             else:
                 helpers.log("This is the backup controller")
                 if (("SLAVE" in show_output) or ("EQUAL" in show_output)):
+
                     pass_count = pass_count + 1
 
             if pass_count == 4:
@@ -662,7 +544,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_ofaux_channel_count(self, node, controller):
@@ -777,7 +659,6 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             else:
                 helpers.log("FAIL:MTU and Speed was not found in show interface output")
-            return True
 
             if pass_count == 7:
                 return True
@@ -840,7 +721,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_crc_forwarding_is_disabled(self, node):
@@ -880,7 +761,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_crc_forwarding_is_enabled(self, node):
@@ -905,7 +786,7 @@ class SwitchLight(object):
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -950,7 +831,7 @@ class SwitchLight(object):
                     helpers.log('Exiting from loop')
                     return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_interface(self, node, interface_name):
@@ -973,7 +854,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_interface(self, node, interface_name):
@@ -996,7 +877,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_disable_interface_bshell(self, node, interface_num):
@@ -1019,7 +900,7 @@ class SwitchLight(object):
             s1.bash(bash_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_enable_interface_bshell(self, node, interface_num):
@@ -1042,7 +923,7 @@ class SwitchLight(object):
             s1.bash(bash_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_flap_interface_ma1(self, node):
@@ -1060,7 +941,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            switch = t.switch(node)
+            # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
             console_ip = t.params(node, "console_ip")
@@ -1085,12 +966,12 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     # Alias
-    def cli_update_interface_ma1(self, console_ip, console_port):
-        return self.cli_add_interface_ma1(console_ip, console_port)
+    # def cli_update_interface_ma1(self, console_ip, console_port):
+    #    return self.cli_add_interface_ma1(console_ip, console_port)
 
 
     def cli_execute_command(self, node, cli_input):
@@ -1120,7 +1001,7 @@ class SwitchLight(object):
             helpers.log("Input is '%s' \n Output is %s" % (cli_input, cli_output))
             return cli_output
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_controller(self, node, controller):
@@ -1146,7 +1027,7 @@ class SwitchLight(object):
             helpers.sleep(float(30))
             return True
         except:
-            helpers.test_failure("Configuration of controller failed")
+            helpers.test_log("Configuration of controller failed")
             return False
 
     def cli_delete_controller(self, node, controller):
@@ -1172,7 +1053,7 @@ class SwitchLight(object):
             helpers.sleep(float(30))
             return True
         except:
-            helpers.test_failure("Configuration delete failed")
+            helpers.test_log("Configuration delete failed")
             return False
 
     def cli_add_static_ip(self, node, subnet, gateway):
@@ -1256,7 +1137,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_dhcp_ip(self, console_ip, console_port):
@@ -1294,7 +1175,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_dhcp_ip(self, console_ip, console_port, ip_address, subnet, gateway):
@@ -1330,7 +1211,7 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+            helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
     def cli_add_dns_server_domain(self, node, dns_server, dns_domain):
@@ -1365,7 +1246,7 @@ class SwitchLight(object):
                 tn.write(password + "\r\n")
                 tn.read_until('')
             except:
-                helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+                helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
                 return False
             else:
                 tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
@@ -1443,7 +1324,7 @@ class SwitchLight(object):
             helpers.test_log(s1.cli_content)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1466,7 +1347,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_crc_forwarding(self, node):
@@ -1488,7 +1369,7 @@ class SwitchLight(object):
             s1.config(cli_input_1)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1566,7 +1447,7 @@ class SwitchLight(object):
             return True
         except:
             tn.close()
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_execute_command(self, node, command):
@@ -1622,7 +1503,7 @@ class SwitchLight(object):
             helpers.sleep(150)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_restart_process(self, node, processName, timeout=None):
@@ -1646,7 +1527,7 @@ class SwitchLight(object):
             switch.bash(bash_input, timeout=timeout)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def bash_upgrade_switch(self, node, image_path):
@@ -1682,7 +1563,7 @@ class SwitchLight(object):
             switch.bash(bash_input_5)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_upgrade_switch(self, node, image_path, netdns='10.192.3.1', netdomain='bigswitch.com', netmask='255.255.192.0', netgw='10.192.64.1'):
@@ -1725,7 +1606,7 @@ class SwitchLight(object):
             switch.config(cli_input_9)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############################################################################
@@ -1752,7 +1633,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             return s1.cli_content()
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1780,7 +1661,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 
@@ -1805,7 +1686,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_add_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
@@ -1836,7 +1717,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
@@ -1866,7 +1747,7 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_snmp(self, node):
@@ -1887,7 +1768,7 @@ class SwitchLight(object):
             s1.config("snmp-server enable")
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_disable_switch_snmp(self, node):
@@ -1908,7 +1789,7 @@ class SwitchLight(object):
             s1.config("no snmp-server enable")
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_enable_trap_keyword(self, node, keyword):
@@ -1929,7 +1810,7 @@ class SwitchLight(object):
             s1.config(str(keyword))
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_trap_keyword(self, node, keyword):
@@ -1951,7 +1832,7 @@ class SwitchLight(object):
             s1.config(delete_key)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############# PORT-CHANNEL SHOW COMMANDS##############################
@@ -1976,18 +1857,21 @@ class SwitchLight(object):
             cli_input = "show interface " + intf_name
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            helpers.log("Multiline is %s" % (string.split(cli_output, '\n')))
-            lagNumber = 60 + int(pcNumber)
-            input1 = str(lagNumber) + "* " + intf_name
-            if str(input1) in cli_output:
-                return True
+            if "Error: "  in cli_output:
+                    return False
             else:
-                return False
+                helpers.log("Multiline is %s" % (string.split(cli_output, '\n')))
+                lagNumber = 60 + int(pcNumber)
+                input1 = str(lagNumber) + "* " + intf_name
+                if str(input1) in cli_output:
+                    return True
+                else:
+                    return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_members(self, node, pc_number, *intf_name_list):
+    def cli_verify_portchannel_members(self, node, pc_number, intf_name_list):
         '''
             Objective:
             - Verify if portchannel contains the member interface that was configured
@@ -2006,29 +1890,31 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            helpers.log("Length of content %d" % (len(content)))
-            helpers.log("Length of content %d" % (len(intf_name_list)))
-            if len(content) < 8 :
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                member_intf = string.split(intf_name_list, ' ')
+                if len(content) < 8 :
+                    return False
+                elif len(member_intf) < 1:
+                    helpers.test_log("Passed interface list is empty !!")
+                    return False
+                else :
+                    pass_count = 0
+                    for i in range(10, len(content) - 1):
+                        intfName = ' '.join(content[i].split()).split(" ", 2)
+                        helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
+                        for intf_name in member_intf:
+                            helpers.log('value is %s' % intf_name)
+                            if len(intfName) > 1 and intfName[1] == intf_name :
+                                helpers.log("IntfName is %s \n" % (intfName[1]))
+                                pass_count = pass_count + 1
+                    if pass_count == len(member_intf):
+                        return True
                 return False
-            elif len(intf_name_list) < 1:
-                helpers.test_failure("Passed interface list is empty !!")
-                return False
-            else :
-                pass_count = 0
-                for i in range(10, len(content) - 1):
-                    intfName = ' '.join(content[i].split()).split(" ", 2)
-                    helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
-                    for intf_name in intf_name_list:
-                        helpers.log('value is %s' % intf_name)
-                        if len(intfName) > 1 and intfName[1] == intf_name :
-                            helpers.log("IntfName is %s \n" % (intfName[1]))
-                            pass_count = pass_count + 1
-                if pass_count == len(intf_name_list):
-                    return True
-            return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_return_member_interface_stats(self, node, pc_number, sub_interface, txrx, packet_byte="packet"):
@@ -2050,27 +1936,30 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            for i in range(0, len(content)):
-                if sub_interface in content[i]:
-                    txrx_value = re.split('\s+', content[i])
-                    if  "tx" in txrx.lower():
-                        if "packet" in packet_byte:
-                            return txrx_value[2]
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                for i in range(0, len(content)):
+                    if sub_interface in content[i]:
+                        txrx_value = re.split('\s+', content[i])
+                        if  "tx" in txrx.lower():
+                            if "packet" in packet_byte:
+                                return txrx_value[2]
+                            else:
+                                return txrx_value[3]
+                        elif "rx" in txrx.lower():
+                            if "packet" in packet_byte:
+                                return txrx_value[4]
+                            else:
+                                return txrx_value[5]
                         else:
-                            return txrx_value[3]
-                    elif "rx" in txrx.lower():
-                        if "packet" in packet_byte:
-                            return txrx_value[4]
-                        else:
-                            return txrx_value[5]
-                    else:
-                        return False
+                            return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_member_state(self, node, pc_number, *intf_name_list):
+    def cli_verify_portchannel_member_state(self, node, pc_number, intf_name_list):
         '''
             Objective:
             - Verify if portchannel member interface is up
@@ -2091,28 +1980,30 @@ class SwitchLight(object):
             cli_input = "show port-channel " + str(pc_number)
             s1.enable(cli_input)
             cli_output = s1.cli_content()
-            content = string.split(cli_output, '\n')
-            helpers.log("Length of content %d" % (len(content)))
-            helpers.log("Length of content %d" % (len(intf_name_list)))
-            if len(content) < 8 :
+            if "Error: "  in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                member_intf = string.split(intf_name_list, ' ')
+                if len(content) < 8 :
+                    return False
+                elif len(member_intf) < 1:
+                    helpers.test_log("Passed interface list is empty !!")
+                    return False
+                else :
+                    pass_count = 0
+                    for i in range(8, len(content)):
+                        intfName = ' '.join(content[i].split()).split(" ", 2)
+                        for intf_name in member_intf:
+                            if len(intfName) > 1 and intfName[1] == intf_name:
+                                if intfName[0] == "*":
+                                    helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                                    pass_count = pass_count + 1
+                    if pass_count == len(member_intf):
+                        return True
                 return False
-            elif len(intf_name_list) < 1:
-                helpers.test_failure("Passed interface list is empty !!")
-                return False
-            else :
-                pass_count = 0
-                for i in range(8, len(content)):
-                    intfName = ' '.join(content[i].split()).split(" ", 2)
-                    for intf_name in intf_name_list:
-                        if len(intfName) > 1 and intfName[1] == intf_name:
-                            if intfName[0] == "*":
-                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                                pass_count = pass_count + 1
-                if pass_count == len(intf_name_list):
-                    return True
-            return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
 ############# PORT-CHANNEL CONFIGURATION COMMANDS##############################
@@ -2147,13 +2038,15 @@ class SwitchLight(object):
                 cli_output = s1.cli_content()
                 if "is not a valid interface" in cli_output:
                     return False
+                elif "Error: "  in cli_output:
+                    return False
                 else:
                     return True
             except:
                 return False
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_delete_portchannel(self, node, pcNumber):
@@ -2180,9 +2073,63 @@ class SwitchLight(object):
             s1.config(cli_input)
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
+###### L2GRE Tunnel
+    def cli_return_tunnel_info(self, node, tunnel_number, tunnel_variable):
+        '''
+            Objective:
+            - Return info specific to tunnel from switch after executing cli command "show tunnel X"
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | tunnel_number | Tunnel number |            
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show tunnel " + str(tunnel_number) + " "
+            switch.enable(cli_input)
+            cli_output = switch.cli_content()
+            if "Error: "  in cli_output or "Cannot" in cli_output:
+                    return False
+            else:
+                content = string.split(cli_output, '\n')
+                helpers.log("Length of content %d" % (len(content)))
+                if tunnel_variable == "of_port":
+                    content_row = content[2].split()
+                    return content_row[2]
+                if tunnel_variable == "parent_port":
+                    content_row = content[2].split()
+                    return content_row[4]
+                if tunnel_variable == "loopback":
+                    content_row = content[2].split()
+                    return content_row[6]
+                if tunnel_variable == "rate_limit":
+                    content_row = content[3].split()
+                    return content_row[6]
+                if tunnel_variable == "vpn_id":
+                    content_row = content[4].split()
+                    return_value = int(content_row[1], 16)
+                    return return_value
+                if tunnel_variable == "mac":
+                    content_row = content[5].split()
+                    return content_row[1]
+                if tunnel_variable == "nh_mac":
+                    content_row = content[6].split()
+                    return content_row[1]
+                if tunnel_variable == "sip":
+                    content_row = content[7].split()
+                    return content_row[1]
+                if tunnel_variable == "dip":
+                    content_row = content[8].split()
+                    return content_row[1]
+                return False
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+###### L2GRE Tunnel
 
 ############# CLI WALK : AUTHOR: CLIFF D
 
