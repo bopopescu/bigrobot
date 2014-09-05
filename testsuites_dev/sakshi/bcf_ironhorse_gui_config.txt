@@ -32,10 +32,10 @@ T1.7 Delete Tenants
     
 ### Controller State
 
-T2.1 Change controller state from active to standby
-	Change Controller State				STANDBY
-T2.1 Change controller state from standby to active
-	Change Controller State				ACTIVE
+T2.1 Show stats for standby controller
+	Show Controller Stats				STANDBY
+T2.1 Show stats for active controller
+	Show Controller Stats				ACTIVE
 
 			
 * Keyword
@@ -44,7 +44,7 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    Start Selenium Server  -trustAllSSLCertificates
+    #Start Selenium Server  -trustAllSSLCertificates
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page

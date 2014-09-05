@@ -370,7 +370,7 @@ Create Tenant
 	
 	Verify Element Invisible  ${CREATE TENANT POPUP}
 	
-Change Controller State
+Show Controller Stats
 	[Arguments]  ${state}
 	
 	Go To Landing Page
