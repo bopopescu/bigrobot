@@ -176,6 +176,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512
     [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256 
+	ixia initialize  tg1  init=True
     ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 line_rate=25  frame_size=256   
@@ -227,6 +228,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic linerate 100% pktsize 1518
     [Tags]  switch-platform  L3  traffic  feature
 
 Uni-Directional L3 Traffic Jumbo flow=a->c traffic framerate 10000 pktsize 9216 
+	ixia initialize  tg1  init=True
     ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                 frame_rate=10000  frame_size=9216   
