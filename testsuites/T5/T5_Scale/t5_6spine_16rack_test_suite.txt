@@ -446,9 +446,9 @@ T8 Generate ARP requests from all L3 hosts
     Log    Send ARP from all L3 hosts 2k ARPs per switch
     Log    Verify ARP resolve
     Log    Repeat T8 for 16k/32k/48k L3 hosts
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-    
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+    manual passed
     
 T9 Controller HA fail-over via CLI
     Log    Repeat T3
@@ -497,7 +497,7 @@ T13 Controller slave reboot
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	    
 T14 Verify/Measure Non-Graceful operations    
     Log    Repeat T9
@@ -550,9 +550,9 @@ T18 Kill floodlight deamon in master/slave contorller
     Log   kill floodlight with kill option 9 under master/slave controller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+	manual failed
 	
 T19 Power off one spine
     Log   Repeat T3    
@@ -563,7 +563,7 @@ T19 Power off one spine
     Log   Measure traffic loss/Convergence time
     #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	
 T20 Power on one spine    
     Log   Repeat T3    
@@ -594,9 +594,9 @@ T22 Power off one leaf
     Log   Power off one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+	manual passed
 	
 T23 Power on one leaf    
     Log   Repeat T3    
@@ -605,8 +605,9 @@ T23 Power on one leaf
     Log   Power on one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+	manual passed
 	
 	
 T24 Power off/on leaf    
@@ -616,9 +617,9 @@ T24 Power off/on leaf
     Log   Power on one leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
-    manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+    #manual untested
+	[Tags] 	sanity    Manual  scaling
+	manual passed
 	
 T25 Power down 16th rack
     Log   Repeat T3
