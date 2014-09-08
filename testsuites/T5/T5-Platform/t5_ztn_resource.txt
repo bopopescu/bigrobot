@@ -43,9 +43,9 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	Sleep  120
 	#Reboot Switches From CLI
 	#Reboot Switches
 	#Power Cycle All Switches
