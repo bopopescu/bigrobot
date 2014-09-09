@@ -437,11 +437,13 @@ class Controller(object):
         if do_first_boot:
             return self.cli_add_first_boot(node, **kwargs)
 
-    def cli_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+    def cli_ping(self, node, dest_ip=None, dest_node=None, return_stats=False,
+                 *args, **kwargs):
         """
         Perform a ping from the CLI. Returns the loss percentage
-        - 0   - 0% loss
-        - 100 - 100% loss
+        - 0   - 0% loss (default)
+        - 100 - 100% loss (default)
+        - Stats dict if return_stats is ${true}
 
         Inputs:
         - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
@@ -468,9 +470,11 @@ class Controller(object):
             dest = dest_ip
         if dest_node:
             dest = t.node(dest_node).ip()
-        status = helpers._ping(dest, node_handle=n, mode='cli',
-                               *args, **kwargs)
-        return status
+        stats = helpers._ping(dest, node_handle=n, mode='cli', *args, **kwargs)
+        if return_stats:
+            return stats
+        else:
+            return stats["packets_loss_pct"]
 
 _ = ''' These methods are candidates for removal...
 
