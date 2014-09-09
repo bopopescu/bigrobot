@@ -307,12 +307,14 @@ T4.8. Swap MAC addresses of two provisioned switches
 T4.9. Provision two switches, power them both off, swap MACs, power them both on
 	Sleep  60
 	Power Down Switch  s2
+	Sleep  5
 	Power Down Switch  s3
 	Sleep  10
 	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
 	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
 	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}
 	Power Up Switch  s2
+	Sleep  5
 	Power Up Switch  s3
 	Telnet Wait For Switch To Reload  s2
 	Telnet Wait For Switch To Reload  s3
