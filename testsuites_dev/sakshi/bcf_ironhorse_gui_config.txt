@@ -49,28 +49,34 @@ T3.4 Add a leaf switch using the previous leaf group
 	Provision Switch			00:ff:00:0a:03:22		switch_leaf.2		Leaf		leaf-group
 T3.5 Add a leaf switch with new leaf group							
 	Provision Switch			00:09:22:33:50:78		switch_lEAf_3		Leaf		leaf_group_new
-T3.6 Change role for switch-1 to spine
+T3.6 Remove the leaf group from the switch switch_lEAf_3
+	Change Switch Config			switch_lEAf_3		Leaf		${EMPTY}
+T3.7 Remove the leaf group from the switch switch-LEAF.1
+	Change Switch Config			switch-LEAF.1		Leaf		${EMPTY}
+T3.8 Change role for switch-1 to spine
 	Change Switch Config			switch-1			Spine		${EMPTY}
-T3.7 Change role and leaf group for switch_leaf.2
+T3.9 Change leaf group for switch_leaf.2
 	Change Switch Config			switch_leaf.2		Leaf		leaf_group_new	
-T3.8 Change role for switch_spine to leaf
+T3.10 Change role for switch_spine to leaf
 	Change Switch Config			switch_spine		Leaf		leaf-group	
-T3.9 Change role for switch-LEAF.1 to spine
-	Change Switch Config			switch-LEAF.1		Spine		${EMPTY}	
-T3.10 Change role to none for switch_lEAf_3
+T3.11 Change role for switch-LEAF.1 to None
+	Change Switch Config			switch-LEAF.1		None		${EMPTY}	
+T3.12 Change role to none for switch_lEAf_3
 	Change Switch Config			switch_lEAf_3		None		${EMPTY}		
-T3.11 Clear Switch config
+T3.13 Clear Switch config
 	Clear Switch Config				switch-LEAF.1		
 
 
 ### Configure Switch Interfaces					
 
-T4.1 Configure Interfaces for switch switch-11
-	Config  	master  switch switch_3; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5			
-T4.2 Configure Interfaces for spine switch
-	Config  	master  switch switch-spine_new; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
-T4.3 Configure Interfaces for leaf switch
-	Config  	master  switch switch_leaf_new; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+T4.1 Configure Interfaces for switch switch_lEAf_3
+	Config  	master  switch switch_lEAf_3; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5			
+T4.2 Configure Interfaces for spine switch switch-1
+	Config  	master  switch switch-1; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+T4.3 Configure Interfaces for leaf switch switch_leaf.2
+	Config  	master  switch switch_leaf.2; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+T4.3 Configure Interfaces for leaf switch switch_spine
+	Config  	master  switch switch_spine; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
 
 
 ### Adding Port Groups				name			mode			Leaf Group
@@ -107,6 +113,10 @@ config suite setup
     
 	
 config suite teardown
+	Clear Switch Config				switch_lEAf_3
+	Clear Switch Config				switch-1
+	Clear Switch Config				switch_leaf.2
+	Clear Switch Config				switch_spine
 	Close Browser
     #Stop Selenium Server
     base suite teardown
