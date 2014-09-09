@@ -1818,7 +1818,8 @@ def _ping(*args, **kwargs):
     Return value:
       { "packets_sent": nnn,
         "packets_received": nnn,
-        "packets_lost_percentage": nnn,
+        "packets_loss": nnn,
+        "packets_loss_percentage": nnn,
         "background_ping_output" = abc
       }
 
@@ -1891,6 +1892,7 @@ def _ping(*args, **kwargs):
         return {
                 "packets_sent": packets_sent,
                 "packets_received": packets_received,
+                "packets_loss": packets_sent - packets_received,
                 "packets_loss_pct": calculated_loss_pct
                 }
 
