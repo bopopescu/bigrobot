@@ -175,14 +175,14 @@ T1.11. Filtering tenants
 
 #Tests at each page:
 T2.1. Exporting tables to CSV, JSON
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual  BVS-2346
 T2.2. Refresh page - manual, periodic
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.3. Sorting in tables
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.4. Choosing columns in table - persists after refresh (saved in cookie)
 	Manual Untested
 	[Tags]  manual-untested
@@ -435,8 +435,8 @@ T10.6. Add, modify, delete Next Hop Group
 	Manual Passed
 	[Tags]  manual
 T10.7. Add, modify, delete Segment Interface
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Failed
+	[Tags]  manual  BSC-6279
 T10.8. Configure/unconfigure interface to Tenant System
 	Manual Passed
 	[Tags]  manual
@@ -454,8 +454,8 @@ T10.9.4. Add, modify, delete Endpoints
 	Manual Failed
 	[Tags]  manual  BVS-2341
 T10.10. Duplicate segment
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T10.11. Clear segment counters
 	Manual Failed
 	[Tags]  manual  BVS-2339
