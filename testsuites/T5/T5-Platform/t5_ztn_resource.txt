@@ -8,6 +8,7 @@
 *** Keywords ***
 Suite Setup
 	Base Suite Setup
+	Run Keyword and Ignore Error  Power Cycle All Switches
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	${tmp}  params  node=s1  key=mac
@@ -42,9 +43,9 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	Sleep  30
 	#Reboot Switches From CLI
 	#Reboot Switches
 	#Power Cycle All Switches
@@ -64,7 +65,6 @@ Suite Setup
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
-	Run Keyword and Ignore Error  Power Cycle All Switches
 	Run Keyword and Ignore Error  Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 

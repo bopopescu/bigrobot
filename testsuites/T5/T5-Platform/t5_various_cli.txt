@@ -502,11 +502,9 @@ T33 Show banner simple test
 T34 Rebooting dummy switch
 	Cli Run  master  switch test
 	Cli Run  master  mac 12:22:33:44:55:66
+	Cli Run  master  system reboot switch test
 	Run Keyword and Expect Error
-	...  *Error: Unable to determine IP address of specified switch name*
-	...  Cli Run  master  system reboot switch test
-	Run Keyword and Expect Error
-	...  *Error: Unable to determine IP address of specified switch DPID*
+	...  *Error: Invalid Use: reboot only supported using IP Address for disconnected switches*
 	...  Cli Run  master  system reboot switch 12:22:33:44:55:66
 	[Tags]  ZTN  BSC-5569
 
