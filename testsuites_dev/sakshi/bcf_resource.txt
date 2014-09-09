@@ -73,7 +73,7 @@ ${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
 ${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
 ${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_5']
-
+${PROCEED DELTE TENANTS BUTTON}			xpath=//span[@id='dijit_form_Button_5']
 
 #### Switch Page
 
@@ -106,6 +106,8 @@ ${PORT GROUP MODE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and 
 ${PORT GROUP LEAF GROUP DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[1]/input
 ${PORT GROUP LEAF GROUP LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup'] 
 ${PORT GROUP LEAF GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PROCEED DELTE PORT GROUPS BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
@@ -213,10 +215,16 @@ Go To Signout Page
 Delete All Tenants
 	Go To Tenants Page
     Delete All
+    Verify Element Visible   ${PROCEED DELTE TENANTS BUTTON}
+	Click Element  ${PROCEED DELTE TENANTS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All Port Groups
 	Go To Port Groups Page
     Delete All
+    Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
+	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
@@ -230,9 +238,7 @@ Delete All
 	Verify Element Visible  ${MAIN MINUS BUTTON}
 	Click Element  ${MAIN MINUS BUTTON}  and don't wait
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
-	Verify Element Visible   ${PROCEED DELTE BUTTON}
-	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
-	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
 	
 	
 Select Checkbox
@@ -485,7 +491,7 @@ Change Switch Config
 	
 	Click Element  ${SWITCH NAME FIELD}  and don't wait
 	
-	Sleep  5
+	Sleep  1
 	
 	Verify Page Contains Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}
 	Click Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}  and don't wait
@@ -504,7 +510,7 @@ Clear Switch Config
 	Click Element  ${CLEAR SWITCH CONFIG MENU ITEM}  and don't wait
 	Verify Element Visible  ${CLEAR SWITCH CONFIG POPUP}
 	
-	Sleep  5
+	Sleep  1
 	
 	Verify Page Contains Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}
 	Click Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}  and don't wait
