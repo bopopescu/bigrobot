@@ -75,7 +75,7 @@ T4.2 Configure Interfaces for spine switch switch-1
 	Config  	master  switch switch-1; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
 T4.3 Configure Interfaces for leaf switch switch_leaf.2
 	Config  	master  switch switch_leaf.2; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
-T4.3 Configure Interfaces for leaf switch switch_spine
+T4.4 Configure Interfaces for leaf switch switch_spine
 	Config  	master  switch switch_spine; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
 
 
