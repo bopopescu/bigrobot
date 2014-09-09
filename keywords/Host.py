@@ -139,7 +139,6 @@ class Host(object):
         if dest_node:
             dest = t.node(dest_node).ip()
         stats = helpers._ping(dest, node_handle=n, mode='bash', *args, **kwargs)
-        helpers.log("****** stats: %s" % stats)
         if kwargs.get('background', False):
             return stats
         elif return_stats:

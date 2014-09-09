@@ -451,8 +451,8 @@ class Controller(object):
         - dest_node  Ping this destination node ('c1', 's1', etc)
 
         Example:
-        | ${lossA} = | Bash Ping | h1          | 10.192.104.1 |
-        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |
+        | ${lossA} = | Cli Ping | h1          | 10.192.104.1 |
+        | ${lossB} = | Cli Ping | node=master | dest_node=s1 |
         =>
         - ${lossA} = 0
         - ${lossB} = 100
