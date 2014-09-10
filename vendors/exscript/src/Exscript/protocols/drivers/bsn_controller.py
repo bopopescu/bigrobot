@@ -37,6 +37,7 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #   Debug Bash: admin@controller:~$
 #
 _prompt_re = [re.compile(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+     # re.compile(r'[$] $')  # useful for matching bourne shell prompt
 
 
 # Controller> show version
