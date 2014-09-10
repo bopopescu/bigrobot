@@ -86,56 +86,84 @@ ${vip}      10.8.28.15
 
 ###### dual nodes controller upgrade  
  
-IMAGE: T1.1 verify image download and various related show command
+IMAGE: T1.1 verify image download and various related show command in master
 	log  get image from external server 
- 		copy_pkg_from_server    ${image}   c1	 
- 		cli_delete_image
+ 		copy_pkg_from_server    ${image}   master	 
+ 		cli_delete_image   master
  		
 	log  get image from file(file as source not supported)
-		cli_copy   scp://${image}    controller-upgrade-SNAPSHOT.pkg
-		enable   c1   copy controller-upgrade-SNAPSHOT.pkg image://
-		${result}=  cli content   c1
-		Should Contain	${result}	 Error: Invalid Use: image:// dest not supported for file source    
+		cli_copy   scp://${image}    file://controller-upgrade-SNAPSHOT.pkg   master
+		copy_pkg_from_file   file://controller-upgrade-SNAPSHOT.pkg   master
+ 
+		${num}  ${image}=	   cli_check_image    master
+		${current}=   rest_get_ver 	  master
     	   	
 	log  get image from self controller(scp should work)	
-		cli_delete_image		 
+		cli_delete_image	master	 
 		${ip}=   get_node_ip   master	
 		bash_scp   	node=master   source=${image}    dest=controller-upgrade-SNAPSHOT.pkg
  		${localimage}=  Catenate	SEPARATOR=	 admin@  ${ip}  	 :controller-upgrade-SNAPSHOT.pkg
-		copy_pkg_from_server   ${localimage}    node=c1     passwd=adminadmin
+		copy_pkg_from_server   ${localimage}    node=master     passwd=adminadmin
 		 		
 	log  get image from slow bandwidth (manual)
 	log  show image clis
-		enable   c1   show image
-		enable   c1   show image detail
-		enable   c1   show upgrade images 
+		enable   master   show image
+		enable   master   show image detail
+		enable   master   show upgrade images 
   			 	
-	[Tags] 	full  feature  upgrade_ztn    
+	[Tags] 	full  feature  upgrade_ztn     
 	
-IMAGE: T1.2 verify only 1 image can be stored in system 
+IMAGE: T1.2 verify image download and various related show command in slave
+	log  get image from external server 
+ 		copy_pkg_from_server    ${image}   slave	 
+ 		cli_delete_image   slave
+ 		
+	log  get image from file(file as source not supported)
+		cli_copy   scp://${image}    file://controller-upgrade-SNAPSHOT.pkg   slave
+		copy_pkg_from_file   file://controller-upgrade-SNAPSHOT.pkg  slave
+		${num}  ${image}=	   cli_check_image   slave
+		${current}=   rest_get_ver 	  slave
+    	   	
+	log  get image from self controller(scp should work)	
+		cli_delete_image	slave 
+		${ip}=   get_node_ip   slave	
+		bash_scp   	node=slave   source=${image}    dest=controller-upgrade-SNAPSHOT.pkg
+ 		${localimage}=  Catenate	SEPARATOR=	 admin@  ${ip}  	 :controller-upgrade-SNAPSHOT.pkg
+		copy_pkg_from_server   ${localimage}    node=slave    passwd=adminadmin
+		 		
+	log  get image from slow bandwidth (manual)
+	log  show image clis
+		enable   slave   show image
+		enable   slave   show image detail
+		enable   slave   show upgrade images 
+  			 	
+	[Tags] 	full  feature  upgrade_ztn      
+	 
+	
+IMAGE: T1.3 verify only 1 image can be stored in system 
 	log  copy image if there is no image in system
-		Copy image if no image exist    c1
+		Copy image if no image exist    master
  		 	   	
 	log  get another image from external server 
- 		copy_pkg_from_server    ${image1}    c1	 
-		${num}  ${image}=	   cli_check_image  
+ 		copy_pkg_from_server    ${image1}    master 
+		${num}  ${image}=	   cli_check_image     master
 		Should Be Equal As Integers     ${num}    1      	   	
     			 	
 	[Tags] 	sanity  feature  upgrade_ztn     
 
 IMAGE: T1.3 verify delete image 
 	log  copy image if there is no image in system
-		Copy image if no image exist    c1
+		Copy image if no image exist    master
   	log  delete image 
- 		cli_delete_image    
-		${num}  ${image}=	   cli_check_image  
+ 		cli_delete_image    master
+		${num}  ${image}=	   cli_check_image    master
 		Should Be Equal As Integers     ${num}    -1      	   	
     			 	
 	[Tags] 	sanity  feature  upgrade_ztn   
 
 
 		 
-STAGE: T2 verify image stage and various show commands at master & slave
+STAGE: T2 verify image stage and various show commands in master and slave
 	log  copy image if image is not available		
 		${num}  ${_}=	   cli_check_image   c1
 		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}	 c1
@@ -155,13 +183,20 @@ STAGE: T2 verify image stage and various show commands at master & slave
 		enable   c1   show boot partition  
 		enable   c1   show boot partition details
 		
+		enable   c2   show upgrade staged 
+		enable   c2   show upgrade staged details 
+		enable   c2   show upgrade status 
+		enable   c2   show boot partition  
+		enable   c2   show boot partition details
+		
+		
  	[Tags] 	full  feature  upgrade_ztn    
     
  
 UPGRADE: T11.1 Verify upgrade (controller - upgrade, switch - upgrade )   	
  		Verify Dual nodes upgrade 	  ${image1}
 		
- 	[Tags] 	sanity  feature  upgrade_ztn   
+ 	[Tags] 	sanity  feature  upgrade_ztn    
  	
     
 UPGRADE: T11.2 Verify upgrade (controller - upgrade, switch - no need) 
@@ -196,8 +231,8 @@ UPGRADE: T11.8 upgrade launch suspend timeout
 UPGRADE: T11.9 Verify upgrade rollback 
   	log  step 1 - rollback once the upgrade is finished on both nodes 	
  	log  step 2 - check both controller and switch revert back to old images
-
-	[Tags]  full   feature  upgrade_ztn    manual-untested
+	
+	[Tags]  full   feature  upgrade_ztn    manual 
 
 
 
@@ -276,10 +311,11 @@ UPGRADE: T11.7 VIP in upgrade
  	Should Be Equal As Strings  ${result}  ${vip}
 	
  	Verify Dual nodes upgrade 	  ${image1}	
+ 	
  	${result}=   cli_show_virtual_ip
  	Should Be Equal As Strings  ${result}  ${vip}
  	
-  	[Tags] 	full    feature  upgrade_ztn   
+  	[Tags] 	full    feature  upgrade_ztn   run
 
 
 SYNC: T12.1 Verify switch config in master controller is pushed to swith(event trigger reload) 
@@ -312,7 +348,7 @@ SYNC: T12.3 Verify controller failover with config changes in switch
  	log  step 2 - perform controller failover and cli reload 		
 	log  step 3 - verify switch startup config and running config all updated
  		
-	[Tags] 	full    manual-untested  feature  upgrade_ztn  
+	[Tags] 	full     feature  upgrade_ztn    manual-untested
  
 SYNC: T12.4 Verify controller upgrade with switch local config changes 
    	log  step 1 - modify switch related config in switch(NTP, Logging, SNMP)
@@ -320,7 +356,7 @@ SYNC: T12.4 Verify controller upgrade with switch local config changes
    	log  step 3 - switch will connect and controller/switch config(in controller) preserved
    	log  step 4 - switch will connect and switch local config is not honored(NTP, Logging, SNMP)
     
-	[Tags] 	sanity  manual-untested   feature  upgrade_ztn
+	[Tags] 	sanity    feature  upgrade_ztn  manual-untested 
 
 
 HAEVENT: T13.1 HA event - standby controller reboot after upgrade
@@ -346,49 +382,63 @@ HAEVENT: T13.4 HA event - master power off
     	
   	[Tags] 	full   feature  upgrade_ztn
   	
-  	
  
-HAEVENT: T13.5 HA event - master vm event (suspend, shutdown, reset, reboot.????)  
-	log  step 1 - upgrade controller
- 	log  step 2 - perform master vm event
-  	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn  skipped
- 
-
 
 EVENT: T14.1 phase 1 switch power off during upgrade with upgrade launch  
  	log  step 1 - upgrade controller
    	log  step 2 - power off phase I switch during phase I 
+		power down switch  s7
+		sleep   30
+		power up switch  s7
+   	    sleep   30
+		Verify switch are booted with correct image
+
+
   	      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full     feature  upgrade_ztn   
 	
 	
 EVENT: T14.2 phase II switch power off during upgrade with upgrade launch  
  	log  step 1 - upgrade controller
+		@{nodes}=     create list   c1   c2
+		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}
+		${result}=   Dual node launch image   ${nodes}   finish=no	
+		sleep   150
+ 	 
    	log  step 2 - power off phase II switch during phase II 
-  	      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+		power down switch  s8
+		sleep   30
+		power up switch  s8
+   	    sleep   30
+   	    
+   	    
+		Verify switch are booted with correct image
+   	    
+   	      
+  	[Tags] 	full     feature  upgrade_ztn     
 	
  		
 EVENT: T14.5 phase 1 switch power off during upgrade with upgrade launch suspend 
  	log  step 1 - upgrade controller
    	log  step 2 - power off phase I switch during phase I 
+   	
   	      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full   feature  upgrade_ztn    
 	
 	
 EVENT: T14.6 phase II switch power off during upgrade with upgrade launch suspend 
  	log  step 1 - upgrade controller
    	log  step 2 - power off phase II switch during phase II 
   	      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full   feature  upgrade_ztn    
 		
 	
 EVENT: T14.7 new switch join as provisioned switch after upgrade (1 - swi upgrade, 1 - loader install)
 	log  step 1 - upgrade controller
 	log  setp 2 - connect new switch as provisioned switch
 	
-  	[Tags] 	full   feature  upgrade_ztn
+  	[Tags] 	full   feature  upgrade_ztn 
 
 EVENT: T14.8 new switch join as standby switch after upgrade (1 - swi upgrade, 1 - loader install)
 	log  step 1 - upgrade controller
@@ -401,53 +451,52 @@ EVENT: T14.9 switch link up/down during upgrade
 	log  step 2 - during upgrade, physical remove link
  
 	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full   feature  upgrade_ztn   manual-untested 
 	
 EVENT: T14.10 L2 miss traffic during upgrade
 	log  step 1 - during upgrade, send l2 miss traffic
 	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full    feature  upgrade_ztn   manual-untested
  
 EVENT: T14.11 L3 arp resolve during upgrade 
 	log  step 1 - during upgrade, send arp request from traffic gen
 	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full    feature  upgrade_ztn  manual-untested
 
 EVENT: T14.12 L3 arp request during upgrade  
 	log  step 1 - during upgrade, system need to send arp request
 	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full    feature  upgrade_ztn    manual-untested
 
 EVENT: T14.13 mac move during upgrade  
 	log  step 1 - during upgrade, send same mac source from different port
 	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn
+  	[Tags] 	full    feature  upgrade_ztn  manual-untested 
   	
 EVENT: T14.14 config change during upgrade should be blocked 
 		${active}=   get_node_name   master
 		${standby}=  get_node_name   slave
 		@{nodes}=     create list   c1   c2
-		Dual node copy image	 ${nodes}    ${image} 
-		Dual node stage image    ${nodes}
+#		Dual node copy image	 ${nodes}    ${image} 
+#		Dual node stage image    ${nodes}
 		${result}=   Dual node launch image   ${nodes}   finish=no	
 		 	
 	log  step 1 - during upgrade, do configuration change in old active
-		sleep    300
-		cli    ${active}   ''
-		config    ${active}   tenant try
-		${content}=  cli content   ${active}
-		Should Contain	 ${content}	 Error:
+#		sleep    300
+#		cli    ${active}   ''
+#		config    ${active}   tenant try
+#		${content}=  cli content   ${active}
+#		Should Contain	 ${content}	 Error:
 		
 	log  step 2 - during upgrade, do configuration change in new active		
-		cli    ${standby}   ''
-		config    ${standby}   tenant try
-		${content}=  cli content   ${standby}
-		Should Contain	 ${content}	 Error:
+#		cli    ${standby}   ''
+#		config    ${standby}   tenant try
+#		${content}=  cli content   ${standby}
+#		Should Contain	 ${content}	 Error:
 		
 		task_finish_check_parallel   ${result['results']}  ${result['result_dict']}
-	
- 	 
-  	[Tags] 	full    feature  upgrade_ztn    run
+  	 
+  	[Tags] 	full    feature  upgrade_ztn  
 
      
 NEGATIVE: T15.1 non-proper image
@@ -466,7 +515,7 @@ NEGATIVE: T15.1 non-proper image
     	     
   	[Tags] 	full   feature  upgrade_ztn    negative    JIRA_BSC_6258      
 
-NEGATIVE: T15.2 upgrade stage 
+NEGATIVE: T15.2 upgrade stage terminated
 	log  copy image is there is none
 		Copy image if no image exist	c1	
 	log  corrupt the stage partition(not sure how)
@@ -501,7 +550,7 @@ NEGATIVE: T15.3 controller upgrade launch
     log  hit ctl-c to terminated active controller before standby finish phase1
     log  hit ctl-c to terminated active controller before standby finish phase2
        
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn    negative
+  	[Tags] 	full  feature  upgrade_ztn    negative  manual-untested
   
 NEGATIVE: T15.4 controller upgrade launch suspend
  	log  different image for active and standby, launch will be terminated
@@ -516,43 +565,43 @@ NEGATIVE: T15.4 controller upgrade launch suspend
     log  hit ctl-c to terminated active controller before standby finish phase1
     log  hit ctl-c to terminated active controller before standby finish phase2
        
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn     negative
+  	[Tags] 	full   feature  upgrade_ztn     negative   manual-untested  
   	
  
 ### Miscellaneous
 
 MIS: T100.1 Verify upgrade from no ZTN switch to ZTN switch    
      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn  skipped
+  	[Tags] 	full   feature  upgrade_ztn  skipped  manual-untested  
 	
 MIS: T100.2 Verify upgrade from ZTN switch to no ZTN switch   
       
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn   skipped
+  	[Tags] 	full   feature  upgrade_ztn   skipped  manual-untested  
  
 
 MIS: T100.3 Verify upgrade with no ZTN switch (ztn related set remain during upgrade) 
      
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn  skipped
+  	[Tags] 	full    feature  upgrade_ztn  skipped  manual-untested 
 
 MIS: T100.4 Verify controller reboot with no ZTN switch (ztn related set remain during reboot)  
       
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn   skipped
+  	[Tags] 	full     feature  upgrade_ztn   skipped  manual-untested
 
 MIS: T101 verify 3 node controller upgrade 
 	log  can not form controller with more than 2 nodes
 	manual passed	
-  	[Tags] 	full  manual    feature  upgrade_ztn 
+  	[Tags] 	full   feature  upgrade_ztn    manual  
 
 MIS: T102 upgrade 1 controller, build another one, then join the cluster
 	manual passed
-  	[Tags] 	full  manual     feature  upgrade_ztn 
+  	[Tags] 	full   feature  upgrade_ztn   manual  
 
 MIS: T104 unsupported switch platform ????
   	[Tags] 	full  manual-untested   feature  upgrade_ztn   skipped
   	
 MIS: T108 upgrade when controller high CPU
 	log  upgrade with high cpu	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn    
+  	[Tags] 	full    feature  upgrade_ztn    manual-untested 
 
 MIS: T109 upgrade when controller does not have enough space  
 	log  upgrade when controller does not have enough space 
@@ -561,15 +610,36 @@ MIS: T109 upgrade when controller does not have enough space
   	
 MIS: T111 spawn another session to do upgrade during upgrade  
 	log   2 seesions copy image the same time
+		log  reusult: tried 2 sessions, new one will overwrite old one
 	log   2 seesions stage image the same time
+		log  result: the 2nd session will give error messages:Error: Internal (bug): cmd: sudo /bin/mount /dev/sda3 /tmp/tmp7BMdNw rtn: 32
+		log  result: both gives error: Error: Internal (bug): cmd: sudo /sbin/e2fsck -fy /dev/sda3
 	log   2 session launch image the same time
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn 
+		
+  	[Tags] 	full  feature  upgrade_ztn   manual 
   	
   	
-MIS: T113 non admin user
-	log  non admin user
-	
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn 
+MIS: T113 admin group non admin user
+	log  admin group but not user: admin
+		create user   user1   adminadmin  admin 
+		cli    master  ''
+		cli_reauth  c1   user1   adminadmin   	
+		cli_reauth  c2   user1   adminadmin 
+		Copy image	   ${image}   c1
+		Copy image	   ${image}   c2
+		cli_whoami   c1
+		cli_whoami   c2	
+		Stage image	  	c1
+		Stage image	  	c2	
+		cli_whoami   c1
+		cli_whoami   c2	
+		
+	log  upgrade launch
+		manual passed
+ 	  	
+	 	cli_reauth  c1  admin   adminadmin   	
+	 	cli_reauth  c2  admin   adminadmin    	
+  	[Tags] 	full   feature  upgrade_ztn     
 
   
  

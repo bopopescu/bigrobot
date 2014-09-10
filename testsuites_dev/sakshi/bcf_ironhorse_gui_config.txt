@@ -34,8 +34,68 @@ T1.7 Delete Tenants
 
 T2.1 Show stats for standby controller
 	Show Controller Stats				STANDBY
-T2.1 Show stats for active controller
+T2.2 Show stats for active controller
 	Show Controller Stats				ACTIVE
+	
+### Configure Switch					mac						name			role		leaf-group
+
+T3.1 Add a switch								
+	Provision Switch			00:0a:99:02:00:ff		switch-1			None		${EMPTY}		
+T3.2 Add a spine switch								
+	Provision Switch			00:0a:99:03:22:33		switch_spine		Spine		${EMPTY}
+T3.3 Add a leaf switch with leaf group 'leaf-group'						
+	Provision Switch			00:aa:19:33:42:33		switch-LEAF.1		Leaf		leaf-group
+T3.4 Add a leaf switch using the previous leaf group								
+	Provision Switch			00:ff:00:0a:03:22		switch_leaf.2		Leaf		leaf-group
+T3.5 Add a leaf switch with new leaf group							
+	Provision Switch			00:09:22:33:50:78		switch_lEAf_3		Leaf		leaf_group_new
+T3.6 Remove the leaf group from the switch switch_lEAf_3
+	Change Switch Config			switch_lEAf_3		Leaf		${EMPTY}
+T3.7 Remove the leaf group from the switch switch-LEAF.1
+	Change Switch Config			switch-LEAF.1		Leaf		${EMPTY}
+T3.8 Change role for switch-1 to spine
+	Change Switch Config			switch-1			Spine		${EMPTY}
+T3.9 Change leaf group for switch_leaf.2
+	Change Switch Config			switch_leaf.2		Leaf		leaf_group_new	
+T3.10 Change role for switch_spine to leaf
+	Change Switch Config			switch_spine		Leaf		leaf-group	
+T3.11 Change role for switch-LEAF.1 to None
+	Change Switch Config			switch-LEAF.1		None		${EMPTY}	
+T3.12 Change role to none for switch_lEAf_3
+	Change Switch Config			switch_lEAf_3		None		${EMPTY}		
+T3.13 Clear Switch config
+	Clear Switch Config				switch-LEAF.1		
+
+
+### Configure Switch Interfaces					
+
+T4.1 Configure Interfaces for switch switch_lEAf_3
+	Config  	master  switch switch_lEAf_3; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5			
+T4.2 Configure Interfaces for spine switch switch-1
+	Config  	master  switch switch-1; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+T4.3 Configure Interfaces for leaf switch switch_leaf.2
+	Config  	master  switch switch_leaf.2; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+T4.4 Configure Interfaces for leaf switch switch_spine
+	Config  	master  switch switch_spine; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5					
+
+
+### Adding Port Groups				name			mode			Leaf Group
+
+T5.1 Create Port group with name as small and mode Static
+	Create Port Group				portgroup		Static			leaf-group
+T5.2 Create Port group with a dot in between name
+    Create Port Group				port.group.1	Static			leaf_group_new	
+T5.3 Create Port group with a hypen in name
+    Create Port Group				port-group-2	Static			leaf-group
+T5.4 Create Port group with an underscore in name
+    Create Port Group				port_group_3	Static			leaf_group_new
+T5.5 Create Port group with name in CAPS and mode as LACP
+    Create Port Group				PORT-GROUP-4	LACP			leaf_group_new		
+T5.6 Delete Port groups
+    Delete All Port Groups
+	
+	
+		
 
 			
 * Keyword
@@ -49,9 +109,14 @@ config suite setup
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
+    #Config  master  switch switch-11; interface ethernet1; interface ethernet2; interface ethernet3
     
 	
 config suite teardown
+	Clear Switch Config				switch_lEAf_3
+	Clear Switch Config				switch-1
+	Clear Switch Config				switch_leaf.2
+	Clear Switch Config				switch_spine
 	Close Browser
     #Stop Selenium Server
     base suite teardown

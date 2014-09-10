@@ -73,6 +73,40 @@ ${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
 ${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
 ${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_5']
+${PROCEED DELTE TENANTS BUTTON}			xpath=//span[@id='dijit_form_Button_5']
+
+#### Switch Page
+
+${ADD SWITCH PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${PROVISION SWITCH POPUP}		xpath=//div[@title='Provision Switch']
+${SWITCH MAC ADDRESS FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SWITCH NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${NONE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input		
+${SPINE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
+${LEAF ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
+${LEAF GROUP NAME FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SAVE SWITCH CONFIG BUTTON}	xpath=//span[@id='dijit_form_Button_4']
+
+${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure Switch')]
+${CONFIGURE SWITCH POPUP}					xpath=//div[@title='Configure Switch']	
+${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_4']			
+${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Switch Configuration')]
+${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
+${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+
+
+#### Port Groups Page
+
+${ADD PORT GROUP PLUS BUTTON}			xpath=//div[@class='icon_node plus']
+${CREATE PORT GROUP POPUP}				xpath=//div[@title='Create Port Group']
+${PORT GROUP NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${PORT GROUP MODE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mode')]/parent::h2/parent::div/following-sibling::div/div[1]/input		
+${PORT GROUP MODE LIST} 				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Static')]/parent::div 
+${PORT GROUP MODE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PORT GROUP LEAF GROUP DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${PORT GROUP LEAF GROUP LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup'] 
+${PORT GROUP LEAF GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PROCEED DELTE PORT GROUPS BUTTON}					xpath=//span[@id='dijit_form_Button_4']
 
 *** Keywords ***
 Set URLs
@@ -181,7 +215,17 @@ Go To Signout Page
 Delete All Tenants
 	Go To Tenants Page
     Delete All
-
+    Verify Element Visible   ${PROCEED DELTE TENANTS BUTTON}
+	Click Element  ${PROCEED DELTE TENANTS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+    
+Delete All Port Groups
+	Go To Port Groups Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
+	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+    
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
 	Click Element  ${CHECKBOX ALL}  and don't wait
@@ -194,9 +238,7 @@ Delete All
 	Verify Element Visible  ${MAIN MINUS BUTTON}
 	Click Element  ${MAIN MINUS BUTTON}  and don't wait
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
-	Verify Element Visible   ${PROCEED DELTE BUTTON}
-	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
-	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
 	
 	
 Select Checkbox
@@ -350,11 +392,15 @@ Check Hover
 	Location Should Be  ${dst}
 	Title Should Contain  ${title}
 	
-	
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content nowrap' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}	
 	
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
 	Go To Tenants Page
+	
 	Verify Page Contains Element  ${ADD TENANT PLUS BUTTON}
 	Click Element  ${ADD TENANT PLUS BUTTON}  and don't wait
 	Verify Element Visible  ${CREATE TENANT POPUP}
@@ -388,4 +434,115 @@ Show Controller Stats
     ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Active
 	
 	
+Provision Switch
+	[Arguments]  ${mac-address}  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	Verify Page Contains Element  ${ADD SWITCH PLUS BUTTON}
+	Click Element  ${ADD SWITCH PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${PROVISION SWITCH POPUP}
+	
+	Input Text And Verify  ${SWITCH MAC ADDRESS FIELD}  ${mac-address}
+	Input Text And Verify  ${SWITCH NAME FIELD}  ${name}
+	
+	#Verify Element Visible  ${FABRIC ROLE RADIO BUTTON}
 
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${PROVISION SWITCH POPUP}
+	
+	
+Change Switch Config
+	[Arguments]  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH MENU ITEM}
+	Click Element  ${CONFIGURE SWITCH MENU ITEM}  and don't wait
+	Verify Element Visible  ${CONFIGURE SWITCH POPUP}
+	
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CONFIGURE SWITCH POPUP}
+	
+Clear Switch Config
+	[Arguments]  ${name}
+	
+	Go to Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG MENU ITEM}
+	Click Element  ${CLEAR SWITCH CONFIG MENU ITEM}  and don't wait
+	Verify Element Visible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	
+Create Port Group
+	[Arguments]  ${name}  ${mode}  ${leaf-group}
+	
+	Go to Port Groups Page
+	
+	Verify Page Contains Element  ${ADD PORT GROUP PLUS BUTTON}
+	Click Element  ${ADD PORT GROUP PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE PORT GROUP POPUP}
+	
+	Input Text And Verify  ${PORT GROUP NAME FIELD}  ${name}
+	
+	Select From List And Verify  
+    ... 	${PORT GROUP MODE DROPDOWN BUTTON}
+    ...		${PORT GROUP MODE LIST}  
+    ... 	${PORT GROUP MODE FIELD}
+    ... 	${mode}
+    
+    Select From List And Verify  
+    ... 	${PORT GROUP LEAF GROUP DROPDOWN BUTTON}
+    ...		${PORT GROUP LEAF GROUP LIST}  
+    ... 	${PORT GROUP LEAF GROUP FIELD}
+    ... 	${leaf-group}
+    
+    Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
+    

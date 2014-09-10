@@ -1820,6 +1820,60 @@ class T5Platform(object):
 
         return image
 
+    def copy_pkg_from_file(self, src, node='master', soft_error=False):
+        '''
+          copy the a upgrade package from controller file
+          Author: Mingtao
+          input:  node  - controller to copy the image,
+                          master, slave, c1 c2
+          usage:
+              copy_pkg_from_file  file/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
+              soft_error:  True, handle negative case
+          output: image build
+
+        '''
+        t = test.Test()
+        c = t.controller(node)
+
+        c.config('')
+        string = 'copy ' + src + ' image://'
+        c.send(string)
+ 
+        try:
+            c.expect(timeout=180)
+        except:
+            helpers.log('USER ERROR: copy image failed')
+            return False
+        else:
+ 
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("USR INFO:   list   is :\n%s" % temp)
+            line = temp[-1]
+            helpers.log("USR INFO:  line is :\n%s" % line)
+            if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
+                helpers.log("Error: %s" % line)
+                if soft_error:
+                    return ("Error: %s" % line)
+                else:
+                    helpers.test_failure("Error: %s" % line)
+            elif re.match(r'Image added:.* build: (\d+)', line):
+                helpers.log("image added")
+                match = re.match(r'Image added:.* build: (\d+)', line)
+                helpers.log("USR INFO: image is: %s" % match.group(1))
+                image = match.group(1)
+            elif  re.match(r'.*already exists.*', line):
+                helpers.log("image already exists")
+                match = re.match(r'.* (\d+):.* already exists.*', line)
+                helpers.log("USR INFO: image is : %s" % match.group(1))
+                image = match.group(1)
+
+            else:
+                (num, images) = self.cli_check_image(node)
+                image = max(images)
+
+        return image
 
     def cli_check_image(self, node='master', soft_error=False):
         '''
@@ -2224,7 +2278,7 @@ class T5Platform(object):
             helpers.test_failure(c.rest.error())
 
 
-    def cli_whoami(self):
+    def cli_whoami(self,node='master'):
         '''
           run cli whoami
           Author: Mingtao
@@ -2233,7 +2287,7 @@ class T5Platform(object):
           output:   username and group
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_whoami ')
 
         c.cli('whoami')
@@ -2257,7 +2311,7 @@ class T5Platform(object):
         return [name, group]
 
 
-    def cli_reauth(self, user='admin', passwd='adminadmin'):
+    def cli_reauth(self, node='master',user='admin', passwd='adminadmin'):
         '''
           run cli reauth, and run cli_whoami verify
           Author: Mingtao
@@ -2267,14 +2321,11 @@ class T5Platform(object):
 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_reauth ')
 
-        c.enable('end')
-        c.send('reauth ' + user)
-        c.expect("Password: ")
-        c.send(passwd)
-        c.expect()
+        c.enable('reauth ' + user + ' ' + passwd)
+        
         userinfo = self.cli_whoami()[0]
         if user == userinfo:
             helpers.log('INFO: current session with user:  %s ' % user)
@@ -5061,7 +5112,7 @@ class T5Platform(object):
 
         if role == 'active':
             helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
-            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
+#            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'config updates are frozen for update',timeout=360)
 #            c.expect(r'standby has begun upgrade',timeout=360)
 #            c.expect(r'waiting for standby to complete switch handoff',timeout=360)
@@ -5072,24 +5123,56 @@ class T5Platform(object):
 #            c.expect(r'new state: phase-2-migrate',timeout=360)
 
 #            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)
-            c.expect(r'The system is going down for reboot NOW!', timeout=600)
-
-            content = c.cli_content()
-            helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-
-            return True
+            try:
+                options= c.expect([r'The system is going down for reboot NOW!',r'.*upgrade has been aborted' ,c.get_prompt()], timeout=600)
+            except:
+                helpers.log('ERROR: upgrade stuck for more than 10 minutes!!!!!!!!!!')
+                c.send(helpers.ctrl('c'))
+                helpers.summary_log('Ctrl C is hit during upgrade')
+                c.expect(timeout=900)
+                return False
+            else:
+                content = c.cli_content()
+                helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+                if options[0] == 1:
+                    helpers.log("ERROR: upgrade ABORTED" )  
+                    c.expect(timeout=900)                  
+                    return False
+                elif options[0] == 2:
+                    helpers.log("ERROR: upgrade FAILED" )
+                                        
+                    return False
+                   
+                return True
 
         elif role == 'standby':
             helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
-            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
+#            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
 #            c.expect(r'Leader->partition state: partition-completed',timeout=360)
 #            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
-            c.expect(r'[R|r]ebooting', timeout=600)
-            content = c.cli_content()
-            helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+            try:
+                options= c.expect([r'[R|r]ebooting',r'.*upgrade has been aborted' ,c.get_prompt()], timeout=300)
+            except:
+                helpers.log('ERROR: upgrade stuck for more than 5 minutes!!!!!!!!!!')
+                c.send(helpers.ctrl('c'))
+                helpers.summary_log('Ctrl C is hit during stage')
+                c.expect(timeout=900)
+                return False
+            else:
+                content = c.cli_content()
+                helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
 
-            return True
+                if options[0] == 1:
+                    helpers.log("ERROR: upgrade ABORTED" ) 
+                    c.expect(timeout=900)                                         
+                    return False
+                elif options[0] == 2 :
+                    helpers.log("ERROR: upgrade FAILED" )  
+                                      
+                    return False
+ 
+                return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
             return False
@@ -5210,21 +5293,64 @@ class T5Platform(object):
             return False
     
     
-    def spawn_log_in(self,sessions):
+    def spawn_log_in(self,sessions,node='master'):
        
         bsn = bsnCommon()
         helpers.log("***Entering==> spawn_log_in   \n" )
         
         t = test.Test()
-        ip = bsn.get_node_ip('master')
+        ip = bsn.get_node_ip(node)
   
         for loop in range (0, int(sessions)): 
             helpers.log('USR info:  this is loop:  %d' % loop )
             n = t.node_spawn(ip)                    
-            content= n.cli('show session')
-            
+            n.cli('show session')            
         helpers.log("***Exiting==> spawn_log_in   \n" )
 
         return True
     
-    
+    def generate_support(self,node='master'):
+        helpers.log("***Entering==> generate support file  \n" )
+        
+        t = test.Test()
+        c = t.controller(node)
+
+        c.enable('')  
+        c.send('support')
+        options = c.expect([r'\(yes/no\)\?', c.get_prompt()],timeout=600)
+        if options[0] == 0 : 
+            c.send('yes') 
+            c.expect(timout=600)                  
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content) 
+        helpers.log("*****Output is :\n%s" % temp)
+        match =  re.match(r'Name.*: (floodlight.*)', temp,flags=re.M)
+        if match:
+            helpers.log("INFO: file name is: %s" % match.group(1))
+            return  match.group(1)
+        else:
+            helpers.test_failure("Error: %s" % temp)            
+            
+    def delete_support(self,node='master',filename=None):
+        helpers.log("***Entering==> delete support file \n" )
+        
+        t = test.Test()
+        c = t.controller(node)
+
+        c.enable('')  
+        if filename is None:
+            c.enable('show support')
+            content = c.cli_content()           
+            output = helpers.strip_cli_output(content)
+            lines = helpers.str_to_list(output)
+            for line in lines:     
+                helpers.log("INFO: line is %s" % line)                      
+                match =  re.match(r'[0-9]*.* (floodlight.*)', line,flags=re.M)
+                if match:
+                    helpers.log("INFO: file name is is: %s" % match.group(1) )
+                    c.enable('delete support ' + match.group(1))                                         
+                 
+        else:
+            c.enable('delete support ' + filename )             
+        return True
+   
