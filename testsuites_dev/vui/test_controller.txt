@@ -213,9 +213,10 @@ Test node reconnect
     test node reconnect   c1
 
 Test reauth timeout
-    [Tags]  skipped
+    #[Tags]  skipped
     config            c1   show user
     #bash              c1   id
+
     sleep             60
     sleep             60
     sleep             60
@@ -226,7 +227,20 @@ Test reauth timeout
     sleep             60
     sleep             60
     sleep             60
+    log               Slept for 10 minutes
+
     sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    log               Slept for 10 minutes
+
     #bash              c1   uname -a
     cli               c1   show session
     config            c1   show session
@@ -275,7 +289,7 @@ Test background ping (simple)
     should be true    ${loss_pct} == 0
 
 Test background ping (complete stats)
-    #[Tags]  skipped
+    [Tags]  skipped
     bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng.bigswitch.com  interval=0.2
     sleep             10
     ${stats}=         bash ping background stop    c1  label=vui_bg_ping   return_stats=${true}
