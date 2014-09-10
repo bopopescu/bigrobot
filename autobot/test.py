@@ -1167,7 +1167,10 @@ class Test(object):
         if not helpers.is_bcf(platform):
             return True
         helpers.log("Checking idle timeout on '%s'" % name)
-        # n.bash('export TERM=vt100')
+        # n.bash('export TERM=dumb')
+        # n.bash('stty cols 200')
+        # n.bash('sh')
+        # n.bash('set +o emacs')
         n.sudo('ls -la %s' % bigrobot_file)['content']
         content = n.sudo('echo $?')['content']
         output = helpers.strip_cli_output(content, to_list=True)[0]
@@ -1204,6 +1207,11 @@ class Test(object):
                                         % (source_dir_file, name))
 
         n.sudo('touch %s' % bigrobot_file)
+
+        # Disable Bash Command Line Editing (default is Emacs mode)
+        n.bash('echo "set +o emacs" >> ~/.bashrc')
+        # n.bash('echo "if [ -f ~/.bashrc ]; then source ~/.bashrc; fi" > ~/.bash_profile')
+
         self.node_reconnect(name)
 
         return True
