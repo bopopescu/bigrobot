@@ -5,6 +5,11 @@
 
 usage() {
     echo "Usage: $0 <full-path-suite-name>"
+    echo "Example:
+% ./get_suite_total_tests.sh /Users/vui/Documents/ws/myforks/bigrobot/testsuites/T5/T5-Platform/t5_switch_from_controller.txt
+28 tests total, 28 passed, 0 failed
+  Manual-untested: 0
+"
     exit 1
 }
 
@@ -36,7 +41,7 @@ base=`basename $suite`
 dir=`dirname $suite`
 
 
-(cd $dir; BIGROBOT_SUITE=$base gobot test --dryrun --include-manual-untested | grep "tests total")
+(cd $dir; BIGROBOT_SUITE=$base gobot validate | grep "tests total")
 
 grep -qi manual-untested $textfile
 if [ $? -eq 0 ]; then
