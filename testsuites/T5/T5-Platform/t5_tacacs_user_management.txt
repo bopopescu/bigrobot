@@ -1,7 +1,7 @@
 *Settings
 Documentation  T5 Tacacs Test Suite Release:Iron Horse
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
+Suite Setup  tacacs suite setup
+Suite Teardown   tacacs suite teardown
 Test Setup   tacacs test setup
 Test Teardown   tacacs test teardown
 Force Tags   IronHorse  T5  Platform
@@ -47,10 +47,10 @@ TC004: Verify remote authentication with open source tacacs
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  200
+    ${result}=  rest add tacacs server  10.9.18.2  secret  30
     Should be true  ${result}
     Verify Tacacs Configuration  0  10.2.3.201  30
-    Verify Tacacs Configuration  1  10.9.18.2  200
+    Verify Tacacs Configuration  1  10.9.18.2  30
     ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
@@ -58,11 +58,11 @@ TC005: Verify multiple tacacs servers can be configured
 TC006: Verify second tacacs server is used when the first is unreachable   
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.1.18.2  secret  200 
+    ${result}=  rest add tacacs server  10.1.18.2  secret  30
     Should be true  ${result}
     ${result}=  rest add tacacs server  10.2.3.201   secret  30
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.1.18.2  200
+    Verify Tacacs Configuration  0  10.1.18.2  30
     Verify Tacacs Configuration  1  10.2.3.201   30   
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.1.18.2
@@ -149,3 +149,11 @@ tacacs test teardown
     Should be true  ${result}
     ${result}=  rest delete tacacs authentication      
     Should be true  ${result}
+
+Tacacs Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  snapshot://startup-config
+
+Tacacs Suite Teardown
+	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Base Suite Teardown
