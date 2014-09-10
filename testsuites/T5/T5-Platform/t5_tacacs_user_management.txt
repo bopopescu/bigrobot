@@ -19,7 +19,7 @@ ${version}      2.0.0
     
 * Test Case
 TC001: Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.2.3.201  30
+    Verify Tacacs Configuration  0  10.2.3.201  10
     Verify AAA Authentication Configuration 
     config  c1  show tacacs
     cli  c1  show tacacs                  
@@ -39,7 +39,7 @@ TC003: Add user tacacsadmin to group admin and verify access
 TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  30
+    ${result}=  rest add tacacs server  10.9.18.2  secret  10
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.9.18.2    
@@ -47,10 +47,10 @@ TC004: Verify remote authentication with open source tacacs
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  200
+    ${result}=  rest add tacacs server  10.9.18.2  secret  10
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.2.3.201  30
-    Verify Tacacs Configuration  1  10.9.18.2  200
+    Verify Tacacs Configuration  0  10.2.3.201  10
+    Verify Tacacs Configuration  1  10.9.18.2  10
     ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
@@ -58,12 +58,12 @@ TC005: Verify multiple tacacs servers can be configured
 TC006: Verify second tacacs server is used when the first is unreachable   
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.1.18.2  secret  200 
+    ${result}=  rest add tacacs server  10.1.18.2  secret  10 
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201   secret  30
+    ${result}=  rest add tacacs server  10.2.3.201   secret  10
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.1.18.2  200
-    Verify Tacacs Configuration  1  10.2.3.201   30   
+    Verify Tacacs Configuration  0  10.1.18.2  10
+    Verify Tacacs Configuration  1  10.2.3.201   10   
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.1.18.2
     Should be true  ${result}
@@ -74,7 +74,7 @@ TC006: Verify second tacacs server is used when the first is unreachable
 TC007: Configure mismatched tacacs secret and verify tacacs user cannot login
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  30
+    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  10
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
@@ -107,7 +107,7 @@ TC010: Delete user tacacsadmin from group admin and verify access
 * Keywords
 
 tacacs test setup
-    ${result}=  rest add tacacs server  10.2.3.201  secret  30
+    ${result}=  rest add tacacs server  10.2.3.201  secret  10
     Should be true  ${result}
     ${result}=  rest add tacacs authentication
     Should be true  ${result}
