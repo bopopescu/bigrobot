@@ -213,7 +213,7 @@ Test node reconnect
     test node reconnect   c1
 
 Test reauth timeout
-    #[Tags]  skipped
+    [Tags]  skipped
     config            c1   show user
     #bash              c1   id
 
@@ -275,7 +275,7 @@ Test controller cli ping (simple)
     log               Packet loss % is ${loss_pct}
 
 Test controller cli ping (complete stats)
-    [Tags]  skipped
+    #[Tags]  skipped
     ${stats}=         cli ping          c1   qa-tools1.qa.bigswitch.com   return_stats=${true}
     log               Ping stats is ${stats}
     log               Packets received is ${stats['packets_received']}

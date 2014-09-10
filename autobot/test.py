@@ -1167,7 +1167,7 @@ class Test(object):
         if not helpers.is_bcf(platform):
             return True
         helpers.log("Checking idle timeout on '%s'" % name)
-
+        # n.bash('export TERM=vt100')
         n.sudo('ls -la %s' % bigrobot_file)['content']
         content = n.sudo('echo $?')['content']
         output = helpers.strip_cli_output(content, to_list=True)[0]
@@ -1184,8 +1184,8 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_dir_file))
 
-        n.bash('cd %s' % source_dir)
-        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s' % source_file)['content']
+        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s'
+               % source_dir_file)['content']
         content = n.bash('echo $?')['content']
         output = helpers.strip_cli_output(content, to_list=True)[0]
         if int(output) != 0:
@@ -1193,9 +1193,10 @@ class Test(object):
                                         % (source_dir_file, name))
 
         n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
-               % (source_file))
+               % (source_dir_file))
 
-        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s' % source_file)['content']
+        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+               % source_dir_file)['content']
         content = n.bash('echo $?')['content']
         output = helpers.strip_cli_output(content, to_list=True)[0]
         if int(output) != 0:

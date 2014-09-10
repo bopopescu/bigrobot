@@ -87,9 +87,12 @@ class TestCatalog(object):
         return self.find_docs(collection='test_suites',
                               query={"build_name": build_name})
 
-    def find_test_cases_matching_build(self, build_name):
+    def find_test_cases_matching_build(self, build_name, release=None):
+        query = {"build_name": build_name}
+        if release:
+            query["tags"] = { "$all": [release] }
         return self.find_docs(collection='test_cases',
-                              query={"build_name": build_name})
+                                  query=query)
 
     def find_test_cases_archive_matching_build(self, build_name):
         return self.find_docs(collection='test_cases_archive',
