@@ -30,13 +30,14 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #               BIGWIRE-2>
 #               SLAVE BIGWIRE-1>
 #               MASTER-BLOCKED BB1301528x>
+#               *controller>
 #   Enable:     controller#
 #   Configure:  controller(config)#
 #               MY-T5-C11(config-local-user)#
 #               ^GMY-T5-C11(config-local-user)#           <== catch bell char
 #   Debug Bash: admin@controller:~$
 #
-_prompt_re = [re.compile(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+_prompt_re = [re.compile(r'[\r\n\x07]+(\*?)(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
      # re.compile(r'[$] $')  # useful for matching bourne shell prompt
 
 

@@ -275,7 +275,7 @@ Test controller cli ping (simple)
     log               Packet loss % is ${loss_pct}
 
 Test controller cli ping (complete stats)
-    #[Tags]  skipped
+    [Tags]  skipped
     ${stats}=         cli ping          c1   qa-tools1.qa.bigswitch.com   return_stats=${true}
     log               Ping stats is ${stats}
     log               Packets received is ${stats['packets_received']}
@@ -296,3 +296,8 @@ Test background ping (complete stats)
     log               Ping stats is ${stats}
     log               Packets received is ${stats['packets_received']}
     should be true    ${stats['packets_loss_pct']} == 0
+
+Get controller IPs
+    ${c1_ip}=         get node ip      c1
+    #${c2_ip}=         get node ip      c2
+
