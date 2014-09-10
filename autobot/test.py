@@ -1150,6 +1150,63 @@ class Test(object):
         n.config('exit')
         n.config('exit')
 
+    def setup_controller_idle_timeout(self, name):
+        """
+        When logging into the BCF controller for the first time, modify the
+        idle timeout setting in Floodlight's application.py. Then
+        touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
+        it again in the future. Finally reconnect so changes can take effect.
+        """
+        bigrobot_file = "/var/log/.touched_by_bigrobot"
+        source_dir = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200"
+        source_file = "application.py"
+        source_dir_file = source_dir + '/' + source_file
+
+        n = self.topology(name)
+        platform = n.platform()
+        if not helpers.is_bcf(platform):
+            return True
+        helpers.log("Checking idle timeout on '%s'" % name)
+
+        n.sudo('ls -la %s' % bigrobot_file)['content']
+        content = n.sudo('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) == 0:
+            # Controller has already been touched by BigRobot
+            return True
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
+
+        n.sudo('ls -la %s' % source_dir_file)['content']
+        content = n.sudo('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_dir_file))
+
+        n.bash('cd %s' % source_dir)
+        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s' % source_file)['content']
+        content = n.bash('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
+                                        % (source_dir_file, name))
+
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+               % (source_file))
+
+        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s' % source_file)['content']
+        content = n.bash('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_dir_file, name))
+
+        n.sudo('touch %s' % bigrobot_file)
+        self.node_reconnect(name)
+
+        return True
+
     def setup_controller_firewall_allow_rest_access(self, name):
         n = self.topology(name)
 
@@ -1386,6 +1443,9 @@ class Test(object):
         master = self.controller("master")
         standby = self.controller("slave")
         if helpers.bigrobot_test_setup().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    self.setup_controller_idle_timeout(key)
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)

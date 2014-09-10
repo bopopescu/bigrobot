@@ -201,15 +201,15 @@ class Protocol(object):
     """
 
     def __init__(self,
-                 driver             = None,
-                 stdout             = None,
-                 stderr             = None,
-                 debug              = 0,
-                 timeout            = 30,
-                 logfile            = None,
-                 termtype           = 'dumb',
-                 verify_fingerprint = True,
-                 account_factory    = None):
+                 driver=None,
+                 stdout=None,
+                 stderr=None,
+                 debug=0,
+                 timeout=30,
+                 logfile=None,
+                 termtype='dumb',
+                 verify_fingerprint=True,
+                 account_factory=None):
         """
         Constructor.
         The following events are provided:
@@ -233,31 +233,31 @@ class Protocol(object):
         @keyword verify_fingerprint: Whether to verify the host's fingerprint.
         @keyword account_factory: A function that produces a new L{Account}.
         """
-        self.data_received_event   = Event()
-        self.otp_requested_event   = Event()
-        self.os_guesser            = OsGuesser()
-        self.auto_driver           = driver_map[self.guess_os()]
-        self.proto_authenticated   = False
-        self.app_authenticated     = False
-        self.app_authorized        = False
-        self.manual_user_re        = None
-        self.manual_password_re    = None
-        self.manual_prompt_re      = None
-        self.manual_error_re       = None
+        self.data_received_event = Event()
+        self.otp_requested_event = Event()
+        self.os_guesser = OsGuesser()
+        self.auto_driver = driver_map[self.guess_os()]
+        self.proto_authenticated = False
+        self.app_authenticated = False
+        self.app_authorized = False
+        self.manual_user_re = None
+        self.manual_password_re = None
+        self.manual_prompt_re = None
+        self.manual_error_re = None
         self.manual_login_error_re = None
-        self.driver_replaced       = False
-        self.host                  = None
-        self.port                  = None
-        self.last_account          = None
-        self.termtype              = termtype
-        self.verify_fingerprint    = verify_fingerprint
-        self.manual_driver         = driver
-        self.debug                 = debug
-        self.timeout               = timeout
-        self.logfile               = logfile
-        self.response              = None
-        self.buffer                = MonitoredBuffer()
-        self.account_factory       = account_factory
+        self.driver_replaced = False
+        self.host = None
+        self.port = None
+        self.last_account = None
+        self.termtype = termtype
+        self.verify_fingerprint = verify_fingerprint
+        self.manual_driver = driver
+        self.debug = debug
+        self.timeout = timeout
+        self.logfile = logfile
+        self.response = None
+        self.buffer = MonitoredBuffer()
+        self.account_factory = account_factory
         if stdout is None:
             self.stdout = open(os.devnull, 'w')
         else:
@@ -280,7 +280,7 @@ class Protocol(object):
         if logfile is None:
             self.log = None
         else:
-            self.log = open(logfile, 'a')
+            self.log = open(logfile, 'a', 0)  # BSN - unbuffered output
 
     def __copy__(self):
         """
@@ -310,7 +310,7 @@ class Protocol(object):
         msg = 'Protocol: driver replaced: %s -> %s' % (old.name, new.name)
         self._dbg(1, msg)
 
-    def _receive_cb(self, data, remove_cr = True):
+    def _receive_cb(self, data, remove_cr=True):
         # Clean the data up.
         if remove_cr:
             text = data.replace('\r', '')
@@ -327,7 +327,7 @@ class Protocol(object):
         old_driver = self.get_driver()
         self.os_guesser.data_received(data, self.is_app_authenticated())
         self.auto_driver = driver_map[self.guess_os()]
-        new_driver       = self.get_driver()
+        new_driver = self.get_driver()
         if old_driver != new_driver:
             self._driver_replaced_notify(old_driver, new_driver)
 
@@ -349,7 +349,7 @@ class Protocol(object):
             return
         self.stderr.write(self.get_driver().name + ': ' + msg + '\n')
 
-    def set_driver(self, driver = None):
+    def set_driver(self, driver=None):
         """
         Defines the driver that is used to recognize prompts and implement
         behavior depending on the remote system.
@@ -396,7 +396,7 @@ class Protocol(object):
         """
         self.get_driver().init_terminal(self)
 
-    def set_username_prompt(self, regex = None):
+    def set_username_prompt(self, regex=None):
         """
         Defines a pattern that is used to monitor the response of the
         connected host for a username prompt.
@@ -421,7 +421,7 @@ class Protocol(object):
             return self.manual_user_re
         return self.get_driver().user_re
 
-    def set_password_prompt(self, regex = None):
+    def set_password_prompt(self, regex=None):
         """
         Defines a pattern that is used to monitor the response of the
         connected host for a password prompt.
@@ -446,7 +446,7 @@ class Protocol(object):
             return self.manual_password_re
         return self.get_driver().password_re
 
-    def set_prompt(self, prompt = None):
+    def set_prompt(self, prompt=None):
         """
         Defines a pattern that is waited for when calling the expect_prompt()
         method.
@@ -474,7 +474,7 @@ class Protocol(object):
             return self.manual_prompt_re
         return self.get_driver().prompt_re
 
-    def set_error_prompt(self, error = None):
+    def set_error_prompt(self, error=None):
         """
         Defines a pattern that is used to monitor the response of the
         connected host. If the pattern matches (any time the expect() or
@@ -500,7 +500,7 @@ class Protocol(object):
             return self.manual_error_re
         return self.get_driver().error_re
 
-    def set_login_error_prompt(self, error = None):
+    def set_login_error_prompt(self, error=None):
         """
         Defines a pattern that is used to monitor the response of the
         connected host during the authentication procedure.
@@ -552,7 +552,7 @@ class Protocol(object):
         """
         raise NotImplementedError()
 
-    def connect(self, hostname = None, port = None):
+    def connect(self, hostname=None, port=None):
         """
         Opens the connection to the remote host or IP address.
 
@@ -579,7 +579,7 @@ class Protocol(object):
         self.last_account = account
         return account.context()
 
-    def login(self, account = None, app_account = None, flush = True):
+    def login(self, account=None, app_account=None, flush=True):
         """
         Log into the connected host using the best method available.
         If an account is not given, default to the account that was
@@ -602,12 +602,12 @@ class Protocol(object):
         with self._get_account(account) as account:
             if app_account is None:
                 app_account = account
-            self.authenticate(account, flush = False)
+            self.authenticate(account, flush=False)
             if self.get_driver().supports_auto_authorize():
                 self.expect_prompt()
-            self.auto_app_authorize(app_account, flush = flush)
+            self.auto_app_authorize(app_account, flush=flush)
 
-    def authenticate(self, account = None, app_account = None, flush = True):
+    def authenticate(self, account=None, app_account=None, flush=True):
         """
         Like login(), but skips the authorization procedure.
 
@@ -626,7 +626,7 @@ class Protocol(object):
                 app_account = account
 
             self.protocol_authenticate(account)
-            self.app_authenticate(app_account, flush = flush)
+            self.app_authenticate(app_account, flush=flush)
 
     def _protocol_authenticate(self, user, password):
         pass
@@ -634,7 +634,7 @@ class Protocol(object):
     def _protocol_authenticate_by_key(self, user, key):
         pass
 
-    def protocol_authenticate(self, account = None):
+    def protocol_authenticate(self, account=None):
         """
         Low-level API to perform protocol-level authentification on protocols
         that support it.
@@ -646,9 +646,9 @@ class Protocol(object):
         @param account: An account object, like login().
         """
         with self._get_account(account) as account:
-            user     = account.get_name()
+            user = account.get_name()
             password = account.get_password()
-            key      = account.get_key()
+            key = account.get_key()
             if key is None:
                 self._dbg(1, "Attempting to authenticate %s." % user)
                 self._protocol_authenticate(user, password)
@@ -670,8 +670,8 @@ class Protocol(object):
     def _app_authenticate(self,
                           account,
                           password,
-                          flush   = True,
-                          bailout = False):
+                          flush=True,
+                          bailout=False):
         user = account.get_name()
 
         while True:
@@ -680,11 +680,11 @@ class Protocol(object):
             # structure to allow for mapping the match index back to the
             # prompt type.
             prompts = (('login-error', self.get_login_error_prompt()),
-                       ('username',    self.get_username_prompt()),
-                       ('skey',        [_skey_re]),
-                       ('password',    self.get_password_prompt()),
-                       ('cli',         self.get_prompt()))
-            prompt_map  = []
+                       ('username', self.get_username_prompt()),
+                       ('skey', [_skey_re]),
+                       ('password', self.get_password_prompt()),
+                       ('cli', self.get_prompt()))
+            prompt_map = []
             prompt_list = []
             for section, sectionprompts in prompts:
                 for prompt in sectionprompts:
@@ -718,15 +718,15 @@ class Protocol(object):
             # User name prompt.
             elif section == 'username':
                 self._dbg(1, "Username prompt %s received." % index)
-                self.expect(prompt) # consume the prompt from the buffer
+                self.expect(prompt)  # consume the prompt from the buffer
                 self.send(user + '\r')
                 continue
 
             # s/key prompt.
             elif section == 'skey':
                 self._dbg(1, "S/Key prompt received.")
-                self.expect(prompt) # consume the prompt from the buffer
-                seq  = int(match.group(1))
+                self.expect(prompt)  # consume the prompt from the buffer
+                seq = int(match.group(1))
                 seed = match.group(2)
                 self.otp_requested_event(account, seq, seed)
                 self._dbg(2, "Seq: %s, Seed: %s" % (seq, seed))
@@ -743,7 +743,7 @@ class Protocol(object):
             # Cleartext password prompt.
             elif section == 'password':
                 self._dbg(1, "Cleartext password prompt received.")
-                self.expect(prompt) # consume the prompt from the buffer
+                self.expect(prompt)  # consume the prompt from the buffer
                 self.send(password + '\r')
                 if bailout:
                     break
@@ -757,9 +757,9 @@ class Protocol(object):
                 break
 
             else:
-                assert False # No such section
+                assert False  # No such section
 
-    def app_authenticate(self, account = None, flush = True, bailout = False):
+    def app_authenticate(self, account=None, flush=True, bailout=False):
         """
         Attempt to perform application-level authentication. Application
         level authentication is needed on devices where the username and
@@ -791,7 +791,7 @@ class Protocol(object):
         @param bailout: Whether to wait for a prompt after sending the password.
         """
         with self._get_account(account) as account:
-            user     = account.get_name()
+            user = account.get_name()
             password = account.get_password()
             self._dbg(1, "Attempting to app-authenticate %s." % user)
             self._app_authenticate(account, password, flush, bailout)
@@ -807,7 +807,7 @@ class Protocol(object):
         """
         return self.app_authenticated
 
-    def app_authorize(self, account = None, flush = True, bailout = False):
+    def app_authorize(self, account=None, flush=True, bailout=False):
         """
         Like app_authenticate(), but uses the authorization password
         of the account.
@@ -823,7 +823,7 @@ class Protocol(object):
         @param bailout: Whether to wait for a prompt after sending the password.
         """
         with self._get_account(account) as account:
-            user     = account.get_name()
+            user = account.get_name()
             password = account.get_authorization_password()
             if password is None:
                 password = account.get_password()
@@ -831,7 +831,7 @@ class Protocol(object):
             self._app_authenticate(account, password, flush, bailout)
         self.app_authorized = True
 
-    def auto_app_authorize(self, account = None, flush = True, bailout = False):
+    def auto_app_authorize(self, account=None, flush=True, bailout=False):
         """
         Like authorize(), but instead of just waiting for a user or
         password prompt, it automatically initiates the authorization
@@ -905,7 +905,7 @@ class Protocol(object):
         raise NotImplementedError()
 
     def _waitfor(self, prompt):
-        re_list  = to_regexs(prompt)
+        re_list = to_regexs(prompt)
         patterns = [p.pattern for p in re_list]
         self._dbg(2, 'waiting for: ' + repr(patterns))
         result = self._domatch(re_list, False)
@@ -948,7 +948,7 @@ class Protocol(object):
             try:
                 result = self._waitfor(prompt)
             except DriverReplacedException:
-                continue # retry
+                continue  # retry
             return result
 
     def _expect(self, prompt):
@@ -978,7 +978,7 @@ class Protocol(object):
             try:
                 result = self._expect(prompt)
             except DriverReplacedException:
-                continue # retry
+                continue  # retry
             return result
 
     def expect_prompt(self):
@@ -1010,7 +1010,7 @@ class Protocol(object):
 
         return result
 
-    def add_monitor(self, pattern, callback, limit = 80):
+    def add_monitor(self, pattern, callback, limit=80):
         """
         Calls the given function whenever the given pattern matches the
         incoming data.
@@ -1056,7 +1056,7 @@ class Protocol(object):
                           handle_window_size):
         # We need to make sure to use an unbuffered stdin, else multi-byte
         # chars (such as arrow keys) won't work properly.
-        stdin  = os.fdopen(sys.stdin.fileno(), 'r', 0)
+        stdin = os.fdopen(sys.stdin.fileno(), 'r', 0)
         oldtty = termios.tcgetattr(stdin)
 
         # Update the terminal size whenever the size changes.
@@ -1142,7 +1142,7 @@ class Protocol(object):
         else:
             return self._open_windows_shell(channel, key_handlers, handle_window_size)
 
-    def interact(self, key_handlers = None, handle_window_size = True):
+    def interact(self, key_handlers=None, handle_window_size=True):
         """
         Opens a simple interactive shell. Returns when the remote host
         sends EOF.
@@ -1159,7 +1159,7 @@ class Protocol(object):
         """
         raise NotImplementedError()
 
-    def close(self, force = False):
+    def close(self, force=False):
         """
         Closes the connection with the remote host.
         """
