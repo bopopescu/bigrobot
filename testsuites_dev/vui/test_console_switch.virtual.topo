@@ -1,0 +1,16 @@
+common:
+  user_switch_image: /etc/hosts
+s1:
+  ip: dummy
+  #http_port: 8080
+  #monitor_reauth: false
+
+  # Below is for console testing
+  console:
+    #ip: 10.1.8.183  # Tomasz's switch
+    #port: 6001
+    ip: 10.1.8.89   # Mingtao's switch
+    port: 7001
+    protocol: telnet
+  set_init_ping: false
+  set_session_ssh: false

@@ -558,6 +558,45 @@ vui@Vuis-MacBook-Pro$
         # connections won't get confused.
         con.cli("")
 
+    def test_controller_console(self, node):
+        """
+        Telnet to a BSN controller or switch console. Try to put the device in
+        CLI mode, or die trying...
+        """
+        t = test.Test()
+        n = t.node(node)
+        n_console = t.dev_console(node, expect_console_banner=True)
+
+        n_console.bash("w")
+        n_console.sudo("cat /etc/shadow")
+        n_console.cli("")
+        n.console_close()  # **** Closing the console
+
+        helpers.log("***** Re-establishing connection to console for '%s'" % node)
+        n_console = t.dev_console(node, expect_console_banner=True)
+        n_console.enable("show running-config")
+
+        # IMPORTANT: Be sure to get back to CLI mode so future console
+        # connections won't get confused.
+        n_console.cli("")
+
+    def test_switch_console(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = t.dev_console(node)
+
+        n_console.cli("show version")
+        n.console_close()  # **** Closing the console
+
+        helpers.log("***** Re-establishing connection to console for '%s'" % node)
+        n_console = t.dev_console(node)
+        n_console.enable("show running-config")
+
+        # IMPORTANT: Be sure to get back to CLI mode so future console
+        # connections won't get confused.
+        n_console.cli("")
+
+
     def test_console2(self, node):
         t = test.Test()
         n = t.node(node)
@@ -730,7 +769,7 @@ vui@Vuis-MacBook-Pro$
                                 % (iterations, res.task_id, action))
                     is_pending = True
         if is_pending and iterations > max_tries:
-            helpers.log("Not able to retrielve results from ESB")
+            helpers.log("Not able to retrieve results from ESB")
             return False
 
         helpers.log("*** Parallel tasks completed")

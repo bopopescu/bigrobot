@@ -143,6 +143,8 @@ Display test execution stats collected for a specific build.
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--show-untested', action='store_true', default=False,
                         help=("Show the manual-untested test cases"))
+    parser.add_argument('--show-manual', action='store_true', default=False,
+                        help=("Show the manual test cases"))
     parser.add_argument('--show-suites', action='store_true', default=False,
                         help=("Show the test suites"))
     parser.add_argument('--show-all', action='store_true', default=False,
@@ -292,8 +294,12 @@ def display_stats(args):
                pass_pct,
                automation_pct,
                )
-    if args.show_untested:
+    if args.show_untested and total_untested != 0:
+        print "\t----- manual-untested(%d)" % total_untested
         print_testcases(ih.manual_untested_by_tag())
+    if args.show_manual and total_manual != 0:
+        print "\t----- manual(%d)" % total_manual
+        print_testcases(ih.manual_by_tag())
 
     for functionality in cat.test_types() + ['virtual',
                                              'physical',
@@ -321,8 +327,12 @@ def display_stats(args):
                    pass_pct,
                    automation_pct,
                    )
-        if args.show_untested:
+        if args.show_untested and total_untested != 0:
+            print "\t----- manual-untested(%d)" % total_untested
             print_testcases(ih.manual_untested_by_tag(functionality))
+        if args.show_manual and total_manual != 0:
+            print "\t----- manual(%d)" % total_manual
+            print_testcases(ih.manual_by_tag(functionality))
 
     if not args.no_show_functional_areas:
         print ""
@@ -350,9 +360,13 @@ def display_stats(args):
                        pass_pct,
                        automation_pct,
                        )
-            if args.show_untested:
+            if args.show_untested and total_untested != 0:
+                print "\t----- manual-untested(%d)" % total_untested
                 print_testcases(ih.manual_untested_by_tag([functionality,
                                                            feature]))
+            if args.show_manual and total_manual != 0:
+                print "\t----- manual(%d)" % total_manual
+                print_testcases(ih.manual_by_tag([functionality, feature]))
 
     print ""
     print "Manual Verification Details"

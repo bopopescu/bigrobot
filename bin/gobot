@@ -201,6 +201,7 @@ helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
 helpers.bigrobot_esb()
 helpers.bigrobot_esb_broker()
 helpers.bigrobot_ztn_reload()
+helpers.bigrobot_ztn_installer()
 helpers.bigrobot_ha_logging()
 helpers.bigrobot_quiet_output()
 
@@ -525,6 +526,15 @@ def test_command(*args):
     #    sys.exit(0)
     # else:
     sys.exit(rc)
+
+
+def validate_command(*args):
+    """
+    Validate correctness of test suite (useful for catching obvious errors).
+    """
+    new_args = list(*args)
+    new_args.extend(["--dryrun", "--include-manual-untested"])
+    test_command(new_args)
 
 
 def env_command(*args):

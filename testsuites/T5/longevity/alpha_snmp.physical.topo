@@ -4,11 +4,15 @@
 # s<n>: Switches
 # h<n>: Hosts (including bare metal)
 # mn  : Mininet server
-  
+
 c1:
-  ip: 10.1.6.5 
+  ip: 10.5.6.20  
+  monitor_reauth: false  # default=true, set to false to disable  
+
+
    
 c2:
-  ip: 10.1.6.6 
+  ip: 10.5.6.21
+  monitor_reauth: false  # default=true, set to false to disable  
   
  

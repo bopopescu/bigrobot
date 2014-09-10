@@ -869,7 +869,7 @@ class Test(object):
             c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node, modeless=False):
+    def dev_console(self, node, modeless=False, expect_console_banner=False):
         """
         Telnet to the console of a BSN controller or switch.
 
@@ -907,7 +907,7 @@ class Test(object):
         """
         t = self
         n = t.node(node)
-        n_console = n.console()
+        n_console = n.console(expect_console_banner=expect_console_banner)
 
         if modeless:
             return n_console
@@ -922,12 +922,14 @@ class Test(object):
         # This regex should match prompts from BSN controllers and switches.
         # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+
+        helpers.log("Sending carriage return and checking for matching prompt/output")
         n_console.send('')
 
         def login():
             helpers.log("Found the login prompt. Sending user name ('%s')"
                         % user)
-            n_console = n.console()
+            n_console = n.console(expect_console_banner=expect_console_banner)
             n_console.send(user)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. DO NOT EXPECT PASSWORD...")
@@ -1148,6 +1150,64 @@ class Test(object):
         n.config('exit')
         n.config('exit')
 
+    def setup_controller_idle_timeout(self, name):
+        """
+        When logging into the BCF controller for the first time, modify the
+        idle timeout setting in Floodlight's application.py. Then
+        touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
+        it again in the future. Finally reconnect so changes can take effect.
+        """
+        bigrobot_file = "/var/log/.touched_by_bigrobot"
+        source_dir = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200"
+        source_file = "application.py"
+        source_dir_file = source_dir + '/' + source_file
+
+        n = self.topology(name)
+        platform = n.platform()
+        if not helpers.is_bcf(platform):
+            return True
+        helpers.log("Checking idle timeout on '%s'" % name)
+        # n.bash('export TERM=vt100')
+        n.sudo('ls -la %s' % bigrobot_file)['content']
+        content = n.sudo('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) == 0:
+            # Controller has already been touched by BigRobot
+            return True
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
+
+        n.sudo('ls -la %s' % source_dir_file)['content']
+        content = n.sudo('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_dir_file))
+
+        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s'
+               % source_dir_file)['content']
+        content = n.bash('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
+                                        % (source_dir_file, name))
+
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+               % (source_dir_file))
+
+        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+               % source_dir_file)['content']
+        content = n.bash('echo $?')['content']
+        output = helpers.strip_cli_output(content, to_list=True)[0]
+        if int(output) != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_dir_file, name))
+
+        n.sudo('touch %s' % bigrobot_file)
+        self.node_reconnect(name)
+
+        return True
+
     def setup_controller_firewall_allow_rest_access(self, name):
         n = self.topology(name)
 
@@ -1308,7 +1368,21 @@ class Test(object):
         con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
-        helpers.log("Finish sending Reboot on switch : %s" % name)
+        if helpers.bigrobot_ztn_installer().lower() != "true":
+            helpers.log("Finish sending Reboot on switch : %s" % name)
+            return
+        try:
+            con.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        con.send("")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("setenv onie_boot_reason install")
+        con.expect([r'\=\>'], timeout=30)
+        con.send("run onie_bootcmd")
+        con.expect("Loading Open Network Install Environment")
+        helpers.log("Finish sending Reboot on switch : %s with installer option" % name)
         return True
 
     def setup_ztn_phase2(self, name):
@@ -1372,6 +1446,9 @@ class Test(object):
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
                 if helpers.is_controller(key):
+                    self.setup_controller_idle_timeout(key)
+            for key in params:
+                if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
                 elif helpers.is_switch(key):
                     if helpers.bigrobot_test_ztn().lower() == 'true':
@@ -1394,8 +1471,15 @@ class Test(object):
                 standby = self.controller("slave")
                 for key in params:
                     self.setup_ztn_phase1(key)
-                helpers.log("Sleeping 2 mins..")
-                helpers.sleep(120)
+                if helpers.bigrobot_ztn_installer().lower() != "true":
+                    helpers.log("Sleeping 2 mins..")
+                    helpers.sleep(120)
+                else:
+                    helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
+                    helpers.sleep(400)
+                helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                for key in params:
+                    self.setup_ztn_phase2(key)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1405,9 +1489,6 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")

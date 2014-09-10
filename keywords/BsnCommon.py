@@ -103,6 +103,12 @@ class BsnCommon(object):
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
 
+    def test_passed(self):
+        print("TEST PASSED")
+
+    def test_failed(self):
+        helpers.test_failure("TEST FAILED")
+
     def summary_log(self, msg):
         helpers.summary_log(msg, level=2)
 
@@ -698,14 +704,30 @@ class BsnCommon(object):
             elif helpers.is_t5(n.platform()):
                 # T5 Controller NTP Server Deletion goes here
                 c = t.controller(node)
-                url = '/api/v1/data/controller/os/config/global/time'
+                url = '/api/v1/data/controller/os/config/global/time/ntp-server'
                 helpers.log("URL is %s" % url)
-                c.rest.delete(url, {"ntp-servers": [ntp_server]})
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
+                ntp_servers = c.rest.get(url)['content']
+                helpers.log("Currently configured servers are %s" % ntp_servers)
+                if ntp_server in ntp_servers:
+                    while ntp_server in ntp_servers:
+                        ntp_servers.remove(ntp_server)
+                    helpers.log("List of servers after deleting %s is %s"
+                                % (ntp_server, ntp_servers))
+                    c.rest.put(url, ntp_servers)
+                    if not c.rest.status_code_ok():
+                        helpers.test_log(c.rest.error())
+                        return False
+                    updated_ntp_servers = c.rest.get(url)['content']
+                    if helpers.list_compare(ntp_servers, updated_ntp_servers):
+                        helpers.log("Successfully removed '%s'"
+                                    " from NTP server list." % ntp_server)
+                        return True
+                    else:
+                        helpers.log("Unsuccessfully removed '%s'"
+                                    " from NTP server list." % ntp_server)
+                        return False
                 else:
-                    helpers.sleep(1)
+                    helpers.log("NTP server not configured. Nothing to delete.")
                     return True
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))

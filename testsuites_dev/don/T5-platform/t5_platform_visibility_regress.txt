@@ -54,6 +54,10 @@ ${s1IxiaVerifyInt}	eth1
 
 * Test Case 
 
+Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
+	[Tags]  L2  scaling  Traffic  
+	${stream}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
+    start traffic  ${stream}
 
 T1 Configure SPAN session for Single interface - Direction Both
     [Tags]  span  feature

@@ -2,7 +2,7 @@
 Documentation                           BigTap Statistics Test Suite
 Suite Setup                             statistics suite setup
 Suite Teardown                          statistics suite teardown
-Test Setup                              base test setup
+Test Setup                              statistics test setup
 Test Teardown                           statistics test teardown 
 Force Tags                              BigTap  SwitchLight  Statistics
 Library                                 keywords/BsnCommon.py
@@ -958,7 +958,7 @@ TC011: Verify switch interface statistics on controller, when filter and deliver
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  single-switch  single-policy  runthis             
+    [Tags]  switch-stats  single-switch  single-policy             
 
 TC012: Verify switch interface statistics on controller, when filter and delivery interface are on different switches       
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -1046,28 +1046,640 @@ TC012: Verify switch interface statistics on controller, when filter and deliver
     ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  multi-switch  single-policy  runthis    
+    [Tags]  switch-stats  multi-switch  single-policy    
                 
 TC013: Verify switch interface statistics on controller, when multiple policies traverse the core.       
-    Log     "To Be Scripted" 
+    change interface role to  filter    ${sw1_tgfilter_intf_2}      ${sw1_tgfilter_alias_2}         s1
+    change interface role to  delivery  ${sw5_tgdelivery_intf_2}    ${sw5_tgdelivery_alias_2}       s5
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_1}  1                          {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw5_tgdelivery_alias_1}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_2}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_2}  1                          {"ether-type": 2048, "dst-tp-port": 8080, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_2}  ${sw1_tgfilter_alias_2}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_2}  ${sw5_tgdelivery_alias_2}  delivery 
+    Should be True      ${return_value}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${statistics_policy_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${statistics_policy_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy2}
+    ${stream1}=  L3 add  flow=a->h  frame_rate=10000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    ${stream2}=  L3 add  flow=b->g  frame_rate=20000  frame_cnt=200000  frame_size=1518  name=b_g_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8080
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    sleep  10    
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    cli clear interface statistics  s5    
+    start traffic
+    sleep  10
+    stop traffic
 
+    ${s1_dpid}=  rest return switch dpid from ip  s1
+    ${s2_dpid}=  rest return switch dpid from ip  s2
+    ${s3_dpid}=  rest return switch dpid from ip  s3
+    ${s4_dpid}=  rest return switch dpid from ip  s4
+    ${s5_dpid}=  rest return switch dpid from ip  s5        
+    ${report}=  fetch port stats
+
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_1}      receive-packets
+
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}      interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                  ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw1sw2_core_switch_value}     ${rx_switch_value}          rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+    
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_2}      receive-packets
+
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_2}      interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                  ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw1sw2_core_switch_value}     ${rx_switch_value}          rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_2}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+        
+    [Tags]  switch-stats  multi-switch  single-policy  
+    
 TC014: Verify switch interface statistics on controller, when policy has one service on core switch S3       
-    Log     "To Be Scripted" 
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_1}  1                          {"any-traffic": true, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw5_tgdelivery_alias_1}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add service to policy  admin-view  ${statistics_policy_1}  ${sw3_service_name}         1    
+    Should be True      ${return_value}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${statistics_policy_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy1}
+    ${stream1}=  L3 add  flow=a->h  frame_rate=10000  frame_cnt=100000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_h_flow
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    sleep  10
+    start traffic
+    sleep  10
+    stop traffic
+    ${report}=  fetch port stats
+    ${rx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${output_value}=  Convert To Integer  ${rx_value}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value}=  verify dict key  ${report}  h  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_value}  rangev=10
+    Should be true  ${in_range}
+    ${s1_dpid}=  rest return switch dpid from ip  s1
+    ${s2_dpid}=  rest return switch dpid from ip  s2
+    ${s3_dpid}=  rest return switch dpid from ip  s3
+    ${s4_dpid}=  rest return switch dpid from ip  s4
+    ${s5_dpid}=  rest return switch dpid from ip  s5
+    
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_1}      receive-packets
+    ${in_range}=  ixia verify traffic rate  ${rx_switch_value}  ${rx_value}  rangev=10
+    Should be true  ${in_range}
+    
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}      interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                  ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw1sw2_core_switch_value}     ${rx_switch_value}          rangev=10
+    Should be true  ${in_range}
 
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s3_pre_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx   service_name=${sw3_service_name}
+    ${s3_pre_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_pre_service_intf}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_pre_service_value}         ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s3_post_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx   service_name=${sw3_service_name}
+    ${s3_post_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_post_service_intf}    receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_post_service_value}         ${s3_pre_service_value}      rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${s3_post_service_value}     rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
+    Should be true  ${in_range}
+    [Tags]  switch-stats  multi-switch  single-policy  single-service   
+        
 TC015: Verify switch interface statistics on controller, when policy has two services chained on filter switch S1 and delivery switch S5        
-    Log     "To Be Scripted" 
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_1}  1                          {"any-traffic": true, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw5_tgdelivery_alias_1}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add service to policy  admin-view  ${statistics_policy_1}  ${sw1_service_name}         1    
+    Should be True      ${return_value}
+    ${return_value}=    rest add service to policy  admin-view  ${statistics_policy_1}  ${sw5_service_name}         2    
+    Should be True      ${return_value}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${statistics_policy_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy1}
+    ${stream1}=  L3 add  flow=a->h  frame_rate=10000  frame_cnt=100000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_h_flow
+    clear stats    
+    cli     node=master    cmd=clear bigtap statistics
+    clear stats    
+    sleep  10
+    start traffic
+    sleep  10
+    stop traffic
+    ${report}=  fetch port stats
+    ${rx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${output_value}=  Convert To Integer  ${rx_value}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value}=  verify dict key  ${report}  h  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_value}  rangev=10
+    Should be true  ${in_range}
+    ${s1_dpid}=  rest return switch dpid from ip  s1
+    ${s2_dpid}=  rest return switch dpid from ip  s2
+    ${s3_dpid}=  rest return switch dpid from ip  s3
+    ${s4_dpid}=  rest return switch dpid from ip  s4
+    ${s5_dpid}=  rest return switch dpid from ip  s5    
 
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_1}      receive-packets
+    ${in_range}=  ixia verify traffic rate  ${rx_switch_value}  ${rx_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s1_pre_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx   service_name=${sw1_service_name}
+    ${s1_pre_service_value}=        rest return switch interface stats      ${s1_dpid}                   ${s1_pre_service_intf}     transmit-packets    
+    ${in_range}=                    ixia verify traffic rate                ${s1_pre_service_value}      ${rx_switch_value}         rangev=10
+    Should be true  ${in_range}
+
+    ${s1_post_service_intf}=        rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=rx   service_name=${sw1_service_name}
+    ${s1_post_service_value}=       rest return switch interface stats      ${s1_dpid}                   ${s1_post_service_intf}    receive-packets    
+    ${in_range}=                    ixia verify traffic rate                ${s1_post_service_value}     ${s1_pre_service_value}    rangev=10
+    Should be true  ${in_range}
+    
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                   ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=                    ixia verify traffic rate                ${sw1sw2_core_switch_value}  ${s1_post_service_value}   rangev=10
+    Should be true  ${in_range}
+
+
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s5_pre_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service         stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=tx   service_name=${sw5_service_name}
+    ${s5_pre_service_value}=        rest return switch interface stats      ${s5_dpid}                   ${s5_pre_service_intf}         transmit-packets    
+    ${in_range}=                    ixia verify traffic rate                ${s5_pre_service_value}      ${sw5sw4_core_switch_value}    rangev=10
+    Should be true  ${in_range}
+
+    ${s5_post_service_intf}=        rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx   service_name=${sw5_service_name}
+    ${s5_post_service_value}=       rest return switch interface stats      ${s5_dpid}                   ${s5_post_service_intf}    receive-packets    
+    ${in_range}=                    ixia verify traffic rate                ${s5_post_service_value}     ${s5_pre_service_value}    rangev=10
+    Should be true  ${in_range}
+    
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${s5_post_service_value}     rangev=10
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
+    Should be true  ${in_range}
+    [Tags]  switch-stats  multi-switch  single-policy  multi-service   
+
+ 
 TC016: Verify switch interface statistics on controller, when two policies use same mandatory service.       
-    Log     "To Be Scripted" 
+    change interface role to  filter    ${sw1_tgfilter_intf_2}      ${sw1_tgfilter_alias_2}         s1
+    change interface role to  delivery  ${sw5_tgdelivery_intf_2}    ${sw5_tgdelivery_alias_2}       s5
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_1}  1                          {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_1}  ${sw5_tgdelivery_alias_1}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add service to policy  admin-view  ${statistics_policy_1}  ${sw3_service_name}         1    
+    Should be True      ${return_value}
+    
+    ${return_value}=    rest add policy             admin-view  ${statistics_policy_2}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${statistics_policy_2}  1                          {"ether-type": 2048, "dst-tp-port": 8080, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_2}  ${sw1_tgfilter_alias_2}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${statistics_policy_2}  ${sw5_tgdelivery_alias_2}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add service to policy  admin-view  ${statistics_policy_2}  ${sw3_service_name}         1    
+    Should be True      ${return_value}
+        
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${statistics_policy_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${statistics_policy_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy2}
+    ${stream1}=  L3 add  flow=a->h  frame_rate=10000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    ${stream2}=  L3 add  flow=b->g  frame_rate=20000  frame_cnt=200000  frame_size=1518  name=b_g_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8080
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    sleep  10    
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    cli clear interface statistics  s5    
+    start traffic
+    sleep  10
+    stop traffic
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  transmitted_frames
+    ${output_value}=  Convert To Integer  ${rx_value_1}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value_1}=  verify dict key  ${report}  h  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value_1}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${rx_value_2}=  verify dict key  ${report}  b  transmitted_frames
+    ${output_value}=  Convert To Integer  ${rx_value_2}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value_2}=  verify dict key  ${report}  g  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value_2}
+    Should Not Be Equal As Integers  ${output_value}  0          
+    ${s1_dpid}=  rest return switch dpid from ip  s1
+    ${s2_dpid}=  rest return switch dpid from ip  s2
+    ${s3_dpid}=  rest return switch dpid from ip  s3
+    ${s4_dpid}=  rest return switch dpid from ip  s4
+    ${s5_dpid}=  rest return switch dpid from ip  s5        
+    ${report}=  fetch port stats
+    ${service_traffic}=     Evaluate    ${rx_value_1}+${rx_value_2}
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_1}      receive-packets
 
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}      interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                  ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw1sw2_core_switch_value}     ${rx_switch_value}          rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s3_pre_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx   service_name=${sw3_service_name}
+    ${s3_pre_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_pre_service_intf}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_pre_service_value}         ${service_traffic}          rangev=10
+    Should be true  ${in_range}
+
+    ${s3_post_service_intf}=         rest return policy stats                ${statistics_policy_1}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx   service_name=${sw3_service_name}
+    ${s3_post_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_post_service_intf}    receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_post_service_value}         ${service_traffic}           rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_1}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+    
+    ${rx_switch_value}=  rest return switch interface stats  ${s1_dpid}     ${sw1_tgfilter_intf_2}      receive-packets
+
+    ${sw1sw2_core_interface}=       rest return policy stats                ${statistics_policy_2}      interface_type=core        stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx        
+    ${sw1sw2_core_switch_value}=    rest return switch interface stats      ${s1_dpid}                  ${sw1sw2_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw1sw2_core_switch_value}     ${rx_switch_value}          rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw1_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx        
+    ${sw2sw1_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw1_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw1_core_switch_value}     ${sw1sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw2sw3_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=tx        
+    ${sw2sw3_core_switch_value}=    rest return switch interface stats      ${s2_dpid}                   ${sw2sw3_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw2sw3_core_switch_value}     ${sw2sw1_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw2_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx        
+    ${sw3sw2_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw2_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw2_core_switch_value}     ${sw2sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${s3_pre_service_intf}=         rest return policy stats                ${statistics_policy_2}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx   service_name=${sw3_service_name}
+    ${s3_pre_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_pre_service_intf}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_pre_service_value}         ${service_traffic}          rangev=10
+    Should be true  ${in_range}
+
+    ${s3_post_service_intf}=         rest return policy stats                ${statistics_policy_2}       interface_type=service     stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=rx   service_name=${sw3_service_name}
+    ${s3_post_service_value}=        rest return switch interface stats      ${s3_dpid}                   ${s3_post_service_intf}    receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${s3_post_service_value}         ${service_traffic}           rangev=10
+    Should be true  ${in_range}
+
+    ${sw3sw4_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s3_dpid}  interface_direction=tx        
+    ${sw3sw4_core_switch_value}=    rest return switch interface stats      ${s3_dpid}                   ${sw3sw4_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw3sw4_core_switch_value}     ${sw3sw2_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw4sw3_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=rx        
+    ${sw4sw3_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw3_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw3_core_switch_value}     ${sw3sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}    
+
+    ${sw4sw5_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s4_dpid}  interface_direction=tx        
+    ${sw4sw5_core_switch_value}=    rest return switch interface stats      ${s4_dpid}                   ${sw4sw5_core_interface}   transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw4sw5_core_switch_value}     ${sw4sw3_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${sw5sw4_core_interface}=       rest return policy stats                ${statistics_policy_2}       interface_type=core        stat_info=interface    switch_dpid=${s5_dpid}  interface_direction=rx        
+    ${sw5sw4_core_switch_value}=    rest return switch interface stats      ${s5_dpid}                   ${sw5sw4_core_interface}   receive-packets    
+    ${in_range}=  ixia verify traffic rate  ${sw5sw4_core_switch_value}     ${sw4sw5_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+
+    ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_2}     transmit-packets    
+    ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
+    Should be true  ${in_range}
+    
+    [Tags]  switch-stats  multi-switch  multi-policy  single-service   
+        
 TC017: Verify switch interface statistics on controller, with an overlapping policy       
-    Log     "To Be Scripted" 
+    change interface role to  delivery  ${sw2_tgdelivery_intf_2}    ${sw2_tgdelivery_alias_2}       s2
+    ${return_value}=    rest enable feature    overlap
+    Should be True      ${return_value}
+    sleep  3    
+    ${return_value}=    rest add policy             admin-view  ${policy_name_1}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${policy_name_1}  1                          {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${policy_name_1}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${policy_name_1}  ${sw2_tgdelivery_alias_1}  delivery 
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy             admin-view  ${policy_name_2}  forward
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy match       admin-view  ${policy_name_2}  1                          {"ether-type": 2048, "src-tp-port": 1234, "ip-proto": 6, "sequence": 1}
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${policy_name_2}  ${sw1_tgfilter_alias_1}    filter
+    Should be True      ${return_value}
+    ${return_value}=    rest add policy interface   admin-view  ${policy_name_2}  ${sw2_tgdelivery_alias_2}  delivery 
+    Should be True      ${return_value}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be True      ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be True      ${verify_policy3}
+    ${stream1}=  L3 add  flow=a->d  frame_rate=10000  frame_cnt=100000  frame_size=1518  name=a_d_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats    
+    cli     node=master    cmd=clear bigtap statistics
+    clear stats    
+    sleep  10
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  transmitted_frames
+    ${output_value}=  Convert To Integer  ${rx_value_1}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value_1}=  verify dict key  ${report}  d  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value_1}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${tx_value_2}=  verify dict key  ${report}  c  received_valid_frames
+    ${output_value}=  Convert To Integer  ${tx_value_2}
+    Should Not Be Equal As Integers  ${output_value}  0      
+    ${s1_dpid}=  rest return switch dpid from ip  s1
+    ${s2_dpid}=  rest return switch dpid from ip  s2
+ 
+    ${in_range}=  ixia verify traffic rate  ${rx_value_1}  ${tx_value_1}  rangev=20
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_1}  100000         rangev=20
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${tx_value_1}  100000         rangev=20
+    Should be true  ${in_range}    
+    ${in_range}=  ixia verify traffic rate  ${rx_value_1}  ${tx_value_2}  rangev=20
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_1}  100000         rangev=20
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${tx_value_2}  100000         rangev=20
+    Should be true  ${in_range}
 
-TC018: Verify switch interface statistics on controller, when core interface is over-subscribed       
-    Log     "To Be Scripted" 
+    ${s1_finterface}=       rest return policy stats                ${policy_name_overlap}      interface_type=filter    interface_name=${sw1_tgfilter_alias_2}     stat_info=interface
+    ${s1_fintf_value}=      rest return switch interface stats      ${s1_dpid}                  ${s1_finterface}         receive-packets    
+    ${in_range}=            ixia verify traffic rate                ${s1_fintf_value}           ${rx_value_1}            rangev=10
+    Should be true  ${in_range}
 
-TC019: Verify switch interface statistics on controller, when delivery interface is over-subscribed       
-    Log     "To Be Scripted" 
+    ${s1s2_core_intf}=      rest return policy stats                ${policy_name_overlap}      interface_type=core       stat_info=interface    switch_dpid=${s1_dpid}  interface_direction=tx  
+    ${s1s2_fintf_value}=    rest return switch interface stats      ${s1_dpid}                  ${s1s2_core_intf}         transmit-packets    
+    ${in_range}=            ixia verify traffic rate                ${s1s2_fintf_value}         ${s1_fintf_value}         rangev=10
+    Should be true  ${in_range}
+
+    ${s2s1_core_intf}=      rest return policy stats                ${policy_name_overlap}      interface_type=core       stat_info=interface    switch_dpid=${s2_dpid}  interface_direction=rx  
+    ${s2s1_fintf_value}=    rest return switch interface stats      ${s2_dpid}                  ${s2s1_core_intf}         receive-packets    
+    ${in_range}=            ixia verify traffic rate                ${s2s1_fintf_value}         ${s1s2_fintf_value}       rangev=10
+    Should be true  ${in_range}
+
+    ${s2_dinterface1}=      rest return policy stats                ${policy_name_overlap}      interface_type=delivery   interface_name=${sw2_tgdelivery_alias_2}     stat_info=interface
+    ${s2_dintf_value1}=     rest return switch interface stats      ${s2_dpid}                  ${s2_dinterface1}         transmit-packets    
+    ${in_range}=            ixia verify traffic rate                ${s2_dintf_value1}          ${s2s1_fintf_value}       rangev=10
+    Should be true  ${in_range}
+    ${in_range}=            ixia verify traffic rate                ${s2_dintf_value1}          ${tx_value_1}             rangev=10
+    Should be true  ${in_range}
+
+    ${s2_dinterface2}=      rest return policy stats                ${policy_name_overlap}      interface_type=delivery   interface_name=${sw2_tgdelivery_alias_1}     stat_info=interface
+    ${s2_dintf_value2}=     rest return switch interface stats      ${s2_dpid}                  ${s2_dinterface2}         transmit-packets    
+    ${in_range}=            ixia verify traffic rate                ${s2_dintf_value2}          ${s2s1_fintf_value}       rangev=10
+    Should be true  ${in_range}
+    ${in_range}=            ixia verify traffic rate                ${s2_dintf_value2}          ${tx_value_2}             rangev=10
+    Should be true  ${in_range}   
+    [Tags]  switch-stats  multi-switch  multi-policy  overlap  runthis
+    
 
                                                       
 * Keywords
@@ -1127,10 +1739,23 @@ change interface role to  [Arguments]  ${new_role}   ${interface_name}   ${inter
     ${return_value}=    rest add interface role  ${node}    ${interface_name}     ${new_role}      ${interface_alias}
     Should be True      ${return_value}
 
+statistics test setup
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    cli clear interface statistics  s5
+
 statistics test teardown
     delete traffic
     ${return_value}=    rest delete policy  admin-view  ${statistics_policy_1}
     Should be True      ${return_value}
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    cli clear interface statistics  s5
+    
     
 statistics suite teardown
     ${return_value}=    rest delete service  ${sw1_service_name}

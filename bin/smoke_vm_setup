@@ -100,6 +100,8 @@ def main(*args):
         args.gateway = "10.192.64.1"
     if args.network_interface is None:
         args.network_interface = "br0"
+    if args.vm_ram is None:
+        args.vm_ram = "8192"
 
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
@@ -117,7 +119,7 @@ def main(*args):
                                  vm_host_name=vm_host_name,
                                  build_number=args.build_number,
                                  gateway=args.gateway,
-                                 network_interface=args.network_interface)
+                                 network_interface=args.network_interface, vm_ram=args.vm_ram)
 
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
@@ -148,7 +150,7 @@ def main(*args):
                                       vm_host_name=vm_host_name,
                                       build_number=args.build_number,
                                       gateway=args.gateway,
-                                      network_interface=args.network_interface)
+                                      network_interface=args.network_interface, vm_ram=args.vm_ram)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -409,5 +411,7 @@ if __name__ == '__main__':
                         help="This used for gateway for VMs")
     parser.add_argument("--network_interface",
                         help="This used for virtual network interface on the KVM HOST Server")
+    parser.add_argument("--vm_ram",
+                        help="This used for vm RAM on  the KVM HOST Server")
     main()
     sys.exit(0)

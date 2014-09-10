@@ -142,6 +142,7 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
+        n = t.node(hostname)
         s = t.dev_console(hostname)
         #s.send(helpers.ctrl('c'))
         #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
@@ -173,6 +174,7 @@ class T5ZTN(object):
                 if ' ' in line:
                     line = line.replace(' ', '')
                 version = version + " (" + line + ")"
+        n.console_close()
         return version
 
     def bash_get_supported_platforms(self, image):
@@ -235,17 +237,20 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        #con.expect(r'[\r\n]Switch Light OS', timeout=120)
-        con.send("\n")
-        options = con.expect([r'=> ', r'[\r\n].*login: $', con.get_prompt()],
+        n = t.node(node)
+        s = t.dev_console(node, modeless=True)
+        #s.expect(r'[\r\n]Switch Light OS', timeout=120)
+        s.send("\n")
+        options = s.expect([r'=> ', r'[\r\n].*login: $', s.get_prompt()],
                   timeout=120)
         if options[0] == 0:  # Uboot prompt
-            con.send('boot')
-            con.expect(r'[\r\n].*login: $', timeout=120)
+            s.send('boot')
+            s.expect(r'[\r\n].*login: $', timeout=120)
         elif options[0] == 2:
+            n.console_close()
             helpers.test_failure("Switch did not reboot. Returning False")
             return False
+        n.console_close()
         return True
 
     def telnet_wait_for_switch_to_find_manifest(self, node):
@@ -259,8 +264,8 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest", timeout=120)
+        s = t.dev_console(node, modeless=True)
+        s.expect("Discovered Switch Light manifest", timeout=120)
         return True
 
     def telnet_wait_for_switch_to_start_booting(self, node):
@@ -274,8 +279,8 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Manifest validated", timeout=120)
+        s = t.dev_console(node, modeless=True)
+        s.expect("ZTN Manifest validated", timeout=120)
         return True
 
     def telnet_verify_ztn_discovery_failed(self, node):
@@ -289,9 +294,15 @@ class T5ZTN(object):
         - True if ZTN Discovery process failed
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Discovery Failed", timeout=120)
-        con.expect("ZTN Discovery Failed", timeout=30)
+        n = t.node(node)
+        s = t.dev_console(node, modeless=True)
+        s.send("\n")
+        options = s.expect([r'=> ', "ZTN Discovery Failed"], timeout=120)
+        if options[0] == 0:
+            s.send("boot")
+            s.expect("ZTN Discovery Failed", timeout=120)
+        s.expect("ZTN Discovery Failed", timeout=30)
+        n.console_close()
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -305,10 +316,10 @@ class T5ZTN(object):
         - True if ZTN Discovery process succeeded
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest from url", timeout=120)
-        con.expect("ZTN Manifest validated")
-        con.expect("Booting")
+        s = t.dev_console(node, modeless=True)
+        s.expect("Discovered Switch Light manifest from url", timeout=120)
+        s.expect("ZTN Manifest validated")
+        s.expect("Booting")
         return True
 
     def telnet_verify_onie_discovery_failed(self, node):
@@ -322,9 +333,11 @@ class T5ZTN(object):
         - True if ONIE Discovery process succeeded
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        con.expect("ONIE: Starting ONIE Service Discovery")
-        con.expect("ONIE: Starting ONIE Service Discovery")
+        n = t.node(node)
+        s = t.dev_console(node, modeless=True)
+        s.expect("ONIE: Starting ONIE Service Discovery")
+        s.expect("ONIE: Starting ONIE Service Discovery")
+        n.console_close()
         return True
 
     def modeless_console(self, node):
@@ -338,18 +351,18 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
-        con = t.dev_console(node, modeless=True)
-        # con.send("\x03")
-        con.send(helpers.ctrl('c'))
-        con.expect("=> ")
-        con.send("help")
-        con.expect("help")
-        con.expect("=> ")
-        con.send("printenv")
-        con.expect("printenv")
-        con.expect("=> ")
-        con.send("boot")
-        con.expect(r'.*login: $')
+        s = t.dev_console(node, modeless=True)
+        # s.send("\x03")
+        s.send(helpers.ctrl('c'))
+        s.expect("=> ")
+        s.send("help")
+        s.expect("help")
+        s.expect("=> ")
+        s.send("printenv")
+        s.expect("printenv")
+        s.expect("=> ")
+        s.send("boot")
+        s.expect(r'.*login: $')
 
     def telnet_set_ma1_state(self, node, state):
         """
@@ -362,6 +375,7 @@ class T5ZTN(object):
         - N/A
         """
         t = test.Test()
+        n = t.node(node)
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login: $', r'root@.*:\~\#',
@@ -374,31 +388,47 @@ class T5ZTN(object):
         if options[0] == 2:
             helpers.log("Switch rebooting")
             s.send('boot')
+            n.console_close()
             return True
         if options[0] == 3:
             helpers.log("Switch in ZTN loader")
             s.send('reboot')
+            n.console_close()
             return True
         if options[0] == 5:
-            helpers.log("Switch in ZTN Discovery process")
+            helpers.log("Switch in ZTN Discovery process. Doing nothing")
             s.send(helpers.ctrl('c'))
             s.send('reboot')
+            n.console_close()
             return True
         s.send('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
-            s.send('interface ma1 ip-address dhcp')
+            #s.send('interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 up")
+            s.send("exit")
         elif state == 'down':
             helpers.log("Setting interface MA1 down")
-            s.send('no interface ma1 ip-address dhcp')
+            #s.send('no interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 down")
+            s.send("exit")
         elif state == 'flap':
             helpers.log("Setting interface MA1 down and up")
-            s.send('no interface ma1 ip-address dhcp')
+            #s.send('no interface ma1 ip-address dhcp')
+            #helpers.sleep(10)
+            #s.send('interface ma1 ip-address dhcp')
+            s.send("debug bash")
+            s.send("ifconfig ma1 down")
             helpers.sleep(10)
-            s.send('interface ma1 ip-address dhcp')
+            s.send("ifconfig ma1 up")
+            s.send("exit")
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
+            n.console_close()
             return helpers.test_failure("Wrong state of interface")
+        n.console_close()
         return True
 
     def telnet_switch_reload_and_execute_loader_shell_commands(self,
@@ -615,6 +645,37 @@ class T5ZTN(object):
         return config
 
 
+    def curl_get_switch_manifest(self, mac):
+        """
+        Get manifest for given switch by executing CURL command
+        against the active controller
+
+        Inputs:
+        | mac | MAC address of switch |
+
+        Return Value:
+        - List with manifest lines or None
+        """
+        t = test.Test()
+        bsn_common = bsnCommon()
+        master_ip = bsn_common.get_node_ip('master')
+
+        url = ("http://%s/ztn/switch/%s/switch_light_manifest?platform=powerpc-as5710-54x-r0b"
+               % (str(master_ip), str(mac)))
+        helpers.log("Trying to get switch manifest at %s" % url)
+        try:
+            req = urllib2.Request(url)
+            res = urllib2.urlopen(req)
+            helpers.log("Response is: %s" % res)
+            manifest = res.read()
+            helpers.log("Response is: %s" % ''.join(manifest))
+        except:
+            helpers.log(traceback.print_exc())
+            return helpers.test_failure("Error trying to get manifest"
+                   " from Master")
+        return manifest
+
+
     def verify_switch_startup_config(self, mac, hostname):
         """
         Fetch startup-config for switch and compare with running-config
@@ -798,25 +859,39 @@ class T5ZTN(object):
         | hostname | Alias of switch |
 
         Return Value:
-        - True if startup config is correct, False otherwise
+        - True if running config is correct, False otherwise
         """
 
         t = test.Test()
+        n = t.node(hostname)
 
         startup_config = self.curl_get_switch_startup_config(mac)
         missing_startup = []
         extra_startup = []
 
         s = t.dev_console(hostname, modeless=True)
-        s.send(helpers.ctrl('c'))
-        s.send("\x03")
+        s.send("\n")
+        #s.send(helpers.ctrl('c'))
+        #s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
-                            r'[\r\n]* root@.*:\~\#', s.get_prompt()],
-                           timeout=30)
+                            r'[\r\n]* root@.*:\~\#', r'loader\#', r'=> ',
+                            s.get_prompt()], timeout=30)
         if options[0] == 0:
             s.cli('admin')
-        if options[0] == 2:
+        elif options[0] == 2:
             s.cli('exit')
+        elif options[0] == 3:
+            s.cli('reboot')
+            helpers.log("Switch is rebooting. Waiting for full reboot")
+            helpers.sleep(100)
+            s.expect(r'[\r\n]*.*login: $', timeout=30)
+            s.send('admin')
+        elif options[0] == 4:
+            s.cli('boot')
+            helpers.test_failure("Switch is rebooting. Waiting for full reboot")
+            helpers.sleep(100)
+            s.expect(r'[\r\n]*.*login: $', timeout=30)
+            s.send('admin')
         s.cli('enable')
         s.cli('config')
         running_config = s.cli("show running-config")['content']
@@ -923,9 +998,11 @@ class T5ZTN(object):
                 helpers.log("Running-config is missing line: %s" % line)
 
         if len(missing_startup) > 0 or len(extra_startup) > 0:
+            n.console_close()
             return helpers.test_failure("Failure due to missing lines")
         else:
-            helpers.log("Startup-config for switch %s is correct" % mac)
+            helpers.log("Running-config for switch %s is correct" % mac)
+            n.console_close()
             return True
 
     def rest_get_switch_fabric_role(self, node, switch):
@@ -1125,6 +1202,7 @@ class T5ZTN(object):
         - True if reboot triggered successfully, False otherwise
         """
         t = test.Test()
+        n = t.node(switch)
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
@@ -1168,17 +1246,20 @@ class T5ZTN(object):
             s.send('reboot')
         elif options[0] == 8:  # SL Loader
             helpers.log("Switch %s is already rebooting. Doing nothing." % switch)
+            n.console_close()
             return True
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
-            else:
-                s.expect(r'Clock Configuration:', timeout=120)
+            #else:
+            #    s.expect(r'Clock Configuration:', timeout=120)
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
+            n.console_close()
             return helpers.test_failure("Error rebooting switch %s" % switch)
 
+        n.console_close()
         return True
 
     def telnet_stop_autoboot(self, switch):
@@ -1248,6 +1329,33 @@ class T5ZTN(object):
         s.expect([r'\=\>'], timeout=30)
         s.send("reset")
         s.expect("Hit any key to stop autoboot", timeout=100)
+        return True
+
+    def telnet_reinstall_switchlight(self, switch):
+        """
+        Enter switch u-boot shell while switch is booting up
+        and request switchlight reinstall
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully requested switchlight reinstall, False otherwise
+        """
+        t = test.Test()
+        self.telnet_reboot_switch(switch)
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        s.send("")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("setenv onie_boot_reason install")
+        s.expect([r'\=\>'], timeout=30)
+        s.send("run onie_bootcmd")
+        s.expect("Loading Open Network Install Environment")
         return True
 
     def enter_loader_shell(self, switch):

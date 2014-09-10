@@ -1,0 +1,548 @@
+-*** Settings ***
+Documentation  A resource file containing the application specific keywords
+...            that create our own domain specific language. This resource
+...            implements keywords for testing HTML version of the test
+...            application.
+Library       	String
+Library        	SeleniumLibrary
+
+
+
+*** Variables ***
+${BROWSER}       				GoogleChrome
+${DELAY}         				0
+${LOG IN TITLE}    				Login
+${VALID USER}    				admin
+${VALID PASSWD}  				adminadmin
+
+${DASHBOARD TITLE}  		Dashboard
+${SWITCHES TITLE}    		Switches
+${INTERFACES TITLE}			Interfaces
+${PORT GROUPS TITLE}		Port Groups
+${TENANTS TITLE}			Tenants
+${ENDPOINTS TITLE}			Endpoints
+${FABRIC SUMMARY TITLE}		Summary
+${TEST PATH TITLE}    		Test Path
+${TOPOLOGY TITLE}			Topology
+${SIGNOUT TITLE}  			Login
+
+
+${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
+${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
+${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
+${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_5']
+${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
+${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
+
+${TIMEOUT}						10 sec
+${PERIOD}						3 sec
+
+### Menu
+${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
+#${TENANTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Tenants')]
+#${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
+${VISIBILITY MENU}		  		xpath=//div[@class='nav' and contains(text(), 'Visibility')]
+${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
+${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
+${INTERFACES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Interfaces')]
+${PORT GROUPS LABEL}			xpath=//div[@class='nav_menu_item' and contains(text(), 'Port Groups')]
+${TENANTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Tenants')]
+${ENDPOINTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
+${FABRIC SUMMARY LABEL}			xpath=//div[@class='nav_menu_item' and contains(text(), 'Fabric Summary')]
+${TEST PATH LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Test Path')]
+${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
+
+
+
+### Main Landing Page
+${CONTROLLER INFO PANE}  		xpath=//div[@data-dojo-attach-point='metadataNode']
+${INVENTORY PANE}				xpath=//div[@data-dojo-attach-point='inventoryNode']
+${CONTROLLER STATS PANE}		xpath=//div[@data-dojo-attach-point='statsNode']
+${CONTROLLER SEGMENTS PANE}  	xpath=//div[@id='bcf_widgets_dashboard_SegmentUsage_0']
+${CONTROLLER TENANTS PANE}		xpath=//div[@id='bcf_widgets_dashboard_TenantUsage_0']
+${CONTROLLER INTERFACES PANE}	xpath=//div[@id='bcf_widgets_dashboard_InterfaceUsage_0']
+${CONFIGURE SWITCHING MODE BUTTON}	xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
+${MATCH MODE EDIT POPUP}		xpath=//div[@title='Configure Switching Mode']/span[1]
+
+
+### Tenants Page
+
+${ADD TENANT PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
+${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
+${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_5']
+${PROCEED DELTE TENANTS BUTTON}			xpath=//span[@id='dijit_form_Button_5']
+
+#### Switch Page
+
+${ADD SWITCH PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${PROVISION SWITCH POPUP}		xpath=//div[@title='Provision Switch']
+${SWITCH MAC ADDRESS FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SWITCH NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${NONE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input		
+${SPINE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
+${LEAF ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
+${LEAF GROUP NAME FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SAVE SWITCH CONFIG BUTTON}	xpath=//span[@id='dijit_form_Button_4']
+
+${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure Switch')]
+${CONFIGURE SWITCH POPUP}					xpath=//div[@title='Configure Switch']	
+${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_4']			
+${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Switch Configuration')]
+${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
+${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+
+
+#### Port Groups Page
+
+${ADD PORT GROUP PLUS BUTTON}			xpath=//div[@class='icon_node plus']
+${CREATE PORT GROUP POPUP}				xpath=//div[@title='Create Port Group']
+${PORT GROUP NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${PORT GROUP MODE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mode')]/parent::h2/parent::div/following-sibling::div/div[1]/input		
+${PORT GROUP MODE LIST} 				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Static')]/parent::div 
+${PORT GROUP MODE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PORT GROUP LEAF GROUP DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${PORT GROUP LEAF GROUP LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup'] 
+${PORT GROUP LEAF GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PROCEED DELTE PORT GROUPS BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+
+*** Keywords ***
+Set URLs
+	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
+	Set Suite Variable     	${WELCOME URL}  			https://${SERVER}/
+	Set Suite Variable     	${ERROR URL}     			https://${SERVER}/login
+	Set Suite Variable     	${SWITCHES URL}   			https://${SERVER}/controller/switches
+	Set Suite Variable     	${INTERFACES URL} 			https://${SERVER}/controller/interfaces
+	Set Suite Variable     	${PORT GROUPS URL}    		https://${SERVER}/bcf/port_groups
+	Set Suite Variable     	${TOPOLOGY URL}  			https://${SERVER}/bcf/fabric
+	Set Suite Variable     	${TENANTS URL}  			https://${SERVER}/bcf/tenants
+	Set Suite Variable     	${ENDPOINTS URL}  			https://${SERVER}/bcf/endpoints
+	Set Suite Variable     	${FABRIC SUMMARY URL}  		https://${SERVER}/bcf/summary
+	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
+	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+
+Valid Login
+    [Arguments]  ${username}  ${password}
+    #Go To Login Page
+    Input Username    ${username}
+    Input Password    ${password}
+    Submit Credentials
+    Welcome Page Should Be Open
+
+Login With Invalid Credentials Should Fail
+    [Arguments]  ${username}  ${password}
+    Go To Login Page
+    Input Username  ${username}
+    Input Password  ${password}
+    Submit Credentials
+    Login Should Have Failed
+
+Open Browser To Login Page
+    Open Browser  ${LOGIN URL}  ${BROWSER}
+    Maximize Browser Window
+    Set Selenium Speed  ${DELAY}
+    Title Should Contain  ${LOG IN TITLE}
+    Sleep  1
+
+Go To Login Page
+    Go To  ${LOGIN URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${LOG IN TITLE}
+	Sleep  1
+	
+Go To Landing Page
+    Go To  ${WELCOME URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${DASHBOARD TITLE}
+    Sleep  1
+	
+Go To Controller Switches Page
+    Go To  ${SWITCHES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SWITCHES TITLE}
+    Sleep  1
+    
+Go To Controller Interfaces Page
+    Go To  ${INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${INTERFACES TITLE}
+    Sleep  1
+    
+Go To Port Groups Page
+    Go To  ${PORT GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${PORT GROUPS TITLE}
+    Sleep  1
+
+Go To Topology Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
+Go To Tenants Page
+    Go To  ${TENANTS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TENANTS TITLE}
+    Sleep  1
+
+Go To Endpoints Page
+    Go To  ${ENDPOINTS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${ENDPOINTS TITLE}
+    Sleep  1
+
+Go To Fabric Summary Page
+    Go To  ${FABRIC SUMMARY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${FABRIC SUMMARY TITLE}
+    Sleep  1
+
+Go To Test Path Page
+    Go To  ${TEST PATH URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TEST PATH TITLE}
+    Sleep  1
+    
+Go To Signout Page
+	Go To  ${SIGNOUT URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SIGNOUT TITLE}
+    Sleep  1
+    
+Delete All Tenants
+	Go To Tenants Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE TENANTS BUTTON}
+	Click Element  ${PROCEED DELTE TENANTS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+    
+Delete All Port Groups
+	Go To Port Groups Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
+	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+    
+Delete All
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	#Show All
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #unselecting
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #selecting again
+	Verify Element Visible  ${CHECKBOX ALL SELECTED}
+	Verify Element Visible  ${MAIN MINUS BUTTON}
+	Click Element  ${MAIN MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	
+	
+	
+Select Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
+	Run Keyword If  '${selected count}' == '0'
+	...  Click Element  ${unselected}  and don't wait
+	Verify Checkbox Selected  ${selected}
+
+
+Unselect Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
+	Run Keyword If  '${unselected count}' == '0'
+	...  Click Element  ${selected}  and don't wait
+	Verify Checkbox Unselected  ${unselected}
+
+
+Verify Checkbox Selected
+	[Arguments]  ${selected}
+	Verify Element Visible  ${selected}
+	${selected count}  Get Matching Xpath Count Tokenize  ${selected}
+	Run Keyword If  '${selected count}' == '0'  Fail
+
+
+Verify Checkbox Unselected
+	[Arguments]  ${unselected}
+	Verify Element Visible  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize  ${unselected}
+	Run Keyword If  '${unselected count}' == '0'	Fail
+
+
+Get Matching Xpath Count Tokenize 
+	[Arguments]  ${string}
+	${string xpath}  Fetch From Right  ${string}  xpath=
+	${string count}  Get Matching Xpath Count  ${string xpath}
+	[Return]   ${string count}
+
+
+Show All
+	Verify Element Visible  ${SHOW ALL BUTTON}
+	Click Element  ${SHOW ALL BUTTON}  and don't wait
+
+
+Input Username  [Arguments]  ${username}
+    Input Text  username  ${username}
+
+
+Input Password  [Arguments]  ${password}
+    Input Text  password  ${password}
+
+
+Submit Credentials
+	Mouse Over  xpath=//span[@id='submit_button']
+    Click Element   xpath=//span[@id='submit_button_label']
+
+
+Welcome Page Should Be Open
+    Location Should Be  ${WELCOME URL}
+    Title Should Contain  ${DASHBOARD TITLE}
+
+
+Login Should Have Failed
+    Location Should Be  ${ERROR URL}
+    Title Should Contain  ${LOG IN TITLE}
+
+
+
+    
+Input Text And Verify
+	[Arguments]  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${field}
+	Input Text  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select From List And Verify
+	[Arguments]  ${button}  ${list}  ${field}  ${text}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${button}
+	Verify Page Contains Element  ${button}
+	Mouse Down  ${button}
+	Mouse Up  ${button} 
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${list}
+	Verify Page Contains Element  ${list}
+	${element}  Catenate  SEPARATOR=  ${list}  /descendant::div[contains(text(), '  ${text}  ')]
+	Mouse Down  ${element}
+	Mouse Up  ${element}
+	#Mouse Down  ${list}
+	#Mouse Up  ${list}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select Checkbox And Verify
+	[Arguments]  ${attachment_point}  ${text}
+    ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
+    Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
+	Checkbox Should Be Selected	  ${checkbox}
+
+
+Verify Element Visible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${element}
+
+
+Verify Element Invisible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Not Be Visible  ${element}
+
+
+Verify Page Contains Text
+	[Arguments]  ${text}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain  ${text}
+	Wait Until Page Contains  ${text}  ${TIMEOUT}
+
+
+Verify Page Contains Element
+	[Arguments]  ${element}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain Element  ${element}
+	Wait Until Page Contains Element  ${element}  ${TIMEOUT}
+
+
+Verify Page Does Not Contain Element
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Not Contain Element  ${element}
+
+
+Check Element
+    [Arguments]  ${element}
+    Wait Until Page Contains Element  ${element}
+	Highlight Element  ${element}
+	Get Text  ${element}
+	Sleep  2
+
+Check Hover
+    [Arguments]  ${menu}  ${label}  ${dst}  ${title}
+    Wait Until Page Contains Element  ${menu}
+	Highlight Element  ${menu}
+	Mouse Over  ${menu}
+	#Mouse Down On Link  ${menu}
+	#Mouse Up 	${menu}
+	Sleep  1
+	Wait Until Page Contains Element   ${label}
+	#Wait Until Keyword Succeeds  1 min  1 sec  Element Should Be Visible   ${label}
+	Click Element  ${label}
+	Location Should Be  ${dst}
+	Title Should Contain  ${title}
+	
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content nowrap' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}	
+	
+Create Tenant
+	[Arguments]  ${tenant-name}  ${description}
+	Go To Tenants Page
+	
+	Verify Page Contains Element  ${ADD TENANT PLUS BUTTON}
+	Click Element  ${ADD TENANT PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT POPUP}
+	
+	Input Text And Verify  ${TENANT NAME FIELD}  ${tenant-name}
+	Click Element  ${TENANT DESCRIPTION FIELD}  and don't wait
+	
+	Run Keyword Unless  '${description}' == '${EMPTY}'
+	...		Input Text And Verify   ${TENANT DESCRIPTION FIELD}  ${description}
+	
+	Verify Page Contains Element  ${SAVE BUTTON}
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE TENANT POPUP}
+	
+Show Controller Stats
+	[Arguments]  ${state}
+	
+	Go To Landing Page
+	
+	Run Keyword If  '${state}'=='STANDBY'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Standby')]  Standby
+
+    Run Keyword If  '${state}'=='STANDBY'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Standby
+    
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Active')]  Active
+
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Active
+	
+	
+Provision Switch
+	[Arguments]  ${mac-address}  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	Verify Page Contains Element  ${ADD SWITCH PLUS BUTTON}
+	Click Element  ${ADD SWITCH PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${PROVISION SWITCH POPUP}
+	
+	Input Text And Verify  ${SWITCH MAC ADDRESS FIELD}  ${mac-address}
+	Input Text And Verify  ${SWITCH NAME FIELD}  ${name}
+	
+	#Verify Element Visible  ${FABRIC ROLE RADIO BUTTON}
+
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${PROVISION SWITCH POPUP}
+	
+	
+Change Switch Config
+	[Arguments]  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH MENU ITEM}
+	Click Element  ${CONFIGURE SWITCH MENU ITEM}  and don't wait
+	Verify Element Visible  ${CONFIGURE SWITCH POPUP}
+	
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CONFIGURE SWITCH POPUP}
+	
+Clear Switch Config
+	[Arguments]  ${name}
+	
+	Go to Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG MENU ITEM}
+	Click Element  ${CLEAR SWITCH CONFIG MENU ITEM}  and don't wait
+	Verify Element Visible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	
+Create Port Group
+	[Arguments]  ${name}  ${mode}  ${leaf-group}
+	
+	Go to Port Groups Page
+	
+	Verify Page Contains Element  ${ADD PORT GROUP PLUS BUTTON}
+	Click Element  ${ADD PORT GROUP PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE PORT GROUP POPUP}
+	
+	Input Text And Verify  ${PORT GROUP NAME FIELD}  ${name}
+	
+	Select From List And Verify  
+    ... 	${PORT GROUP MODE DROPDOWN BUTTON}
+    ...		${PORT GROUP MODE LIST}  
+    ... 	${PORT GROUP MODE FIELD}
+    ... 	${mode}
+    
+    Select From List And Verify  
+    ... 	${PORT GROUP LEAF GROUP DROPDOWN BUTTON}
+    ...		${PORT GROUP LEAF GROUP LIST}  
+    ... 	${PORT GROUP LEAF GROUP FIELD}
+    ... 	${leaf-group}
+    
+    Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
+    

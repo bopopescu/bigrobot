@@ -21,6 +21,9 @@ s1:
     ip: 10.1.8.68
     protocol: telnet
     port: 6003
+  pdu:
+    ip: pdu-113-b
+    port: 12
   set_session_ssh: false
   set_init_ping: false
 
@@ -34,6 +37,9 @@ s2:
     ip: 10.1.8.68
     protocol: telnet
     port: 6004
+  pdu:
+    ip: pdu-113-b
+    port: 11
   set_session_ssh: false
   set_init_ping: false
 
@@ -47,6 +53,9 @@ s3:
     ip: 10.1.8.68
     protocol: telnet
     port: 6005
+  pdu:
+    ip: pdu-113-a
+    port: 12
   set_session_ssh: false
   set_init_ping: false
 
@@ -60,6 +69,9 @@ s4:
     ip: 10.1.8.68
     protocol: telnet
     port: 6006
+  pdu:
+    ip: pdu-113-a
+    port: 11
   set_session_ssh: false
   set_init_ping: false
 
@@ -73,6 +85,9 @@ s5:
     ip: 10.1.8.68
     protocol: telnet
     port: 6007
+  pdu:
+    ip: pdu-113-a
+    port: 10
   set_session_ssh: false
   set_init_ping: false
 
@@ -86,6 +101,9 @@ s6:
     ip: 10.1.8.68
     protocol: telnet
     port: 6008
+  pdu:
+    ip: pdu-113-a
+    port: 9
   set_session_ssh: false
   set_init_ping: false
   
@@ -99,6 +117,9 @@ s7:
     ip: 10.1.8.68
     protocol: telnet
     port: 6001
+  pdu:
+    ip: pdu-113-b
+    port: 14
   set_session_ssh: false
   set_init_ping: false
 
@@ -112,6 +133,9 @@ s8:
     ip: 10.1.8.68
     protocol: telnet
     port: 6002
+  pdu:
+    ip: pdu-113-b
+    port: 13
   set_session_ssh: false
   set_init_ping: false
 
@@ -145,7 +169,7 @@ h6:
   user: root
   password: bsn
 
-#tg1:
+tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.5
   tcl_server_ip: 10.9.19.242

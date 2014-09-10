@@ -213,10 +213,12 @@ T0.1. BSC-5430
 	Cli Run  master  switch ${name}
 	Cli Run  master  mac ${mac1}
 	Cli Run  master  show run
+	Curl Get Switch Manifest  ${mac1}
 	Verify Switch Startup Config  ${mac1}  ${name}
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${name}
 	Cli Run  master  mac ${mac2}
+	Curl Get Switch Manifest  ${mac2}
 	Verify Switch Startup Config  ${mac2}  ${name}
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${name}
@@ -242,9 +244,7 @@ T0.3. BSC-5568
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${name}
 	Cli Run  master  mac ${mac1}
-	Run Keyword and Expect error
-	...  *Error: Unable to determine IP address of specified switch name*
-	...  Cli Run and Verify Output  master
+	Cli Run and Verify Output  master
 	...  system reboot switch test ?
 	...  Shutdown Controller
 	...  flag=False
@@ -252,17 +252,15 @@ T0.3. BSC-5568
 	...  system reboot switch ?
 	...  Shutdown Controller
 	...  flag=False
-	Run Keyword and Expect Error
-	...  *Error: Unable to determine IP address of specified switch name*
-	...  Cli Run and Verify Output  master
+	Cli Run and Verify Output  master
 	...  system reboot switch test ?
-	...  Reboot indicated switches
+	...  Manage zerotouch switches
 	[Tags]  BSC-5568
 
 T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} version
 	...  Load average
@@ -299,7 +297,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} version
 	...  Load average
@@ -336,7 +334,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} version
 	...  Load average
@@ -373,7 +371,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} version
 	...  Load average
@@ -410,7 +408,7 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} version
 	...  Load average
@@ -448,7 +446,7 @@ T0.4. Show remote on Active
 T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} version
 	...  Load average
@@ -485,7 +483,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} version
 	...  Load average
@@ -522,7 +520,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} version
 	...  Load average
@@ -559,7 +557,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} version
 	...  Load average
@@ -596,7 +594,7 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} environment
-	...  Dpid
+	...  Chassis Thermal Sensor
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} version
 	...  Load average

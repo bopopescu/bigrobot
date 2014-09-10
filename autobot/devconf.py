@@ -612,6 +612,7 @@ class BsnDevConf(DevConf):
                            br_utils.end_of_output_marker()),
                            level=level)
 
+        """
         if helpers.is_bsn_controller(self.platform()):
             if re.search(r"^Timeout: exiting '\w+' mode to '\w+' mode", self.content(), re.M):
                 helpers.log("Found mode mismatch on '%s'. Possibly triggered by idle timeout."
@@ -623,6 +624,7 @@ class BsnDevConf(DevConf):
             else:
                 # helpers.log("!!!!! No mode mismatch. All is well!")
                 pass
+        """
         return self.result()
 
     def cmd(self, *args, **kwargs):
@@ -698,7 +700,7 @@ class ControllerDevConf(BsnDevConf):
         #
         # Inside autobot/node.py is where we disabled this functionality.
         #
-        is_monitor_reauth = kwargs.pop('is_monitor_reauth', True)
+        is_monitor_reauth = kwargs.pop('is_monitor_reauth', False)
         super(ControllerDevConf, self).__init__(*args, **kwargs)
 
         self.test_monitor = None

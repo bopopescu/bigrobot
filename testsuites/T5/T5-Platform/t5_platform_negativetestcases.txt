@@ -55,39 +55,40 @@ Test Configuration requests originating from standby
 Test Controller behavior during high cpu spikes
     Log     Step 1 - Test Controller behavior during high cpu spikes   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Test Simulate with large configs / issuing failover etc
     Log     Step 1 - Test Simulate with large configs / issuing failover etc   
+    Log     Step 2 - Configuration - 200 tenants, 200 segments, 4K endpoints 
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Test Continuous SNMP Walks
     Log     Step 1 - Test Continuous SNMP Walks   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Test Continuous switch connect/disconnect
     Log     Step 1 - Test Continuous switch connect/disconnect   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
-Test Continuous switch connect/disconnectTest Without removing the stdby controller add another stdby controller with the same IP
-    Log     Step 1 - Test Without removing the stdby controller add another stdby controller with the same IP   
+Test Continuous switch connect/disconnect Without removing the stdby controller add another stdby controller
+    Log     Step 1 - Test Without removing the stdby controller add another stdby controller   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Try to add more than 2 controllers in to a cluster
     Log     Step 1 - Try to add more than 2 controllers in to a cluster 
     Log     Step 2 - Verify that it should not be allowed and 3rd controller should not join cluster  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual  jira-bsc-5662
-    Manual Failed 
+    [Tags]  Manual  
+    Manual Passed 
 
 Test Active & Stdby controller configured in different time zones
     Log     Step 1 - Test Active & Stdby controller configured in different time zones 
@@ -97,7 +98,7 @@ Test Active & Stdby controller configured in different time zones
     Manual Passed 
 
 Killing active deamons (eg: keepalived, ntpd, collectd)
-    Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd)   
+    Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd, rsyslog)   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
     Manual passed 
@@ -110,7 +111,7 @@ Test continuous floodlight restarts
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
     Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
-    Log     Step 2 - Verify that the configuration get rejected with error message 
+    Log     Step 2 - Verify that the configuration get rejected with proper error message 
     [Tags]  T5  controller  negative  
     [Tags]  Manual
     Manual passed
@@ -118,20 +119,20 @@ Overlapping / Misconfiguration parameters (Same DPID/MAC with two different swit
 Changes in the switch role (leaf to spine / spine to leaf)
     Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Misconfiguration in the leaf groups 
     Log     Step 1 - Misconfiguration in the leaf groups   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
     
 Misconfiguration in the port-groups. Configuring disconnected/mismatch links
     Log     Step 1 - Misconfiguration in the port-groups. Configuring disconnected/mismatch links   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Connect server ports to leaves in 2 different racks
     Log     Step 1 - Connect server ports to leaves in 2 different racks   
@@ -146,7 +147,6 @@ Connect server port to leaf in same rack with different port group configuration
     [Tags]  Manual
     Manual passed
     
-
 # Switch Platform Negative Test Cases 
 
 Adding/deleting Controller IP address
@@ -169,11 +169,12 @@ Add spine to spine direct links
     [Tags]  Manual
     Manual passed
 
-Add external stp loop
-    Log     Step 1 - Add external stp loop   
+Try to create external stp loop sending STP bpdu 
+    Log     Step 1 - Try to create external stp loop- Bpdu guard is by default enabled and it brings port down 
+    Log     Step 2 - Verify that STP Bpdu brings the port down and user need to do shut/noshut of interface to bring back port 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested		
+    [Tags]  Manual
+    Manual passed	
     
 Different flavor of traffic types (invalid headers, CRC, malformed, Invalid protocols)
     Log     Step 1 - Different flavor of traffic types (invalid headers, CRC, malformed)   

@@ -143,20 +143,13 @@ T17 Deleting lines
 	${diff}=  Create List
 	...  user test-user123
 	...  hashed-password
-	...  associate user test-user123
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
 T18 Deleting lines
-	${command}=  Set Variable  group test-group123
-	${diff}=  Create List
-	...  group test-group123
-	...  associate user remote1
-	...  associate user test-user123
-	Delete single running config line and verify
-	...  ${command}
-	...  ${diff}
+	[Tags]  skipped
+	# Not Applicable any more
 
 T19 Deleting lines
 	${command}=  Set Variable  virtual-ip
