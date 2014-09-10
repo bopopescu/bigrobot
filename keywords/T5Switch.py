@@ -11,7 +11,7 @@ class  T5Switch(object):
     def __init__(self):
         pass
         
-    def rest_get_switch_environment_fan_from_controller (self, switch, dpid, model="none", element="Fan", element_number=1, component="none"):
+    def rest_get_switch_environment_fan_from_controller (self, switch, dpid, model=None, element="Fan", element_number=1, component=None):
             
             ''' Function to get rest output from controller the show environment output for switch
             This will parse the fan output from the show environment 
@@ -43,9 +43,7 @@ class  T5Switch(object):
                     fan_dict = {}
                     for i in range(element_index, maxlen):
                         tmp_string = data1[i].lstrip()
-                        #helpers.log("The tmp_string  is %s" % tmp_string)
                         element_array = tmp_string.split()
-                        #helpers.log("The elemet_array  is %s" % element_array)
                         if ("State:" in element_array):
                             fan_dict['State'] = str(element_array[1])
                         elif ("Status:" in element_array):
@@ -54,13 +52,11 @@ class  T5Switch(object):
                             fan_dict['RPM'] = element_array[1]
                         elif ("Speed:" in element_array):
                             tmpstring= str(element_array[1]).split("%")
-                            #helpers.log("The tmpstring for Speed is %s" % tmpstring)
                             fan_dict['Speed'] = str(tmpstring[0])
                         elif ("Airflow:" in element_array):
                             fan_dict['Airflow'] = str(element_array[1])
                             
                 helpers.log("The dictionary value is %s" % fan_dict)
-                #helpers.log("The component require is %s" % component)
                 componentVal =  fan_dict.get(component)
                 helpers.log("Got the value %s for the component %s" % (componentVal, component) )
                 if (component == 'State') and (componentVal == 'Present'):
@@ -77,7 +73,7 @@ class  T5Switch(object):
                 return  False
             
  
-    def rest_get_switch_version_from_controller(self, switch, component="none"):
+    def rest_get_switch_version_from_controller(self, switch, component=None):
         '''
             Objective:
             - get the switch output from the controller.
@@ -86,11 +82,10 @@ class  T5Switch(object):
             | node | switch name  |
     
             Return Value:
-            - Return the value of the field [Model, version, image ] 
+            - Return the value of the field [Model] 
         
         '''
         t = test.Test()
-        #switch = t.switch(switch)
         switch_alias = t.switch(switch)
         helpers.log("The switch alias is %s"  % switch)
         c = t.controller('master')
@@ -109,16 +104,11 @@ class  T5Switch(object):
             helpers.log("The t3 output is %s" % (t3))
             if ("Model: AS5710" in t3):
                 helpers.log("The value of model is found as Leaf AS5710")
-                return True
-            #t4 = data[0]["response"]["Model"]
-            #helpers.log("The t4 output is %s" % (t4))
-            #t5 = data[0]["response"]["System Information"]
-            #helpers.log("The t5 output is %s" % (t5))
-            
+                return True            
             if component is None:
                 helpers.log("component is None.")
                 return True
-            elif component is "model":
+            elif component == "model":
                 helpers.log("getting the switch Model from output")
                 model = data[0]["response"][0]["Model"]
                 helpers.log("Model is found as %s" % model )
@@ -127,7 +117,7 @@ class  T5Switch(object):
             helpers.log("Could not get the rest output.see log for errors\n")
             return False
  
-    def rest_get_switch_environment_psu_from_controller (self, switch, dpid, model="none", element="PSU", element_number=1, component="none"):
+    def rest_get_switch_environment_psu_from_controller (self, switch, dpid, model="none", element="PSU", element_number=1, component=None):
             
             ''' Function to get rest output from controller the show environment output for switch
             This will parse the PSU output from the show environment 
@@ -185,7 +175,6 @@ class  T5Switch(object):
                         
                             
                 helpers.log("The dictionary value is %s" % psu_dict)
-                #helpers.log("The component require is %s" % component)
                 componentVal =  psu_dict.get(component)
                 helpers.log("Got the value %s for the component %s" % (componentVal, component) )
                 if (component == 'State') and (componentVal == 'Present'):
@@ -370,7 +359,7 @@ class  T5Switch(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
     
-    def cli_t5_switch_show_environment_psu(self, switch, model="none", element="PSU2", element_number=1, component="none"):
+    def cli_t5_switch_show_environment_psu(self, switch, model=None, element="PSU2", element_number=1, component=None):
         ''' Function to return the show environment output
             input - switch , model 
             output - environment output for PSU 
@@ -401,9 +390,7 @@ class  T5Switch(object):
                 psu_dict = {}
                 for i in range(0, len(content2)):                    
                     tmp_string= content2[i].lstrip()
-                    #helpers.log("The current string is %s" % tmp_string)
                     element_array= tmp_string.split()
-                    #helpers.log("The element array is %s" % element_array)
                     if ('State:' in element_array):
                         psu_dict['State'] = element_array[1]
                     elif ('Status:' in element_array):
@@ -428,12 +415,8 @@ class  T5Switch(object):
                 helpers.log("The dictionary value is %s" % psu_dict)
                 
                 helpers.log("The component require is %s" % component)
-                #helpers.log("The dict has following items %s" % psu_dict.items())
-                #helpers.log("The dict has following keys %s" % psu_dict.keys())
-                #helpers.log("The dict has following keys %s" % (psu_dict.get('Vin')))
                 componentVal =  psu_dict.get(component)
-                helpers.log("Got the value %s for the component %s" % (componentVal, component) )
-                
+                helpers.log("Got the value %s for the component %s" % (componentVal, component) )                
                 return componentVal 
                                         
             else:
@@ -443,7 +426,7 @@ class  T5Switch(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False       
     
-    def cli_t5_switch_show_environment_fan(self, switch, model="none", element="Fan", element_number=1, component="none"):  
+    def cli_t5_switch_show_environment_fan(self, switch, model=None, element="Fan", element_number=1, component=None):  
         ''' Function to return the show environment output 
             This will parse the fan output from the show environment 
             input - switch , element, element_number, component 
@@ -455,8 +438,7 @@ class  T5Switch(object):
         try:
             cli_input1= "show environment"
             s1.enable(cli_input1)
-            content1= string.split(s1.cli_content(), '\n')
-            #helpers.log("value of content1 is %s"  %  (content1))   
+            content1= string.split(s1.cli_content(), '\n') 
             
             if ("Fan" in element):
                 element_name= str(" Fan ") + element_number + str('\r')
@@ -470,9 +452,7 @@ class  T5Switch(object):
                 fan_dict= {}
                 for i in range(element_index, maxlen):
                     tmp_string= content1[i].lstrip()
-                    #helpers.log("The current string is %s" % tmp_string)
                     element_array= tmp_string.split()
-                    #helpers.log("The element array is %s" % element_array)
                     if ("State:" in element_array):
                         fan_dict['State'] = str(element_array[1])
                     elif ("Status:" in element_array):
@@ -481,7 +461,6 @@ class  T5Switch(object):
                         fan_dict['RPM'] = element_array[1]
                     elif ("Speed:" in element_array):
                         tmpstring= str(element_array[1]).split("%")
-                        #helpers.log("The tmpstring for Speed is %s" % tmpstring)
                         fan_dict['Speed'] = str(tmpstring[0])
                     elif ("Airflow:" in element_array):
                         fan_dict['Airflow'] = str(element_array[1])    
@@ -508,7 +487,7 @@ class  T5Switch(object):
             return False
         
         
-    def cli_t5_switch_show_environment_thermal(self, switch, model="none", element="thermal", element_number=1,component="none"):  
+    def cli_t5_switch_show_environment_thermal(self, switch, model="none", element="thermal", element_number=1,component=None):  
         ''' Function to return the show environment output 
             This will parse the Thermal temperature output from the show environment 
             input - switch , element, element_number 
@@ -521,7 +500,7 @@ class  T5Switch(object):
             cli_input1= "show environment"
             s1.enable(cli_input1)
             content1= string.split(s1.cli_content(), '\n')
-            #helpers.log("value of content1 is %s"  %  (content1)) 
+
             
             if ("thermal" in element):
                 element_name= str(" Thermal ") + element_number + str("\r")
@@ -532,17 +511,12 @@ class  T5Switch(object):
                 thermal_dict= {}
                 for i in range(element_index, maxlen):
                     tmp_string= content1[i].lstrip()
-                    #helpers.log("The current string is %s" % tmp_string)
                     element_array= tmp_string.split()
-                    #helpers.log("The element array is %s" % element_array)
                     if ("Description:" in element_array):
                         thermal_dict['Description'] = str(element_array[1])
                     elif ("Status:" in element_array):
                         thermal_dict['Status'] = str(element_array[1])
                     elif ("Temperature:" in element_array):
-                        #helpers.log("The temperature string is %s" % tmp_string)
-                        #element_array= tmp_string.split()
-                        #helpers.log("The current temp info is %s" % element_array)
                         thermal_dict['Temperature'] = str(element_array[1])
                 
                 helpers.log("The dictionary value is %s" % thermal_dict)
@@ -584,9 +558,6 @@ class  T5Switch(object):
             user = "admin"
             password = "adminadmin"
             tn = t.dev_console(node)
-            #console_ip = t.params(node, "console_ip")
-            #console_port = t.params(node, "console_port")
-            #tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -626,17 +597,12 @@ class  T5Switch(object):
             user = "admin"
             password = "adminadmin"
             tn = t.dev_console(node)
-            #console_ip = t.params(node, "console_ip")
-            #console_port = t.params(node, "console_port")
-            #tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
             tn.write(password + "\r\n")
             tn.read_until('')
             tn.write("\r\n" + "no interface ma1 ip-address dhcp \r\n")
-#            tn.write("\r\n" + "no interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
-#            tn.write("\r\n" + "no ip default-gateway " + str(gateway) + " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.close()
@@ -659,20 +625,6 @@ class  T5Switch(object):
         '''
         t = test.Test()
         tn = t.dev_console(node)
-        #console_ip = t.params(node, "console_ip")
-        #console_port = t.params(node, "console_port")
-        #tn = telnetlib.Telnet(console_ip, console_port)
-        #tn.set_debuglevel(10)
-        #tn.read_until("login:", 10)
-        #tn.write(str(user).encode('ascii') + "\r\n".encode('ascii'))
-        #tn.read_until("Password: ", 10)
-        #tn.write(str(current_password).encode('ascii') + "\r\n".encode('ascii'))
-        #tn.read_until('')
-        #tn.write("show version \r\n".encode('ascii'))
-        #helpers.sleep(4)
-        #output = tn.read_very_eager()
-        #helpers.log(output)
-        #tn.write("logout" + "\r\n".encode('ascii'))
         tn.close()
         if version_string in  output:
             return True
@@ -697,11 +649,7 @@ class  T5Switch(object):
         try:
             t = test.Test()
             tn = t.dev_console(node)
-            #helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
-            #helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
-            #tn = telnetlib.Telnet(console_ip, console_port)
             helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
-            #tn.set_debuglevel(10)
             tn.read_until("login:", 10)
             tn.write(str(user) + "\r\n")
             tn.read_until("Password: ", 10)
