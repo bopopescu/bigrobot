@@ -5285,6 +5285,7 @@ class T5Platform(object):
                     return utilities.fabric_integrity_checker(obj, "after", "single", "Yes")
                 else:
                     helpers.log("Error verifying diff between two running config files. Looks like something is off")
+                    return False
             else:
                 helpers.log("Error during Copying running config to autoConfig2.txt")
                 return False
