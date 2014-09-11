@@ -40,7 +40,7 @@ ${s1s3_core_intf_2}                 ethernet50
 ${s1s4_core_intf_1}                 ethernet52
 
 ${s1s3_portchannel_number}          1
-${s1s3_portchannel_rannge}          49-50
+${s1s3_portchannel_range}           49-50
 
 
 
@@ -64,7 +64,7 @@ ${switch3_postservice_intf_1}       ethernet48
 ${switch3_postservice_alias_1}      app-rly2-1-post
 ${switch3_service_name}             service-app-rly2-1
 ${s3s1_portchannel_number}          1
-${s3s1_portchannel_rannge}          13-4
+${s3s1_portchannel_range}           13-14
 ## Switch 4
 ${switch4_alias}                    app-rs4810-1        
 ${switch4_filter_intf_1}            ethernet1           #S4F1
@@ -77,9 +77,9 @@ ${switch4_postservice_intf_1}       ethernet48
 ${switch4_postservice_alias_1}      app-rs4810-1-post
 ${switch4_service_name}             service-app-rs4810-1
 ${s4s5_portchannel_number}          1
-${s4s5_portchannel_rannge}          7-8
+${s4s5_portchannel_range}           7-8
 ${s4s6_portchannel_number}          2
-${s4s6_portchannel_rannge}          9-10
+${s4s6_portchannel_range}           9-10
 
 ## Switch 5
 ${switch5_alias}                    app-rlb9-4          
@@ -88,7 +88,7 @@ ${switch5_filter_alias_1}           ixia-4-9            #S5F1
 ${switch5_delivery_intf_1}          ethernet2           #S5D1
 ${switch5_delivery_alias_1}         ixia-4-10           #S5D1
 ${s5s4_portchannel_number}          1
-${s5s4_portchannel_rannge}          51-52
+${s5s4_portchannel_range}           51-52
 ## Switch 6
 ${switch6_alias}                    app-rlb9-1
 ${switch6_filter_intf_1}            ethernet1           #S6F1
@@ -96,7 +96,7 @@ ${switch6_filter_alias_1}           ixia-2-3            #S6F1
 ${switch6_delivery_intf_1}          ethernet2           #S6D1
 ${switch6_delivery_alias_1}         ixia-2-4            #S6D1
 ${s6s4_portchannel_number}          2
-${s6s4_portchannel_rannge}          49-50
+${s6s4_portchannel_range}           49-50
 
 ${policy_name_1}                    P1
 ${policy_name_2}                    ZP1
@@ -1005,7 +1005,6 @@ TC039: With overlapping policy configuration (S1F1, S6D1, S5D1). Convert inter-s
     stop traffic
     verify results  a  j  transmitted_frames  received_valid_frames     
     verify results  a  l  transmitted_frames  received_valid_frames 
-    test teardown in tc26-45
     sleep  5    
     ${s4s5_lag}=  cli delete portchannel  s4  ${s4s5_portchannel_number}
     Should be true  ${s4s6_lag}
@@ -1029,6 +1028,7 @@ TC039: With overlapping policy configuration (S1F1, S6D1, S5D1). Convert inter-s
     stop traffic
     verify results  a  j  transmitted_frames  received_valid_frames     
     verify results  a  l  transmitted_frames  received_valid_frames                  
+    test teardown in tc26-45
     [Tags]  multiple-switch  ha  runthis
 #### Run next 3 testcases together -- End            
         
