@@ -3811,3 +3811,20 @@ class BigTap(object):
             c.rest.get(url)
             content = c.rest.content()
             return content[0]['stats']['interface'][0][str(stat_info)]
+
+    def rest_return_info_of_core_interface_carrying_flow(self, switch_dpid, policy_name, interface_direction=None, stat_info='interface'):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/core-interface' % str(policy_name)
+            c.rest.get(url)
+            content = c.rest.content()
+            for i in range(0, len(content)):
+                if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction):
+                    return content[i][str(stat_info)]
+            return False
