@@ -1208,8 +1208,10 @@ class Test(object):
 
         n.sudo('touch %s' % bigrobot_file)
 
-        # Disable Bash Command Line Editing (default is Emacs mode)
-        n.bash('echo "set +o emacs" >> ~/.bashrc')
+        # Disable Bash Command Line Editing (default is Emacs mode). But this
+        # will affect all future sessions (including interactive sessions)
+        # to the box, not just for BigRobot sessions. So disable for now.
+        # n.bash('echo "set +o emacs" >> ~/.bashrc')
         # n.bash('echo "if [ -f ~/.bashrc ]; then source ~/.bashrc; fi" > ~/.bash_profile')
 
         self.node_reconnect(name)
