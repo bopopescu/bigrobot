@@ -4641,10 +4641,10 @@ class T5Platform(object):
                     prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
                     # skip due to PR BSC-6137
-                    if re.match(r'.*member port-group.*', string):
-                        helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
-                        num = num - 1
-                        continue
+                    #if re.match(r'.*member port-group.*', string):
+                    #    helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
+                    #    num = num - 1
+                    #    continue
 
                     # Compare prompts.
                     if prompt1 != prompt2:
