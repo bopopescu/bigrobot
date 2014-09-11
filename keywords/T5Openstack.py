@@ -1127,3 +1127,28 @@ S
 			i = i + 1
 			h = 1
 		return True
+	
+	def openstack_compute_node_portgroup(self, instanceName, netName):
+		'''Function to extract the port group and its members which VM instance belongs
+		Input: openstack network name and Instance name
+		Output: list of port group members
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
+		c.rest.get(url)
+		data = c.rest.content()
+		portgroup_members = {}
+		port_group_name = str(data[0]["port-group"])
+		url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (port_group_name)
+		c.rest.get(url1)
+		data1 = c.rest.content()
+		for i in len(data1[0]["interface"][0]):
+			k, v = data1[0]["interface"][0][i]["switch-name"], data1[0]["interface"][0][i]["interface-name"]
+			portgroup_members[k] = v 
+		return portgroup_members
+				
+		
+		
+		
