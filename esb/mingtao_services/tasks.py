@@ -23,8 +23,8 @@ class UpgradeCommands(object):
             helpers.log("Task: cli_copy_upgrade_pkg")
             test.Test()             
             t5 = T5Platform()
-            t5.copy_pkg_from_server(**kwargs)        
-            return True
+            result= t5.copy_pkg_from_server(**kwargs)        
+            return result
         return task_execute(params, run)
     
     @app.task(filter=task_method)    
@@ -32,8 +32,8 @@ class UpgradeCommands(object):
         def run():
             test.Test()             
             t5 = T5Platform()
-            t5.cli_upgrade_stage(**kwargs)
-            return True  
+            result= t5.cli_upgrade_stage(**kwargs)
+            return result 
         return task_execute(params, run)
       
     @app.task(filter=task_method)    
@@ -41,7 +41,7 @@ class UpgradeCommands(object):
         def run():
             test.Test()             
             t5 = T5Platform()
-            t5.cli_upgrade_launch_HA(**kwargs)
-            return True        
+            result= t5.cli_upgrade_launch_HA(**kwargs)
+            return result        
         return task_execute(params, run)
     

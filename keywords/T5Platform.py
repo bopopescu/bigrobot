@@ -1820,6 +1820,60 @@ class T5Platform(object):
 
         return image
 
+    def copy_pkg_from_file(self, src, node='master', soft_error=False):
+        '''
+          copy the a upgrade package from controller file
+          Author: Mingtao
+          input:  node  - controller to copy the image,
+                          master, slave, c1 c2
+          usage:
+              copy_pkg_from_file  file/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
+              soft_error:  True, handle negative case
+          output: image build
+
+        '''
+        t = test.Test()
+        c = t.controller(node)
+
+        c.config('')
+        string = 'copy ' + src + ' image://'
+        c.send(string)
+ 
+        try:
+            c.expect(timeout=180)
+        except:
+            helpers.log('USER ERROR: copy image failed')
+            return False
+        else:
+ 
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("USR INFO:   list   is :\n%s" % temp)
+            line = temp[-1]
+            helpers.log("USR INFO:  line is :\n%s" % line)
+            if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
+                helpers.log("Error: %s" % line)
+                if soft_error:
+                    return ("Error: %s" % line)
+                else:
+                    helpers.test_failure("Error: %s" % line)
+            elif re.match(r'Image added:.* build: (\d+)', line):
+                helpers.log("image added")
+                match = re.match(r'Image added:.* build: (\d+)', line)
+                helpers.log("USR INFO: image is: %s" % match.group(1))
+                image = match.group(1)
+            elif  re.match(r'.*already exists.*', line):
+                helpers.log("image already exists")
+                match = re.match(r'.* (\d+):.* already exists.*', line)
+                helpers.log("USR INFO: image is : %s" % match.group(1))
+                image = match.group(1)
+
+            else:
+                (num, images) = self.cli_check_image(node)
+                image = max(images)
+
+        return image
 
     def cli_check_image(self, node='master', soft_error=False):
         '''
@@ -5080,12 +5134,13 @@ class T5Platform(object):
             else:
                 content = c.cli_content()
                 helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
-
                 if options[0] == 1:
-                    helpers.log("ERROR: upgrade ABORTED" )                    
+                    helpers.log("ERROR: upgrade ABORTED" )  
+                    c.expect(timeout=900)                  
                     return False
-                elif options[0] == 2 or options[0] == 3:
-                    helpers.log("ERROR: upgrade FAILED" )                    
+                elif options[0] == 2:
+                    helpers.log("ERROR: upgrade FAILED" )
+                                        
                     return False
                    
                 return True
@@ -5109,7 +5164,8 @@ class T5Platform(object):
                 helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
 
                 if options[0] == 1:
-                    helpers.log("ERROR: upgrade ABORTED" )                    
+                    helpers.log("ERROR: upgrade ABORTED" ) 
+                    c.expect(timeout=900)                                         
                     return False
                 elif options[0] == 2 :
                     helpers.log("ERROR: upgrade FAILED" )  
