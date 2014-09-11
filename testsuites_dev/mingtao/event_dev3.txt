@@ -288,10 +288,13 @@ T5 longevity suite teardown
 T5 base test setup 
    base test setup
  
-T5 base test teardown  
-    base test teardown   
-    Run Keyword If Test Failed    check controller top   c1
+T5 base test teardown 
+    Run Keyword If Test Failed    generate_support
     Run Keyword If Test Failed    check controller top   c2
+    Run Keyword If Test Failed    check controller top   c1 
+    base test teardown  
+     
+    
  
  
  
