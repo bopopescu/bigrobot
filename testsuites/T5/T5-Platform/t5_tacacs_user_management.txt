@@ -1,7 +1,7 @@
 *Settings
 Documentation  T5 Tacacs Test Suite Release:Iron Horse
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
+Suite Setup  tacacs suite setup
+Suite Teardown   tacacs suite teardown
 Test Setup   tacacs test setup
 Test Teardown   tacacs test teardown
 Force Tags   IronHorse  T5  Platform
@@ -149,3 +149,11 @@ tacacs test teardown
     Should be true  ${result}
     ${result}=  rest delete tacacs authentication      
     Should be true  ${result}
+
+Tacacs Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  snapshot://startup-config
+
+Tacacs Suite Teardown
+	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Base Suite Teardown
