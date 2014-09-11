@@ -338,5 +338,3 @@ T5.4.12. Disconnect, delete, double failover, reboot
 	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
 
-T44 Reinstall Switchlight
-	Telnet Reinstall Switchlight  s5

@@ -235,6 +235,3 @@ T5.6.12. Connected, delete, double failover, reboot
 	Telnet Verify ZTN Discovery Failed  s3
 	Telnet Verify ZTN Discovery Failed  s4
 	Telnet Verify ZTN Discovery Failed  s5
-
-T5.6.13. Test
-	Telnet Wait For Switch to Reload  s1

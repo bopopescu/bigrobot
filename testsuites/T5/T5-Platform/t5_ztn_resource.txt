@@ -8,7 +8,7 @@
 *** Keywords ***
 Suite Setup
 	Base Suite Setup
-	#Run Keyword and Ignore Error  Power Cycle All Switches
+	Run Keyword and Ignore Error  Power Cycle All Switches
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	${tmp}  params  node=s1  key=mac
@@ -43,7 +43,7 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
-#	Sleep  150
+	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
 	#Reboot Switches From CLI
@@ -63,9 +63,9 @@ Suite Setup
 	set suite variable  ${s5_ip}  ${tmp}
 
 Suite Teardown
-	#Sleep  30
+	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
-	#Run Keyword and Ignore Error  Failover
+	Run Keyword and Ignore Error  Failover
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Test Setup
@@ -82,7 +82,6 @@ Test Setup
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
 
 Test Teardown
-	#Run Keyword and Ignore Error  Power Up All Switches
 	Run Keyword and Ignore Error  Sleep  15
 	Run Keyword and Ignore Error  Cli  c1  ''
 	Run Keyword and Ignore Error  Cli  c2  ''
@@ -90,7 +89,7 @@ Test Teardown
 	Run Keyword and Ignore Error  Cli  c2  reauth admin adminadmin
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
-	#Run Keyword and Ignore Error  Sleep  30
+	Run Keyword and Ignore Error  Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -286,7 +285,6 @@ Verify Switch Installer Version
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
-	Sleep  10
 #	Should Be True  ${status}
 
 
