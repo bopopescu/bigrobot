@@ -1363,13 +1363,13 @@ TC053: Configure overlapping policy with filter interfaces S2F1, S2F2, S5F1, S5F
     clear stats
     cli     node=master    cmd=clear bigtap statisticss    
     start traffic
-    Sleep  5
+    Sleep  10
     ${report}=  fetch port stats
     ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
     ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
-    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000  500
     Should be true  ${in_range_1}    
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000  500
     Should be true  ${in_range_2}    
     Sleep  10
     stop traffic
@@ -1415,9 +1415,9 @@ TC055: With configuration in TC053, flap all filter interface. Verify policies g
     cli disable interface  s6  ${switch6_delivery_intf_1}
     sleep  10    
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
-    Should be true  ${verify_policy1}
+    Should not be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
-    Should be true  ${verify_policy2}
+    Should not be true  ${verify_policy2}
     ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
     Should not be true  ${verify_policy12}
     cli enable interface  s2  ${switch2_filter_intf_1}
@@ -1435,7 +1435,7 @@ TC055: With configuration in TC053, flap all filter interface. Verify policies g
     Should be true  ${verify_policy12}
     [Tags]  multiple-switch  ha  flap-filter  group6    
 
-TC055: With configuration in TC053, flap delivery interface S1D1. Verify policies get re-installed
+TC056: With configuration in TC053, flap delivery interface S1D1. Verify policies get re-installed
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
@@ -1461,7 +1461,7 @@ TC055: With configuration in TC053, flap delivery interface S1D1. Verify policie
     [Tags]  multiple-switch  ha  flap-delivery  group6
 
 
-TC056: With configuration in TC053, flap delivery interface S1D2. Verify policies get re-installed
+TC057: With configuration in TC053, flap delivery interface S1D2. Verify policies get re-installed
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
@@ -1486,7 +1486,7 @@ TC056: With configuration in TC053, flap delivery interface S1D2. Verify policie
     Should be true  ${verify_policy12}
     [Tags]  multiple-switch  ha  flap-delivery  group6
 
-TC057: With configuration in TC053, flap all delivery interfaces. Verify policies get re-installed
+TC058: With configuration in TC053, flap all delivery interfaces. Verify policies get re-installed
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
@@ -1513,7 +1513,7 @@ TC057: With configuration in TC053, flap all delivery interfaces. Verify policie
     Should be true  ${verify_policy12}
     [Tags]  multiple-switch  ha  flap-delivery  group6 
 
-TC058: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
+TC059: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
@@ -1553,9 +1553,9 @@ TC058: With configuration in TC053, disconnect switch S3 from fabric. Verify pol
     ${report}=  fetch port stats
     ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
     ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
-    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000  500
     Should be true  ${in_range_1}    
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000  500
     Should be true  ${in_range_2}    
     Sleep  10
     stop traffic
@@ -1574,15 +1574,15 @@ TC058: With configuration in TC053, disconnect switch S3 from fabric. Verify pol
     ${report}=  fetch port stats
     ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
     ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
-    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000  500
     Should be true  ${in_range_1}    
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000  500
     Should be true  ${in_range_2}    
     Sleep  10
     stop traffic
     [Tags]  multiple-switch  ha  flap-switch  group6
 
-TC059: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
+TC060: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
@@ -1622,9 +1622,9 @@ TC059: With configuration in TC053, disconnect switch S3 from fabric. Verify pol
     ${report}=  fetch port stats
     ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
     ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
-    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000  500
     Should be true  ${in_range_1}    
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000  500
     Should be true  ${in_range_2}    
     Sleep  10
     stop traffic
@@ -1643,15 +1643,15 @@ TC059: With configuration in TC053, disconnect switch S3 from fabric. Verify pol
     ${report}=  fetch port stats
     ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
     ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
-    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000  500
     Should be true  ${in_range_1}    
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000  500
     Should be true  ${in_range_2}    
     Sleep  10
     stop traffic
     [Tags]  multiple-switch  ha  flap-delivery  group6
 
-TC060: With configuration in TC053, Flap policy action from forward to inactive and back to forward and verify overlapping policy is re-installed.
+TC061: With configuration in TC053, Flap policy action from forward to inactive and back to forward and verify overlapping policy is re-installed.
     ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  inactive
     Should be true  ${config_state}
     ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  inactive
@@ -1672,7 +1672,7 @@ TC060: With configuration in TC053, Flap policy action from forward to inactive 
     Should be true  ${verify_policy12}
     [Tags]  multiple-switch  ha  flap-action  group6 
             
-TC061: With configuration in TC053, Flap policy action from forward to rate-measure and back to forward and verify overlapping policy is re-installed.
+TC062: With configuration in TC053, Flap policy action from forward to rate-measure and back to forward and verify overlapping policy is re-installed.
     ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  rate-measure
     Should be true  ${config_state}
     ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
