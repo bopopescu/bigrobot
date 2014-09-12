@@ -2012,7 +2012,7 @@ class T5(object):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Tx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")

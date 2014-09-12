@@ -1660,7 +1660,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         if switch is None:
             url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table' 
         else:
-            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-table' % switch
+            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % switch
         c.rest.get(url)
         data = c.rest.content()
 #        result = helpers.from_json(data)

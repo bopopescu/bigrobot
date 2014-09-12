@@ -109,10 +109,6 @@ Controller HA failover via reboot of master
     Controller HA failover via reboot of master
     [Tags]          feature         HA
 
-Verify L3 traffic honor more specific routes with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp        
-
 Move ecmp endpoint to another attachment point and verify L3 forwarding
     manual passed
     [Tags]          manual          feature         ecmp        
@@ -134,7 +130,7 @@ L3 inter tenant forwarding to external router
     [Tags]          manual          feature         
 
 L3 inter tenant forwarding to VRRP routers
-    manual untested
+    manual passed
     [Tags]          manual          feature        
 
 L3 inter tenant traceroute with icmp and udp probe
@@ -156,18 +152,6 @@ L3 inter tenant traffic with jumbo frame
 L3 inter tenant with CRC errors
     L3 inter tenant with CRC errors
     [Tags]          feature         runfailed
-
-Verify route next hop IP must be in the same tenant
-    manual passed
-    [Tags]          manual          feature         
-
-Verify ECMP next hop IP must be in the same tenant
-    manual passed
-    [Tags]          manual                  feature         ecmp            
-
-L3 inter tenant forwarding with ecmp destination
-    manual passed
-    [Tags]          manual                  feature         ecmp            
 
 L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
     L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
@@ -205,14 +189,7 @@ Active Controller reboot with dhcp-relay
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
     [Tags]          feature             runfailed    testpath
-
-Restart ofad on leaf switch with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp    
-
-Restart ofad on spine with ecmp group
-    manual passed
-    [Tags]          manual          feature         ecmp    
+ 
 
 Restart ofad on leaf with dhcp-relay
     Restart ofad on leaf with dhcp-relay
@@ -222,13 +199,6 @@ Restart ofad on spine with dhcp-relay
     Restart ofad on spine with dhcp-relay
     [Tags]          feature         dhcp-relay          runfailed
     
-Flap member link in a port-group in ecmp group
-    manual passed
-    [Tags]          manual          solution            ecmp    
-    
-Flap port group in ecmp group
-    manual passed
-    [Tags]          manual          solution            ecmp
 
 inter tenant ecmp forwarding in headless mode
     manual passed
