@@ -114,8 +114,8 @@ Measure Openstack Scaling limit (Topology: Single Nova controller)
 	manual passed
 
 Performance(between 2 VM using iperf)
-	[Tags]  performance  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  performance  openstack  IronHorse  manual
+	manual passed
 
 
 Upgrade Iron Horse Image to a Iron Horse Official Release image.
