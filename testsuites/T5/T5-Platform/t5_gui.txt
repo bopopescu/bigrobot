@@ -184,17 +184,17 @@ T2.3. Sorting in tables
 	Manual Passed
 	[Tags]  manual
 T2.4. Choosing columns in table - persists after refresh (saved in cookie)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.5. Toggling through subtables with arrows/links
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.6. Expanding/collapsing rows in tables
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.7. Links in the footer of a page
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 #Main landing page:
 T3.1. Refresh each single pane
