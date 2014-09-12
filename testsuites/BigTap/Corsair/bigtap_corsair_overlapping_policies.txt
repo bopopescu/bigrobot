@@ -437,9 +437,9 @@ TC014: Configure overlapping policy with S1F1, S3D1 and S4D1. Shutdown the core 
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  h  transmitted_frames  received_valid_frames        
     test teardown in tc1-15
-    reconnect switch from fabric  s2
-    reconnect switch from fabric  s5
-    reconnect switch from fabric  s6
+    reconnect switch to fabric  s2
+    reconnect switch to fabric  s5
+    reconnect switch to fabric  s6
     sleep  5         
     [Tags]  flap-core  multiple-switch  ha 
 
@@ -528,7 +528,7 @@ TC019: Configure overlapping policy with S1F1, S3D1 and S5D1. Disconnect core-sw
     stop traffic
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  j  transmitted_frames  received_valid_frames 
-    reconnect switch from fabric  s4               
+    reconnect switch to fabric  s4               
     test teardown in tc15-25
     [Tags]  multiple-switch  ha  
     
@@ -566,7 +566,7 @@ TC020: Configure overlapping policy with S1F1, S3D1 and S5D1. Shutdown interface
     stop traffic
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  j  transmitted_frames  received_valid_frames 
-    [Tags]  multiple-switch  ha  group1
+    [Tags]  multiple-switch  ha  group1  runthis
 
 TC021: With config from TC20, shutdown one of the core interfaces between S1 and S3 verify no traffic drop, and no policy flap.
     ${stream1}=  L3 add  flow=a->f  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
@@ -588,7 +588,7 @@ TC021: With config from TC20, shutdown one of the core interfaces between S1 and
     stop traffic
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  j  transmitted_frames  received_valid_frames     
-    [Tags]  multiple-switch  ha  group1
+    [Tags]  multiple-switch  ha  group1  runthis
 
 TC022: With config from TC20, re-enable the shut interface between S3 and S5 verify no traffic drop, and no policy flap.
     ${stream1}=  L3 add  flow=a->f  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
@@ -598,8 +598,8 @@ TC022: With config from TC20, re-enable the shut interface between S3 and S5 ver
     cli     node=master    cmd=clear bigtap statistics
     sleep  10    
     start traffic
-    Run Keyword if   ${shutdown_core_switch} == 's3'  cli enable interface  s3  ${shutdown_core_interface}
-    Run Keyword if   ${shutdown_core_switch} == 's4'  cli enable interface  s4  ${shutdown_core_interface}
+    Run Keyword if   ${shutdown_core_switch} == 's3'  cli enable interface  s4  ${shutdown_core_interface}
+    Run Keyword if   ${shutdown_core_switch} == 's4'  cli enable interface  s3  ${shutdown_core_interface}
     Sleep  10
     verify policies in tc1-45
     verify results  a  f  transmitted_frame_rate  received_valid_frame_rate     
@@ -608,7 +608,7 @@ TC022: With config from TC20, re-enable the shut interface between S3 and S5 ver
     stop traffic
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  j  transmitted_frames  received_valid_frames     
-    [Tags]  multiple-switch  ha  group1
+    [Tags]  multiple-switch  ha  group1  runthis
 
 TC023: With config from TC22, re-enable the shut interface between S1 and S3 verify no traffic drop, and no policy flap
     ${stream1}=  L3 add  flow=a->f  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
@@ -628,7 +628,7 @@ TC023: With config from TC22, re-enable the shut interface between S1 and S3 ver
     verify results  a  f  transmitted_frames  received_valid_frames     
     verify results  a  j  transmitted_frames  received_valid_frames
     test teardown in tc15-25         
-    [Tags]  multiple-switch  ha  group1
+    [Tags]  multiple-switch  ha  group1  runthis
 
 ### Run next 4 testcases together -- End
 
@@ -651,7 +651,7 @@ TC024:Configure overlapping policy with S1F1, S3D1 and S5D1. Flap policy action 
     sleep  10    
     verify policies in tc1-45    
     test teardown in tc15-25
-    [Tags]  flap-action  multiple-switch  ha
+    [Tags]  flap-action  multiple-switch  ha  runthis
 
 
 TC025:Configure overlapping policy with S1F1, S3D1 and S5D1. Flap policy action from forward to rate-measure and back to forward and verify overlapping policy is re-installed.
@@ -673,7 +673,7 @@ TC025:Configure overlapping policy with S1F1, S3D1 and S5D1. Flap policy action 
     sleep  10    
     verify policies in tc1-45    
     test teardown in tc15-25
-    [Tags]  flap-action  multiple-switch  ha
+    [Tags]  flap-action  multiple-switch  ha  runthis
 
 TC026: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch S2 from fabric. Verify, with traffic, no affect on individual as well as overlapping policies.
     test setup and initial verification in tc26-45
@@ -693,7 +693,7 @@ TC026: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch 
     verify results  a  j  transmitted_frames  received_valid_frames     
     verify results  a  l  transmitted_frames  received_valid_frames            
     test teardown in tc26-45
-    [Tags]  multiple-switch  ha  
+    [Tags]  multiple-switch  ha  runthis  
 
 TC027: Configure overlapping policy with S1F1, S6D1 and S5D1. Flap filter interface and verify overlapping policy is re-installed    
     test setup and initial verification in tc26-45
@@ -706,7 +706,7 @@ TC027: Configure overlapping policy with S1F1, S6D1 and S5D1. Flap filter interf
     sleep  10
     verify policies in tc1-45 
     test teardown in tc26-45
-    [Tags]  flap-filter  multiple-switch  ha  
+    [Tags]  flap-filter  multiple-switch  ha  runthis  
 
 TC028:Configure overlapping policy with S1F1, S6D1 and S5D1. Flap delivery interface, S5D1, and verify overlapping policy is re-installed
     test setup and initial verification in tc26-45
@@ -719,7 +719,7 @@ TC028:Configure overlapping policy with S1F1, S6D1 and S5D1. Flap delivery inter
     sleep  10
     verify policies in tc1-45 
     test teardown in tc26-45
-    [Tags]  flap-delivery  multiple-switch  ha  
+    [Tags]  flap-delivery  multiple-switch  ha  runthis  
     
 TC029:Configure overlapping policy with S1F1, S6D1 and S5D1. Flap delivery interface, S6D1, and verify overlapping policy is re-installed    
     test setup and initial verification in tc26-45
@@ -732,7 +732,7 @@ TC029:Configure overlapping policy with S1F1, S6D1 and S5D1. Flap delivery inter
     sleep  10
     verify policies in tc1-45 
     test teardown in tc26-45
-    [Tags]  flap-delivery  multiple-switch  ha  
+    [Tags]  flap-delivery  multiple-switch  ha  runthis  
 
 #### Run next 3 testcases together -- Start
 TC030: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch S3 from fabric. Verify, with traffic, no affect on overlapping policy.
@@ -753,7 +753,7 @@ TC030: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch 
     stop traffic
     verify results  a  j  transmitted_frames  received_valid_frames     
     verify results  a  l  transmitted_frames  received_valid_frames            
-    [Tags]   multiple-switch  ha  group2  
+    [Tags]   multiple-switch  ha  group2  runthis  
 
 TC031: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch S3 from fabric. Shutdown core interface between S4 and S5 that is carrying the policy-flow. Verify, with traffic, overlapping policy is re-installed using the second core interface.
     ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
@@ -776,7 +776,7 @@ TC031: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch 
     stop traffic
     verify results  a  j  transmitted_frames  received_valid_frames     
     verify results  a  l  transmitted_frames  received_valid_frames 
-    [Tags]   multiple-switch  ha  group2  
+    [Tags]   multiple-switch  ha  group2  runthis  
 
 TC032: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch S3 from fabric. Shutdown core interface between S4 and S6 that is carrying the policy-flow. Verify, with traffic, overlapping policy is re-installed using the second core interface.
     ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
@@ -802,11 +802,11 @@ TC032: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch 
     cli enable interface  s4  ${interface_name_2}
     sleep  5
     verify policies in tc1-45            
-    reconnect switch from fabric  s3
+    reconnect switch to fabric  s3
     sleep  5
     verify policies in tc1-45    
     test teardown in tc26-45     
-    [Tags]   multiple-switch  ha  group2          
+    [Tags]   multiple-switch  ha  group2  runthis          
 #### Run next 3 testcases together -- End    
 #### Run next 4 testcases together -- Start
 TC033: Configure overlapping policy with S1F1, S6D1 and S5D1. Disconnect switch S4 from fabric. Verify, with traffic, no affect on overlapping policy.
@@ -879,7 +879,7 @@ TC036: Configure overlapping policy with S1F1, S6D1 and S5D1. Flap policy action
     Should be true  ${config_state}    
     sleep  10    
     verify policies in tc1-45
-    reconnect switch from fabric  s4
+    reconnect switch to fabric  s4
     cli enable interface  s1  ${shutdown_interface_2}
     sleep  10    
     verify policies in tc1-45
@@ -976,7 +976,724 @@ TC039: With overlapping policy configuration (S1F1, S6D1, S5D1). Convert inter-s
     test teardown in tc26-45
     [Tags]  multiple-switch  ha  group4
 #### Run next 3 testcases together -- End            
-        
+#### Run next 13 testcases together -- Start
+TC040: With overlapping policy configuration (S1F1, S6D1, S5D1). Add a mandatory service S1 on core-switch S3 to component policy P1
+    test setup and initial verification in tc26-45
+    verify policies in tc1-45    
+    Sleep  2
+    ${config_state}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch3_service_name}   1
+    Should be true  ${config_state}
+    sleep  3     
+    verify policies in tc1-45
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    verify policies in tc1-45
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames     
+    [Tags]  multiple-switch  ha  service  group5
+
+TC041: With overlapping policy configuration (S1F1, S6D1, S5D1) and mandatory service S1 on core-switch S3/P1, disconnect and re-connect switch S3 from fabric. Verify all policies are re-installed.
+    verify policies in tc1-45
+    disconnect switch from fabric  s2
+    sleep  5
+    reconnect switch to fabric  s2
+    sleep  5    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    verify policies in tc1-45
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames     
+    [Tags]  multiple-switch  ha  service  group5
+
+TC042: With overlapping policy configuration (S1F1, S6D1, S5D1) convert mandatory service S1 into optional service on policy P1. Disconnect and re-connect switch S3 from fabric. Verify all policies are re-installed.
+    verify policies in tc1-45
+    Sleep  2
+    ${config_state}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch3_service_name}   1  optional=${True}
+    Should be true  ${config_state}
+    sleep  3
+    verify policies in tc1-45    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    verify policies in tc1-45
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames 
+    disconnect switch from fabric  s2
+    sleep  5
+    reconnect switch to fabric  s2
+    sleep  5    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    verify policies in tc1-45
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames     
+    [Tags]  multiple-switch  ha  service  group5
+
+TC043: With overlapping policy configuration (S1F1, S6D1, S5D1) add mandatory service S1 to policy ZP1. Verify overlapping policy is not installed.
+    verify policies in tc1-45
+    Sleep  2
+    ${config_state}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch3_service_name}  1  
+    Should be true  ${config_state}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  service  group5
+
+TC045: With overlapping policy configuration (S1F1, S6D1, S5D1) convert mandatory service S1 on policy ZP1 to optional. Verify all policies are re-installed.     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    Sleep  2
+    ${config_state}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch3_service_name}   1  optional=${True}
+    Should be true  ${config_state}
+    sleep  10
+    verify policies in tc1-45    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    verify policies in tc1-45
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames 
+    [Tags]  multiple-switch  ha  service  group5
+
+TC046: With overlapping policy configuration (S1F1, S6D1, S5D1) and optional service S1 on both policies, make one delivery interface common to both policies. Verify with traffic, all policies are re-installed.   
+    verify policies in tc1-45
+    Sleep  2
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch6_delivery_alias_1}  delivery
+    Should be true  ${config_state}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames 
+    [Tags]  multiple-switch  ha  service  group5
+    
+TC047: With configuration in TC046, delete service S1 from both policies. Verify with traffic, all policies are re-installed.
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    sleep  5
+    ${config_state}=  rest delete service from policy  admin-view  ${policy_name_1}  ${switch3_service_name}         
+    Should be true  ${config_state}
+    ${config_state}=  rest delete service from policy  admin-view  ${policy_name_2}  ${switch3_service_name}         
+    Should be true  ${config_state}    
+    sleep  10
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames     
+    [Tags]  multiple-switch  ha  service  group5
+
+TC048: With configuration in TC047, add a second filter interface to policy ZP1. Verify, with traffic, all policies are installed.
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch2_filter_alias_1}  filter
+    Should be true  ${config_state}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    sleep  10
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames    
+    [Tags]  multiple-switch  ha  group5
+    
+
+TC049: With configuration in TC047, disconnect and reconnect switch S3. Verify, with traffic, all policies are re-installed.
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    log  Expect common-core link issue once we disconnect second core switch. Lets add a vlan rewrite to filter interface and verify
+    ${result}=  rest add interface role  s1  ${switch1_filter_intf_1}  filter  ${switch1_filter_alias_1}  rewrite_vlan=4001
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s2  ${switch2_filter_intf_1}  filter  ${switch2_filter_alias_1}  rewrite_vlan=4002
+    Should be true  ${result}          
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}    
+    disconnect switch from fabric  s3
+    sleep  10    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames    
+    reconnect switch to fabric  s3
+    sleep  10
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames      
+    [Tags]  multiple-switch  ha  group5
+
+TC050: With configuration in TC049, disconnect and reconnect switch S4. Verify, with traffic, all policies are re-installed.
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    disconnect switch from fabric  s4
+    sleep  10    
+    ${stream1}=  L3 add  flow=a->j  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames    
+    reconnect switch to fabric  s4
+    sleep  10
+    clear stats
+    cli     node=master    cmd=clear bigtap statistics
+    start traffic
+    Sleep  10        
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    Sleep  10
+    stop traffic
+    verify results  a  j  transmitted_frames  received_valid_frames     
+    verify results  a  l  transmitted_frames  received_valid_frames      
+    [Tags]  multiple-switch  ha  group5
+       
+TC051: With configuration in TC049, Flap policy action from forward to inactive and back to forward and verify overlapping policy is re-installed.
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  inactive
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  inactive
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  forward
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-action  group5 
+            
+TC052: With configuration in TC049, Flap policy action from forward to rate-measure and back to forward and verify overlapping policy is re-installed.
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  rate-measure
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  forward
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    test teardown in tc26-45
+    [Tags]  multiple-switch  ha  flap-action  group5 
+#### Run next 13 testcases together -- End
+#### Run next 15 testcases together -- Start
+TC053: Configure overlapping policy with filter interfaces S2F1, S2F2, S5F1, S5F2, S6F1, S6F2 and delivery interfaces S1D1 and S1D2. Verify policy with traffic.
+    test setup and initial configuration for tc53-61
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    ${stream1}=  L3 add  flow=c->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    ${stream2}=  L3 add  flow=d->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=2345  dst_port=80
+    ${stream3}=  L3 add  flow=i->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=3234  dst_port=80
+    ${stream4}=  L3 add  flow=j->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=4234  dst_port=80
+    ${stream5}=  L3 add  flow=k->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=5234  dst_port=80
+    ${stream6}=  L3 add  flow=l->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=6234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statisticss    
+    start traffic
+    Sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
+    ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    Should be true  ${in_range_1}    
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    Should be true  ${in_range_2}    
+    Sleep  10
+    stop traffic
+    [Tags]  multiple-switch  ha  group6
+
+TC054: With configuration in TC053, flap interface S2F1. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli disable interface  s2  ${switch2_filter_intf_1}
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli enable interface  s2  ${switch2_filter_intf_1}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-filter  group6
+
+TC055: With configuration in TC053, flap all filter interface. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli disable interface  s2  ${switch2_filter_intf_1}
+    cli disable interface  s2  ${switch2_delivery_intf_2}
+    cli disable interface  s5  ${switch5_filter_intf_1}
+    cli disable interface  s5  ${switch5_delivery_intf_1}
+    cli disable interface  s6  ${switch6_filter_intf_1}
+    cli disable interface  s6  ${switch6_delivery_intf_1}
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    cli enable interface  s2  ${switch2_filter_intf_1}
+    cli enable interface  s2  ${switch2_delivery_intf_2}
+    cli enable interface  s5  ${switch5_filter_intf_1}
+    cli enable interface  s5  ${switch5_delivery_intf_1}
+    cli enable interface  s6  ${switch6_filter_intf_1}
+    cli enable interface  s6  ${switch6_delivery_intf_1}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-filter  group6    
+
+TC055: With configuration in TC053, flap delivery interface S1D1. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli disable interface  s1  ${switch1_delivery_intf_1}
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    cli enable interface  s1  ${switch1_delivery_intf_1}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-delivery  group6
+
+
+TC056: With configuration in TC053, flap delivery interface S1D2. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli disable interface  s1  ${switch1_filter_intf_1}
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should not be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    cli enable interface  s1  ${switch1_filter_intf_1}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-delivery  group6
+
+TC057: With configuration in TC053, flap all delivery interfaces. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    cli disable interface  s1  ${switch1_filter_intf_1}
+    cli disable interface  s1  ${switch1_delivery_intf_1}
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should not be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_policy12}
+    cli enable interface  s1  ${switch1_filter_intf_1}
+    cli enable interface  s1  ${switch1_delivery_intf_1}
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-delivery  group6 
+
+TC058: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    disconnect switch from fabric  s3    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    ${stream1}=  L3 add  flow=c->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    ${stream2}=  L3 add  flow=d->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=2345  dst_port=80
+    ${stream3}=  L3 add  flow=i->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=3234  dst_port=80
+    ${stream4}=  L3 add  flow=j->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=4234  dst_port=80
+    ${stream5}=  L3 add  flow=k->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=5234  dst_port=80
+    ${stream6}=  L3 add  flow=l->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=6234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statisticss    
+    start traffic
+    Sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
+    ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    Should be true  ${in_range_1}    
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    Should be true  ${in_range_2}    
+    Sleep  10
+    stop traffic
+    reconnect switch to fabric  s3    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    clear stats
+    cli     node=master    cmd=clear bigtap statisticss    
+    start traffic
+    Sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
+    ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    Should be true  ${in_range_1}    
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    Should be true  ${in_range_2}    
+    Sleep  10
+    stop traffic
+    [Tags]  multiple-switch  ha  flap-switch  group6
+
+TC059: With configuration in TC053, disconnect switch S3 from fabric. Verify policies get re-installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    disconnect switch from fabric  s4    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    ${stream1}=  L3 add  flow=c->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=80
+    ${stream2}=  L3 add  flow=d->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=2345  dst_port=80
+    ${stream3}=  L3 add  flow=i->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=3234  dst_port=80
+    ${stream4}=  L3 add  flow=j->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=4234  dst_port=80
+    ${stream5}=  L3 add  flow=k->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=5234  dst_port=80
+    ${stream6}=  L3 add  flow=l->a  frame_rate=5000  frame_cnt=100000  frame_size=1518  name=a_h_flow  ethertype=0800  
+    ...     src_mac=00:11:00:00:00:01  dst_mac=00:11:00:00:00:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=6234  dst_port=80
+    clear stats
+    cli     node=master    cmd=clear bigtap statisticss    
+    start traffic
+    Sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
+    ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    Should be true  ${in_range_1}    
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    Should be true  ${in_range_2}    
+    Sleep  10
+    stop traffic
+    reconnect switch to fabric  s4    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    clear stats
+    cli     node=master    cmd=clear bigtap statisticss    
+    start traffic
+    Sleep  5
+    ${report}=  fetch port stats
+    ${rx_value_1}=  verify dict key  ${report}  a  received_valid_frame_rate
+    ${rx_value_2}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${rx_value_1}  30000
+    Should be true  ${in_range_1}    
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value_2}  30000
+    Should be true  ${in_range_2}    
+    Sleep  10
+    stop traffic
+    [Tags]  multiple-switch  ha  flap-delivery  group6
+
+TC060: With configuration in TC053, Flap policy action from forward to inactive and back to forward and verify overlapping policy is re-installed.
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  inactive
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  inactive
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  forward
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    [Tags]  multiple-switch  ha  flap-action  group6 
+            
+TC061: With configuration in TC053, Flap policy action from forward to rate-measure and back to forward and verify overlapping policy is re-installed.
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  rate-measure
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${config_state}
+    ${config_state}=  rest update policy action  admin-view  ${policy_name_2}  forward
+    Should be true  ${config_state}    
+    sleep  10    
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=6  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=6  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    test teardown for tc53-61
+    [Tags]  multiple-switch  ha  flap-action  group6 
+
 * Keywords
 overlap suite setup
     base suite setup
@@ -1009,7 +1726,7 @@ overlap suite setup
     #Configure Switch 2    
     ${result}=  rest add switch alias  s2  ${switch2_alias}
     Should be true  ${result}      
-    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_1}  delivery  ${switch2_delivery_alias_1}
+    ${result}=  rest add interface role  s2  ${switch2_filter_intf_1}    filter  ${switch2_filter_alias_1}
     Should be true  ${result}  
     ${result}=  rest add interface role  s2  ${switch2_delivery_intf_2}  delivery  ${switch2_delivery_alias_2}
     Should be true  ${result}
@@ -1129,8 +1846,8 @@ test teardown in tc15-25
     Should be true  ${config_state}    
     ${config_state}=  rest delete policy  admin-view  ${policy_name_2}
     Should be true  ${config_state}
-    reconnect switch from fabric  s2
-    reconnect switch from fabric  s6
+    reconnect switch to fabric  s2
+    reconnect switch to fabric  s6
     sleep  5         
 
 test setup and initial verification in tc26-45
@@ -1164,7 +1881,7 @@ test teardown in tc26-45
     Should be true  ${config_state}    
     ${config_state}=  rest delete policy  admin-view  ${policy_name_2}
     Should be true  ${config_state}
-    reconnect switch from fabric  s2
+    reconnect switch to fabric  s2
     sleep  5         
 
 verify policies in tc1-45
@@ -1175,13 +1892,69 @@ verify policies in tc1-45
     ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
 
+test setup and initial configuration for tc53-61
+    ${result}=  rest add interface role  s5  ${switch5_delivery_intf_1}  filter  ${switch5_delivery_alias_1}
+    Should be true  ${result}
+    ${result}=  rest add interface role  s6  ${switch6_delivery_intf_1}  filter  ${switch6_delivery_alias_1}
+    Should be true  ${result} 
+    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_2}  filter  ${switch2_delivery_alias_2}
+    Should be true  ${result}
+    ${result}=  rest add interface role  s1  ${switch1_filter_intf_1}  delivery  ${switch1_filter_alias_1}
+    Should be true  ${result}     
+    sleep  10
+    ${config_state}=  rest add policy  admin-view  ${policy_name_1}   forward
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch2_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch5_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch6_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch2_delivery_alias_2}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch5_delivery_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch6_delivery_alias_1}  filter
+    Should be true  ${config_state}                        
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch1_delivery_alias_1}  delivery 
+    Should be true  ${config_state}
+    Sleep  5  
+    ${config_state}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch2_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch5_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch6_filter_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch2_delivery_alias_2}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch5_delivery_alias_1}  filter
+    Should be true  ${config_state}
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch6_delivery_alias_1}  filter
+    Should be true  ${config_state} 
+    ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_1}  delivery
+    Should be true  ${config_state}
+    sleep  20        
+
+test teardown for tc53-61
+    ${config_state}=  rest delete policy  admin-view  ${policy_name_1}
+    Should be true  ${config_state}    
+    ${config_state}=  rest delete policy  admin-view  ${policy_name_2}
+    Should be true  ${config_state}
+    sleep  10
+
 disconnect switch from fabric  [Arguments]  ${switch}
     ${c1_ip}=         get node ip      c1
     ${c2_ip}=         get node ip      c2
     ${result}=        config  node=${switch}  cmd=no controller ${c1_ip}
     ${result}=        config  node=${switch}  cmd=no controller ${c2_ip}
 
-reconnect switch from fabric  [Arguments]  ${switch}
+reconnect switch to fabric  [Arguments]  ${switch}
     ${c1_ip}=         get node ip      c1
     ${c2_ip}=         get node ip      c2
     ${result}=        config  node=${switch}  cmd=controller ${c1_ip}
@@ -1223,7 +1996,7 @@ overlap suite teardown
     ${result}=  rest delete interface role  s1  ${switch1_delivery_intf_4}   delivery
     Should be true  ${result}            
     ### Switch 2
-    ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_1}   delivery
+    ${result}=  rest delete interface role  s2  ${switch2_filter_intf_1}   filter
     Should be true  ${result}
     ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_2}   delivery
     Should be true  ${result}
@@ -1274,7 +2047,7 @@ overlap suite teardown
     ${result}=  rest delete interface  s1  ${switch1_delivery_intf_4} 
     Should be true  ${result}        
     ### Switch 2            
-    ${result}=  rest delete interface  s2  ${switch2_delivery_intf_1}   
+    ${result}=  rest delete interface  s2  ${switch2_filter_intf_1}   
     Should be true  ${result}
     ${result}=  rest delete interface  s2  ${switch2_delivery_intf_2} 
     Should be true  ${result}
