@@ -1884,9 +1884,9 @@ class T5(object):
         dpid = data1[0]["dpid"]
         url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url2)
-        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:'+switch+', ifName:'+intf+', "'
+        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
         c.enable(cli_string)
-        
+
         data = c.rest.content()
         if data[0]["interface"][0]["state"] == "down":
             helpers.log("Interface state is down")
@@ -1909,9 +1909,9 @@ class T5(object):
         url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url2)
         data = c.rest.content()
-        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:'+switch+', ifName:'+intf+', "'
+        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
         c.enable(cli_string)
-        
+
         if data[0]["interface"][0]["state"] == "up":
             helpers.log("Interface state is up")
             return True
@@ -2184,7 +2184,7 @@ class T5(object):
         result = c.cli_content()
         return result
 
-    def cli_controller_reboot_switch(self, switch=None):
+    def ssvecli_controller_reboot_switch(self, switch=None):
         '''Function to reboot switch from master controllers CLI
             if switch argument is not passed reboot all switchs
         '''
@@ -2212,11 +2212,11 @@ class T5(object):
                 helpers.log("Not ZTN ..not reconfiguring switch consoles for ssh connections..")
         else:
             helpers.log("Rebooting switch: %s from controller" % switch)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('show switch %s version | grep Uptime' % switch)
             c.enable('system reboot switch %s' % switch, prompt=':')
             c.enable('yes', timeout=300)
             helpers.sleep(120)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('show switch %s version | grep Uptime' % switch)
             helpers.log("Success rebooting switch: %s from controller" % switch)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
