@@ -78,9 +78,7 @@ ${SYSTEM TENANT INTERFACE ENABLE BUTTON}	xpath=//td[@class='label' and contains(
 ${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
 ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_5']
 
-## Logical Segments page
 
-${LOGICAL SEGMENTS PLUS BUTTON}		xpath=//h2[contains(text(), 'Logical Segments')]/parent::div[@data-dojo-attach-point='segmentsBlock']/descendant::div[@class='icon_node plus']
 
 #### Switch Page
 
@@ -170,6 +168,47 @@ ${IP ADDRESS TEXT FIELD}					xpath=//div[@data-dojo-attach-point='messageMultipl
 ${APPEND IP ADDRESSES BUTTON}				xpath=//span[@id='dijit_form_Button_26_label']
 ${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
 ${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
+
+## Logical Segment Interface page
+
+${LOGICAL SEGMENT INTERFACE PLUS BUTTON}		xpath=//h2[contains(text(), 'Logical Segment Interfaces')]/parent::div/descendant::div[@class='icon_node plus']		
+${CREATE LOGICAL SEGMENT INTERFACE POPUP}		xpath=//div[@title='Create Logical Segment Interface']
+${LOGICAL SEGMENT DROPDOWN BUTTON}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logical Segment')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[1]/input
+${LOGICAL SEGMENT LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
+${LOGICAL SEGMENT FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logical Segment')]/parent::h2/parent::div/following-sibling::div/div[1]/div[2]/div[1]/div[1]/div[3]/input[1]
+${STATUS LIST TYPE KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Status')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${SEGMENT GATEWAY IP ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Address (Segment Gateway)')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${SEGMENT GATEWAY MASK FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Address (Segment Gateway)')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${IP ADDRESS TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Public')]/parent::h2/parent::div/parent::div/parent::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${DHCP RELAY STEP BUTTON}						xpath=//div[@class='step_text' and contains(text(), '2. DHCP Relay')]
+${DHCP RELAY TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]/parent::h2/parent::div/parent::div/parent::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${DHCP RELAY SERVER IP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server IP')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SAVE SEGMENT INTERFACE BUTTON}				xpath=//span[@id='dijit_form_Button_5_label']
+
+## Next Hop group page
+${NEXT HOP GROUP PLUS BUTTON}						xpath=//h2[contains(text(), 'Next Hop Groups')]/parent::div[@data-dojo-attach-point='nextHopGroupBlock']/descendant::div[@class='icon_node plus']
+${CREATE NEXT HOP GROUP POPUP}						xpath=//div[@title='Create Next Hop Group']
+${NEXT HOP GROUP NAME FIELD}						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_NextHopGroup')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}		xpath=//span[@id='dijit_form_Button_11_label']
+${SAVE NEXT HOP GROUP BUTTON}						xpath=//span[@id='dijit_form_Button_5_label']
+
+
+##### Logical Router Route Page
+
+${LOGICAL ROUTER ROUTE PLUS BUTTON}				xpath=//div[contains(text(), 'Destination Subnet')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']
+${CREATE ROUTE POPUP}							xpath=//div[@title='Create Route']	
+${LOGICAL ROUTER ROUTE DESTINATION SUBNET FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination Subnet')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${LOGICAL ROUTER ROUTE MASK FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination Subnet')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${LOGICAL ROUTER NEXT HOP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[1]/input	
+${LOGICAL ROUTER NEXT HOP LIST}					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
+${LOGICAL ROUTER NEXT HOP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[1]/div/div[3]/input[1]	
+${LOGICAL ROUTER NEXT HOP GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[1]/input
+${LOGICAL ROUTER NEXT HOP GROUP LIST}			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${LOGICAL ROUTER NEXT HOP GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[3]/input[1]
+${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//span[@id='dijit_form_Button_5_label']
+
+
+
 
 
 
@@ -740,6 +779,11 @@ Create Logical Segments
 	Run Keyword Unless  '${ip-addr}' == '${EMPTY}'
 	...		Add IP Address to Endpoint  ${ip-addr}
 	
+	Verify Element Visible  ${APPEND IP ADDRESSES BUTTON}
+	Click Element  ${APPEND IP ADDRESSES BUTTON}  and don't wait
+
+    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
+	
 	Click Element  ${APPEND SEGMENT ENDPOINTS BUTTON}   and don't wait
 	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
 	Verify Element Invisible  ${CREATE LOGICAL SEGMENT POPUP}
@@ -750,10 +794,124 @@ Add IP Address to Endpoint
 	Click Element   ${ADD IP ADDRESS PLUS BUTTON}  and don't wait
 	Verify Element Visible  ${ENTER IPV4 ADDRESS POPUP}
 	Input Text And Verify   ${IP ADDRESS TEXT FIELD}  ${ip-addr}
-	Highlight Element  ${APPEND IP ADDRESSES BUTTON} 
+	#Highlight Element  ${APPEND IP ADDRESSES BUTTON} 
 	Click Element   ${ENTER IPV4 ADDRESS POPUP}  and don't wait 
-	Verify Element Visible  ${APPEND IP ADDRESSES BUTTON}
-	Click Element  ${APPEND IP ADDRESSES BUTTON}  and don't wait
+	
+    
+Create Logical Segment Interface
+	[Arguments]  ${tenant-name}  ${ls-name}  ${status}  ${ip-addr}   ${mask}   ${addr-type}   ${dhcp-relay}   ${server-ip}   
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Sleep  5
+	Highlight Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
+	Verify Element Visible  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
+	Click Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
+	Select From List And Verify  
+    ... 	${LOGICAL SEGMENT DROPDOWN BUTTON}
+    ...		${LOGICAL SEGMENT LIST}  
+    ... 	${LOGICAL SEGMENT FIELD}
+    ... 	${ls-name}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Shutdown')]  Status_Shutdown
+    Run Keyword If  '${status}' == 'Shutdown'
+    ...			Drag And Drop   ${STATUS LIST TYPE KNOB}  target=Status_Shutdown
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Active')]  Status_Active
+	Run Keyword If  '${status}' == 'Active'
+    ...			Drag And Drop   ${STATUS LIST TYPE KNOB}  target=Status_Active
+    
+    Input Text And Verify   ${SEGMENT GATEWAY IP ADDRESS FIELD}  ${ip-addr}
+    Input Text And Verify   ${SEGMENT GATEWAY MASK FIELD}  ${mask}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Public')]  Public
+    Run Keyword If  '${addr-type}' == 'Public'
+    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Public
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Private')]  Private
+	Run Keyword If  '${addr-type}' == 'Private'
+    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Status_Private
+	
+	Verify Page Contains Element  ${DHCP RELAY STEP BUTTON}
+	Click Element  ${DHCP RELAY STEP BUTTON}  and don't wait
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Disabled')]  Disabled
+    Run Keyword If  '${dhcp-relay}' == 'Disabled'
+    ...			Drag And Drop   ${DHCP RELAY TYPE KNOB}  target=Disabled
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enabled
+    Run Keyword If  '${dhcp-relay}' == 'Enabled'
+    ...			Drag And Drop   ${DHCP RELAY TYPE KNOB}  target=Enabled
+    
+    Run Keyword Unless  '${server-ip} ' == '${EMPTY}'
+	...		Input Text And Verify   ${DHCP RELAY SERVER IP FIELD}  ${server-ip} 
+	
+	Click Element  ${SAVE SEGMENT INTERFACE BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
+	
+	
+Create Next Hop Group
+	[Arguments]  ${tenant-name}  ${nhg-name}  ${ip}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${NEXT HOP GROUP PLUS BUTTON}
+	Click Element  ${NEXT HOP GROUP PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE NEXT HOP GROUP POPUP}
+	
+	Input Text And Verify   ${NEXT HOP GROUP NAME FIELD}  ${nhg-name}
+	
+	Add IP Address to Endpoint  ${ip}
+
+	Verify Element Visible  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}
+	Click Element  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}  and don't wait
 
     Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
+	
+	Click Element  ${SAVE NEXT HOP GROUP BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE NEXT HOP GROUP POPUP}
+	
+	
+Create Logical Router Routes
+	[Arguments]  ${tenant-name}	 ${dst-subnet}  ${mask}  ${next-hop}  ${next-hop-group-name}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${LOGICAL ROUTER ROUTE PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER ROUTE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE ROUTE POPUP}
+	
+	Input Text And Verify   ${LOGICAL ROUTER ROUTE DESTINATION SUBNET FIELD}  ${dst-subnet}
+	Input Text And Verify   ${LOGICAL ROUTER ROUTE MASK FIELD}  ${mask}
+	
+	Select From List And Verify  
+    ... 	${LOGICAL ROUTER NEXT HOP DROPDOWN BUTTON}
+    ...		${LOGICAL ROUTER NEXT HOP LIST}  
+    ... 	${LOGICAL ROUTER NEXT HOP FIELD}
+    ... 	${next-hop}
+	
+	Run Keyword If  '${next-hop}' == 'Next Hop Group'
+	...		Select From List And Verify   ${LOGICAL ROUTER NEXT HOP GROUP DROPDOWN BUTTON}  ${LOGICAL ROUTER NEXT HOP GROUP LIST}    ${LOGICAL ROUTER NEXT HOP GROUP FIELD}  ${next-hop-group-name}
     
+	Highlight Element  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	Click Element  ${SAVE LOGICAL ROUTER ROUTE BUTTON}   and don't wait
+	#Mouse Down  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	#Mouse Up  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	Verify Element Invisible  ${CREATE ROUTE POPUP}
+	
+	
+	
+	
