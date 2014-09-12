@@ -370,7 +370,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/applications/bcf/port-group[name="%s"]/member-interface[switch-name="%s"][interface-name="%s"]' % (pg, switch, intf)
         try:
-            c.rest.put(url, {"switch-name": switch, "interface-name": intf})
+            c.rest.patch(url, {"switch-name": switch, "interface-name": intf})
         except:
             return False
         else:
@@ -2212,7 +2212,7 @@ class T5(object):
         else:
             helpers.log("Rebooting switch: %s from controller" % switch)
             c.enable('show switch %s version | grep Uptime' % switch)
-            c.enable('system reboot switch %s' % switch, prompt=':')
+            c.enable('system reboot switch %s' % switch)
             helpers.sleep(120)
             c.enable('show switch %s version | grep Uptime' % switch)
             helpers.log("Success rebooting switch: %s from controller" % switch)
