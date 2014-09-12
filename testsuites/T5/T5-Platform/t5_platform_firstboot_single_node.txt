@@ -43,8 +43,8 @@ Set variable
 	Set Suite Variable       ${file} 		
 	${ip}=   ip_to_list    ${ipc1}
 	log   ip address is ${ip} 
-  
-	[Tags] 	sanity   feature  
+	Run Keyword if   ${ip[1]}==9	set regression variables
+	[Tags] 	sanity   feature   firstboot
 
  
 ## first boot with single controller	 
