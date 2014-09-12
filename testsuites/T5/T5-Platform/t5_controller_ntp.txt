@@ -1,12 +1,13 @@
 *Settings
 Documentation  T5 NTP Test Suite Release:Iron Horse
 Suite Setup  ntp suite setup
-Suite Teardown   base suite teardown
+Suite Teardown   ntp suite teardown
 Test Setup   base test setup
-Test Teardown   base test teardown
+Test Teardown   ntp test teardown
 Force Tags   IronHorse  T5  ntp
 
 Library  keywords/T5.py
+Library  keywords/T5Platform.py
 Library  keywords/BsnCommon.py
 
 * Variable
@@ -15,18 +16,22 @@ ${version_string}   2.0.5-SNAPSHOT
     
 * Test Case
 Configure and Verify Configuration on Master 
+    add ntp server  c1  time-c.nist.gov
+    Sleep  5
     ${status}=  verify ntp  c1  time-c.nist.gov
     Should be true  ${status}
     [Tags]  feature
 
 Configure and Verify Configuration on Slave 
+    add ntp server  c1  time-c.nist.gov
+    Sleep  5
     ${status}=  verify ntp  c2  time-c.nist.gov
     Should be true  ${status}
     [Tags]  feature    
 
 Delete NTP server and verify
-    add ntp server  c1  0.bigswitch.pool.ntp.org
     add ntp server  c1  time-c.nist.gov
+    Sleep  5
     ${status}=  delete ntp server  c1  time-c.nist.gov
     Should be true  ${status}
     Sleep  5
@@ -184,8 +189,16 @@ With multiple NTP servers, restart process ntp on Slave and verify Master is una
                             
 * Keywords
 
-ntp suite setup
-    base suite setup
-    add ntp server  c1  time-c.nist.gov
-    Sleep  5
-    
+NTP Suite Setup
+    Base Suite Setup
+    Cli Copy  running-config  snapshot://startup-config
+    Config  master  ntp server 0.bigswitch.pool.ntp.org
+
+NTP Suite Teardown
+    Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+    Base Suite Teardown
+
+NTP Test Teardown
+    Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+    Base Test Teardown
+
