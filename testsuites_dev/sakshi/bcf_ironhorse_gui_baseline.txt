@@ -47,15 +47,9 @@ T2.2 Controller Interfaces
 	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}		${INTERFACES URL}			${INTERFACES TITLE}
 T2.3 Controller Portgroups	
 	Check Hover					${FABRIC MENU}				${PORT GROUPS LABEL}	${PORT GROUPS URL}			${PORT GROUPS TITLE}
-T2.4 Tenants	
-	Check Hover					${TENANTS LABEL}			${TENANTS LABEL}		${TENANTS URL}				${TENANTS TITLE}
-T2.5 Endpoints	
-	Check Hover					${ENDPOINTS LABEL}			${ENDPOINTS LABEL}		${ENDPOINTS URL}			${ENDPOINTS TITLE}
-T2.6 Fabric Summary
-	Check Hover					${VISIBILITY MENU}			${FABRIC SUMMARY LABEL}  {FABRIC SUMMARY URL}		{FABRIC SUMMARY TITLE}	
-T2.7 Test Path			
+T2.4 Test Path			
 	Check Hover					${VISIBILITY MENU}			${TEST PATH LABEL}		${TEST PATH URL}			${TEST PATH TITLE}
-T2.8 Sign Out		
+T2.5 Sign Out		
 	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 		${LOG IN URL}				${LOG IN TITLE}
 
 
