@@ -208,8 +208,57 @@ ${LOGICAL ROUTER NEXT HOP GROUP FIELD}			xpath=//div[@data-dojo-attach-point='ti
 ${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//span[@id='dijit_form_Button_5_label']
 
 
+##### Logical Router Policy List Page
+
+${LOGICAL ROUTER POLICY LIST PLUS BUTTON}		xpath=//div[contains(text(), 'Total Rules')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']	
+${CREATE POLICY LIST POPUP}						xpath=//div[@title='Create Policy List']				
+${POLICY LIST NAME FIELD} 						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_PolicyList')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${POLICY LIST SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_5_label']
+
+### Policy Rule Page
 
 
+${LOGICAL ROUTER POLICY EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${LOGICAL ROUTER EDIT POLICY POPUP}					xpath=//div[@title='Edit Policy List']
+${LOGICAL ROUTER POLICY RULE PLUS BUTTON}			xpath=//div[contains(text(), 'Sequence')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']
+${CREATE POLICY LIST RULE POPUP}					xpath=//div[@title='Create Policy List Rule']
+${ACTION PERMIT RADIO BUTTON}						xpath=//div[contains(text(), 'Permit')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${ACTION DENY RADIO BUTTON}							xpath=//div[contains(text(), 'Deny')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${ACTION NEXT HOP RADIO BUTTON}						xpath=//div[contains(text(), 'Next Hop')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${POLICY LIST NEXT HOP DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div[starts-with(@id, 'bcf_widgets_formDialog_component_NextHop')]/div/div[1]/div/div[1]/input 
+${POLICY LIST NEXT HOP LIST}  						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'System Tenant')]/parent::div  
+${POLICY LIST NEXT HOP FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/div/div[3]/input[1]
+${POLICY RULE NEXT HOP GROUP DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='blockNextHopNextHop']/descendant::input[contains(@class, 'dijitArrowButtonInner')]
+${POLICY RULE NEXT HOP GROUP LIST} 					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'ng-1')]/parent::div 			  
+${POLICY RULE NEXT HOP GROUP FIELD}					xpath=//div[@data-dojo-attach-point='blockNextHopNextHop']/descendant::input[contains(@class, 'dijitInputInner')]
+${POLICY LIST PROTOCOL NUMBER FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Protocol')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[3]/input[1]
+${POLICY RULE LOG MATCHING PACKETS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Matching Packets')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${POLICY LIST RULE SOURCE STEP BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Source')]
+${POLICY LIST SOURCE MATCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${POLICY LIST SOURCE MATCH LIST}					xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${POLICY LIST SOURCE MATCH FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY LIST RULE SOURCE IP FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input		
+${POLICY LIST RULE SOURCE IP PREFIX FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${POLICY RULE SOURCE TENANT DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	
+${POLICY RULE SOURCE TENANT LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_6_popup']   
+${POLICY RULE SOURCE TENANT FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]
+${POLICY LIST RULE SOURCE L4 PORT FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY RULE LOGICAL SEGMENT INTERFACE CHECKBOX}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source Interface')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${POLICY RULE LOGICAL SEGMENT INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[1]/input	  
+${POLICY RULE LOGICAL SEGMENT INTERFACE LIST} 		xpath=//div[@id='dijit_form_FilteringSelect_9_popup']  
+${POLICY RULE LOGICAL SEGMENT INTERFACE FIELD}		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[3]/input[1]	
+${POLICY LIST RULE DESTINATION STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Destination')]	
+${POLICY LIST DESTINATION MATCH DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input 
+${POLICY LIST DESTINATION MATCH LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_11_popup']		
+${POLICY LIST DESTINATION MATCH FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY LIST RULE DESTINATION IP FIELD}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${POLICY LIST RULE DESTINATION IP PREFIX FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	 
+${POLICY RULE DESTINATION TENANT LIST}				xpath=//div[@id='dijit_form_FilteringSelect_12_popup']     
+${POLICY RULE DESTINATION TENANT FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]		
+${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//span[@id='dijit_form_Button_10_label']
+${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
 
 
 *** Keywords ***
@@ -504,6 +553,11 @@ Generate Action Menu Xpath Switch
 Generate Action Menu Xpath Tenants
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(),'  ${text}  ')]/parent::div/parent::a/parent::td/preceding-sibling::td/div[1]/div[@class='aux_row_control']
+    [Return]  ${xpath}
+    
+Generate Action Menu Xpath Policy
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
 	
 Create Tenant
@@ -806,7 +860,6 @@ Create Logical Segment Interface
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait
 	
-	Sleep  5
 	Highlight Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
 	Verify Element Visible  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
 	Click Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}  and don't wait
@@ -913,5 +966,130 @@ Create Logical Router Routes
 	Verify Element Invisible  ${CREATE ROUTE POPUP}
 	
 	
+Create Policy List
+	[Arguments]  ${tenant-name}	 ${policy-name}	
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${LOGICAL ROUTER POLICY LIST PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY LIST PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE POLICY LIST POPUP}
+	
+	Input Text And Verify   ${POLICY LIST NAME FIELD}  ${policy-name}
+	Click Element  ${CREATE POLICY LIST POPUP}  and don't wait
+	Verify Element Visible  ${POLICY LIST SAVE BUTTON}
+	Click Element  ${POLICY LIST SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE POLICY LIST POPUP}
 	
 	
+Create Policy Rules
+	[Arguments]  ${tenant-name}	 ${policy-name}  ${action}  ${protocol-number}  ${log-packets}  ${src-match}  ${src-ip}  ${src-mask}  ${src-tenant}  ${src-l4-port}  ${log-seg-if}  ${dst-match}  ${dst-ip}	${dst-mask}  ${dst-tenant}  ${dst-l4-port}	
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@data-dojo-attach-point='policyListNode']  ${policy-name}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${LOGICAL ROUTER POLICY EDIT MENU ITEM}
+    Click Element  ${LOGICAL ROUTER POLICY EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${LOGICAL ROUTER EDIT POLICY POPUP}
+    
+    Verify Element Visible  ${LOGICAL ROUTER POLICY RULE PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY RULE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE POLICY LIST RULE POPUP}
+	
+	${radio_button}  Set Variable  ${ACTION PERMIT RADIO BUTTON}
+	
+	${radio_button}  Set Variable If  '${action}'=='Permit'   		${ACTION PERMIT RADIO BUTTON}	${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Deny'  			${ACTION DENY RADIO BUTTON}  	${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Next-Hop-Sys'   ${ACTION NEXT HOP RADIO BUTTON}   ${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Next-Hop-NHG'   ${ACTION NEXT HOP RADIO BUTTON}   ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+    
+    Run Keyword If  '${action}' == 'Next-Hop-Sys'
+	...		Select From List And Verify   ${POLICY LIST NEXT HOP DROPDOWN BUTTON}  ${POLICY LIST NEXT HOP LIST}    ${POLICY LIST NEXT HOP FIELD}   System Tenant
+    
+    
+    Run Keyword If  '${action}' == 'Next-Hop-NHG'
+	...		Select From List And Verify   ${POLICY LIST NEXT HOP DROPDOWN BUTTON}  ${POLICY LIST NEXT HOP LIST}    ${POLICY LIST NEXT HOP FIELD}  Next Hop Group
+    
+    Run Keyword If  '${action}' == 'Next-Hop-NHG'
+	...		Select From List And Verify   ${POLICY RULE NEXT HOP GROUP DROPDOWN BUTTON}  ${POLICY RULE NEXT HOP GROUP LIST}    ${POLICY RULE NEXT HOP GROUP FIELD}  ng-1
+    
+    Run Keyword Unless  '${protocol-number}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST PROTOCOL NUMBER FIELD}  ${protocol-number} 
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'No')]  No
+    Run Keyword If  '${log-packets}' == 'No'
+    ...			Drag And Drop   ${POLICY RULE LOG MATCHING PACKETS KNOB}  target=No
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Yes')]  Yes
+    Run Keyword If  '${log-packets}' == 'Yes'
+    ...			Drag And Drop   ${POLICY RULE LOG MATCHING PACKETS KNOB}  target=Yes
+    
+    
+    Verify Page Contains Element  ${POLICY LIST RULE SOURCE STEP BUTTON}
+	Click Element  ${POLICY LIST RULE SOURCE STEP BUTTON}  and don't wait
+	
+	Select From List And Verify   ${POLICY LIST SOURCE MATCH DROPDOWN BUTTON}  ${POLICY LIST SOURCE MATCH LIST}    ${POLICY LIST SOURCE MATCH FIELD}  ${src-match}
+	
+	Run Keyword If  '${src-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE SOURCE IP FIELD}  ${src-ip}
+	
+	Run Keyword If  '${src-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE SOURCE IP PREFIX FIELD}  ${src-mask}
+	
+	Run Keyword If  '${src-match}' == 'Tenant'
+	...			Select From List And Verify   ${POLICY RULE SOURCE TENANT DROPDOWN BUTTON}  ${POLICY RULE SOURCE TENANT LIST}    ${POLICY RULE SOURCE TENANT FIELD}  ${src-tenant}
+	
+	Run Keyword Unless  '${src-l4-port}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST RULE SOURCE L4 PORT FIELD}  ${src-l4-port} 
+    
+	Run Keyword Unless  '${log-seg-if}' == '${EMPTY}'
+	...		Click Element  ${POLICY RULE LOGICAL SEGMENT INTERFACE CHECKBOX}  and don't wait
+	
+	Run Keyword Unless  '${log-seg-if}' == '${EMPTY}'
+	...		Select From List And Verify   ${POLICY RULE LOGICAL SEGMENT INTERFACE DROPDOWN BUTTON}  ${POLICY RULE LOGICAL SEGMENT INTERFACE LIST}    ${POLICY RULE LOGICAL SEGMENT INTERFACE FIELD}  ${log-seg-if}
+	
+    Verify Page Contains Element  ${POLICY LIST RULE DESTINATION STEP BUTTON}
+	Click Element  ${POLICY LIST RULE DESTINATION STEP BUTTON}  and don't wait
+	
+	
+	Select From List And Verify   ${POLICY LIST DESTINATION MATCH DROPDOWN BUTTON}  ${POLICY LIST DESTINATION MATCH LIST}    ${POLICY LIST DESTINATION MATCH FIELD}  ${dst-match}
+	
+	Run Keyword If  '${dst-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE DESTINATION IP FIELD}  ${dst-ip}
+	
+	Run Keyword If  '${dst-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE DESTINATION IP PREFIX FIELD}  ${dst-mask}
+	
+	Run Keyword If  '${dst-match}' == 'Tenant'
+	...			Select From List And Verify   ${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON}  ${POLICY RULE DESTINATION TENANT LIST}    ${POLICY RULE DESTINATION TENANT FIELD}  ${dst-tenant}
+	
+	Run Keyword Unless  '${dst-l4-port}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST RULE DESTINATION L4 PORT FIELD}  ${dst-l4-port} 
+    
+	Highlight Element  ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}   and don't wait
+	
+	Verify Element Invisible  ${CREATE POLICY LIST RULE POPUP}
+	
+	Highlight Element  ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}
+	Click Element  ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}   and don't wait
+	
+	Verify Element Invisible  ${LOGICAL ROUTER EDIT POLICY POPUP}
+	Sleep  2
+    	
