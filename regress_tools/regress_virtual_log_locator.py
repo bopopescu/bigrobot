@@ -11,7 +11,7 @@ import datetime
 import subprocess
 import getpass
 # Adding Gobot Path to sys path for Exscript APIs
-bigrobot_path = os.path.dirname(__file__) + '/..'
+bigrobot_path = os.path.dirname(__file__) + '..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
