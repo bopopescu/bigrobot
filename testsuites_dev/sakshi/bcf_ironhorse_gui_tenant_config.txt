@@ -27,7 +27,6 @@ T1 Set up
     Create Port Group	port-group-5			Static			leaf-group1	
     Create Port Group	port-group-6			Static			leaf-group2
     Create Port Group	port-group-7			Static			leaf-group2
-    Enable System Tenant Interface 				tenant1	
 
 
 T1.1 Create Logical Segments with Port group as an attachment point and same port group in segment endpoint
@@ -67,21 +66,19 @@ T3.3 Create Next Hop group NEXT-HOP3
 T3.4 Create Next Hop group Next.Hop4
     Create Next Hop group  tenant1		Next.Hop4		100.20.30.4
     
-#### Logical Router Routes				dst-subnet		mask		next-hop		nxt-hop-group-name
+#### Logical Router Routes				tenant-name		dst-subnet		mask		next-hop		nxt-hop-group-name
 T4.1 Create Logical Router Routes with none as next hop
-	Create Logical Router Routes 		1.2.3.4			18			None	 			${EMPTY}
+	Create Logical Router Routes 		tenant1			1.2.3.4			18			None	 			${EMPTY}
 T4.2 Create Logical Router Routes with System Tenant as next hop
-	Create Logical Router Routes 		2.2.2.2			24			System Tenant	 	${EMPTY}
+	Create Logical Router Routes 		tenant1			2.2.2.2			24			System Tenant	 	${EMPTY}
 T4.3 Create Logical Router Routes with Next Hop Group ng1 as next hop
-	Create Logical Router Routes 		3.4.56.78		14			Next Hop Group	 	ng-1
+	Create Logical Router Routes 		tenant1			3.4.56.78		14			Next Hop Group	 	ng-1
 T4.4 Create Logical Router Routes with previous next hop group ng1 as next hop
-	Create Logical Router Routes 		1.2.3.4			16			Next Hop Group	 	ng-1
-	
+	Create Logical Router Routes 		tenant1			1.2.3.4			16			Next Hop Group	 	ng-1
 
-
-T2.7 Delete All Port Groups 
+T5.1 Delete All Port Groups 
 	Delete All Port Groups
-T2.8 Delete All Tenants
+T5.2 Delete All Tenants
 	Delete All Tenants
 
 			
@@ -100,10 +97,8 @@ config suite setup
     
 	
 config suite teardown
-	#Clear Switch Config				switch-leaf1
-	#Clear Switch Config				switch-leaf2
-	#Clear Switch Config				switch_leaf.2
-	#Clear Switch Config				switch_spine
+	Clear Switch Config				switch-leaf1
+	Clear Switch Config				switch-leaf2
 	Close Browser
     #Stop Selenium Server
     base suite teardown
