@@ -724,7 +724,7 @@ S
 			c.rest.get(url)
 			data = c.rest.content()
 			for i in range(0,len(data)):
-				if  data[i]["name"] == netId:
+				if  str(data[i]["name"]) == str(netId):
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
 				else:
