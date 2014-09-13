@@ -31,6 +31,7 @@ add Fabric setup Three Rack Dual Leaf
 
 VM endpoint verification
 	[Tags]  openstack
+	openstack source  keystonerc_admin
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
 	openstack show instance all
@@ -127,12 +128,12 @@ T5 Functional Suite Setup
   	openstack add user  t5test  t5test  t5test  t5test@t5test.com
   	openstack add net  t5test  app
 	openstack add subnet  t5test  app  app  30.0.0.0/24
-	openstack add instance  cirros  t5test  app  app-inst1
 	openstack add net external  ext-net
 	openstack add subnet external  ext-net  ext-net  192.168.4.1  ${h1_tag_ip}/24
 	openstack add router  t5test  t5test-r1
 	openstack add subnet to router  t5test-r1  app
 	openstack source  keystonerc_t5test
+	openstack add instance  cirros  app  app-inst1
 	openstack add router gw  t5test-r1  ext-net
 	${tenant}=  openstack_show_tenant  admin  
 	${segement}=  openstack show subnet  ext-net 
@@ -140,12 +141,13 @@ T5 Functional Suite Setup
 	sleep  30
   	
 T5 Functional Suite Teardown
-	openstack source  keystonerc_admin
+	openstack source  keystonerc_t5test
 	openstack delete instance  app-inst1
 	openstack delete subnet to router  t5test-r1  app
 	openstack delete router gw  t5test-r1
 	openstack delete router  t5test-r1
 	openstack delete net  app
+	openstack source  keystonerc_admin
 	openstack delete net  ext-net
 	openstack delete tenant  t5test
 	openstack delete user  t5test

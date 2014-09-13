@@ -119,6 +119,7 @@ T5 Functional Suite Setup
   	
 T5 Functional Suite Teardown
 	openstack source  keystonerc_admin
+	openstack delete net  ext-net
 	openstack delete tenant  t5test
 	openstack delete user  t5test
 	base suite teardown
@@ -128,14 +129,13 @@ T5 base test setup
 	openstack source  keystonerc_admin
 	
 T5 base test teardown
-	openstack source  keystonerc_admin
+	openstack source  keystonerc_t5test
 	openstack delete subnet to router  t5test-r1  app
 	openstack delete subnet to router  t5test-r1  web
 	openstack delete subnet to router  t5test-r1  db
-	openstack delete router gw  t5-test-r1
+	openstack delete router gw  t5test-r1
 	openstack delete router  t5test-r1
 	openstack delete net  app
-	openstack delete net  ext-net
 	openstack delete net  web
 	openstack delete net  db
 	base test teardown
