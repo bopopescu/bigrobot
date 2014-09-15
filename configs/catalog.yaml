@@ -34,6 +34,7 @@ features:
 aggregated_builds:
   'bvs master aggregated 2014 wk38':          # week of 2014-09-15
     [ 
+      'bvs master #3312',
       'bvs master #3317',
       'bvs master #3318',
       'bvs master #3321',

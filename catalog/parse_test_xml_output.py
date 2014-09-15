@@ -18,6 +18,7 @@ sys.path.insert(1, exscript_path)
 
 import autobot.helpers as helpers
 from catalog_modules.test_suite import TestSuite
+from catalog_modules.test_catalog import TestCatalog
 
 
 helpers.set_env('IS_GOBOT', 'False')
@@ -26,24 +27,66 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 class TestCollection(object):
     def __init__(self, in_files, out_suites, out_testcases,
-                 is_regression=False):
+                 is_regression=False, is_baseline=False):
         self._suites = []
         self._input_files = in_files
         self._output_suites = out_suites
         self._output_testcases = out_testcases
         self._is_regression = is_regression
+        self._is_baseline = is_baseline
+        self._add_build_record = True
+
+    def dump_records_to_json_file(self, filename, records):
+        helpers.file_write_append_once(filename,
+                                       helpers.to_json(records)
+                                       + '\n')
 
     def load_suites(self):
+        """
+        This is the workhorse. It reads each output.xml file and extract the
+        various test attributes.
+        """
+        suite_records = []
+        test_records = []
         for filename in self._input_files:
             filename = filename.strip()
 
             if helpers.file_not_empty(filename):
                 print("Reading %s" % filename)
-                suite = TestSuite(filename, is_regression=self._is_regression)
-                suite.extract_attributes()
-                suite.dump_tests_to_file(self._output_testcases, to_json=True)
-                suite.dump_suite_to_file(self._output_suites, to_json=True)
-                self._suites.append(suite)
+                try:
+                    suite = TestSuite(filename,
+                                      is_regression=self._is_regression,
+                                      is_baseline=self._is_baseline,
+                                      add_build_record=self._add_build_record)
+                except:
+                    print("ERROR: Unable to parse %s. Test suite will not be added to Test Catalog."
+                          % filename)
+                    print helpers.exception_info()
+                else:
+                    if self._add_build_record == True:
+                        self._add_build_record = False
+                    suite.extract_attributes()
+                    self._suites.append(suite)
+                    suite_records.append(suite.suite())
+                    test_records = test_records + suite.tests()
+        self.dump_records_to_json_file(self._output_suites, suite_records)
+        self.dump_records_to_json_file(self._output_testcases, test_records)
+
+        # Import data into DB
+
+        f = self._output_suites
+        print("Importing %s into Mongo test suites collection" % f)
+        (status, output) = helpers.run_cmd2(
+                              cmd="./mongoimport_suites_collection.sh %s" % f,
+                              shell=True)
+        print("Output:\n%s" % helpers.indent_str(output))
+
+        f = self._output_testcases
+        print("Importing %s into Mongo test case collection" % f)
+        (status, output) = helpers.run_cmd2(
+                              cmd="./mongoimport_testcases_collection.sh %s" % f,
+                              shell=True)
+        print("Output:\n%s" % helpers.indent_str(output))
 
     def suites(self):
         return self._suites
@@ -74,12 +117,16 @@ Test Catalog (MongoDB) database.
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--input', required=True,
-                        help=("Contains a list of Robot output.xml files"
-                              "  with complete pathnames"))
+                        help=("Input file which contains a list of Robot"
+                              " output.xml files  with complete pathnames"))
     parser.add_argument('--output-suites', required=True,
                         help=("JSON output file containing test suites"))
     parser.add_argument('--output-testcases', required=True,
                         help=("JSON output file containing test cases"))
+    parser.add_argument('--is-baseline',
+                        action='store_true', default=False,
+                        help=("Specify this option if generating baseline"
+                              " data"))
     parser.add_argument('--is-regression',
                         action='store_true', default=False,
                         help=("Specify this option if analyzing regression"
@@ -95,6 +142,9 @@ Test Catalog (MongoDB) database.
     else:
         os.environ['BUILD_NAME'] = _args.build
 
+    if not _args.is_baseline and not _args.is_regression:
+        helpers.error_exit("Must specify --is-regression or --is-baseline")
+
     return _args
 
 
@@ -104,7 +154,9 @@ if __name__ == '__main__':
     t = TestCollection(in_files=input_files,
                        out_suites=args.output_suites,
                        out_testcases=args.output_testcases,
-                       is_regression=args.is_regression)
+                       is_regression=args.is_regression,
+                       is_baseline=args.is_baseline,
+                       )
     t.load_suites()
     print "Total suites: %s" % t.total_suites()
     print "Total tests: %s" % t.total_tests()

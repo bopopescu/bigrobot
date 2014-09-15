@@ -65,7 +65,9 @@ class Host(object):
         Start background ping. It accepts the same options as bash_ping
         although it requires an additional 'label' argument. The label is
         used to name the output log and to store the background PID. So it
-        needs to be unique for the duration of the background ping.
+        needs to be unique for the duration of the background ping. The reason
+        the label is required is because multiple background pings may get
+        issued in parallel.
 
         To stop background ping, call the keyword 'bash ping background stop'
         and provide it with the label.
