@@ -78,7 +78,12 @@ ${SYSTEM TENANT INTERFACE ENABLE BUTTON}	xpath=//td[@class='label' and contains(
 ${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
 ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_5']
 
-
+${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}		xpath=//td[@class='label' and contains(text(), 'Applied Policy List')]/parent::tr/descendant::div[@class='icon_node configure']		
+${APPLY INBOUND POLICY POPUP}						xpath=//div[@title='Apply Inbound Policy']
+${APPLY INBOUND POLICY DROPDOWN BUTTON}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[1]/input
+${APPLY INBOUND POLICY LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
+${APPLY INBOUND POLICY FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[3]/input[1]
+${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//span[@id='dijit_form_Button_5']
 
 #### Switch Page
 
@@ -122,52 +127,56 @@ ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_5']
 ${LOGICAL SEGMENTS PLUS BUTTON}				xpath=//h2[contains(text(), 'Logical Segments')]/parent::div[@data-dojo-attach-point='segmentsBlock']/descendant::div[@class='icon_node plus']			
 ${CREATE LOGICAL SEGMENT POPUP}				xpath=//div[@title='Create Segment']
 ${LOGICAL SEGMENT NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input					
-${PORT GROUPS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Port Groups')]
-${ADD SEGMENT PORT GROUP PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='portGroupsNode']/descendant::div[@class='icon_node plus']
-${PORT GROUP MEMBERSHIP RULE POPUP}			xpath=//div[@title='Port Group Membership Rule']
-${SEGMENT PORT GROUP NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]	
-${SEGMENT PORT GROUP DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[1]/input
+#${PORT GROUPS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Port Groups')]
+${ADD SEGMENT PORT GROUP PLUS BUTTON}		xpath=//div[@id='segment_port_groups_section']/descendant::div[@class='icon_node plus']
+${PORT GROUP MEMBERSHIP RULE POPUP}			xpath=//div[@title='Create Port Group Membership Rule']
+#${SEGMENT PORT GROUP NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]	
+#${SEGMENT PORT GROUP DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[1]/input
+${SEGMENT PORT GROUP DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[1]/input
 ${SEGMENT PORT GROUP LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
-${SEGMENT PORT GROUP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]		
-${SEGMENT RULE DESCRIPTION FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rule Description')]/parent::h2/parent::div/parent::div/descendant::textarea[@id='dijit_form_SimpleTextarea_1']
-${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  xpath=//span[@id='dijit_form_Button_10']
-${SWITCH INTERFACES STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Switch Interfaces')]
-${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@data-dojo-attach-point='switchInterfacesNode']/descendant::div[@class='icon_node plus']	
-${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Switch Interface Membership Rule']
-${SEGMENT SWITCH NAME FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_1']
+#${SEGMENT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]
+${SEGMENT PORT GROUP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]		
+${SEGMENT RULE DESCRIPTION FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rule Description')]/parent::h2/parent::div/parent::div/descendant::textarea[@id='dijit_form_SimpleTextarea_0']
+${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  xpath=//span[@id='dijit_form_Button_4']
+#${SWITCH INTERFACES STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Switch Interfaces')]
+${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@id='segment_switch_ports_section']/descendant::div[@class='icon_node plus']	
+${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Create Switch Port Membership Rule']
+${SEGMENT SWITCH NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
 ${SEGMENT SWITCH NAME DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
 ${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
 #${SEGMENT SWITCH NAME FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_1']
 #${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_2']
-${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/input[1]	
+${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input[1]
 ${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
-${SEGMENT SWITCH INTERFACE FIELD}			xpath=//input[@id='dijit_form_FilteringSelect_2']
-${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_15']
-${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
-${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@data-dojo-attach-point='endpointsNode']/descendant::div[@class='icon_node plus']
-${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Segment Endpoint']			
-${SEGMENT ENDPOINT NAME FIELD}				xpath=//div[@title='Segment Endpoint']/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SEGMENT SWITCH INTERFACE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
+${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_9']
+#${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
+${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
+${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
+${SEGMENT ENDPOINT NAME FIELD}				xpath=//div[@title='Create Endpoint']/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${ATTACHMENT TYPE DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[1]/input	
 ${ATTACHMENT TYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
 ${ATTACHMENT TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]			
-${ENDPOINT PORT GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[1]/div/div[1]/input
-${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
-${ENDPOINT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]	
+${ENDPOINT PORT GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[1]/input
+${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${ENDPOINT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[3]/input[1]
 ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
-${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_5_popup']			   
-${ENDPOINT SWITCH FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_5']
+${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']			   
+${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
 
-${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div/div[1]/input
-${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_6_popup']						   
-${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_6']
+${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
+${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_8_popup']						   
+${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
 
 ${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
 ${ENTER IPV4 ADDRESS POPUP}					xpath=//div[@title='Enter IPv4 Address/Mask Pair(s)']
 ${IP ADDRESS TEXT FIELD}					xpath=//div[@data-dojo-attach-point='messageMultipleAddress']/following-sibling::div/textarea
-${APPEND IP ADDRESSES BUTTON}				xpath=//span[@id='dijit_form_Button_26_label']
-${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
-${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
+${APPEND IP ADDRESSES BUTTON}				xpath=//span[@id='dijit_form_Button_20_label']
+#${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
+${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_14_label']
+${LOGICAL SEGMENT DETAIL MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Detail')]
+${SAVE LOGICAL SEGMENT BUTTON} 				xpath=//span[@id='dijit_form_Button_5_label']
 
 ## Logical Segment Interface page
 
@@ -559,6 +568,11 @@ Generate Action Menu Xpath Policy
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+    
+Generate Action Menu Xpath Logical Segments
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
 	
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
@@ -578,6 +592,7 @@ Create Tenant
 	Click Element  ${SAVE BUTTON}  and don't wait
 	
 	Verify Element Invisible  ${CREATE TENANT POPUP}
+	Enable System Tenant Interface  ${tenant-name} 
 	
 Show Controller Stats
 	[Arguments]  ${state}
@@ -743,9 +758,19 @@ Create Logical Segments
 	
 	Verify Element Visible  ${CREATE LOGICAL SEGMENT POPUP}
 	Input Text And Verify  ${LOGICAL SEGMENT NAME FIELD}  ${ls-name}
+	Click Element  ${CREATE LOGICAL SEGMENT POPUP}   and don't wait
 	
-	Verify Page Contains Element  ${PORT GROUPS STEP BUTTON}
-	Click Element  ${PORT GROUPS STEP BUTTON}  and don't wait
+	#Verify Page Contains Element  ${PORT GROUPS STEP BUTTON}
+	#Click Element  ${PORT GROUPS STEP BUTTON}  and don't wait
+	Click Element  ${SAVE LOGICAL SEGMENT BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE LOGICAL SEGMENT POPUP}
+	
+	${action_menu_policy}  Generate Action Menu Xpath Logical Segments  div[@data-dojo-attach-point='segmentsNode']  ${ls-name}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${LOGICAL SEGMENT DETAIL MENU ITEM}
+    Click Element  ${LOGICAL SEGMENT DETAIL MENU ITEM}  and don't wait
 	
 	Verify Element Visible  ${ADD SEGMENT PORT GROUP PLUS BUTTON}
 	Click Element   ${ADD SEGMENT PORT GROUP PLUS BUTTON}  and don't wait
@@ -769,8 +794,8 @@ Create Logical Segments
 	
 	Verify Element Invisible  ${PORT GROUP MEMBERSHIP RULE POPUP}
 	
-	Verify Page Contains Element  ${SWITCH INTERFACES STEP BUTTON}
-	Click Element  ${SWITCH INTERFACES STEP BUTTON}  and don't wait
+	#Verify Page Contains Element  ${SWITCH INTERFACES STEP BUTTON}
+	#Click Element  ${SWITCH INTERFACES STEP BUTTON}  and don't wait
 	
 	Verify Element Visible  ${ADD SWITCH INTERFACE PLUS BUTTON}
 	Click Element   ${ADD SWITCH INTERFACE PLUS BUTTON}  and don't wait
@@ -801,8 +826,8 @@ Create Logical Segments
 	
 	Verify Element Invisible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
 	
-	Verify Page Contains Element  ${ENDPOINTS STEP BUTTON}
-	Click Element  ${ENDPOINTS STEP BUTTON}  and don't wait
+	#Verify Page Contains Element  ${ENDPOINTS STEP BUTTON}
+	#Click Element  ${ENDPOINTS STEP BUTTON}  and don't wait
 	
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
@@ -838,9 +863,8 @@ Create Logical Segments
 
     Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
 	
-	Click Element  ${APPEND SEGMENT ENDPOINTS BUTTON}   and don't wait
 	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
-	Verify Element Invisible  ${CREATE LOGICAL SEGMENT POPUP}
+	
 	
 Add IP Address to Endpoint
 	[Arguments]  ${ip-addr}
@@ -888,7 +912,7 @@ Create Logical Segment Interface
     
     Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Private')]  Private
 	Run Keyword If  '${addr-type}' == 'Private'
-    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Status_Private
+    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Private
 	
 	Verify Page Contains Element  ${DHCP RELAY STEP BUTTON}
 	Click Element  ${DHCP RELAY STEP BUTTON}  and don't wait
@@ -903,6 +927,8 @@ Create Logical Segment Interface
     
     Run Keyword Unless  '${server-ip} ' == '${EMPTY}'
 	...		Input Text And Verify   ${DHCP RELAY SERVER IP FIELD}  ${server-ip} 
+	
+	Click Element  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}   and don't wait
 	
 	Click Element  ${SAVE SEGMENT INTERFACE BUTTON}   and don't wait
 	Verify Element Invisible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
@@ -1092,4 +1118,26 @@ Create Policy Rules
 	
 	Verify Element Invisible  ${LOGICAL ROUTER EDIT POLICY POPUP}
 	Sleep  2
-    	
+	
+	
+Apply Policy List
+	[Arguments]  ${tenant-name}	 ${policy-name}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	   	
+	Verify Element Visible  ${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}
+	Click Element  ${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}  and don't wait
+	
+	Verify Element Visible  ${APPLY INBOUND POLICY POPUP}
+	
+	Select From List And Verify   
+	...		${APPLY INBOUND POLICY DROPDOWN BUTTON}  
+	...		${APPLY INBOUND POLICY LIST}    
+	...		${APPLY INBOUND POLICY FIELD}  
+	...		${policy-name}
+	
+	Click Element  ${APPLY INBOUND POLICY SUBMIT BUTTON}   and don't wait
+	Verify Element Invisible  ${APPLY INBOUND POLICY POPUP}

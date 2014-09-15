@@ -90,7 +90,7 @@ checking multiple subnet with same IP range to tenant router
 	sleep  40
 	openstack verify router interface  app
 	${result}=  openstack add subnet to router  t5test-r1  web
-	Should not be True  ${result}
+	Should be True  ${result}
 	openstack delete subnet to router  t5test-r1  app
 	sleep  10
 	${result}=  openstack verify router interface  app

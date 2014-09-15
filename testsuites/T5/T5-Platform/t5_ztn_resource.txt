@@ -215,7 +215,7 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone
-	Cli Run  master  ntp time-zone ${timezone_random}
+	#Cli Run  master  ntp time-zone ${timezone_random}
 	${host_random}  Generate Random IP
 	${hostname_random}  Generate Random Name  hostname.tmk.  5
 	Cli Run  master  logging remote
