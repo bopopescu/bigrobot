@@ -2,7 +2,7 @@
 #
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
-database: test_catalog3
+database: test_catalog4
 #database: test_catalog3_20140806
 
 products:
@@ -32,6 +32,10 @@ features:
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
 aggregated_builds:
+  'bvs master aggregated 2014 wk38':          # week of 2014-09-15
+    [ 
+      #'bvs master #3272',
+    ] 
   'bvs master aggregated 2014 wk37':          # week of 2014-09-08
     [ 
       'bvs master #3242',
@@ -44,6 +48,13 @@ aggregated_builds:
       'bvs master #3266',
       'bvs master #3271',
       'bvs master #3272',
+      'bvs master #3274',
+      'bvs master #3278',
+      'bvs master #3280',
+      'bvs master #3284',
+      'bvs master #3287',
+      'bvs master #3292',
+      'bvs master #3296',
     ] 
   'bvs master aggregated 2014 wk36':          # week of 2014-09-01
     [ 
