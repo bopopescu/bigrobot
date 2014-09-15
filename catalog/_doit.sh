@@ -55,6 +55,7 @@ if [ $phase2 -eq 1 ]; then
         subject2 "Generating JSON for test results in $xml_logs ..."
         time ./parse_test_xml_output.py \
                 --input=$xml_logs \
+                --is-baseline \
                 --output-suites=raw_data.test_suites_${product}.json \
                 --output-testcases=raw_data.test_cases_${product}.json
     done
