@@ -105,6 +105,7 @@ Reboot spine switch spine1 and verify the fabric link
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
+	reconnect switch ips
 Reboot leaf switch and verify fabric link
 	[Tags]  Fabric  feature  IronHorse  run
 	rest verify fabric link
@@ -113,6 +114,7 @@ Reboot leaf switch and verify fabric link
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
+	reconnect switch ips
 	
 Add/delete a new link between spine0 and leaf0a
 	[Tags]  Fabric  feature  IronHorse
@@ -135,19 +137,19 @@ Delete and Readd the Rack2
 	[Tags]  Fabric  feature  IronHorse
 	rest delete fabric switch  leaf2-a
 	rest delete fabric switch  leaf2-b
-	sleep  2
+	sleep  125
 	rest verify fabric link
 	rest add switch  leaf2-a
 	rest add dpid  leaf2-a  ${leaf2a_dpid}
 	rest add fabric role  leaf2-a  leaf
 	rest add leaf group  leaf2-a  rack2
-	sleep  5
+	sleep  125
 	rest verify fabric link
 	rest add switch  leaf2-b
 	rest add dpid  leaf2-b  ${leaf2b_dpid}
 	rest add fabric role  leaf2-b  leaf
 	rest add leaf group  leaf2-b  rack2
-	sleep  5
+	sleep  125
 	rest verify fabric link
 
 add portgroup lacp to 2 different rack
@@ -162,7 +164,7 @@ add portgroup lacp to 2 different rack
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack6
-	sleep  3
+	sleep  125
 	rest add portgroup  p1
 	rest add portgroup lacp  p1
 	rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1

@@ -46,10 +46,19 @@ Suite Setup
 	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
-	#Reboot Switches From CLI
-	#Reboot Switches
-	#Power Cycle All Switches
 	Cli Run  master  show switch
+
+	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s1_alias}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
+	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s2_alias}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
+	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s3_alias}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
+	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s4_alias}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
+	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s5_alias}
+	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
+	Sleep  120
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -215,7 +224,7 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone
-	Cli Run  master  ntp time-zone ${timezone_random}
+	#Cli Run  master  ntp time-zone ${timezone_random}
 	${host_random}  Generate Random IP
 	${hostname_random}  Generate Random Name  hostname.tmk.  5
 	Cli Run  master  logging remote

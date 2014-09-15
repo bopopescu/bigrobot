@@ -176,17 +176,21 @@ Try to create external stp loop sending STP bpdu
     [Tags]  Manual
     Manual passed	
     
-Different flavor of traffic types (invalid headers, CRC, malformed, Invalid protocols)
-    Log     Step 1 - Different flavor of traffic types (invalid headers, CRC, malformed)   
+Different flavor of traffic types ( CRC, malformed, Invalid protocols)
+    Log     Step 1 - Different flavor of traffic types (CRC, malformed) 
+    Log     Step 2 - Pcap file for arp storm, LDAP invalid packet, snmp invalid packets etc 
+    Log     Step 3 - Collecting the result matrix with different type of invalid packets 
+    Log     Step 4 - Will Mark pass and fail if find any behavior inconsistent
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
-IP header with more than 1500 Bytes
-    Log     Step 1 - IP header with more than 1500 Bytes 
+IP header with more than 1500 Bytes Invalid header type 
+    Log     Step 1 - IP header with more than 1500 Bytes or Invalid header type 
+    Log     Step 2 - IP packet with invalid header 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Killing OFAD
     Log     Step 1 - Killing OFAD
@@ -196,9 +200,11 @@ Killing OFAD
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
+    Log     Step 2 - Difficult to simulate this scenario. 
+    Log     Step 3 - Tried taking out slowly and putting it back. 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed 
 
 Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff, 00:00:00:00:00:00)
     Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)

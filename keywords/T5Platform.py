@@ -4641,10 +4641,10 @@ class T5Platform(object):
                     prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
                     # skip due to PR BSC-6137
-                    if re.match(r'.*member port-group.*', string):
-                        helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
-                        num = num - 1
-                        continue
+                    #if re.match(r'.*member port-group.*', string):
+                    #    helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
+                    #    num = num - 1
+                    #    continue
 
                     # Compare prompts.
                     if prompt1 != prompt2:
@@ -5285,6 +5285,7 @@ class T5Platform(object):
                     return utilities.fabric_integrity_checker(obj, "after", "single", "Yes")
                 else:
                     helpers.log("Error verifying diff between two running config files. Looks like something is off")
+                    return False
             else:
                 helpers.log("Error during Copying running config to autoConfig2.txt")
                 return False

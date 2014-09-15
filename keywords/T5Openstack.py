@@ -657,7 +657,7 @@ S
 		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))
 		return True
 
-	def openstack_add_instance(self, imageName, keypairName, netName, instanceName):
+	def openstack_add_instance(self, imageName, netName, instanceName):
 		'''delete instance
 			Input:
 				imageName : e.g cirros , ubuntu etc
@@ -671,7 +671,7 @@ S
 		os1 = t.openstack_server('os1')
 		imageId = self.openstack_show_image(imageName)
 		netId = self.openstack_show_net(netName)
-		os1.bash("nova boot --flavor 2 --image %s --key-name %s --nic net-id=%s %s" % (imageId, keypairName, netId, instanceName))
+		os1.bash("nova boot --flavor 2 --image %s --nic net-id=%s %s" % (imageId, netId, instanceName))
 		return True
 
 	def openstack_delete_instance(self, instanceName):
@@ -724,7 +724,7 @@ S
 			c.rest.get(url)
 			data = c.rest.content()
 			for i in range(0,len(data)):
-				if data[i]["tenant"] == tenantId and data[i]["name"] == netId:
+				if  str(data[i]["name"]) == str(netId):
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
 				else:
@@ -1127,3 +1127,28 @@ S
 			i = i + 1
 			h = 1
 		return True
+	
+	def openstack_compute_node_portgroup(self, instanceName, netName):
+		'''Function to extract the port group and its members which VM instance belongs
+		Input: openstack network name and Instance name
+		Output: list of port group members
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
+		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
+		c.rest.get(url)
+		data = c.rest.content()
+		portgroup_members = {}
+		port_group_name = str(data[0]["port-group"])
+		url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (port_group_name)
+		c.rest.get(url1)
+		data1 = c.rest.content()
+		for i in len(data1[0]["interface"][0]):
+			k, v = data1[0]["interface"][0][i]["switch-name"], data1[0]["interface"][0][i]["interface-name"]
+			portgroup_members[k] = v 
+		return portgroup_members
+				
+		
+		
+		

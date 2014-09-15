@@ -1884,9 +1884,9 @@ class T5(object):
         dpid = data1[0]["dpid"]
         url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url2)
-        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:'+switch+', ifName:'+intf+', "'
+        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
         c.enable(cli_string)
-        
+
         data = c.rest.content()
         if data[0]["interface"][0]["state"] == "down":
             helpers.log("Interface state is down")
@@ -1909,9 +1909,9 @@ class T5(object):
         url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url2)
         data = c.rest.content()
-        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:'+switch+', ifName:'+intf+', "'
+        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
         c.enable(cli_string)
-        
+
         if data[0]["interface"][0]["state"] == "up":
             helpers.log("Interface state is up")
             return True
@@ -2018,7 +2018,7 @@ class T5(object):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Tx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2193,8 +2193,7 @@ class T5(object):
         params = t.topology_params()
         if switch is None:
             helpers.log("Executing switch reboot for all switchs from master controller")
-            c.enable('system reboot switch all', prompt=':')
-            c.enable('yes', timeout=300)
+            c.enable('system reboot switch all')
             helpers.sleep(120)
             helpers.log('Successfully rebooted switches from controller')
             if helpers.bigrobot_test_ztn().lower() == 'true':
@@ -2212,11 +2211,10 @@ class T5(object):
                 helpers.log("Not ZTN ..not reconfiguring switch consoles for ssh connections..")
         else:
             helpers.log("Rebooting switch: %s from controller" % switch)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
-            c.enable('system reboot switch %s' % switch, prompt=':')
-            c.enable('yes', timeout=300)
+            c.enable('show switch %s version | grep Uptime' % switch)
+            c.enable('system reboot switch %s' % switch)
             helpers.sleep(120)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('show switch %s version | grep Uptime' % switch)
             helpers.log("Success rebooting switch: %s from controller" % switch)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")

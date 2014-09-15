@@ -175,7 +175,7 @@ T1.11. Filtering tenants
 
 #Tests at each page:
 T2.1. Exporting tables to CSV, JSON
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2346
 T2.2. Refresh page - manual, periodic
 	Manual Passed
@@ -184,17 +184,17 @@ T2.3. Sorting in tables
 	Manual Passed
 	[Tags]  manual
 T2.4. Choosing columns in table - persists after refresh (saved in cookie)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.5. Toggling through subtables with arrows/links
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.6. Expanding/collapsing rows in tables
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T2.7. Links in the footer of a page
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 #Main landing page:
 T3.1. Refresh each single pane
@@ -290,8 +290,8 @@ T4.2.10. Toggle through Links table with arrows/links
 	Manual Passed
 	[Tags]  manual
 T4.2.11. Toggle through Port groups table with arrows/links
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 #Main pane:
 T4.3.1. Add Spine Switch - empty/invalid/reserved/long mac, name
@@ -335,7 +335,7 @@ T5.5. Adding Dummy Switch - empty/invalid/reserved/long mac, name
 	Manual Passed
 	[Tags]  manual
 T5.6. Change fabric role - other to spine/leaf
-	Manual Failed
+	Manual Passed
 	[Tags]  manual
 T5.7. Change fabric role - spine to leaf/other
 	Manual Passed
@@ -400,7 +400,7 @@ T9.1. Add, modify, delete description (in the bar/by clicking wrench icon)
 	Manual Passed
 	[Tags]  manual
 T9.2. Add, modify, delete Route
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2334
 T9.3. Add, modify, delete Policy List
 	Manual Passed
@@ -412,7 +412,7 @@ T9.5. Add, modify, delete ECMP Group (?)
 	# ECMP Groups (Next Hop Groups) not available for tenant System
 	[Tags]  skipped
 T9.6. Add, modify, delete Tenant Interface
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2336
 
 #Regular Tenant:
@@ -435,7 +435,7 @@ T10.6. Add, modify, delete Next Hop Group
 	Manual Passed
 	[Tags]  manual
 T10.7. Add, modify, delete Segment Interface
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BSC-6279
 T10.8. Configure/unconfigure interface to Tenant System
 	Manual Passed
@@ -451,7 +451,7 @@ T10.9.3. Add, modify, delete Switch Interfaces
 	Manual Passed
 	[Tags]  manual
 T10.9.4. Add, modify, delete Endpoints
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2341
 T10.10. Duplicate segment
 	Manual Passed
@@ -483,7 +483,7 @@ T11.6. Add, modify, delete Switch Interfaces
 	Manual Passed
 	[Tags]  manual
 T11.7. Add, modify, delete Endpoints
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2341
 T11.8. Clear segment counters
 	Manual Failed
@@ -491,19 +491,19 @@ T11.8. Clear segment counters
 
 #Endpoints:
 T12.1. Filtering
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T12.2. Verify information about endpoints correct
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T12.3. Manage static endpoints (eventually)
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 
 #Other:
 T13.1. Logging in as remote users
-	Manual Untested
-	[Tags]  manual-untested
+	Manual Passed
+	[Tags]  manual
 T13.2. Logging out
 	Manual Passed
 	[Tags]  manual

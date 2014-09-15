@@ -93,9 +93,6 @@ T5.5 Create Port group with name in CAPS and mode as LACP
     Create Port Group				PORT-GROUP-4	LACP			leaf_group_new		
 T5.6 Delete Port groups
     Delete All Port Groups
-	
-	
-		
 
 			
 * Keyword
