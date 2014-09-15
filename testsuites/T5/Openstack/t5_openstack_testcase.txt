@@ -119,8 +119,8 @@ Performance(between 2 VM using iperf)
 
 
 Upgrade Iron Horse Image to a Iron Horse Official Release image.
-	[Tags]  solution  openstack  IronHorse  manual-untested	
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 
 Configure 2 Nuetron server for openstack HA
 	[Tags]  solution  openstack  IronHorse  manual
