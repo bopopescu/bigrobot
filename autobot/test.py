@@ -1167,17 +1167,22 @@ class Test(object):
         if not helpers.is_bcf(platform):
             return True
         helpers.log("Checking idle timeout on '%s'" % name)
-        # n.bash('export TERM=dumb')
-        # n.bash('stty cols 200')
-        # n.bash('sh')
-        # n.bash('set +o emacs')
+
+        # Did we previously make modifications to the system?
         n.sudo('ls -la %s' % bigrobot_file)['content']
         content = n.sudo('echo $?')['content']
         output = helpers.strip_cli_output(content, to_list=True)[0]
         if int(output) == 0:
             # Controller has already been touched by BigRobot
-            n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)
-            return True
+            content = n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)['content']
+            output = helpers.strip_cli_output(content, to_list=True)[0]
+            if re.match(r'.*BigRobot mod.*', output):
+                helpers.log("'%s' - BigRobot modifications have already been applied."
+                            % name)
+                return True
+            else:
+                helpers.log("'%s' - BigRobot modifications not found - possibly because system was upgraded."
+                            % name)
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
 
