@@ -73,9 +73,6 @@ Run tests with and without Floating IP
 Run show tech-support
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Run bsn-support.py
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 Verify trace packet support in the Horizon 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
@@ -117,13 +114,13 @@ Measure Openstack Scaling limit (Topology: Single Nova controller)
 	manual passed
 
 Performance(between 2 VM using iperf)
-	[Tags]  performance  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  performance  openstack  IronHorse  manual
+	manual passed
 
 
 Upgrade Iron Horse Image to a Iron Horse Official Release image.
-	[Tags]  solution  openstack  IronHorse  manual-untested	
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 
 Configure 2 Nuetron server for openstack HA
 	[Tags]  solution  openstack  IronHorse  manual
@@ -149,12 +146,6 @@ Flap the link between Leaf switch and OVS (connection to nova-controller)
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Flap the link between Leaf switch and OVS (connection to block storage)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap the link between Service Rack Leaf switch and Spine switch
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap the link between Compute Rack Leaf switch and Spine switch
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Flap the link between Service Rack Leaf switch and router

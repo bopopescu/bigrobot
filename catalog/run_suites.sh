@@ -51,7 +51,7 @@ for x in `cat $f`; do
         # Notes:
         #   We need to count the test cases which are tagged as 'manual-untested'
         #   as well.
-        BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
+        BIGROBOT_SUITE=$y ../bin/gobot validate
     fi
 done
 

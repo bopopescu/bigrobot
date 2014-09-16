@@ -657,7 +657,7 @@ S
 		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))
 		return True
 
-	def openstack_add_instance(self, imageName, keypairName, netName, instanceName):
+	def openstack_add_instance(self, imageName, netName, instanceName):
 		'''delete instance
 			Input:
 				imageName : e.g cirros , ubuntu etc
@@ -671,7 +671,7 @@ S
 		os1 = t.openstack_server('os1')
 		imageId = self.openstack_show_image(imageName)
 		netId = self.openstack_show_net(netName)
-		os1.bash("nova boot --flavor 2 --image %s --key-name %s --nic net-id=%s %s" % (imageId, keypairName, netId, instanceName))
+		os1.bash("nova boot --flavor 2 --image %s --nic net-id=%s %s" % (imageId, netId, instanceName))
 		return True
 
 	def openstack_delete_instance(self, instanceName):
@@ -724,7 +724,7 @@ S
 			c.rest.get(url)
 			data = c.rest.content()
 			for i in range(0,len(data)):
-				if data[i]["tenant"] == tenantId and data[i]["name"] == netId:
+				if  str(data[i]["name"]) == str(netId):
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
 				else:

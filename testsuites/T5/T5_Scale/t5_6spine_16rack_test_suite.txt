@@ -402,9 +402,10 @@ T3 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2/L3 mixed
-    manual untested
-	[Tags] 	sanity    Manual-untested   scaling
-
+    #manual untested
+	[Tags] 	sanity    Manual   scaling
+    Manual passed
+    
 T4 Verify L2 traffic drop time after deleting the scale config
     Log    Repeat T1
     Log    Delete scale configuration under Master controller
@@ -701,7 +702,7 @@ T32 Verify L2 learning rate
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    #manual untested
-	[Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual  scaling
    Manual passed
 	
 T33 Verify L3 hosts ageout and relearn
@@ -710,9 +711,9 @@ T33 Verify L3 hosts ageout and relearn
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #manual untested
+   [Tags] 	sanity    Manual  scaling
+   Manual passed
 	
 T34 Verify traffic loss/convergence after removing static endpoints
    Log   Repeat T3
