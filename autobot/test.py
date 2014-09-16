@@ -1176,6 +1176,7 @@ class Test(object):
         output = helpers.strip_cli_output(content, to_list=True)[0]
         if int(output) == 0:
             # Controller has already been touched by BigRobot
+            n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)
             return True
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
@@ -1206,6 +1207,7 @@ class Test(object):
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_dir_file, name))
 
+        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)
         n.sudo('touch %s' % bigrobot_file)
 
         # Disable Bash Command Line Editing (default is Emacs mode). But this
