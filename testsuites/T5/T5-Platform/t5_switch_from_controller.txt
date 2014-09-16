@@ -21,10 +21,6 @@ Library         String
 *Variables
 ${switchlight_version}  Switch Light OS
 ${netmask}  18
-${gateway}  10.8.0.1
-${gateway1}  10.192.60.1
-${dns_server}  10.3.0.4
-${dns_domain}  qa.bigswitch.com
 ${switch1_name}=  leaf0-a
 
 *Test Case
