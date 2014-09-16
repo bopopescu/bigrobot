@@ -25,7 +25,7 @@ Library        OperatingSystem
 * Test Case
  
  
-T12 SNMP(every 10 sec)
+T12 SNMP(every 2 minutes sec)
 	log  constant SNMP walk 	
 	log  ******** setup snmp and verify********
 	setup snmp	
@@ -34,10 +34,10 @@ T12 SNMP(every 10 sec)
 	: FOR    ${i}    IN RANGE    0    10	
 	\  ${result}=  snmp cmd  master  snmpbulkwalk  public   
 	\  log  ${result}   
-	\  sleep  300
-#	\  ${result}=  snmp cmd  master  snmpwalk  public      
-#	\  log  ${result}   
-#	\  sleep  60
+	\  sleep  120
+	\  ${result}=  snmp cmd  master  snmpwalk  public      
+	\  log  ${result}   
+	\  sleep  120
 	 
 	[Tags] 	traffic   backgroupcheck
  
