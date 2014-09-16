@@ -48,15 +48,15 @@ Suite Setup
 	Randomize ZTN Configuration
 	Cli Run  master  show switch
 
-	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s1_alias}
+	${status}=  Rest Get Switch Fabric Connection State  master  ${s1_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
-	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s2_alias}
+	${status}=  Rest Get Switch Fabric Connection State  master  ${s2_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
-	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s3_alias}
+	${status}=  Rest Get Switch Fabric Connection State  master  ${s3_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
-	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s4_alias}
+	${status}=  Rest Get Switch Fabric Connection State  master  ${s4_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
-	${fabric_connection_state}=  Rest Get Switch Fabric Connection State  master  ${s5_alias}
+	${status}=  Rest Get Switch Fabric Connection State  master  ${s5_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
 	Sleep  120
 
