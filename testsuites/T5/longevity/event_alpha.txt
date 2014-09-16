@@ -225,9 +225,9 @@ data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
 	\   disable links between nodes      ${node1}   ${int}
-	\   sleep   ${medium}
+	\   sleep   120
 	\   enable links between nodes      ${node1}   ${int} 
- 	\   sleep   ${medium} 
+ 	\   sleep   120 
  
 
 disable links between nodes    [Arguments]   ${node1}   ${int} 
