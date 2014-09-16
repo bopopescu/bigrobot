@@ -57,7 +57,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine2}   
     \   sleep  ${inevent}  
        
-	[Tags] 	longevity   traffic    event     skipped
+	[Tags] 	longevity   traffic    event      
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -123,7 +123,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${inevent}  
  
  
-	[Tags] 	longevity     traffic     event    skipped
+	[Tags] 	longevity     traffic     event    
 
 T28 data Link down/up event between leafs 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -145,7 +145,7 @@ T26 big configuration changes (around 500 tenants)
  	\  tenant configuration add/remove      ${Tflapnum}       3       
  	\  sleep  ${bigconfigsleep}  
    	
-	[Tags] 	longevity     traffic    event    skipped
+	[Tags] 	longevity     traffic    event     
 
 
 T25 big configuration changes (around 500 vns change)
@@ -154,7 +154,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event      skipped
+	[Tags] 	longevity     traffic    event      
 
 
 
@@ -174,7 +174,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
   	\  sleep  ${betweenevent}
    
-	[Tags] 	longevity    traffic    skipped
+	[Tags] 	longevity    traffic     
 
 
  
@@ -221,7 +221,7 @@ controller node event reboot slave    [Arguments]    ${during}=30
 
 data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
     Log To Console   ================ data link down/up for ${node1} ${node2} ===============
-	log  disable/enable link from leaf to spine		
+	log  disable/enable link from nodes		
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
 	\   disable links between nodes      ${node1}   ${int}
