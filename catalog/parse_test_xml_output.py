@@ -76,14 +76,14 @@ class TestCollection(object):
 
         f = self._output_suites
         print("Importing %s into Mongo test suites collection" % f)
-        (status, output) = helpers.run_cmd2(
+        (status, output, error_code) = helpers.run_cmd2(
                               cmd="./mongoimport_suites_collection.sh %s" % f,
                               shell=True)
         print("Output:\n%s" % helpers.indent_str(output))
 
         f = self._output_testcases
         print("Importing %s into Mongo test case collection" % f)
-        (status, output) = helpers.run_cmd2(
+        (status, output, error_code) = helpers.run_cmd2(
                               cmd="./mongoimport_testcases_collection.sh %s" % f,
                               shell=True)
         print("Output:\n%s" % helpers.indent_str(output))
