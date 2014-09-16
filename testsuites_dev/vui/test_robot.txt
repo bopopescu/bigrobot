@@ -56,6 +56,7 @@ ${COUNTER}      100
 #@{MYLIST}       [ a, b, c, d, e ]
 @{MYLIST}       [ 1, 2, 3, 4, 5, 6, 7, "abc", xyz ]
 ${POLICY_BM0_IP}   None
+${KW_COUNTER}      0
 
 * Test Cases
 Test var assignment
@@ -284,12 +285,172 @@ Test Song's function
     should not be empty   ${result}
 
 Test Robot variable
+    [Tags]           skipped
     ${var}           set variable   1.2.3.X
     log              var=${var}
     test failed
 
+Test custom teardown
+    [Tags]           skipped
+    Log              I am here
+    [Setup]          Custom test case setup
+    [Teardown]       Custom test case teardown
+
+Test ++++++Maximum limit of started keywords exceeded++++++
+    #[Tags]           skipped
+    Count me
+    Do A
 
 * Keywords
+Count me
+    ${temp}=         expr   ${KW_COUNTER} + 1
+    set global variable   ${KW_COUNTER}   ${temp}
+Do A
+    Count me
+    Do B
+Do B
+    Count me
+    Do C
+Do C
+    Count me
+    Do D
+Do D
+    Count me
+    Do E
+Do E
+    Count me
+    Do F
+Do F
+    Count me
+    Do G
+Do G
+    Count me
+    Do H
+Do H
+    Count me
+    Do I
+Do I
+    Count me
+    Do J
+Do J
+    Count me
+    Do K
+Do K
+    Count me
+    Do L
+Do L
+    Count me
+    Do M
+Do M
+    Count me
+    Do N
+Do N
+    Count me
+    Do O
+Do O
+    Count me
+    Do P
+Do P
+    Count me
+    Do Q
+Do Q
+    Count me
+    Do R
+Do R
+    Count me
+    Do S
+Do S
+    Count me
+    Do T
+Do T
+    Count me
+    Do U
+Do U
+    Count me
+    Do V
+Do V
+    Count me
+    Do W
+Do W
+    Count me
+    Do X
+Do X
+    Count me
+    Do Y
+Do Y
+    Count me
+    Do Z
+Do Z
+    Count me
+    Do A1
+Do A1
+    Count me
+    Do B1
+Do B1
+    Count me
+    Do C1
+Do C1
+    Count me
+    Do D1
+Do D1
+    Count me
+    Do E1
+Do E1
+    Count me
+    Do F1
+Do F1
+    Count me
+    Do G1
+Do G1
+    Count me
+    Do H1
+Do H1
+    Count me
+    Do I1
+Do I1
+    Count me
+    Do J1
+Do J1
+    Count me
+    Do K1
+Do K1
+    Count me
+    Do L1
+Do L1
+    Count me
+    Do M1
+Do M1
+    Count me
+    Do N1
+Do N1
+    Count me
+    Do O1
+Do O1
+    Count me
+    Do P1
+Do P1
+    Count me
+    Do Q1
+Do Q1
+    Count me
+    Do R1
+Do R1
+    Count me
+    Do S1
+Do S1
+    Count me
+    Do T1
+Do T1
+    Count me
+    Do U1
+Do U1
+    Count me
+    Do V1
+Do V1
+    Count me
+    
+
+
 my base suite setup
     base suite setup
     #${c1_ip} =          params  node=c1  key=ip
@@ -305,5 +466,11 @@ variable assignment
     Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
     Should be true  ${temp} == 123123
+
+Custom test case setup
+    Log           Inside custom test case setup
+
+Custom test case teardown
+    Log           Inside custom test case teardown
 
 

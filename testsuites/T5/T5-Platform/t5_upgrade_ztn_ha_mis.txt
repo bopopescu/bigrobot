@@ -267,11 +267,15 @@ UPGRADE: T11.11 disconneted switch behavior during upgrade
 
 UPGRADE: T11.12 Verify switch partition for different topology
 	log  step 1 - verify switch partition for full redundant spine and leaf
+		log  result - passed
 	log  step 2 - verify switch partition with single leaf rack
 	log  step 3 - verify switch partition with odd number spine
+		log  result - passed(with 1 spine)
 	log  step 4 - verify switch partition with 1 spine
+		log  result - passed
+	
 
-	[Tags] 	fully   feature  upgrade_ztn   manual-untested 
+	[Tags] 	fully   feature  upgrade_ztn   manual 
   
 
 UPGRADE: T11.13 upgrade with static ZTN server
@@ -287,8 +291,9 @@ UPGRADE: T11.13 upgrade with static ZTN server
 
 UPGRADE: T11.14 upgrade with dhcp ZTN server
 	log   config dhcp server
+		log  Tomasz tested it with virtual address
 
-	[Tags] 	fully   feature  upgrade_ztn   manual-untested 
+	[Tags] 	fully   feature  upgrade_ztn   manual 
 
 UPGRADE: T11.15 upgrade with not ZTN server configured
 	log   covered in test case T11.1
@@ -347,16 +352,15 @@ SYNC: T12.3 Verify controller failover with config changes in switch
 	log  step 1 - modify switch related config in controller(NTP, Logging, SNMP)
  	log  step 2 - perform controller failover and cli reload 		
 	log  step 3 - verify switch startup config and running config all updated
- 		
-	[Tags] 	full     feature  upgrade_ztn    manual-untested
+ 		manual passed
+	[Tags] 	full     feature  upgrade_ztn    manual 
  
 SYNC: T12.4 Verify controller upgrade with switch local config changes 
    	log  step 1 - modify switch related config in switch(NTP, Logging, SNMP)
  	log  step 2 - upgrade both controllers
    	log  step 3 - switch will connect and controller/switch config(in controller) preserved
-   	log  step 4 - switch will connect and switch local config is not honored(NTP, Logging, SNMP)
-    
-	[Tags] 	sanity    feature  upgrade_ztn  manual-untested 
+ 		manual passed    
+	[Tags] 	sanity    feature  upgrade_ztn  manual 
 
 
 HAEVENT: T13.1 HA event - standby controller reboot after upgrade
@@ -448,30 +452,32 @@ EVENT: T14.8 new switch join as standby switch after upgrade (1 - swi upgrade, 1
   	
 EVENT: T14.9 switch link up/down during upgrade
 	log  step 1 - during upgrade, go to the switch, shut/no shut port 
+		log  shut down interface in switch, the interace is removed from lag 
+		log  unshut it or wait for config reload for it get unshut, it will not added back
 	log  step 2 - during upgrade, physical remove link
+		log  siwtch interface down is honored, but up not added
  
 	
-  	[Tags] 	full   feature  upgrade_ztn   manual-untested 
+  	[Tags] 	full   feature  upgrade_ztn   manual 
 	
 EVENT: T14.10 L2 miss traffic during upgrade
 	log  step 1 - during upgrade, send l2 miss traffic
+		log  result - traffic will not be forwarded
+	manual passed
 	
-  	[Tags] 	full    feature  upgrade_ztn   manual-untested
+  	[Tags] 	full    feature  upgrade_ztn   manual 
  
 EVENT: T14.11 L3 arp resolve during upgrade 
 	log  step 1 - during upgrade, send arp request from traffic gen
+		log  result - passed
 	
-  	[Tags] 	full    feature  upgrade_ztn  manual-untested
+  	[Tags] 	full    feature  upgrade_ztn  manual 
 
 EVENT: T14.12 L3 arp request during upgrade  
 	log  step 1 - during upgrade, system need to send arp request
+		log  result - passed
 	
-  	[Tags] 	full    feature  upgrade_ztn    manual-untested
-
-EVENT: T14.13 mac move during upgrade  
-	log  step 1 - during upgrade, send same mac source from different port
-	
-  	[Tags] 	full    feature  upgrade_ztn  manual-untested 
+  	[Tags] 	full    feature  upgrade_ztn    manual 
   	
 EVENT: T14.14 config change during upgrade should be blocked 
 		${active}=   get_node_name   master
@@ -536,17 +542,25 @@ NEGATIVE: T15.2 upgrade stage terminated
 	  		
 	 
   	[Tags] 	full     feature  upgrade_ztn	negative      
+
+ 
+
 	  
 NEGATIVE: T15.3 controller upgrade launch 
  	log  different image for active and standby, launch will be terminated
+ 		log  standby exit immediatly
 	log  only issue launch at active, launch will not proceed, and user can terminate
+		log   passed
 	log  only issue launch at standby, launch will not proceed, user can terminate
+		log   passed
     log  send no to terminated launch at active during prompt
+    	log   passed
     log  send no to terminated lanuch at standby during prompt
-    log  hit ctl-c to terminated active upgrade before standby upgrade has began messgge
-    log  hit ctl-c to terminated standby upgrade during message wait for upgrader
+    	log  passed
     log  hit ctl-c to terminated active upgrade before standby disconneted message
+    	log  passed
     log  hit ctl-c to terminated standby upgrade standby disconneted message    
+    
     log  hit ctl-c to terminated active controller before standby finish phase1
     log  hit ctl-c to terminated active controller before standby finish phase2
        
@@ -570,23 +584,7 @@ NEGATIVE: T15.4 controller upgrade launch suspend
  
 ### Miscellaneous
 
-MIS: T100.1 Verify upgrade from no ZTN switch to ZTN switch    
-     
-  	[Tags] 	full   feature  upgrade_ztn  skipped  manual-untested  
-	
-MIS: T100.2 Verify upgrade from ZTN switch to no ZTN switch   
-      
-  	[Tags] 	full   feature  upgrade_ztn   skipped  manual-untested  
  
-
-MIS: T100.3 Verify upgrade with no ZTN switch (ztn related set remain during upgrade) 
-     
-  	[Tags] 	full    feature  upgrade_ztn  skipped  manual-untested 
-
-MIS: T100.4 Verify controller reboot with no ZTN switch (ztn related set remain during reboot)  
-      
-  	[Tags] 	full     feature  upgrade_ztn   skipped  manual-untested
-
 MIS: T101 verify 3 node controller upgrade 
 	log  can not form controller with more than 2 nodes
 	manual passed	
@@ -596,16 +594,14 @@ MIS: T102 upgrade 1 controller, build another one, then join the cluster
 	manual passed
   	[Tags] 	full   feature  upgrade_ztn   manual  
 
-MIS: T104 unsupported switch platform ????
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn   skipped
-  	
+   	
 MIS: T108 upgrade when controller high CPU
 	log  upgrade with high cpu	
   	[Tags] 	full    feature  upgrade_ztn    manual-untested 
 
 MIS: T109 upgrade when controller does not have enough space  
 	log  upgrade when controller does not have enough space 
-  	[Tags] 	full  manual-untested   feature  upgrade_ztn 
+  	[Tags] 	full  feature  upgrade_ztn  manual-untested 
 
   	
 MIS: T111 spawn another session to do upgrade during upgrade  
@@ -615,8 +611,8 @@ MIS: T111 spawn another session to do upgrade during upgrade
 		log  result: the 2nd session will give error messages:Error: Internal (bug): cmd: sudo /bin/mount /dev/sda3 /tmp/tmp7BMdNw rtn: 32
 		log  result: both gives error: Error: Internal (bug): cmd: sudo /sbin/e2fsck -fy /dev/sda3
 	log   2 session launch image the same time
-		
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+		manual failed
+  	[Tags] 	full  feature  upgrade_ztn   manual   JIRA-BSC-6349
   	
   	
 MIS: T113 admin group non admin user

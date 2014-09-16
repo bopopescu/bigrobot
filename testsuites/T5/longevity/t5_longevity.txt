@@ -453,7 +453,7 @@ T29 management link event
 	log  reload 1 management switch
   	log  reload both management switch
     
-	[Tags] 	full  manual-untested   traffic     event
+	[Tags] 	full  manual-untested   traffic     event   skipped
 
 T30 big configuration changes (around 500 tenants or vns change)
  	clear stats in controller switch	 
@@ -500,15 +500,15 @@ T31 quick configuration changes (non stop, less than 10 tenants or vns each chan
     
 	[Tags] 	full   longevity   traffic   event   
 	
-T29 VM event
+T32 VM event
 	log  VM move - mac move within 1 pair tor
 	log  VM move - mac move between different racks
 	log  VM add - start a set of new traffic
 	log  VM delete - stop the traffic and age ou
    
-	[Tags] 	full  event  manual-untested
+	[Tags] 	full  event  skipped
  
-T30 table flush
+T table flush
     log   not supported
 	log  placeholder for table flush: there is still no way to clean  
     
