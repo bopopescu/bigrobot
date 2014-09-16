@@ -83,7 +83,7 @@ T7.28.2 - while SWI download - switch undefined (suspended)
 	Telnet Wait For Switch To Find Manifest  s1
 	Randomize ZTN Configuration
 	Telnet Wait For Switch To Reload  s1
-	Sleep  30
+	Sleep  60
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch In Provisioned Mode  ${s1_alias}
@@ -93,7 +93,7 @@ T7.28.3 - while image startup - switch undefined (suspended)
 	Telnet Wait For Switch To Start Booting  s2
 	Randomize ZTN Configuration
 	Telnet Wait For Switch To Reload  s2
-	Sleep  30
+	Sleep  60
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch In Provisioned Mode  ${s2_alias}
