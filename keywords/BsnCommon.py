@@ -138,6 +138,22 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def run_cmd(self, *args, **kwargs):
+        """
+        Execute a command and return its execution status, output, and error
+        code.
+
+        Inputs:
+        | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
+
+        Return Value:
+        - Tuple of (<status_flag>,  "<output>", <errorcode>)
+
+        See helpers.run_cmd2() for more info.
+        """
+        return helpers.run_cmd2(*args, **kwargs)
+
+
     def bcf_controller_postmortem(self, node, server, server_devconf,
                                   user, password, dest_path, test_descr=None):
         """
