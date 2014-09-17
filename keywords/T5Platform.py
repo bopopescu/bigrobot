@@ -220,7 +220,7 @@ class T5Platform(object):
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     helpers.log("Controller just came alive. Waiting for it to become fully functional")
-                    sleep(60)
+                    sleep(120)
                     break
 
         if(singleNode):
