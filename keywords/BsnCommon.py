@@ -153,6 +153,31 @@ class BsnCommon(object):
         """
         return helpers.run_cmd2(*args, **kwargs)
 
+    def scp_put(self, server, file_path, dest_path, user="admin", password="adminadmin"):
+        """
+        Example:
+            helpers.scp_get(c.ip(),
+                            remote_file='/var/log',
+                            local_path='/tmp',
+                            user='recovery',
+                            password='bsn')
+
+        Limitations: Does not support wildcards.
+        """
+        helpers.scp_put(server, file_path, dest_path, user, password)
+
+    def scp_get(self, server, remote_file_path, dest_path, user="admin", password="adminadmin"):
+        """
+        Example:
+            helpers.scp_get(c.ip(),
+                            remote_file='/var/log',
+                            local_path='/tmp',
+                            user='recovery',
+                            password='bsn')
+
+        Limitations: Does not support wildcards.
+        """
+        helpers.scp_get(server, remote_file_path, dest_path, user, password)
 
     def bcf_controller_postmortem(self, node, server, server_devconf,
                                   user, password, dest_path, test_descr=None):
