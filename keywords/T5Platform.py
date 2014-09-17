@@ -5362,3 +5362,38 @@ class T5Platform(object):
             c.enable('delete support ' + filename )             
         return True
    
+   
+    def rest_get_switch_connection(self, switch=None):
+        '''
+                Objective:
+                - Get the switch connections from controller 
+    
+                Input:
+                | switch name |
+
+                Return Value:
+                - Content if present
+                - Null on failure
+                
+        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch[name="spine0"]?select=connection 
+        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch?select=connection
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        if switch is not None:
+            url = '/api/v1/data/controller/core/switch[name="%s"]?select=connection' % switch
+            c.rest.get(url)
+            data = c.rest.content()
+            if len(data) == 0:
+                return {}
+            else: 
+                return data
+        else:
+            url = '/api/v1/data/controller/core/switch?select=connection'
+            c.rest.get(url)
+            data = c.rest.content()
+            if len(data) == 0:
+                return {}
+            else: 
+                return data    
+   
