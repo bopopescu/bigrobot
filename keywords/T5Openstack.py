@@ -961,17 +961,28 @@ S
 	    '''
 		t = test.Test()
 		c = t.controller('master')
-		tenantId = self.openstack_show_tenant(tenantName)
 		count = int(count)
-		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
-		c.rest.get(url)
-		data = c.rest.content()
-		if len(data) == count:
-			helpers.test_log("All Openstack segments are present in controller")
-			return True	
+		if str(tenantName) != "global":
+			tenantId = self.openstack_show_tenant(tenantName)
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenantId)
+			c.rest.get(url)
+			data = c.rest.content()
+			if len(data) == count:
+				helpers.test_log("All Openstack segments are present in controller")
+				return True	
+			else:
+				helpers.test_failure("All Openstack segments are not present in controller")
+				return False
 		else:
-			helpers.test_failure("All Openstack segments are not present in controller")
-			return False
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="global"]'
+			c.rest.get(url)
+			data = c.rest.content()
+			if len(data) == count:
+				helpers.test_log("All Openstack segments are present in controller")
+				return True	
+			else:
+				helpers.test_failure("All Openstack segments are not present in controller")
+				return False
 		
 	def openstack_router_scale(self, extName, count, tName='p', rname='r'):
 		'''Function to add multiple routers to each tenant
@@ -1131,7 +1142,7 @@ S
 	def openstack_compute_node_portgroup(self, instanceName, netName):
 		'''Function to extract the port group and its members which VM instance belongs
 		Input: openstack network name and Instance name
-		Output: list of port group members
+		Output: list of port group members in dictionary format
 		'''
 		t = test.Test()
 		c = t.controller('master')
