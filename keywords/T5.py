@@ -2193,7 +2193,8 @@ class T5(object):
         params = t.topology_params()
         if switch is None:
             helpers.log("Executing switch reboot for all switchs from master controller")
-            c.enable('system reboot switch all')
+            c.enable('system reboot switch all', prompt=':')
+            c.enable('yes', timeout=300)
             helpers.sleep(120)
             helpers.log('Successfully rebooted switches from controller')
             if helpers.bigrobot_test_ztn().lower() == 'true':
@@ -2212,7 +2213,8 @@ class T5(object):
         else:
             helpers.log("Rebooting switch: %s from controller" % switch)
             c.enable('show switch %s version | grep Uptime' % switch)
-            c.enable('system reboot switch %s' % switch)
+            c.enable('system reboot switch %s' % switch, prompt=':')
+            c.enable('yes', timeout=300)
             helpers.sleep(120)
             c.enable('show switch %s version | grep Uptime' % switch)
             helpers.log("Success rebooting switch: %s from controller" % switch)

@@ -1,0 +1,55 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 Functional Openstack integration global tenant sync verification test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       T5 base test setup
+Test Teardown    T5 base test teardown
+Force Tags       T5  IronHorse  feature 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library          keywords/T5Openstack.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
+
+* Test Case 
+	
+verify global tenant mapping
+	[Tags]   openstack    
+	openstack tenant scale  2000
+	openstack multiple scale  70  2000  1  
+	openstack verify segment scale  global  2000
+	rest delete tenant all 
+	sleep  70
+	openstack verify segment scale  global  2000
+	
+delete all networks and tenants
+	[Tags]  openstack
+	openstack segment scale delete  2000
+    openstack tenant scale delete  2000	
+
+* keywords
+T5 Functional Suite Setup
+	base suite setup
+  	openstack source  keystonerc_admin
+  	rest fabric setting global
+  	sleep  2
+
+T5 Functional Suite Teardown
+	openstack source  keystonerc_admin
+	rest fabric setting default
+	base suite teardown
+	
+T5 base test setup
+	base test setup
+	
+T5 base test teardown
+	base test teardown
+	
+
+

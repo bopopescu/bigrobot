@@ -21,10 +21,6 @@ Library         String
 *Variables
 ${switchlight_version}  Switch Light OS
 ${netmask}  18
-${gateway}  10.8.0.1
-${gateway1}  10.192.60.1
-${dns_server}  10.3.0.4
-${dns_domain}  qa.bigswitch.com
 ${switch1_name}=  leaf0-a
 
 *Test Case
@@ -33,169 +29,169 @@ ${switch1_name}=  leaf0-a
 ### Section I : Environment Information FAN, PSU from Controller 
 ###
 ###
-Get and Verify the switch environment Fan 1 State information from Controller
+TC01 Get and Verify the switch environment Fan 1 State information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment information of Fan 1 State from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  State 
 
-Get and Verify the switch environment Fan 1 Status information from Controller
+TC02 Get and Verify the switch environment Fan 1 Status information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment information of Fan 1 Status from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Status
 
-Get and Verify the switch environment Fan 1 RPM information from Controller
+TC03 Get and Verify the switch environment Fan 1 RPM information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment information of Fan 1 RPM from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  RPM
     
-Get and Verify the switch environment Fan 1 Speed information from Controller
+TC04 Get and Verify the switch environment Fan 1 Speed information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment information of Fan 1 Speed from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Speed
 
-Get and Verify the switch environment Fan 1 Airflow information from Controller
+TC05 Get and Verify the switch environment Fan 1 Airflow information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment information of Fan 1 Airflow from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Airflow
     
-Get and Verify the switch environment Fan 2 State information from Controller
+TC06 Get and Verify the switch environment Fan 2 State information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 2 State from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  State 
 
-Get and Verify the switch environment Fan 2 Status information from Controller
+TC07 Get and Verify the switch environment Fan 2 Status information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 2 Status from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Status
 
-Get and Verify the switch environment Fan 2 RPM information from Controller
+TC08 Get and Verify the switch environment Fan 2 RPM information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 2 RPM from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  RPM
 
-Get and Verify the switch environment Fan 2 Speed information from Controller
+TC09 Get and Verify the switch environment Fan 2 Speed information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 2 Speed from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Speed
 
-Get and Verify the switch environment Fan 2 Airflow information from Controller 
+TC10 Get and Verify the switch environment Fan 2 Airflow information from Controller 
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 2 Airflow from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Airflow
     
-Get and Verify the switch environment Fan 3 State information from Controller
+TC11 Get and Verify the switch environment Fan 3 State information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 3 State information from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  State 
 
-Get and Verify the switch environment Fan 3 Status information from Controller
+TC12 Get and Verify the switch environment Fan 3 Status information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 3 Status information from controller 
     ${dpid} =  rest get dpid  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Status
 
-Get and Verify the switch environment Fan 3 RPM information from Controller
+TC13 Get and Verify the switch environment Fan 3 RPM information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 3 RPM from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  RPM
    
-Get and Verify the switch environment Fan 3 Speed information from Controller
+TC14 Get and Verify the switch environment Fan 3 Speed information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 3 Speed from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Speed
     
-Get and Verify the switch environment Fan 3 Airflow information from Controller
+TC15 Get and Verify the switch environment Fan 3 Airflow information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 3 Airflow from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Airflow
      
-Get and Verify the switch environment Fan 4 State information from Controller
+TC16 Get and Verify the switch environment Fan 4 State information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 4 State from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  State 
 
-Get and Verify the switch environment Fan 4 Status information from Controller
+TC17 Get and Verify the switch environment Fan 4 Status information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 4 Status from controller 
     ${dpid} =  rest get dpid  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Status
   
-Get and Verify the switch environment Fan 4 RPM information from Controller
+TC18 Get and Verify the switch environment Fan 4 RPM information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 4 RPM from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  RPM
     
-Get and Verify the switch environment Fan 4 Speed information from Controller
+TC19 Get and Verify the switch environment Fan 4 Speed information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 4 Speed from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Speed
     
-Get and Verify the switch environment Fan 4 Airflow information from Controller
+TC20 Get and Verify the switch environment Fan 4 Airflow information from Controller
     [Tags]  switch-platform  environment  feature
     Log  Step 1 - Get the switch environment of Fan 4 Airflow from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Airflow    
 
-Get and Verify the switch environment Fan 5 State information from Controller
+TC21 Get and Verify the switch environment Fan 5 State information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 5 State from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  State 
 
-Get and Verify the switch environment Fan 5 Status information from Controller
+TC22 Get and Verify the switch environment Fan 5 Status information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 5 Status from controller 
     ${dpid} =  rest get dpid  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Status
     
-Get and Verify the switch environment Fan 5 RPM information from Controller
+TC23 Get and Verify the switch environment Fan 5 RPM information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 5 RPM from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  RPM
 
-Get and Verify the switch environment Fan 5 Speed information from Controller
+TC24 Get and Verify the switch environment Fan 5 Speed information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 5 Speed from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Speed
 
-Get and Verify the switch environment Fan 5 Airflow information from Controller
+TC25 Get and Verify the switch environment Fan 5 Airflow information from Controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch environment of Fan 5 Airflow from controller 
     ${dpid} =  rest get dpid  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Airflow
 
-Get and Verify the switch PSU State information from controller
+TC26 Get and Verify the switch PSU State information from controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch PSU State information from Controller 
     ${dpid} =  rest get dpid  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  State  
    
-Get and Verify the switch PSU Status information from controller
+TC27 Get and Verify the switch PSU Status information from controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch PSU Status information from Controller 
     ${dpid} =  rest get dpid  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Status  
 
-Get and Verify the switch PSU Type information from controller
+TC28 Get and Verify the switch PSU Type information from controller
     [Tags]  switch-platform  environment  feature 
     Log  Step 1 - Get the switch PSU Type information from Controller 
     ${dpid} =  rest get dpid  ${switch1_name}

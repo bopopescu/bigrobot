@@ -1646,7 +1646,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
     """
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
@@ -1656,9 +1656,9 @@ def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     identical, resulting in more consistent behavior. Need to gradually phase
     out the old run_cmd usage.
 
-    Returns tuple (Boolean, String)
-        success: (True,  "...success message...")
-        failure: (False, "...error message...")
+    Returns tuple (Boolean, String, Integer)
+        success: (<status_flag>,  "...success message...", <errorcode>)
+        failure: (<status_flag>, "...error message...", <errorcode>)
     """
     if not quiet:
         print("Executing '%s'" % cmd)
@@ -1672,17 +1672,17 @@ def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, cwd=cwd)
     out, err = p.communicate()
+    error_code = p.returncode
     if err and not ignore_stderr:
-        return (False, err)
-
-    return (True, out)
+        return (False, err, error_code)
+    return (True, out, error_code)
 
 
 def id():
     """
     Dump output from 'id'.
     """
-    _, output = run_cmd2('id', shell=False, quiet=True)
+    _, output, _ = run_cmd2('id', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1690,7 +1690,7 @@ def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output = run_cmd2('uname -a', shell=False, quiet=True)
+    _, output, _ = run_cmd2('uname -a', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1700,7 +1700,7 @@ def ulimit():
     Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
     built-in shell command. So let's execute it using shell mode.
     """
-    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
+    _, output, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output.strip()
 
 
@@ -1708,7 +1708,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output = run_cmd2('uptime', shell=False, quiet=True)
+    _, output, _ = run_cmd2('uptime', shell=False, quiet=True)
     return output.strip()
 
 

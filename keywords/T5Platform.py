@@ -219,6 +219,8 @@ class T5Platform(object):
                     count += 1
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
+                    helpers.log("Controller just came alive. Waiting for it to become fully functional")
+                    sleep(60)
                     break
 
         if(singleNode):
@@ -4647,13 +4649,14 @@ class T5Platform(object):
                     #    continue
 
                     # Compare prompts.
-                    if prompt1 != prompt2:
-                        newstring = ''
-                        helpers.log("***** Call the cli walk again with  --- '%s'" % string)
+                    if not (re.match(r'.*config-tenant-seg-portgrouprule.*', prompt1) and re.match(r'.*config-tenant-seg.*', prompt2)):
+                        if prompt1 != prompt2:
+                            newstring = ''
+                            helpers.log("***** Call the cli walk again with  --- '%s'" % string)
 
-                        # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
-                        c.config('show this')
-                        self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
+                            # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
+                            c.config('show this')
+                            self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
 
                     if num == 1:
                         return string
