@@ -4020,15 +4020,19 @@ class T5Platform(object):
             helpers.log("Didn't find path: %s in the test-path config" % pathName)
             return False
 
-    def rest_clear_testpath(self):
+    def rest_clear_testpath(self, testname=""):
         ''' Verify whether the testpath is timedout or not
             Returns : True if timedout
         '''
         t = test.Test()
         c = t.controller("master")
-
-        url = '/api/v1/data/controller/applications/bcf/test/path/expired-test'
-        result = c.rest.delete(url)
+        
+        if(testname):
+            url = '/api/v1/data/controller/applications/bcf/test/path/all-test[test-name="%s"]' % testname
+            result = c.rest.delete(url)
+        else:
+            url = '/api/v1/data/controller/applications/bcf/test/path/all-test'
+            result = c.rest.delete(url)
 
 
     def cli_walk_exec(self, string='', file_name=None, padding=''):
