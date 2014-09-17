@@ -237,6 +237,7 @@ T4.4 Copy from scp:// and compare with previous running-config
 	Cli Copy  running-config  file://backup
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  file://backup  running-config
+	Sleep  5
 	Compare  ${scp switch}  running-config
 	[Tags]  SCP
 

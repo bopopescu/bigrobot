@@ -208,6 +208,7 @@ T14 a\n in banner
 T15 'from mode ...' in login mode
 	Cli Run  master  enable
 	Cli Run  master  exit
+	Sleep  5
 	Cli Run and Verify Output  master
 	...  ? enable
 	...  from mode
@@ -448,9 +449,9 @@ T27 Interaction between snmp and banner commands
 
 T28 NTP sync command
 	Cli Run  master  ntp server 0.bigswitch.pool.ntp.org
-	Cli Run  master  ntp sync  cmd_timeout=15
-	Cli Run  master  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
-	[Tags]  NTP BSC-5169
+	Cli Run  master  ntp sync  cmd_timeout=25
+	Cli Run  master  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=25
+	[Tags]  NTP  BSC-5169
 
 T29 Deletion of ntp server
 	Run Keyword and Expect Error
@@ -464,7 +465,7 @@ T29 Deletion of ntp server
 T30 No fabric role
 	Cli Run  master  switch test
 	Run Keyword and Expect Error
-	...  *Error: Missing argument: "spine", "leaf"*
+	...  *Error: Unexpected end of command*
 	...  Cli Run  master  no fabric-role
 	Cli Run  master  no fabric-role spine
 	Cli Run  master  no fabric-role leaf
