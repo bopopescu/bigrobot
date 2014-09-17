@@ -24,6 +24,9 @@ verify global tenant mapping
 	openstack tenant scale  2000
 	openstack multiple scale  70  2000  1  
 	openstack verify segment scale  global  2000
+	rest delete tenant all 
+	sleep  70
+	openstack verify segment scale  global  2000
 	
 delete all networks and tenants
 	[Tags]  openstack
