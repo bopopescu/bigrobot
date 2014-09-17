@@ -5171,7 +5171,6 @@ class T5Platform(object):
             url = '/api/v1/data/controller/core/switch[name="%s"]?select=connection' % switch
             c.rest.get(url)
             data = c.rest.content()
-            helpers.log ("result: %s" % helpers.prettify(data)) 
             if len(data) == 0:
                 return {}
             else: 
@@ -5180,7 +5179,6 @@ class T5Platform(object):
             url = '/api/v1/data/controller/core/switch?select=connection'
             c.rest.get(url)
             data = c.rest.content()
-            helpers.log ("result: %s" % helpers.prettify(data)) 
             if len(data) == 0:
                 return {}
             else: 
