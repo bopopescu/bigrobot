@@ -212,6 +212,8 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
 	Cli Run  master  snmp-server enable traps
+	Cli Run  master  snmp-server switch trap fan-status
+	Cli Run  master  snmp-server switch trap psu-status
 	Cli Run  master  snmp-server switch trap cpu-load 80
 	Cli Run  master  snmp-server switch trap fm-flow-table-util 80
 	Cli Run  master  snmp-server switch trap l2-flow-table-util 80
