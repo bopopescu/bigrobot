@@ -764,8 +764,9 @@ T39 Verify L3 hosts move with inter-tenant traffic (repeat with 16k/32k/48k L3 h
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual-untested
-	[Tags] 	sanity    Manual  scaling
+   #manual-untested
+   [Tags] 	sanity    Manual  scaling
+   Manual passed
 	
 	
 T40 Verify/measure traffic convergence/cli times for incremental config changes
@@ -785,9 +786,9 @@ T41 Verify fabric stability on spine/leaf interface continuous flap
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #manual untested
+   [Tags] 	sanity    Manual-untested  scaling
+   Manual passed
 	
 T42 Verify traffic loss in headless mode of controller
    Log   Repeat T3
@@ -815,9 +816,9 @@ T44 Verify traffic loss in half switches connected to master and rest have conne
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #manual untested
+   [Tags] 	sanity    Manual-untested  scaling
+   Manual failed
 	
 T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Repeat T3
@@ -825,8 +826,9 @@ T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
+   #manual untested
+   [Tags] 	sanity    Manual-untested  scaling
+   Manual failed
 	
 	
 T46 Verify snmp polling (get/getnext/getbulk)
