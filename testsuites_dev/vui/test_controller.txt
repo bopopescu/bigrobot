@@ -64,9 +64,9 @@ Test priminitive CLI keywords
     ${result}=    bash_content    c1
     log           result=${result}
 
-Test priminitive REST keywords
-    [Tags]  skipped
-    get           master   /rest/v1/system/clock/local
+Test primitive REST keywords
+    #[Tags]  skipped
+    get           master   "/api/v1/data/controller/os/action/time?select\=system-time"
     ${result}=    rest_content    c1
     log           result=${result}
 
@@ -303,7 +303,7 @@ Get controller IPs
     #${c2_ip}=         get node ip      c2
 
 Test bash command line editing
-    #[Tags]  skipped
+    [Tags]  skipped
     cli               c1   show user
     config            c1   show version
     bash              c1   cat /etc/hosts    # we should see in devconf log 'set +o emacs'
