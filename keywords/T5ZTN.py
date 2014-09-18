@@ -785,6 +785,12 @@ class T5ZTN(object):
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap fm-flow-table-util",
                            "snmp-server trap flow-table-tcam-fm-util threshold")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap psu-status",
+                           "snmp-server trap psu all status all")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap fan-status",
+                           "snmp-server trap fan all status all")
                         if "mem-total-free" in ztn_config_line:
                            helpers.log("Need to divide value in %s "
                                        "by 1024" % ztn_config_line)
@@ -868,6 +874,48 @@ class T5ZTN(object):
         startup_config = self.curl_get_switch_startup_config(mac)
         missing_startup = []
         extra_startup = []
+        psu_lines = ["snmp-server trap PSU 1 status good",
+                     "snmp-server trap PSU 1 status failed",
+                     "snmp-server trap PSU 1 status missing",
+                     "snmp-server trap PSU 2 status good",
+                     "snmp-server trap PSU 2 status failed",
+                     "snmp-server trap PSU 2 status missing"]
+        fan_lines_leaf = ["snmp-server trap Fan 1 status good",
+                     "snmp-server trap Fan 1 status failed",
+                     "snmp-server trap Fan 1 status missing",
+                     "snmp-server trap Fan 2 status good",
+                     "snmp-server trap Fan 2 status failed",
+                     "snmp-server trap Fan 2 status missing",
+                     "snmp-server trap Fan 3 status good",
+                     "snmp-server trap Fan 3 status failed",
+                     "snmp-server trap Fan 3 status missing",
+                     "snmp-server trap Fan 4 status good",
+                     "snmp-server trap Fan 4 status failed",
+                     "snmp-server trap Fan 4 status missing",
+                     "snmp-server trap Fan 5 status good",
+                     "snmp-server trap Fan 5 status failed",
+                     "snmp-server trap Fan 5 status missing",
+                     "snmp-server trap Fan 6 status good",
+                     "snmp-server trap Fan 6 status failed",
+                     "snmp-server trap Fan 6 status missing"]
+        fan_lines_spine = ["snmp-server trap Fan 1 status good",
+                     "snmp-server trap Fan 1 status failed",
+                     "snmp-server trap Fan 1 status missing",
+                     "snmp-server trap Fan 2 status good",
+                     "snmp-server trap Fan 2 status failed",
+                     "snmp-server trap Fan 2 status missing",
+                     "snmp-server trap Fan 3 status good",
+                     "snmp-server trap Fan 3 status failed",
+                     "snmp-server trap Fan 3 status missing",
+                     "snmp-server trap Fan 4 status good",
+                     "snmp-server trap Fan 4 status failed",
+                     "snmp-server trap Fan 4 status missing",
+                     "snmp-server trap Fan 5 status good",
+                     "snmp-server trap Fan 5 status failed",
+                     "snmp-server trap Fan 5 status missing",
+                     "snmp-server trap Fan 7 status good",
+                     "snmp-server trap Fan 7 status failed",
+                     "snmp-server trap Fan 7 status missing"]
 
         s = t.dev_console(hostname, modeless=True)
         s.send("\n")
@@ -894,6 +942,12 @@ class T5ZTN(object):
             s.send('admin')
         s.cli('enable')
         s.cli('config')
+        switch_type = "unknown"
+        version = s.cli("show version")['content']
+        if "AS6700-32X" in version:
+            switch_type = "spine"
+        elif "AS5710-54X" in version:
+            switch_type = "leaf"
         running_config = s.cli("show running-config")['content']
         running_config = helpers.str_to_list(running_config)
         if len(running_config) < 5:
@@ -912,10 +966,20 @@ class T5ZTN(object):
                 if "snmp-server enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                # temp override BSC-5629
-                #if re.match(r'snmp-server trap', startup_config_line):
-                #    helpers.log("Skipping line %s" % startup_config_line)
-                #    continue
+                if re.match(r'snmp-server trap psu', startup_config_line):
+                    helpers.log("Expanding line %s" % startup_config_line)
+                    for psu_line in psu_lines:
+                        startup_config_temp.append(psu_line)
+                    continue
+                if re.match(r'snmp-server trap fan', startup_config_line):
+                    helpers.log("Expanding line %s" % startup_config_line)
+                    if switch_type == "spine":
+                        for fan_line in fan_lines_spine:
+                            startup_config_temp.append(fan_line)
+                    elif switch_type == "leaf":
+                        for fan_line in fan_lines_leaf:
+                            startup_config_temp.append(fan_line)
+                    continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
                     startup_config_temp.append(temp_line)
@@ -939,6 +1003,9 @@ class T5ZTN(object):
         startup_config_temp.append("username recovery")
         startup_config = startup_config_temp
 
+        helpers.log("Startup config after adjustments:")
+        for line in startup_config:
+            helpers.log("SC contains line: %s" % line)
         running_config_temp = []
         for running_config_line in running_config:
             helpers.log("Analyzing line %s" % running_config_line)
