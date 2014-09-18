@@ -82,9 +82,9 @@ UPGRADE: T1.3 Verify upgrade for same version(same image)
 
     
 
-UPGRADE: T1.5 upgrade launch suspend
+UPGRADE: T1.5 upgrade launch suspend - NA
 	Verify single node upgrade    ${image}    suspend    		
-	[Tags] 	sanity  feature  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn  skipped  
    
 UPGRADE: T1.6 upgrade launch timeout
 	Verify single node upgrade    ${image}    switch-timeout 900   		
@@ -92,9 +92,9 @@ UPGRADE: T1.6 upgrade launch timeout
 
     
 
-UPGRADE: T1.8 upgrade launch suspend timeout
+UPGRADE: T1.8 upgrade launch suspend timeout - NA
 	Verify single node upgrade    ${image}    suspend switch-timeout 900   		
-	[Tags] 	sanity  feature  upgrade_ztn     
+	[Tags] 	sanity  feature  upgrade_ztn  skipped   
    
 
 UPGRADE: T1.9 Verify upgrade rollback  
