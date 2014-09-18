@@ -220,7 +220,7 @@ class T5Platform(object):
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     helpers.log("Controller just came alive. Waiting for it to become fully functional")
-                    sleep(60)
+                    sleep(120)
                     break
 
         if(singleNode):
@@ -4020,15 +4020,19 @@ class T5Platform(object):
             helpers.log("Didn't find path: %s in the test-path config" % pathName)
             return False
 
-    def rest_clear_testpath(self):
+    def rest_clear_testpath(self, testname=""):
         ''' Verify whether the testpath is timedout or not
             Returns : True if timedout
         '''
         t = test.Test()
         c = t.controller("master")
-
-        url = '/api/v1/data/controller/applications/bcf/test/path/expired-test'
-        result = c.rest.delete(url)
+        
+        if(testname):
+            url = '/api/v1/data/controller/applications/bcf/test/path/all-test[test-name="%s"]' % testname
+            result = c.rest.delete(url)
+        else:
+            url = '/api/v1/data/controller/applications/bcf/test/path/all-test'
+            result = c.rest.delete(url)
 
 
     def cli_walk_exec(self, string='', file_name=None, padding=''):
@@ -5357,4 +5361,39 @@ class T5Platform(object):
         else:
             c.enable('delete support ' + filename )             
         return True
+   
+   
+    def rest_get_switch_connection(self, switch=None):
+        '''
+                Objective:
+                - Get the switch connections from controller 
+    
+                Input:
+                | switch name |
+
+                Return Value:
+                - Content if present
+                - Null on failure
+                
+        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch[name="spine0"]?select=connection 
+        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch?select=connection
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        if switch is not None:
+            url = '/api/v1/data/controller/core/switch[name="%s"]?select=connection' % switch
+            c.rest.get(url)
+            data = c.rest.content()
+            if len(data) == 0:
+                return {}
+            else: 
+                return data
+        else:
+            url = '/api/v1/data/controller/core/switch?select=connection'
+            c.rest.get(url)
+            data = c.rest.content()
+            if len(data) == 0:
+                return {}
+            else: 
+                return data    
    
