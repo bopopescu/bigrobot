@@ -407,7 +407,7 @@ verify interface LLDP/control packet count different rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  210
-    rest verify vns tx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  10000
     rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  15
     rest delete tenant  t1
 
