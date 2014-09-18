@@ -19,6 +19,7 @@ fi
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
 outfile=raw_data.`basename $0`_output.$ts.log
+errfile=raw_data.`basename $0`_errors.$ts.log
 
 ./mv_logs.sh
 ./_doit.sh > $outfile 2>&1
@@ -29,3 +30,14 @@ outfile=raw_data.`basename $0`_output.$ts.log
     --subject "Dashboard baseline: '$BUILD_NAME'" \
     --message "Script executed: $0" \
     --infile $outfile
+
+# Reporting potential test suite errors
+grep -n -e "ERROR" -e "^Exception" -e "traceback" $outfile > $errfile
+if [ -s $errfile ]; then
+    ../bin/send_mail.py \
+        --sender vui.le@bigswitch.com \
+        --receiver bigrobot_stats_collection@bigswitch.com \
+        --subject "ERROR in Dashboard baseline: '$BUILD_NAME'" \
+        --message "Log file: $outfile" \
+        --infile $errfile
+fi
