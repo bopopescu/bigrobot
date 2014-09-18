@@ -1,6 +1,7 @@
 import os
 import re
 import xmltodict
+import getpass
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
@@ -185,7 +186,8 @@ class TestSuite(object):
             self._build = {'build_name': os.environ['BUILD_NAME'],
                            'starttime': ts,
                            'starttime_datestamp': ts.split('T')[0],
-                            }
+                           'created_by': getpass.getuser(),
+                          }
             self.db_add_if_not_found_build(self._build)
 
     def db_populate_suite(self):
@@ -245,6 +247,7 @@ class TestSuite(object):
                     'topo_type': topo_type,
                     'notes': None,
                     'build_name': os.environ['BUILD_NAME'],
+                    'created_by': getpass.getuser(),
                     }
 
     def extract_test_attributes(self, test_xml):
@@ -306,6 +309,7 @@ class TestSuite(object):
                 'build_url': None,
                 'build_name': os.environ['BUILD_NAME'],
                 'notes': None,
+                'created_by': getpass.getuser(),
                 }
         return test
 
