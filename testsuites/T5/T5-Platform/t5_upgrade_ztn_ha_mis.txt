@@ -248,8 +248,9 @@ UPGRADE: T11.10 standby switch behavior during upgrade
 UPGRADE: T11.11 suspended switch behavior during upgrade 
 	log  step 0 - prepare switch to suspended 				
  	log  step 1 - upgrade controller
+ 		manual failed
 	  		      	      
-	[Tags] 	fully   feature  upgrade_ztn   manual-untested 
+	[Tags] 	fully   feature  upgrade_ztn   manual  
 
 UPGRADE: T11.11 disconneted switch behavior during upgrade 
 	log  step 0 - add a nonexisting switch 	
@@ -396,10 +397,10 @@ EVENT: T14.1 phase 1 switch power off during upgrade with upgrade launch
 		power up switch  s7
    	    sleep   30
 		Verify switch are booted with correct image
-
+	maunal  failed
 
   	      
-  	[Tags] 	full     feature  upgrade_ztn   
+  	[Tags] 	full     feature  upgrade_ztn   manual  JIRA-BSC-2463
 	
 	
 EVENT: T14.2 phase II switch power off during upgrade with upgrade launch  
@@ -418,9 +419,9 @@ EVENT: T14.2 phase II switch power off during upgrade with upgrade launch
    	    
    	    
 		Verify switch are booted with correct image
-   	    
+		maunal  passed   	    
    	      
-  	[Tags] 	full     feature  upgrade_ztn     
+  	[Tags] 	full     feature  upgrade_ztn     manual
 	
  		
 EVENT: T14.5 phase 1 switch power off during upgrade with upgrade launch suspend 
@@ -548,7 +549,7 @@ NEGATIVE: T15.2 upgrade stage terminated
 	  
 NEGATIVE: T15.3 controller upgrade launch 
  	log  different image for active and standby, launch will be terminated
- 		log  standby exit immediatly
+ 		log  both sides exit immediatly
 	log  only issue launch at active, launch will not proceed, and user can terminate
 		log   passed
 	log  only issue launch at standby, launch will not proceed, user can terminate
@@ -560,15 +561,22 @@ NEGATIVE: T15.3 controller upgrade launch
     log  hit ctl-c to terminated active upgrade before standby disconneted message
     	log  passed
     log  hit ctl-c to terminated standby upgrade standby disconneted message    
-    
+    	log  result - user account not deleted immediately from standby/ active not terminated immediately
+    	log  failed - need to revisit
+    		
     log  hit ctl-c to terminated active controller before standby finish phase1
+    	log  passed - new active rebooted and phase 1 switched reboot 
     log  hit ctl-c to terminated active controller before standby finish phase2
+    	log  failed - only phase 1 switches are connected back
        
-  	[Tags] 	full  feature  upgrade_ztn    negative  manual-untested
+  	[Tags] 	full  feature  upgrade_ztn    negative  manual 
   
 NEGATIVE: T15.4 controller upgrade launch suspend
  	log  different image for active and standby, launch will be terminated
+ 		log  system aborted immediately at both sides
+ 		log  passed
 	log  only issue launch at active, launch will not proceed, and user can terminate
+		log  passed
 	log  only issue launch at standby, launch will not proceed, user can terminate
     log  send no to terminated launch at active during prompt
     log  send no to terminated lanuch at standby during prompt
@@ -597,11 +605,16 @@ MIS: T102 upgrade 1 controller, build another one, then join the cluster
    	
 MIS: T108 upgrade when controller high CPU
 	log  upgrade with high cpu	
-  	[Tags] 	full    feature  upgrade_ztn    manual-untested 
+		log - with around 370 % cpu (send l3 traffic for switch to resolve)
+		log - stage takes long time (10 minutes)
+		log - launch - cpu is reduced due to no event is handled.
+		log - passed
+  	[Tags] 	full    feature  upgrade_ztn    manual 
 
 MIS: T109 upgrade when controller does not have enough space  
 	log  upgrade when controller does not have enough space 
-  	[Tags] 	full  feature  upgrade_ztn  manual-untested 
+		log - not applicable for this release, revisit for next release
+  	[Tags] 	full  feature  upgrade_ztn  manual-untested   skipped
 
   	
 MIS: T111 spawn another session to do upgrade during upgrade  
