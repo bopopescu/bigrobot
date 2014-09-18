@@ -743,9 +743,9 @@ T37 Verify parallel upgrades of all spines/leafs
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #manual untested
+   [Tags] 	sanity    Manual  scaling
+   Manual failed	
 	
 T38 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
    Log   Repeat T3
@@ -787,7 +787,7 @@ T41 Verify fabric stability on spine/leaf interface continuous flap
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    #manual untested
-   [Tags] 	sanity    Manual-untested  scaling
+   [Tags] 	sanity    Manual  scaling
    Manual passed
 	
 T42 Verify traffic loss in headless mode of controller
@@ -817,7 +817,7 @@ T44 Verify traffic loss in half switches connected to master and rest have conne
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    #manual untested
-   [Tags] 	sanity    Manual-untested  scaling
+   [Tags] 	sanity    Manual  scaling
    Manual failed
 	
 T45 Repeat T44, all switches connect back to master, verify fabric stability
@@ -827,7 +827,7 @@ T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    #manual untested
-   [Tags] 	sanity    Manual-untested  scaling
+   [Tags] 	sanity    Manual  scaling
    Manual failed
 	
 	
@@ -847,8 +847,9 @@ T47 Verify controller stability when switch sends line rate traffic to controlle
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual-untested
-	[Tags] 	sanity    Manual  scaling
+   #manual-untested
+   [Tags] 	sanity    Manual  scaling
+   Manual passed
 	
 	
 T48 Verify switch stability when controller sends line rate traffic switch
@@ -857,8 +858,9 @@ T48 Verify switch stability when controller sends line rate traffic switch
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
+   #manual untested
+   [Tags] 	sanity    Manual  scaling
+   Manual passed
 	
 	
 T49 Verify VIP changes
