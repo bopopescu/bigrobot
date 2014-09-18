@@ -382,11 +382,11 @@ verify interface rx/tx multicast packets stats
     sleep  210
     rest verify vns rx stats  t1  v1  10000  
     rest verify vns tx stats  t1  v1  10000
-    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  7
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  15
     rest delete tenant  t1
 
 verify interface LLDP/control packet count different rack
-	[Tags]  L2  feature  IronHorse  skipped
+	[Tags]  L2  feature  IronHorse  
 
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -408,7 +408,7 @@ verify interface LLDP/control packet count different rack
     start traffic  ${stream}
     sleep  210
     rest verify vns tx stats  t1  v1  0
-    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  0
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  15
     rest delete tenant  t1
 
 verify multiple vns counters different rack
