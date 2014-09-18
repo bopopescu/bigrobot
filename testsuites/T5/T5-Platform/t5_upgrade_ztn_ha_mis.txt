@@ -211,10 +211,10 @@ UPGRADE: T11.3 Verify upgrade with same image
  	[Tags] 	full  feature  upgrade_ztn    
 
  
-UPGRADE: T11.5 upgrade launch suspend
+UPGRADE: T11.5 upgrade launch suspend - NA
 		Verify Dual nodes upgrade     ${image}    suspend    
 				
-	[Tags] 	full  feature  upgrade_ztn    
+	[Tags] 	full  feature  upgrade_ztn    skipped
    
 UPGRADE: T11.6 upgrade launch timeout
 		Verify Dual nodes upgrade     ${image}    switch-timeout 900   	
@@ -222,10 +222,10 @@ UPGRADE: T11.6 upgrade launch timeout
 	[Tags] 	full  feature  upgrade_ztn    
 
 
-UPGRADE: T11.8 upgrade launch suspend timeout
+UPGRADE: T11.8 upgrade launch suspend timeout - NA
 		Verify Dual nodes upgrade     ${image}    suspend switch-timeout 900  
 		 		
-	[Tags] 	sanity  feature  upgrade_ztn     
+	[Tags] 	sanity  feature  upgrade_ztn    skipped
     
 
 UPGRADE: T11.9 Verify upgrade rollback 
@@ -424,19 +424,20 @@ EVENT: T14.2 phase II switch power off during upgrade with upgrade launch
   	[Tags] 	full     feature  upgrade_ztn     manual
 	
  		
-EVENT: T14.5 phase 1 switch power off during upgrade with upgrade launch suspend 
+EVENT: T14.5 phase 1 switch power off during upgrade with upgrade launch suspend - NA
  	log  step 1 - upgrade controller
    	log  step 2 - power off phase I switch during phase I 
+   	manual failed
    	
   	      
-  	[Tags] 	full   feature  upgrade_ztn    
+  	[Tags] 	full   feature  upgrade_ztn    manual   JIRA-BSC-6452  skipped
 	
 	
 EVENT: T14.6 phase II switch power off during upgrade with upgrade launch suspend 
  	log  step 1 - upgrade controller
    	log  step 2 - power off phase II switch during phase II 
-  	      
-  	[Tags] 	full   feature  upgrade_ztn    
+  	manual failed
+  	[Tags] 	full   feature  upgrade_ztn     manual  JIRA-BSC-6453
 		
 	
 EVENT: T14.7 new switch join as provisioned switch after upgrade (1 - swi upgrade, 1 - loader install)
@@ -571,23 +572,27 @@ NEGATIVE: T15.3 controller upgrade launch
        
   	[Tags] 	full  feature  upgrade_ztn    negative  manual 
   
-NEGATIVE: T15.4 controller upgrade launch suspend
+NEGATIVE: T15.4 controller upgrade launch suspend - NA
  	log  different image for active and standby, launch will be terminated
  		log  system aborted immediately at both sides
  		log  passed
 	log  only issue launch at active, launch will not proceed, and user can terminate
-		log  passed
+		log   cltr-c to terminate the upgrade
+		log   passed
 	log  only issue launch at standby, launch will not proceed, user can terminate
+		log   standby rebooted - can optimize
     log  send no to terminated launch at active during prompt
+    	log   waiting message, can ctrl-C to terminate in other side
     log  send no to terminated lanuch at standby during prompt
-    log  hit ctl-c to terminated active upgrade before standby upgrade has began messgge
-    log  hit ctl-c to terminated standby upgrade during message wait for upgrader
+    	log  waiting message, hit ctrl-C, standby rebooted
     log  hit ctl-c to terminated active upgrade before standby disconneted message
     log  hit ctl-c to terminated standby upgrade standby disconneted message    
     log  hit ctl-c to terminated active controller before standby finish phase1
+    	log  
     log  hit ctl-c to terminated active controller before standby finish phase2
+    	manual failed
        
-  	[Tags] 	full   feature  upgrade_ztn     negative   manual-untested  
+  	[Tags] 	full   feature  upgrade_ztn     negative   manual   skipped
   	
  
 ### Miscellaneous

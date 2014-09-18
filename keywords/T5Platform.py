@@ -5301,21 +5301,36 @@ class T5Platform(object):
             return False
     
     
-    def spawn_log_in(self,sessions,node='master'):
+    def spawn_log_in(self,sessions=1,node='master'):
        
         bsn = bsnCommon()
         helpers.log("***Entering==> spawn_log_in   \n" )
         
         t = test.Test()
         ip = bsn.get_node_ip(node)
-  
+        session_id = []
         for loop in range (0, int(sessions)): 
             helpers.log('USR info:  this is loop:  %d' % loop )
-            n = t.node_spawn(ip)                    
-            n.cli('show session')            
+            n = t.node_spawn(ip)   
+            session_id.append(n)                             
+            n.bash('netstat | grep ssh')           
+            n.bash('netstat | grep ssh | wc -l')           
         helpers.log("***Exiting==> spawn_log_in   \n" )
 
+        return session_id
+
+    def spawn_log_out(self,session_id,node='master'):
+       
+        bsn = bsnCommon()
+        helpers.log("***Entering==> spawn_log_in   \n" )
+              
+        for session in session_id:            
+            session.close()  
+                  
+        helpers.log("***Exiting==> spawn_log_in   \n" )
         return True
+
+
     
     def generate_support(self,node='master'):
         helpers.log("***Entering==> generate support file  \n" )
@@ -5325,19 +5340,22 @@ class T5Platform(object):
 
         c.enable('')  
         c.send('support')
-        options = c.expect([r'\(yes/no\)\?', c.get_prompt()],timeout=600)
+        options = c.expect([r'\(yes/no\)\?', c.get_prompt()],timeout=1200)
         if options[0] == 0 : 
             c.send('yes') 
-            c.expect(timout=600)                  
+            c.expect(timout=1200)                  
         content = c.cli_content()
         temp = helpers.strip_cli_output(content) 
+        lines = helpers.str_to_list(temp)
         helpers.log("*****Output is :\n%s" % temp)
-        match =  re.match(r'Name.*: (floodlight.*)', temp,flags=re.M)
-        if match:
-            helpers.log("INFO: file name is: %s" % match.group(1))
-            return  match.group(1)
-        else:
-            helpers.test_failure("Error: %s" % temp)            
+        for line in lines:  
+            helpers.log("INFO: line is %s" % line)                 
+            match =  re.match(r'Name.*: (floodlight.*)', line)
+            if match:
+                helpers.log("INFO: file name is: %s" % match.group(1))
+                return  match.group(1)
+        
+        helpers.test_failure("Error: %s" % temp)            
             
     def delete_support(self,node='master',filename=None):
         helpers.log("***Entering==> delete support file \n" )
@@ -5352,48 +5370,98 @@ class T5Platform(object):
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
             for line in lines:     
-                helpers.log("INFO: line is %s" % line)                      
-                match =  re.match(r'[0-9]*.* (floodlight.*)', line,flags=re.M)
-                if match:
-                    helpers.log("INFO: file name is is: %s" % match.group(1) )
-                    c.enable('delete support ' + match.group(1))                                         
+                helpers.log("INFO: line is %s" % line)                                      
+                match =  re.match(r'[0-9]*.* floodlight.*', line,flags=re.M)
+                if match:                   
+                    helpers.log("INFO: file name is is: %s" % line.split(' ')[1] )
+                    c.enable('delete support ' + line.split(' ')[1])                                         
                  
         else:
             c.enable('delete support ' + filename )             
         return True
-   
-   
-    def rest_get_switch_connection(self, switch=None):
-        '''
-                Objective:
-                - Get the switch connections from controller 
-    
-                Input:
-                | switch name |
 
-                Return Value:
-                - Content if present
-                - Null on failure
-                
-        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch[name="spine0"]?select=connection 
-        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch?select=connection
+
+
+    def cli_get_upgrade_progress(self, node='master'):
         '''
+          monitor upgrade launch  in the system "show upgrade progress"
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+                  breakpoint - phase 1 ,  phase 2 ..
+          usage:   cli_monitor_upgrade_launch   
+          output:  return True when hit the breakpoint
+                 
+        '''
+
         t = test.Test()
-        c = t.controller('master')
-        if switch is not None:
-            url = '/api/v1/data/controller/core/switch[name="%s"]?select=connection' % switch
-            c.rest.get(url)
-            data = c.rest.content()
-            if len(data) == 0:
-                return {}
-            else: 
-                return data
+        c = t.controller(node)
+        helpers.log('INFO: Entering ==> cli_get_upgrade_progress' )
+        c.enable(" show upgrade progress")
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("*****Output list   is :\n%s" % temp)
+        
+        if re.match(r'Error:.*', temp[0]):
+            helpers.log("Error: %s" % temp[0])
+            helpers.test_failure("Error: %s" % temp[0])
+
+        elif re.match(r'upgrade not active', temp[0]):
+            helpers.log("USR INFO:  upgrade is not active")
+            return {'local': 'not active', 'remote': 'not active'}
+ 
         else:
-            url = '/api/v1/data/controller/core/switch?select=connection'
-            c.rest.get(url)
-            data = c.rest.content()
-            if len(data) == 0:
-                return {}
-            else: 
-                return data    
+            match =  re.match(r'.* Local: (.*) Remote: (.*)', temp[0])
+            if match:
+                local = match.group(1)
+                remote = match.group(2)
+                return {'local': local, 'remote': remote}
+               
+            else:
+                helpers.test_failure("USR Error: did not get the upgrade state: \n %s" % temp[0])
+       
+
+    def cli_monitor_upgrade_launch(self, node='master', breakpoint=None):
+        '''
+          monitor upgrade launch  in the system "show upgrade progress"
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+                  breakpoint - phase 1 ,  phase 2 ..
+          usage:   cli_monitor_upgrade_launch   
+          output:  return True when hit the breakpoint
+                 
+        '''
+        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch' )
+        is_continuous = True
+        iteration = 0
+        while is_continuous:
+            is_continuous = False  
+            iteration +=1       
+            result = self.cli_get_upgrade_progress(node=node)
+            local = result['local']
+            remote = result['remote']
+            helpers.log("USER INFO: %d. upgrade state: Local -  %s ; Remote - %s" % (iteration, local, remote)) 
+            if 'phase1' is breakpoint and 'phase-1-migrate' in remote:
+                helpers.log("USER INFO:  Phase 1 migrate "  )                
+                return True
+            elif 'phase2' is breakpoint and 'phase-2-migrate' in remote:
+                helpers.log("USER INFO:  Phase 2 migrate "  )                
+                return True
+           
+            elif 'not active' in local  and  'not active' in remote:
+                return  True
+            else:                
+                is_continuous = True
+                
+            if iteration >= 40 :
+                helpers.log('USR ERROR: exceed 20 minutes ' ) 
+                return False
+                       
+            helpers.sleep(30)            
+            
+            
+
    

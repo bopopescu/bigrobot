@@ -50,15 +50,22 @@ ${spine2}      dt-spine2
  
 T13 user login/logout (every 1 hour)
 	log  user login/logout 
-	spawn_log_in	 10
-	cli  master   show session 
-	sleep  10 	
+		bash  master     netstat | grep ssh
+		${sessions}=    spawn_log_in	 10
+		bash  master     netstat | grep ssh
+		sleep  20
+		bash  master     netstat | grep ssh 	
+		spawn_log_out   ${sessions}
+		bash  master     netstat | grep ssh
+	 	
 	log  multiple user log in and not logout
-	
+		spawn_log_in	 10
+		bash  master     netstat | grep ssh
+		sleep  3000
 	
     
 	[Tags] 	   full  traffic   backgroupcheck
-	  
+ 	  
 
 * Keywords
 
