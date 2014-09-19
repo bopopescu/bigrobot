@@ -238,16 +238,16 @@ class T5Platform(object):
 
         if(singleNode):
             if(masterID == newMasterID):
-                # obj.restart_floodlight_monitor("master")
+                #obj.restart_floodlight_monitor("master")
                 helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
                 helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
                     After the reboot Master is: %s " % (masterID, newMasterID))
         else:
-            # if(masterNode):
+            #if(masterNode):
             #    obj.restart_floodlight_monitor("slave")
-            # else:
+            #else:
             #    obj.restart_floodlight_monitor("master")
 
             if(masterNode):
@@ -257,7 +257,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
-                    # obj.stop_floodlight_monitor()
+                    #obj.stop_floodlight_monitor()
                     return False
             else:
                 if(masterID == newMasterID and slaveID == newSlaveID):
@@ -266,7 +266,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
-                    # obj.stop_floodlight_monitor()
+                    #obj.stop_floodlight_monitor()
                     return False
 
 
@@ -1840,14 +1840,14 @@ class T5Platform(object):
         c.config('')
         string = 'copy ' + src + ' image://'
         c.send(string)
-
+ 
         try:
             c.expect(timeout=180)
         except:
             helpers.log('USER ERROR: copy image failed')
             return False
         else:
-
+ 
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
@@ -2027,7 +2027,7 @@ class T5Platform(object):
         return False
 
 
-    def cli_upgrade_stage_negative(self, node='master', breakpoint='yes'):
+    def cli_upgrade_stage_negative(self, node='master',breakpoint='yes'):
         '''
           upgrade stage  -  2 step of upgrade
           Author: Mingtao
@@ -2044,21 +2044,21 @@ class T5Platform(object):
 
         c.config('')
         c.send('upgrade stage')
-        options = c.expect(r'[\r\n].*to continue.*')
-        if breakpoint == 'yes':
+        options = c.expect(r'[\r\n].*to continue.*' )
+        if breakpoint == 'yes': 
             c.send("no")
-            helpers.log('INFO: send NO to break the stage')
-            c.expect(timeout=900)
+            helpers.log('INFO: send NO to break the stage') 
+            c.expect(timeout=900)            
             return True
-
+            
         c.send("yes")
-
+        
         c.expect([r'.* copying image into alternate partition', r'.*to continue.*'], timeout=900)
         if options[0] == 1:
             c.send("yes")
-            c.expect(r'.* copying image into alternate partition', timeout=900)
-
-        if breakpoint.lower() == 'ctrl-c':
+            c.expect(r'.* copying image into alternate partition',timeout=900) 
+               
+        if breakpoint.lower() == 'ctrl-c':   
             c.send(helpers.ctrl('c'))
             helpers.summary_log('Ctrl C is hit during stage')
             c.expect(timeout=900)
@@ -2280,7 +2280,7 @@ class T5Platform(object):
             helpers.test_failure(c.rest.error())
 
 
-    def cli_whoami(self, node='master'):
+    def cli_whoami(self,node='master'):
         '''
           run cli whoami
           Author: Mingtao
@@ -2313,7 +2313,7 @@ class T5Platform(object):
         return [name, group]
 
 
-    def cli_reauth(self, node='master', user='admin', passwd='adminadmin'):
+    def cli_reauth(self, node='master',user='admin', passwd='adminadmin'):
         '''
           run cli reauth, and run cli_whoami verify
           Author: Mingtao
@@ -2327,7 +2327,7 @@ class T5Platform(object):
         helpers.log('INFO: Entering ==> cli_reauth ')
 
         c.enable('reauth ' + user + ' ' + passwd)
-
+        
         userinfo = self.cli_whoami()[0]
         if user == userinfo:
             helpers.log('INFO: current session with user:  %s ' % user)
@@ -2741,10 +2741,6 @@ class T5Platform(object):
                 n_console.send(helpers.ctrl('c'))
                 helpers.sleep(2)
                 n_console.send('')
-                n_console.send('')
-                n_console.send(helpers.ctrl('c'))
-                helpers.sleep(2)
-                n_console.send('')
                 try:
                     n_console.expect(helpers.regex_bvs())
                 except:
@@ -2752,7 +2748,7 @@ class T5Platform(object):
                     helpers.log(helpers.exception_info())
                     n.console_close()  # **** Closing the console
                     helpers.sleep(1)
-                    n_console = n.dev_console(modeless=True)
+                    n_console = t.dev_console(node, modeless=True)
                     n_console.send('')
                 n_console.expect(r'login:')
             elif options[0] == 1:
@@ -3714,7 +3710,7 @@ class T5Platform(object):
                 url = url + '[ip-protocol=6]'
             elif(kwargs.get('ip-protocol') == "udp"):
                 url = url + '[ip-protocol=17]'
-            # url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+            #url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
         if(kwargs.get('src-segment')):
@@ -3756,7 +3752,7 @@ class T5Platform(object):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
-        # if(kwargs.get('ip-protocol')):
+        #if(kwargs.get('ip-protocol')):
         #    url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('ip-protocol')):
             if(kwargs.get('ip-protocol') == "icmp"):
@@ -3845,7 +3841,7 @@ class T5Platform(object):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
-        # if(kwargs.get('ip-protocol')):
+        #if(kwargs.get('ip-protocol')):
         #    url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('ip-protocol')):
             if(kwargs.get('ip-protocol') == "icmp"):
@@ -4038,7 +4034,7 @@ class T5Platform(object):
         '''
         t = test.Test()
         c = t.controller("master")
-
+        
         if(testname):
             url = '/api/v1/data/controller/applications/bcf/test/path/all-test[test-name="%s"]' % testname
             result = c.rest.delete(url)
@@ -4659,7 +4655,7 @@ class T5Platform(object):
                     prompt2 = helpers.strip_ctrl_chars(prompt_str2)
 
                     # skip due to PR BSC-6137
-                    # if re.match(r'.*member port-group.*', string):
+                    #if re.match(r'.*member port-group.*', string):
                     #    helpers.log("Ignoring line due to PR BSC-6137 - %s" % string)
                     #    num = num - 1
                     #    continue
@@ -4820,7 +4816,7 @@ class T5Platform(object):
             c.enable('')
             c.send("system reboot switch %s" % sw)
             options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
-
+            
             if options[0] == 0:  # login prompt
                 c.send("yes")
                 c.expect()
@@ -4864,8 +4860,8 @@ class T5Platform(object):
         helpers.log("USER INFO - switches are:  %s" % switch)
         for ip in switch:
             c.enable("system reboot switch %s" % ip)
-
-            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
+            
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
             if options[0] == 0:  # login prompt
                 c.send("yes")
                 c.expect()
@@ -4911,11 +4907,11 @@ class T5Platform(object):
         for mac in switch:
             c.enable('')
             c.send("system reboot switch %s" % mac)
-            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
+            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])            
             if options[0] == 0:  # login prompt
                 c.send("yes")
                 c.expect()
-
+                
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
             if "Error" in c.cli_content():
                 helpers.test_failure("Error rebooting the switch")
@@ -5143,7 +5139,7 @@ class T5Platform(object):
 
 #            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)
             try:
-                options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=600)
+                options= c.expect([r'The system is going down for reboot NOW!',r'.*upgrade has been aborted' ,c.get_prompt()], timeout=600)
             except:
                 helpers.log('ERROR: upgrade stuck for more than 10 minutes!!!!!!!!!!')
                 c.send(helpers.ctrl('c'))
@@ -5154,14 +5150,14 @@ class T5Platform(object):
                 content = c.cli_content()
                 helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
                 if options[0] == 1:
-                    helpers.log("ERROR: upgrade ABORTED")
-                    c.expect(timeout=900)
+                    helpers.log("ERROR: upgrade ABORTED" )  
+                    c.expect(timeout=900)                  
                     return False
                 elif options[0] == 2:
-                    helpers.log("ERROR: upgrade FAILED")
-
+                    helpers.log("ERROR: upgrade FAILED" )
+                                        
                     return False
-
+                   
                 return True
 
         elif role == 'standby':
@@ -5171,7 +5167,7 @@ class T5Platform(object):
 #            c.expect(r'Leader->partition state: partition-completed',timeout=360)
 #            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
             try:
-                options = c.expect([r'[R|r]ebooting', r'.*upgrade has been aborted' , c.get_prompt()], timeout=300)
+                options= c.expect([r'[R|r]ebooting',r'.*upgrade has been aborted' ,c.get_prompt()], timeout=300)
             except:
                 helpers.log('ERROR: upgrade stuck for more than 5 minutes!!!!!!!!!!')
                 c.send(helpers.ctrl('c'))
@@ -5183,14 +5179,14 @@ class T5Platform(object):
                 helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
 
                 if options[0] == 1:
-                    helpers.log("ERROR: upgrade ABORTED")
-                    c.expect(timeout=900)
+                    helpers.log("ERROR: upgrade ABORTED" ) 
+                    c.expect(timeout=900)                                         
                     return False
                 elif options[0] == 2 :
-                    helpers.log("ERROR: upgrade FAILED")
-
+                    helpers.log("ERROR: upgrade FAILED" )  
+                                      
                     return False
-
+ 
                 return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
@@ -5279,22 +5275,22 @@ class T5Platform(object):
     def fabric_consistency_checker(self, node):
         ''' This function checks the consistency between active and standby nodes.
             Specifically it'll look for:
-                1) running-config mismatches between active & standby.
+                1) running-config mismatches between active & standby. 
                 2) All the runtime fabric integrity verifications which includes:
                         switchlists/endpoints/lags/links/forwarding tables etc
-
+                        
             Arguments: node - linux host name from the topo file which it will use to scp the running configs
         '''
-
+            
         t = test.Test()
         obj = utilities()
         n = t.node(node)
         nodeIP = n.ip()
 
-        scpLocation = "scp://root@" + nodeIP + ":/root/autoConfig1.txt"
-        returnVal = self.cli_copy("running-config", scpLocation)
+        scpLocation = "scp://root@" + nodeIP +":/root/autoConfig1.txt"
+        returnVal = self.cli_copy("running-config",  scpLocation)
         if(returnVal):
-            scpLocation = "scp://root@" + nodeIP + ":/root/autoConfig2.txt"
+            scpLocation = "scp://root@" + nodeIP +":/root/autoConfig2.txt"
             returnVal = self.cli_copy("running-config", scpLocation, "slave")
             if(returnVal):
                 returnVal = utilities.cli_diff_running_configs(obj, node, "autoConfig1.txt", "autoConfig2.txt")
@@ -5311,85 +5307,85 @@ class T5Platform(object):
         else:
             helpers.log("Error during Copying running config to autoConfig1.txt")
             return False
-
-
-    def spawn_log_in(self, sessions=1, node='master'):
-
+    
+    
+    def spawn_log_in(self,sessions=1,node='master'):
+       
         bsn = bsnCommon()
-        helpers.log("***Entering==> spawn_log_in   \n")
-
+        helpers.log("***Entering==> spawn_log_in   \n" )
+        
         t = test.Test()
         ip = bsn.get_node_ip(node)
         session_id = []
-        for loop in range (0, int(sessions)):
-            helpers.log('USR info:  this is loop:  %d' % loop)
-            n = t.node_spawn(ip)
-            session_id.append(n)
-            n.bash('netstat | grep ssh')
-            n.bash('netstat | grep ssh | wc -l')
-        helpers.log("***Exiting==> spawn_log_in   \n")
+        for loop in range (0, int(sessions)): 
+            helpers.log('USR info:  this is loop:  %d' % loop )
+            n = t.node_spawn(ip)   
+            session_id.append(n)                             
+            n.bash('netstat | grep ssh')           
+            n.bash('netstat | grep ssh | wc -l')           
+        helpers.log("***Exiting==> spawn_log_in   \n" )
 
         return session_id
 
-    def spawn_log_out(self, session_id, node='master'):
-
+    def spawn_log_out(self,session_id,node='master'):
+       
         bsn = bsnCommon()
-        helpers.log("***Entering==> spawn_log_in   \n")
-
-        for session in session_id:
-            session.close()
-
-        helpers.log("***Exiting==> spawn_log_in   \n")
+        helpers.log("***Entering==> spawn_log_in   \n" )
+              
+        for session in session_id:            
+            session.close()  
+                  
+        helpers.log("***Exiting==> spawn_log_in   \n" )
         return True
 
 
-
-    def generate_support(self, node='master'):
-        helpers.log("***Entering==> generate support file  \n")
-
+    
+    def generate_support(self,node='master'):
+        helpers.log("***Entering==> generate support file  \n" )
+        
         t = test.Test()
         c = t.controller(node)
 
-        c.enable('')
+        c.enable('')  
         c.send('support')
-        options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1200)
-        if options[0] == 0 :
-            c.send('yes')
-            c.expect(timout=1200)
+        options = c.expect([r'\(yes/no\)\?', c.get_prompt()],timeout=1200)
+        if options[0] == 0 : 
+            c.send('yes') 
+            c.expect(timout=1200)                  
         content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
+        temp = helpers.strip_cli_output(content) 
         lines = helpers.str_to_list(temp)
         helpers.log("*****Output is :\n%s" % temp)
-        for line in lines:
-            helpers.log("INFO: line is %s" % line)
-            match = re.match(r'Name.*: (floodlight.*)', line)
+        for line in lines:  
+            helpers.log("INFO: line is %s" % line)                 
+            match =  re.match(r'Name.*: (floodlight.*)', line)
             if match:
                 helpers.log("INFO: file name is: %s" % match.group(1))
                 return  match.group(1)
-
-        helpers.test_failure("Error: %s" % temp)
-
-    def delete_support(self, node='master', filename=None):
-        helpers.log("***Entering==> delete support file \n")
-
+        
+        helpers.test_failure("Error: %s" % temp)            
+            
+    def delete_support(self,node='master',filename=None):
+        helpers.log("***Entering==> delete support file \n" )
+        
         t = test.Test()
         c = t.controller(node)
 
-        c.enable('')
+        c.enable('')  
         if filename is None:
             c.enable('show support')
-            content = c.cli_content()
+            content = c.cli_content()           
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
-            for line in lines:
-                helpers.log("INFO: line is %s" % line)
-                match = re.match(r'[0-9]*.* floodlight.*', line, flags=re.M)
-                if match:
-                    helpers.log("INFO: file name is is: %s" % line.split(' ')[1])
-                    c.enable('delete support ' + line.split(' ')[1])
-
+            for line in lines:     
+                helpers.log("INFO: line is %s" % line)                                      
+                match =  re.match(r'[0-9]*.* floodlight.*', line,flags=re.M)
+                if match:                   
+                    helpers.log("INFO: file name is is: %s" % line.split(' ')[1] )
+                    c.enable('delete support ' + line.split(' ')[1])                                         
+                 
         else:
-            c.enable('delete support ' + filename)
+            c.enable('delete support ' + filename )             
         return True
 
 
@@ -5401,21 +5397,21 @@ class T5Platform(object):
           input:  node  - controller
                           master, slave, c1 c2
                   breakpoint - phase 1 ,  phase 2 ..
-          usage:   cli_monitor_upgrade_launch
+          usage:   cli_monitor_upgrade_launch   
           output:  return True when hit the breakpoint
-
+                 
         '''
 
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_get_upgrade_progress')
+        helpers.log('INFO: Entering ==> cli_get_upgrade_progress' )
         c.enable(" show upgrade progress")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         helpers.log("*****Output list   is :\n%s" % temp)
-
+        
         if re.match(r'Error:.*', temp[0]):
             helpers.log("Error: %s" % temp[0])
             helpers.test_failure("Error: %s" % temp[0])
@@ -5423,17 +5419,17 @@ class T5Platform(object):
         elif re.match(r'upgrade not active', temp[0]):
             helpers.log("USR INFO:  upgrade is not active")
             return {'local': 'not active', 'remote': 'not active'}
-
+ 
         else:
-            match = re.match(r'.* Local: (.*) Remote: (.*)', temp[0])
+            match =  re.match(r'.* Local: (.*) Remote: (.*)', temp[0])
             if match:
                 local = match.group(1)
                 remote = match.group(2)
                 return {'local': local, 'remote': remote}
-
+               
             else:
                 helpers.test_failure("USR Error: did not get the upgrade state: \n %s" % temp[0])
-
+       
 
     def cli_monitor_upgrade_launch(self, node='master', breakpoint=None):
         '''
@@ -5442,38 +5438,38 @@ class T5Platform(object):
           input:  node  - controller
                           master, slave, c1 c2
                   breakpoint - phase 1 ,  phase 2 ..
-          usage:   cli_monitor_upgrade_launch
+          usage:   cli_monitor_upgrade_launch   
           output:  return True when hit the breakpoint
-
+                 
         '''
-        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch')
+        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch' )
         is_continuous = True
         iteration = 0
         while is_continuous:
-            is_continuous = False
-            iteration += 1
+            is_continuous = False  
+            iteration +=1       
             result = self.cli_get_upgrade_progress(node=node)
             local = result['local']
             remote = result['remote']
-            helpers.log("USER INFO: %d. upgrade state: Local -  %s ; Remote - %s" % (iteration, local, remote))
+            helpers.log("USER INFO: %d. upgrade state: Local -  %s ; Remote - %s" % (iteration, local, remote)) 
             if 'phase1' is breakpoint and 'phase-1-migrate' in remote:
-                helpers.log("USER INFO:  Phase 1 migrate ")
+                helpers.log("USER INFO:  Phase 1 migrate "  )                
                 return True
             elif 'phase2' is breakpoint and 'phase-2-migrate' in remote:
-                helpers.log("USER INFO:  Phase 2 migrate ")
+                helpers.log("USER INFO:  Phase 2 migrate "  )                
                 return True
-
+           
             elif 'not active' in local  and  'not active' in remote:
                 return  True
-            else:
+            else:                
                 is_continuous = True
-
+                
             if iteration >= 40 :
-                helpers.log('USR ERROR: exceed 20 minutes ')
+                helpers.log('USR ERROR: exceed 20 minutes ' ) 
                 return False
+                       
+            helpers.sleep(30)            
+            
+            
 
-            helpers.sleep(30)
-
-
-
-
+   
