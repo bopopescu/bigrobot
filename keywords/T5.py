@@ -1447,14 +1447,19 @@ class T5(object):
         status = False
         for i in range (0, len(data)):
             helpers.log("Checking switch dpid in controller...")
-            if data[i]["dpid"] == dpid.lower() and data[i]["fabric-role"] == role.lower():
-                helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
-                status = True
-                return True
-                break
+            try:
+                if data[i]["dpid"] == dpid.lower() and data[i]["fabric-role"] == role.lower():
+                    helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
+                    status = True
+                    return True
+            except KeyError:
+                if data[i]["fabric-connection-state"] == "suspended":
+                    if role.lower() == "undefined":
+                        if data[i]["suspended-reason"] == "No fabric role configured":
+                            status = True
+                            return True
         if status == False:
             helpers.test_failure("Fabric switch role Check Test Failed")
-
         return False
 
     def rest_delete_fabric_role(self, switch, role=None):
