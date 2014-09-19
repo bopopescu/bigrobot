@@ -6,6 +6,6 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.9.16.139
+  ip: 10.9.16.142
   
 
