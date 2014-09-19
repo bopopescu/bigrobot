@@ -2748,7 +2748,7 @@ class T5Platform(object):
                     helpers.log(helpers.exception_info())
                     n.console_close()  # **** Closing the console
                     helpers.sleep(1)
-                    n_console = n.dev_console(modeless=True)
+                    n_console = t.dev_console(node, modeless=True)
                     n_console.send('')
                 n_console.expect(r'login:')
             elif options[0] == 1:
