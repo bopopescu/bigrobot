@@ -2741,7 +2741,15 @@ class T5Platform(object):
                 n_console.send(helpers.ctrl('c'))
                 helpers.sleep(2)
                 n_console.send('')
-                n_console.expect(helpers.regex_bvs())
+                try:
+                    n_console.expect(helpers.regex_bvs())
+                except:
+                    helpers.log("Devconf 'expect' error. Possibly corrupted terminal session. Try to reconnect to console.")
+                    helpers.log(helpers.exception_info())
+                    n.console_close()  # **** Closing the console
+                    helpers.sleep(1)
+                    n_console = n.dev_console(modeless=True)
+                    n_console.send('')
                 n_console.expect(r'login:')
             elif options[0] == 1:
                 helpers.log("INFO:  need to login as  admin")
