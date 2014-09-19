@@ -1730,4 +1730,20 @@ class T5ZTN(object):
                     line = line.replace(' ', '')
                 version = version + " (" + line + ")"
         return version
-    
+
+    def telnet_run(self, switch, cmd):
+        """
+        Issue given command for a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if reboot triggered successfully, False otherwise
+        """
+        t = test.Test()
+        n = t.node(switch)
+        s = t.dev_console(switch)
+        helpers.log("Running command %s" %cmd)
+        s.config(cmd)
+        return True
