@@ -2214,7 +2214,7 @@ class T5Platform(object):
         temp = helpers.str_to_list(temp)
         for line in temp:
             helpers.log("INFO: line is - %s" % line)
-            match = re.match(r'.* \* (active|standby).* connected', line)
+            match = re.match(r'.* \* (active|standby).*', line)
             if match:
                 helpers.log("INFO: role is: %s" % match.group(1))
                 return  match.group(1)
@@ -5101,7 +5101,7 @@ class T5Platform(object):
           upgrade launch  -  2 step of upgrade
           Author: Mingtao
           input:  node  - controller
-                          master, slave, c1 c2
+                          c1 c2
 
           usage:
           output: True  - upgrade launched successfully
@@ -5126,7 +5126,7 @@ class T5Platform(object):
             c.send("yes")
 
         if role == 'active':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role))
 #            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'config updates are frozen for update',timeout=360)
 #            c.expect(r'standby has begun upgrade',timeout=360)
@@ -5161,7 +5161,7 @@ class T5Platform(object):
                 return True
 
         elif role == 'standby':
-            helpers.log("USER INFO: controller : %s is:   %s" % (node, role))
+            helpers.log("USER INFO: I am controller : %s is:   %s" % (node, role))
 #            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
 #            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
 #            c.expect(r'Leader->partition state: partition-completed',timeout=360)
@@ -5431,7 +5431,7 @@ class T5Platform(object):
                 helpers.test_failure("USR Error: did not get the upgrade state: \n %s" % temp[0])
        
 
-    def cli_monitor_upgrade_launch(self, node='master', breakpoint=None):
+    def cli_monitor_upgrade_launch(self, node, breakpoint=None):
         '''
           monitor upgrade launch  in the system "show upgrade progress"
           Author: Mingtao
