@@ -2739,9 +2739,8 @@ class T5Platform(object):
                 helpers.log("USER INFO:  need to Enter ")
                 n_console.send('')
                 helpers.log("Need to wait for the system initialize before sending Ctl C")
-                helpers.sleep(5)
-                n_console.send(helpers.ctrl('c'))
-                helpers.sleep(2)
+                helpers.sleep(15)
+#                n_console.send(helpers.ctrl('c')))
                 n_console.send('')
                 try:
                     n_console.expect(helpers.regex_bvs())
