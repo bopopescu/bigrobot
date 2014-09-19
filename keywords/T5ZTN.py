@@ -931,13 +931,13 @@ class T5ZTN(object):
         elif options[0] == 3:
             s.cli('reboot')
             helpers.log("Switch is rebooting. Waiting for full reboot")
-            helpers.sleep(100)
+            helpers.sleep(120)
             s.expect(r'[\r\n]*.*login: $', timeout=30)
             s.send('admin')
         elif options[0] == 4:
             s.cli('boot')
             helpers.test_failure("Switch is rebooting. Waiting for full reboot")
-            helpers.sleep(100)
+            helpers.sleep(120)
             s.expect(r'[\r\n]*.*login: $', timeout=30)
             s.send('admin')
         s.cli('enable')
