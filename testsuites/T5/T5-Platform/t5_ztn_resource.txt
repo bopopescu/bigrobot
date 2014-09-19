@@ -11,6 +11,11 @@ Suite Setup
 	Run Keyword and Ignore Error  Power Cycle All Switches
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
+	${tmp}  params  node=c1  key=ip
+	set suite variable  ${c1_ip}  ${tmp}
+	${tmp}  params  node=c2  key=ip
+	set suite variable  ${c2_ip}  ${tmp}
+
 	${tmp}  params  node=s1  key=mac
 	set suite variable  ${s1_mac}  ${tmp}
 	${tmp}  params  node=s2  key=mac

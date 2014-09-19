@@ -1,0 +1,230 @@
+*** Settings ***
+Documentation       Testing ZTN
+...              The purpose of this test suite is to check managing switches with ZTN. Small testbed will be used.
+...
+...              *Test topology*: pair of controllers, one spine switch, two leaf switches (Accton).
+...
+...              For tests which check correct installation of flows on the switches, simple forwarding configuration
+...              and small traffic rate will be used.
+...              Larger testbeds will be tested inherently in other testsuites.
+...
+...              In this Test Suite the following terms will be used:
+...
+...              * stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+...
+...              * provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+...
+...              * suspended switch - switch connected to fabric but not configured on the controller,
+...                or running wrong version of Swith Light, or with incorrect running-config
+...
+...              * ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
+...
+...              * ZTN configuration, which includes:
+...
+...                - configuration mirrored from controller's configuration to switches (NTP, Logging, SNMP)
+...
+...                - controllers' IP addresses
+...
+...                  - per-switch hostname (as switch name on the controller)
+...
+...                  - per-switch interface configuration (as assigned by DHCP server when switch booted)
+...
+...              * ZTN configuration change:
+...
+...                - any controller Cli change that affects the switch startup-config
+...
+...              * Switch mode change:
+...
+...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
+
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
+Test Setup		Test Setup
+Test Teardown	Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
+Library  		keywords/BsnCommon.py
+Library		keywords/T5Platform.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		String
+Resource		t5_ztn_resource.txt
+
+
+*** Test Cases ***
+# Switch in stand-by mode
+T10.1.1. Connected, change config on switch, reload
+	Sleep  10
+	Telnet Run  s1  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s1  no hostname
+	Telnet Run  s1  no logging host 10.8.67.2
+	#Telnet Run  s1  no controller ${c1_ip}
+	#Telnet Run  s1  no controller ${c2_ip}
+	Telnet Run  s1  no snmp-server enable
+	Telnet Run  s1  no snmp-server trap Fan 1 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Sleep  60
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+
+T10.1.2. Connected, change config on switch, reboot
+	Sleep  10
+	Telnet Run  s2  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s2  no hostname
+	Telnet Run  s2  no logging host 10.8.67.2
+	#Telnet Run  s2  no controller ${c1_ip}
+	#Telnet Run  s2  no controller ${c2_ip}
+	Telnet Run  s2  no snmp-server enable
+	Telnet Run  s2  no snmp-server trap Fan 2 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Cli Reboot Switch  master  ${s2_ip}
+	Sleep  30
+	Telnet Wait For Switch To Reload  s2
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
+T10.1.3. Connected, disconnect, change config on switch, reconnect
+	Sleep  10
+	Telnet Set MA1 State  s3  down
+	Telnet Run  s3  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s3  no hostname
+	Telnet Run  s3  no logging host ${c2_ip}
+	#Telnet Run  s3  no controller ${c1_ip}
+	#Telnet Run  s3  no controller ${c2_ip}
+	Telnet Run  s3  no snmp-server enable
+	Telnet Run  s3  no snmp-server trap Fan 3 status missing
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Telnet Set MA1 State  s3  up
+	Sleep  60
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
+T10.1.4. Connected, change config on switch, flap
+	Sleep  10
+	Telnet Run  s4  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s4  no hostname
+	Telnet Run  s4  no logging host ${c1_ip}
+	#Telnet Run  s4  no controller ${c1_ip}
+	#Telnet Run  s4  no controller ${c2_ip}
+	Telnet Run  s4  no snmp-server enable
+	Telnet Run  s4  no snmp-server trap Fan 4 status failed
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Telnet Set MA1 State  s4  flap
+	Sleep  60
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+
+# As above, with failover
+T10.1.5. Connected, change config on switch, reload
+	Sleep  10
+	Telnet Run  s5  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s5  no hostname
+	Telnet Run  s5  no logging host 10.8.67.2
+	#Telnet Run  s5  no controller ${c1_ip}
+	Telnet Run  s5  no snmp-server enable
+	Telnet Run  s5  no snmp-server trap Fan 1 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+
+T10.1.6. Connected, change config on switch, reboot
+	Sleep  10
+	Telnet Run  s1  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s1  no hostname
+	Telnet Run  s1  no logging host 10.8.67.2
+	#Telnet Run  s1  no controller ${c2_ip}
+	Telnet Run  s1  no snmp-server enable
+	Telnet Run  s1  no snmp-server trap Fan 2 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Cli Reboot Switch  master  ${s1_ip}
+	Failover
+	Sleep  30
+	Telnet Wait For Switch To Reload  s1
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+
+T10.1.7. Connected, disconnect, change config on switch, reconnect
+	Sleep  10
+	Telnet Set MA1 State  s2  down
+	Telnet Run  s2  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s2  no hostname
+	Telnet Run  s2  no logging host ${c2_ip}
+	#Telnet Run  s2  no controller ${c1_ip}
+	Telnet Run  s2  no snmp-server enable
+	Telnet Run  s2  no snmp-server trap Fan 3 status missing
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Telnet Set MA1 State  s2  up
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
+T10.1.8. Connected, change config on switch, flap
+	Sleep  10
+	Telnet Run  s3  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s3  no hostname
+	Telnet Run  s3  no logging host ${c1_ip}
+	#Telnet Run  s3  no controller ${c1_ip}
+	Telnet Run  s3  no snmp-server enable
+	Telnet Run  s3  no snmp-server trap Fan 4 status failed
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Telnet Set MA1 State  s3  flap
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+
+# As above, with two failovers
+T10.1.9. Connected, change config on switch, reload
+	Sleep  10
+	Telnet Run  s4  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s4  no hostname
+	Telnet Run  s4  no logging host 10.8.67.2
+	#Telnet Run  s4  no controller ${c1_ip}
+	Telnet Run  s4  no snmp-server enable
+	Telnet Run  s4  no snmp-server trap Fan 1 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Failover
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+
+T10.1.10. Connected, change config on switch, reboot
+	Sleep  10
+	Telnet Run  s5  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s5  no hostname
+	Telnet Run  s5  no logging host 10.8.67.2
+	#Telnet Run  s5  no controller ${c2_ip}
+	Telnet Run  s5  no snmp-server enable
+	Telnet Run  s5  no snmp-server trap Fan 2 status good
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Cli Reboot Switch  master  ${s5_ip}
+	Failover
+	Failover
+	Sleep  30
+	Telnet Wait For Switch To Reload  s5
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+
+T10.1.11. Connected, disconnect, change config on switch, reconnect
+	Sleep  10
+	Telnet Set MA1 State  s1  down
+	Telnet Run  s1  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s1  no hostname
+	Telnet Run  s1  no logging host ${c2_ip}
+	#Telnet Run  s1  no controller ${c1_ip}
+	Telnet Run  s1  no snmp-server enable
+	Telnet Run  s1  no snmp-server trap Fan 3 status missing
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Telnet Set MA1 State  s1  up
+	Failover
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+
+T10.1.12. Connected, change config on switch, flap
+	Sleep  10
+	Telnet Run  s2  no ntp server 0.bigswitch.pool.ntp.org
+	Telnet Run  s2  no hostname
+	Telnet Run  s2  no logging host ${c1_ip}
+	#Telnet Run  s2  no controller ${c1_ip}
+	Telnet Run  s2  no snmp-server enable
+	Telnet Run  s2  no snmp-server trap Fan 4 status failed
+	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Telnet Set MA1 State  s2  flap
+	Failover
+	Failover
+	Sleep  60
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
