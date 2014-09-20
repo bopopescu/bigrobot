@@ -722,9 +722,9 @@ T34 Verify traffic loss/convergence after removing static endpoints
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
-	[Tags] 	sanity    Manual-untested  scaling
-	
+   #manual untested
+   [Tags] 	sanity    Manual  scaling
+   Manual failed
 	
 T35 Verify image upgrade of controller
    Log   Repeat T3
