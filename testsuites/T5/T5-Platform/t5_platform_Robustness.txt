@@ -188,13 +188,13 @@ Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
 
 
 Master Reboot Stress Test For 200 Times
-   [Tags]     stress  don
+   [Tags]     stress  
    test passed
    #Stress Failover/Failback by rebooting the master and verify connectivity
   
    
 Master System Failover Stress Test For 250 Times
-   [Tags]     stress  don
+   [Tags]     stress   don
    test passed
    #Stress Failover/Failback by failing over the master and verify connectivity
    
@@ -247,8 +247,8 @@ Headless mode verifications
 	#cli_verify_cluster_slave_shutdown
 	
 Disconnect peer leaf switch lag links
-	[Tags]  manual  BVS-2067
-	manual failed 
+	[Tags]  manual 
+	manual passed 
 	
 Reboot peer leaf switches. 
 	[Tags]  
@@ -401,7 +401,7 @@ Switch - Open Ports - Penetration test
 	
 Controller- Bundle Image
 	[Tags]    manual
-	manual failed
+	manual passsed
 	
 Power supplies - DC /AC Mix match
 	[Tags]    manual
@@ -500,7 +500,7 @@ Re-run the election and verify connectivity
 * Keywords      
 
 Stress Failover/Failback by rebooting the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    100
+   : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
    \	${returnVal}=	cli verify cluster master reboot
    \	Should Be True  ${returnVal}

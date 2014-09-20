@@ -1,6 +1,13 @@
 * Keywords
 
- 
+set regression variables  
+	Set Suite Variable  ${gw}      10.9.16.1
+	Set Suite Variable  ${mask}    23
+	Set Suite Variable  ${VIP1}    10.9.16.19
+	Set Suite Variable  ${VIP2}    10.9.16.20
+	Set Suite Variable  ${namec1}    MY-C1
+	Set Suite Variable  ${namec2}    MY-C2
+	Set Suite Variable  ${ipcno}    10.9.16.255	
 
 #  first boot  
 

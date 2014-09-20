@@ -12,25 +12,25 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+${switch1_alias}                          app-ras5710-1   #Alias for switch 1
 
 ### Ixia Ports
 ${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
 ${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
 ${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
 ${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
-${switch1_filter_intf_2}                  ethernet11       #filter interface on switch 1
+${switch1_filter_intf_2}                  ethernet13       #filter interface on switch 1
 ${switch1_filter_alias_2}                 filter-5710-1    #Alias for filter interface on switch 1
-${switch1_delivery_intf_2}                ethernet12       #Delivery interface on switch 1
+${switch1_delivery_intf_2}                ethernet14       #Delivery interface on switch 1
 ${switch1_delivery_alias_2}               delivery-5710-1  #Alias for delivery interface on switch 1
-${switch1_filter_intf_3}                  ethernet13       #filter interface on switch 1
+${switch1_filter_intf_3}                  ethernet15       #filter interface on switch 1
 ${switch1_filter_alias_3}                 filter-5710-2    #Alias for filter interface on switch 1
-${switch1_delivery_intf_3}                ethernet14       #Delivery interface on switch 1
+${switch1_delivery_intf_3}                ethernet16       #Delivery interface on switch 1
 ${switch1_delivery_alias_3}               delivery-5710-2  #Alias for delivery interface on switch 1
 
 
 ### BigTap Policy Configuration
-${policy_name}                          policy_filter_group      #Policy Name that will use the tunnel interface
+${policy_name}                            policy_filter_group      #Policy Name that will use the tunnel interface
 ${filter_interface_group_name_1}          corsair_filter_group_1
 ${filter_interface_group_name_2}          corsair_filter_group_2
 ${delivery_interface_group_name_1}        corsair_delivery_group_1
@@ -39,7 +39,7 @@ ${vlan_rewrite_1}                         1024
 ${vlan_rewrite_2}                         2048
 
 *Test Case
-Verify filter interfaces can be added to a group via rest 
+TC001: Verify filter interfaces can be added to a group via rest 
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
@@ -50,21 +50,21 @@ Verify filter interfaces can be added to a group via rest
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  feature
     
-Verify a filter interface can be deleted from a filter interface group via rest
+TC002: Verify a filter interface can be deleted from a filter interface group via rest
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['filter-group'][0]['name']}     
     [Tags]  feature
     
-Verify a filter interface-group can be deleted via rest
+TC003: Verify a filter interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['name']}    
     [Tags]  feature
     
-Verify delivery interfaces can be added to a group via rest 
+TC004: Verify delivery interfaces can be added to a group via rest 
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
@@ -73,21 +73,21 @@ Verify delivery interfaces can be added to a group via rest
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
     [Tags]  feature
     
-Verify a delivery interface can be deleted from a delivery interface group via rest
+TC005: Verify a delivery interface can be deleted from a delivery interface group via rest
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['delivery-group'][0]['name']}     
     [Tags]  feature
     
-Verify a delivery interface-group can be deleted via rest
+TC006: Verify a delivery interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
     Should be true  ${return_value}
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['name']}  
     [Tags]  feature
 
-Verify multiple interfaces can be added to filter-interface-group
+TC007: Verify multiple interfaces can be added to filter-interface-group
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
@@ -100,7 +100,7 @@ Verify multiple interfaces can be added to filter-interface-group
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][1]['name']}  ${switch1_filter_alias_3}    
     [Tags]  feature
 
-Verify multiple interfaces can be added to delivery-interface-group
+TC008: Verify multiple interfaces can be added to delivery-interface-group
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
@@ -113,7 +113,7 @@ Verify multiple interfaces can be added to delivery-interface-group
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][1]['name']}  ${switch1_delivery_alias_3}
     [Tags]  feature
 
-Verify filter-interface group with multiple member interfaces can be added to policy
+TC009: Verify filter-interface group with multiple member interfaces can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
     Should be true  ${return_value}
     Sleep  5      
@@ -129,7 +129,7 @@ Verify filter-interface group with multiple member interfaces can be added to po
     Sleep  5        
     [Tags]  feature      
 
-Verify delivery-interface group with multiple member interfaces can be added to policy
+TC010: Verify delivery-interface group with multiple member interfaces can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     Should be true  ${return_value}
     Sleep  5      
@@ -146,7 +146,7 @@ Verify delivery-interface group with multiple member interfaces can be added to 
     [Tags]  feature      
 
 
-Verify delivery-interface group and filter-interface group can be added to policy
+TC011: Verify delivery-interface group and filter-interface group can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     Should be true  ${return_value}
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
@@ -161,7 +161,7 @@ Verify delivery-interface group and filter-interface group can be added to polic
     Should be true  ${verify_policy1}      
     [Tags]  feature 
 
-Delete filter interface from filter-interface group and verify policy gets updated automatically
+TC012: Delete filter interface from filter-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}
     Should be true  ${return_value}
     Sleep  5 
@@ -169,7 +169,7 @@ Delete filter interface from filter-interface group and verify policy gets updat
     Should be true  ${verify_policy1}
     [Tags]  feature
     
-Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
+TC013: Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
     Should be true  ${return_value}   
     Sleep  5          
@@ -177,7 +177,7 @@ Add the deleted filter interface back to the filter interface group and verify p
     Should be true  ${verify_policy1}
     [Tags]  feature
 
-Delete delivery interface from delivery-interface group and verify policy gets updated automatically
+TC014: Delete delivery interface from delivery-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}
     Should be true  ${return_value}
     Sleep  5 
@@ -185,7 +185,7 @@ Delete delivery interface from delivery-interface group and verify policy gets u
     Should be true  ${verify_policy1}
     [Tags]  feature  
     
-Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
+TC015: Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
     Should be true  ${return_value}   
     Sleep  5          
@@ -193,7 +193,7 @@ Add the deleted delivery interface back to the delivery interface group and veri
     Should be true  ${verify_policy1}
     [Tags]  feature  
 
-Verify same filter interface can be added to a two groups
+TC016: Verify same filter interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
     ${return_value}=  rest add interface group  ${filter_interface_group_name_2}  filter  
@@ -211,7 +211,7 @@ Verify same filter interface can be added to a two groups
     Should be equal as strings   ${filter_dictionary[1]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  feature
 
-Verify same delivery interface can be added to a two groups
+TC017: Verify same delivery interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_2}  delivery  
@@ -229,7 +229,7 @@ Verify same delivery interface can be added to a two groups
     Should be equal as strings   ${delivery_dictionary[1]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}    
     [Tags]  feature
 
-Verify a filter interface and a filter interface group can be both added to a policy
+TC018: Verify a filter interface and a filter interface group can be both added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -248,7 +248,7 @@ Verify a filter interface and a filter interface group can be both added to a po
     Should be true  ${verify_policy1}        
     [Tags]  feature
 
-Verify a delivery interface and a delivery interface group can be both added to a policy
+TC019: Verify a delivery interface and a delivery interface group can be both added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -267,7 +267,7 @@ Verify a delivery interface and a delivery interface group can be both added to 
     Should be true  ${verify_policy1}        
     [Tags]  feature
 
-Verify a filter interface and a filter interface group with common interface can be added to a policy
+TC020: Verify a filter interface and a filter interface group with common interface can be added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -287,7 +287,7 @@ Verify a filter interface and a filter interface group with common interface can
     [Tags]  feature
 
 
-Verify a delivery interface and a delivery interface group with common interface can be added to a policy
+TC021: Verify a delivery interface and a delivery interface group with common interface can be added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -307,7 +307,7 @@ Verify a delivery interface and a delivery interface group with common interface
     rest delete policy  admin-view  ${policy_name}        
     [Tags]  feature
 
-Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a filter interface group.  
+TC022: Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a filter interface group.  
     rest delete policy  admin-view  ${policy_name}
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
@@ -327,7 +327,7 @@ Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a f
     Should be true  ${verify_policy1}
     [Tags]  feature                 
 
-Verify interfaces tagged with and without vlan-rewrite can exist in a filter interface group
+TC023: Verify interfaces tagged with and without vlan-rewrite can exist in a filter interface group
     rest delete policy  admin-view  ${policy_name}
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
@@ -357,7 +357,7 @@ Verify interfaces tagged with and without vlan-rewrite can exist in a filter int
     Should be true  ${return_value}    
     [Tags]  feature 
 
-Verify multiple filter interface groups can be added to a policy
+TC024: Verify multiple filter interface groups can be added to a policy
     clean configuration    
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
@@ -381,7 +381,7 @@ Verify multiple filter interface groups can be added to a policy
     clean configuration     
     [Tags]  feature  jira-bt-1367
 
-Verify multiple delivery interface groups can be added to a policy
+TC025: Verify multiple delivery interface groups can be added to a policy
     clean configuration     
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
@@ -405,44 +405,568 @@ Verify multiple delivery interface groups can be added to a policy
     clean configuration     
     [Tags]  feature  jira-bt-1367
     
-Verify filter and delivery interface-groups can have all lower-case alphabet names
+TC026: Verify filter and delivery interface-groups can have all lower-case alphabet names
     clean configuration 
     verify group name  filtergroup  deliverygroup
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all upper-case alphabet names
+TC027: Verify filter and delivery interface-groups can have all upper-case alphabet names
     verify group name  FILTERGROUP  DELIVERYGROUP
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have mix of lower-case and upper-case alphabet names
+TC028: Verify filter and delivery interface-groups can have mix of lower-case and upper-case alphabet names
     verify group name  FiLtErGrOuP  DeLiVeRyGrOuP
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have alphanumeric (alphabet all small) names
+TC029: Verify filter and delivery interface-groups can have alphanumeric (alphabet all small) names
     verify group name  filtergroup1234  deliverygroup1234
     [Tags]  feature                                             
 
-Verify filter and delivery interface-groups can have alphanumeric (alphabet all caps) names
+TC030: Verify filter and delivery interface-groups can have alphanumeric (alphabet all caps) names
     verify group name  FILTERGROUP1234  DELIVERYGROUP1234
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a -
+TC031: Verify filter and delivery interface-groups can have all alphanumeric names with a -
     verify group name  filter-Group1  delivery-Group1
     [Tags]  feature
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a _
+TC032: Verify filter and delivery interface-groups can have all alphanumeric names with a _
     verify group name  filter_Group1  delivery_Group1
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a :
+TC033: Verify filter and delivery interface-groups can have all alphanumeric names with a :
     verify group name  filter:Group1  delivery:Group1
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a .
+TC034: Verify filter and delivery interface-groups can have all alphanumeric names with a .
     verify group name  filter.Group1  delivery.Group1
     [Tags]  feature 
 
+TC035: Verify filter-interface name in a filter-interface-group can have all lower-case alphabet names
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filterinterface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filterinterface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
 
+TC036: Verify delivery-interface name in a delivery-interface-group can have all lower-case alphabet names
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  deliveryinterface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  deliveryinterface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC037: Verify filter-interface name in a filter-interface-group can have all upper-case alphabet names
+    clean configuration 
+    add interface to interface group  filtergroup  filter  FILTERINTERFACE
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTERINTERFACE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC038: Verify delivery-interface name in a delivery-interface-group can have all upper-case alphabet names
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  DELIVERYINTERFACE
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERYINTERFACE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC039: Verify filter-interface name in a filter-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    add interface to interface group  filtergroup  filter  FiLtErInTeRfAcE
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FiLtErInTeRfAcE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC040: Verify delivery-interface name in a delivery-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  DeLiVeRyInTeRfAcE
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DeLiVeRyInTeRfAcE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC041: Verify filter-interface name in a filter-interface-group can have alphanumeric (alphabet all small) names
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filter1234interface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1234interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC042: Verify delivery-interface name in a delivery-interface-group can have alphanumeric (alphabet all small) names
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  delivery1234interface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1234interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC043: Verify filter-interface name in a filter-interface-group can have alphanumeric (alphabet all capitals) names
+    clean configuration 
+    add interface to interface group  filtergroup  filter  FILTER1234INTERFACE
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTER1234INTERFACE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC044: Verify delivery-interface name in a delivery-interface-group can have alphanumeric (alphabet all capitals) names
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  DELIVERY1234INTERFACE
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERY1234INTERFACE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC045: Verify filter-interface name in a filter-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filter-interface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter-interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC046: Verify delivery-interface name in a delivery-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  delivery-interface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery-interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC047: Verify filter-interface name in a filter-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filter_interface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter_interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC048: Verify delivery-interface name in a delivery-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  delivery_interface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery_interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC049: Verify filter-interface name in a filter-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filter:interface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter:interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC050: Verify delivery-interface name in a delivery-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  delivery:interface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery:interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature      
+
+TC051: Verify filter-interface name in a filter-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    add interface to interface group  filtergroup  filter  filter1.2interface
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1.2interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC052: Verify delivery-interface name in a delivery-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    add interface to interface group  deliverygroup  delivery  delivery1.2interface
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1.2interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+      
+TC053: Verify via cli filter-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1.2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1             
+    verify filter interface group name  filter1.2group  
+    [Teardown]  delete interface group testcase configuration  filter1.2group  filter            
+    [Tags]  feature      
+
+TC054: Verify via cli delivery-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1.2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1       
+    verify delivery interface group name  delivery1.2group       
+    [Teardown]  delete interface group testcase configuration  delivery1.2group  delivery          
+    [Tags]  feature                
+    
+TC055: Verify via cli filter-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1:2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1              
+    verify filter interface group name  filter1:2group 
+    [Teardown]  delete interface group testcase configuration  filter1:2group  filter          
+    [Tags]  feature    
+
+TC056: Verify via cli delivery-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1:2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  delivery1:2group       
+    [Teardown]  delete interface group testcase configuration  delivery1:2group  delivery          
+    [Tags]  feature       
+    
+TC057: Verify via cli filter-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1_2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1  
+    verify filter interface group name  filter1_2group 
+    [Teardown]  delete interface group testcase configuration  filter1_2group  filter          
+    [Tags]  feature  
+
+TC058: Verify via cli delivery-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1_2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  delivery1_2group      
+    [Teardown]  delete interface group testcase configuration  delivery1_2group  delivery          
+    [Tags]  feature   
+
+    
+TC059: Verify via cli filter-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1-2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  filter1-2group 
+    [Teardown]  delete interface group testcase configuration  filter1-2group  filter          
+    [Tags]  feature  
+
+TC060: Verify via cli delivery-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1-2group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  delivery1-2group            
+    [Teardown]  delete interface group testcase configuration  delivery1-2group  delivery          
+    [Tags]  feature       
+    
+TC061: Verify via cli filter-interface-group can have all alphanumeric (alphabet all capitals) names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group FILTER1234GROUP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  FILTER1234GROUP 
+    [Teardown]  delete interface group testcase configuration  FILTER1234GROUP  filter          
+    [Tags]  feature  
+
+TC062: Verify via cli delivery-interface-group can have all alphanumeric (alphabet all capitals) names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group DELIVERY1234GROUP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  DELIVERY1234GROUP        
+    [Teardown]  delete interface group testcase configuration  DELIVERY1234GROUP  delivery          
+    [Tags]  feature  
+
+TC063: Verify via cli filter-interface-group can have all alphanumeric (alphabet all small) names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1234group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  filter1234group 
+    [Teardown]  delete interface group testcase configuration  filter1234group  filter          
+    [Tags]  feature  
+
+TC064: Verify via cli delivery-interface-group can have all alphanumeric (alphabet all small) names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1234group
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  delivery1234group       
+    [Teardown]  delete interface group testcase configuration  delivery1234group  delivery          
+    [Tags]  feature  
+
+TC065: Verify via cli filter-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group FiLtErGrOuP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  FiLtErGrOuP 
+    [Teardown]  delete interface group testcase configuration  FiLtErGrOuP  filter          
+    [Tags]  feature  
+
+TC066: Verify via cli delivery-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group DeLiVeRyGrOuP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  DeLiVeRyGrOuP     
+    [Teardown]  delete interface group testcase configuration  DeLiVeRyGrOuP  delivery          
+    [Tags]  feature     
+
+TC067: Verify via cli filter-interface-group can have all upper-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group FILTERGROUP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  FILTERGROUP 
+    [Teardown]  delete interface group testcase configuration  FILTERGROUP  filter          
+    [Tags]  feature  
+
+TC068: Verify via cli delivery-interface-group can have all upper-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group DELIVERYGROUP
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  DELIVERYGROUP     
+    [Teardown]  delete interface group testcase configuration  DELIVERYGROUP  delivery          
+    [Tags]  feature   
+
+TC069: Verify via cli filter-interface-group can have all lower-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify filter interface group name  filtergroup 
+    [Teardown]  delete interface group testcase configuration  filtergroup  filter          
+    [Tags]  feature  
+
+TC070: Verify via cli delivery-interface-group can have all lower-case alphabet names
+    clean configuration 
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    sleep  1
+    verify delivery interface group name  deliverygroup     
+    [Teardown]  delete interface group testcase configuration  deliverygroup  delivery          
+    [Tags]  feature   
+
+    
+TC071: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1.2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface filter1.2interface
+    Should not contain  ${return_value_2['content']}  Error 
+    sleep  1             
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1.2interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature      
+
+TC072: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric names with a .
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1.2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface delivery1.2interface
+    Should not contain  ${return_value_2['content']}  Error
+    sleep  1       
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1.2interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature                
+    
+TC073: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1:2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface filter1:2interface
+    Should not contain  ${return_value_2['content']}  Error
+    sleep  1              
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1:2interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature    
+
+TC074: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric names with a :
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1:2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface delivery1:2interface
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1:2interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature       
+    
+TC075: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1_2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface filter1_2interface
+    Should not contain  ${return_value_2['content']}  Error        
+    sleep  1  
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1_2interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC076: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric names with a _
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1_2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1  delivery-interface delivery1_2interface
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1_2interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature   
+
+    
+TC077: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1-2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1  filter-interface filter1-2interface
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1-2interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC078: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric names with a -
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1-2interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1  delivery-interface delivery1-2interface
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1-2interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature       
+    
+TC079: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric (alphabet all capitals) names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FILTER1234INTERFACE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface FILTER1234INTERFACE
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTER1234INTERFACE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC080: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric (alphabet all capitals) names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DELIVERY1234INTERFACE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface DELIVERY1234INTERFACE
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERY1234INTERFACE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC081: Verify via cli filter-interface name in a filter-interface-group can have all alphanumeric (alphabet all small) names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1234interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface filter1234interface
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1234interface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC082: Verify via cli delivery-interface name in a delivery-interface-group can have all alphanumeric (alphabet all small) names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1234interface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface delivery1234interface
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1234interface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC083: Verify via cli filter-interface name in a filter-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FiLtErInTeRfAcE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface FiLtErInTeRfAcE
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FiLtErInTeRfAcE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC084: Verify via cli delivery-interface name in a delivery-interface-group can have mix of lower-case and upper-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DeLiVeRyInTeRfAcE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface DeLiVeRyInTeRfAcE
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DeLiVeRyInTeRfAcE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature     
+
+TC085: Verify via cli filter-interface name in a filter-interface-group can have all upper-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FILTERINTERFACE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface FILTERINTERFACE
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTERINTERFACE
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC086: Verify via cli delivery-interface name in a delivery-interface-group can have all upper-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DELIVERYINTERFACE  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface DELIVERYINTERFACE
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERYINTERFACE      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature   
+
+TC087: Verify via cli filter-interface name in a filter-interface-group can have all lower-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filterinterface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   filter-interface filterinterface
+    Should not contain  ${return_value_2['content']}  Error          
+    sleep  1
+    verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filterinterface
+    [Teardown]  delete interface name testcase configuration  filtergroup  filter  ${switch1_filter_intf_3}          
+    [Tags]  feature  
+
+TC088: Verify via cli delivery-interface name in a delivery-interface-group can have all lower-case alphabet names
+    clean configuration 
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   deliveryinterface  
+    Should be true  ${return_value_0}    
+    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    Should not contain  ${return_value_1['content']}  Error    
+    ${return_value_2}=  config  c1   delivery-interface deliveryinterface
+    Should not contain  ${return_value_2['content']}  Error   
+    sleep  1
+    verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  deliveryinterface      
+    [Teardown]  delete interface name testcase configuration  deliverygroup  delivery  ${switch1_filter_intf_3}          
+    [Tags]  feature   
+                       
 * Keyword
 
 interface suite setup
@@ -493,6 +1017,55 @@ verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
     ${return_value}=  rest delete interface group  ${group_name_delivery}  delivery   
     Should be true  ${return_value}
     Sleep  3            
+
+verify filter interface group name  [Arguments]  ${interface_group_name} 
+    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${group_config_dictionary[0]['name']}  ${interface_group_name}    
+    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group[name="${interface_group_name}"]/info
+    Should be equal as strings   ${group_exec_dictionary[0]['filter-interface-group-name']}  ${interface_group_name}    
+
+verify delivery interface group name  [Arguments]  ${interface_group_name} 
+    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${group_config_dictionary[0]['name']}  ${interface_group_name}    
+    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group[name="${interface_group_name}"]/info
+    Should be equal as strings   ${group_exec_dictionary[0]['delivery-interface-group-name']}  ${interface_group_name}   
+
+add interface to interface group  [Arguments]   ${interface_group_name}   ${interface_group_type}   ${interface_alias}
+    ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  ${interface_group_type}   ${interface_alias}  
+    Should be true  ${return_value_0}
+    Sleep  1     
+    ${return_value_1}=  rest add interface group  ${interface_group_name}  ${interface_group_type}  
+    Should be true  ${return_value_1}
+    Sleep  1
+    ${return_value_2}=  rest add interface to interface group  ${interface_group_name}  ${interface_group_type}  ${interface_alias}    
+    Should be true  ${return_value_2}
+    Sleep  1
+
+verify filter interface name in interface group  [Arguments]  ${interface_group_name}  ${interface_name}  ${interface_alias} 
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group[name="${interface_group_name}"]/info
+    Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['filter-interface-name']}  ${interface_alias}    
+    Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['interface']}  ${interface_name}    
+    Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['state']}  up    
+    Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['direction']}  rx    
+
+verify delivery interface name in interface group  [Arguments]  ${interface_group_name}  ${interface_name}  ${interface_alias} 
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group[name="${interface_group_name}"]/info
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['delivery-interface-name']}  ${interface_alias}    
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['interface']}  ${interface_name}    
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['state']}  up    
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['direction']}  tx    
+
+
+delete interface name testcase configuration  [Arguments]  ${interface_group_name}  ${interface_role}  ${interface_name}
+    ${return_value_1}=  rest delete interface group  ${interface_group_name}  ${interface_role}
+    Should be true  ${return_value_1}    
+    ${return_value_2}=  rest delete interface role  s1  ${interface_name}       ${interface_role} 
+    Should be true  ${return_value_2}    
+
+delete interface group testcase configuration  [Arguments]  ${interface_group_name}  ${interface_role}
+    ${return_value_1}=  rest delete interface group  ${interface_group_name}  ${interface_role}
+    Should be true  ${return_value_1}    
+               
     
 interface suite teardown
     rest delete policy  admin-view  ${policy_name}

@@ -33,32 +33,32 @@ Configure 1k Tenant with 4k segment in default vlan-mapping mode
 	[Tags]				manual			scaling	
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
-    manual untested
-    [Tags]              manual-untested           scaling     
+    manual passed
+    [Tags]              manual           scaling     
 
 DHCP request from 48k host 
     manual passed
 	[Tags]				manual 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
-    manual untested
-	[Tags]				manual-untested 			scaling			
+    manual passed
+	[Tags]				manual 			scaling			
 
 Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
-    manual untested
-    [Tags]              manual-untested          scaling           
+    manual passed
+    [Tags]              manual          scaling           
 
 Add and delete 10k cidr routes in spine switches
     manual failed
-	[Tags]				manual          scaling	   BSC-5991     
+	[Tags]				manual          scaling	        BVS-2376
 	
 Add and delete 10k cidr routes in leaf switches
     manual failed
-    [Tags]              manual          scaling      BSC-5991              
+    [Tags]              manual          scaling         BVS-2376   
     
 Add and delete 1k nexthop group
-    manual untested
-	[Tags]				manual-untested 			scaling			
+    manual failed
+	[Tags]				manual 			scaling	       PAN-1251		
 
 Add more than 1k tenant
     manual passed
@@ -69,12 +69,12 @@ Add more than 4k segment
     [Tags]              manual          scaling           
     
 Add more than 1k nexthop group
-    manual untested
-    [Tags]              manual-untested           scaling           
+    manual passed
+    [Tags]              manual           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
-    manual untested
-    [Tags]              manual-untested           scaling           
+    manual passed
+    [Tags]              manual           scaling           
         
 
 

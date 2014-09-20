@@ -1447,14 +1447,19 @@ class T5(object):
         status = False
         for i in range (0, len(data)):
             helpers.log("Checking switch dpid in controller...")
-            if data[i]["dpid"] == dpid.lower() and data[i]["fabric-role"] == role.lower():
-                helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
-                status = True
-                return True
-                break
+            try:
+                if data[i]["dpid"] == dpid.lower() and data[i]["fabric-role"] == role.lower():
+                    helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
+                    status = True
+                    return True
+            except KeyError:
+                if data[i]["fabric-connection-state"] == "suspended":
+                    if role.lower() == "undefined":
+                        if data[i]["suspended-reason"] == "No fabric role configured":
+                            status = True
+                            return True
         if status == False:
             helpers.test_failure("Fabric switch role Check Test Failed")
-
         return False
 
     def rest_delete_fabric_role(self, switch, role=None):
@@ -1884,6 +1889,9 @@ class T5(object):
         dpid = data1[0]["dpid"]
         url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url2)
+        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
+        c.enable(cli_string)
+
         data = c.rest.content()
         if data[0]["interface"][0]["state"] == "down":
             helpers.log("Interface state is down")
@@ -1892,26 +1900,33 @@ class T5(object):
             helpers.test_failure("Interface did not go down:state is still Up, open the bug for inteface disable status")
             return False
 
-    def rest_enable_fabric_interface(self, switch, intf, timeout=15):
+    def rest_enable_fabric_interface(self, switch, intf, timeout=30):
         t = test.Test()
         c = t.controller('master')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(int(timeout))
+        helpers.sleep(3)
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
-        c.rest.get(url2)
-        data = c.rest.content()
-        if data[0]["interface"][0]["state"] == "up":
-            helpers.log("Interface state is up")
-            return True
-        else:
-            helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
-            return False
+        max = int(timeout)/3
+        for loop in range (0, int(max)):
+            url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+            c.rest.get(url2)
+            data = c.rest.content()
+            cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
+            c.enable(cli_string)
+
+            if data[0]["interface"][0]["state"] == "up":
+                helpers.log("Interface state is up")
+                return True
+            
+            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " %(switch,  intf, int(loop+1)*3 )  )      
+            helpers.sleep(3)  
+        helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
+        return False
 
     def rest_verify_fabric_interface_rx_stats(self, switch, intf, frame_cnt, vrange=5):
         ''' Function to verify the fabric interface stats
@@ -2012,7 +2027,7 @@ class T5(object):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
+                helpers.test_failure("Interface Tx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["interface"][0]["rate"][0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -2206,11 +2221,11 @@ class T5(object):
                 helpers.log("Not ZTN ..not reconfiguring switch consoles for ssh connections..")
         else:
             helpers.log("Rebooting switch: %s from controller" % switch)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('show switch %s version | grep Uptime' % switch)
             c.enable('system reboot switch %s' % switch, prompt=':')
             c.enable('yes', timeout=300)
             helpers.sleep(120)
-            c.enable('show switch %s remote version | grep Uptime' % switch)
+            c.enable('show switch %s version | grep Uptime' % switch)
             helpers.log("Success rebooting switch: %s from controller" % switch)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")

@@ -45,19 +45,20 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		Should Be Equal    ${c1config_before}    ${c1config_after} 	
 		
  		# stop the ping and see how much traffic lost
-		${result}=  bash ping background stop    h1   label=upgrade_ping 
-		log  there are ${result} ping packet loss, 1 ping per sec
+		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+		
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
 		Log To Console   there are ${result} ping packet loss, 1 ping per sec
  		fabric_integrity_checker    after   single   		
 		Verify Ping   h1     ${h2ip} 				
 		Return From Keyword   True
 
-Copy image  [Arguments]    ${upgradeimage} 
+Copy image  [Arguments]    ${upgradeimage}    ${node}=master
 		Log time to console   before copy image
-		copy_pkg_from_server   ${upgradeimage}  
+		copy_pkg_from_server   ${upgradeimage}    ${node}
 		Log time    ${File}   after copy image
-		${num}  ${image}=	   cli_check_image 
+		${num}  ${image}=	   cli_check_image    ${node}
 		${current}=   rest_get_ver 	
 		Upgrade show command    master
 		
@@ -68,14 +69,14 @@ Copy image if no image exist   [Arguments]    ${node}
 		Should Be Equal As Integers     ${num}    1      	   	
 		
 
-Stage image       
+Stage image    [Arguments]    ${node}=master
 		Log time to console   before stage image
-		${result}= 	cli_upgrade_stage   c1
+		${result}= 	cli_upgrade_stage   ${node}
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
 		Upgrade show command    master
 		
-Launch image 
+Launch image   [Arguments]    ${node}=master
 		Log time    ${File}    before launch image
 		${result}= 	cli_upgrade_launch    c1   
  		Should be True     ${result} 
@@ -171,14 +172,17 @@ Verify config in master and backup
 	Set Suite Variable       ${c1config}
 
 
-Upgrade show command   [Arguments]   ${node}
-	cli  ${node}    show debug upgrade status details
-	cli  ${node}    show debug upgrade status 
+Upgrade show command   [Arguments]   ${node}	 
+	cli  ${node}    show debug upgrade status
+	cli  ${node}    show upgrade staged 
 	cli  ${node}    show boot partition  
 	cli  ${node}    show switch
 	cli  ${node}    show link
 	cli  ${node}    show upgrade progress	  
 	cli  ${node}    show running-config switch		
+	cli  ${node}    show clock;show forwarding switch leaf0-a lag-table;show forwarding switch leaf0-b lag-table;show forwarding switch leaf1-a lag-table;show forwarding switch leaf1-b lag-table;show forwarding switch leaf2-a lag-table;show forwarding switch leaf2-b lag-table;show forwarding switch spine0 lag-table;show forwarding switch spine1 lag-table;show upgrade progress
+
+
 
 Find Index   [Arguments]    ${element}    @{items}
    ${index} =    Set Variable    ${0}
@@ -230,7 +234,7 @@ Reboot all the suspended switch
  
 Upgrade Suite Setup
 	Base Suite Setup
-	Cli Copy   ${config}   running-config    node=c1  scp_passwd=bsn	
+#	Cli Copy   ${config}   running-config    node=master  scp_passwd=bsn	
 	
 	
 Upgrade suite teardown	
@@ -401,15 +405,44 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
  		Compare RSA keys   c2    ${key_c2}	 	
  			 	 
 		Compare runningconfig 	c1    ${config_before_c1}
-		Compare runningconfig 	c1    ${config_before_c2}
+		Compare runningconfig 	c2    ${config_before_c2}
 			
  		# stop the ping and see how much traffic lost
-		${result}=  bash ping background stop    h1   label=upgrade_ping 
+	 
+		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+		
 		log  there are ${result} ping packet loss, 1 ping per sec
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
 		Log To Console   there are ${result} ping packet loss, 1 ping per sec
  		fabric_integrity_checker    after      		
 		Verify Ping   h1     ${h2ip} 				
+
+Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage} 
+		Log time to console   before copy image
+		upgrade_copy_image_HA_parallel     nodes=@{nodes}   image=${upgradeimage} 	     		  
+		Log time    ${File}   after copy image
+ 		: FOR    ${node}   IN   @{nodes}   
+		\  ${num}  ${image}=	   cli_check_image   
+		\  ${current}=   rest_get_ver   ${node}
+		\  Upgrade show command    ${node}
+
+Dual node stage image  [Arguments]    ${nodes}
+ 		Log time to console   before stage image
+		${result}= 	 upgrade_statge_image_HA_parallel     nodes=@{nodes}   
+ 		Should be True     ${result} 
+		Log time     ${File}   after stage image 	
+ 		: FOR    ${node}   IN   @{nodes}   
+		\  ${num}  ${image}=	   cli_check_image   
+		\  ${current}=   rest_get_ver   ${node}
+		\  Upgrade show command    ${node}
+
+Dual node launch image   [Arguments]    ${nodes}    ${option}=${EMPTY} 	  ${finish}=yes
+		Log time    ${File}    before launch image
+		${result}= 	upgrade_launch_image_HA_parallel  nodes=@{nodes}  option=${option}  finish=${finish}
+		Run Keyword if   '${finish}' == 'yes'   Should be True     ${result} 
+ 		...  ELSE    Return From Keyword      ${result} 	 		 		  
+		 	
  
 
 Compare RSA keys     [Arguments]    ${node}    ${oldkey} 
@@ -417,10 +450,21 @@ Compare RSA keys     [Arguments]    ${node}    ${oldkey}
  		Should Be Equal as Strings  ${oldkey}  ${key} 
 	 
 Compare runningconfig     [Arguments]    ${node}    ${oldconfig}
-  		${config_after}=   cli_take_snapshot   node  run_config=yes
+  		${config_after}=   cli_take_snapshot   ${node}  run_config=yes
 		Should Be Equal    ${oldconfig}    ${config_after} 	
 		
 		
+create user    [Arguments]    ${user}     ${passwd}   ${group}
+	cli_add_user 	  ${user}     ${passwd}   	
+ 	cli_group_add_users    ${group}    ${user}
  		
+Verify VIP function    [Arguments]   ${vip} 
+	T5Platform.Rest Configure Virtual IP  ${vip}
+	 sleep  10
+	${configured} =  Rest Show Virtual IP
+	Should Be Equal as Strings  ${configured}  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP   master
+	Should Be Equal as Strings  ${mac1}  ${mac2}
 
 	 

@@ -14,6 +14,8 @@ usage() {
     exit 0
 }
 
+ts=`date "+%Y-%m-%d_%H%M%S"`
+
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
     exit 1
@@ -38,7 +40,11 @@ if [ "$BIGROBOT_PATH"x = x ]; then
 fi
 export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
 
-rm -rf $BIGROBOT_LOG_PATH
+if [ -d $BIGROBOT_LOG_PATH ]; then
+    #rm -rf $BIGROBOT_LOG_PATH
+    mv $BIGROBOT_LOG_PATH ${BIGROBOT_LOG_PATH}.${ts}
+fi
+
 for x in `cat $f`; do
     if [ `expr $x : '.*/deprecated/.*'` -gt 0 ]; then
         echo "Ignoring $x (deprecated)"
@@ -51,7 +57,7 @@ for x in `cat $f`; do
         # Notes:
         #   We need to count the test cases which are tagged as 'manual-untested'
         #   as well.
-        BIGROBOT_SUITE=$y ../bin/gobot test --dryrun --include-manual-untested
+        BIGROBOT_SUITE=$y ../bin/gobot validate
     fi
 done
 

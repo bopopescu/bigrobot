@@ -131,6 +131,7 @@ T5.5.7. Connected, change config, failover, reboot
 	Randomize ZTN Configuration
 	Telnet Set MA1 State  s3  flap
 	Failover
+	Sleep  30
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Telnet Wait For Switch To Reload  s3
@@ -183,6 +184,7 @@ T5.5.11. Connected, change config, double failover, reboot
 	Telnet Set MA1 State  s3  flap
 	Failover
 	Failover
+	Sleep  30
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Telnet Wait For Switch To Reload  s3

@@ -61,11 +61,12 @@ T14 background show command (every 1 hour )
 	 cli  master   show tenant all segment all rates
 	 
 	 	 
-	log  show techsupport  
-	 cli  master   support	  timeout=300
+	log  show support  
+		${file}=  generate_support 
+		delete_support	  filename=${file}
 	log  check ntp time
-	 cli  master   show ntp 	  
-   
+		cli  master   show ntp 	  
+ 	  
 	[Tags]     full  traffic   backgroupcheck
 
 

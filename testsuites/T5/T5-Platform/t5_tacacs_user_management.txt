@@ -1,13 +1,14 @@
 *Settings
 Documentation  T5 Tacacs Test Suite Release:Iron Horse
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
+Suite Setup  tacacs suite setup
+Suite Teardown   tacacs suite teardown
 Test Setup   tacacs test setup
 Test Teardown   tacacs test teardown
 Force Tags   IronHorse  T5  Platform
 
 Library  keywords/T5.py
 Library  keywords/T5Platform.py
+Library  keywords/T5Utilities.py
 Library  keywords/AppController.py
 Library  keywords/BsnCommon.py
 Library  keywords/BigTap.py
@@ -19,7 +20,7 @@ ${version}      2.0.0
     
 * Test Case
 TC001: Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.2.3.201  30
+    Verify Tacacs Configuration  0  10.2.3.201  10
     Verify AAA Authentication Configuration 
     config  c1  show tacacs
     cli  c1  show tacacs                  
@@ -39,7 +40,7 @@ TC003: Add user tacacsadmin to group admin and verify access
 TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  30
+    ${result}=  rest add tacacs server  10.9.18.2  secret  10
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.9.18.2    
@@ -47,10 +48,10 @@ TC004: Verify remote authentication with open source tacacs
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  200
+    ${result}=  rest add tacacs server  10.9.18.2  secret  10
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.2.3.201  30
-    Verify Tacacs Configuration  1  10.9.18.2  200
+    Verify Tacacs Configuration  0  10.2.3.201  10
+    Verify Tacacs Configuration  1  10.9.18.2  10
     ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
@@ -58,12 +59,12 @@ TC005: Verify multiple tacacs servers can be configured
 TC006: Verify second tacacs server is used when the first is unreachable   
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.1.18.2  secret  200 
+    ${result}=  rest add tacacs server  10.1.18.2  secret  10 
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201   secret  30
+    ${result}=  rest add tacacs server  10.2.3.201   secret  10
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.1.18.2  200
-    Verify Tacacs Configuration  1  10.2.3.201   30   
+    Verify Tacacs Configuration  0  10.1.18.2  10
+    Verify Tacacs Configuration  1  10.2.3.201   10   
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.1.18.2
     Should be true  ${result}
@@ -74,7 +75,7 @@ TC006: Verify second tacacs server is used when the first is unreachable
 TC007: Configure mismatched tacacs secret and verify tacacs user cannot login
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  30
+    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  10
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
@@ -104,15 +105,162 @@ TC010: Delete user tacacsadmin from group admin and verify access
     Should be true  ${result}
     [Tags]  feature 
         
+TC011. Verify that admin account can be created and deleted locally
+	Cli Run  master  user admin
+	Cli Run  master  password adminadmin
+	Run Keyword and Expect Error  *  Cli Run  master  no user admin
+
+TC012. Verify that admin account can not be disassociated from admin group
+	Cli Run  master  user admin
+	Cli Run  master  group admin
+	Cli Run  master  associate user admin
+	Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin
+	Run Keyword and Expect Error  *  Cli Run  master  no associate user admin
+	Run Keyword and Expect Error  *  Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin
+	...  flag=False
+
+TC013. Verify that creation of non-admin groups is not allowed
+	Run Keyword and Expect Error  *  Cli Run  master  group non-admin
+
+TC014. Verify that remote-admin account can be created and deleted locally
+	Cli Run  master  user remote-admin
+	Cli Run  master  password adminadmin
+	Cli Run  master  no user remote-admin
+
+TC015. Verify that remote-admin account can be associated and disassociated from admin group
+	Cli Run  master  group admin
+	Cli Run  master  associate user remote-admin
+	Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-admin
+	Cli Run  master  no associate user remote-admin
+	Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-admin
+	...  flag=False
+
+TC016. Verify that local-user account can be associated and disassociated from admin group
+	Cli Run  master  user local-user
+	Cli Run  master  group admin
+	Cli Run  master  associate user local-user
+	Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin, local-user
+	Cli Run  master  no associate user local-user
+	Cli Run and Verify Output  master
+	...  show group admin
+	...  admin \ \ \ \ \ admin, local-user
+	...  flag=False
+
+TC017. Verify that admin configured locally and associated with admin group can do actions
+	Cli Run  master  user admin
+	Cli Run  master  password adminadmin
+	Cli Run  master  group admin
+	Cli Run  master  associate user admin
+	Cli Run  master  enable  user=admin
+	Cli Run  slave  enable  user=admin
+	Cli Run  master  show running-config  user=admin
+	Cli Run  master  enable; config; no user test1234  user=admin
+	Cli Run  master  show controller  user=admin
+	Cli Run  master  show file  user=admin
+	Cli Run  master  enable; config; copy running-config file://test-file  user=admin
+	Cli Run  master  enable; config; delete file test-file  user=admin
+
+TC018. Verify that remote admin, associated with admin group can do actions
+	Cli Run  master  group admin
+	Cli Run  master  associate user remote-admin
+	Cli Run  master  enable  user=remote-admin
+	Cli Run  slave  enable  user=remote-admin
+	Cli Run  master  show running-config  user=remote-admin
+	Cli Run  master  enable; config; no user test1234  user=remote-admin
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run and Verify Output
+	...  master
+	...  show running-config tenant
+	...  tenant test4321
+	Cli Run  master  show controller  user=remote-admin
+	Sleep  5
+	Cli Run  master  show file  user=remote-admin
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; delete file test-file  user=remote-admin
+
+TC019. Verify that remote admin provisioned locally, associated with admin group can do actions
+	Cli Run  master  user remote-admin
+	Cli Run  master  group admin
+	Cli Run  master  associate user remote-admin
+	Cli Run  master  enable  user=remote-admin
+	Cli Run  slave  enable  user=remote-admin
+	Cli Run  master  show running-config  user=remote-admin
+	Cli Run  master  enable; config; no user test1234  user=remote-admin
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run and Verify Output
+	...  master
+	...  show running-config tenant
+	...  tenant test4321
+	Cli Run  master  show controller  user=remote-admin
+	Sleep  5
+	Cli Run  master  show file  user=remote-admin
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; delete file test-file  user=remote-admin
+
+TC020. Verify that user configured locally and associated with admin group can do actions
+	Cli Run  master  user user
+	Cli Run  master  password adminadmin
+	Cli Run  master  group admin
+	Cli Run  master  associate user user
+	Cli Run  master  enable  user=user
+	Cli Run  slave  enable  user=user
+	Cli Run  master  show running-config  user=user
+	Cli Run  master  enable; config; no user test1234  user=user
+	Cli Run  master  enable; config; tenant test4321  user=user
+	Cli Run and Verify Output
+	...  master
+	...  show running-config tenant
+	...  tenant test4321
+	Cli Run  master  show controller  user=user
+	Sleep  5
+	Cli Run  master  show file  user=user
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; copy running-config file://test-file  user=user
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable; config; delete file test-file  user=user
+
+TC021. Verify that remote-admin not associated with admin group can not do actions
+	Cli Run  master  group admin
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  enable  user=remote  password=remote
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  slave  enable  user=remote  password=remote
+	Sleep  5
+	Run Keyword and Expect Error  *
+	...  Cli Run  master  show run  user=remote  password=remote
+	Sleep  5
 * Keywords
 
 tacacs test setup
-    ${result}=  rest add tacacs server  10.2.3.201  secret  30
+    ${result}=  rest add tacacs server  10.2.3.201  secret  10
     Should be true  ${result}
     ${result}=  rest add tacacs authentication
     Should be true  ${result}
     ${result}=  rest add user to group  tacacsadmin  admin
     Should be true  ${result}
+	Cli Copy  running-config  snapshot://test-config
     
 Verify Tacacs Configuration  [Arguments]  ${index}  ${tacacs-server}  ${timeout}
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
@@ -143,9 +291,19 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
     Should Contain  ${content}  ${projectname}
 
 tacacs test teardown
+	Cli Copy  snapshot://test-config  running-config
     ${result}=  cli delete user from group  tacacsadmin  admin
     Should be true  ${result}
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
     ${result}=  rest delete tacacs authentication      
     Should be true  ${result}
+
+Tacacs Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  snapshot://startup-config  node=master
+	Cli Copy  running-config  snapshot://startup-config  node=slave
+
+Tacacs Suite Teardown
+	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+	Base Suite Teardown

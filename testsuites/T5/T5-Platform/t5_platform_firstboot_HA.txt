@@ -22,15 +22,10 @@ ${short}  1
 ${medium}  10
 ${long}   30
 ${verylong}    120 
-#${gw}           10.9.16.1
 ${dns}          10.3.0.4
 ${domain}       qa.bigswitch.com 
-${mask}	        23
-#${VIP1}         10.9.16.19
-#${VIP2}         10.9.16.20
 ${namec1}       MY-T5-C10
 ${namec2}       MY-T5-C11
-#${ipcno}        10.9.16.255
 
 # mingtao setup variable
 ${gw}           10.8.0.1
@@ -51,7 +46,7 @@ Set variable
 	Set Suite Variable       ${file} 		
 	${ip}=   ip_to_list    ${ipc1}
 	log   ip address is ${ip} 
- 
+ 	Run Keyword if   ${ip[1]}==9	set regression variables
 	[Tags] 	sanity   feature   firstboot
 
 

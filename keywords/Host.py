@@ -65,7 +65,9 @@ class Host(object):
         Start background ping. It accepts the same options as bash_ping
         although it requires an additional 'label' argument. The label is
         used to name the output log and to store the background PID. So it
-        needs to be unique for the duration of the background ping.
+        needs to be unique for the duration of the background ping. The reason
+        the label is required is because multiple background pings may get
+        issued in parallel.
 
         To stop background ping, call the keyword 'bash ping background stop'
         and provide it with the label.
@@ -73,10 +75,15 @@ class Host(object):
         Example:
         | bash ping background start | c1 | dest_ip=www.cnn.com | label=test001 |
         | bash ping background stop | c1 | label=test001 |
+        | bash ping background stop | c1 | label=test001 | return_stats=${true} |
+
+        Return value:
+          - packet loss percentage (default)
+          - stats dict if return_stats is ${true}
         """
         _ = self.bash_ping(background=True, *args, **kwargs)
 
-    def bash_ping_background_stop(self, node, label):
+    def bash_ping_background_stop(self, node, label, return_stats=False):
         """
         See details in keyword 'bash ping background start'.
         """
@@ -87,13 +94,19 @@ class Host(object):
         pid = helpers.str_to_list(n.bash('cat %s' % ping_pid_file)['content'])[1]
         n.bash('kill -2 %s' % pid)
         ping_output = n.bash('tail -20 %s' % ping_output_file)['content']
-        return helpers._ping(ping_output=ping_output)
+        stats = helpers._ping(ping_output=ping_output)
+        if return_stats:
+            return stats
+        else:
+            return stats["packets_loss_pct"]
 
-    def bash_ping(self, node=None, dest_ip=None, dest_node=None, *args, **kwargs):
+    def bash_ping(self, node=None, dest_ip=None, dest_node=None,
+                  return_stats=False, *args, **kwargs):
         """
         Perform a ping from the shell. Returns the loss percentage
-        - 0   - 0% loss
-        - 100 - 100% loss
+        - 0   - 0% loss (default)
+        - 100 - 100% loss (default)
+        - Stats dict if return_stats is ${true}
 
         Inputs:
         - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
@@ -127,9 +140,13 @@ class Host(object):
             dest = dest_ip
         if dest_node:
             dest = t.node(dest_node).ip()
-        status = helpers._ping(dest, node_handle=n, mode='bash',
-                               *args, **kwargs)
-        return status
+        stats = helpers._ping(dest, node_handle=n, mode='bash', *args, **kwargs)
+        if kwargs.get('background', False):
+            return stats
+        elif return_stats:
+            return stats
+        else:
+            return stats["packets_loss_pct"]
 
     def bash_add_tag(self, node, intf, vlan):
         """

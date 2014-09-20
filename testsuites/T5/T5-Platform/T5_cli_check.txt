@@ -153,7 +153,7 @@ T6 Verify 'show endpoint' command completion
     [Tags]  feature  CLI  cli-completion  smoke   
         
 T7 Verify 'tenant' command completion in config mode
-    ${result}=  cli walk command  tenant  3  config_mode=${True}  
+    ${result}=  cli walk command  tenant  2  config_mode=${True}  
     Should be true  ${result}
     [Tags]  feature  CLI  cli-completion  smoke    
     
@@ -218,11 +218,11 @@ T19 Verify 'port-group' command completion in config mode
     [Tags]  feature  CLI  cli-completion  smoke      
         
 T20 Verify 'port-group rack0pg1 member switch' command completion in config mode
-    ${result}=  cli walk command  member switch  6  config_mode=${True}  multiline=port-group rack0pg1  
+    ${result}=  cli walk command  member switch  5  config_mode=${True}  multiline=port-group rack0pg1  
     Should be true  ${result}
     [Tags]  feature  CLI  cli-completion  smoke  
     
 T21 Verify 'port-group rack0pg1 member switch leaf0a interface' command completion in config mode
-    ${result}=  cli walk command  member switch leaf0a interface  55  config_mode=${True}  multiline=port-group rack0pg1  
+    ${result}=  cli walk command  member switch leaf0a interface  54  config_mode=${True}  multiline=port-group rack0pg1  
     Should be true  ${result}
     [Tags]  feature  CLI  cli-completion  smoke

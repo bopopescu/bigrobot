@@ -1646,7 +1646,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
     """
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
@@ -1656,9 +1656,9 @@ def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     identical, resulting in more consistent behavior. Need to gradually phase
     out the old run_cmd usage.
 
-    Returns tuple (Boolean, String)
-        success: (True,  "...success message...")
-        failure: (False, "...error message...")
+    Returns tuple (Boolean, String, Integer)
+        success: (<status_flag>,  "...success message...", <errorcode>)
+        failure: (<status_flag>, "...error message...", <errorcode>)
     """
     if not quiet:
         print("Executing '%s'" % cmd)
@@ -1672,17 +1672,17 @@ def run_cmd2(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, cwd=cwd)
     out, err = p.communicate()
+    error_code = p.returncode
     if err and not ignore_stderr:
-        return (False, err)
-
-    return (True, out)
+        return (False, err, error_code)
+    return (True, out, error_code)
 
 
 def id():
     """
     Dump output from 'id'.
     """
-    _, output = run_cmd2('id', shell=False, quiet=True)
+    _, output, _ = run_cmd2('id', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1690,7 +1690,7 @@ def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output = run_cmd2('uname -a', shell=False, quiet=True)
+    _, output, _ = run_cmd2('uname -a', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1700,7 +1700,7 @@ def ulimit():
     Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
     built-in shell command. So let's execute it using shell mode.
     """
-    _, output = run_cmd2('ulimit -a', shell=True, quiet=True)
+    _, output, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output.strip()
 
 
@@ -1708,7 +1708,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output = run_cmd2('uptime', shell=False, quiet=True)
+    _, output, _ = run_cmd2('uptime', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1769,6 +1769,7 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
                 log("Ping command: %s" % cmd, level=4)
             if background:
                 output_file = '/tmp/ping_background_output.%s.log' % label
+                node_handle.bash("rm -f %s" % output_file)
                 result = node_handle.bash(cmd + " > " + output_file + " &")
                 pid = str_to_list(node_handle.bash("echo $!")['content'])[1]
                 log("Ping is running in the background. PID=%s" % pid)
@@ -1814,6 +1815,14 @@ def _ping(*args, **kwargs):
       :param ping_output : (Str) if specified, assuming ping action happened
              as a separate activity and simply process the ping output.
 
+    Return value:
+      { "packets_sent": nnn,
+        "packets_received": nnn,
+        "packets_loss": nnn,
+        "packets_loss_percentage": nnn,
+        "background_ping_output" = abc
+      }
+
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
 
@@ -1826,7 +1835,7 @@ def _ping(*args, **kwargs):
         output = _run_ping_cmd(*args, **kwargs)
 
     if kwargs.get('background'):
-        return output
+        return {"background_ping_output": output}
 
     if not kwargs.get('quiet'):
         log("Ping output:\n%s" % output, level=4)
@@ -1864,23 +1873,28 @@ def _ping(*args, **kwargs):
                       output,
                       re.M | re.I)
     if match:
-        packets_transmitted = int(match.group(1))
+        packets_sent = int(match.group(1))
         packets_received = int(match.group(2))
         loss_pct = int(float(match.group(4)))
         s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
-             % (host, packets_transmitted, packets_received,
+             % (host, packets_sent, packets_received,
                 loss_pct))
 
-        calculated_loss_pct = int((float(packets_transmitted) -
+        calculated_loss_pct = int((float(packets_sent) -
                                    float(packets_received))
-                                  / float(packets_transmitted) * 100.0)
+                                  / float(packets_sent) * 100.0)
         if calculated_loss_pct != loss_pct:
             warn("Reported ping loss%% (%s) does not equal calculated %% (%s)"
                  % (loss_pct, calculated_loss_pct))
 
         log("Ping result: %s%s"
             % (s, br_utils.end_of_output_marker()), level=4)
-        return calculated_loss_pct
+        return {
+                "packets_sent": packets_sent,
+                "packets_received": packets_received,
+                "packets_loss": packets_sent - packets_received,
+                "packets_loss_pct": calculated_loss_pct
+                }
 
     if re.search(r'no route to host', output, re.M | re.I):
         test_error("Ping error - no route to host")
@@ -1889,30 +1903,35 @@ def _ping(*args, **kwargs):
 
 
 def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
-         quiet=False):
+         quiet=False, return_stats=False):
     """
     Unix ping. See _ping() for a complete list of options.
     Additional arguments:
 
     :param loss: (Int) allowable loss percentage
 
-    Return: (Int) loss percentage
+    Return:
+      - (Int) loss percentage, by default
+      - Stats dict if return_stats is True
     """
     if ping_output == None and host == None:
         test_error("Must specify a host to ping")
     if count < 4:
         count = 4  # minimum count
 
-    actual_loss = _ping(host=host, count=count, timeout=timeout,
-                        ping_output=ping_output, quiet=quiet)
-    if actual_loss > loss:
-        actual_loss = _ping(host=host, count=count, timeout=timeout,
-                            ping_output=ping_output, quiet=quiet)
-        if actual_loss > loss:
+    stats = _ping(host=host, count=count, timeout=timeout,
+                  ping_output=ping_output, quiet=quiet)
+    if stats["packets_loss_pct"] > loss:
+        stats = _ping(host=host, count=count, timeout=timeout,
+                      ping_output=ping_output, quiet=quiet)
+        if stats["packets_loss_pct"] > loss:
             count -= 4
-            actual_loss = _ping(host=host, count=count, timeout=timeout,
-                                ping_output=ping_output, quiet=quiet)
-    return actual_loss
+            stats = _ping(host=host, count=count, timeout=timeout,
+                          ping_output=ping_output, quiet=quiet)
+    if return_stats:
+        return stats
+    else:
+        return stats["packets_loss_pct"]
 
 
 def params_val(k, params_dict):

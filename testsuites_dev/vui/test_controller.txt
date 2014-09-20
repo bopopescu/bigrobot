@@ -64,9 +64,9 @@ Test priminitive CLI keywords
     ${result}=    bash_content    c1
     log           result=${result}
 
-Test priminitive REST keywords
+Test primitive REST keywords
     [Tags]  skipped
-    get           master   /rest/v1/system/clock/local
+    get           master   "/api/v1/data/controller/os/action/time?select\=system-time"
     ${result}=    rest_content    c1
     log           result=${result}
 
@@ -95,10 +95,6 @@ Test new things
 Test config block
     [Tags]  skipped
     config block
-
-Test controller cli ping
-    [Tags]  skipped
-    cli ping   c1   qa-kvm-32
 
 Test bash file listing
     [Tags]  skipped
@@ -187,13 +183,6 @@ Test cli walk
     [Tags]  skipped
     cli walk config   base_hierarchy=fabric-setting
 
-Test background ping
-    [Tags]  skipped
-    bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng  interval=0.2
-    sleep             10
-    ${result}=        bash ping background stop    c1  label=vui_bg_ping
-    should be true    ${result} == 0
-
 Test reauth monitor
     [Tags]  skipped
     #monitor reauth    master  ${false}
@@ -216,7 +205,7 @@ Test console
     test console      c1
 
 Test controller console
-    #[Tags]  skipped
+    [Tags]  skipped
     test controller console      c1
 
 Test node reconnect
@@ -227,6 +216,7 @@ Test reauth timeout
     [Tags]  skipped
     config            c1   show user
     #bash              c1   id
+
     sleep             60
     sleep             60
     sleep             60
@@ -237,7 +227,20 @@ Test reauth timeout
     sleep             60
     sleep             60
     sleep             60
+    log               Slept for 10 minutes
+
     sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    sleep             60
+    log               Slept for 10 minutes
+
     #bash              c1   uname -a
     cli               c1   show session
     config            c1   show session
@@ -264,4 +267,48 @@ Test REST commands
     get               c1   /api/v1/data/controller/core/aaa/local-user
     get               c1   /api/v1/data/controller/core/aaa/group
     #patch             c1   /api/v1/data/controller/core/aaa/local-user[user-name="vui"]   {"full-name": "Vui Bob Le"}
-    patch             c1   /api/v1/data/controller/core/aaa/local-user%5Buser-name%3D%22vui%22%5D   {"full-name": "Vui Bob Le"}
+    #patch             c1   /api/v1/data/controller/core/aaa/local-user%5Buser-name%3D%22vui%22%5D   {"full-name": "Vui Bob Le"}
+
+Test controller cli ping (simple)
+    [Tags]  skipped
+    ${loss_pct}=      cli ping          c1   qa-tools1.qa.bigswitch.com
+    log               Packet loss % is ${loss_pct}
+
+Test controller cli ping (complete stats)
+    [Tags]  skipped
+    ${stats}=         cli ping          c1   qa-tools1.qa.bigswitch.com   return_stats=${true}
+    log               Ping stats is ${stats}
+    log               Packets received is ${stats['packets_received']}
+
+
+Test background ping (simple)
+    [Tags]  skipped
+    bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng.bigswitch.com  interval=0.2
+    sleep             10
+    ${loss_pct}=      bash ping background stop    c1  label=vui_bg_ping
+    should be true    ${loss_pct} == 0
+
+Test background ping (complete stats)
+    [Tags]  skipped
+    bash ping background start                     c1  label=vui_bg_ping  dest_ip=dev1.eng.bigswitch.com  interval=0.2
+    sleep             10
+    ${stats}=         bash ping background stop    c1  label=vui_bg_ping   return_stats=${true}
+    log               Ping stats is ${stats}
+    log               Packets received is ${stats['packets_received']}
+    should be true    ${stats['packets_loss_pct']} == 0
+
+Get controller IPs
+    [Tags]  skipped
+    ${c1_ip}=         get node ip      c1
+    #${c2_ip}=         get node ip      c2
+
+Test bash command line editing
+    #[Tags]  skipped
+    cli               c1   show user
+    config            c1   show version
+    bash              c1   cat /etc/hosts    # we should see in devconf log 'set +o emacs'
+    sudo              c1   ls -la /var/log
+    enable            c1   show sessions
+    sudo              c1   find /tmp         # we should see in devconf log 'set +o emacs'
+    cli               c1   show user
+

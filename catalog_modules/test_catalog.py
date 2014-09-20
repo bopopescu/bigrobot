@@ -84,17 +84,26 @@ class TestCatalog(object):
                               query={"build_name": build_name})
 
     def find_test_suites_matching_build(self, build_name):
+        query = {"build_name": build_name}
         return self.find_docs(collection='test_suites',
-                              query={"build_name": build_name})
+                              query=query)
 
-    def find_test_cases_matching_build(self, build_name):
-        return self.find_docs(collection='test_cases',
-                              query={"build_name": build_name})
+    def find_test_cases_matching_build(self,
+                                       build_name,
+                                       release=None,
+                                       tags=None,
+                                       collection='test_cases'):
+        query = {"build_name": build_name}
+        if release:
+            query["tags"] = { "$all": helpers.list_flatten([release, tags]) }
+        return self.find_docs(collection=collection,
+                              query=query)
 
-    def find_test_cases_archive_matching_build(self, build_name):
-        return self.find_docs(collection='test_cases_archive',
-                              query={"build_name": build_name})
-
+    def find_test_cases_archive_matching_build(self, *args, **kwargs):
+        new_kwargs = dict(kwargs)
+        if 'collection' not in new_kwargs:
+            new_kwargs['collection'] = 'test_cases_archive'
+        return self.find_test_cases_matching_build(*args, **new_kwargs)
 
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()
@@ -110,11 +119,19 @@ class TestCatalog(object):
         return self.remove_docs(collection='test_suites',
                                 query={"build_name": build_name})
 
-    def remove_test_cases_matching_build(self, build_name):
-        return self.remove_docs(collection='test_cases',
-                                query={"build_name": build_name})
+    def remove_test_cases_matching_build(self,
+                                         build_name,
+                                         release=None,
+                                         tags=None,
+                                         collection='test_cases'):
+        query = {"build_name": build_name}
+        if release:
+            query["tags"] = { "$all": helpers.list_flatten([release, tags]) }
+        return self.remove_docs(collection=collection,
+                                query=query)
 
-    def remove_test_cases_archive_matching_build(self, build_name):
-        return self.remove_docs(collection='test_cases_archive',
-                                query={"build_name": build_name})
-
+    def remove_test_cases_archive_matching_build(self, *args, **kwargs):
+        new_kwargs = dict(kwargs)
+        if 'collection' not in new_kwargs:
+            new_kwargs['collection'] = 'test_cases_archive'
+        return self.remove_test_cases_matching_build(*args, **new_kwargs)

@@ -1,13 +1,15 @@
 import os
 import re
 import xmltodict
+import getpass
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
 
 
 class TestSuite(object):
-    def __init__(self, filename, is_regression=False):
+    def __init__(self, filename, is_regression=False, is_baseline=False,
+                 add_build_record=True):
         """
         filename: output.xml file (with path)
         """
@@ -19,6 +21,8 @@ class TestSuite(object):
         self._db = TestCatalog().db()
 
         self._is_regression = is_regression
+        self._is_baseline = is_baseline
+        self._add_build_record = add_build_record
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
@@ -176,13 +180,37 @@ class TestSuite(object):
             return "physical"
         return "unknown"
 
+    def db_populate_build(self):
+        if self._is_baseline and self._add_build_record:
+            ts = helpers.ts_long_local()
+            self._build = {'build_name': os.environ['BUILD_NAME'],
+                           'starttime': ts,
+                           'starttime_datestamp': ts.split('T')[0],
+                           'created_by': getpass.getuser(),
+                          }
+            self.db_add_if_not_found_build(self._build)
+
+    def db_populate_suite(self):
+        if self._is_regression:
+            pass
+        elif self._is_baseline:
+            self.db_add_if_not_found_suite(self._suite)
+
+    def db_populate_test_case(self, test):
+        if self._is_regression:
+            if 'BUILD_NUMBER' in os.environ:
+                test['build_number'] = os.environ['BUILD_NUMBER']
+            if 'BUILD_URL' in os.environ:
+                test['build_url'] = os.environ['BUILD_URL']
+            self.db_find_and_modify_regression_testcase(test)
+        elif self._is_baseline:
+            self.db_add_if_not_found_testcase(test)
+
     def extract_suite_attributes(self):
         """
-        Extract test data from XML, create test suite data structure and
-        populate it in DB.
-
-        Need to call extract_test_attributes() first to get the total_tests
-        data.
+        Extract test data from XML, create test suite data structure.
+        Note: Need to extract test case attributes first to get the
+        total_tests data.
         """
         suite = self.data()['robot']['suite']
         timestamp = helpers.format_robot_timestamp(
@@ -219,19 +247,78 @@ class TestSuite(object):
                     'topo_type': topo_type,
                     'notes': None,
                     'build_name': os.environ['BUILD_NAME'],
+                    'created_by': getpass.getuser(),
                     }
 
-    def db_populate_suites(self):
-        if self._is_regression:
-            pass
+    def extract_test_attributes(self, test_xml):
+        # print "['@id']: " + '@id'
+        # print "a_test['@id']: " + a_test['@id']
+        # print "*** a_test: %s" % a_test
+        test_id = helpers.utf8(test_xml['@id'])
+        name = helpers.utf8(test_xml['@name'])
+        if (('tags' in test_xml and test_xml['tags'] != None)
+            and 'tag' in test_xml['tags']):
+            tags = helpers.utf8(test_xml['tags']['tag'])
+
+            # Normalize data - convert tags to lowercase
+            tags = [x.lower() for x in tags]
         else:
-            # Baselining
-            self.db_add_if_not_found_suite(self._suite)
+            tags = []
+
+        if self._is_regression:
+            # Regression
+            # Analyzing regression results which should have PASS/FAIL
+            # status.
+            status = helpers.utf8(test_xml['status']['@status'])
+            starttime = helpers.format_robot_timestamp(
+                            helpers.utf8(test_xml['status']['@starttime']))
+            starttime_datestamp = helpers.format_robot_datestamp(
+                            helpers.utf8(test_xml['status']['@starttime']))
+            endtime = helpers.format_robot_timestamp(
+                            helpers.utf8(test_xml['status']['@endtime']))
+            endtime_datestamp = helpers.format_robot_datestamp(
+                            helpers.utf8(test_xml['status']['@endtime']))
+            executed = True
+        else:
+            # Baseline
+            status = None
+            starttime = starttime_datestamp = None
+            endtime = endtime_datestamp = None
+            executed = False
+            # starttime_datestamp = self._suite['starttime_datestamp']
+            #   starttime_datestamp = '2014-05-28'
+
+        # This should contain the complete list of attributes. Some may
+        # be populated by the Script Catalog while others may be populated
+        # later by Regression execution.
+        test = {'test_id': test_id,
+                'name': name,
+                'tags': tags,
+                'executed': executed,
+                'status': status,
+                'createtime': helpers.ts_long_local(),
+                'starttime': starttime,
+                'starttime_datestamp': starttime_datestamp,
+                'endtime': endtime,
+                'endtime_datestamp': endtime_datestamp,
+                'duration': None,
+                'origin_script_catalog': not self._is_regression,
+                'origin_regression_catalog': self._is_regression,
+                'product_suite': self._suite['product_suite'],
+                'build_number': None,
+                'build_url': None,
+                'build_name': os.environ['BUILD_NAME'],
+                'notes': None,
+                'created_by': getpass.getuser(),
+                }
+        return test
 
     def extract_test_attributes_and_db_populate(self):
         """
-        Extract test data from XML, create test case data structure and
-        populate it in DB.
+        Extract test data from XML, create test case data structure.
+        For regression, it also populates the test data into the DB.
+        For baseline, it doesn't populate the DB - this step is deferred
+        until later for performance reason.
         """
         tests = self.data()['robot']['suite']['test']
 
@@ -244,106 +331,23 @@ class TestSuite(object):
                           % self.db_count_testcases())
 
         for a_test in tests:
-            # print "['@id']: " + '@id'
-            # print "a_test['@id']: " + a_test['@id']
-            # print "*** a_test: %s" % a_test
-            test_id = helpers.utf8(a_test['@id'])
-            name = helpers.utf8(a_test['@name'])
-            if (('tags' in a_test and a_test['tags'] != None)
-                and 'tag' in a_test['tags']):
-                tags = helpers.utf8(a_test['tags']['tag'])
-
-                # Normalize data - convert tags to lowercase
-                tags = [x.lower() for x in tags]
-            else:
-                tags = []
-
+            test = self.extract_test_attributes(a_test)
             if self._is_regression:
-                # Analyzing regression results which should have PASS/FAIL
-                # status.
-                status = helpers.utf8(a_test['status']['@status'])
-                starttime = helpers.format_robot_timestamp(
-                                helpers.utf8(a_test['status']['@starttime']))
-                starttime_datestamp = helpers.format_robot_datestamp(
-                                helpers.utf8(a_test['status']['@starttime']))
-                endtime = helpers.format_robot_timestamp(
-                                helpers.utf8(a_test['status']['@endtime']))
-                endtime_datestamp = helpers.format_robot_datestamp(
-                                helpers.utf8(a_test['status']['@endtime']))
-                executed = True
-            else:
-                status = None
-                starttime = starttime_datestamp = None
-                endtime = endtime_datestamp = None
-                executed = False
-                # starttime_datestamp = self._suite['starttime_datestamp']
-                #   starttime_datestamp = '2014-05-28'
-
-            # This should contain the complete list of attributes. Some may
-            # be populated by the Script Catalog while others may be populated
-            # later by Regression execution.
-            test = {'test_id': test_id,
-                    'name': name,
-                    'tags': tags,
-                    'executed': executed,
-                    'status': status,
-                    'createtime': helpers.ts_long_local(),
-                    'starttime': starttime,
-                    'starttime_datestamp': starttime_datestamp,
-                    'endtime': endtime,
-                    'endtime_datestamp': endtime_datestamp,
-                    'duration': None,
-                    'origin_script_catalog': not self._is_regression,
-                    'origin_regression_catalog': self._is_regression,
-                    'product_suite': self._suite['product_suite'],
-                    'build_number': None,
-                    'build_url': None,
-                    'build_name': os.environ['BUILD_NAME'],
-                    'notes': None,
-                    }
-
-            if self._is_regression:
-                if 'BUILD_NUMBER' in os.environ:
-                    test['build_number'] = os.environ['BUILD_NUMBER']
-                if 'BUILD_URL' in os.environ:
-                    test['build_url'] = os.environ['BUILD_URL']
-
-                # 2014-07-31 We probably don't need to update baseline
-                # anymore since the strategy has chanced to collect baseline
-                # data for every build instead of maintaining just a single
-                # baseline for an extended duration...
-                #
-                # self.db_find_and_modify_testcase(test)
-
-                self.db_find_and_modify_regression_testcase(test)
-                # self.db_insert(test, collection='test_cases_archive')
-            else:
-                # Baselining
-                self.db_add_if_not_found_testcase(test)
-
+                self.db_populate_test_case(test)
             self._tests.append(test)
-
-            # Add test cases to test suite
-            # self._suite['tests'] = self._tests
-        if self._is_regression:
-            helpers.debug("DB testcase count (AFTER): %s"
-                          % self.db_count_testcases())
 
         self.total_tests()
 
-    def extract_build_attributes(self):
-        ts = helpers.ts_long_local()
-        self._build = {'build_name': os.environ['BUILD_NAME'],
-                       'starttime': ts,
-                       'starttime_datestamp': ts.split('T')[0],
-                        }
-        self.db_add_if_not_found_build(self._build)
-
     def extract_attributes(self):
-        self.extract_build_attributes()
+        """
+        Populate regression test data into the DB. For baseline data, we defer
+        DB update until later for performance reason.
+        """
+        self.db_populate_build()
         self.extract_suite_attributes()
         self.extract_test_attributes_and_db_populate()
-        self.db_populate_suites()
+        if self._is_regression:
+            self.db_populate_suite()
 
     def suite_name(self):
         return self._suite['name']

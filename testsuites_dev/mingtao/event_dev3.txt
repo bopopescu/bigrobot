@@ -213,7 +213,8 @@ enable links between nodes   [Arguments]   ${node1}   ${list}
 	cli  master   show link	
  	: FOR    ${int}   IN   @{list}   
 	\  	rest_enable_fabric_interface		${node1}  ${int}  
-	\   sleep  ${medium}
+	\   check fabric debug event    ${node1}  ${int} 
+	\    sleep  ${medium}
 	cli   master   ''
 
 
@@ -287,10 +288,13 @@ T5 longevity suite teardown
 T5 base test setup 
    base test setup
  
-T5 base test teardown  
-    base test teardown   
-    Run Keyword If Test Failed    check controller top   c1
+T5 base test teardown 
+    Run Keyword If Test Failed    generate_support
     Run Keyword If Test Failed    check controller top   c2
+    Run Keyword If Test Failed    check controller top   c1 
+    base test teardown  
+     
+    
  
  
  
@@ -303,7 +307,9 @@ check controller top  [Arguments]  ${node}
     \  bash   ${node}  top -n 1 
     \  sleep  2
  	cli       master   ''
- 
+
+check fabric debug event   [Arguments]  ${node}   ${int}
+	cli  master   show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:${node1}, ifName:${int}, "
  
 ######## test case keyword
 

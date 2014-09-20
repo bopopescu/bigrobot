@@ -138,6 +138,47 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def run_cmd(self, *args, **kwargs):
+        """
+        Execute a command and return its execution status, output, and error
+        code.
+
+        Inputs:
+        | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
+
+        Return Value:
+        - Tuple of (<status_flag>,  "<output>", <errorcode>)
+
+        See helpers.run_cmd2() for more info.
+        """
+        return helpers.run_cmd2(*args, **kwargs)
+
+    def scp_put(self, server, file_path, dest_path, user="admin", password="adminadmin"):
+        """
+        Example:
+            helpers.scp_get(c.ip(),
+                            remote_file='/var/log',
+                            local_path='/tmp',
+                            user='recovery',
+                            password='bsn')
+
+        Limitations: Does not support wildcards.
+        """
+        helpers.scp_put(server, file_path, dest_path, user, password)
+
+    def scp_get(self, server, remote_file_path, dest_path, user="admin", password="adminadmin"):
+        """
+        Example:
+            helpers.scp_get(c.ip(),
+                            remote_file='/var/log',
+                            local_path='/tmp',
+                            user='recovery',
+                            password='bsn')
+
+        Limitations: Does not support wildcards.
+        """
+        helpers.scp_get(server, remote_file_path, dest_path, user, password)
+
     def bcf_controller_postmortem(self, node, server, server_devconf,
                                   user, password, dest_path, test_descr=None):
         """

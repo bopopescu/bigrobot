@@ -25,7 +25,7 @@ add/delete VM instance single app network
 	openstack add subnet  t5test  app  app  30.0.0.0/24 
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
-	openstack add instance  cirros  t5test  app  app-inst1
+	openstack add instance  cirros  app  app-inst1
 	sleep  15
 	openstack show instance all
 	openstack verify endpoint  app-inst1  app
@@ -36,8 +36,8 @@ add/delete multiple VM instance single app network
 	openstack add subnet  t5test  app  app  30.0.0.0/24 
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
-	openstack add instance  cirros  t5test  app  app-inst1
-	openstack add instance  cirros  t5test  app  app-inst2
+	openstack add instance  cirros  app  app-inst1
+	openstack add instance  cirros  app  app-inst2
 	sleep  15
 	openstack show instance all
 	openstack verify endpoint  app-inst1  app
@@ -55,12 +55,12 @@ Test 3 tier app in single tenant
 	openstack add net  t5test  db
 	openstack add subnet  t5test  db  db  30.0.2.0/24
 	openstack verify vns  t5test  db
-	openstack add instance  cirros  t5test  app  app-inst1
-	openstack add instance  cirros  t5test  app  app-inst2
-	openstack add instance  cirros  t5test  web  web-inst1
-	openstack add instance  cirros  t5test  web  web-inst2
-	openstack add instance  cirros  t5test  db  db-inst1
-	openstack add instance  cirros  t5test  db  db-inst2
+	openstack add instance  cirros  app  app-inst1
+	openstack add instance  cirros  app  app-inst2
+	openstack add instance  cirros  web  web-inst1
+	openstack add instance  cirros  web  web-inst2
+	openstack add instance  cirros  db  db-inst1
+	openstack add instance  cirros  db  db-inst2
 	sleep  20
 	openstack show instance all
 	openstack verify endpoint  app-inst1  app
@@ -86,10 +86,10 @@ T5 Functional Suite Teardown
 	
 T5 base test setup
 	base test setup
-	openstack source  keystonerc_admin
+	openstack source  keystonerc_t5test
 	
 T5 base test teardown
-	openstack source  keystonerc_admin
+	openstack source  keystonerc_t5test
 	openstack delete instance  app-inst1
 	openstack delete instance  app-inst2
 	openstack delete instance  web-inst1

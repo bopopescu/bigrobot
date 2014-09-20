@@ -82,9 +82,9 @@ UPGRADE: T1.3 Verify upgrade for same version(same image)
 
     
 
-UPGRADE: T1.5 upgrade launch suspend
+UPGRADE: T1.5 upgrade launch suspend - NA
 	Verify single node upgrade    ${image}    suspend    		
-	[Tags] 	sanity  feature  upgrade_ztn    
+	[Tags] 	sanity  feature  upgrade_ztn  skipped  
    
 UPGRADE: T1.6 upgrade launch timeout
 	Verify single node upgrade    ${image}    switch-timeout 900   		
@@ -92,9 +92,9 @@ UPGRADE: T1.6 upgrade launch timeout
 
     
 
-UPGRADE: T1.8 upgrade launch suspend timeout
+UPGRADE: T1.8 upgrade launch suspend timeout - NA
 	Verify single node upgrade    ${image}    suspend switch-timeout 900   		
-	[Tags] 	sanity  feature  upgrade_ztn     
+	[Tags] 	sanity  feature  upgrade_ztn  skipped   
    
 
 UPGRADE: T1.9 Verify upgrade rollback  
@@ -171,7 +171,13 @@ UPGRADE: T1.11 disconnected switch behavior during upgrade
  		      	      
 	[Tags] 	full   feature  upgrade_ztn   manual 
  
-
+UPGRADE: T1.12 suspended switch behavior during upgrade 
+	log  step 0 - prepaare suspended switch				
+ 	log  step 1 - upgrade controller
+ 		log   passed
+ 		      	      
+	[Tags] 	full   feature  upgrade_ztn   manual 
+ 
  
 SYNC: T2.1 Verify switch config in controller is pushed to swith(event trigger reload) 
 	log  step 1 - modify switch related config in controller(NTP, Logging, SNMP)
@@ -279,7 +285,7 @@ EVENT: T3.3 switch disconnected/connected during controller upgrade
    	log  step 6 - switch disconnected during controller reboot
    	log  step 7 - switch connected back after controller come back
   	      
-	[Tags] 	full  manual-untested   feature  upgrade_ztn 
+	[Tags] 	full  manual    feature  upgrade_ztn 
 	
 	
 

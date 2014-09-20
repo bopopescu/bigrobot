@@ -1646,9 +1646,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
             return True
 
 
-    def rest_get_l3_cidr_route_info(self, ipaddress, netMask):
+    def rest_get_l3_cidr_route_info(self, ipaddress, netMask, switch=None):
         '''return specific route entry in l3 cidr table
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="leaf0-a"]/l3-cidr-route-table        
 
             Input: ip, subnet mask
 
@@ -1656,7 +1657,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table' 
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/l3-cidr-table' 
+        else:
+            url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % switch
         c.rest.get(url)
         data = c.rest.content()
 #        result = helpers.from_json(data)

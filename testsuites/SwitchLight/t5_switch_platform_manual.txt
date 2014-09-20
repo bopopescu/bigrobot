@@ -114,7 +114,8 @@ Verify uboot configuration Static ip address, gateway, netmask, server ip
 
 ## Switch flash card verification 4GB/ 8GB 
 Verify the switch flash card memory 
-    Log    Step 1 - Verify the switch flash card memory 4GB or 8GB minimum
+    Log    Step 1 - Verify the switch flash card memory 2GB / 4GB 
+    Log    Step 2 - From data sheet AS5710 and AS6700 have 2GB flash memory
     [Tags]  switch-platform  install  feature 
     [Tags]  Manual
     Manual passed      
@@ -482,28 +483,28 @@ Verify the SNMP traps configured and generated for link up down of switch interf
 Verify the SNMP traps generated for the PSU sensor threshold crossed 
     Log    Step 1 - Verify the SNMP traps generated for the PSU sensor failure
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual Passed
 
 Verify the SNMP traps generated for the chassis Fan failure 
     Log    Step 1 - Verify the SNMP traps generated for the chassis Fan failure
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual Passed
 
 Verify the SNMP traps generated for the temp sensors threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the temp sensors threshold value crossed
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual Passed
 
 Verify the SNMP traps generated for the CPU load threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the CPU load threshold value crossed
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual Passed
 
 Verify the PSU1 and PSU2 SNMPwalk and after removal of the PSU1 
     Log    Step 1 - Verify the SNMPwalk for the PSU1 and PSU2 
     Log    Step 2 - remove PSU1 and verify the snmpwalk again
     [Tags]  switch-platform  Manual  SNMP  feature
-    Manual Failed
+    Manual Passed
 
 Verify the repeatitive snmpwalk of the interface MIB and confirm the consistent value
     Log    Step 1 - Verify repeatitive snmpwalk of the interface MIB and confirm the consistent value 

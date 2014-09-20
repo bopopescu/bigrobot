@@ -57,7 +57,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine2}   
     \   sleep  ${inevent}  
        
-	[Tags] 	longevity   traffic    event     
+	[Tags] 	longevity   traffic    event      
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -123,7 +123,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${inevent}  
  
  
-	[Tags] 	longevity     traffic     event  
+	[Tags] 	longevity     traffic     event    
 
 T28 data Link down/up event between leafs 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -137,7 +137,7 @@ T28 data Link down/up event between leafs
 	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
 	\  sleep  ${inevent}  		
    
-	[Tags] 	 longevity   traffic   event    
+	[Tags] 	 longevity   traffic   event      
 
 T26 big configuration changes (around 500 tenants)
      : FOR    ${i}    IN RANGE    0    ${loop}
@@ -145,7 +145,7 @@ T26 big configuration changes (around 500 tenants)
  	\  tenant configuration add/remove      ${Tflapnum}       3       
  	\  sleep  ${bigconfigsleep}  
    	
-	[Tags] 	longevity     traffic    event  
+	[Tags] 	longevity     traffic    event     
 
 
 T25 big configuration changes (around 500 vns change)
@@ -174,7 +174,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
   	\  sleep  ${betweenevent}
    
-	[Tags] 	longevity    traffic  
+	[Tags] 	longevity    traffic     
 
 
  
@@ -183,70 +183,71 @@ T51 continues Event
 
 * Keywords
 
+Cli show commands for debug
+	cli  master   show running-config switch
+	cli  master   show switch 		
+	cli  master   show link	
+	
+
 switch node down/up event   [Arguments]    ${node}
 	log  reload switch
 	Log To Console   ================ Rebooting ${node} ===============
+	Cli show commands for debug 	
 	cli_reboot_switch    master     ${node} 
-	cli   master   ''
+	Cli show commands for debug
 	sleep   ${long}	
 	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
 
 Verify all switches connected back
  	${switches}=  rest_get_disconnect_switch
- 	cli   master   ''
+	Cli show commands for debug
 	log   the disconnected switches are ${switches}  	
 	Should Be Empty   ${switches}	
  
  
 controller node event HA failover    [Arguments]    ${during}=30
     Log To Console   =============HA failover ===============
+	Cli show commands for debug    
     cli_cluster_take_leader
-    cli   master   ''
     sleep  ${during}   
-    cli   master   '' 
+	Cli show commands for debug
     clear stats in controller switch	  
 
 controller node event reboot master    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
     cli_verify_cluster_master_reboot 
-    cli   master   ''
-    sleep  ${during}
+	Cli show commands for debug
+	sleep  ${during}
+  
  
 controller node event reboot slave    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
     cli_verify_cluster_slave_reboot 
-    cli   master   ''
+	Cli show commands for debug     
     sleep  ${during}
-
+ 
 
 data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
     Log To Console   ================ data link down/up for ${node1} ${node2} ===============
-	log  disable/enable link from leaf to spine			 
-	${list}=  disable links between nodes   ${node1}    ${node2}
-	log   list is ${list} 
- 	sleep    ${medium}  
- 	cli   master   ''	
-	enable links between nodes 	${node1}   ${list}
-	cli   master   ''
-
-
-disable links between nodes    [Arguments]   ${node1}   ${node2} 
-	cli  master   show running-config switch 
-	cli  master   show link
-	
+	log  disable/enable link from nodes		
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
-	\  	rest_disable_fabric_interface		${node1}  ${int}  
-	\   sleep  ${medium}
- 	Return From Keyword   ${list}
+	\   disable links between nodes      ${node1}   ${int}
+	\   sleep   120
+	\   enable links between nodes      ${node1}   ${int} 
+ 	\   sleep   120 
+ 
 
-enable links between nodes   [Arguments]   ${node1}   ${list} 
-	cli  master   show running-config switch
-	cli  master   show link	
- 	: FOR    ${int}   IN   @{list}   
-	\  	rest_enable_fabric_interface		${node1}  ${int}  
-	\   sleep  ${medium}
-	cli   master   ''
+disable links between nodes    [Arguments]   ${node1}   ${int} 
+	Cli show commands for debug
+	rest_disable_fabric_interface		${node1}  ${int}  
+ 
+ 
+enable links between nodes   [Arguments]   ${node1}   ${int} 
+	Cli show commands for debug
+ 
+	rest_enable_fabric_interface		${node1}  ${int}  
+ 
 
 
  
@@ -279,14 +280,14 @@ tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${s
 vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     Log To Console   ================ vns configuration changes: ${Vnumber}===============
 	enable  master  copy running-config config://config_vns_old
-	cli     master  ''
+	 
 	${vlan}=    Set Variable   1000    
 	rest_add_tenant_vns_scale    tenantcount=1   tname=FLAP    vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	rest_add_interface_to_all_vns      FLAP0     ${leaf1-a}    ethernet3   vlan=${vlan}	
 	sleep   ${sleep}	 
 	cli    master     show running-config tenant	timeout=120
 	enable  master  copy running-config config://config_vns_new
-	cli    master   ''
+	 
  	log  big scale configuration tenant delete
  	config    master   tenant FLAP0
 	${vns}=  expr  1 + ${Vnumber}
@@ -296,21 +297,19 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
     : FOR    ${j}    IN RANGE    1     ${vns}
     \ 	config    master    no interface segment V${j}   
 	config    master    no tenant FLAP0      
-	enable    master     show running-config tenant	 timeout=120	
- 	cli       master   ''
-
+	cli    master     show running-config tenant	 timeout=120	
+ 
 clear stats in controller switch
 	enable    master  clear switch all interface all counters 
 #	rest_clear_vns_stats
 #	rest_clear_fabric_interface_stats
- 	cli       master   ''
+ 	Cli show commands for debug 
  	 
 T5 longevity suite setup
    base suite setup
     : FOR    ${j}    IN RANGE    0     500
     \ 	config    master     no tenant FLAP${j}
- 	cli       master   ''
- 		
+  		
 T5 longevity suite teardown
 #   base suite teardown
     sleep  1
@@ -321,6 +320,7 @@ T5 base test setup
  
 T5 base test teardown  
     base test teardown   
+    Run Keyword If Test Failed    generate_support
     Run Keyword If Test Failed    check controller top   c1
     Run Keyword If Test Failed    check controller top   c2
  
@@ -334,7 +334,7 @@ check controller top  [Arguments]  ${node}
     : FOR    ${j}    IN RANGE    0     5 
     \  bash   ${node}  top -n 1 
     \  sleep  2
- 	cli       master   ''
+ 	Cli show commands for debug
  
  
 ######## test case keyword

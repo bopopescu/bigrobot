@@ -38,20 +38,8 @@ delete multiple VMs with floating IP
 exhaust floating IPs in a tenant
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Verify that traffic correctly flows between networks (VNSs)
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-Verify that traffic correctly flows from all networks to the external server/internet
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
 Verify that traffic is correctly blocked between projects (tenants)
 	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-Between Spine switches and Service Rack Leaf switches
-	[Tags]  feature  openstack  IronHorse  manual 
-	manual passed
-Between Service Rack Leaf switches and Router
-	[Tags]  feature  openstack  IronHorse  manual 
 	manual passed
 Test with different traffic (IP, TCP, Jumbo Frame)
 	[Tags]  feature  openstack  IronHorse  manual
@@ -73,12 +61,6 @@ verify floating IP connectivity between VNS and external router
 	manual passed
 
 
-Ping external address from VMs
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-Ping VMs from external addresses
-	[Tags]  feature  openstack  IronHorse  manual 
-	manual passed
 Use traceroute to verify traffic paths
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
@@ -89,9 +71,6 @@ Run tests with and without Floating IP
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 Run show tech-support
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Run bsn-support.py
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Verify trace packet support in the Horizon 
@@ -135,56 +114,20 @@ Measure Openstack Scaling limit (Topology: Single Nova controller)
 	manual passed
 
 Performance(between 2 VM using iperf)
-	[Tags]  performance  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  performance  openstack  IronHorse  manual
+	manual passed
 
 
 Upgrade Iron Horse Image to a Iron Horse Official Release image.
-	[Tags]  solution  openstack  IronHorse  manual-untested	
-	manual untested
+	[Tags]  solution  openstack  IronHorse  manual
+	manual failed
 
 Configure 2 Nuetron server for openstack HA
 	[Tags]  solution  openstack  IronHorse  manual
 	manual failed
-Failover using link down
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Fail back test 
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 reboot Master neutron server
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-
-Controller failover
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover from CLI, then check
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover from CLI Failover to slave correctly happens
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover from CLI Existing flows should not be impacted
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover from CLI New flows should be established after failover
-	[Tags]  solution  openstack  IronHorse  manual 
-	manual passed
-
-Trigger HA failover from CLI Failback to previous master
-	[Tags]  solution  openstack  IronHorse  manual 
-	manual passed
-Trigger HA failover from CLI Failback to previous master to slave correctly happens
-	[Tags]  solution  openstack  IronHorse  manual 
-	manual passed
-Trigger HA failover from CLI Failback to previous master Existing flows should not be impacted
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover from CLI Failback to previous master New flows should be established after failover
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
 Trigger HA failover via a process restart (floodlight restart) 
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -198,34 +141,11 @@ Trigger HA process restart New flows should be established after failover
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-Trigger HA failover via master controller node shutdown/reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover via master controller Failover to slave correctly happens
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover via master controller Existing flows should not be impacted
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA failover via master controller New flows should be established after failover
-	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
-
- 
 
 Flap the link between Leaf switch and OVS (connection to nova-controller)
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Flap the link between Leaf switch and OVS (connection to nova compute node)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 Flap the link between Leaf switch and OVS (connection to block storage)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap the link between Service Rack Leaf switch and Spine switch
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap the link between Compute Rack Leaf switch and Spine switch
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 Flap the link between Service Rack Leaf switch and router
@@ -266,9 +186,6 @@ service leaf Connection to Spine - move/add/remove link
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-Connection to Leaf switch Switch failure/reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 All Spine reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed

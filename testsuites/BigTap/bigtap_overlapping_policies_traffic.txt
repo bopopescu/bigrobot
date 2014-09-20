@@ -13,6 +13,7 @@ Library  keywords/Ixia.py
 Library  Collections.py
 
 * Variable
+## Switch 1
 ${switch1_alias}                    app-rlb9-2
 ${switch1_filter_intf_1}            ethernet1    
 ${switch1_filter_alias_1}           ixia-4-4
@@ -37,7 +38,7 @@ ${switch1_postservice_intf_1}       ethernet48
 ${switch1_postservice_alias_1}      app-rlb9-2-post
 ${switch1_service_name}             service-app-rlb9-2
 
-
+## Switch 2
 ${switch2_alias}                    app-rlb9-3
 ${switch2_delivery_intf_1}          ethernet1    
 ${switch2_delivery_alias_1}         ixia-3-4
@@ -51,7 +52,7 @@ ${switch2_preservice_alias_1}       app-rlb9-3-pre
 ${switch2_postservice_intf_1}       ethernet48
 ${switch2_postservice_alias_1}      app-rlb9-3-post
 ${switch2_service_name}             service-app-rlb9-3
-
+## Switch 3
 ${switch3_alias}                    app-rly2-1
 ${switch3_filter_intf_1}            ethernet1    
 ${switch3_filter_alias_1}           ixia-4-2
@@ -71,9 +72,10 @@ ${src_mac_other}                    00:11:00:00:01:02
 ${dst_mac}                          00:11:00:00:00:02
 ${dst_mac_other}                    00:11:00:00:01:01
 
+
 * Test Case
 
-Verify initial configuration
+TC001: Verify initial configuration
     verify overlapping policies
     sleep  20
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
@@ -87,48 +89,48 @@ Verify initial configuration
     [Tags]  feature
 
 
-Protocol TCP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC002: Protocol TCP: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  protocol=6  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=80  src_port=1234  ip_tos=1  vlan=100  
     verify protocol matches  ${generate_protocol_matches}                
     [Tags]  feature  tcp  protocolmatches
 
-Protocol TCP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC003: Protocol TCP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=34525  protocol=6  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d  dst_port=80  src_port=1234  ip_tos=1  vlan=100  
     verify protocol matches  ${generate_protocol_matches}                
     [Tags]  feature  tcp6  protocolv6matches 
 
-Protocol UDP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC004: Protocol UDP: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  protocol=17  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=53  src_port=1234  ip_tos=1  vlan=100
     verify protocol matches  ${generate_protocol_matches}
     [Tags]  feature  udp  protocolmatches
 
-Protocol UDP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC005: Protocol UDP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=34525  protocol=17  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d   dst_port=53  src_port=1234  ip_tos=1  vlan=100
     verify protocol matches  ${generate_protocol_matches}
     [Tags]  feature  udp6  protocolv6matches
         
-Protocol ICMP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC006: Protocol ICMP: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  protocol=1  src_ip=10.28.6.42  dst_ip=10.28.7.44  src_port=8  dst_port=0  ip_tos=1  vlan=100
     verify protocol matches  ${generate_protocol_matches}                
     [Tags]  feature  icmp  protocolmatches
 
-Protocol SCTP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC007: Protocol SCTP: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  protocol=132  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=132  src_port=1234  ip_tos=1
     verify protocol matches  ${generate_protocol_matches}                    
     [Tags]  feature  sctp  protocolmatches
 
-Protocol SCTP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC008: Protocol SCTP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=34525  protocol=132  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d  dst_port=132  src_port=1234  ip_tos=1
     verify protocol matches  ${generate_protocol_matches}                    
     [Tags]  feature  sctp6  protocolmatches  
 
-L2: All possible matches. Configure two policies with common filter and different delivery interfaces.
+TC009: L2: All possible matches. Configure two policies with common filter and different delivery interfaces.
     ${generate_protocol_matches}=  return match  ip_type=2048  dst_mac=00:11:00:00:00:01  src_mac=00:11:00:00:00:02  ip_tos=1  vlan=100
     verify protocol matches  ${generate_protocol_matches}                    
     [Tags]  feature  l2  protocolmatches
 
 
-Add multiple filter interfaces (same filter switch) to both policies and verify overlap
+TC010: Add multiple filter interfaces (same filter switch) to both policies and verify overlap
     rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
     rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_3}  filter
     rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
@@ -150,7 +152,7 @@ Add multiple filter interfaces (same filter switch) to both policies and verify 
     verify results  a  d  transmitted_frames  received_valid_frames
     [Tags]  feature  l2
 
-Add multiple filter interfaces (different filter switches) to both policies and verify overlap
+TC011: Add multiple filter interfaces (different filter switches) to both policies and verify overlap
     rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
     rest add policy interface  admin-view  ${policy_name_1}   ${switch3_filter_alias_1}  filter
     rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
@@ -172,7 +174,7 @@ Add multiple filter interfaces (different filter switches) to both policies and 
     verify results  a  d  transmitted_frames  received_valid_frames
     [Tags]  feature  l2  run
      
-Delete match condition in P1 and verify overlap goes away
+TC012: Delete match condition in P1 and verify overlap goes away
     rest delete policy match  admin-view  ${policy_name_1}   1
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
@@ -198,7 +200,7 @@ Delete match condition in P1 and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames
     [Tags]  feature
     
-Change action to inactive in P1 and verify overlap goes away
+TC013: Change action to inactive in P1 and verify overlap goes away
     rest update policy action  admin-view  ${policy_name_1}  inactive
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
@@ -224,7 +226,7 @@ Change action to inactive in P1 and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames
     [Tags]  feature      
     
-Set policy action to rate-measure and verify overlap goes away
+TC014: Set policy action to rate-measure and verify overlap goes away
     ${result}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
     Should be true  ${result}
     sleep  30
@@ -266,7 +268,7 @@ Set policy action to rate-measure and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  feature  rate-measure
 
-Set different priorities in P1 and P2 and verify overlap goes away
+TC015: Set different priorities in P1 and P2 and verify overlap goes away
     rest update policy priority  admin-view  ${policy_name_1}   200
     sleep  10
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
@@ -295,7 +297,7 @@ Set different priorities in P1 and P2 and verify overlap goes away
     [Tags]  feature  priority
 
     
-Add vlan re-write to one policy and verify overlap goes away
+TC016: Add vlan re-write to one policy and verify overlap goes away
     rest add vlan rewrite  admin-view  ${policy_name_1}   200
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
@@ -323,7 +325,7 @@ Add vlan re-write to one policy and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  feature  vlan  runthis
     
-Add vlan re-write to both policies and verify overlap stays
+TC017: Add vlan re-write to both policies and verify overlap stays
     rest add vlan rewrite  admin-view  ${policy_name_1}   200
     rest add vlan rewrite  admin-view  ${policy_name_2}   200    
     sleep  3
@@ -351,7 +353,7 @@ Add vlan re-write to both policies and verify overlap stays
     [Tags]  feature  vlan  runthis
 
     
-Add a service to P1 and verify overlap policy stays
+TC018: Add a service to P1 and verify overlap policy stays
     rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
     sleep  10
     ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
@@ -376,10 +378,10 @@ Add a service to P1 and verify overlap policy stays
     stop traffic  ${stream_new}    
     verify results  a  c  transmitted_frames  received_valid_frames     
     verify results  a  d  transmitted_frames  received_valid_frames    
-    [Tags]  feature  service  skipped
+    [Tags]  feature  service  
 
 
-Add same service to both policies and verify overlap policy stays
+TC019: Add same service to both policies and verify overlap policy stays
     rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
     rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1    
     sleep  3
@@ -417,9 +419,9 @@ Add same service to both policies and verify overlap policy stays
     stop traffic  ${stream_new}    
     verify results  a  c  transmitted_frames  received_valid_frames     
     verify results  a  d  transmitted_frames  received_valid_frames         
-    [Tags]  feature  service  skipped
+    [Tags]  feature  service  
 
-Add a service to both policies and verify overlap policy is created. Bring down pre-service interface, verify overlap goes away
+TC020: Add a service to both policies and verify overlap policy is created. Bring down pre-service interface, verify overlap goes away
     rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
     rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1 
     sleep  3
@@ -438,9 +440,9 @@ Add a service to both policies and verify overlap policy is created. Bring down 
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  feature  service  skipped
+    [Tags]  feature  service  
 
-Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
+TC021: Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
     rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
     rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1   
     sleep  3
@@ -459,9 +461,9 @@ Add a service to both policies and verify overlap policy is created. Bring down 
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  feature  service  skipped
+    [Tags]  feature  service  
 
-Verify overlap is not created when component policies have different protocols 
+TC022: Verify overlap is not created when component policies have different protocols 
     rest delete policy match  admin-view  ${policy_name_1}  1
     rest delete policy match  admin-view  ${policy_name_2}   1
     sleep  3
@@ -491,7 +493,8 @@ Verify overlap is not created when component policies have different protocols
     Should be true  ${verify_overlap}
     [Tags]  negative
 
-Disable overlap knob and verify overlapping policies are deleted
+
+TC023: Disable overlap knob and verify overlapping policies are deleted
     ${ovelap_disabled}=  rest disable feature  overlap
     Should be true  ${ovelap_disabled} 
     Sleep  20
@@ -508,7 +511,7 @@ Disable overlap knob and verify overlapping policies are deleted
     [Tags]  negative     
 
 
-Re-enable overlap knob and verify overlapping policies are deleted
+TC024: Re-enable overlap knob and verify overlapping policies are deleted
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled} 
     Sleep  10
@@ -523,7 +526,7 @@ Re-enable overlap knob and verify overlapping policies are deleted
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative     
 
-Enable inport-mask knob and verify overlapping policies are not affected.
+TC025: Enable inport-mask knob and verify overlapping policies are not affected.
     verify overlapping policies
     ${inport_enabled}=  rest enable feature  inport-mask
     Should be true  ${inport_enabled} 
@@ -539,7 +542,7 @@ Enable inport-mask knob and verify overlapping policies are not affected.
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative     
 
-Disable inport-mask knob and verify overlapping policies are not affected.
+TC026: Disable inport-mask knob and verify overlapping policies are not affected.
     verify overlapping policies
     ${inport_disabled}=  rest disable feature  inport-mask
     Should be true  ${inport_disabled} 
@@ -555,7 +558,7 @@ Disable inport-mask knob and verify overlapping policies are not affected.
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative    
 
-Enable tracked hosts knob and verify overlapping policies are not affected.
+TC027: Enable tracked hosts knob and verify overlapping policies are not affected.
     verify overlapping policies
     ${thost_enabled}=  rest enable feature  tracked-host
     Should be true  ${thost_enabled} 
@@ -571,7 +574,7 @@ Enable tracked hosts knob and verify overlapping policies are not affected.
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative     
 
-Disable tracked hosts knob and verify overlapping policies are not affected.
+TC028: Disable tracked hosts knob and verify overlapping policies are not affected.
     verify overlapping policies
     ${thost_disabled}=  rest disable feature  tracked-host
     Should be true  ${thost_disabled} 
@@ -587,7 +590,7 @@ Disable tracked hosts knob and verify overlapping policies are not affected.
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative         
 
-Verify overlapping policies work in l3-l4-match mode.
+TC029: Verify overlapping policies work in l3-l4-match mode.
     rest delete policy match  admin-view  ${policy_name_1}  1
     rest delete policy match  admin-view  ${policy_name_2}  1    
     sleep  10
@@ -611,7 +614,7 @@ Verify overlapping policies work in l3-l4-match mode.
     verify results  a  d  transmitted_frames  received_valid_frames                
     [Tags]  negative
 
-Verify overlapping policies work in l3-l4-offset-match mode.
+TC030: Verify overlapping policies work in l3-l4-offset-match mode.
     rest delete policy match  admin-view  ${policy_name_1}  1
     rest delete policy match  admin-view  ${policy_name_2}  1    
     sleep  10
@@ -635,7 +638,7 @@ Verify overlapping policies work in l3-l4-offset-match mode.
     verify results  a  d  transmitted_frames  received_valid_frames                
     [Tags]  negative
     
-Verify overlapping policies work on reverting back to full-match mode.
+TC031: Verify overlapping policies work on reverting back to full-match mode.
     rest delete policy match  admin-view  ${policy_name_1}  1
     rest delete policy match  admin-view  ${policy_name_2}  1    
     sleep  10
@@ -659,7 +662,7 @@ Verify overlapping policies work on reverting back to full-match mode.
     verify results  a  d  transmitted_frames  received_valid_frames
     [Tags]  negative   
         
-Shutdown filter interface and verify overlapping policy goes away
+TC032: Shutdown filter interface and verify overlapping policy goes away
     cli disable interface  s1  ${switch1_filter_intf_1}
     sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
@@ -674,7 +677,7 @@ Shutdown filter interface and verify overlapping policy goes away
     return ixia txrx value  d  received_valid_frames  0     
     [Tags]  negative 
 
-Re-enable previously shut filter interface and verify overlapping policy is re-created
+TC033: Re-enable previously shut filter interface and verify overlapping policy is re-created
     cli enable interface  s1  ${switch1_filter_intf_1}
     sleep  30  
     verify overlapping policies
@@ -688,7 +691,7 @@ Re-enable previously shut filter interface and verify overlapping policy is re-c
     verify results  a  d  transmitted_frames  received_valid_frames     
     [Tags]  negative  
 
-Shutdown delivery interface and verify overlapping policy goes away
+TC034: Shutdown delivery interface and verify overlapping policy goes away
     ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
     cli disable interface  s2  ${switch2_delivery_intf_1}
@@ -703,7 +706,7 @@ Shutdown delivery interface and verify overlapping policy goes away
     verify results  a  d  transmitted_frames  received_valid_frames     
     [Tags]  negative
 
-Re-enable previously shut delivery interface and verify overlapping policy is re-created
+TC035: Re-enable previously shut delivery interface and verify overlapping policy is re-created
     cli enable interface  s2  ${switch2_delivery_intf_1}
     sleep  30  
     verify overlapping policies
@@ -718,7 +721,7 @@ Re-enable previously shut delivery interface and verify overlapping policy is re
     [Tags]  negative  
 
 
-Reboot filter switch and verify overlapping policies still exist
+TC036: Reboot filter switch and verify overlapping policies still exist
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
     cli restart switch  s1
@@ -732,7 +735,7 @@ Reboot filter switch and verify overlapping policies still exist
     verify results  a  d  transmitted_frames  received_valid_frames         
     [Tags]  ha 
 
-Reboot delivery switch and verify overlapping policies still exist
+TC037: Reboot delivery switch and verify overlapping policies still exist
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
     cli restart switch  s2
@@ -746,7 +749,7 @@ Reboot delivery switch and verify overlapping policies still exist
     verify results  a  d  transmitted_frames  received_valid_frames       
     [Tags]  ha  
 
-Reboot core switch and verify overlapping policies still exist
+TC038: Reboot core switch and verify overlapping policies still exist
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
     cli restart switch  s3
@@ -760,7 +763,7 @@ Reboot core switch and verify overlapping policies still exist
     verify results  a  d  transmitted_frames  received_valid_frames       
     [Tags]  ha 
 
-Execute HA Failover and verify overlapping policies still exist
+TC039: Execute HA Failover and verify overlapping policies still exist
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
     verify overlapping policies   
@@ -781,7 +784,7 @@ Execute HA Failover and verify overlapping policies still exist
     verify results  a  d  transmitted_frames  received_valid_frames     
     [Tags]  ha
 
-Change configuration execute HA Failback and verify overlapping policies still exist
+TC040: Change configuration execute HA Failback and verify overlapping policies still exist
     rest delete policy match  admin-view  ${policy_name_1}  1
     sleep  10
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": ${src_mac_other}, "ether-type": 2048, "sequence": 1}
@@ -836,7 +839,7 @@ overlap suite setup
     Should be true  ${result}  
     ${result}=  rest add interface role  s1  ${switch1_postservice_intf_1}  service  ${switch1_postservice_alias_1}
     Should be true  ${result}     
-    
+    Sleep  5    
     #Configure Switch 2    
     ${result}=  rest add switch alias  s2  ${switch2_alias}
     Should be true  ${result}      
@@ -848,7 +851,7 @@ overlap suite setup
     Should be true  ${result}  
     ${result}=  rest add interface role  s2  ${switch2_postservice_intf_1}  service  ${switch2_postservice_alias_1}
     Should be true  ${result}      
-
+    Sleep  5
     
     #Configure Switch 3    
     ${result}=  rest add switch alias  s3  ${switch3_alias}
@@ -863,14 +866,14 @@ overlap suite setup
     Should be true  ${result}
     Sleep  5
     
+
     #Configure  All Services
     ${result}=  rest add service  ${switch1_service_name}  ${switch1_preservice_alias_1}  ${switch1_postservice_alias_1}   
     Should be true  ${result}
     ${result}=  rest add service  ${switch2_service_name}  ${switch2_preservice_alias_1}  ${switch2_postservice_alias_1}   
     Should be true  ${result}
     ${result}=  rest add service  ${switch3_service_name}  ${switch3_preservice_alias_1}  ${switch3_postservice_alias_1}   
-    Should be true  ${result}            
-    Sleep  5
+    Should be true  ${result}
 
 verify overlapping policies
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1004,7 +1007,7 @@ overlap suite teardown
     ${result}=  rest delete interface  s3  ${switch3_preservice_intf_1}
     Should be true  ${result}
     ${result}=  rest delete interface  s3  ${switch3_postservice_intf_1}
-    Should be true  ${result}         
+    Should be true  ${result}  
     Sleep  5
     rest delete switch alias  s1
     rest delete switch alias  s2
@@ -1012,4 +1015,4 @@ overlap suite teardown
     rest delete switch   s1
     rest delete switch   s2
     rest delete switch   s3     
-    base suite teardown                        
+    base suite teardown
