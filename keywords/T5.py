@@ -1900,29 +1900,33 @@ class T5(object):
             helpers.test_failure("Interface did not go down:state is still Up, open the bug for inteface disable status")
             return False
 
-    def rest_enable_fabric_interface(self, switch, intf, timeout=15):
+    def rest_enable_fabric_interface(self, switch, intf, timeout=30):
         t = test.Test()
         c = t.controller('master')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(int(timeout))
+        helpers.sleep(3)
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
-        c.rest.get(url2)
-        data = c.rest.content()
-        cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
-        c.enable(cli_string)
+        max = int(timeout)/3
+        for loop in range (0, int(max)):
+            url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+            c.rest.get(url2)
+            data = c.rest.content()
+            cli_string = 'show debug event module FabricManager event-name fabric-interface-physical-status-change-event | grep -B 2 "swName:' + switch + ', ifName:' + intf + ', "'
+            c.enable(cli_string)
 
-        if data[0]["interface"][0]["state"] == "up":
-            helpers.log("Interface state is up")
-            return True
-        else:
-            helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
-            return False
+            if data[0]["interface"][0]["state"] == "up":
+                helpers.log("Interface state is up")
+                return True
+            
+            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " %(switch,  intf, int(loop+1)*3 )  )      
+            helpers.sleep(3)  
+        helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
+        return False
 
     def rest_verify_fabric_interface_rx_stats(self, switch, intf, frame_cnt, vrange=5):
         ''' Function to verify the fabric interface stats

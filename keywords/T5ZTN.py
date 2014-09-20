@@ -931,13 +931,13 @@ class T5ZTN(object):
         elif options[0] == 3:
             s.cli('reboot')
             helpers.log("Switch is rebooting. Waiting for full reboot")
-            helpers.sleep(100)
+            helpers.sleep(120)
             s.expect(r'[\r\n]*.*login: $', timeout=30)
             s.send('admin')
         elif options[0] == 4:
             s.cli('boot')
             helpers.test_failure("Switch is rebooting. Waiting for full reboot")
-            helpers.sleep(100)
+            helpers.sleep(120)
             s.expect(r'[\r\n]*.*login: $', timeout=30)
             s.send('admin')
         s.cli('enable')
@@ -1730,4 +1730,20 @@ class T5ZTN(object):
                     line = line.replace(' ', '')
                 version = version + " (" + line + ")"
         return version
-    
+
+    def telnet_run(self, switch, cmd):
+        """
+        Issue given command for a switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if reboot triggered successfully, False otherwise
+        """
+        t = test.Test()
+        n = t.node(switch)
+        s = t.dev_console(switch)
+        helpers.log("Running command %s" %cmd)
+        s.config(cmd)
+        return True
