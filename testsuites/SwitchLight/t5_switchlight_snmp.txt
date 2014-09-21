@@ -11,11 +11,11 @@ Library  keywords/BigTap.py
 Library  keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}  SwitchLight
+${switchlight_version}  Switch Light OS
 ${snmp_contact}  nw_admin@super_awesome_switch.com
 ${snmp_location_1}  CS_RACK11_6004
 ${snmp_location_2}  CS_RACK11_6013    
-${oneGlb9_name}  ethernet25
+${oneGlb9_name}  ethernet24
 ${tenGly2_name}  ethernet39
 ${fortyGly2_name}  ethernet52
 
@@ -163,18 +163,18 @@ Verify snmpbulkwalk works as expected
     [Tags]  feature
         
 Verify snmptrap is generated on dataport linkflap
-    clear snmpttlog  10.192.66.230
+    clear snmpttlog  10.9.18.2
     sleep  10
     cli disable interface  s1  ethernet39
     sleep  60
-    ${output}=  return snmptrap output  10.192.66.230  "Link down on interface 1039"
+    ${output}=  return snmptrap output  10.9.18.2  "Link down on interface 1039"
     Should contain  ${output}  Operational state: 2  
     sleep  10
-    clear snmpttlog  10.192.66.230
+    clear snmpttlog  10.9.18.2
     sleep  10    
     cli enable interface  s1  ethernet39
     sleep  60
-    ${output}=  return snmptrap output  10.192.66.230  "Link up on interface 1039"
+    ${output}=  return snmptrap output  10.9.18.2  "Link up on interface 1039"
     Should contain  ${output}  Operational state: 1     
     [Tags]  feature  jira-pan-741 
          
@@ -198,8 +198,8 @@ snmp suite setup
     cli add snmp keyword   s1   community   ro public       
     cli add snmp keyword   s1   location   ${snmp_location_1}       
     cli add snmp keyword   s1   contact   ${snmp_contact}       
-    cli add snmp host   s1   10.192.66.230   traps   public   162   
-    cli add snmp host   s1   10.192.66.230   informs   public   162
+    cli add snmp host   s1   10.9.18.2   traps   public   162   
+    cli add snmp host   s1   10.9.18.2   informs   public   162
     cli enable trap keyword  s1  snmp-server trap linkUpDown interval 1
     cli enable snmp   s1                       
     Sleep   30             
@@ -264,7 +264,7 @@ snmp suite teardown
     cli delete snmp keyword   s1   community   ro public       
     cli delete snmp keyword   s1   location   ${snmp_location_1}  
     cli delete snmp keyword   s1   contact   ${snmp_contact}       
-    cli delete snmp host   s1   10.192.66.230   traps   public   162   
-    cli delete snmp host   s1   10.192.66.230   informs   public   162
+    cli delete snmp host   s1   10.9.18.2   traps   public   162   
+    cli delete snmp host   s1   10.9.18.2   informs   public   162
     cli delete trap keyword  s1  snmp-server trap linkUpDown interval 1       
     base suite teardown      
