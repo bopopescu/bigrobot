@@ -19,7 +19,7 @@ class MyTest(object):
         c.rest.set_session_cookie(session_cookie)
 
     def generate_data(self):
-        return "MydataXXX"
+        return "MydataX"
 
     def save_data(self, data):
         helpers.log(data)
@@ -317,9 +317,9 @@ admin_user = glance
         controllers = t.controllers()
         helpers.log("*** Controllers: %s" % controllers)
 
-    def _build_link_list(self, list):
+    def _build_link_list(self, alist):
         updated_list = []
-        for l in list:
+        for l in alist:
             src_switch = l['src']['interface']['name']
             src_intf = l['src']['switch-info']['switch-name']
             dst_switch = l['dst']['interface']['name']
@@ -926,7 +926,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         helpers.log("Ping loss percentage: %s" % loss_pct)
         return loss_pct
 
-    def run_cmd_test(self, node):
+    def run_cmd_test(self):
         arg1, arg2 = helpers.run_cmd('cat /etc/hosts', shell=True)
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
@@ -1011,7 +1011,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             node = t.node_spawn(ip)
             n.append(node)
             helpers.log("!!!! Executing command on node(%s, name=%s)" % (i, node.name()))
-            content = node.cli('show user')
+            node.cli('show user')
             c.bash('netstat | grep ssh; netstat | grep ssh | wc -l; w | grep floodlight-login')
             helpers.sleep(3)
 
@@ -1033,3 +1033,20 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         c.send('reauth')
         c.expect(r'Password: ')
         c.cli('adminadmin')
+
+    def rest_api_benchmark(self, node, total_requests=1000, concurrency=100):
+        t = test.Test()
+        c = t.controller(node)
+        session_cookie = c.rest.get_session_cookie()
+        url = c.rest.format_url('/api/v1/data/controller/core/controller/role')
+        helpers.log("'%s' session cookie: '%s'" % (node, session_cookie))
+        cmd = ("ab -n %s -c %s -H Cookie:session_cookie=%s %s"
+               % (total_requests, concurrency, session_cookie, url))
+        (status, output, errcode) = helpers.run_cmd2(
+                                        # cmd=cmd,
+                                        cmd="grep out /etc/hostss",
+                                        shell=True)
+        helpers.log("run_cmd2 output:\n%s" % helpers.prettify(
+                                                    {"status": status,
+                                                     "output": output,
+                                                     "errcode": errcode}))
