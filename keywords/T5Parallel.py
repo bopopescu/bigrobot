@@ -189,7 +189,9 @@ class T5Parallel(object):
                     helpers.log("****** %d.READY     - task_id(%s)['%s']"
                                 % (iteration, res.task_id, action))
                     helpers.log("USR INFO: on job is ready")                               
-                   
+                              
+                    helpers.log_task_output(task_id)
+
                     return True
                 else:
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
