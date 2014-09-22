@@ -1951,8 +1951,10 @@ L3 inter tenant add nexthop member to 16 nexthop group
 #### sumK only one link in each leaf switch is transmitting due to hashing algorithm in this scenario where leaf has two egress ports, and two spines has two egress ports to each leaf    
     ${sumK} =                                       evaluate                                ${diffC3} + ${diffC4} + ${diffC5} + ${diffC6}
     ${sumL} =                                       evaluate                                ${diffA9} + ${diffB9}       
-    Should Be True                                  ${sumA} > 500000 and ${sumE} > 500000 and ${sumD} > 500000 and ${sumH} > 500000 and ${sumL} < 50 and ${sumK} > 50000 and ${sumJ} > 500000
-    
+    Should Be True                                  ${sumA} > 500000 or ${sumE} > 500000
+    Should Be True                                  ${sumD} > 500000 or ${sumH} > 500000
+    Should Be True                                  ${sumL} < 50
+    Should Be True                                  ${sumK} > 500000 or ${sumJ} > 500000
 #    Should Be True                                  ${diffA2} > 40000
 #    Should Be True                                  ${diffA3} > 40000
 #    Should Be True                                  ${diffA4} > 40000
