@@ -184,9 +184,12 @@ T51 continues Event
 * Keywords
 
 Cli show commands for debug
-	cli  master   show running-config switch
-	cli  master   show switch 		
-	cli  master   show link	
+	cli     master   show ver
+	enable  master   show running-config switch
+	enable  master   show switch 		
+	enable  master   show link	
+	cli     master   show ver
+	
 	
 
 switch node down/up event   [Arguments]    ${node}
