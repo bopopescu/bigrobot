@@ -23,6 +23,7 @@ Setup Three Rack Dual Leaf Topology
     add fabric switch
     sleep  125
     rest verify fabric switch all
+    rest verify fabric link common
    
 verify interface cli 
 	[Tags]  Fabric  feature  IronHorse

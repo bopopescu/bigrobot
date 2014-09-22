@@ -23,6 +23,7 @@ add Single Leaf Three Rack setup
    [Tags]  L2  feature  IronHorse          
    rest verify fabric switch all
    rest verify fabric link
+   rest verify fabric link common
 	
 verify show vns and tenant counters CLI output
 	[Tags]  L2  feature  IronHorse   
