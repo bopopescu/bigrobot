@@ -13,6 +13,7 @@ Library       		String
 
 
 *Test Case
+	
 ### Create Tenant
 		
 T1.1 Create Tenant with name as small 
@@ -93,6 +94,13 @@ T5.5 Create Port group with name in CAPS and mode as LACP
     Create Port Group				PORT-GROUP-4	LACP			leaf_group_new		
 T5.6 Delete Port groups
     Delete All Port Groups
+    
+#### Support Bundles
+
+T6.1 Generate a Support Bundle
+	Generate Support Bundle		
+T6.2 Delete Support Bundle
+	Delete All Support Bundles	
 
 			
 * Keyword
@@ -101,7 +109,7 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
+    Start Selenium Server  -trustAllSSLCertificates
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page

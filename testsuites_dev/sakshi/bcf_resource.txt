@@ -276,6 +276,13 @@ ${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-poi
 ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//span[@id='dijit_form_Button_10_label']
 ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
 
+#### Support Bundle Page
+
+${SUPPORT BUNDLES PLUS BUTTON}						xpath=//div[@id='support_content']/descendant::div[@class='icon_node plus']
+${GENERATE SUPPORT BUNDLE POPUP}					xpath=//div[@title='Generate Support Bundle']	
+${GENERATE SUPPORT BUNDLE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Generate')]
+${PROCEED DELTE SUPPORT BUNDLES BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
+
 
 *** Keywords ***
 Set URLs
@@ -415,6 +422,13 @@ Delete All Port Groups
     Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
 	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Support Bundles
+	Go To Support Bundles Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE SUPPORT BUNDLES BUTTON}
+	Click Element  ${PROCEED DELTE SUPPORT BUNDLES BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
@@ -494,10 +508,7 @@ Welcome Page Should Be Open
 Login Should Have Failed
     Location Should Be  ${ERROR URL}
     Title Should Contain  ${LOG IN TITLE}
-
-
-
-    
+   
 Input Text And Verify
 	[Arguments]  ${field}  ${text}
 	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${field}
@@ -1169,3 +1180,21 @@ Apply Policy List
 	
 	Click Element  ${APPLY INBOUND POLICY SUBMIT BUTTON}   and don't wait
 	Verify Element Invisible  ${APPLY INBOUND POLICY POPUP}
+	
+Generate Support Bundle
+
+	Go To Support Bundles Page
+	   	
+	Verify Element Visible  ${SUPPORT BUNDLES PLUS BUTTON}
+	Click Element  ${SUPPORT BUNDLES PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+	
+	Click Element  ${GENERATE SUPPORT BUNDLE BUTTON}   and don't wait
+	Sleep  180
+	
+	Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+
+
