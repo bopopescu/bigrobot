@@ -257,7 +257,7 @@ T4.2.1. Configure switch - change from spine to leaf or none
 	Manual Passed
 	[Tags]  manual
 T4.2.2. Configure switch - change from leaf to spine or none
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2196
 T4.2.3. Configure switch - change from none to spine or leaf
 	Manual Passed
@@ -457,10 +457,10 @@ T10.10. Duplicate segment
 	Manual Passed
 	[Tags]  manual
 T10.11. Clear segment counters
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2339
 T10.12. Clear tenant counters
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2339
 
 #Segment:
@@ -486,7 +486,7 @@ T11.7. Add, modify, delete Endpoints
 	Manual Passed
 	[Tags]  manual  BVS-2341
 T11.8. Clear segment counters
-	Manual Failed
+	Manual Passed
 	[Tags]  manual
 
 #Endpoints:
