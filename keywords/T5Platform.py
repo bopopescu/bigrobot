@@ -5405,7 +5405,7 @@ class T5Platform(object):
 
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_get_upgrade_progress')
+        helpers.log('INFO: Entering ==> cli_get_upgrade_progress' )
         c.enable(" show upgrade progress")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
@@ -5422,7 +5422,7 @@ class T5Platform(object):
             return {'local': 'not active', 'remote': 'not active'}
 
         else:
-            match = re.match(r'.* Local: (.*) Remote: (.*)', temp[0])
+            match =  re.match(r'.* Local: (.*)Remote: (.*)', temp[0])
             if match:
                 local = match.group(1)
                 remote = match.group(2)
@@ -5443,30 +5443,30 @@ class T5Platform(object):
           output:  return True when hit the breakpoint
 
         '''
-        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch')
+        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch' )
         is_continuous = True
         iteration = 0
         while is_continuous:
-            is_continuous = False
-            iteration += 1
+            is_continuous = False  
+            iteration +=1       
             result = self.cli_get_upgrade_progress(node=node)
             local = result['local']
             remote = result['remote']
-            helpers.log("USER INFO: %d. upgrade state: Local -  %s ; Remote - %s" % (iteration, local, remote))
-            if 'phase1' is breakpoint and 'phase-1-migrate' in remote:
-                helpers.log("USER INFO:  Phase 1 migrate ")
+            helpers.log("USER INFO: **** %d. upgrade state: Local -  %s ; Remote - %s*****" % (iteration, local, remote)) 
+            if ('phase1' == breakpoint) and ('phase-1-migrate' == remote):
+                helpers.log("USER INFO:  upgrade is in:  Phase 1 migrate "  )                
                 return True
-            elif 'phase2' is breakpoint and 'phase-2-migrate' in remote:
-                helpers.log("USER INFO:  Phase 2 migrate ")
+            elif ('phase2' == breakpoint) and ('phase-2-migrate' == remote):
+                helpers.log("USER INFO: upgrade is in:   Phase 2 migrate "  )                
                 return True
 
             elif 'not active' in local  and  'not active' in remote:
                 return  True
-            else:
+            else:                
                 is_continuous = True
-
+                
             if iteration >= 40 :
-                helpers.log('USR ERROR: exceed 20 minutes ')
+                helpers.log('USR ERROR: exceed 20 minutes ' ) 
                 return False
 
             helpers.sleep(30)

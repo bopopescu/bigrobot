@@ -409,6 +409,7 @@ spine switch reboot with 48k mac address in the system
     verify traffic rate  tx_rate  rx_rate  f  b
     verify traffic rate  tx_rate  rx_rate  d  e
     verify traffic rate  tx_rate  rx_rate  e  d
+    reconnect switch ips
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -457,7 +458,7 @@ Master controller node reboot with 48k mac entries
     verify traffic rate  tx_rate  rx_rate  e  d
     stop traffic  
     summary log  waiting 10 minutes for 48000 mac age
-	sleep  600
+	sleep  900
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
