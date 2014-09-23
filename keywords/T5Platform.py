@@ -4637,10 +4637,10 @@ class T5Platform(object):
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     if string == ' support' or string == ' ntp sync':
                         helpers.log("Issuing cmd:%s with timeout option.." % string)
-                        c.enable(string, timeout=200)
+                        c.config(string, timeout=200)
                     else:
                         helpers.log("Issuing cmd:%s with default timeout.." % string)
-                        c.enable(string)
+                        c.config(string)
 
                     prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>]'
                     content = c.cli_content()
