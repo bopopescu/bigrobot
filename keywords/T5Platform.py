@@ -3923,9 +3923,9 @@ class T5Platform(object):
                     try:
                         if (index > len(args) - 1):
                             helpers.warn("Test Path Warning:Expected # of Hops:%s /Actual # of Hops:%s-Probably due to dynamic topology changes" % ((len(args), len(result[0]['physical-path']))))
-                            #helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-path']))))
-                            #return False
-                            
+                            # helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-path']))))
+                            # return False
+
                         if(index < len(args) - 1):
                             if args[index] not in hop["hop-name"]:
                                 helpers.log("Test Path Error: Expected - %s / Actual - %s" % (args[index], hop["hop-name"]))
@@ -3944,10 +3944,10 @@ class T5Platform(object):
                         return  False
 
                 if(len(args) != len(currentHops)):
-                    #helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
-                    #return False
+                    # helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
+                    # return False
                     helpers.warn("Test Path Warning:Expected # of Hops:%s /Actual # of Hops:%s-Probably due to dynamic topology changes" % ((len(args), len(result[0]['physical-path']))))
-                    
+
                 break
 
             except Exception as e:
@@ -4635,7 +4635,12 @@ class T5Platform(object):
                         continue
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
-                    c.config(string)
+                    if string == ' support' or string == ' ntp sync':
+                        helpers.log("Issuing cmd:%s with timeout option.." % string)
+                        c.enable(string, timeout=200)
+                    else:
+                        helpers.log("Issuing cmd:%s with default timeout.." % string)
+                        c.enable(string)
 
                     prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>]'
                     content = c.cli_content()
@@ -5412,7 +5417,7 @@ class T5Platform(object):
 
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_get_upgrade_progress' )
+        helpers.log('INFO: Entering ==> cli_get_upgrade_progress')
         c.enable(" show upgrade progress")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
@@ -5429,7 +5434,7 @@ class T5Platform(object):
             return {'local': 'not active', 'remote': 'not active'}
 
         else:
-            match =  re.match(r'.* Local: (.*)Remote: (.*)', temp[0])
+            match = re.match(r'.* Local: (.*)Remote: (.*)', temp[0])
             if match:
                 local = match.group(1)
                 remote = match.group(2)
@@ -5450,30 +5455,30 @@ class T5Platform(object):
           output:  return True when hit the breakpoint
 
         '''
-        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch' )
+        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch')
         is_continuous = True
         iteration = 0
         while is_continuous:
-            is_continuous = False  
-            iteration +=1       
+            is_continuous = False
+            iteration += 1
             result = self.cli_get_upgrade_progress(node=node)
             local = result['local']
             remote = result['remote']
-            helpers.log("USER INFO: **** %d. upgrade state: Local -  %s ; Remote - %s*****" % (iteration, local, remote)) 
+            helpers.log("USER INFO: **** %d. upgrade state: Local -  %s ; Remote - %s*****" % (iteration, local, remote))
             if ('phase1' == breakpoint) and ('phase-1-migrate' == remote):
-                helpers.log("USER INFO:  upgrade is in:  Phase 1 migrate "  )                
+                helpers.log("USER INFO:  upgrade is in:  Phase 1 migrate ")
                 return True
             elif ('phase2' == breakpoint) and ('phase-2-migrate' == remote):
-                helpers.log("USER INFO: upgrade is in:   Phase 2 migrate "  )                
+                helpers.log("USER INFO: upgrade is in:   Phase 2 migrate ")
                 return True
 
             elif 'not active' in local  and  'not active' in remote:
                 return  True
-            else:                
+            else:
                 is_continuous = True
-                
+
             if iteration >= 40 :
-                helpers.log('USR ERROR: exceed 20 minutes ' ) 
+                helpers.log('USR ERROR: exceed 20 minutes ')
                 return False
 
             helpers.sleep(30)
