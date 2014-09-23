@@ -1034,19 +1034,97 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         c.expect(r'Password: ')
         c.cli('adminadmin')
 
-    def rest_api_benchmark(self, node, total_requests=1000, concurrency=100):
+    def rest_api_benchmark(self, node, requests=2000, concurrent_requests=40,
+                           log_header=False, log_trailer=False):
+        """
+        Run Apache Bench ('ab') against BCF controller. There are 2 parameters which can be tweaked - requests and concurrent_requests.
+        Some caveats:
+        - This test doesn't return a PASS/FAIL result.
+        - The REST command is limited to a simple GET which minimal data transfered.
+
+        Inputs:
+        | rest_api_benchmark | node=c1 | concurrent_request=300 | requests = 5000 |
+        """
         t = test.Test()
         c = t.controller(node)
         session_cookie = c.rest.get_session_cookie()
         url = c.rest.format_url('/api/v1/data/controller/core/controller/role')
+        output_txt = ("%s/output-concurrent-%s,requests-%s.txt"
+                      % (helpers.bigrobot_log_path_exec_instance(),
+                         concurrent_requests, requests))
+        output_tsv = ("%s/output-concurrent-%s,requests-%s.tsv"
+                      % (helpers.bigrobot_log_path_exec_instance(),
+                         concurrent_requests, requests))
+        output_log = ("%s/output.log"
+                      % (helpers.bigrobot_log_path_exec_instance()))
+
         helpers.log("'%s' session cookie: '%s'" % (node, session_cookie))
-        cmd = ("ab -n %s -c %s -H Cookie:session_cookie=%s %s"
-               % (total_requests, concurrency, session_cookie, url))
-        (status, output, errcode) = helpers.run_cmd2(
-                                        # cmd=cmd,
-                                        cmd="grep out /etc/hostss",
+        cmd = ("ab -n %s -c %s -H Cookie:session_cookie=%s -g %s %s"
+               % (requests, concurrent_requests, session_cookie, output_tsv, url))
+        (status, output, err_str, err_code) = helpers.run_cmd2(
+                                        cmd=cmd,
                                         shell=True)
         helpers.log("run_cmd2 output:\n%s" % helpers.prettify(
                                                     {"status": status,
                                                      "output": output,
-                                                     "errcode": errcode}))
+                                                     "err_str": err_str,
+                                                     "err_code": err_code}))
+        helpers.log(output)
+        helpers.log("Dumping benchmark output to %s" % output_txt)
+        helpers.file_write_once(output_txt, output)
+
+        for line in helpers.str_to_list(output):
+            match = re.match(r'.*concurrency level:\s+(\d+).*', line, re.I)
+            if match:
+                result_concurrent = match.group(1)
+                continue
+            match = re.match(r'.*time taken for tests:\s+(\d+(\.\d+)?).*', line, re.I)
+            if match:
+                result_exec_time = match.group(1)
+                continue
+            match = re.match(r'.*complete requests:\s+(\d+).*', line, re.I)
+            if match:
+                result_requests = match.group(1)
+                continue
+            match = re.match(r'.*total transferred:\s+(\d+).*', line, re.I)
+            if match:
+                result_transferred_bytes = match.group(1)
+                continue
+            match = re.match(r'.*requests per second:\s+(\d+(\.\d+)?).*', line, re.I)
+            if match:
+                result_requests_per_second = match.group(1)
+                continue
+            match = re.match(r'.*time per request:\s+(\d+(\.\d+)?).*\(mean\).*', line, re.I)
+            if match:
+                result_time_per_request = match.group(1)
+                continue
+            match = re.match(r'.*time per request:\s+(\d+(\.\d+)?).*concurrent.*', line, re.I)
+            if match:
+                result_time_per_request_concurrent = match.group(1)
+                continue
+            match = re.match(r'.*transfer rate:\s+(\d+(\.\d+)?).*', line, re.I)
+            if match:
+                result_transfer_rate = match.group(1)
+                continue
+
+        if log_header:
+            helpers.file_write_append_once(
+                    output_log,
+                    "#concurrent  #requests  exec_time(sec)  transferred(bytes)  requests/sec  time/request(ms)  concurrent-time/request(ms)  transfer-rate(Kb/sec)\n")
+        helpers.file_write_append_once(
+                    output_log,
+                    "%11s %10s %15s  %18s  %12s  %16s  %16s  %24s\n"
+                    % (result_concurrent,
+                       result_requests,
+                       result_exec_time,
+                       result_transferred_bytes,
+                       result_requests_per_second,
+                       result_time_per_request,
+                       result_time_per_request_concurrent,
+                       result_transfer_rate,
+                       )
+                    )
+        if log_trailer:
+            helpers.log("Benchmark data logged to %s" % output_log)
+            helpers.log("Log results:\n%s"
+                        % helpers.file_read_once(output_log))
