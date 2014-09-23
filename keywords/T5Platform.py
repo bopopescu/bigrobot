@@ -5484,5 +5484,15 @@ class T5Platform(object):
             helpers.sleep(30)
 
 
+    def cli_show_endpoint_pattern(self,pattern):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_show_endpoint_filter: %s"  % pattern)           
+        t = test.Test()
+        c = t.controller('master')         
+        cli= 'show endpoint | grep ' + pattern + ' | wc -l'
+        content = c.cli(cli)['content']   
+        temp = helpers.strip_cli_output(content)        
+        return temp
 
 
