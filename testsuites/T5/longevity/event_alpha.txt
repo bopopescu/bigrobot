@@ -47,6 +47,16 @@ ${spine2}      dt-spine2
  
 * Test Case
  
+	    
+T23 controller node event failover        
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node failover: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+        
+	[Tags] 	longevity    traffic     event     
+ 
+
  
 
 T21 spine switch node down/up event 	 
@@ -73,16 +83,6 @@ T22 leaf switch node down/up event
     
          
 	[Tags] 	longevity   traffic    event   skipped    
-
-	    
-T23 controller node event failover        
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* controller node failover: ${i}*******    
-    \	controller node event HA failover     ${inevent}
-    \   sleep   ${inevent}
-        
-	[Tags] 	longevity    traffic     event    skipped
- 
 
 
 
@@ -165,13 +165,14 @@ T51 continues Event
     ${loop}=  Set Variable   1	
     : FOR   ${index}    IN RANGE    0    ${repeat}	
 	\  Log To Console   "\n========******* in continues event loop: ${index} out of ${repeat} ******====== " 
-	\  ${random}=	Evaluate	 random.randint(1,5)    random,sys
+	\  ${random}=	Evaluate	 random.randint(1,6)    random,sys
 	\  Log To Console   "--------random number is ${random} --------" 
 	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 	 
 	\  Run Keyword if    ${random}==2   T27 data Link down/up event between leaf and spine       
 	\  Run Keyword if    ${random}==3   T28 data Link down/up event between leafs 
 	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
+	\  Run Keyword if    ${random}==6   T23 controller node event failover
   	\  sleep  ${betweenevent}
    
 	[Tags] 	longevity    traffic     
@@ -214,7 +215,7 @@ controller node event HA failover    [Arguments]    ${during}=30
     cli_cluster_take_leader
     sleep  ${during}   
 	Cli show commands for debug
-    clear stats in controller switch	  
+ 	  
 
 controller node event reboot master    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
