@@ -96,6 +96,7 @@ class TestCatalog(object):
             # print "***** Build '%s' not found. Found aggregated build '%s'." % (build_name, aggregated_build_name)
             doc = cursor[0]
             doc["build_names"].append(build_name)
+            doc["updatetime"] = helpers.ts_long_local()
             _ = self.upsert_doc('aggregated_builds', doc, query)
             return doc
         else:
@@ -106,6 +107,7 @@ class TestCatalog(object):
                    "year": year,
                    "build_names": [build_name],
                    "createtime": helpers.ts_long_local(),
+                   "updatetime": helpers.ts_long_local(),
                    }
             _ = self.insert_doc('aggregated_builds', doc)
             return doc
