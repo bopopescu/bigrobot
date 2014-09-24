@@ -48,10 +48,16 @@ done
 ts=`date "+%Y-%m-%d_%H%M%S"`
 year=`../bin/helpers year`
 week_num=`../bin/helpers week_num`
-export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
+
+if [ "$BUILD_NAME"x == x ]; then
+    export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
+    echo "Setting env BUILD_NAME='$BUILD_NAME' for the aggregate."
+else
+    echo "Using env BUILD_NAME='$BUILD_NAME' for the aggregate."
+fi
 
 if [ $do_it -eq 0 ]; then
-    echo "Did you sync with your git repo? Rerun with option '-y' to proceed."
+    echo "Be sure to sync with your git repo first? Rerun with option '-y' to proceed."
     exit 1
 fi
 
@@ -70,3 +76,4 @@ if [ $no_report -eq 0 ]; then
 fi
 
 exit 0
+
