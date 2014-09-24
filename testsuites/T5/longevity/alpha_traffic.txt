@@ -28,11 +28,10 @@ ${linkflap}   120
 ${inevent}       300
 ${betweenevent}  600
  
+${last}     4800
+${count}    4000
 
-${count}    4500
-
-${loop}        10
-${repeat}      60
+ 
  
 * Test Case
 #####  testbed and traffic setup   
@@ -57,7 +56,9 @@ T2 setup traffic make sure all traffic can be forwarded without loss after learn
 		verify endpoint in group  	  10:10:10		  ${count}	
 		
  		start traffic 
-		verify ixia traffic rate    p1     p2
+ 		 : FOR    ${index}   IN RANGE    1   ${last}   
+		\   verify ixia traffic rate    p1     p2
+ 				
 		 
 	[Tags]      full   setup     traffic
  	
