@@ -26,16 +26,30 @@ class TestCatalog(object):
     def features(self, release):
         return self.configs()['features'][release]
 
+#    def aggregated_build(self, build_name):
+#        """
+#        Returns a list of actual builds in an aggregated build.
+#        """
+#        config = self.configs()
+#        if 'aggregated_builds' not in config:
+#            return {}
+#        if build_name not in config['aggregated_builds']:
+#            return {}
+#        return config['aggregated_builds'][build_name]
+
     def aggregated_build(self, build_name):
         """
-        Returns a list of actual builds in an aggregated build.
+        Returns a list of actual builds in an aggregated build. Data is
+        retrieved from the aggregated_build collection.
         """
-        config = self.configs()
-        if 'aggregated_builds' not in config:
-            return {}
-        if build_name not in config['aggregated_builds']:
-            return {}
-        return config['aggregated_builds'][build_name]
+        query = {"name": build_name}
+        cursor = self.aggregated_builds_collection().find(query)
+        count = cursor.count()
+
+        if count >= 1:
+            return cursor[0]['build_names']
+        else:
+            return []
 
 
     # DB access
