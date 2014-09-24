@@ -33,7 +33,8 @@ ${SIGNOUT TITLE}  			Login
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
-${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_5']
+${CONFIRM DELTE POPUP}			xpath=//div[@title='Confirm']
+${PROCEED DELTE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
@@ -79,7 +80,7 @@ ${ADD TENANT PLUS BUTTON}		xpath=//div[@class='icon_node plus']
 ${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
 ${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
-${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_5']
+${SAVE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${PROCEED DELTE TENANTS BUTTON}				xpath=//span[@id='dijit_form_Button_5']
 ${SYSTEM TENANT INTERFACE ENABLE BUTTON}	xpath=//td[@class='label' and contains(text(), 'System Tenant Interface')]/parent::tr/descendant::div[@class='icon_node configure']
 ${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
@@ -281,8 +282,34 @@ ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//span[@id='dijit_form_Button_
 ${SUPPORT BUNDLES PLUS BUTTON}						xpath=//div[@id='support_content']/descendant::div[@class='icon_node plus']
 ${GENERATE SUPPORT BUNDLE POPUP}					xpath=//div[@title='Generate Support Bundle']	
 ${GENERATE SUPPORT BUNDLE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Generate')]
-${PROCEED DELTE SUPPORT BUNDLES BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
+${PROCEED DELTE BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
 
+#### Logging
+${LOGGING LEVELS STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Levels')]
+${CREATE LOG LEVEL PLUS BUTTON}			xpath=//div[@id='logging_config_levels']/descendant::div[@class='icon_node plus']
+${CREATE LOG LEVEL POPUP}				xpath=//div[@title='Create Log Level']
+${LEVEL LOGGER FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logger')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${LOG LEVEL DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Level')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${LOG LEVEL LIST}						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Warn')]/parent::div
+${LOG LEVEL FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Level')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${LOGGING LEVELS EDIT MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT LOG LEVEL POPUP}					xpath=//div[@title='Edit Log Level']
+${LOGGING LEVELS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE ALL LOG LEVELS MINUS BUTTON}	xpath=//div[@id='logging_config_levels']/descendant::div[@class='icon_node minus']
+${REMOTE SERVER STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Remote Servers')]
+${ADD REMOTE SERVER PLUS BUTTON}		xpath=//div[@id='logging_config_remotes']/descendant::div[@class='icon_node plus']
+${CREATE REMOTE SERVER POPUP}			xpath=//div[@title='Create Remote Server']
+${REMOTE SERVER IP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input	
+${REMOTE SERVER PORT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${REMOTE SERVER EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT REMOTE SERVER POPUP}				xpath=//div[@title='Edit Remote Server']
+${REMOTE SERVER DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE ALL REMOTE SERVERS MINUS BUTTON}		xpath=//div[@id='logging_config_remotes']/descendant::div[@class='icon_node minus']
+${LOGGING LEVEL CHECKBOX ALL}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
+${LOGGING REMOTE CHECKBOX ALL}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
+${LOGGING LEVEL CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+${LOGGING REMOTE CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[@id='dijit_form_Button_14_label']
 
 *** Keywords ***
 Set URLs
@@ -426,8 +453,33 @@ Delete All Port Groups
 Delete All Support Bundles
 	Go To Support Bundles Page
     Delete All
-    Verify Element Visible   ${PROCEED DELTE SUPPORT BUNDLES BUTTON}
-	Click Element  ${PROCEED DELTE SUPPORT BUNDLES BUTTON}  and don't wait
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Logging Levels
+	Go To Logging Page
+	Verify Element Visible  ${LOGGING LEVEL CHECKBOX ALL}
+	Click Element  ${LOGGING LEVEL CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	Verify Element Visible  ${LOGGING LEVEL CHECKBOX ALL SELECTED}
+	Click Element  ${DELETE ALL LOG LEVELS MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Remote Servers
+	Go To Logging Page
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+    Verify Element Visible  ${LOGGING REMOTE CHECKBOX ALL}
+	Click Element  ${LOGGING REMOTE CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	Verify Element Visible  ${LOGGING REMOTE CHECKBOX ALL SELECTED}
+	Click Element  ${DELETE ALL REMOTE SERVERS MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All
@@ -612,7 +664,13 @@ Generate Action Menu Xpath Logical Segments
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
-	
+
+Generate Action Menu Xpath Logging
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+    	
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
 	Go To Tenants Page
@@ -1197,4 +1255,144 @@ Generate Support Bundle
 	Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
 	
 
+Create Logging Level
+	[Arguments]  ${logger}	 ${log-level}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait
+	   	
+	Verify Element Visible  ${CREATE LOG LEVEL PLUS BUTTON}
+	Click Element  ${CREATE LOG LEVEL PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE LOG LEVEL POPUP}
+	
+	Input Text And Verify   ${LEVEL LOGGER FIELD}  ${logger}
+	
+	Select From List And Verify   
+	...		${LOG LEVEL DROPDOWN BUTTON}  
+	...		${LOG LEVEL LIST}    
+	...		${LOG LEVEL FIELD}  
+	...		${log-level}
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE LOG LEVEL POPUP}
+	
+Edit Logging Level Info
+	[Arguments]  ${logger}	 ${log-level}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait
+	   	
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${logger}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${LOGGING LEVELS EDIT MENU ITEM}
+    Click Element  ${LOGGING LEVELS EDIT MENU ITEM}  and don't wait
 
+    Verify Element Visible  ${EDIT LOG LEVEL POPUP}
+	
+	Input Text And Verify   ${LEVEL LOGGER FIELD}  ${logger}
+	
+	Select From List And Verify   
+	...		${LOG LEVEL DROPDOWN BUTTON}  
+	...		${LOG LEVEL LIST}    
+	...		${LOG LEVEL FIELD}  
+	...		${log-level}
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${EDIT LOG LEVEL POPUP}
+	
+Delete Logging Level
+	[Arguments]  ${logger}
+	
+	Go To Logging Page	
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait 
+		
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${logger}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${LOGGING LEVELS DELETE MENU ITEM}
+    Click Element  ${LOGGING LEVELS DELETE MENU ITEM}  and don't wait
+
+    #Verify Element Visible  ${CONFIRM DELTE POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	#Verify Element Invisible  ${CONFIRM DELTE POPUP}
+		
+	
+Configure Remote Server
+	[Arguments]  ${server}	${port}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+	   	
+	Verify Element Visible  ${ADD REMOTE SERVER PLUS BUTTON}
+	Click Element  ${ADD REMOTE SERVER PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE REMOTE SERVER POPUP}
+	
+	Input Text And Verify   ${REMOTE SERVER IP FIELD}  ${server}
+	Input Text And Verify   ${REMOTE SERVER PORT FIELD}  ${port}
+	Click Element  ${CREATE REMOTE SERVER POPUP}  and don't wait
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE REMOTE SERVER POPUP}
+	
+Edit Remote Server Info
+	[Arguments]  ${server}	${port}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+	
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${server}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${REMOTE SERVER EDIT MENU ITEM}
+    Click Element  ${REMOTE SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT REMOTE SERVER POPUP}
+	
+	Input Text And Verify   ${REMOTE SERVER IP FIELD}  ${server}
+	Input Text And Verify   ${REMOTE SERVER PORT FIELD}  ${port}
+	Click Element  ${EDIT REMOTE SERVER POPUP}  and don't wait
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${EDIT REMOTE SERVER POPUP}
+	
+Delete Remote Server
+	[Arguments]  ${server}
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait	 
+		
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${server}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${REMOTE SERVER DELETE MENU ITEM}
+    Click Element  ${REMOTE SERVER DELETE MENU ITEM}  and don't wait
+
+    #Verify Element Visible  ${CONFIRM DELTE POPUP}
+    Highlight Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}
+    
+    Verify Element Visible   ${DELETE LOGGING REMOTE PROCEED BUTTON}
+	Click Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}  and don't wait
+	#Verify Element Invisible  ${CONFIRM DELTE POPUP}
+	
