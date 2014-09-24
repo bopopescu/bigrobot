@@ -283,6 +283,7 @@ class Ixia(object):
             if prefix is not None:
                     helpers.log("Setting Gateway prefix: %s" % prefix)
                     ixia_refs['gateway_prefix'] = handle.getAttribute(ip_device_ixia, '-prefix')
+                    handle.setMultiAttribute(ixia_refs['gateway_prefix'], '-clearOverlays', False, '-pattern', 'singleValue')
                     ixia_refs['gateway_prefix_singleValue'] = handle.add(ixia_refs['gateway_prefix'], 'singleValue')
                     handle.setMultiAttribute(ixia_refs['gateway_prefix_singleValue'], '-value', prefix)
             handle.commit()
