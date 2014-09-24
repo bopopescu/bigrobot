@@ -3591,7 +3591,15 @@ initialize host
     BASH run command                                h3-rack2                                ifup eth2
     sleep                                           1
     BASH run command                                h3-rack2                                ifup eth3
-      
+    BASH kill process                           h1-rack0                              dhclient
+    BASH kill process                           h2-rack0                              dhclient
+    BASH kill process                           h3-rack0                              dhclient
+    BASH kill process                           h1-rack1                              dhclient
+    BASH kill process                           h2-rack1                              dhclient
+    BASH kill process                           h3-rack1                              dhclient    
+    BASH kill process                           h1-rack2                              dhclient
+    BASH kill process                           h2-rack2                              dhclient
+    BASH kill process                           h3-rack2                              dhclient        
 	BASH ifup intf							    h1-rack0 								bond0
 	BASH ifup intf							    h2-rack0								bond0
 	BASH ifup intf							    h3-rack0								bond0
