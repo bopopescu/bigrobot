@@ -45,9 +45,9 @@ done
 ts=`date "+%Y-%m-%d_%H%M%S"`
 year=`../bin/helpers year`
 week_num=`../bin/helpers week_num`
-build_name="bvs master aggregated ${year} wk${week_num}"
+export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
 
-echo "Start updating data for aggregated build '$build_name'..."
+echo "Start updating data for aggregated build '$BUILD_NAME'..."
 
 if [ $no_baseline -eq 0 ]; then
     ./run_repopulate_build_baseline.sh
