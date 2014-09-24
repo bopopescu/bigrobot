@@ -280,18 +280,12 @@ class Ixia(object):
                 helpers.log('Adding GW_IP : %s with gw_ip_step : %s' % (gw_ip, gw_step))
                 handle.setMultiAttribute(ixia_refs['gatewayIp'] + '/counter', 'direction', 'increment', '-start', gw_ip, '-step', gw_step)
             handle.commit()
-            if prefix is not None:
-                    helpers.log("Setting Gateway prefix: %s" % prefix)
-                    ixia_refs['gateway_prefix'] = handle.getAttribute(ip_device_ixia, '-prefix')
-                    handle.setMultiAttribute(ixia_refs['gateway_prefix'], '-clearOverlays', False, '-pattern', 'singleValue')
-                    ixia_refs['gateway_prefix_singleValue'] = handle.add(ixia_refs['gateway_prefix'], 'singleValue')
-                    handle.setMultiAttribute(ixia_refs['gateway_prefix_singleValue'], '-value', prefix)
-            handle.commit()
             # handle.remapIds(ixia_refs['address_counter'])[0]
-
+            if prefix is None:
+                prefix = '24'
             ixia_refs['prefix'] = handle.getAttribute(ip_device_ixia, '-prefix')
             ixia_refs['prefix_singleValue'] = handle.add(ixia_refs['prefix'], 'singleValue')
-            handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', '24')
+            handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', prefix)
             handle.commit()
             handle.remapIds(ixia_refs['prefix'])[0]
 
