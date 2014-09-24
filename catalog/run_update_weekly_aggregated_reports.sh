@@ -26,6 +26,7 @@ fi
 no_baseline=0
 no_aggregate=0
 no_report=0
+do_it=0
 
 while :
 do
@@ -33,6 +34,8 @@ do
     -no-baseline) no_baseline=1;;
     -no-aggregate) no_aggregate=1;;
     -no-report) no_report=1;;
+    -yes) do_it=1;;
+    -y) do_it=1;;
     --) shift; break;;
     -h) usage;;
     -help) usage;;
@@ -46,6 +49,11 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 year=`../bin/helpers year`
 week_num=`../bin/helpers week_num`
 export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
+
+if [ $do_it -eq 0 ]; then
+    echo "Did you sync with your git repo? Rerun with option '-y' to proceed."
+    exit 1
+fi
 
 echo "Start updating data for aggregated build '$BUILD_NAME'..."
 
@@ -61,3 +69,4 @@ if [ $no_report -eq 0 ]; then
     ./gen_report.sh -all
 fi
 
+exit 0
