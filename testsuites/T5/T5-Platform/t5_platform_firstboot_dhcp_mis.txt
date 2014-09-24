@@ -97,7 +97,7 @@ T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
 	sleep  ${verylong}	
   	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
 	first_boot_controller_initial_cluster_setup 	c1  no   
-	first_boot_controller_menu_gateway   			c1  10.9.16.1  
+	first_boot_controller_menu_gateway   			c1  10.85.43.34  
 	first_boot_controller_menu_dnsserver            c1  8.8.8.8  	      
 	first_boot_controller_menu_apply_negative       c1   gateway=${gw}   dns=${dns}	
 	sleep  ${verylong}		
@@ -107,7 +107,7 @@ T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
     controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
  
  	   
-	[Tags] 	full  feature   firstboot   
+	[Tags] 	full  feature   firstboot   skipped
 
   
 
