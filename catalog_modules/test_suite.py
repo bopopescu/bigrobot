@@ -153,15 +153,19 @@ class TestSuite(object):
 
     def git_auth(self, filename):
         filename = re.sub(r'.*bigrobot/', '../', filename)
-        (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
+        (status, output, err_out, err_code) = helpers.run_cmd2("./git-auth " + filename, shell=True)
         output = output.strip()
         authors = Authors.get()
         if output in authors:
             return authors[output]
+        elif status == False:
+            helpers.log(
+                    "ERROR: Shell command error (code:'%s', mesg:'%s'). Using 'unknown' author."
+                    % (err_code, err_out))
         else:
             helpers.log(
                     "ERROR: Author '%s' does not exist. Using 'unknown' author." % output)
-            return authors['Unknown']
+        return authors['Unknown']
 
     def check_topo_type(self, suite):
         """

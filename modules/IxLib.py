@@ -181,7 +181,7 @@ class Ixia(object):
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, prefix=None):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -265,8 +265,6 @@ class Ixia(object):
                 ixia_refs['gatewayIp'] = handle.getAttribute(ip_device_ixia, '-gatewayIp')
                 ixia_refs['gatewayIp_singleValue'] = handle.add(ixia_refs['gatewayIp'], 'singleValue')
                 handle.setMultiAttribute(ixia_refs['gatewayIp_singleValue'], '-value', gw_ip)
-
-
             else:
                 helpers.log('Adding Multipier ...for mac and Ip')
                 helpers.log('Adding Mac: %s with mac_step : %s' % (mac, mac_step))
@@ -281,6 +279,11 @@ class Ixia(object):
                 helpers.log('Adding GW_IP : %s with gw_ip_step : %s' % (gw_ip, gw_step))
                 handle.setMultiAttribute(ixia_refs['gatewayIp'] + '/counter', 'direction', 'increment', '-start', gw_ip, '-step', gw_step)
 
+            if prefix is not None:
+                    helpers.log("Setting Gateway prefix: %s" % prefix)
+                    ixia_refs['gateway_prefix'] = handle.getAttribute(ip_device_ixia, '-prefix')
+                    ixia_refs['gateway_prefix_singleValue'] = handle.add(ixia_refs['gateway_prefix'], 'singleValue')
+                    handle.setMultiAttribute(ixia_refs['gateway_prefix_singleValue'], '-value', gw_ip)
             handle.commit()
             # handle.remapIds(ixia_refs['address_counter'])[0]
 
@@ -986,6 +989,7 @@ class Ixia(object):
         rstBit = kwargs.get('rstBit', False)
         finBit = kwargs.get('finBit', False)
         synBit = kwargs.get('synBit', False)
+        gw_prefix = kwargs.get('gw_prefix', None)
 
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
@@ -1120,7 +1124,8 @@ class Ixia(object):
                 self._arp_check = False
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                           dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                          dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type, vlan_id=vlan_id)
+                                                                          dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
+                                                                          vlan_id=vlan_id, prefix=gw_prefix)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
 
                 traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
@@ -1137,7 +1142,8 @@ class Ixia(object):
                 self._arp_check = True
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                           dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                          dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id)
+                                                                          dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id,
+                                                                          prefix=gw_prefix)
                 self.ix_start_hosts(ip_type=ip_type)
                 self._started_hosts = True
                 helpers.log("IP Devices: %s" % ip_devices)

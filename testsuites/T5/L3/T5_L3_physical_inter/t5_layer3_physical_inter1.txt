@@ -1250,6 +1250,12 @@ initialize host
     BASH stop service                           h1                                isc-dhcp-server
     BASH stop service                           h2                                isc-dhcp-server
     BASH stop service                           h3                                isc-dhcp-server
+    BASH kill process                           h1                              dhclient
+    BASH kill process                           h2                              dhclient
+    BASH kill process                           h3                              dhclient
+    BASH kill process                           h4                              dhclient
+    BASH kill process                           h5                              dhclient
+    BASH kill process                           h6                              dhclient    
 #    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
 #    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
 #    BASH delete tag                             h3                              bond0.1003              soft_error=${true}

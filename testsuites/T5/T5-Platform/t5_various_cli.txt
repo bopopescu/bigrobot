@@ -517,12 +517,91 @@ T34 Rebooting dummy switch
 #	...  10
 #	Cli Run  master  enable;config;set length 0
 
+T36 Tenant names
+	Verify Regular Name  tenant
+T37 Segment names
+	Cli Run  master  tenant test
+	Verify Regular Name  segment
+T38 User names
+	Verify Regular Name  user
+T39 Port-group names
+	Verify Regular Name  port-group
+T40 Switch names
+	Verify Regular Name  switch
+T41 Endpoint names
+	Cli Run  master  tenant test; segment test
+	Verify Regular Name  endpoint
+T42 Policy-list names
+	Cli Run  master  tenant test; logical-router
+	Verify Regular Name  policy-list
+T43 Next-hop-group names
+	Cli Run  master  tenant test; logical-router
+	Verify Regular Name  next-hop-group
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
     ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
+
+Verify Name
+	[Arguments]  ${name}  ${character}
+	Cli Run  master  ${name} 'abc${character}ttt'
+	Cli Run and Verify Output
+	...  master
+	...  show run ${name}
+	...  abc${character}ttt
+
+Verify Name Negative
+	[Arguments]  ${name}  ${character}
+	Run Keyword and Expect Error  *  Cli Run  master  ${name} 'abc${character}ttt'
+
+
+Verify Regular Name
+	[Arguments]  ${name}
+    Verify Name  ${name}  -
+    Verify Name  ${name}  _
+    Verify Name  ${name}  .
+    Verify Name  ${name}  1
+    Verify Name  ${name}  2
+    Verify Name  ${name}  3
+    Verify Name  ${name}  4
+    Verify Name  ${name}  5
+    Verify Name  ${name}  6
+    Verify Name  ${name}  7
+    Verify Name  ${name}  8
+    Verify Name  ${name}  9
+    Verify Name  ${name}  0
+    Verify Name Negative  ${name}  ~
+    Verify Name Negative  ${name}  !
+    Verify Name Negative  ${name}  @
+    Verify Name Negative  ${name}  \#
+    Verify Name Negative  ${name}  $
+    Verify Name Negative  ${name}  %
+    Verify Name Negative  ${name}  ^
+    Verify Name Negative  ${name}  &
+    Verify Name Negative  ${name}  *
+    Verify Name Negative  ${name}  (
+    Verify Name Negative  ${name}  )
+    Verify Name Negative  ${name}  +
+    Verify Name Negative  ${name}  `
+    Verify Name Negative  ${name}  =
+    Verify Name Negative  ${name}  [
+    Verify Name Negative  ${name}  ]
+    Verify Name Negative  ${name}  \\
+    Verify Name Negative  ${name}  ;
+    Verify Name Negative  ${name}  '
+    Verify Name Negative  ${name}  ,
+    Verify Name Negative  ${name}  /
+    Verify Name Negative  ${name}  <
+    Verify Name Negative  ${name}  >
+    Verify Name Negative  ${name}  ?
+    Verify Name Negative  ${name}  :
+    Verify Name Negative  ${name}  "
+    Verify Name Negative  ${name}  {
+    Verify Name Negative  ${name}  }
+    Verify Name Negative  ${name}  |
 
 Various Suite Setup
 	Base Suite Setup

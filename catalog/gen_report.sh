@@ -90,7 +90,8 @@ if [ "$summary"x != x ]; then
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites | tee -a $output
     echo ""
-    scp_to_web $no_scp $output $output_summary_no_timestamp
+    gzip -9 $output
+    scp_to_web $no_scp ${output}.gz ${output_summary_no_timestamp}.gz
 fi
 
 if [ "$detailed"x != x ]; then
@@ -101,6 +102,7 @@ if [ "$detailed"x != x ]; then
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites --show-untested --show-manual | tee -a $output
     echo ""
-    scp_to_web $no_scp $output $output_detailed_no_timestamp
+    gzip -9 $output
+    scp_to_web $no_scp ${output}.gz ${output_detailed_no_timestamp}.gz
 fi
 
