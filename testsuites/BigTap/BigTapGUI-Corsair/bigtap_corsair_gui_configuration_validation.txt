@@ -18,11 +18,11 @@ Library       		String
 T1.1 Interface with regular name-filter		
  	Configure Big Tap Interface from Controller Menu		ethernet1				00:00:08:9e:01:ce:b8:6a			filter				filter-1
 T1.2 Interface with regular name-delivery-1	
- 	Configure Big Tap Interface from Controller Menu		ethernet1				00:00:08:9e:01:e1:86:0e			delivery			delivery-1
+ 	Configure Big Tap Interface from Controller Menu		ethernet1				00:00:08:9e:01:e1:86:0e			delivery			delivery_1
 T1.3 Interface with regular name-delivery-2	
- 	Configure Big Tap Interface from Controller Menu		ethernet2				00:00:08:9e:01:e1:86:0e			delivery			delivery-2
+ 	Configure Big Tap Interface from Controller Menu		ethernet2				00:00:08:9e:01:e1:86:0e			delivery			delivery 2
 T1.4 Interface with regular name-service-1	
- 	Configure Big Tap Interface from Controller Menu		ethernet3				00:00:08:9e:01:ce:b8:6a			service				service-1
+ 	Configure Big Tap Interface from Controller Menu		ethernet3				00:00:08:9e:01:ce:b8:6a			service				SERVICE-1
 T1.5 Edit regular name-filter	
  	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:08:9e:01:ce:b8:6a			filter				filter-new-1
 T1.6 Edit regular name-delivery-1				
@@ -36,7 +36,7 @@ T1.9 Edit interface type and name1
 T1.10 Edit interface type and name2			
 	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:08:9e:01:e1:86:0e			filter				filter-new-4
 T1.11 Edit interface type and name2			
-	Edit Big Tap Interface from Controller Menu				ethernet2				00:00:08:9e:01:e1:86:0e			filter				filter-new-5	
+	Edit Big Tap Interface from Controller Menu				ethernet2				00:00:08:9e:01:e1:86:0e			filter				filter-new interface	
 T1.12 Delete regular name-filter				
  	Edit Big Tap Interface from Controller Menu				ethernet1				00:00:08:9e:01:ce:b8:6a			${EMPTY}			${EMPTY}
 T1.13 Delete regular name-delivery-1			
@@ -79,7 +79,7 @@ T2.13 Delete regular name-delivery-1
 T2.14 Delete regular name-delivery-2		
  	Delete Big Tap Interface from Big Tap Menu																							filter-new-5
 T2.15 Delete regular name-service-2			
- 	Delete Big Tap Interface from Big Tap Menu																						service-new-2			
+ 	Delete Big Tap Interface from Big Tap Menu																							service-new-2			
 T2 Teardown
  	Delete All Big Tap Resources
 # 
@@ -97,7 +97,7 @@ T3.2 Delivery Interface with 1 delivery interface and name delivery_group
 T3.3 Another Filter Interface group with previous filter interface and name filter group 1					
  	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group2		ixia-2-9
 T3.4 Another Delivery Interface group with previous delivery interface				
- 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery-group2		ixia-2-15	
+ 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery group2		ixia-2-15	
 T3.5 Delete filter interface from Filter Interface group					
  	Delete Big Tap Interface from Interface Group				filter				filter-group		ixia-2-9
 T3.6 Delete delivery interface from Delivery Interface group				
@@ -129,44 +129,7 @@ T4.7 Configure udf0 with L4 start offset 20
 T4.8 Configure udf0 with L4 start offset 24					
  	Configure Big TapUser Defined Offsets						udf3				L4 Start			24
 
-### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
-T5.1 User with password 	
- 	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
-T5.2 User no password		
- 	Configure User			__random__			${EMPTY}			${EMPTY}					User no password		${EMPTY}
-T5.3 User wrong password
- 	Configure User			__random__			testtest1			testtest					User wrong password		${EMPTY}
-T5.4 User no full name	
- 	Configure User			__random__			testtest			testtest					${EMPTY}				${EMPTY}
-T5.5 User group admin
- 	Configure User			__random__			adminadmin			adminadmin					User group admin		admin
-T5.6 User new group
- 	Configure User			__random__			adminadmin			adminadmin					User new group			__new__
-T5.7 User unhashable pass
-	Configure User			__random__			;"$					testtest					User unhashable pass	${EMPTY}
-T5 Teardown
- 	Delete All Big Tap Resources
 
-
-### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match				${src-ip}		${dst-ip}
-T6.1 RBAC Allow All		
-	Configure RBAC			 		__random__			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}    		${EMPTY}     	${EMPTY}	
-T6.2 RBAC IPv4
- 	Configure Big Tap Interface from Controller Menu		ethernet1		00:00:08:9e:01:ce:b8:6a			filter				filter1
- 	Configure Big Tap Interface from Controller Menu		ethernet1		00:00:08:9e:01:e1:86:0e			delivery			delivery1
- 	#Configure Big Tap Service								service1				${EMPTY}			${EMPTY}
-	Configure RBAC				 	__random__			admin				filter1			delivery1		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		${EMPTY}
-T6.3 RBAC IPv6
- 	#Configure Big Tap Interface from Controller Menu		ethernet6		00:00:08:9e:01:e1:86:0e			filter				filter3
- 	Configure Big Tap Interface from Controller Menu		ethernet2		00:00:08:9e:01:e1:86:0e			delivery			delivery2
- 	#Configure Big Tap Service								service2				${EMPTY}			${EMPTY}
- 	Configure RBAC				 	__random__			admin				filter1			delivery2		${EMPTY}	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
-T6.4 RBAC ARP
- 	Configure RBAC				 	__random__			admin				filter1			delivery1		${EMPTY}	  	ARP - 0x806 (2054)		${EMPTY}	${EMPTY}
-T6 Teardown
- 	Delete All Big Tap Resources
- 
- 
 # ### Configure Switch Alias										Switch	 						Alias	 			
 T7.1 Switch with regular alias	 				
  	Configure Switch Alias										00:00:08:9e:01:ce:b8:6a			app-rlb9-1

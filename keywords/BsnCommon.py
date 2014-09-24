@@ -147,7 +147,7 @@ class BsnCommon(object):
         | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
 
         Return Value:
-        - Tuple of (<status_flag>,  "<output>", <errorcode>)
+        - Tuple of (<status_flag>,  "<output>", "<err_str>", <errorcode>)
 
         See helpers.run_cmd2() for more info.
         """

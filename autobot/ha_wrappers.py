@@ -218,11 +218,11 @@ class HaControllerNode(object):
 
     def console_reconnect(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
-        return n.console(*args, **kwargs)
+        return n.console_reconnect(*args, **kwargs)
 
     def console_close(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
-        return n.console(*args, **kwargs)
+        return n.console_close(*args, **kwargs)
 
     def monitor_reauth(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)

@@ -23,6 +23,9 @@ ${TENANTS TITLE}			Tenants
 ${ENDPOINTS TITLE}			Endpoints
 ${FABRIC SUMMARY TITLE}		Summary
 ${TEST PATH TITLE}    		Test Path
+${SUPPORT BUNDLES TITLE}	Support
+${MONITOR SESSIONS TITLE}	Monitor Session
+${LOGGING TITLE}			Logging
 ${TOPOLOGY TITLE}			Topology
 ${SIGNOUT TITLE}  			Login
 
@@ -43,6 +46,7 @@ ${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
 #${TENANTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Tenants')]
 #${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
 ${VISIBILITY MENU}		  		xpath=//div[@class='nav' and contains(text(), 'Visibility')]
+${SETTINGS MENU}				xpath=//div[@class='nav' and contains(text(), 'Settings')]
 ${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
 ${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
 ${INTERFACES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Interfaces')]
@@ -51,6 +55,9 @@ ${TENANTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Tenants')]
 ${ENDPOINTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
 ${FABRIC SUMMARY LABEL}			xpath=//div[@class='nav_menu_item' and contains(text(), 'Fabric Summary')]
 ${TEST PATH LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Test Path')]
+${SUPPORT BUNDLES LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Support Bundles')]
+${MONITOR SESSIONS LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Monitor Sessions')]	
+${LOGGING LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Logging')]
 ${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
 
 
@@ -269,6 +276,13 @@ ${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-poi
 ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//span[@id='dijit_form_Button_10_label']
 ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
 
+#### Support Bundle Page
+
+${SUPPORT BUNDLES PLUS BUTTON}						xpath=//div[@id='support_content']/descendant::div[@class='icon_node plus']
+${GENERATE SUPPORT BUNDLE POPUP}					xpath=//div[@title='Generate Support Bundle']	
+${GENERATE SUPPORT BUNDLE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Generate')]
+${PROCEED DELTE SUPPORT BUNDLES BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
+
 
 *** Keywords ***
 Set URLs
@@ -283,11 +297,14 @@ Set URLs
 	Set Suite Variable     	${ENDPOINTS URL}  			https://${SERVER}/bcf/endpoints
 	Set Suite Variable     	${FABRIC SUMMARY URL}  		https://${SERVER}/bcf/summary
 	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
+	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
+	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
+	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
 
 Valid Login
     [Arguments]  ${username}  ${password}
-    #Go To Login Page
+    Go To Login Page
     Input Username    ${username}
     Input Password    ${password}
     Submit Credentials
@@ -367,7 +384,25 @@ Go To Test Path Page
     Wait Until Page Loaded 
     Title Should Contain  ${TEST PATH TITLE}
     Sleep  1
+ 
+Go To Support Bundles Page
+	Go To  ${SUPPORT BUNDLES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SUPPORT BUNDLES TITLE}
+    Sleep  1
+ 
+Go To Monitor Sessions Page
+  	Go To  ${MONITOR SESSIONS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${MONITOR SESSIONS TITLE}
+    Sleep  1
     
+Go To Logging Page  
+	Go To  ${LOGGING URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${LOGGING TITLE}
+    Sleep  1
+
 Go To Signout Page
 	Go To  ${SIGNOUT URL}
     Wait Until Page Loaded 
@@ -386,6 +421,13 @@ Delete All Port Groups
     Delete All
     Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
 	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Support Bundles
+	Go To Support Bundles Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE SUPPORT BUNDLES BUTTON}
+	Click Element  ${PROCEED DELTE SUPPORT BUNDLES BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All
@@ -466,10 +508,7 @@ Welcome Page Should Be Open
 Login Should Have Failed
     Location Should Be  ${ERROR URL}
     Title Should Contain  ${LOG IN TITLE}
-
-
-
-    
+   
 Input Text And Verify
 	[Arguments]  ${field}  ${text}
 	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${field}
@@ -1141,3 +1180,21 @@ Apply Policy List
 	
 	Click Element  ${APPLY INBOUND POLICY SUBMIT BUTTON}   and don't wait
 	Verify Element Invisible  ${APPLY INBOUND POLICY POPUP}
+	
+Generate Support Bundle
+
+	Go To Support Bundles Page
+	   	
+	Verify Element Visible  ${SUPPORT BUNDLES PLUS BUTTON}
+	Click Element  ${SUPPORT BUNDLES PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+	
+	Click Element  ${GENERATE SUPPORT BUNDLE BUTTON}   and don't wait
+	Sleep  180
+	
+	Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+
+

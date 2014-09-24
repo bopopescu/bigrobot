@@ -19,13 +19,37 @@ fi
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
 outfile=raw_data.`basename $0`_output.$ts.log
+errfile=raw_data.`basename $0`_errors.$ts.log
 
 ./mv_logs.sh
 ./_doit.sh > $outfile 2>&1
+
+server=`uname -n`
+pwd=`pwd`
+logfile="${server}:${pwd}/$outfile"
+if [ "$BUILD_URL"x = x ]; then
+     build_url=$BUILD_URL
+else
+     build_url=None
+fi
 
 ../bin/send_mail.py \
     --sender vui.le@bigswitch.com \
     --receiver bigrobot_stats_collection@bigswitch.com \
     --subject "Dashboard baseline: '$BUILD_NAME'" \
-    --message "Script executed: $0" \
+    --message "Script executed: $0
+Log file: $logfile
+BUILD_URL: $build_url" \
     --infile $outfile
+
+# Reporting potential test suite errors
+grep -n -e "ERROR" -e "^Exception" -e "traceback" $outfile > $errfile
+if [ -s $errfile ]; then
+    ../bin/send_mail.py \
+        --sender vui.le@bigswitch.com \
+        --receiver bigrobot_stats_collection@bigswitch.com \
+        --subject "ERROR in Dashboard baseline: '$BUILD_NAME'" \
+        --message "Log file: $logfile
+BUILD_URL: $build_url" \
+        --infile $errfile
+fi

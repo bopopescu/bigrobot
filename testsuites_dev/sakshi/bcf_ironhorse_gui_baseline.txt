@@ -6,10 +6,11 @@ Suite Teardown  	config suite teardown
 Force Tags      	GUI BCF Ironhorse
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
 Library        		SeleniumLibrary
 Resource        	bcf_resource.txt
 Library       		String
-
 
 
 *Test Case
@@ -32,7 +33,13 @@ T1.8 Check Fabric Summary Page
     Go To Fabric Summary Page
 T1.9 Check Testpath Page
     Go To Testpath Page
-T1.10 Check Signout Page
+T1.10 Check Support Bundles Page
+    Go To Support Bundles Page
+T1.11 Check Monitor Sessions Page
+    Go To Monitor Sessions Page 
+T1.12 Check Logging Page
+    Go To Logging Page  
+T1.13 Check Signout Page
     Go To Signout Page 
 
 
@@ -42,15 +49,23 @@ T2 Setup
     Valid Login  admin  adminadmin
     Sleep  1 sec
 T2.1 Controller Switches	
-	Check Hover					${FABRIC MENU}				${SWITCHES LABEL}		${SWITCHES URL}				${SWITCHES TITLE}
+	Check Hover					${FABRIC MENU}				${SWITCHES LABEL}				${SWITCHES URL}				${SWITCHES TITLE}
 T2.2 Controller Interfaces
-	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}		${INTERFACES URL}			${INTERFACES TITLE}
+	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}				${INTERFACES URL}			${INTERFACES TITLE}
 T2.3 Controller Portgroups	
-	Check Hover					${FABRIC MENU}				${PORT GROUPS LABEL}	${PORT GROUPS URL}			${PORT GROUPS TITLE}
-T2.4 Test Path			
-	Check Hover					${VISIBILITY MENU}			${TEST PATH LABEL}		${TEST PATH URL}			${TEST PATH TITLE}
-T2.5 Sign Out		
-	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 		${LOG IN URL}				${LOG IN TITLE}
+	Check Hover					${FABRIC MENU}				${PORT GROUPS LABEL}			${PORT GROUPS URL}			${PORT GROUPS TITLE}
+T2.4 Fabric Summary			
+	Check Hover					${VISIBILITY MENU}			${FABRIC SUMMARY LABEL}			${FABRIC SUMMARY URL}		${FABRIC SUMMARY TITLE}
+T2.5 Test Path			
+	Check Hover					${VISIBILITY MENU}			${TEST PATH LABEL}				${TEST PATH URL}			${TEST PATH TITLE}
+T2.6 Support Bundles			
+	Check Hover					${VISIBILITY MENU}			${SUPPORT BUNDLES LABEL}		${SUPPORT BUNDLES URL}		${SUPPORT BUNDLES TITLE}
+T2.7 Monitor Sessions		
+	Check Hover					${VISIBILITY MENU}			${MONITOR SESSIONS LABEL} 		${MONITOR SESSIONS URL}		${MONITOR SESSIONS TITLE}
+T2.8 Logging			
+	Check Hover					${SETTINGS MENU}			${LOGGING LABEL}				${LOGGING URL}				${LOGGING TITLE}
+T2.9 Sign Out		
+	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 				${LOG IN URL}				${LOG IN TITLE}
 
 
 ###  Check Element			Element 
@@ -79,7 +94,7 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
+    Start Selenium Server  -trustAllSSLCertificates
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
