@@ -62,11 +62,11 @@ T14 background show command (every 1 hour )
 	 
 	 	 
 	log  show support  
-		generate_support 
-		delete_support	
+		${file}=  generate_support 
+		delete_support	  filename=${file}
 	log  check ntp time
 		cli  master   show ntp 	  
-   
+ 	  
 	[Tags]     full  traffic   backgroupcheck
 
 

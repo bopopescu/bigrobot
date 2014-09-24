@@ -1040,7 +1040,7 @@ class Test(object):
                     % (helpers.ulimit(),
                        br_utils.end_of_output_marker()))
         helpers.log("Staging User ID:\n%s%s"
-                    % (helpers.id(),
+                    % (helpers.user_id(),
                        br_utils.end_of_output_marker()))
         helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
 

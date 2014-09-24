@@ -72,6 +72,10 @@ class RestClient(object):
     def set_session_cookie(self, session):
         helpers.log("Saving session cookie %s" % session)
         self.session_cookie = session
+        return self.session_cookie
+
+    def get_session_cookie(self):
+        return self.session_cookie
 
     def status_code(self, result=None):
         if not result:

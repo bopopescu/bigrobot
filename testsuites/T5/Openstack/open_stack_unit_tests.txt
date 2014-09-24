@@ -15,6 +15,7 @@ Library		keywords/T5ZTN.py
 
 *** Test Cases ***
 TC01 Open Stack Unit Testcases test_bsc_interface
+	[Tags]     smoke
 	${workspace}=  Get Environment Variable  WORKSPACE
 	${c1_ip}=  get node ip   c1
 #	${out}=  run_cmd  openssl s_client -connect ${c1_ip}:8000 > ${workspace}/temp.txt
@@ -30,6 +31,7 @@ TC01 Open Stack Unit Testcases test_bsc_interface
 	Should Be Equal  ${count}  1
 
 TC02 Open Stack Unit Testcases test_t5_api
+	[Tags]     smoke
         ${workspace}=  Get Environment Variable  WORKSPACE
         ${c1_ip}=  get node ip   c1
 #       ${out}=  run_cmd  openssl s_client -connect ${c1_ip}:8000 > ${workspace}/temp.txt

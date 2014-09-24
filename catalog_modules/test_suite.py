@@ -1,6 +1,7 @@
 import os
 import re
 import xmltodict
+import getpass
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
@@ -152,15 +153,19 @@ class TestSuite(object):
 
     def git_auth(self, filename):
         filename = re.sub(r'.*bigrobot/', '../', filename)
-        (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
+        (status, output, err_out, err_code) = helpers.run_cmd2("./git-auth " + filename, shell=True)
         output = output.strip()
         authors = Authors.get()
         if output in authors:
             return authors[output]
+        elif status == False:
+            helpers.log(
+                    "ERROR: Shell command error (code:'%s', mesg:'%s'). Using 'unknown' author."
+                    % (err_code, err_out))
         else:
             helpers.log(
                     "ERROR: Author '%s' does not exist. Using 'unknown' author." % output)
-            return authors['Unknown']
+        return authors['Unknown']
 
     def check_topo_type(self, suite):
         """
@@ -185,7 +190,8 @@ class TestSuite(object):
             self._build = {'build_name': os.environ['BUILD_NAME'],
                            'starttime': ts,
                            'starttime_datestamp': ts.split('T')[0],
-                            }
+                           'created_by': getpass.getuser(),
+                          }
             self.db_add_if_not_found_build(self._build)
 
     def db_populate_suite(self):
@@ -245,6 +251,7 @@ class TestSuite(object):
                     'topo_type': topo_type,
                     'notes': None,
                     'build_name': os.environ['BUILD_NAME'],
+                    'created_by': getpass.getuser(),
                     }
 
     def extract_test_attributes(self, test_xml):
@@ -306,6 +313,7 @@ class TestSuite(object):
                 'build_url': None,
                 'build_name': os.environ['BUILD_NAME'],
                 'notes': None,
+                'created_by': getpass.getuser(),
                 }
         return test
 

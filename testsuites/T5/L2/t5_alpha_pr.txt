@@ -44,7 +44,8 @@ Static endpoint age test
 	rest delete tenant  internal
 	
 static endpoint membership rule change test
-    [Tags]  L2  feature  IronHorse     
+    [Tags]  L2  feature  IronHorse  skipped
+# Need to add IXIA VLAN ID support with IXIA L3 add 
     rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1

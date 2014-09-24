@@ -64,9 +64,9 @@ Test priminitive CLI keywords
     ${result}=    bash_content    c1
     log           result=${result}
 
-Test priminitive REST keywords
+Test primitive REST keywords
     [Tags]  skipped
-    get           master   /rest/v1/system/clock/local
+    get           master   "/api/v1/data/controller/os/action/time?select\=system-time"
     ${result}=    rest_content    c1
     log           result=${result}
 

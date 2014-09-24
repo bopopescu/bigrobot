@@ -1627,7 +1627,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         failure: (False, "...error message...")
     """
     if not quiet:
-        print("Executing '%s'" % cmd)
+        log("Executing '%s'" % cmd)
 
     if shell:
         # In general, should avoid shell mode. The command output will go
@@ -1656,12 +1656,12 @@ def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
     identical, resulting in more consistent behavior. Need to gradually phase
     out the old run_cmd usage.
 
-    Returns tuple (Boolean, String, Integer)
-        success: (<status_flag>,  "...success message...", <errorcode>)
-        failure: (<status_flag>, "...error message...", <errorcode>)
+    Returns tuple (Boolean, String, String, Integer)
+        success: (True,  "command_output", "error_msg", <errorcode>)
+        failure: (False, "command_output', "error_msg", <errorcode>)
     """
     if not quiet:
-        print("Executing '%s'" % cmd)
+        log("Executing '%s'" % cmd)
     if shell:
         # In general, should avoid shell mode due to security reasons.
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -1673,16 +1673,17 @@ def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
                              stderr=subprocess.PIPE, cwd=cwd)
     out, err = p.communicate()
     error_code = p.returncode
-    if err and not ignore_stderr:
-        return (False, err, error_code)
-    return (True, out, error_code)
+    status = True
+    if error_code and not ignore_stderr:
+        status = False
+    return (status, out, err, error_code)
 
 
-def id():
+def user_id():
     """
     Dump output from 'id'.
     """
-    _, output, _ = run_cmd2('id', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('id', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1690,7 +1691,7 @@ def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output, _ = run_cmd2('uname -a', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('uname -a', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1700,7 +1701,7 @@ def ulimit():
     Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
     built-in shell command. So let's execute it using shell mode.
     """
-    _, output, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
+    _, output, _, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output.strip()
 
 
@@ -1708,7 +1709,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output, _ = run_cmd2('uptime', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('uptime', shell=False, quiet=True)
     return output.strip()
 
 
