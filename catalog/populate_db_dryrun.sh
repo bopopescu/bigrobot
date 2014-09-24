@@ -43,7 +43,8 @@ BUILD_URL: $build_url" \
     --infile $outfile
 
 # Reporting potential test suite errors
-grep -n -e "ERROR" -e "^Exception" -e "traceback" $outfile > $errfile
+# grep -n -e "ERROR" -e "^Exception" -e "traceback" $outfile > $errfile
+grep -n -e "ERROR" -e "^Exception" -e "traceback" *.log > $errfile
 if [ -s $errfile ]; then
     ../bin/send_mail.py \
         --sender vui.le@bigswitch.com \
