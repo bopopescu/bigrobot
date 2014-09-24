@@ -249,7 +249,7 @@ class Host(object):
         '''
         t = test.Test()
         n = t.node(node)
-        n.sudo("dhclient -d -v -4 %s" % intf)
+        n.sudo("dhclient -v -4 %s" % intf)
         output = n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
