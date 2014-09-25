@@ -61,6 +61,7 @@ T2 setup traffic make sure all traffic can be forwarded without loss after learn
  		start traffic 
  		sleep  300
  		 : FOR    ${index}   IN RANGE    1   ${last}   
+ 		\   Log To Console   \n******* traffic verification : ${index} out of ${last}*******    
 		\   verify ixia stream rate       ${L3_1}   L3_1  
 		\   ${result}=  rest_get_fabric_interface_stats            ${sw1}   ${int1}
 		\ 	Log to file     log_interface_counter    switch:${sw1} interface: ${int1} stats    ${result} 
