@@ -1068,7 +1068,7 @@ def to_json(python_data, is_raw=False):
 
 def unicode_to_ascii(u):
     """
-    COnvert a Unicode string to an ASCII string.
+    Convert a Unicode string to an ASCII string.
     """
     return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
 

@@ -165,7 +165,7 @@ T2.9 Test first boot of controller menu invalid cluster name
 	first_boot_controller_menu_cluster_name         c1     name=MY.T5
 	first_boot_controller_menu_apply                c1
 		 			
-	[Tags] 	full   feature  firstboot   singlenode	 
+	[Tags] 	full   feature  firstboot   singlenode  skipped
  
 
 T2.10 Test first boot of controller menu reset and start over for standalone
@@ -179,7 +179,7 @@ T2.10 Test first boot of controller menu reset and start over for standalone
  
 	first_boot_controller_menu_apply                c1
  
-	[Tags] 	full  feature  firstboot   singlenode	 
+	[Tags] 	full  feature  firstboot   singlenode  skipped 
 
  
 T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
@@ -192,7 +192,7 @@ T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first
  	first_boot_controller_menu_apply                c1   	
  	log  need to care the ctl_c after the apply
  	    
-	[Tags] 	full  feature  firstboot   singlenode    JIRA-BSC_5064
+	[Tags] 	full  feature  firstboot   singlenode    JIRA-BSC_5064  skipped
 
 T2.12 Verification of configs in local node mode 
 	log   covered in T2.1   

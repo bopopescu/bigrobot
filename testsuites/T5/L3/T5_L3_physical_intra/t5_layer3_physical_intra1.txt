@@ -800,6 +800,12 @@ initialize host
     BASH release dhcpv4 address                 h4                              bond0
     BASH release dhcpv4 address                 h5                              bond0
     BASH release dhcpv4 address                 h6                              bond0
+    BASH kill process                           h1                              dhclient
+    BASH kill process                           h2                              dhclient
+    BASH kill process                           h3                              dhclient
+    BASH kill process                           h4                              dhclient
+    BASH kill process                           h5                              dhclient
+    BASH kill process                           h6                              dhclient    
     ${result} =                                 BASH run command                h1                     ifconfig
     log                                         host1 ifconfig is ${result}
     ${result} =                                 BASH run command                h2                     ifconfig
