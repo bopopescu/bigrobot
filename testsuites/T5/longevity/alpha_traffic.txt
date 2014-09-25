@@ -43,20 +43,24 @@ ${int2}     ethernet43
 	
 T2 setup traffic make sure all traffic can be forwarded without loss after learning
      #### p1 to p2  L3 traffic 
-     
+     Log To Console   \n******* Adding ixia traffic *******   
      ${L3_1}=    L3 add  name=L3_1   flow=p1<->p2   frame_size=128    frame_rate=${rate}   
     ...    src_mac=00:10:10:10:00:00  src_mac_step=00:00:00:00:00:01 
     ...    dst_mac=00:44:44:44:00:00  dst_mac_step=00:00:00:00:00:01  
     ...    src_ip=10.201.16.2   src_ip_step=0.0.0.1  src_gw_prefix=20  src_cnt=${count}   src_gw=10.201.16.1  src_gw_step=0.0.0.0
     ...    dst_ip=10.201.0.2    dst_ip_step=0.0.0.1  dst_gw_prefix=20  dst_cnt=${count}   dst_gw=10.201.0.1  dst_gw_step=0.0.0.0
     
-	 
+	Log To Console   \n******* finish add ixia traffic *******  
 	log  finishing creating the traffic
  		traffic endpoint learning	      60
-	
+ 		
+	Log To Console   \n******* verify all end point learned *******  
  	log  verify forwarding table
 		verify endpoint in group  	  44:44:44		  ${count}
 		verify endpoint in group  	  10:10:10		  ${count}	
+
+
+	Log To Console   \n******* start traffic *******  
 		
  		start traffic 
  		sleep  300
