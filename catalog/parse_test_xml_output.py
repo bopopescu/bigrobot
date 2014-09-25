@@ -34,7 +34,6 @@ class TestCollection(object):
         self._output_testcases = out_testcases
         self._is_regression = is_regression
         self._is_baseline = is_baseline
-        self._add_build_record = True
 
     def dump_records_to_json_file(self, filename, records):
         helpers.file_write_append_once(filename,
@@ -56,15 +55,12 @@ class TestCollection(object):
                 try:
                     suite = TestSuite(filename,
                                       is_regression=self._is_regression,
-                                      is_baseline=self._is_baseline,
-                                      add_build_record=self._add_build_record)
+                                      is_baseline=self._is_baseline)
                 except:
                     print("ERROR: Unable to parse %s. Test suite will not be added to Test Catalog."
                           % filename)
                     print helpers.exception_info()
                 else:
-                    if self._add_build_record == True:
-                        self._add_build_record = False
                     suite.extract_attributes()
                     self._suites.append(suite)
                     suite_records.append(suite.suite())

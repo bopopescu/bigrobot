@@ -48,7 +48,7 @@ matches the env BUILD_NAME.
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_aggregated_build(args.build)
+    doc = db.find_and_add_aggregated_build(args.build, quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
     print "%s" % doc["name"]
