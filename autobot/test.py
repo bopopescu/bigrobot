@@ -1460,10 +1460,13 @@ class Test(object):
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         master = self.controller("master")
         standby = self.controller("slave")
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.setup_controller_idle_timeout(key)
+
+        # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
-            for key in params:
-                if helpers.is_controller(key):
-                    self.setup_controller_idle_timeout(key)
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
