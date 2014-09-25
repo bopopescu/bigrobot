@@ -189,9 +189,8 @@ Cli show commands for debug
 	enable  master   show running-config switch   timeout=60
 	enable  master   show switch 		 timeout=60
 	enable  master   show link	         timeout=60
-	cli     master   show ver            timeout=60
-	
-	
+	cli     master   show ver            timeout=60	
+	cli     slave   show ver           timeout=60	
 
 switch node down/up event   [Arguments]    ${node}
 	log  reload switch
