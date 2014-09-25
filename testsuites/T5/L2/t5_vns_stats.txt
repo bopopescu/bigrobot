@@ -20,10 +20,10 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse          
+   [Tags]  L2  feature  IronHorse  run     
    rest verify fabric switch all
    rest verify fabric link
-   rest verify fabric link common
+   rest verify fabric link common  6
 	
 verify show vns and tenant counters CLI output
 	[Tags]  L2  feature  IronHorse   
@@ -155,7 +155,7 @@ Verify single VNS rx/tx stats within same rack
     rest delete tenant  t1
     
 Verify single vns rx/tx rates same rack
-	[Tags]  L2  feature  IronHorse  run
+	[Tags]  L2  feature  IronHorse  
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -215,7 +215,7 @@ verify single vns rx/tx rates different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats different rack
-	[Tags]  L2  feature  IronHorse  run
+	[Tags]  L2  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -274,7 +274,7 @@ verify interface rx/tx stats same rack
     rest delete tenant  t1
 	
 verify interface rx/tx rates different rack
-	[Tags]  L2  feature  IronHorse  run
+	[Tags]  L2  feature  IronHorse  
 
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -302,7 +302,7 @@ verify interface rx/tx rates different rack
     rest delete tenant  t1
    
 verify interface rx/tx rates same rack
-	[Tags]  L2  feature  IronHorse  run     
+	[Tags]  L2  feature  IronHorse       
          
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -360,7 +360,7 @@ verify interface rx/tx broadcast packet stats different rack
     rest delete tenant  t1
 	
 verify interface rx/tx multicast packets stats
-	[Tags]  L2  feature  IronHorse  run
+	[Tags]  L2  feature  IronHorse  
 
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -387,7 +387,7 @@ verify interface rx/tx multicast packets stats
     rest delete tenant  t1
 
 verify interface LLDP/control packet count different rack
-	[Tags]  L2  feature  IronHorse  
+	[Tags]  L2  feature  IronHorse  skipped
 
 	rest add tenant  t1
 	rest add vns  t1  v1
