@@ -1563,7 +1563,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     Should Be True                                  ${sumA} > 500000 or ${sumE} > 500000
     Should Be True                                  ${sumD} > 500000 or ${sumH} > 500000
     Should Be True                                  ${sumL} < 50
-    Should Be True                                  ${sumK} > 250000 or ${sumJ} > 250000    
+    Should Be True                                  ${sumK} > 200000 or ${sumJ} > 200000    
 #    Should Be True                                  ${diffA2} > 40000
 #    Should Be True                                  ${diffA3} > 40000
 #    Should Be True                                  ${diffA4} > 40000
@@ -1849,10 +1849,10 @@ Verify system nexthop group uses all members across rack
     verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
 	sleep                                           1
     CLI arista enable disable interface             s11                             		port-channel 5          		disable=${False}
-    sleep                                           1
+    sleep                                           10
     ${result} =                                     REST get tracked endpoint               10.99.5.1
     ${state} =                                      Set Variable                            ${result['state']}             
-    Should Be Equal As Strings                      ${state}                                unknown
+    Should Be Equal As Strings                      ${state}                                known
     sleep                                           1
     REST clear fabric interface stats
     sleep                                           1
@@ -2052,6 +2052,10 @@ Verify system nexthop group uses all members across rack
     ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
     ${rx_53_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet54
+    ${rx_54_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}    
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet53
+    ${rx_53_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
     ${rx_54_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
@@ -2085,6 +2089,10 @@ Verify system nexthop group uses all members across rack
     ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
     ${rx_53_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet54
+    ${rx_54_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}    
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet53
+    ${rx_53_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
     ${rx_54_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
@@ -2115,13 +2123,15 @@ Verify system nexthop group uses all members across rack
     ${diffA13} =                                    evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
     ${diffA14} =                                    evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
     ${diffA15} =                                    evaluate                                ${rx_53_ucast_cnt0A-2} - ${rx_53_ucast_cnt0A-1}
-    ${diffA16} =                                    evaluate                                ${rx_54_ucast_cnt0B-2} - ${rx_54_ucast_cnt0B-1}	
+    ${diffA16} =                                    evaluate                                ${rx_54_ucast_cnt0A-2} - ${rx_54_ucast_cnt0A-1}	
+    ${diffA17} =                                    evaluate                                ${rx_53_ucast_cnt0B-2} - ${rx_53_ucast_cnt0B-1}
+    ${diffA18} =                                    evaluate                                ${rx_54_ucast_cnt0B-2} - ${rx_54_ucast_cnt0B-1}     
     ${sumA} =                                       evaluate                                ${diffA1} + ${diffA2}
     ${sumB} =                                       evaluate                                ${diffA3} + ${diffA4} + ${diffA5} + ${diffA6} 
     ${sumC} =                                       evaluate                                ${diffA7} + ${diffA8}
     ${sumD} =                                       evaluate                                ${diffA9} + ${diffA10} + ${diffA11} + ${diffA12}
     ${sumE} =                                       evaluate                                ${diffA13} + ${diffA14}
-    ${sumF} =                                       evaluate                                ${diffA15} + ${diffA16}
+    ${sumF} =                                       evaluate                                ${diffA15} + ${diffA16} + ${diffA17} + ${diffA18} 
     Should Be True                                  ${sumA} > 200000 
     Should Be True                                  ${sumB} > 200000
     Should Be True                                  ${sumC} > 200000 
