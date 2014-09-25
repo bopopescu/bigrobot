@@ -15,6 +15,9 @@ usage() {
     echo "  -no-baseline  : Don't generate baseline data"
     echo "  -no-aggregate : Don't aggregate data from various builds"
     echo "  -no-report    : Don't generate QA Dashboard reports"
+    echo ""
+    echo "The tool can be run as a cronjob or Jenkins scheduled task to update the aggregated build"
+    echo "reports on a daily basis."
     exit 0
 }
 
