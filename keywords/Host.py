@@ -495,3 +495,13 @@ class Host(object):
             h.sudo("/etc/init.d/networking restart", timeout=timeout)
         else:
             h.sudo("service networking restart", timeout=timeout)
+
+    def bash_kill_process(self, node, pname):
+        ''' 
+            kill process name 
+        '''
+        t = test.Test()
+        n = t.node(node)
+        n.bash("ps aux | grep -i %s | grep -v grep" % pname)
+        n.bash("for x in `ps aux | grep -i %s | grep -v grep | awk '{print $2}'`; do sudo kill -9 $x; done" % pname)
+        

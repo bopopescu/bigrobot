@@ -26,16 +26,30 @@ class TestCatalog(object):
     def features(self, release):
         return self.configs()['features'][release]
 
+#    def aggregated_build(self, build_name):
+#        """
+#        Returns a list of actual builds in an aggregated build.
+#        """
+#        config = self.configs()
+#        if 'aggregated_builds' not in config:
+#            return {}
+#        if build_name not in config['aggregated_builds']:
+#            return {}
+#        return config['aggregated_builds'][build_name]
+
     def aggregated_build(self, build_name):
         """
-        Returns a list of actual builds in an aggregated build.
+        Returns a list of actual builds in an aggregated build. Data is
+        retrieved from the aggregated_build collection.
         """
-        config = self.configs()
-        if 'aggregated_builds' not in config:
-            return {}
-        if build_name not in config['aggregated_builds']:
-            return {}
-        return config['aggregated_builds'][build_name]
+        query = {"name": build_name}
+        cursor = self.aggregated_builds_collection().find(query)
+        count = cursor.count()
+
+        if count >= 1:
+            return cursor[0]['build_names']
+        else:
+            return []
 
 
     # DB access
@@ -96,6 +110,7 @@ class TestCatalog(object):
             # print "***** Build '%s' not found. Found aggregated build '%s'." % (build_name, aggregated_build_name)
             doc = cursor[0]
             doc["build_names"].append(build_name)
+            doc["updatetime"] = helpers.ts_long_local()
             _ = self.upsert_doc('aggregated_builds', doc, query)
             return doc
         else:
@@ -106,6 +121,7 @@ class TestCatalog(object):
                    "year": year,
                    "build_names": [build_name],
                    "createtime": helpers.ts_long_local(),
+                   "updatetime": helpers.ts_long_local(),
                    }
             _ = self.insert_doc('aggregated_builds', doc)
             return doc

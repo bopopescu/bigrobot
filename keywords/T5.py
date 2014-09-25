@@ -2826,6 +2826,31 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
+        
+    def rest_get_fabric_interface_rate(self, switch, intf):
+        ''' Function to return a switch fabric interface rate stats
+        Input: switch and interface
+        Output: contents from the switch interface or error
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="ethernet33"][switch-dpid="00:00:70:72:cf:b5:f0:e4"]?select=interface[name="ethernet33"]
+
+
+ 
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        dpid = self.rest_get_dpid(switch)
+        helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
+        # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-rate[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else:
+            return c.rest.content()
+                
+        
+        
 
     def rest_set_vlan_mapping_mode(self, mode):
         '''

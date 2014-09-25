@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-# Check the database collection 'aggregated_builds' for a document which
-# matches the env BUILD_NAME.
-#   - If found, return the aggregated build name.
-#   - If not found, create a new document, then return the aggregated build name.
+# Given the aggregated build (BUILD_NAME argument), print the list of actual builds.
 
 import os
 import sys
@@ -23,7 +20,6 @@ if not 'BUILD_NAME' in os.environ:
 
 build_name = os.environ['BUILD_NAME']
 db = TestCatalog()
-doc = db.find_and_add_aggregated_build(build_name)
+build_names = db.aggregated_build(build_name)
 
-#print "Doc: %s" % helpers.prettify(doc)
-print "%s" % doc["name"]
+print "%s" % helpers.prettify([helpers.unicode_to_ascii(x) for x in build_names])
