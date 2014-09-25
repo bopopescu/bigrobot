@@ -1,11 +1,8 @@
 #!/usr/bin/env python
-# Check the database collection 'aggregated_builds' for a document which
-# matches the env BUILD_NAME.
-#   - If found, return the aggregated build name.
-#   - If not found, create a new document, then return the aggregated build name.
 
 import os
 import sys
+import argparse
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -18,12 +15,40 @@ sys.path.insert(1, exscript_path)
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 
-if not 'BUILD_NAME' in os.environ:
-    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
-build_name = os.environ['BUILD_NAME']
-db = TestCatalog()
-doc = db.find_and_add_aggregated_build(build_name)
+def prog_args():
+    descr = """\
+Check the database collection 'aggregated_builds' for a document which
+matches the env BUILD_NAME.
+   - If found, return the aggregated build name.
+   - If not found, create a new document, then return the aggregated build name.
+"""
+    parser = argparse.ArgumentParser(prog='db_chk_and_add_wk_aggregated_build',
+                                     description=descr)
+    parser.add_argument('--verbose', action='store_true',
+                        default=False,
+                        help=("Print verbose output"))
+    parser.add_argument('--build',
+                        help=("Jenkins build string,"
+                              " e.g., 'bvs master #2007'"))
+    _args = parser.parse_args()
 
-#print "Doc: %s" % helpers.prettify(doc)
-print "%s" % doc["name"]
+    # _args.build <=> env BUILD_NAME
+    if not _args.build and 'BUILD_NAME' in os.environ:
+        _args.build = os.environ['BUILD_NAME']
+    elif not _args.build:
+        helpers.error_exit("Must specify --build option or set environment"
+                           " variable BUILD_NAME")
+    else:
+        os.environ['BUILD_NAME'] = _args.build
+
+    return _args
+
+
+if __name__ == '__main__':
+    args = prog_args()
+    db = TestCatalog()
+    doc = db.find_and_add_aggregated_build(args.build)
+
+    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+    print "%s" % doc["name"]
