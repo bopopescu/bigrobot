@@ -52,7 +52,7 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 year=`../bin/helpers year`
 week_num=`../bin/helpers week_num`
 
-if [ "$BUILD_NAME"x == x ]; then
+if [ "$BUILD_NAME"x = x ]; then
     export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
     echo "Setting env BUILD_NAME='$BUILD_NAME' for the aggregate."
 else
