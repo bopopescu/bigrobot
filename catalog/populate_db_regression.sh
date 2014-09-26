@@ -29,7 +29,7 @@ if [ $? -eq 0 ]; then
 else
     echo "No baseline data for build '$BUILD_NAME'. Start collecting baseline."
     time ./populate_db_dryrun.sh
-    ./db_chk_and_add_wk_aggregated_build.sh
+    ./db_chk_and_add_wk_aggregated_build.py
 fi
 
 if [ $# -eq 0 ]; then
