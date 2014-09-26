@@ -786,11 +786,17 @@ class T5ZTN(object):
                            "snmp-server switch trap fm-flow-table-util",
                            "snmp-server trap flow-table-tcam-fm-util threshold")
                         ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap auth-fail",
+                           "snmp-server trap authenticationFailure")
+                        ztn_config_line = ztn_config_line.replace(
+                           "snmp-server switch trap link-status",
+                           "snmp-server trap linkUpDown interval")
+                        ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap psu-status",
-                           "snmp-server trap psu all status all")
+                           "snmp-server trap psu all status all interval")
                         ztn_config_line = ztn_config_line.replace(
                            "snmp-server switch trap fan-status",
-                           "snmp-server trap fan all status all")
+                           "snmp-server trap fan all status all interval")
                         if "mem-total-free" in ztn_config_line:
                            helpers.log("Need to divide value in %s "
                                        "by 1024" % ztn_config_line)
@@ -967,18 +973,25 @@ class T5ZTN(object):
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
                 if re.match(r'snmp-server trap psu', startup_config_line):
+                    interval = startup_config_line.split("interval ")[1]
                     helpers.log("Expanding line %s" % startup_config_line)
+                    helpers.log("Interval is %s" % str(interval))
                     for psu_line in psu_lines:
-                        startup_config_temp.append(psu_line)
+                        startup_config_temp.append("%s interval %s"
+                             % (psu_line, str(interval)))
                     continue
                 if re.match(r'snmp-server trap fan', startup_config_line):
+                    interval = startup_config_line.split("interval ")[1]
                     helpers.log("Expanding line %s" % startup_config_line)
+                    helpers.log("Interval is %s" % str(interval))
                     if switch_type == "spine":
                         for fan_line in fan_lines_spine:
-                            startup_config_temp.append(fan_line)
+                            startup_config_temp.append("%s interval %s"
+                                 % (fan_line, str(interval)))
                     elif switch_type == "leaf":
                         for fan_line in fan_lines_leaf:
-                            startup_config_temp.append(fan_line)
+                            startup_config_temp.append("%s interval %s"
+                                 % (fan_line, str(interval)))
                     continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
