@@ -60,7 +60,7 @@ else
 fi
 
 if [ $do_it -eq 0 ]; then
-    echo "Be sure to sync with your git repo first? Rerun with option '-y' to proceed."
+    echo "Be sure to sync with your git repo first. Rerun with option '-y' to proceed."
     exit 1
 fi
 

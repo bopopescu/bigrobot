@@ -1150,79 +1150,116 @@ class Test(object):
         n.config('exit')
         n.config('exit')
 
-    def setup_controller_idle_timeout(self, name):
+    def _sudo_with_error_code(self, name, cmd):
+        n = self.topology(name)
+        cmd_output = n.sudo(cmd)['content']
+        content = n.bash('echo $?')['content']
+        error_code = helpers.strip_cli_output(content, to_list=True)[0]
+        return (cmd_output, int(error_code))
+
+    def _file_exists(self, name, filename):
+        (_, error_code) = self._sudo_with_error_code(name, 'ls -la %s' % filename)
+        return error_code
+
+    def _setup_controller_idle_timeout(self, name):
+        helpers.log("Checking idle timeout on '%s'" % name)
+        n = self.topology(name)
+        source_file = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200/application.py"
+
+        if self._file_exists(name, source_file) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_file))
+        (_, error_code) = self._sudo_with_error_code(name,
+                                'grep -e "BigRobot mod" %s' % source_file)
+        if error_code == 0:
+            helpers.log("'%s' - BigRobot idle timeout modifications have already been applied."
+                        % name)
+            return False
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^command.cli.interactive_read_timeout" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
+                                        % (source_file, name))
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+               % source_file)
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_file, name))
+
+        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s'
+               % source_file)
+        return True
+
+    def _setup_controller_reauth_timeout(self, name):
+        helpers.log("Checking reauth timeout on '%s'" % name)
+        n = self.topology(name)
+        source_file = "/etc/default/floodlight"
+
+        if self._file_exists(name, source_file) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_file))
+        (_, error_code) = self._sudo_with_error_code(name,
+                                'grep -e "BigRobot mod" %s' % source_file)
+        if error_code == 0:
+            helpers.log("'%s' - BigRobot reauth timeout modifications have already been applied."
+                        % name)
+            return False
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            % source_file)
+        if error_code == 0:
+            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with BigRobot mod."
+                                        % (source_file, name))
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
+        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (BigRobot mod)\' | sudo tee -a %s'
+               % source_file)
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_file, name))
+
+        n.sudo("initctl stop floodlight")
+        helpers.sleep(0.5)
+        n.sudo("initctl start floodlight")
+        helpers.sleep(0.5)
+        return True
+
+    def setup_controller_reauth_and_idle_timeout(self, name):
         """
         When logging into the BCF controller for the first time, modify the
         idle timeout setting in Floodlight's application.py. Then
         touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
         it again in the future. Finally reconnect so changes can take effect.
         """
-        bigrobot_file = "/var/log/.touched_by_bigrobot"
-        source_dir = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200"
-        source_file = "application.py"
-        source_dir_file = source_dir + '/' + source_file
-
         n = self.topology(name)
         platform = n.platform()
         if not helpers.is_bcf(platform):
             return True
-        helpers.log("Checking idle timeout on '%s'" % name)
 
-        # Did we previously make modifications to the system?
-        n.sudo('ls -la %s' % bigrobot_file)['content']
-        content = n.sudo('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) == 0:
-            # Controller has already been touched by BigRobot
-            content = n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)['content']
-            output = helpers.strip_cli_output(content, to_list=True)[0]
-            if re.match(r'.*BigRobot mod.*', output):
-                helpers.log("'%s' - BigRobot modifications have already been applied."
-                            % name)
-                return True
-            else:
-                helpers.log("'%s' - BigRobot modifications not found - possibly because system was upgraded."
-                            % name)
+        status1 = self._setup_controller_idle_timeout(name)
+        status2 = self._setup_controller_reauth_timeout(name)
 
-        helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
-
-        n.sudo('ls -la %s' % source_dir_file)['content']
-        content = n.sudo('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("'%s' - Source file does not exist: %s"
-                                        % (name, source_dir_file))
-
-        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s'
-               % source_dir_file)['content']
-        content = n.bash('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
-                                        % (source_dir_file, name))
-
-        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
-               % (source_dir_file))
-
-        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
-               % source_dir_file)['content']
-        content = n.bash('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
-                                        % (source_dir_file, name))
-
-        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)
-        n.sudo('touch %s' % bigrobot_file)
-
-        # Disable Bash Command Line Editing (default is Emacs mode). But this
-        # will affect all future sessions (including interactive sessions)
-        # to the box, not just for BigRobot sessions. So disable for now.
-        # n.bash('echo "set +o emacs" >> ~/.bashrc')
-        # n.bash('echo "if [ -f ~/.bashrc ]; then source ~/.bashrc; fi" > ~/.bash_profile')
-
-        self.node_reconnect(name)
-
+        if status1 or status2:
+            # Reconnect to device if updates were made to idle/reauth
+            # properties.
+            self.node_reconnect(name)
         return True
 
     def setup_controller_firewall_allow_rest_access(self, name):
@@ -1463,7 +1500,7 @@ class Test(object):
 
         for key in params:
             if helpers.is_controller(key):
-                self.setup_controller_idle_timeout(key)
+                self.setup_controller_reauth_and_idle_timeout(key)
 
         # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
