@@ -19,12 +19,15 @@ Library				Collections
 *** Test Cases ***
 T0 Basic check
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  snapshot://extensive-config
+	Sleep  5
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  file://extensive-file
 	Compare  file://extensive-file  snapshot://extensive-config
+	Sleep  5
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  running-config
 	Compare  snapshot://extensive-config  running-config
 	Compare  file://extensive-file  running-config
 	Cli Copy  snapshot://startup-config  running-config
+	Sleep  5
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
 
 T1 Deleting lines
