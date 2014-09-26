@@ -22,6 +22,7 @@ outfile=raw_data.`basename $0`_output.$ts.log
 errfile=raw_data.`basename $0`_errors.$ts.log
 
 ./mv_logs.sh
+./db_chk_and_add_build_name.py
 ./_doit.sh > $outfile 2>&1
 
 server=`uname -n`

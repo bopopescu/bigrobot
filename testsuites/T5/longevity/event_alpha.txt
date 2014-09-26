@@ -54,7 +54,7 @@ T23 controller node event failover
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	longevity    traffic     event     
+	[Tags] 	longevity    traffic     event     skipped
  
 
  
@@ -67,7 +67,7 @@ T21 spine switch node down/up event
     \	switch node down/up event      ${spine2}   
     \   sleep  ${inevent}  
        
-	[Tags] 	longevity   traffic    event      
+	[Tags] 	longevity   traffic    event      skipped
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -123,7 +123,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${inevent}  
  
  
-	[Tags] 	longevity     traffic     event    
+	[Tags] 	longevity     traffic     event    skipped
 
 T28 data Link down/up event between leafs 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -137,7 +137,7 @@ T28 data Link down/up event between leafs
 	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
 	\  sleep  ${inevent}  		
    
-	[Tags] 	 longevity   traffic   event      
+	[Tags] 	 longevity   traffic   event      skipped
 
 T26 big configuration changes (around 500 tenants)
      : FOR    ${i}    IN RANGE    0    ${loop}
@@ -145,7 +145,7 @@ T26 big configuration changes (around 500 tenants)
  	\  tenant configuration add/remove      ${Tflapnum}       3       
  	\  sleep  ${bigconfigsleep}  
    	
-	[Tags] 	longevity     traffic    event     
+	[Tags] 	longevity     traffic    event     skipped
 
 
 T25 big configuration changes (around 500 vns change)
@@ -154,7 +154,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event      
+	[Tags] 	longevity     traffic    event      skipped
 
 
 
@@ -184,14 +184,13 @@ T51 continues Event
 
 * Keywords
 
-Cli show commands for debug
-	cli     master   show ver
-	enable  master   show running-config switch
-	enable  master   show switch 		
-	enable  master   show link	
-	cli     master   show ver
-	
-	
+Cli show commands for debug     
+	cli     master   show ver           timeout=60
+	enable  master   show running-config switch   timeout=60
+	enable  master   show switch 		 timeout=60
+	enable  master   show link	         timeout=60
+	cli     master   show ver            timeout=60	
+	cli     slave   show ver           timeout=60	
 
 switch node down/up event   [Arguments]    ${node}
 	log  reload switch
@@ -237,9 +236,9 @@ data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
 	\   disable links between nodes      ${node1}   ${int}
-	\   sleep   120
+	\   sleep   60
 	\   enable links between nodes      ${node1}   ${int} 
- 	\   sleep   120 
+ 	\   sleep   60 
  
 
 disable links between nodes    [Arguments]   ${node1}   ${int} 

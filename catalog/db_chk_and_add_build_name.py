@@ -18,12 +18,12 @@ from catalog_modules.test_catalog import TestCatalog
 
 def prog_args():
     descr = """\
-Check the database collection 'aggregated_builds' for a document which
-matches the env BUILD_NAME.
-   - If found, return the aggregated build name.
-   - If not found, create a new document, then return the aggregated build name.
+Check the database collection 'builds' for a document which matches the env
+BUILD_NAME.
+   - If found, return the build name.
+   - If not found, create a new document, then return the build name.
 """
-    parser = argparse.ArgumentParser(prog='db_chk_and_add_wk_aggregated_build',
+    parser = argparse.ArgumentParser(prog='db_chk_and_add_build_name',
                                      description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
@@ -48,7 +48,7 @@ matches the env BUILD_NAME.
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_aggregated_build(args.build, quiet=not args.verbose)
+    doc = db.find_and_add_build_name(args.build, quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
-    print "%s" % doc["name"]
+    print "%s" % doc["build_name"]
