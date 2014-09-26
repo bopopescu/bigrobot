@@ -39,6 +39,7 @@ fi
     --receiver bigrobot_stats_collection@bigswitch.com \
     --subject "Dashboard baseline: '$BUILD_NAME'" \
     --message "Script executed: $0
+User: $USER
 Log file: $logfile
 BUILD_URL: $build_url" \
     --infile $outfile
@@ -55,3 +56,4 @@ if [ -s $errfile ]; then
 BUILD_URL: $build_url" \
         --infile $errfile
 fi
+

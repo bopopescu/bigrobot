@@ -63,20 +63,17 @@ def bigrobot_env_variables():
 
 
 def bigrobot_module_dependencies():
-    robot_framework_version = robot.version.VERSION
     import Exscript
     import Crypto
     import pexpect
-    exscript_version = Exscript.version.__version__
-    paramiko_version = paramiko.__version__
-    crypto_version = Crypto.__version__
-    pexpect_version = pexpect.__version__
+    import httplib2
     s = "BigRobot version        %s\n" % get_version()
-    s += "Robot Framework version %s\n" % robot_framework_version
-    s += "Exscript version        %s\n" % exscript_version
-    s += "Paramiko version        %s\n" % paramiko_version
-    s += "Crypto version          %s\n" % crypto_version
-    s += "Pexpect version         %s\n" % pexpect_version
+    s += "Robot Framework version %s\n" % robot.version.VERSION
+    s += "Exscript version        %s\n" % Exscript.version.__version__
+    s += "Paramiko version        %s\n" % paramiko.__version__
+    s += "Crypto version          %s\n" % Crypto.__version__
+    s += "Pexpect version         %s\n" % pexpect.__version__
+    s += "Httplib2 version        %s\n" % httplib2.__version__
     pversion = sys.version_info
     s += "Python version          %s.%s.%s" % (pversion.major,
                                                pversion.minor,
