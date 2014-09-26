@@ -15,6 +15,9 @@ usage() {
     echo "  -no-baseline  : Don't generate baseline data"
     echo "  -no-aggregate : Don't aggregate data from various builds"
     echo "  -no-report    : Don't generate QA Dashboard reports"
+    echo ""
+    echo "The tool can be run as a cronjob or Jenkins scheduled task to update the aggregated build"
+    echo "reports on a daily basis."
     exit 0
 }
 
@@ -49,7 +52,7 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 year=`../bin/helpers year`
 week_num=`../bin/helpers week_num`
 
-if [ "$BUILD_NAME"x == x ]; then
+if [ "$BUILD_NAME"x = x ]; then
     export BUILD_NAME="bvs master aggregated ${year} wk${week_num}"
     echo "Setting env BUILD_NAME='$BUILD_NAME' for the aggregate."
 else
@@ -57,7 +60,7 @@ else
 fi
 
 if [ $do_it -eq 0 ]; then
-    echo "Be sure to sync with your git repo first? Rerun with option '-y' to proceed."
+    echo "Be sure to sync with your git repo first. Rerun with option '-y' to proceed."
     exit 1
 fi
 

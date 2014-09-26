@@ -107,8 +107,8 @@ Test to provide any Qos settings for storage traffic
 	manual passed
 
 Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
-	[Tags]  scaling  openstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  scaling  openstack  IronHorse  manual	
+	manual passed
 Measure Openstack Scaling limit (Topology: Single Nova controller)
 	[Tags]  scaling  openstack  IronHorse  manual
 	manual passed
