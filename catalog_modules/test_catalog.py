@@ -1,3 +1,4 @@
+import getpass
 from pymongo import MongoClient
 import autobot.helpers as helpers
 
@@ -76,13 +77,16 @@ class TestCatalog(object):
     def test_cases_archive_collection(self):
         return self.db()['test_cases_archive']
 
+    def builds_collection(self):
+        return self.db()['builds']
+
     def aggregated_builds_collection(self):
         return self.db()['aggregated_builds']
 
 
     # DB query/update
 
-    def find_and_add_aggregated_build(self, build_name):
+    def find_and_add_aggregated_build(self, build_name, quiet=True):
         """
         Check whether 'build_name' is found in aggregated_builds collection.
         - If found, return the document.
@@ -94,7 +98,7 @@ class TestCatalog(object):
         count = cursor.count()
         if count >= 1:
             # Found aggregated build which contains the build_name.
-            # print "***** Found aggregated build with '%s'." % build_name
+            if not quiet: print "Found aggregated build with '%s'." % build_name
             if count > 1:
                 print "WARNING: Did not expect multiple results."
             return cursor[0]
@@ -105,25 +109,53 @@ class TestCatalog(object):
                                  % (year, week_num))
         query = {"name": aggregated_build_name}
         cursor = self.aggregated_builds_collection().find(query)
+        ts = helpers.ts_long_local()
+
         if cursor.count() >= 1:
             # Aggregated build for year/week exists. Add build_name to list.
-            # print "***** Build '%s' not found. Found aggregated build '%s'." % (build_name, aggregated_build_name)
+            if not quiet: print "Build '%s' not found. Found aggregated build '%s'." % (build_name, aggregated_build_name)
             doc = cursor[0]
             doc["build_names"].append(build_name)
-            doc["updatetime"] = helpers.ts_long_local()
+            doc["updatetime"] = ts
             _ = self.upsert_doc('aggregated_builds', doc, query)
             return doc
         else:
             # Aggregated build for year/week does not exist. Create it.
-            # print "***** Not found aggregated build '%s'. Creating." % aggregated_build_name
+            if not quiet: print "Not found aggregated build '%s'. Creating." % aggregated_build_name
             doc = {"name": aggregated_build_name,
                    "week_num": week_num,
                    "year": year,
                    "build_names": [build_name],
-                   "createtime": helpers.ts_long_local(),
-                   "updatetime": helpers.ts_long_local(),
+                   "createtime": ts,
+                   "updatetime": ts,
                    }
             _ = self.insert_doc('aggregated_builds', doc)
+            return doc
+
+    def find_and_add_build_name(self, build_name, quiet=True):
+        """
+        Check whether 'build_name' is found in builds collection.
+        - If found, return the document.
+        - If not found, create a new build document, and return it.
+        """
+        query = {"build_name": build_name}
+        cursor = self.builds_collection().find(query)
+        count = cursor.count()
+        if count >= 1:
+            # Found build which contains the build_name.
+            if not quiet: print "Found build with '%s'." % build_name
+            if count > 1:
+                print "WARNING: Did not expect multiple results."
+            return cursor[0]
+        else:
+            # Build does not exist. Create it.
+            if not quiet: print "Not found build '%s'. Creating." % build_name
+            ts = helpers.ts_long_local()
+            doc = {"build_name": build_name,
+                   "createtime": ts,
+                   "created_by": getpass.getuser()
+                   }
+            _ = self.insert_doc('builds', doc)
             return doc
 
     def find_test_suites(self, query):
