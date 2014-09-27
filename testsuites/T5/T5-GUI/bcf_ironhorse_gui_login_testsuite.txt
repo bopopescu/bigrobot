@@ -8,7 +8,7 @@ Library         	keywords/BsnCommon.py
 Library         	keywords/T5Utilities.py
 Library        		keywords/BsnSelenium.py
 Library         	keywords/AppController.py
-Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/BigTap.py
 Library        		SeleniumLibrary
 Resource        	bcf_resource.txt
 #Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
@@ -57,24 +57,17 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    Rest Add Tacacs Server  10.2.3.201  secret
+    Rest Add Tacacs Server  10.2.3.201  secret  10
     Rest Add Tacacs Authentication
-    Rest Delete Tacacs Authorization
-    #CLI Configure User    tomasz  password
-    #CLI Configure User    bt-admin  adminadmin
+    #Rest Delete Tacacs Authorization
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     CLI Run  master  group admin; associate user tomasz; associate user test-user-local
-    #CLI Configure User    test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
     Start Selenium Server  -trustAllSSLCertificates
-    #CLI Start Mininet Server  tree,3
-    #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-    #Config  master  switch switch-11; interface ethernet1; interface ethernet2; interface ethernet3
-    
 	
 config suite teardown
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown
