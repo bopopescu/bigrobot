@@ -327,6 +327,42 @@ class BigTap(object):
         else:
             helpers.test_failure(c.rest.error())
             return False
+        
+# Tomasz       
+    def cli_configure_user(self, username, passwd=None):
+        '''
+            Objective:
+            - Execute the CLI command 'user username'
+            - Execute the CLI command 'password passwd' (if non-empty)
+        
+            Input:
+            | `username` |  Username | 
+            | `passwd` | Password |
+            
+            Return Value: 
+            - True if configuration is successful
+            - False otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c= t.controller('master')
+            
+            try:
+                string = "user %s" % str(username)
+
+                if (passwd is not None):
+                    string =  string + "; password %s" % str(passwd)
+                helpers.test_log("Issue command: %s" %string) 
+                result = c.config(string)
+                helpers.log("Output: %s" % result) 
+
+                return True
+            except:
+                helpers.test_failure("Something went wrong") 
+                return False
 
 ###################################################
 # All Bigtap Verify Commands Go Here:
