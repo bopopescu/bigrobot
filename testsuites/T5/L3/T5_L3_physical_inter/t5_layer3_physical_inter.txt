@@ -1230,6 +1230,7 @@ Dhcp request from overlapping private IP and public IP
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
+    BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
     REST add vns ip                             Y                               Y3                      10.251.3.1              24  
     REST add dhcp relay                         Y                               Y3                      10.251.1.11
@@ -1270,9 +1271,10 @@ Dhcp request from overlapping private IP and public IP
     ${result} =                                 REST show endpoints mac         ${mac5}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}
-    ${state} =                                  Set Variable                    ${result[0]['state']}  
+#    ${state} =                                  Set Variable                    ${result[0]['state']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
-    Should Contain                              ${state}                        L2 Only
+#    Should Contain                              ${state}                        L2 Only
+    Dictionary Should Not Contain Key           ${result}                       ip-address
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     BASH delete route                           h6                              10.251.0.0/16           10.251.1.1
