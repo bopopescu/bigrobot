@@ -5541,9 +5541,9 @@ class T5Platform(object):
                     
            
                 cli = 'system remove-node ' + standby
-#                c.enable(cli, prompt= 'Conform remove-node \(\"y\" or \"yes\" to continue\):')
-#                c.enable('yes',timeout=60)   
-#                helpers.sleep(60)      
+                c.enable(cli, prompt= 'Conform remove-node \(\"y\" or \"yes\" to continue\):')
+                c.enable('yes',timeout=60)   
+                helpers.sleep(60)      
                        
                 num = self.rest_get_num_nodes(node)        
                 if num == 1:
