@@ -190,6 +190,7 @@ class T5Platform(object):
 
         try:
             if(masterNode):
+                actual_node_name = master.name()
                 ipAddr = master.ip()
                 master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
@@ -198,6 +199,7 @@ class T5Platform(object):
                 sleep(160)
             else:
                 slave = t.controller("slave")
+                actual_node_name = slave.name()
                 ipAddr = slave.ip()
                 slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
@@ -223,6 +225,9 @@ class T5Platform(object):
                     sleep(120)
                     break
 
+        helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
+        t.node_reconnect(actual_node_name)
+        
         if(singleNode):
             newMasterID = self.getNodeID(False)
         else:
