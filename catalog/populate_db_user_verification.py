@@ -163,6 +163,7 @@ verification files (in bigrobot/data/verification/).
 The specified build (BUILD_NAME) must be the name of an aggregated build.
 """
     parser = argparse.ArgumentParser(prog='db_manual_verification',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--build',
                         help=("Build name,"

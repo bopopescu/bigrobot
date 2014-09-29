@@ -16,6 +16,13 @@ usage() {
     echo "  -no-aggregate : Don't aggregate data from various builds"
     echo "  -no-report    : Don't generate QA Dashboard reports"
     echo ""
+    echo "Examples:"
+    echo "  % ./run_update_weekly_aggregated_reports.sh"
+    echo "         -- automaticall set aggregated build name to current year/week, 'bvs master aggregated 2014 wk39'"
+    echo ""
+    echo "  % BUILD_NAME="bvs master bcf-2.0.0 aggregated" ./run_update_weekly_aggregated_reports.sh"
+    echo "         -- automaticall set aggregated build name to 'bvs master bcf-2.0.0 aggregated'"
+    echo ""
     echo "The tool can be run as a cronjob or Jenkins scheduled task to update the aggregated build"
     echo "reports on a daily basis."
     exit 0

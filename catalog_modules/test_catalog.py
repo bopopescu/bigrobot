@@ -86,13 +86,21 @@ class TestCatalog(object):
 
     # DB query/update
 
-    def find_and_add_aggregated_build(self, build_name, quiet=True):
+    def find_and_add_aggregated_build(self, build_name,
+                                      aggregated_build_name=None,
+                                      quiet=True):
         """
         Check whether 'build_name' is found in aggregated_builds collection.
         - If found, return the document.
         - If not found, create a new aggregated build document indexed by
           current year and week. Then return the document.
         """
+        week_num = helpers.week_num()
+        year = helpers.year()
+        if not aggregated_build_name:
+            aggregated_build_name = ("bvs master aggregated %s wk%s"
+                                     % (year, week_num))
+
         query = {"build_names": {"$all": [build_name]}}
         cursor = self.aggregated_builds_collection().find(query)
         count = cursor.count()
@@ -103,10 +111,6 @@ class TestCatalog(object):
                 print "WARNING: Did not expect multiple results."
             return cursor[0]
 
-        week_num = helpers.week_num()
-        year = helpers.year()
-        aggregated_build_name = ("bvs master aggregated %s wk%s"
-                                 % (year, week_num))
         query = {"name": aggregated_build_name}
         cursor = self.aggregated_builds_collection().find(query)
         ts = helpers.ts_long_local()
