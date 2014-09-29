@@ -135,6 +135,7 @@ def prog_args():
 Display test execution stats collected for a specific build.
 """
     parser = argparse.ArgumentParser(prog='db_collect_stats',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--release', required=True,
                         help=("Product release, e.g., 'IronHorse'"))

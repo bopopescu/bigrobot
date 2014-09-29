@@ -733,6 +733,16 @@ def bigrobot_syslog_level(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
 
 
+def bigrobot_reauth_config_sleep_timer(new_val=None, default=30):  # 30 seconds
+    """
+    Category: Get/set environment variables for BigRobot.
+    After reconfiguring reauth timeout which requires re-starting floodlight,
+    sleep for a few seconds while floodlight settles down.
+    """
+    return _env_get_and_set('BIGROBOT_REAUTH_CONFIG_SLEEP_TIMER',
+                            new_val, default)
+
+
 def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes
     """
     Category: Get/set environment variables for BigRobot.

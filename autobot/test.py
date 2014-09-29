@@ -1235,10 +1235,13 @@ class Test(object):
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
+        helpers.log("Restarting floodlight to put new reauth timeout into effect.")
         n.sudo("initctl stop floodlight")
         helpers.sleep(0.5)
         n.sudo("initctl start floodlight")
-        helpers.sleep(0.5)
+        sleep_time = helpers.bigrobot_reauth_config_sleep_timer()
+        helpers.log("Sleeping for %s seconds while floodlight settles." % sleep_time)
+        helpers.sleep(sleep_time)
         return True
 
     def setup_controller_reauth_and_idle_timeout(self, name):

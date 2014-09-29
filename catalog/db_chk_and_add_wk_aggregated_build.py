@@ -3,6 +3,7 @@
 import os
 import sys
 import argparse
+import re
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -21,9 +22,20 @@ def prog_args():
 Check the database collection 'aggregated_builds' for a document which
 matches the env BUILD_NAME.
    - If found, return the aggregated build name.
-   - If not found, create a new document, then return the aggregated build name.
+   - If not found and build_name matches a typical build name (e.g., 'bvs master #1234'),
+     create a new document, then return the weekly aggregated build name.
+   - If not found and build_name does not match a typical build name (e.g., a Beta build
+     does not have a typical build name - 'bvs master #bcf-2.0.0_13'), don't create a
+     new document. You should instead rerun command and specify the aggregated beta build name
+     using the option --aggregated-build-name.
+
+Examples:
+   % BUILD_NAME="bvs master #3436" ./db_chk_and_add_wk_aggregated_build.py
+   % BUILD_NAME="bvs master #bcf-2.0.0_13" ./db_chk_and_add_wk_aggregated_build.py \\
+                     --aggregated-build-name "bvs master bcf-2.0.0 aggregated"
 """
     parser = argparse.ArgumentParser(prog='db_chk_and_add_wk_aggregated_build',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
@@ -31,6 +43,9 @@ matches the env BUILD_NAME.
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
+    parser.add_argument('--aggregated-build-name',
+                        help=("Aggregated build name,"
+                              " e.g., 'bvs master #bcf-2.0.0_13'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -47,8 +62,17 @@ matches the env BUILD_NAME.
 
 if __name__ == '__main__':
     args = prog_args()
-    db = TestCatalog()
-    doc = db.find_and_add_aggregated_build(args.build, quiet=not args.verbose)
 
-    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
-    print "%s" % doc["name"]
+    if re.match(r'.*#(\d+)$', args.build) or args.aggregated_build_name:
+        db = TestCatalog()
+        doc = db.find_and_add_aggregated_build(
+                        args.build,
+                        aggregated_build_name=args.aggregated_build_name,
+                        quiet=not args.verbose)
+
+        if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+        print "%s" % doc["name"]
+        sys.exit(0)
+    else:
+        print "ERROR: BUILD_NAME '%s' is not added to weekly aggregated build."
+        sys.exit(1)
