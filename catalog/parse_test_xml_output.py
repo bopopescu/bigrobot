@@ -68,21 +68,21 @@ class TestCollection(object):
         self.dump_records_to_json_file(self._output_suites, suite_records)
         self.dump_records_to_json_file(self._output_testcases, test_records)
 
-        # Import data into DB
+        # Import baseline data into DB (if not regression data)
+        if self._is_regression == False:
+            f = self._output_suites
+            print("Importing %s into Mongo test suites collection" % f)
+            (_, output, _, _) = helpers.run_cmd2(
+                                  cmd="./mongoimport_suites_collection.sh %s" % f,
+                                  shell=True)
+            print("Output:\n%s" % helpers.indent_str(output))
 
-        f = self._output_suites
-        print("Importing %s into Mongo test suites collection" % f)
-        (_, output, _, _) = helpers.run_cmd2(
-                              cmd="./mongoimport_suites_collection.sh %s" % f,
-                              shell=True)
-        print("Output:\n%s" % helpers.indent_str(output))
-
-        f = self._output_testcases
-        print("Importing %s into Mongo test case collection" % f)
-        (_, output, _, _) = helpers.run_cmd2(
-                              cmd="./mongoimport_testcases_collection.sh %s" % f,
-                              shell=True)
-        print("Output:\n%s" % helpers.indent_str(output))
+            f = self._output_testcases
+            print("Importing %s into Mongo test case collection" % f)
+            (_, output, _, _) = helpers.run_cmd2(
+                                  cmd="./mongoimport_testcases_collection.sh %s" % f,
+                                  shell=True)
+            print("Output:\n%s" % helpers.indent_str(output))
 
     def suites(self):
         return self._suites
