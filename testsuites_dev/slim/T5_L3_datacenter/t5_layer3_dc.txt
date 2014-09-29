@@ -488,6 +488,7 @@ L3 inter tenant across rack tagged with dynamic endpoints via dhcp-relay
     ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
 
+
 L3 intra tenant 16 hop ecmp group in same rack
     REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
     REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
@@ -1335,7 +1336,7 @@ Add and delete all members in nexthop group
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    sleep                                           11
+    sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
@@ -1432,7 +1433,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${tx_50_ucast_cnt1B} =                          Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}    
     ${rx_50_ucast_cnt1B} =                          Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}    
-    sleep                                           11
+    sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet35
     ${tx_35_ucast_cnt2A} =                          Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet36
@@ -1522,7 +1523,8 @@ L3 inter tenant add nexthop member to 16 nexthop group
     ${sumF} =                                       evaluate                                ${diffB10} + ${diffB11}
     ${sumG} =                                       evaluate                                ${diffB12} + ${diffB13} 
     ${sumH} =                                       evaluate                                ${diffB14} + ${diffB15}     
-    Should Be True                                  ${sumA} > 500000 and ${sumE} > 500000 and ${sumD} > 500000 and ${sumH} > 500000
+    Should Be True                                  ${sumA} > 500000 and ${sumE} > 500000 
+    Should Be True                                  ${sumD} > 500000 or ${sumH} > 500000
 #    Should Be True                                  ${diffA2} > 40000
 #    Should Be True                                  ${diffA3} > 40000
 #    Should Be True                                  ${diffA4} > 40000
@@ -1741,7 +1743,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     ${sumJ} =                                       evaluate                                ${diffC1} + ${diffC2}   
     ${sumK} =                                       evaluate                                ${diffC3} + ${diffC4} + ${diffC5} + ${diffC6}
     ${sumL} =                                       evaluate                                ${diffA9} + ${diffB9}       
-    Should Be True                                  ${sumA} > 500000 and ${sumE} > 500000 and ${sumD} > 500000 and ${sumH} > 500000 and ${sumL} < 50 and ${sumK} < 50 and ${sumJ} < 50
+    Should Be True                                  ${sumA} > 500000 and ${sumE} > 500000 and ${sumD} > 400000 and ${sumH} > 400000 and ${sumL} < 50 and ${sumK} < 50 and ${sumJ} < 50
 #    Should Be True                                  ${diffA2} > 20000
 #    Should Be True                                  ${diffA3} > 20000
 #    Should Be True                                  ${diffA4} > 20000
@@ -1954,7 +1956,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     Should Be True                                  ${sumA} > 500000 or ${sumE} > 500000
     Should Be True                                  ${sumD} > 500000 or ${sumH} > 500000
     Should Be True                                  ${sumL} < 50
-    Should Be True                                  ${sumK} > 500000 or ${sumJ} > 500000
+    Should Be True                                  ${sumK} > 200000 or ${sumJ} > 200000    
 #    Should Be True                                  ${diffA2} > 40000
 #    Should Be True                                  ${diffA3} > 40000
 #    Should Be True                                  ${diffA4} > 40000
@@ -2240,10 +2242,10 @@ Verify system nexthop group uses all members across rack
     verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
 	sleep                                           1
     CLI arista enable disable interface             s11                             		port-channel 5          		disable=${False}
-    sleep                                           1
+    sleep                                           10
     ${result} =                                     REST get tracked endpoint               10.99.5.1
     ${state} =                                      Set Variable                            ${result['state']}             
-    Should Be Equal As Strings                      ${state}                                unknown
+    Should Be Equal As Strings                      ${state}                                known
     sleep                                           1
     REST clear fabric interface stats
     sleep                                           1
@@ -2342,9 +2344,9 @@ Verify system nexthop group uses all members across rack
     ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
     ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
+	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet49
     ${rx_53_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet52
     ${rx_54_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
     ${rx_49_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
@@ -2375,9 +2377,9 @@ Verify system nexthop group uses all members across rack
     ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
     ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
+	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet49
     ${rx_53_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet52
     ${rx_54_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
     ${rx_49_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
@@ -2441,9 +2443,13 @@ Verify system nexthop group uses all members across rack
     ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
     ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
+	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet49
     ${rx_53_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet52
+    ${rx_54_ucast_cnt0A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}    
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet49
+    ${rx_53_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet52
     ${rx_54_ucast_cnt0B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
     ${rx_49_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
@@ -2457,7 +2463,7 @@ Verify system nexthop group uses all members across rack
     ${rx_49_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${rx_50_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    sleep                                           12
+    sleep                                           10
 	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
 	${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
@@ -2474,9 +2480,13 @@ Verify system nexthop group uses all members across rack
     ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
     ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet53
+	${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet49
     ${rx_53_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
-    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet54
+    ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet52
+    ${rx_54_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}    
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet49
+    ${rx_53_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet52
     ${rx_54_ucast_cnt0B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet49
     ${rx_49_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
@@ -2506,19 +2516,21 @@ Verify system nexthop group uses all members across rack
     ${diffA13} =                                    evaluate                                ${tx_17_ucast_cnt0A-2} - ${tx_17_ucast_cnt0A-1}
     ${diffA14} =                                    evaluate                                ${tx_17_ucast_cnt0B-2} - ${tx_17_ucast_cnt0B-1}
     ${diffA15} =                                    evaluate                                ${rx_53_ucast_cnt0A-2} - ${rx_53_ucast_cnt0A-1}
-    ${diffA16} =                                    evaluate                                ${rx_54_ucast_cnt0B-2} - ${rx_54_ucast_cnt0B-1}	
+    ${diffA16} =                                    evaluate                                ${rx_54_ucast_cnt0A-2} - ${rx_54_ucast_cnt0A-1}	
+    ${diffA17} =                                    evaluate                                ${rx_53_ucast_cnt0B-2} - ${rx_53_ucast_cnt0B-1}
+    ${diffA18} =                                    evaluate                                ${rx_54_ucast_cnt0B-2} - ${rx_54_ucast_cnt0B-1}     
     ${sumA} =                                       evaluate                                ${diffA1} + ${diffA2}
     ${sumB} =                                       evaluate                                ${diffA3} + ${diffA4} + ${diffA5} + ${diffA6} 
     ${sumC} =                                       evaluate                                ${diffA7} + ${diffA8}
     ${sumD} =                                       evaluate                                ${diffA9} + ${diffA10} + ${diffA11} + ${diffA12}
     ${sumE} =                                       evaluate                                ${diffA13} + ${diffA14}
-    ${sumF} =                                       evaluate                                ${diffA15} + ${diffA16}
-    Should Be True                                  ${sumA} > 300000 
-    Should Be True                                  ${sumB} > 300000
-    Should Be True                                  ${sumC} > 300000 
-    Should Be True                                  ${sumD} > 300000
-    Should Be True                                  ${sumE} > 300000 
-    Should Be True                                  ${sumF} > 300000    
+    ${sumF} =                                       evaluate                                ${diffA15} + ${diffA16} + ${diffA17} + ${diffA18} 
+    Should Be True                                  ${sumA} > 200000 
+    Should Be True                                  ${sumB} > 200000
+    Should Be True                                  ${sumC} > 200000 
+    Should Be True                                  ${sumD} > 200000
+    Should Be True                                  ${sumE} > 200000 
+    Should Be True                                  ${sumF} > 200000    
     verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1	 50
   
 	
@@ -2555,7 +2567,7 @@ Verify system creates ecmp group when there is more than one member and back
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    sleep                                           10
+    sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
     ${tx_17_ucast_cnt0A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf0-b                     ethernet17
@@ -2746,7 +2758,8 @@ restart ofad on single-leaf rack with ecmp nexthop
     Should Be True                                  ${sumA} > 500000 
     Should Be True                                  ${sumB} < 0
     ### After restart values will be reset, the diff will be a negative number
-    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1           1200000
+#    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1           1200000
+    calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
     
 restart ofad on dual-leaf rack with ecmp nexthop
@@ -2873,7 +2886,7 @@ restart ofad on dual-leaf rack with ecmp nexthop
 #    Should Be True                                  ${sumA} < 50 
 #    Should Be True                                  ${sumB} > 500000    
     ### After restart values will be reset, the diff will be a negative number
-    Should Be True                                  ${diffA1} > 500000 and ${diffA2} < 0
+    Should Be True                                  ${diffA1} > 500000 and ${diffA2} <= 0
     Should Be True                                  ${diffA3} > 500000 or ${diffA4} > 500000
     verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1           100000
     REST delete nexthop group                       External                                test 
@@ -3547,22 +3560,18 @@ Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
     
+    
 initialize host
     BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete tag                             h2                              bond0.1002              soft_error=${true}
-    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
     BASH delete tag                             h4                              bond0.1004              soft_error=${true}
     BASH delete tag                             h5                              bond0.1005              soft_error=${true}
-    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
     BASH run command                                h1-rack0                                ifdown bond0
     BASH run command                                h2-rack0                                ifdown bond0
-    BASH run command                                h3-rack0                                ifdown bond0
     BASH run command                                h1-rack1                                ifdown bond0
     BASH run command                                h2-rack1                                ifdown bond0
-    BASH run command                                h3-rack1                                ifdown bond0
     BASH run command                                h1-rack2                                ifdown bond0
     BASH run command                                h2-rack2                                ifdown bond0
-    BASH run command                                h3-rack2                                ifdown bond0
     sleep                                           1
     BASH run command                                h1-rack0                                ifup eth2
     sleep                                           1
@@ -3570,55 +3579,37 @@ initialize host
     BASH run command                                h2-rack0                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack0                                ifup eth3
-    BASH run command                                h3-rack0                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack0                                ifup eth3
     BASH run command                                h1-rack1                                ifup eth2
     sleep                                           1
     BASH run command                                h1-rack1                                ifup eth3
     BASH run command                                h2-rack1                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack1                                ifup eth3
-    BASH run command                                h3-rack1                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack1                                ifup eth3
     BASH run command                                h1-rack2                                ifup eth2
     sleep                                           1
     BASH run command                                h1-rack2                                ifup eth3
     BASH run command                                h2-rack2                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack2                                ifup eth3
-    BASH run command                                h3-rack2                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack2                                ifup eth3
     BASH kill process                           h1-rack0                              dhclient
     BASH kill process                           h2-rack0                              dhclient
-    BASH kill process                           h3-rack0                              dhclient
     BASH kill process                           h1-rack1                              dhclient
     BASH kill process                           h2-rack1                              dhclient
-    BASH kill process                           h3-rack1                              dhclient    
     BASH kill process                           h1-rack2                              dhclient
     BASH kill process                           h2-rack2                              dhclient
-    BASH kill process                           h3-rack2                              dhclient        
 	BASH ifup intf							    h1-rack0 								bond0
 	BASH ifup intf							    h2-rack0								bond0
-	BASH ifup intf							    h3-rack0								bond0
 	BASH ifup intf							    h1-rack1								bond0
 	BASH ifup intf							    h2-rack1								bond0
-	BASH ifup intf							    h3-rack1								bond0
 	BASH ifup intf                              h1-rack2                                bond0
     BASH ifup intf                              h2-rack2                                bond0
-    BASH ifup intf                              h3-rack2                                bond0
     
     BASH init intf                              h1-rack0                                bond0
     BASH init intf                              h2-rack0                                bond0
-    BASH init intf                              h3-rack0                                bond0
     BASH init intf                              h1-rack1                                bond0
     BASH init intf                              h2-rack1                                bond0
-    BASH init intf                              h3-rack1                                bond0
     BASH init intf                              h1-rack2                                bond0
     BASH init intf                              h2-rack2                                bond0
-    BASH init intf                              h3-rack2                                bond0
     BASH stop service                           h1-rack0                        isc-dhcp-server
 
 setup topology
