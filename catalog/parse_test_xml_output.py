@@ -108,6 +108,7 @@ Parse the Robot output.xml files to generate the collections for the
 Test Catalog (MongoDB) database.
 """
     parser = argparse.ArgumentParser(prog='parse_test_xml_output',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--build',
                         help=("Jenkins build string,"
