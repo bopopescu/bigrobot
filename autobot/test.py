@@ -1201,6 +1201,10 @@ class Test(object):
         return True
 
     def _setup_controller_reauth_timeout(self, name):
+        if helpers.bigrobot_reconfig_reauth().lower() == "false":
+            helpers.log("Env BIGROBOT_RECONFIG_REAUTH is False. Bypass reauth reconfig.")
+            return False
+
         helpers.log("Checking reauth timeout on '%s'" % name)
         n = self.topology(name)
         source_file = "/etc/default/floodlight"
@@ -1239,7 +1243,7 @@ class Test(object):
         n.sudo("initctl stop floodlight")
         helpers.sleep(0.5)
         n.sudo("initctl start floodlight")
-        sleep_time = helpers.bigrobot_reauth_config_sleep_timer()
+        sleep_time = helpers.bigrobot_reconfig_reauth_sleep_timer()
         helpers.log("Sleeping for %s seconds while floodlight settles." % sleep_time)
         helpers.sleep(sleep_time)
         return True
