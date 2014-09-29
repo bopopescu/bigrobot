@@ -24,6 +24,7 @@ BUILD_NAME.
    - If not found, create a new document, then return the build name.
 """
     parser = argparse.ArgumentParser(prog='db_chk_and_add_build_name',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
