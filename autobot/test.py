@@ -1302,7 +1302,6 @@ class Test(object):
 
         helpers.log("Setting up controllers - before clean-config")
 
-        self.controller_cli_show_version(name)
         self.setup_controller_firewall_allow_rest_access(name)
         self.setup_controller_http_session_cookie(name)
 
@@ -1500,6 +1499,10 @@ class Test(object):
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         master = self.controller("master")
         standby = self.controller("slave")
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.controller_cli_show_version(key)
 
         for key in params:
             if helpers.is_controller(key):
