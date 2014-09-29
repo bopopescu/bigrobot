@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # Description:
 #    Generate baseline test suites and test cases for the specified build.
 #    This should be done as the first step for every new build.
@@ -29,9 +29,9 @@ server=`uname -n`
 pwd=`pwd`
 logfile="${server}:${pwd}/$outfile"
 if [ "$BUILD_URL"x = x ]; then
-     build_url=$BUILD_URL
-else
      build_url=None
+else
+     build_url=$BUILD_URL
 fi
 
 ../bin/send_mail.py \
