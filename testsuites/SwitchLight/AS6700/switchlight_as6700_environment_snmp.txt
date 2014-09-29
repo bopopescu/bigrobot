@@ -391,7 +391,11 @@ TC47: Verify temperature reading from thermal sensor 1 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}        
     [Tags]    thermal  temperature  
 
 TC48: Verify temperature reading from thermal sensor 2 is same in CLI and in SNMP walk output        
@@ -402,7 +406,11 @@ TC48: Verify temperature reading from thermal sensor 2 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC49: Verify temperature reading from thermal sensor 3 is same in CLI and in SNMP walk output        
@@ -413,7 +421,11 @@ TC49: Verify temperature reading from thermal sensor 3 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC50: Verify temperature reading from thermal sensor 4 is same in CLI and in SNMP walk output        
@@ -424,7 +436,11 @@ TC50: Verify temperature reading from thermal sensor 4 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC51: Verify temperature reading from thermal sensor 5 is same in CLI and in SNMP walk output        
@@ -435,7 +451,11 @@ TC51: Verify temperature reading from thermal sensor 5 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC52: Verify temperature reading from thermal sensor 6 is same in CLI and in SNMP walk output        
@@ -446,7 +466,11 @@ TC52: Verify temperature reading from thermal sensor 6 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC53: Verify temperature reading from thermal sensor 7 is same in CLI and in SNMP walk output        
@@ -457,7 +481,11 @@ TC53: Verify temperature reading from thermal sensor 7 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature  
 
 TC54: Verify temperature reading from thermal sensor 8 is same in CLI and in SNMP walk output        
@@ -468,7 +496,11 @@ TC54: Verify temperature reading from thermal sensor 8 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
+    Should be true  ${in_range}
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}    
     [Tags]    thermal  temperature      
     
 TC55: Verify description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
