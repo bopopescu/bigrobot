@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 # Description:
 #    Generate baseline test suites and test cases for the specified build.
 #    This should be done as the first step for every new build.
