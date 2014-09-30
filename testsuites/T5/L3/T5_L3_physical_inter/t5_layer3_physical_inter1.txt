@@ -39,7 +39,6 @@ TC04 inter tenant L3 tagged traffic with dynamic endpoints across rack
 TC05 Add and delete default route on tenant
     Add and delete default route on tenant router
     [Tags]      feature         testpath
-   
 
 TC06 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
@@ -180,6 +179,13 @@ TC39 Restart ofad on spine switch
 TC40 Controller HA failover via CLI
     Controller HA failover via CLI
     [Tags]          feature         HA 
+    
+TC41 Traffic forwarding with other tenant mac
+    Traffic forwarding with other tenant mac
+    [Tags]          feature          
+    
+
+    
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
     BASH ifup intf                              h1                              bond0

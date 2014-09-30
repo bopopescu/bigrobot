@@ -168,12 +168,6 @@ h2:
    user: root
    password: bsn
 
-h3:
-   ip: 10.8.24.33
-   alias: h3-rack0
-   user: root
-   password: bsn
-
 h4:
    ip: 10.8.24.34
    alias: h1-rack1
@@ -183,12 +177,6 @@ h4:
 h5:
    ip: 10.8.24.35
    alias: h2-rack1
-   user: root
-   password: bsn
-  
-h6:
-   ip: 10.8.24.36
-   alias: h3-rack1
    user: root
    password: bsn
    
@@ -201,12 +189,6 @@ h7:
 h8:
    ip: 10.8.24.38
    alias: h2-rack2
-   user: root
-   password: bsn
-    
-h9:
-   ip: 10.8.24.39
-   alias: h3-rack2
    user: root
    password: bsn
 

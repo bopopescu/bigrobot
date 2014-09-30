@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 # Search for all the BigRobot test structured log files (output.xml).
 # Parse the log files and populate the test catalog database with the
 # test results.
