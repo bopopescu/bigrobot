@@ -29,9 +29,9 @@ server=`uname -n`
 pwd=`pwd`
 logfile="${server}:${pwd}/$outfile"
 if [ "$BUILD_URL"x = x ]; then
-     build_url=$BUILD_URL
-else
      build_url=None
+else
+     build_url=$BUILD_URL
 fi
 
 ../bin/send_mail.py \

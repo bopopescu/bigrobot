@@ -592,7 +592,7 @@ class SwitchLight(object):
             | subnet | Switch subnet in /18 /24 format |
             | gateway | IP address of default gateway |
             | dns_server | dns-server IP address in 1.2.3.4 format |
-            | dns-domain | dns-server IP address in bigswitch.com format |
+            | dns-domain | dns-server IP address in qa.bigswitch.com format |
 
             Return Value:
             - True on verification success
@@ -678,7 +678,7 @@ class SwitchLight(object):
             | subnet | Switch subnet in /18 /24 format |
             | gateway | IP address of default gateway |
             | dns_server | dns-server IP address in 1.2.3.4 format |
-            | dns-domain | dns-server IP address in bigswitch.com format |
+            | dns-domain | dns-server IP address in qa.bigswitch.com format |
 
             Return Value:
             - True on verification success
@@ -961,7 +961,7 @@ class SwitchLight(object):
             time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
-            tn.write("ip default-gateway 10.192.64.1")
+            tn.write("ip default-gateway 10.9.18.1")
             tn.write("exit" + "\r\n")
             tn.close()
             return True
@@ -1537,7 +1537,7 @@ class SwitchLight(object):
 
         Inputs:
         | node | Reference to switch (as defined in .topo file) |
-        | image_path | Image path after http://switch-nfs.bigswitch.com/export/switchlight/ |
+        | image_path | Image path after http://10.6.1.1/export/switchlight/ |
 
         Return Value:
         - True on upgrade success
@@ -1551,33 +1551,35 @@ class SwitchLight(object):
             image_name = image_array[len(image_array) - 1]
             bash_input_1 = 'rm /mnt/flash2/' + str(image_name)
             switch.bash(bash_input_1)
-            full_path = "http://switch-nfs.bigswitch.com/export/switchlight/" + str(image_path)
+            full_path = "http://10.6.1.1/export/switchlight/" + str(image_path)
             bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
             bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
+            bash_input_4 = "echo NETDEV=ma1 >> /mnt/flash/boot-config"
             switch.bash(bash_input_4)
-            helpers.sleep(1)
-            bash_input_5 = "reboot"
+            bash_input_5 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_5)
+            helpers.sleep(1)
+            bash_input_6 = "reboot"
+            switch.bash(bash_input_6)
             return True
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_upgrade_switch(self, node, image_path, netdns='10.192.3.1', netdomain='bigswitch.com', netmask='255.255.192.0', netgw='10.192.64.1'):
+    def cli_upgrade_switch(self, node, image_path, netdns='10.3.0.4', netdomain='qa.bigswitch.com', netmask='255.255.254.0', netgw='10.9.18.1'):
         '''
         Objective:
         Upgrade switch via CLI
 
         Inputs:
         | node | Reference to switch (as defined in .topo file) |
-        | image_path | Image path after http://switch-nfs.bigswitch.com/export/switchlight/ |
-        | netdns | IP Address of DNS Server. Default Value is 10.192.3.1|
-        | netdomain | DNS Domain. Default Value is bigswitch.com|
+        | image_path | Image path after http://10.6.1.1/export/switchlight/ |
+        | netdns | IP Address of DNS Server. Default Value is 10.3.0.4|
+        | netdomain | DNS Domain. Default Value is qa.bigswitch.com|
         | netmask | NetMask. Default Value is 255.255.192.0|
-        | netgw | Default Gateway. Default Value is 10.192.64.1 |
+        | netgw | Default Gateway. Default Value is 10.9.18.1 |
 
         Return Value:
         - True on upgrade success
@@ -1586,7 +1588,7 @@ class SwitchLight(object):
         try:
             t = test.Test()
             switch = t.switch(node)
-            cli_input_1 = "boot image http://switch-nfs.bigswitch.com/export/switchlight/" + str(image_path)
+            cli_input_1 = "boot image http://10.6.1.1/export/switchlight/" + str(image_path)
             switch.config(cli_input_1)
             cli_input_2 = "boot netdev ma1"
             switch.config(cli_input_2)
@@ -1858,7 +1860,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             if "Error: "  in cli_output:
-                    return False
+                return False
             else:
                 helpers.log("Multiline is %s" % (string.split(cli_output, '\n')))
                 lagNumber = 60 + int(pcNumber)
@@ -1891,7 +1893,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             if "Error: "  in cli_output:
-                    return False
+                return False
             else:
                 content = string.split(cli_output, '\n')
                 member_intf = string.split(intf_name_list, ' ')
@@ -1981,7 +1983,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             if "Error: "  in cli_output:
-                    return False
+                return False
             else:
                 content = string.split(cli_output, '\n')
                 member_intf = string.split(intf_name_list, ' ')
@@ -2093,7 +2095,7 @@ class SwitchLight(object):
             switch.enable(cli_input)
             cli_output = switch.cli_content()
             if "Error: "  in cli_output or "Cannot" in cli_output:
-                    return False
+                return False
             else:
                 content = string.split(cli_output, '\n')
                 helpers.log("Length of content %d" % (len(content)))

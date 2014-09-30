@@ -158,7 +158,7 @@ class T5Parallel(object):
         if finish == 'yes':
             result= self.task_finish_check_parallel(results, result_dict, timer=30, timeout=900)
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel,  all node done  \n")
-            return result
+            return { 'results': result}
         elif finish == 'one':
             result= self.task_one_finish_check_parallel(results, result_dict, timer=30, timeout=900)
             return { 'results': results, 'result_dict': result_dict }          
