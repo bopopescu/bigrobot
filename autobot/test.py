@@ -318,7 +318,9 @@ class Test(object):
 
     def checkpoint(self, msg):
         self._checkpoint += 1
-        helpers.log(":::: CHECKPOINT %04d - %s" % (self._checkpoint, msg), level=3)
+        helpers.log(":::: CHECKPOINT %04d - %s%s"
+                    % (self._checkpoint, msg, br_utils.end_of_output_marker()),
+                    level=3)
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -1136,12 +1138,14 @@ class Test(object):
 
     def controller_cli_show_version(self, name):
         n = self.topology(name)
-        n.cli('show version')
+        if n.devconf():
+            n.cli('show version')
 
     def controller_cli_show_running_config(self, name):
         n = self.topology(name)
-        n.enable('show running-config', quiet=True)
-        return n.cli_content()
+        if n.devconf():
+            n.enable('show running-config', quiet=True)
+            return n.cli_content()
 
     def controller_get_node_ids(self, config):
         lines = config.split('\n')
@@ -1269,6 +1273,9 @@ class Test(object):
         it again in the future. Finally reconnect so changes can take effect.
         """
         n = self.topology(name)
+        if not n.devconf():
+            return False
+
         platform = n.platform()
         if not helpers.is_bcf(platform):
             return True
@@ -1517,6 +1524,11 @@ class Test(object):
         master = self.controller("master")
         standby = self.controller("slave")
 
+        # CAUTION: The following section may not execute properly if the device
+        # is connected via console, or if the device is in firstboot state. So
+        # be sure to check if devconf handle exists before running any kind of
+        # REST/CLI command.
+
         for key in params:
             if helpers.is_controller(key):
                 self.controller_cli_show_version(key)
@@ -1605,8 +1617,7 @@ class Test(object):
             master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
             master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
-        helpers.debug("Test object setup ends.%s"
-                      % br_utils.end_of_output_marker())
+        self.checkpoint("Test object setup ends.")
 
     def teardown_switch(self, name):
         """

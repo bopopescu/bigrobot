@@ -45,7 +45,7 @@ Examples:
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--aggregated-build-name',
                         help=("Aggregated build name,"
-                              " e.g., 'bvs master #bcf-2.0.0_13'"))
+                              " e.g., 'bvs master bcf-2.0.0 aggregated'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
