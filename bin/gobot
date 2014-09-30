@@ -204,6 +204,7 @@ helpers.bigrobot_ztn_reload()
 helpers.bigrobot_ztn_installer()
 helpers.bigrobot_ha_logging()
 helpers.bigrobot_quiet_output()
+helpers.bigrobot_reconfig_reauth()
 
 
 def get_command_dict():
