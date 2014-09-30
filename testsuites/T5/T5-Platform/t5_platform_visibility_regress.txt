@@ -998,7 +998,7 @@ Tracking with multiple test paths
     
 ################## 		Visibility		################## 	
 
-Verify LED support:  “beacon switch”
+Verify LED support: “beacon switch”
 	[Tags]  visibility  feature  manual
 	manual passed
 

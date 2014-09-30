@@ -195,6 +195,10 @@ TC17: Verify temperature reading from thermal sensor 1 is same in CLI and in SNM
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}  
     [Tags]    thermal  temperature  
 
 TC18: Verify temperature reading from thermal sensor 2 is same in CLI and in SNMP walk output        
@@ -206,6 +210,10 @@ TC18: Verify temperature reading from thermal sensor 2 is same in CLI and in SNM
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}  
     [Tags]    thermal  temperature 
 
 TC19: Verify temperature reading from thermal sensor 3 is same in CLI and in SNMP walk output        
@@ -216,8 +224,12 @@ TC19: Verify temperature reading from thermal sensor 3 is same in CLI and in SNM
     ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
-    Should be true  ${in_range}   
-    [Tags]    thermal  temperature 
+    Should be true  ${in_range}  
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}   
+    [Tags]    thermal  temperature  jira-pan-1281 
 
 TC20: Verify temperature reading from thermal sensor 4 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Temperature
@@ -228,6 +240,10 @@ TC20: Verify temperature reading from thermal sensor 4 is same in CLI and in SNM
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
+    ${in_range_value_1}=  verify value is in range  ${cli_value}  range1=0  range2=55    
+    Should be true  ${in_range_value_1}   
+    ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
+    Should be true  ${in_range_value_2}  
     [Tags]    thermal  temperature 
 
 TC21: Verify description for PSU 1 is reported correctly in CLI and in SNMP Walk Output

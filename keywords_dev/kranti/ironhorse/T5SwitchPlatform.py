@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import string
 import telnetlib
+import re
 
 
 class  T5SwitchPlatform(object):
@@ -397,7 +398,12 @@ class  T5SwitchPlatform(object):
                     if ("Description:" in element_array):
                         thermal_dict['Description'] = str(element_array[1])
                     elif ("Status:" in element_array):
-                        thermal_dict['Status'] = str(element_array[1])
+                        helpers.log("The element array is %s" % element_array)
+                        tmpstr1 = str(element_array[1])
+                        tmpstr2 = str(element_array[2])
+                        finalstr = str(tmpstr1) + " " + str(tmpstr2)
+                        helpers.log("The final element is %s" % finalstr)
+                        thermal_dict['Status'] = str(finalstr)
                     elif ("Temperature:" in element_array):
                         #helpers.log("The temperature string is %s" % tmp_string)
                         #element_array= tmp_string.split()
@@ -408,7 +414,7 @@ class  T5SwitchPlatform(object):
                 helpers.log("The component require is %s" % component)
                 componentVal =  thermal_dict.get(component)
                 helpers.log("Got the value %s for the component %s" % (componentVal, component) )
-                if (component == 'Status') and (componentVal == 'Good'):
+                if (component == 'Status') and (componentVal == 'Sensor Functional'):
                     return True
                 elif (component == 'Temperature'):    
                     return componentVal  
@@ -503,59 +509,8 @@ class  T5SwitchPlatform(object):
         except:
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
-        
-        
-    def rest_get_switch_output_from_controller(self, switch, field=None):
-        '''
-            Objective:
-            - get the switch output from the controller.
 
-            Inputs:
-            | node | switch name  |
-    
-            Return Value:
-            - Return the value of the field [Model, version, image ] 
-        
-        '''
-        t = test.Test()
-        #switch = t.switch(switch)
-        switch_alias = t.switch(switch)
-        helpers.log("The switch alias is %s"  % switch)
-        c = t.controller('master')
-        url = ('/api/v1/data/controller/core/proxy/version[name="%s"]' % switch )
-        helpers.log("Getting the switch %s info from controller %s" % (switch, url) )
-        try:
-            helpers.log("Getting the switch %s info from controller %s" % (switch, url) )
-            c.rest.get(url)
-            data = c.rest.content()
-            helpers.log("The output is %s" % data)
-            t1 = data[0]
-            helpers.log("The t1 output is %s" % (t1))
-            t2 = data[0]["name"]
-            helpers.log("The t2 output is %s" % (t2))
-            t3 = data[0]["response"]
-            helpers.log("The t3 output is %s" % (t3))
-            if ("Model: AS5710" in t3):
-                helpers.log("The value of model is found")
-                return True
-            #t4 = data[0]["response"]["Model"]
-            #helpers.log("The t4 output is %s" % (t4))
-            #t5 = data[0]["response"]["System Information"]
-            #helpers.log("The t5 output is %s" % (t5))
-            
-            if field is None:
-                helpers.log("Got the switch version from controller")
-                return True
-            elif field is "model":
-                helpers.log("getting the switch Model from output")
-                model = data[0]["response"][0]["Model"]
-                helpers.log("Model is found as %s" % model )
-                return model 
-        except:
-            helpers.log("Could not get the rest output.see log for errors\n")
-            return False
-
-                
+           
     def cli_t5_switch_verify_password_change(self, node, user, current_password, version_string):
         '''
             Objective: Return version of switch software

@@ -37,6 +37,7 @@ class Test(object):
             self._current_controller_master = None
             self._current_controller_slave = None
             self._settings = {}
+            self._checkpoint = 0
 
             # ESB environment:
             # Per convention, the consumer will pass the params data to the
@@ -314,6 +315,12 @@ class Test(object):
         else:
             helpers.test_error("Attribute '%s' is not defined in %s" %
                                (key, self._bsn_config['this_file']))
+
+    def checkpoint(self, msg):
+        self._checkpoint += 1
+        helpers.log(":::: CHECKPOINT %04d - %s%s"
+                    % (self._checkpoint, msg, br_utils.end_of_output_marker()),
+                    level=3)
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -1015,7 +1022,7 @@ class Test(object):
             # helpers.log("Test object initialization skipped.")
             return
 
-        helpers.debug("Test object initialization begins.")
+        self.checkpoint("Test object initialization begins.")
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
@@ -1042,7 +1049,15 @@ class Test(object):
         helpers.log("Staging User ID:\n%s%s"
                     % (helpers.user_id(),
                        br_utils.end_of_output_marker()))
-        helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
+
+        jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
+        for i in range(0, len(jenkins_env)):
+            if i == 0:
+                helpers.log("Jenkins environment:")
+            if i + 1 == len(jenkins_env):
+                helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
+            else:
+                helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
@@ -1123,12 +1138,14 @@ class Test(object):
 
     def controller_cli_show_version(self, name):
         n = self.topology(name)
-        n.cli('show version')
+        if n.devconf():
+            n.cli('show version')
 
     def controller_cli_show_running_config(self, name):
         n = self.topology(name)
-        n.enable('show running-config', quiet=True)
-        return n.cli_content()
+        if n.devconf():
+            n.enable('show running-config', quiet=True)
+            return n.cli_content()
 
     def controller_get_node_ids(self, config):
         lines = config.split('\n')
@@ -1162,7 +1179,7 @@ class Test(object):
         return error_code
 
     def _setup_controller_idle_timeout(self, name):
-        helpers.log("Checking idle timeout on '%s'" % name)
+        self.checkpoint("Checking idle timeout on '%s'" % name)
         n = self.topology(name)
         source_file = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200/application.py"
 
@@ -1201,7 +1218,11 @@ class Test(object):
         return True
 
     def _setup_controller_reauth_timeout(self, name):
-        helpers.log("Checking reauth timeout on '%s'" % name)
+        if helpers.bigrobot_reconfig_reauth().lower() == "false":
+            helpers.log("Env BIGROBOT_RECONFIG_REAUTH is False. Bypass reauth reconfig.")
+            return False
+
+        self.checkpoint("Checking reauth timeout on '%s'" % name)
         n = self.topology(name)
         source_file = "/etc/default/floodlight"
 
@@ -1235,20 +1256,25 @@ class Test(object):
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
+        self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")
         n.sudo("initctl stop floodlight")
         helpers.sleep(0.5)
         n.sudo("initctl start floodlight")
-        helpers.sleep(0.5)
+        sleep_time = helpers.bigrobot_reconfig_reauth_sleep_timer()
+        helpers.log("Sleeping for %s seconds while floodlight settles." % sleep_time)
+        helpers.sleep(sleep_time)
         return True
 
     def setup_controller_reauth_and_idle_timeout(self, name):
         """
         When logging into the BCF controller for the first time, modify the
-        idle timeout setting in Floodlight's application.py. Then
-        touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
-        it again in the future. Finally reconnect so changes can take effect.
+        idle timeout setting in Floodlight's application.py. Then reconnect
+        so changes can take effect.
         """
         n = self.topology(name)
+        if not n.devconf():
+            return False
+
         platform = n.platform()
         if not helpers.is_bcf(platform):
             return True
@@ -1299,7 +1325,6 @@ class Test(object):
 
         helpers.log("Setting up controllers - before clean-config")
 
-        self.controller_cli_show_version(name)
         self.setup_controller_firewall_allow_rest_access(name)
         self.setup_controller_http_session_cookie(name)
 
@@ -1490,13 +1515,22 @@ class Test(object):
         if self._setup_in_progress:  # pylint: disable=E0203
             return
 
-        helpers.debug("Test object setup begins.")
+        self.checkpoint("Test object setup begins.")
         self._setup_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         master = self.controller("master")
         standby = self.controller("slave")
+
+        # CAUTION: The following section may not execute properly if the device
+        # is connected via console, or if the device is in firstboot state. So
+        # be sure to check if devconf handle exists before running any kind of
+        # REST/CLI command.
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.controller_cli_show_version(key)
 
         for key in params:
             if helpers.is_controller(key):
@@ -1582,8 +1616,7 @@ class Test(object):
             master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
             master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
-        helpers.debug("Test object setup ends.%s"
-                      % br_utils.end_of_output_marker())
+        self.checkpoint("Test object setup ends.")
 
     def teardown_switch(self, name):
         """
@@ -1618,7 +1651,7 @@ class Test(object):
                 n.config(cmd)
 
     def teardown(self):
-        helpers.debug("Test object teardown begins.")
+        self.checkpoint("Test object teardown begins.")
         params = self.topology_params_nodes()
         for key in params:
             if helpers.is_controller(key):
@@ -1635,7 +1668,7 @@ class Test(object):
                         " clean-config")
             return True
 
-        helpers.log("Running clean-config on devices in topology")
+        self.checkpoint("Running clean-config on devices in topology")
         if (helpers.is_controller(name) and helpers.is_t5(n.platform())
             and self.is_master_controller(name)):
 

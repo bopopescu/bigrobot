@@ -552,7 +552,8 @@ def bigrobot_esb_broker(new_val=None,
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
-    Set to 'True' if test is run under smoketest/regression environment.
+    Set to 'True' if test is run under smoketest/regression environment
+    (i.e., Jenkins).
     """
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
@@ -731,6 +732,28 @@ def bigrobot_syslog_level(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
+
+
+def bigrobot_reconfig_reauth(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Reconfiguration of reauth timeout. If True then reconfigure reauth timeout
+    to be longer than the 2 hour default, but in the process it has to restart
+    floodlight. In some test scenarios, user may want to disable that by
+    setting this value to 'False'.
+    """
+    return _env_get_and_set('BIGROBOT_RECONFIG_REAUTH',
+                            new_val, default)
+
+
+def bigrobot_reconfig_reauth_sleep_timer(new_val=None, default=30):  # 30 seconds
+    """
+    Category: Get/set environment variables for BigRobot.
+    After reconfiguring reauth timeout which requires re-starting floodlight,
+    sleep for a few seconds while floodlight settles down.
+    """
+    return _env_get_and_set('BIGROBOT_RECONFIG_REAUTH_SLEEP_TIMER',
+                            new_val, default)
 
 
 def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes

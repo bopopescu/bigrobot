@@ -310,6 +310,7 @@ verification records for each failed test case.
 The specified build (BUILD_NAME) must be the name of an aggregated build.
 """
     parser = argparse.ArgumentParser(prog='create_verification_files',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument(
                 '--build',
