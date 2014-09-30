@@ -37,6 +37,7 @@ class Test(object):
             self._current_controller_master = None
             self._current_controller_slave = None
             self._settings = {}
+            self._checkpoint = 0
 
             # ESB environment:
             # Per convention, the consumer will pass the params data to the
@@ -314,6 +315,10 @@ class Test(object):
         else:
             helpers.test_error("Attribute '%s' is not defined in %s" %
                                (key, self._bsn_config['this_file']))
+
+    def checkpoint(self, msg):
+        self._checkpoint += 1
+        helpers.log(":::: CHECKPOINT %04d - %s" % (self._checkpoint, msg), level=3)
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -1015,7 +1020,7 @@ class Test(object):
             # helpers.log("Test object initialization skipped.")
             return
 
-        helpers.debug("Test object initialization begins.")
+        self.checkpoint("Test object initialization begins.")
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
@@ -1042,7 +1047,15 @@ class Test(object):
         helpers.log("Staging User ID:\n%s%s"
                     % (helpers.user_id(),
                        br_utils.end_of_output_marker()))
-        helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
+
+        jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
+        for i in range(0, len(jenkins_env)):
+            if i == 0:
+                helpers.log("Jenkins environment:")
+            if i + 1 == len(jenkins_env):
+                helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
+            else:
+                helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
@@ -1496,7 +1509,7 @@ class Test(object):
         if self._setup_in_progress:  # pylint: disable=E0203
             return
 
-        helpers.debug("Test object setup begins.")
+        self.checkpoint("Test object setup begins.")
         self._setup_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params_nodes()

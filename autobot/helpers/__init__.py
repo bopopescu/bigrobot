@@ -552,7 +552,8 @@ def bigrobot_esb_broker(new_val=None,
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
-    Set to 'True' if test is run under smoketest/regression environment.
+    Set to 'True' if test is run under smoketest/regression environment
+    (i.e., Jenkins).
     """
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
