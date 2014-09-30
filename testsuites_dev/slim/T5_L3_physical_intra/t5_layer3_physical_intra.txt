@@ -20,15 +20,15 @@ Resource        testsuites_dev/slim/T5_L3_physical_intra/t5_dualleaf_three_rack_
 
 
 * Test Cases
-Intra tenant L3 untagged traffic with dynamic endpoints same rack
+TC01 Intra tenant L3 untagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack untagged with dynamic endpoints
     [Tags]              feature         sanity          run1
 
-Intra tenant L3 untagged traffic with dynamic endpoints across rack
+TC02 Intra tenant L3 untagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack untagged with dynamic endpoints
     [Tags]              feature         sanity          run2
 
-Intra tenant L3 tagged traffic with dynamic endpoints same rack
+TC03 Intra tenant L3 tagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack tagged with dynamic endpoints
     [Tags]              feature         sanity          run3
 
@@ -632,7 +632,8 @@ Verify host with same IP as vrf is having L2 service only
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
-    Should Contain                              ${ipstate}                      learned-inactive     
+#    Should Contain                              ${ipstate}                      learned-inactive     
+    Should Contain                              ${ipstate}                      learned-L2 Only  
     REST add vns ip                             X                               X1                      10.251.1.1              24
     sleep                                       1
     BASH ping                                   h5                              10.251.1.2              count=5
@@ -1615,12 +1616,6 @@ L3 add and delete tagged endpoints with existing host
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-#   BASH ping                                   h3                              10.251.1.1              count=10
-#   BASH ping                                   h2                              10.251.3.1              count=10
-#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-#    Should Not Be True                          ${value}        
-#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -1634,7 +1629,7 @@ L3 add and delete tagged endpoints with existing host
     Should Be True                              ${result}                       
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.251.3.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} <= 40        
     REST delete portgroup from vns              X                               X1                      ${leaf0_pc1}            1001
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1649,7 +1644,7 @@ L3 add and delete tagged endpoints with existing host
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}   
     ${loss} =                                   BASH ping                       h3                      10.251.1.11             count=10
-    Should Be True                              ${loss} == 0        
+    Should Be True                              ${loss} <= 40        
     BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
     BASH delete route                           h3                              10.251.1.0/24           10.251.3.1
 
@@ -2390,7 +2385,8 @@ Verify host with different IP on vns router is not getting L3 service
     ${value} =                                  BASH verify arp                 h4                      10.251.3.1
     Should Be True                              ${value}    
     ${value} =                                  BASH verify arp                 h6                      10.251.2.1
-    Should Not Be True                          ${value}    
+#    Should Not Be True                          ${value}    
+    Should Be True                              ${value}    
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}                       
@@ -2402,9 +2398,12 @@ Verify host with different IP on vns router is not getting L3 service
     Should Be True                              ${result}                           
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc2}
-    ${state} =                                  Set Variable                    ${result[0]['state']}   
-    Should Contain                              ${state}                        L2 Only     
-    BASH ifconfig ip address                            h6                              10.251.2.11/24          bond0
+    ${ipstate} =                                Set Variable                    ${result[0]['ip-address'][0]['ip-state']}   
+    Should Contain                              ${ipstate}                      learned-L2 Only 
+    ${loss} =                                   BASH ping                       h6                      10.251.1.11             count=10
+    Should Be True                              ${loss} == 100
+    sleep                                       1
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     ${loss} =                                   BASH ping                       h6                      10.251.1.11             count=10
     Should Be True                              ${loss} < 20
@@ -2971,8 +2970,8 @@ restart ofad on spine
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-#    BASH restart process                        s1                              ofad                    timeout=60
-    console bash restart process                s7                              ofad                    timeout=60
+    BASH restart process                        s7                              ofad                    timeout=60
+#    console bash restart process                s7                              ofad                    timeout=60
     sleep                                       5
 #    ${value} =                                  BASH check service status       s1                      ofad
     ${value} =                                  console check service status       s7                      ofad
@@ -3032,8 +3031,8 @@ restart ofad on leaf
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-#    BASH restart process                        s3                              ofad
-    console bash restart process                s1                              ofad                    timeout=60
+    BASH restart process                        s1                              ofad
+#    console bash restart process                s1                              ofad                    timeout=60
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
 #   sleep                                       1

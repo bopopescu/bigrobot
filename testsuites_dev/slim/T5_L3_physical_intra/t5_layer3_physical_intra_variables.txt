@@ -65,7 +65,8 @@ ${ixia3}            ethernet33
 ${ixia4}            ethernet33
 ${ixia5}            ethernet33
 ${ixia6}            ethernet33
-${leaf0a_spine0}    ethernet53
+#${leaf0a_spine0}    ethernet53
+${leaf0a_spine0}    ethernet49
 
 ${leaf0_pc1_intf1}  ethernet1
 ${leaf0_pc1_intf2}  ethernet1
