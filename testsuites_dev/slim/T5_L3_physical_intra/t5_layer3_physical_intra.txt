@@ -262,23 +262,23 @@ Verify dhcp-relay functionality in headless mode
     [Tags]                  manual              feature                 dhcp-relay       run60   
 
 Verify ecmp forwarding in headless mode
-    manual untested
+    manual passed
     [Tags]                  manual          feature                 ecmp        run61
             
 Verify L3 intra tenant forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature                 run62
 
 Verify ecmp forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature                 run63
 
 Verify dhcp-relay functionality after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature            run64     
 
 Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
-    manual untested
+    manual passed
     [Tags]                  manual          feature                 run65
 
 Verify arp agent functionality after controller HA failover via CLI
@@ -290,7 +290,7 @@ Verify arp agent functionality after controller HA failover via reboot
     [Tags]                  feature                                           run67  
     
 Verify ecmp traffic will failover and failback to more specific routes with ecmp group
-    manual untested
+    manual passed
     [Tags]                  manual                  feature                 ecmp    run68     
     
     
@@ -2973,8 +2973,8 @@ restart ofad on spine
     BASH restart process                        s7                              ofad                    timeout=60
 #    console bash restart process                s7                              ofad                    timeout=60
     sleep                                       5
-#    ${value} =                                  BASH check service status       s1                      ofad
-    ${value} =                                  console check service status       s7                      ofad
+    ${value} =                                  BASH check service status       s7                      ofad
+#    ${value} =                                  console check service status       s7                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -3036,8 +3036,8 @@ restart ofad on leaf
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
 #   sleep                                       1
-    ${value} =                                  console check service status    s3                      ofad
-#    ${value} =                                  BASH check service status      s1                      ofad
+#    ${value} =                                  console check service status    s3                      ofad
+    ${value} =                                  BASH check service status       s3                     ofad
     Should Contain                              ${value}                        is started  
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c

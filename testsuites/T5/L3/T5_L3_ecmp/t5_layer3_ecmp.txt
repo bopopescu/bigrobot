@@ -3176,13 +3176,10 @@ initialize host
     BASH delete tag                             h6                              bond0.1006              soft_error=${true}
     BASH run command                                h1-rack0                                ifdown bond0
     BASH run command                                h2-rack0                                ifdown bond0
-    BASH run command                                h3-rack0                                ifdown bond0
     BASH run command                                h1-rack1                                ifdown bond0
     BASH run command                                h2-rack1                                ifdown bond0
-    BASH run command                                h3-rack1                                ifdown bond0
     BASH run command                                h1-rack2                                ifdown bond0
     BASH run command                                h2-rack2                                ifdown bond0
-    BASH run command                                h3-rack2                                ifdown bond0
     sleep                                           1
     BASH run command                                h1-rack0                                ifup eth2
     sleep                                           1
@@ -3190,55 +3187,37 @@ initialize host
     BASH run command                                h2-rack0                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack0                                ifup eth3
-    BASH run command                                h3-rack0                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack0                                ifup eth3
     BASH run command                                h1-rack1                                ifup eth2
     sleep                                           1
     BASH run command                                h1-rack1                                ifup eth3
     BASH run command                                h2-rack1                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack1                                ifup eth3
-    BASH run command                                h3-rack1                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack1                                ifup eth3
     BASH run command                                h1-rack2                                ifup eth2
     sleep                                           1
     BASH run command                                h1-rack2                                ifup eth3
     BASH run command                                h2-rack2                                ifup eth2
     sleep                                           1
     BASH run command                                h2-rack2                                ifup eth3
-    BASH run command                                h3-rack2                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3-rack2                                ifup eth3
     BASH kill process                           h1-rack0                              dhclient
     BASH kill process                           h2-rack0                              dhclient
-    BASH kill process                           h3-rack0                              dhclient
     BASH kill process                           h1-rack1                              dhclient
     BASH kill process                           h2-rack1                              dhclient
-    BASH kill process                           h3-rack1                              dhclient    
     BASH kill process                           h1-rack2                              dhclient
     BASH kill process                           h2-rack2                              dhclient
-    BASH kill process                           h3-rack2                              dhclient    
 	BASH ifup intf							    h1-rack0 								bond0
 	BASH ifup intf							    h2-rack0								bond0
-	BASH ifup intf							    h3-rack0								bond0
 	BASH ifup intf							    h1-rack1								bond0
 	BASH ifup intf							    h2-rack1								bond0
-	BASH ifup intf							    h3-rack1								bond0
 	BASH ifup intf                              h1-rack2                                bond0
     BASH ifup intf                              h2-rack2                                bond0
-    BASH ifup intf                              h3-rack2                                bond0
     
     BASH init intf                              h1-rack0                                bond0
     BASH init intf                              h2-rack0                                bond0
-    BASH init intf                              h3-rack0                                bond0
     BASH init intf                              h1-rack1                                bond0
     BASH init intf                              h2-rack1                                bond0
-    BASH init intf                              h3-rack1                                bond0
     BASH init intf                              h1-rack2                                bond0
     BASH init intf                              h2-rack2                                bond0
-    BASH init intf                              h3-rack2                                bond0
     BASH stop service                           h1-rack0                        isc-dhcp-server
 
 setup topology
