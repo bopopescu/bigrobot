@@ -1179,7 +1179,7 @@ class Test(object):
         return error_code
 
     def _setup_controller_idle_timeout(self, name):
-        helpers.log("Checking idle timeout on '%s'" % name)
+        self.checkpoint("Checking idle timeout on '%s'" % name)
         n = self.topology(name)
         source_file = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200/application.py"
 
@@ -1222,7 +1222,7 @@ class Test(object):
             helpers.log("Env BIGROBOT_RECONFIG_REAUTH is False. Bypass reauth reconfig.")
             return False
 
-        helpers.log("Checking reauth timeout on '%s'" % name)
+        self.checkpoint("Checking reauth timeout on '%s'" % name)
         n = self.topology(name)
         source_file = "/etc/default/floodlight"
 
@@ -1256,7 +1256,7 @@ class Test(object):
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
-        helpers.log("Restarting floodlight to put new reauth timeout into effect.")
+        self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")
         n.sudo("initctl stop floodlight")
         helpers.sleep(0.5)
         n.sudo("initctl start floodlight")
@@ -1268,9 +1268,8 @@ class Test(object):
     def setup_controller_reauth_and_idle_timeout(self, name):
         """
         When logging into the BCF controller for the first time, modify the
-        idle timeout setting in Floodlight's application.py. Then
-        touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
-        it again in the future. Finally reconnect so changes can take effect.
+        idle timeout setting in Floodlight's application.py. Then reconnect
+        so changes can take effect.
         """
         n = self.topology(name)
         if not n.devconf():
@@ -1652,7 +1651,7 @@ class Test(object):
                 n.config(cmd)
 
     def teardown(self):
-        helpers.debug("Test object teardown begins.")
+        self.checkpoint("Test object teardown begins.")
         params = self.topology_params_nodes()
         for key in params:
             if helpers.is_controller(key):
@@ -1669,7 +1668,7 @@ class Test(object):
                         " clean-config")
             return True
 
-        helpers.log("Running clean-config on devices in topology")
+        self.checkpoint("Running clean-config on devices in topology")
         if (helpers.is_controller(name) and helpers.is_t5(n.platform())
             and self.is_master_controller(name)):
 
