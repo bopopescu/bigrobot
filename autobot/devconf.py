@@ -593,9 +593,12 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd(bash_cmd,
                                             mode=self._mode_before_bash,
                                             quiet=5, level=level)
-                super(BsnDevConf, self).cmd("set +o emacs",
-                                            mode=self._mode_before_bash,
-                                            quiet=5, level=level)
+
+                # 2014-09-30 It seems this is causing havoc on console
+                # sessions. Disable for now.
+                # super(BsnDevConf, self).cmd("set +o emacs",
+                #                            mode=self._mode_before_bash,
+                #                            quiet=5, level=level)
 
         self.mode(mode)
         # helpers.log("Current mode is %s" % self.mode(), level=level)
