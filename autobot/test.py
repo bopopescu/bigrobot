@@ -1499,6 +1499,8 @@ class Test(object):
         else:
             helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
         con.cli("")
+        helpers.log("Disabling switch config auto-reloads...")
+        con.bash('touch /mnt/flash/local.d/no-auto-reload')
         self.node_reconnect(name)
         helpers.log("Closing dev_console session for switch : %s" % name)
         con.close()
