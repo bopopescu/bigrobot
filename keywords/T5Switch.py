@@ -515,7 +515,12 @@ class  T5Switch(object):
                     if ("Description:" in element_array):
                         thermal_dict['Description'] = str(element_array[1])
                     elif ("Status:" in element_array):
-                        thermal_dict['Status'] = str(element_array[1])
+                        helpers.log("The element array is %s" % element_array)
+                        tmpstr1 = str(element_array[1])
+                        tmpstr2 = str(element_array[2])
+                        finalstr = str(tmpstr1) + " " + str(tmpstr2)
+                        helpers.log("The final element is %s" % finalstr)
+                        thermal_dict['Status'] = str(finalstr)
                     elif ("Temperature:" in element_array):
                         thermal_dict['Temperature'] = str(element_array[1])
                 
@@ -523,7 +528,7 @@ class  T5Switch(object):
                 helpers.log("The component require is %s" % component)
                 componentVal =  thermal_dict.get(component)
                 helpers.log("Got the value %s for the component %s" % (componentVal, component) )
-                if (component == 'Status') and (componentVal == 'Good'):
+                if (component == 'Status') and (componentVal == 'Sensor Functional'):
                     return True
                 elif (component == 'Temperature'):    
                     return componentVal  
