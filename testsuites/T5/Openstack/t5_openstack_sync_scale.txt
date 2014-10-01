@@ -20,32 +20,32 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 * Test Case 
 
 verify 5 tenant 50 network sync  
-	[Tags]   openstack   
+	[Tags]   openstack     
 	openstack tenant scale  5
 	openstack multiple scale  70  5  10 
-	rest verify tenant segment scale  5  10
+	openstack verify multiple scale  5  10
 	rest delete tenant all
 	sleep  130
-	rest verify tenant segment scale  5  10
+	openstack verify multiple scale  5  10
     
 Delete 5 tenant/networks
-	[Tags]  openstack  
+	[Tags]  openstack    
 	openstack segment scale delete  50
     openstack tenant scale delete  5
 
 verify 1k tenant 4k segment sync
 	[Tags]   openstack   
-	openstack tenant scale  1000
-	openstack multiple scale  70  1000  4  
-	rest verify tenant segment scale  1000  4
+	openstack tenant scale  995
+	openstack multiple scale  70  995  4  
+	openstack verify multiple scale  995  4
 	rest delete tenant all
 	sleep  420  
-	rest verify tenant segment scale  1000  4
+	openstack verify multiple scale  995  4
 
 Delete all tenant/networks
 	[Tags]  openstack 
-    openstack segment scale delete  4000
-    openstack tenant scale delete  1000	
+    openstack segment scale delete  3980
+    openstack tenant scale delete  995	
 
 * keywords
 T5 Functional Suite Setup

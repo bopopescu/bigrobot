@@ -29,6 +29,7 @@ add/delete single project openstack
 	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
 	openstack verify tenant  app-tenant
 	openstack delete net  app-net
+	sleep  5
 	${result}=  openstack verify tenant  app-tenant
 	Should not be True  ${result}
 
@@ -39,9 +40,11 @@ add/delete single subnet from openstack
 	openstack add tenant   app-tenant 
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
-	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24
+	sleep  2 
 	openstack verify vns  app-tenant  app-net
 	openstack delete net  app-net
+	sleep  2
 	openstack verify vns  app-tenant  app-net
 	
 add/delete multiple projects in openstack
@@ -65,6 +68,7 @@ add/delete multiple projects in openstack
 	openstack delete net  db-net
 	openstack delete net  web-net
 	openstack delete net  app-net
+	sleep  5
 	${result}=  openstack verify tenant  app-tenant
 	Should not be True  ${result}	
 	${result}=  openstack verify tenant  web-tenant
@@ -138,6 +142,5 @@ T5 base test teardown
 	openstack delete tenant  app-tenant
 	openstack delete tenant  web-tenant
 	openstack delete tenant  db-tenant
-	
 	base test teardown
   
