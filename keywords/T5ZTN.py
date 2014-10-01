@@ -1537,7 +1537,7 @@ class T5ZTN(object):
         helpers.log("Reset connection command executed successfully")
         return True
 
-    def console_bash_switch_mode_nonztn(self, node,password='adminadmin' ):
+    def console_bash_switch_mode_nonztn(self, node ):
         """
         Set the bootmode for switch - non ztn
         Author- Mingtao
@@ -1557,7 +1557,7 @@ class T5ZTN(object):
             helpers.log('The switch: %s is in ZTN mode ' % node)    
             image =  'SWI=http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release-bcf.swi'
             sedstring = 's;^BOOTMODE.*;'+image+';'       
-            line = 'cat /mnt/flash/boot-config | sed \'' + sedstring + '\' > /mnt/flash/boot-config'
+            line = 'sed -i.orig \'' + sedstring + '\'  /mnt/flash/boot-config'
             s.bash(line)        
             s.bash('cat /mnt/flash/boot-config')         
             helpers.log(s.bash('')['content'])                              
@@ -1570,7 +1570,7 @@ class T5ZTN(object):
         s.cli('')                  
         return True
 
-    def console_bash_switch_mode_ztn(self, node,password='adminadmin' ):
+    def console_bash_switch_mode_ztn(self, node):
         """
         Set the bootmode for switch - ztn
         Author- Mingtao
@@ -1588,7 +1588,7 @@ class T5ZTN(object):
             helpers.log('The switch: %s is NOT in  ztn mode, setting to ztn ' % node)    
             bootmode =  'BOOTMODE=ztn'
             sedstring = 's;^SWI=.*;'+bootmode+';'       
-            line = 'cat /mnt/flash/boot-config | sed \'' + sedstring + '\' > /mnt/flash/boot-config'
+            line = 'sed -i.orig \'' + sedstring + '\'  /mnt/flash/boot-config'
             s.bash(line) 
             s.bash('cat /mnt/flash/boot-config') 
             helpers.log(s.bash('')['content'])            
@@ -1600,7 +1600,7 @@ class T5ZTN(object):
         s.cli('')                  
         return True
 
-    def console_bash_switch_add_ztnserver(self, node,ztnserver, password='adminadmin' ):
+    def console_bash_switch_add_ztnserver(self, node,ztnserver):
         """
         add ztn server to switch
         Author- Mingtao
@@ -1617,8 +1617,9 @@ class T5ZTN(object):
         helpers.log('USR OUTPUT: %s ' % temp)                       
         if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
             helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
-            line= 'cat /mnt/flash/boot-config |sed \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'            
-            helpers.log('the sed line is:  %s'  % line)
+            #line= 'cat /mnt/flash/boot-config | sed -i.orig \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'
+            line= "sed -i.orig '/^ZTNSERVERS.*/d' /mnt/flash/boot-config"           
+            helpers.log("the sed line is:  '%s'"  % line)
             s.bash(line) 
             s.bash('cat /mnt/flash/boot-config') 
             helpers.log(s.bash('')['content'])            
@@ -1634,7 +1635,7 @@ class T5ZTN(object):
         s.cli('')                  
         return True
     
-    def console_bash_switch_delete_ztnserver(self, node, password='adminadmin' ):
+    def console_bash_switch_delete_ztnserver(self, node):
         """
         remove ztn server to switch
         Author- Mingtao
@@ -1651,7 +1652,7 @@ class T5ZTN(object):
         helpers.log('USR OUTPUT: %s ' % temp)                       
         if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
             helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
-            line= 'cat /mnt/flash/boot-config |sed \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'            
+            line= "sed -i.orig '/^ZTNSERVERS.*/d\'  /mnt/flash/boot-config"            
             helpers.log('the sed line is:  %s'  % line)
             s.bash(line) 
             s.bash('cat /mnt/flash/boot-config')         
@@ -1660,6 +1661,35 @@ class T5ZTN(object):
             helpers.log('The switch: %s does NOT have ZTNSERVER' % node)                            
         s.cli('')                  
         return True
+
+    def console_bash_switch_default_boot_config(self, node):
+        """
+        remove ztn server to switch
+        Author- Mingtao
+        Inputs:
+            node  -  Alias of the switch  
+                    
+        Return Value:  True         
+        """
+        t = test.Test()
+        
+        s = t.dev_console(node)
+        content = s.bash('cat /mnt/flash/boot-config')['content'] 
+        temp = helpers.strip_cli_output(content) 
+        helpers.log('USR OUTPUT: %s ' % temp)   
+        s.bash('echo " NETDEV=ma1" > /mnt/flash/boot-config')
+        s.bash('echo " NETAUTO=dhcp" >> /mnt/flash/boot-config')
+        s.bash('echo " BOOTMODE=ztn" >> /mnt/flash/boot-config')
+ 
+        s.bash('cat /mnt/flash/boot-config')         
+        helpers.log(s.bash('')['content'])                       
+                               
+        s.cli('')                  
+        return True
+
+
+
+
 
     def power_cycle_switch(self, switch):
         """
