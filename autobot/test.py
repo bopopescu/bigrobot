@@ -1443,8 +1443,6 @@ class Test(object):
         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
-        helpers.log("Disabling switch config auto-reloads...")
-        con.bash('touch /mnt/flash/local.d/no-auto-reload')
         con.send('reboot')
         con.send('')
         if helpers.bigrobot_ztn_installer().lower() != "true":
@@ -1498,8 +1496,11 @@ class Test(object):
             self.params(name, 'ip', new_val=mgt_ip)
         else:
             helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
-        helpers.log("Disabling switch config auto-reloads...")
-        con.bash('touch /mnt/flash/local.d/no-auto-reload')
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            helpers.log("Disabling switch config auto-reloads...")
+            con.bash('touch /mnt/flash/local.d/no-auto-reload')
+        else:
+            helpers.log("Skipping to disable auto-reloads , which disallows switch SSH Handles")
         con.cli("")
         self.node_reconnect(name)
         helpers.log("Closing dev_console session for switch : %s" % name)
