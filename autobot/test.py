@@ -1571,9 +1571,12 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
+                if helpers.bigrobot_no_auto_reload() == 'true':
+                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                    for key in params:
+                        self.setup_ztn_phase2(key)
+                else:
+                    helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
