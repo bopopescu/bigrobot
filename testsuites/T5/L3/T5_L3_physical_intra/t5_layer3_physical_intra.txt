@@ -114,15 +114,15 @@ Verify ecmp forwarding in headless mode
     [Tags]                  manual          feature  run_pass                 ecmp    
             
 Verify L3 intra tenant forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature  run_pass                 
 
 Verify ecmp forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature  run_pass                 
 
 Verify dhcp-relay functionality after controller upgrade
-    manual failed
+    manual passed
     [Tags]                  manual          feature  run_pass                 
 
 Verify arp agent functionality after controller HA failover via CLI

@@ -105,15 +105,15 @@ TC21 inter tenant dhcp relay in headless mode
     [Tags]          manual          solution            dhcp-relay  
 
 TC22 Verify L3 inter tenant forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 
 
 TC23 Verify inter tenant ecmp forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 
 
 TC24 Verify inter tenant dhcp-relay functionality after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature    
 
 TC25 Add and delete nexthop group
