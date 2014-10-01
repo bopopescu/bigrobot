@@ -3611,6 +3611,7 @@ initialize host
 
 
 test setup topology
+    bash test setup
     initialize host
     sleep                                           1
 #   Start Floodlight Monitor 
@@ -3677,6 +3678,7 @@ test teardown topology
 #    BASH restart networking service                 h1                          timeout=60
 #    BASH restart networking service                 h3                          timeout=60
 #    BASH restart networking service                 h6                          timeout=60
+    bash test teardown
 
 
 T5 base suite setup
@@ -3759,7 +3761,8 @@ T5 base suite teardown
     REST delete portgroup                               ${leaf1_pc2}
     REST delete portgroup                               ${leaf2_pc1}
     REST delete portgroup                               ${leaf2_pc2}
-
+    base suite teardown
+    
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_valid_frames}  ${stream}  ${stream_name}
     Sleep  5

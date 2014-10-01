@@ -3613,6 +3613,7 @@ initialize host
     BASH stop service                           h1-rack0                        isc-dhcp-server
 
 setup topology
+    base test setup
 	initialize host
 	REST add tenant								system
 	REST add tenant                             External
@@ -3899,6 +3900,7 @@ setup topology
 teardown topology
 	delete traffic
     initialize host
+    base test teardown
 
 T5 base suite setup
 	base suite setup
@@ -4067,7 +4069,7 @@ T5 base suite teardown
     CLI arista enable disable interface        s11                             port-channel 5           disable=${False}    
     CLI arista enable disable interface        s11                             ethernet 1               disable=${False}    
     CLI arista enable disable interface        s11                             ethernet 2               disable=${False}    
-    
+    base suite teardown
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}  ${range}=5
     Sleep  5
