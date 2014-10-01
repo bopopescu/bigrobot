@@ -2985,7 +2985,7 @@ test teardown topology
 #    BASH restart networking service                 h1                          timeout=60
 #    BASH restart networking service                 h3                          timeout=60
 #    BASH restart networking service                 h6                          timeout=60
-    
+    base test teardown
 
 T5 base suite setup
     base suite setup
