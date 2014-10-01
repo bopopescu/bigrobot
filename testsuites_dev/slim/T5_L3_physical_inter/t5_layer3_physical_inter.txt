@@ -239,15 +239,15 @@ inter tenant dhcp relay in headless mode
     [Tags]          manual          solution            dhcp-relay  run54  
 
 Verify L3 inter tenant forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 run55
 
 Verify inter tenant ecmp forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 run56
 
 Verify inter tenant dhcp-relay functionality after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature     run57
 
 Dhcp request from overlapping private IP and public IP
@@ -1275,7 +1275,7 @@ L3 inter tenant traceroute with icmp and udp probe
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     sleep                                       2
-    BASH run command                            route -n
+    BASH run command                            h5                              route -n
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.252.1.11
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -1832,8 +1832,8 @@ Spine reboot
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
-#    CLI restart switch                          s1
-    Console bash reboot switch                  s7
+    CLI restart switch                          s7
+#    Console bash reboot switch                  s7
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
@@ -1883,8 +1883,8 @@ Leaf reboot
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
-#    CLI restart switch                          s5
-    Console bash reboot switch                  s1
+    CLI restart switch                          s1
+#    Console bash reboot switch                  s1
     sleep                                       10
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
@@ -2888,7 +2888,7 @@ initialize host
 test setup topology
     initialize host
     sleep                                           1
-    Start Floodlight Monitor 
+#    Start Floodlight Monitor 
     REST add tenant                                 X
     REST add tenant                                 Y
     REST add tenant                                 Z
@@ -2976,7 +2976,7 @@ test teardown topology
     REST delete tenant routers intf to system       Y
     REST delete tenant routers intf to system       Z
     initialize host
-    Stop Floodlight Monitor    
+#    Stop Floodlight Monitor    
     BASH ifdown intf                                h3                          bond0
 #    BASH restart networking service                 h1                          timeout=60
 #    BASH restart networking service                 h3                          timeout=60
