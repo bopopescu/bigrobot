@@ -1159,6 +1159,30 @@ S
 			k, v = data1[0]["interface"][0][i]["switch-name"], data1[0]["interface"][0][i]["interface-name"]
 			portgroup_members[k] = v 
 		return portgroup_members
+	
+	def openstack_verify_multiple_scale(self, tcount, ncount, tname='p'):
+		'''Function to create multiple segments in a given tenant
+			Input: tenantName , count , name starts with segment
+			Output: given number of segments created in neutron server using neutron command
+	    '''
+		t = test.Test()
+		c = t.controller('master')
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			tenantId = self.openstack_show_tenant(tenant)
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % (tenantId)
+			c.rest.get(url)
+			data = c.rest.content()
+			if int(data[0]["segment-count"]) != ncount:
+				helpers.test_failure("All Openstack segments are not present in a tenant")
+				return False
+			i = i + 1
+		return True
 				
 		
 		
