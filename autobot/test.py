@@ -1571,7 +1571,7 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
-                if helpers.bigrobot_no_auto_reload() == 'true':
+                if helpers.bigrobot_no_auto_reload().lower() == 'true':
                     helpers.log("Reconnecting switch consoles and updating switch IP's....")
                     for key in params:
                         self.setup_ztn_phase2(key)
