@@ -2097,7 +2097,7 @@ class T5Platform(object):
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("USR INFO:   list   is :\n%s" % temp)
-            line = temp[-2]
+            line = temp[-1]
             helpers.log("USR INFO:  line is :\n%s" % line)
             if re.match(r'Error:.*', line):
                 helpers.log("Error: %s" % line)
@@ -2105,6 +2105,8 @@ class T5Platform(object):
                     return line
                 else:
                     helpers.test_failure("Error: %s" % line)
+            elif soft_error:
+                return line
             else:
                 return False
             
