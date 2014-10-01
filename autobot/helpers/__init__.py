@@ -609,6 +609,12 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
+def bigrobot_no_auto_reload(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using ssh Switch handles.
+    """
+    return _env_get_and_set('BIGROBOT_NO_AUTO_RELOAD', new_val, default)
 
 def bigrobot_ztn_reload(new_val=None, default='False'):
     """
