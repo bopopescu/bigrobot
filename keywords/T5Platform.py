@@ -2097,7 +2097,7 @@ class T5Platform(object):
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("USR INFO:   list   is :\n%s" % temp)
-            line = temp[-2]
+            line = temp[-1]
             helpers.log("USR INFO:  line is :\n%s" % line)
             if re.match(r'Error:.*', line):
                 helpers.log("Error: %s" % line)
@@ -2105,6 +2105,8 @@ class T5Platform(object):
                     return line
                 else:
                     helpers.test_failure("Error: %s" % line)
+            elif soft_error:
+                return line
             else:
                 return False
             
@@ -4869,7 +4871,7 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
-
+ 
         if switch is None:
             url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
             helpers.log("get switch fabric connection state")
@@ -4887,11 +4889,12 @@ class T5Platform(object):
             switch = switch.split(',')
         helpers.log("USER INFO - switches are:  %s" % switch)
         for ip in switch:
-            c.enable("system reboot switch %s" % ip)
+            c.enable('')
+            c.send("system reboot switch %s" % ip)
 
-            options = c.expect([r'.*\("y" or "yes" to continue\):', c.get_prompt()])
+            options = c.expect([r'.*\(\"y\" or \"yes\" to continue\): ', c.get_prompt()], timeout = 60)
             if options[0] == 0:  # login prompt
-                c.send("yes")
+                c.send('yes')
                 c.expect()
 
             helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())
@@ -5149,23 +5152,17 @@ class T5Platform(object):
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
-        options = c.expect([r'fabric is redundant', r'.* \("y" or "yes" to continue\):'])
-        if options[0] == 1:
-            c.send("yes")
-
         if role == 'active':
-            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role))
-#            c.expect(r'waiting for standby to begin \"upgrade launch\"', timeout=360)
-#            c.expect(r'config updates are frozen for update',timeout=360)
-#            c.expect(r'standby has begun upgrade',timeout=360)
-#            c.expect(r'waiting for standby to complete switch handoff',timeout=360)
-#            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360)
-#            c.expect(r'new state: phase-1-migrate',timeout=360)
+            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role)) 
+            helpers.summary_log('Active controller is upgradeing ..... ')       
+            options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'],timeout=300)
+            if options[0] == 1:
+                c.send("yes")
 
-#            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=360)
-#            c.expect(r'new state: phase-2-migrate',timeout=360)
+            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360) 
+            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=600)
+            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=600)
 
-#            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=360)
             try:
                 options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=600)
             except:
@@ -5190,10 +5187,7 @@ class T5Platform(object):
 
         elif role == 'standby':
             helpers.log("USER INFO: I am controller : %s is:   %s" % (node, role))
-#            c.expect(r'waiting for active to begin \"upgrade launch\"', timeout=360)
-#            c.expect(r'Leader->begin-upgrade-old state',timeout=360)
-#            c.expect(r'Leader->partition state: partition-completed',timeout=360)
-#            c.expect(r'Leader->remove-standby-controller-config state: remove-standby-controller-config-completed',timeout=360)
+            helpers.summary_log('Standby controller is upgradeing .... . ')
             try:
                 options = c.expect([r'[R|r]ebooting', r'.*upgrade has been aborted' , c.get_prompt()], timeout=300)
             except:

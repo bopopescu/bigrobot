@@ -1125,24 +1125,7 @@ class T5(object):
             helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), len(data)))
             return False
 
-    def rest_delete_virtual_ip(self):
-        ''' Function to delete  Virtual IP from a controller
-        Input: None
-        Output: Delete the VIP address
-        '''
-
-        t = test.Test()
-        c = t.controller('master')
-
-        helpers.log("Deleting virtual IP address")
-        try:
-            url = '/api/v1/data/controller/os/config/global/virtual-ip-config'
-            c.rest.delete(url)
-        except:
-            return False
-        else:
-            return True
-
+ 
     def rest_clear_vns_stats(self, vns=None):
         ''' Function to clear the VNS stats
         Input: vns name
