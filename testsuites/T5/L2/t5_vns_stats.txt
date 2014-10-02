@@ -20,10 +20,13 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse  run     
+   [Tags]  L2  feature  IronHorse  run 
+   bigrobot test ztn  False
+   add fabric switch  
+   sleep  125  
    rest verify fabric switch all
    rest verify fabric link
-   rest verify fabric link common
+   rest verify fabric link common  6
 	
 verify show vns and tenant counters CLI output
 	[Tags]  L2  feature  IronHorse   
@@ -128,6 +131,7 @@ Verify single VNS rx/tx stats within same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -153,14 +157,16 @@ Verify single VNS rx/tx stats within same rack
     rest verify vns tx stats  t1  v1  10000
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
+    sleep  125
     
 Verify single vns rx/tx rates same rack
-	[Tags]  L2  feature  IronHorse  
+	[Tags]  L2  feature  IronHorse
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -186,6 +192,7 @@ Verify single vns rx/tx rates same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
+    sleep  125
 
 verify single vns rx/tx rates different rack
 	[Tags]  L2  feature  IronHorse      
@@ -248,6 +255,7 @@ verify interface rx/tx stats same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -272,6 +280,7 @@ verify interface rx/tx stats same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
+    sleep  125
 	
 verify interface rx/tx rates different rack
 	[Tags]  L2  feature  IronHorse  
@@ -309,6 +318,7 @@ verify interface rx/tx rates same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -331,6 +341,7 @@ verify interface rx/tx rates same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
+    sleep  125
 
 verify interface rx/tx broadcast packet stats different rack
 	[Tags]  L2  feature  IronHorse   
