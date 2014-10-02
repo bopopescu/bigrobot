@@ -192,7 +192,7 @@ Verify single vns rx/tx rates same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
-    sleep 125
+    sleep  125
 
 verify single vns rx/tx rates different rack
 	[Tags]  L2  feature  IronHorse      
@@ -255,7 +255,7 @@ verify interface rx/tx stats same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
-	sleep 125
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -280,7 +280,7 @@ verify interface rx/tx stats same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
-    sleep 125
+    sleep  125
 	
 verify interface rx/tx rates different rack
 	[Tags]  L2  feature  IronHorse  
@@ -318,7 +318,7 @@ verify interface rx/tx rates same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
-	sleep 125
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -341,7 +341,7 @@ verify interface rx/tx rates same rack
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
-    sleep 125
+    sleep  125
 
 verify interface rx/tx broadcast packet stats different rack
 	[Tags]  L2  feature  IronHorse   
