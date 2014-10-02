@@ -275,6 +275,125 @@ class T5Platform(object):
                     return False
 
 
+
+    def cluster_node_reload(self, masterNode=True):
+
+        ''' Reload a node and verify the cluster leadership.
+            Reboot Master in dual node setup: masterNode == True
+        '''
+        t = test.Test()
+        master = t.controller("master")
+        obj = utilities()
+
+        if (utilities.cli_get_num_nodes(obj) == 1):
+            singleNode = True
+        else:
+            singleNode = False
+
+
+        if(singleNode):
+            masterID = self.getNodeID(False)
+        else:
+            masterID, slaveID = self.getNodeID()
+
+        if(singleNode):
+            if (masterID == -1):
+                return False
+        else:
+            if(masterID == -1 and slaveID == -1):
+                return False
+
+        try:
+            if(masterNode):
+                actual_node_name = master.name()
+                ipAddr = master.ip()
+                master.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("yes")
+                helpers.log("Master is reloading")
+                # sleep(90)
+                sleep(160)
+            else:
+                slave = t.controller("slave")
+                actual_node_name = slave.name()
+                ipAddr = slave.ip()
+                slave.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is reloading")
+                # sleep(90)
+                sleep(160)
+        except:
+            helpers.log("Node is reloading")
+            sleep(90)
+            count = 0
+            while (True):
+                loss = helpers.ping(ipAddr)
+                helpers.log("loss is: %s" % loss)
+                if(loss != 0):
+                    if (count > 5):
+                        helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                        return False
+                    sleep(60)
+                    count += 1
+                    helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+                else:
+                    helpers.log("Controller just came alive. Waiting for it to become fully functional")
+                    sleep(120)
+                    break
+
+        helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
+        t.node_reconnect(actual_node_name)
+        
+        if(singleNode):
+            newMasterID = self.getNodeID(False)
+        else:
+            newMasterID, newSlaveID = self.getNodeID()
+
+        if(singleNode):
+            if (newMasterID == -1):
+                return False
+        else:
+            if(newMasterID == -1 and newSlaveID == -1):
+                return False
+
+
+        if(singleNode):
+            if(masterID == newMasterID):
+                # obj.restart_floodlight_monitor("master")
+                helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
+                    After the reboot Master is: %s " % (masterID, newMasterID))
+        else:
+            # if(masterNode):
+            #    obj.restart_floodlight_monitor("slave")
+            # else:
+            #    obj.restart_floodlight_monitor("master")
+
+            if(masterNode):
+                if(masterID == newSlaveID and slaveID == newMasterID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    # obj.stop_floodlight_monitor()
+                    return False
+            else:
+                if(masterID == newMasterID and slaveID == newSlaveID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    # obj.stop_floodlight_monitor()
+                    return False
+
+
+
+
+
+
     def _cluster_node_shutdown(self, masterNode=True):
         ''' Shutdown the node
         '''
@@ -335,6 +454,24 @@ class T5Platform(object):
         if(not returnVal):
             return False
         return utilities.fabric_integrity_checker(obj, "after")
+
+
+    def cli_verify_cluster_master_reload(self):
+        obj = utilities()
+        utilities.fabric_integrity_checker(obj, "before")
+        returnVal = self.cluster_node_reload()
+        if(not returnVal):
+            return False
+        return utilities.fabric_integrity_checker(obj, "after")
+
+    def cli_verify_cluster_slave_reload(self):
+        obj = utilities()
+        utilities.fabric_integrity_checker(obj, "before")
+        returnVal = self.cluster_node_reload(False)
+        if(not returnVal):
+            return False
+        return utilities.fabric_integrity_checker(obj, "after")
+
 
     def cli_verify_cluster_master_shutdown(self):
         obj = utilities()
@@ -5157,16 +5294,11 @@ class T5Platform(object):
             helpers.summary_log('Active controller is upgradeing ..... ')       
             options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'],timeout=300)
             if options[0] == 1:
-                c.send("yes")
-
-            c.expect(r'waiting for upgrade to complete \(remove-standby-controller-config-completed\)',timeout=360) 
-            c.expect(r'waiting for upgrade to complete \(phase-1-migrate\)',timeout=600)
-            c.expect(r'waiting for upgrade to complete \(phase-2-migrate\)',timeout=600)
-
+                c.send("yes")   
             try:
-                options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=600)
+                options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=1200)
             except:
-                helpers.log('ERROR: upgrade stuck for more than 10 minutes!!!!!!!!!!')
+                helpers.log('ERROR: upgrade stuck for more than 20 minutes!!!!!!!!!!')
                 c.send(helpers.ctrl('c'))
                 helpers.summary_log('Ctrl C is hit during upgrade')
                 c.expect(timeout=900)
