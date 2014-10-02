@@ -6,11 +6,11 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.8.30.5
+  ip: 10.8.30.6
   openflow_port:  6633 
 
 c2:
-  ip: 10.8.30.6
+  ip: 10.8.30.7
   openflow_port:  6633 
   
 s1:

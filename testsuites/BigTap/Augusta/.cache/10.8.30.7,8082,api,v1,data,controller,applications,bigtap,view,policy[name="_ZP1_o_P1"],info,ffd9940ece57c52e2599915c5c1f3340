@@ -1,0 +1,40 @@
+status: 200
+content-location: http://10.8.30.7:8082/api/v1/data/controller/applications/bigtap/view/policy[name="_ZP1_o_P1"]/info
+accept-ranges: bytes
+vary: Accept-Charset, Accept-Encoding, Accept-Language, Accept
+server: Restlet-Framework/2.1.0
+connection: keep-alive
+date: Thu, 02 Oct 2014 06:46:34 GMT
+content-type: application/json; charset=UTF-8
+-varied-accept-encoding: gzip, deflate
+
+[ {
+  "component-policy" : "ZP1, P1, ",
+  "config-status" : "active and forwarding",
+  "core-interface-count" : 4,
+  "delivery-bandwidth-bps" : 20000000000,
+  "delivery-interface-count" : 2,
+  "delivery-switch-count" : 2,
+  "detailed-status" : "installed to forward",
+  "filter-bandwidth-bps" : 10000000000,
+  "filter-interface-count" : 1,
+  "filter-switch-count" : 1,
+  "name" : "_ZP1_o_P1",
+  "o-priority" : 1,
+  "overlap-match" : "\n1 ether-type 2048 src-mac 00:11:00:00:00:01 dst-mac 00:11:00:00:00:02 \n",
+  "overlap-message" : "none",
+  "post-service-interface-count" : 0,
+  "pre-service-interface-count" : 0,
+  "priority" : 100,
+  "rewrite-valid" : false,
+  "rewrite-vlan" : 0,
+  "runtime-status" : "installed",
+  "service-count" : 0,
+  "service-name-list" : "",
+  "service-switch-count" : 0,
+  "total-delivery-traffic-bps" : 0,
+  "total-ingress-traffic-bps" : 0,
+  "total-post-service-traffic-bps" : 0,
+  "total-pre-service-traffic-bps" : 0,
+  "type" : "Dynamic"
+} ]

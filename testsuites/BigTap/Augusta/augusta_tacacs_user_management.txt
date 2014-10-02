@@ -13,7 +13,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Tap Controller
-${version}      Big Tap Controller 2.0.3  
+${version}      Big Tap Controller 2.0.4
     
 * Test Case
 Verify Running-Configuration
