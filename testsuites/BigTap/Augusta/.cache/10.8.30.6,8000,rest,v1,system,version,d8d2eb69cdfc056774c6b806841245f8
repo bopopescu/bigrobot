@@ -1,0 +1,7 @@
+status: 200
+content-location: http://10.8.30.6:8000/rest/v1/system/version
+server: Apache/2.2.17 (Ubuntu)
+date: Thu, 02 Oct 2014 07:08:56 GMT
+content-type: application/json
+
+[{"controller": "Big Tap Controller 2.0.4 (2014.10.02.0101-b.bsc.augusta-patch4)"}]
