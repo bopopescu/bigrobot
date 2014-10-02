@@ -100,8 +100,10 @@ class TestCatalog(object):
         if not aggregated_build_name:
             aggregated_build_name = ("bvs master aggregated %s wk%s"
                                      % (year, week_num))
-
-        query = {"build_names": {"$all": [build_name]}}
+            query = {"build_names": {"$all": [build_name]}}
+        else:
+            query = {"build_names": {"$all": [build_name]},
+                     "name": aggregated_build_name}
         cursor = self.aggregated_builds_collection().find(query)
         count = cursor.count()
         if count >= 1:
