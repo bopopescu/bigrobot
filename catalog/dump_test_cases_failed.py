@@ -67,11 +67,12 @@ def print_failed_tests(args):
     i = 0
     for tc in tc_archive_collection:
         i += 1
-        print("TC-%03d: %12s  %-55s  %s"
+        print("TC-%03d: %12s  %-55s  %s  %s"
               % (i,
                  ts_author_dict[tc["product_suite"]],
                  tc["product_suite"],
-                 tc["name"]))
+                 tc["name"],
+                 helpers.utf8(tc["tags"])))
     print "\nTotal test cases failed: %s" % total_tc
 
 
