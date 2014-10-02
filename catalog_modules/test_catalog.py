@@ -83,6 +83,13 @@ class TestCatalog(object):
     def aggregated_builds_collection(self):
         return self.db()['aggregated_builds']
 
+    def test_suite_author_mapping(self, build_name):
+        query = {"build_name": build_name}
+        cursor = self.test_suites_collection().find(query)
+        test_suite_author_map = {}
+        for tc in cursor:
+            test_suite_author_map[helpers.utf8(tc["product_suite"])] = helpers.utf8(tc["author"])
+        return test_suite_author_map
 
     # DB query/update
 
