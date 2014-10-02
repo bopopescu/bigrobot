@@ -357,7 +357,7 @@ Consecutive reboot of peer leaf (dual-tor context)
 
 Consecutive reboots of spines
 	[Tags]   
-	test  passed
+	test passed
 	#: FOR    ${Iteration}    IN RANGE    1    5
    	#\	Log To Console   \n================ Rebooting all spine switches - Iteration ${Iteration} ===============\n
 	#\	${returnVal}=	verify fabric with disruption	switchPowerCycle    switch=spine0 spine1
@@ -401,7 +401,7 @@ Switch - Open Ports - Penetration test
 	
 Controller- Bundle Image
 	[Tags]    manual
-	manual passsed
+	manual passed
 	
 Power supplies - DC /AC Mix match
 	[Tags]    manual
