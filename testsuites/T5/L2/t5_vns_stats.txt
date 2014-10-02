@@ -131,7 +131,7 @@ Verify single VNS rx/tx stats within same rack
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
 	rest add leaf group  leaf0-a  rack0
-	sleep 125
+	sleep  125
 	rest verify fabric link
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -157,7 +157,7 @@ Verify single VNS rx/tx stats within same rack
     rest verify vns tx stats  t1  v1  10000
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
-    sleep 125
+    sleep  125
     
 Verify single vns rx/tx rates same rack
 	[Tags]  L2  feature  IronHorse
