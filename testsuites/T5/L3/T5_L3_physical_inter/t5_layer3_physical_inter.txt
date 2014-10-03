@@ -66,7 +66,7 @@ L3 inter tenant traceroute with icmp and udp probe
 
 Add and delete endpoints with L3 inter tenant traffic
     Add and delete endpoints with L3 inter tenant traffic
-    [Tags]          feature         TC012
+    [Tags]          feature         TC012  fail_run
 
 Verify private subnet cannot be routed via system router
     Verify private subnet cannot be routed via system router
@@ -94,7 +94,7 @@ Controller HA failover with dhcp-relay
 
 Active Controller reboot with dhcp-relay
     Active Controller reboot with dhcp-relay
-    [Tags]          feature         dhcp-relay          HA  TC019
+    [Tags]          feature         dhcp-relay          HA  TC019  fail_run
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
@@ -114,7 +114,7 @@ Dhcp request from overlapping private IP and public IP
                     
 Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
-    [Tags]          feature     testpath          runfailed     TC024
+    [Tags]          feature     testpath          fail_run     TC024
 
 * Keywords
 
