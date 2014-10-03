@@ -35,8 +35,6 @@ sys.path.insert(1, exscript_path)
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
-if not 'BUILD_NAME' in os.environ:
-    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
 
 def sanitize_string(value):
@@ -170,6 +168,7 @@ class VerificationFileBuilder(object):
         # Search for failed test cases. Verification list will be built/updated
         # based on the failed test cases.
         query = { "build_name": self.aggregated_build_name(),
+                  "tags": { "$all": ['ironhorse']},
                   "status": 'FAIL',
                  }
         aggr_cursor = self.catalog().find_test_cases_archive(query)
@@ -308,10 +307,18 @@ Search for all FAILed test cases in a (aggregated) build and generate
 verification records for each failed test case.
 
 The specified build (BUILD_NAME) must be the name of an aggregated build.
+
+Examples:
+    -- Generate the verification file for 'mingtao'
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user mingtao
+
+    -- Generate the verification files for all QA engineers
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user all
 """
-    parser = argparse.ArgumentParser(prog='create_verification_files',
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=descr)
+    parser = argparse.ArgumentParser(
+                prog='create_or_update_verification_file',
+                formatter_class=argparse.RawDescriptionHelpFormatter,
+                description=descr)
     parser.add_argument(
                 '--build',
                 help=("Build name,"
