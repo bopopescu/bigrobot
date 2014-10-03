@@ -5296,7 +5296,7 @@ class T5Platform(object):
             if options[0] == 1:
                 c.send("yes")   
             try:
-                options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=1200)
+                options = c.expect([r'The system is going down for reboot NOW!', r'.*aborted' , c.get_prompt()], timeout=1200)
             except:
                 helpers.log('ERROR: upgrade stuck for more than 20 minutes!!!!!!!!!!')
                 c.send(helpers.ctrl('c'))
@@ -5748,3 +5748,98 @@ class T5Platform(object):
             helpers.test_failure("Error Detected during bond link detection.Looks like ")
             return False
          
+
+
+   def cli_show_boot_partition(self,node='master'):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_show_boot_partition" )           
+        t = test.Test()
+        c = t.controller(node)               
+        c.enable('show boot partition')
+        content = c.cli_content()         
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+#        helpers.log("*****Output list   is :\n%s" % temp)
+        assert(len(temp) == 4)
+        temp.pop(0);temp.pop(0)
+        partition={}       
+        for line in temp:   
+            helpers.log("*****line is :\n%s" % line)
+            
+            if 'Pending Launch' in line:
+                helpers.log(" there is Pending Launch")
+                line= line.replace("Pending Launch", "Pending_Launch") 
+            if  'Active, Boot' in line:
+                helpers.log(" there is Active, Boot")               
+                line= line.replace("Active, Boot", "Active_Boot") 
+            line = line.split()
+            helpers.log("*****line is :\n%s" % line)
+            partition[line[0]]={}
+            if line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed':
+                partition[line[0]]['state'] = 'None'
+                partition[line[0]]['upgrade']= line[1]
+            else:
+                partition[line[0]]['state']= line[1]
+                partition[line[0]]['upgrade']= line[2] 
+                                                         
+        return partition
+           
+
+                
+    def cli_verify_node_upgrade_partition(self, singleNode=False):
+
+        ''' Reboot a node and verify the cluster leadership.
+            Reboot Master in dual node setup: masterNode == True
+        '''
+  
+        if(singleNode):
+            partition= self.cli_show_boot_partition()
+            for key in partition:
+                if partition[key]['upgrade'] == ['complete' or 'Pending Launch']:
+                    continue
+                else:
+                    return False
+            return True
+        else:
+            partition1= self.cli_show_boot_partition()
+            partition2= self.cli_show_boot_partition(node='slave')
+            for key in partition1:
+                if partition1[key]['state'] == 'Active_Boot':
+                        active1 = key
+                        break
+            for key in partition2:
+                if partition2[key]['state'] == 'Active_Boot':
+                        active2 = key
+                        break
+                  
+            if active1 == active2:
+                helpers.log("system at same partition: %s" % active1)
+                return True
+            else:
+                helpers.log("system at differnet partition: %s  -  %s" % (active1, active2))
+                return False
+  
+
+    def cli_verify_switch_configured(self,switch):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_verify_switch_configured" )           
+        t = test.Test()
+        c = t.controller('master')               
+        c.enable("show switch %s" % switch)
+        content = c.cli_content()         
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("*****Output list   is :\n%s" % temp) 
+        for line in temp:   
+            helpers.log("*****line is :\n%s" % line)            
+            if 'None' in line:
+                helpers.log(" The switch is not found in fabric:  %s" %switch)
+                return False
+            if switch in line:
+                helpers.log(" The switch is found in fabric:  %s" %switch) 
+                return True   
+        helpers.test_failure('Error: can not decide the switch in fabric ')
+        return False
+           

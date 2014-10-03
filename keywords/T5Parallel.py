@@ -10,7 +10,7 @@ class T5Parallel(object):
     def __init__(self):
         pass
 
-    def task_finish_check_parallel(self, results, result_dict,timer=60, timeout=1200):
+    def task_finish_check_parallel(self, results, result_dict,timer=60, timeout=1500):
         '''
         task_finish_check_parallel
         Input:  
@@ -40,11 +40,10 @@ class T5Parallel(object):
                     
             if iteration >= int(timeout)/int(timer):
 #                helpers.test_failure("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)
-                helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)   
-                flag = False
-                break
+                helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)                   
+                return False
             
-        helpers.log("*** Parallel tasks completed or exceed the timeout")
+        helpers.log("*** Parallel tasks completed ")
 
         #
         # Check task output
