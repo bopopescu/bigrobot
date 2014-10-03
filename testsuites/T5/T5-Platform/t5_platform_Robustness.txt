@@ -499,6 +499,18 @@ Re-run the election and verify connectivity
 
 * Keywords      
 
+Check Management Network Going Down 
+	: FOR    ${Iteration}    IN RANGE    1    25
+   \	Log To Console   \n================ Failing Over Master - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	cli cluster take leader
+   \	Should Be True  ${returnVal}
+   \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	cli verify cluster master reboot
+   \	Should Be True  ${returnVal}
+   \    Log To Console   \n================ Checking Links - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	cli detect bonding links
+   \	Should Be True  ${returnVal}
+
 Stress Failover/Failback by rebooting the master and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
