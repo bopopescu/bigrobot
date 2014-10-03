@@ -996,6 +996,7 @@ class Test(object):
         time.sleep(4)
         output = tn.read_very_eager()
         helpers.log(output)
+        tn.close()
 
     def power_cycle(self, node, minutes=5):
         self._pdu_mgt(node, 'reboot')
