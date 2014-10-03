@@ -132,7 +132,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
     REST add interface to vns                   Y                               Y1                      ${leaf2_b}          ${leaf2b_host6}            -1
-    sleep                                       1
+    sleep                                       3
     BASH ping                                   h5                              10.252.1.31             count=5
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
     Should Be True                              ${value}        
@@ -449,10 +449,10 @@ Inter tenant dhcp relay
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     sleep                                       5
@@ -483,7 +483,7 @@ Inter tenant dhcp relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -519,10 +519,10 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
@@ -544,7 +544,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}
     Should Contain                              ${attachpoint}                  ${leaf0_pc2}
     Should Contain                              ${ipAddr}                       ${ipAddr2}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     REST delete static routes                   Y                               10.251.0.0/16       
@@ -555,7 +555,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}
     Should Be True                              ${loss} == 100
     REST add static routes                      Y                               10.251.0.0/16            {"tenant": "system"}
-    sleep                                       1
+    sleep                                       3
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     BASH add route                              h2                              10.251.0.0/16           10.252.1.1
@@ -581,14 +581,14 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH release dhcpv4 address                 h2                              bond0.1002
     BASH release dhcpv4 address                 h5                              bond0
-    sleep                                       1
+    sleep                                       3
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Be Empty                             ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -637,7 +637,7 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -671,10 +671,10 @@ Host moved to another vns on another tenant and renew dhcp
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h1                              10.253.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
@@ -706,7 +706,7 @@ Host moved to another vns on another tenant and renew dhcp
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -714,7 +714,7 @@ Host moved to another vns on another tenant and renew dhcp
     REST delete portgroup from vns              Y                               Y1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   Z                               Z3                      ${leaf2_pc1}            -1
     REST add dhcp relay                         Z                               Z3                      10.251.1.11
-    sleep                                       1
+    sleep                                       3
     REST show forwarding dhcp table
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}   
@@ -730,7 +730,7 @@ Host moved to another vns on another tenant and renew dhcp
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     Should Contain                              ${segment}                      Z3
     BASH add route                              h5                              10.251.0.0/16           10.253.3.1
-    sleep                                       1   
+    sleep                                       3   
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
     Should Be True                              ${loss} < 20
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0.1002
@@ -766,16 +766,16 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH ifup intf                              h4                              bond0
     BASH add ip address                         h2                              10.251.1.11/24          bond0
     BASH start service                          h2                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add ip address                         h3                              10.252.1.11/24          bond0
     BASH start service                          h3                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h2                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     REST add dhcp relay                         X                               X2                      10.252.1.11
@@ -796,20 +796,20 @@ Inter tenant dhcp relay with multiple dhcp servers
     Should Not Be Empty                         ${ipAddr1}
     ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0
     Should Not Be Empty                         ${ipAddr4}
-    sleep                                       1
+    sleep                                       3
     BASH ping                                   h1                              ${ipAddr4}              count=5
     ${loss} =                                   BASH ping                       h1                      ${ipAddr4}          count=5
     Should Be True                              ${loss} < 20
     ${value} =                                  BASH release dhcpv4 address     h1                      bond0
     Should Be True                              ${value}
     BASH stop service                           h3                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
     Should Contain                              ${value}                        is stopped
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Be Empty                             ${ipAddr1}
     BASH stop service                           h2                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
     Should Contain                              ${value}                        is stopped
     ${value} =                                  BASH release dhcpv4 address     h4                      bond0
@@ -912,7 +912,7 @@ Spine reboot
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
     CLI restart switch                          s1
-    sleep                                       10
+    sleep                                       30
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
     stop traffic                                ${stream1}
@@ -962,7 +962,7 @@ Leaf reboot
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
     CLI restart switch                          s5
-    sleep                                       10
+    sleep                                       30
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       5
     stop traffic                                ${stream1}
@@ -1003,12 +1003,12 @@ Add and delete endpoints with L3 inter tenant traffic
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST delete portgroup from vns              X                               X1                      ${leaf2_pc1}            -1
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100  
-    sleep                                       1
+    sleep                                       3
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40    
 #   ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=1000             frame_size=9216             frame_cnt=10000
@@ -1038,10 +1038,10 @@ Controller HA failover with dhcp-relay
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
@@ -1073,7 +1073,7 @@ Controller HA failover with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1104,7 +1104,7 @@ Controller HA failover with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1129,10 +1129,10 @@ Active Controller reboot with dhcp-relay
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
@@ -1164,7 +1164,7 @@ Active Controller reboot with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1195,7 +1195,7 @@ Active Controller reboot with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1226,10 +1226,10 @@ Dhcp request from overlapping private IP and public IP
     BASH init intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
@@ -1297,10 +1297,10 @@ Restart ofad on leaf with dhcp-relay
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
@@ -1332,7 +1332,7 @@ Restart ofad on leaf with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1345,12 +1345,12 @@ Restart ofad on leaf with dhcp-relay
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
-    sleep                                       10
+    sleep                                       30
     BASH restart process                        s4                              ofad                    timeout=60
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
-    sleep                                       10
+    sleep                                       30
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -1370,7 +1370,7 @@ Restart ofad on leaf with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1395,10 +1395,10 @@ Restart ofad on spine with dhcp-relay
     BASH ifup intf                              h2                              bond0.1002
     BASH add ip address                         h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    sleep                                       1
+    sleep                                       3
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
-    sleep                                       1
+    sleep                                       3
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
     #REST enable dhcp relay                      Y                               Y1  
@@ -1430,7 +1430,7 @@ Restart ofad on spine with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1443,12 +1443,12 @@ Restart ofad on spine with dhcp-relay
     sleep                                       5
     ${value} =                                  BASH check service status       s7                      ofad
     Should Contain                              ${value}                        is started
-    sleep                                       10
+    sleep                                       30
     BASH restart process                        s8                              ofad                    timeout=60
     sleep                                       5
     ${value} =                                  BASH check service status       s8                      ofad
     Should Contain                              ${value}                        is started
-    sleep                                       10
+    sleep                                       30
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -1468,7 +1468,7 @@ Restart ofad on spine with dhcp-relay
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     Should Contain                              ${ipAddr}                       ${ipAddr5}
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
@@ -1509,20 +1509,20 @@ L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST add shutdown fabric switch             s3
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     REST delete shutdown fabric switch          s3
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
-    sleep                                       1
+    sleep                                       3
     REST add shutdown fabric switch             s4
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     REST delete shutdown fabric switch          s4
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
@@ -1560,20 +1560,20 @@ L3 inter tenant shutdown and bringup both spine switch
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST add shutdown fabric switch             s1
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     REST delete shutdown fabric switch          s1
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
-    sleep                                       1
+    sleep                                       3
     REST add shutdown fabric switch             s2
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     REST delete shutdown fabric switch          s2
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
@@ -1624,7 +1624,7 @@ Link flap between leaf and spine
     log traffic rate                            tx_rate                         rx_rate                 a                       c
     #CLI enable interface                        s3                              ${leaf0a_spine0}    
     REST enable fabric interface                ${leaf0_a}                       ${leaf0a_spine0}
-    sleep                                       10
+    sleep                                       30
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1    
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
@@ -1839,7 +1839,7 @@ Enable and disable tenant logical router interface
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST disable router intf                    system                          Y
-    sleep                                       1
+    sleep                                       3
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
