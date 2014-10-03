@@ -5713,4 +5713,38 @@ class T5Platform(object):
             return False
            
                 
+    def cli_detect_bonding_links(self):
+        
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+        
+        try: 
+            master.cli("debug bash")
+            master.send('ssh bsn@169.254.13.2')
+            master.expect('password: ')
+            master.send('bsn')
+            master.send('sudo ethtool eth0')
+            master.expect('Link detected: yes')
+            master.send('sudo ethtool eth1')
+            master.expect('Link detected: yes')
+            master.send('exit')
+            master.send('exit')
+            
+            slave.cli("debug bash")
+            slave.send('ssh bsn@169.254.13.2')
+            slave.expect('password: ')
+            slave.send('bsn')
+            slave.send('sudo ethtool eth0')
+            slave.expect('Link detected: yes')
+            slave.send('sudo ethtool eth1')
+            slave.expect('Link detected: yes')
+            slave.send('exit')
+            slave.send('exit')
+                       
+            return True
+            
+        except:
+            helpers.test_failure("Error Detected during bond link detection.Looks like ")
+            return False
          
