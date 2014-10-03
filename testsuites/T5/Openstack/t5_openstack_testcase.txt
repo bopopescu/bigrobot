@@ -120,11 +120,11 @@ Performance(between 2 VM using iperf)
 
 Upgrade Iron Horse Image to a Iron Horse Official Release image.
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 
 Configure 2 Nuetron server for openstack HA
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 reboot Master neutron server
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -155,7 +155,7 @@ Flap the link between Service Rack Leaf switch and router
 
 Flap all the links on nova-controller
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 Flap all the links on compute node
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -232,10 +232,10 @@ Host reboot
 	manual passed
 Nova controller reboot
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 Nova compute node reboot
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 Storage reboot
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
@@ -304,7 +304,7 @@ Add service between Data and App VNS and verify the traffic load balance
 
 Out of sync script for new controller bringup and exsisting openstack setup
 	[Tags]  solution  openstack  IronHorse  manual
-	manual failed
+	manual passed
 	
 shared resources VNS created under admin tenant (clemson univsersity)
 	[Tags]  feature  openstack  IronHorse  manual
