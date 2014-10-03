@@ -23,11 +23,11 @@ Given the build (BUILD_NAME argument), print a list of failed test cases.
 If release is not specified, default to 'IronHorse' release.
 
 Examples:
-   % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./dump_test_cases_failed.py
-   % BUILD_NAME="bvs master aggregated 2014 wk40" ./dump_test_cases_failed.py --release ironhorse
+   % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./dump_test_cases_not_in_release.py
+   % BUILD_NAME="bvs master aggregated 2014 wk40" ./dump_test_cases_not_in_release.py --release ironhorse
 
 """
-    parser = argparse.ArgumentParser(prog='dump_test_cases_failed',
+    parser = argparse.ArgumentParser(prog='dump_test_cases_not_in_release',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--build',
@@ -59,8 +59,7 @@ def print_failed_tests(args):
     ts_author_dict = db.test_suite_author_mapping(args.build)
 
     query = {"build_name": args.build,
-             "tags": {"$all": [release]},
-             "status": "FAIL",
+             "tags": {"$nin": [release]},
              }
     tc_archive_collection = db.test_cases_archive_collection().find(query).sort(
                                             [("product_suite", pymongo.ASCENDING),

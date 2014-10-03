@@ -21,10 +21,6 @@ import catalog_modules.cat_helpers as cat_helpers
 from catalog_modules.test_catalog import TestCatalog
 
 
-if not 'BUILD_NAME' in os.environ:
-    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
-
-
 class ManualVerificationBuild(object):
     def __init__(self, build, infile):
         self._aggregated_build_name = build
@@ -161,6 +157,17 @@ Populate the QA Dashboard database with data found in the user-entered
 verification files (in bigrobot/data/verification/).
 
 The specified build (BUILD_NAME) must be the name of an aggregated build.
+
+Examples:
+    -- Sanity check the data. It will not update the database.
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./populate_db_user_verification.py \\
+             --infile ../data/verification/verification.bvs_master_ironhorse_beta2_aggregated.mingtao.yaml \\
+             --sanitize-data
+
+    -- If everything looks good. Update the database.
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./populate_db_user_verification.py \\
+             --infile ../data/verification/verification.bvs_master_ironhorse_beta2_aggregated.mingtao.yaml
+
 """
     parser = argparse.ArgumentParser(prog='db_manual_verification',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
