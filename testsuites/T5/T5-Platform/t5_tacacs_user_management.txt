@@ -16,7 +16,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-${version}      2.0.0
+${version}      2.0
     
 * Test Case
 TC001: Verify Running-Configuration
