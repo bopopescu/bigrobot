@@ -1323,6 +1323,13 @@ def file_not_empty(f):
         return False
 
 
+def file_rename(old_name, new_name):
+    """
+    Rename a file from old_name to new_name.
+    """
+    os.rename(old_name, new_name)
+
+
 def file_remove(filename):
     """
     Remove/delete a file.

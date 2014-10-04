@@ -161,12 +161,12 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 Examples:
     -- Sanity check the data. It will not update the database.
     % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./populate_db_user_verification.py \\
-             --infile ../data/verification/verification.bvs_master_ironhorse_beta2_aggregated.mingtao.yaml \\
+             --infile ../data/verification/bvs_master_bcf-2.0.0_fcs/verification_kranti.yaml \\
              --sanitize-data
 
     -- If everything looks good. Update the database.
     % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./populate_db_user_verification.py \\
-             --infile ../data/verification/verification.bvs_master_ironhorse_beta2_aggregated.mingtao.yaml
+             --infile ../data/verification/bvs_master_bcf-2.0.0_fcs/verification_kranti.yaml
 
 """
     parser = argparse.ArgumentParser(prog='db_manual_verification',

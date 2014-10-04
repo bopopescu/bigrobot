@@ -115,8 +115,11 @@ class VerificationFileBuilder(object):
     def verification_file(self, author):
         build_str = re.sub(' ', '_', self.aggregated_build_name())
         build_str = re.sub('#', '', build_str)
-        return ('../data/verification/verification.%s.%s.yaml'
-                % (build_str, author))
+        path = '../data/verification/%s' % build_str
+        if helpers.file_not_exists(path):
+            helpers.mkdir_p(path)
+        return ('%s/verification_%s.yaml'
+                % (path, author))
 
     def catalog(self):
         if not self._cat:
@@ -168,8 +171,8 @@ class VerificationFileBuilder(object):
         # Search for failed test cases. Verification list will be built/updated
         # based on the failed test cases.
         query = { "build_name": self.aggregated_build_name(),
-                  "tags": { "$all": ['ironhorse']},
                   "status": 'FAIL',
+                  # "tags": { "$all": ['ironhorse']},
                  }
         aggr_cursor = self.catalog().find_test_cases_archive(query)
         fail_count = aggr_cursor.count()
@@ -224,7 +227,7 @@ class VerificationFileBuilder(object):
                 helpers.file_copy(self.verification_header_template(),
                                   new_file_name)
                 print "Creating file %s" % new_file_name
-                first_pass[new_file_name] = True
+                first_pass[new_file_name] = file_name
 
             key = product_suite + ' ' + tc_name
             if key in self._test_case_dict[author]:
@@ -299,6 +302,11 @@ class VerificationFileBuilder(object):
                     # Contains user comments
                     tc['name'] = sanitize_string(tc['name'])
                     self.write_entry_to_file(tc, new_file_name)
+
+        # for key, value in first_pass.iteritems():
+        #    if helpers.file_not_exists(value):
+        #        helpers.file_rename(key, value)
+        #        print "Renamed file to %s" % value
 
 
 def prog_args():
