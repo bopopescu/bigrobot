@@ -1,0 +1,120 @@
+* Settings
+Documentation   	Test suite with tests to configure tenants. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags      	GUI BCF Ironhorse
+Library         	keywords/BsnCommon.py
+Library         	keywords/T5Utilities.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords/AppController.py
+Library         	keywords/BigTap.py
+Library        		SeleniumLibrary
+Resource        	testsuites/T5/T5-GUI/bcf_resource.txt
+#Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+Library       		String
+
+
+## Create Monitor Session		${id}  ${switch}  ${src-if}  ${dst-if} 
+#### Monitor Session			ID		Active		Direction   Tenant	 Segment	Ethertype  Ip Protocol  Src-mac  	Src-IP		Dst-mac   Dst-Ip     
+*Test Case
+
+T1 Set up		
+	Create Tenant				tenant1		Tenant name with description 
+	Create Tenant				tenant2		Tenant-2
+	Provision Switch			00:0a:99:03:22:33		switch-1		Leaf		leaf-group1
+	Provision Switch			00:aa:19:33:42:33		switch-2		Leaf		leaf-group2 
+	Config  					master  switch switch-1; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5			
+	Config  					master  switch switch-2; interface ethernet1; interface ethernet2; interface ethernet3; interface ethernet4; interface ethernet5
+	Create Port Group			port-group-1			Static			leaf-group1
+    Create Port Group			port-group-2			Static			leaf-group2
+    Create Port Group			port-group-3			Static			leaf-group2
+	Create Logical Segments		tenant1		log-seg1	port-group-1	switch-1	ethernet3		end-pt1		Port Group			port-group-1	${EMPTY}		${EMPTY}	00:02:03:22:ff:0f	10.0.1.6
+	Create Logical Segments		tenant2		log-seg2	port-group-2	switch-2	ethernet3		end-pt2		Port Group			port-group-3	${EMPTY}		${EMPTY}	${EMPTY}			10.0.1.7	
+	
+	
+T1.1 Create Monitor session1  		
+ 	Create Monitor session		1		switch-1	ethernet1	ethernet2					
+T1.2 Edit Monitor session1  		
+ 	Edit Monitor session		1		Yes			Both		${EMPTY}  ${EMPTY}  		${EMPTY}    			${EMPTY}     ${EMPTY}   ${EMPTY} 	${EMPTY}  ${EMPTY}
+T1.3 Edit Monitor session1  		
+ 	Edit Monitor session		1		No			Egress		${EMPTY}  ${EMPTY} 			${EMPTY}    			${EMPTY}     ${EMPTY}   ${EMPTY} 	${EMPTY}  ${EMPTY}				
+T1.4 Edit Monitor session1  		
+ 	Edit Monitor session		1		Yes			Ingress		tenant1	  log-seg1			IPv4 - 0x800 (2048)		UDP			22:22:22:22:22:22		1.2.3.4			02:02:ff:29:0e:06		2.2.1.0				
+T1.5 Edit Monitor session1  		
+ 	Edit Monitor session		1		No			Ingress		tenant1	  log-seg1			IPv4 - 0x800 (2048)		TCP			22:02:22:32:ee:ff		1.12.33.4		22:02:ff:29:0e:06		23.24.51.90				
+T1.6 Edit Monitor session1  		
+ 	Edit Monitor session		1		No			Ingress		${EMPTY}  ${EMPTY}			IPv6 - 0x86DD (34525)   ICMP		22:02:22:32:ee:0f		${EMPTY}		22:02:ff:29:0e:06		${EMPTY}			
+
+T1.7 Create Monitor session1  		
+ 	Create Monitor session		2		switch-2	ethernet1	ethernet2
+T1.8 Edit Monitor session2  		
+ 	Edit Monitor session		2		No			Ingress		tenant2	  log-seg2			IPv6 - 0x86DD (34525)	TCP			02:02:12:0e:0f:01		11.12.13.14		03:09:0e:0f:ff:ee		22.22.21.20				
+T1.9 Edit Monitor session2  		
+ 	Edit Monitor session		2		Yes			Both		${EMPTY}  ${EMPTY}  		${EMPTY}    			${EMPTY}     ${EMPTY}   			${EMPTY} 		${EMPTY} 				${EMPTY}				
+T1.10 Edit Monitor session2  		
+ 	Edit Monitor session		2		No			Ingress		tenant2	  log-seg2			IPv4 - 0x800 (2048)		ICMP		 02:22:32:ee:ff:01		1.0.2.3			${EMPTY}    			${EMPTY}				
+T1.11 Edit Monitor session2  		
+ 	Edit Monitor session		2		Yes			Egress		${EMPTY}  ${EMPTY}  		${EMPTY}    			${EMPTY}     ${EMPTY}   			${EMPTY} 		${EMPTY}  				${EMPTY}				
+T1.12 Edit Monitor session1  		
+ 	Edit Monitor session		1		No			Ingress		tenant2	  log-seg2			IPv4 - 0x800 (2048)		ICMP		 02:22:32:ee:ff:01		1.0.2.3			${EMPTY}    			${EMPTY}				
+T1.13 Edit Monitor session1  		
+ 	Edit Monitor session		1		Yes			Egress		${EMPTY}  ${EMPTY}  		${EMPTY}    			${EMPTY}     ${EMPTY}   			${EMPTY} 		${EMPTY}  				${EMPTY}				
+T1.14 Delete Monitor session1
+	Delete Monitor Session 	 	1
+T1.15 Delete Monitor session2
+	Delete Monitor Session 	 	2
+	
+	
+#### Logging							Logger												Log Level
+
+T2.1 Create a Debug logging level
+	Create Logging Level				com.bigswitch.floodlight.bvs.endpointmanager		Debug
+T2.2 Create a Trace logging level
+	Create Logging Level				com.bigswitch.floodlight.bvs						Trace
+T2.3 Create a Error logging level
+	Create Logging Level				com.bigswitch.floodlight							Error
+T2.4 Edit the Debug logging level to Info
+	Edit Logging Level Info				com.bigswitch.floodlight.bvs.endpointmanager		Info			
+T2.5 Edit the Trace logging level to Off
+	Edit Logging Level Info				com.bigswitch.floodlight.bvs						Off
+T2.6 Edit the Error logging level to Warn
+	Edit Logging Level Info				com.bigswitch.floodlight							Warn
+T2.7 Configure a remote server1
+	Configure Remote Server				1.2.3.5												22
+T2.8 Configure a remote server2
+	Configure Remote Server				2.2.2.5												890
+T2.9 Edit the port number of the remote server1
+	Edit Remote Server Info				1.2.3.5												420
+T2.10 Edit the port number of the remote server2
+	Edit Remote Server Info				2.2.2.5												900
+T2.11 Delete the Warn logging level
+	Delete Logging Level				com.bigswitch.floodlight
+T2.12 Delete All Logging Levels
+	Delete All Logging Levels
+T2.13 Delete remote server1
+	Delete Remote Server				1.2.3.5		
+T2.14 Delete All Remote Servers
+	Delete All Remote Servers
+	
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    
+	
+config suite teardown	
+	Delete All Tenants
+	Delete All Port Groups
+	#Clear Switch Config    switch-1
+	#Clear Switch Config	switch-2
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown
