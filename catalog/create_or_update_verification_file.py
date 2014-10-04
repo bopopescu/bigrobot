@@ -190,7 +190,7 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                print "Loading file %s" % file_name
+                # print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
 
