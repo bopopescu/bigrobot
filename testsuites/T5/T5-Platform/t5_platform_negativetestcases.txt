@@ -34,8 +34,8 @@ Test Cluster formation with 2 different versions
     Log     Step 3 - Bring up the stby controller and add it to the same cluster
     Log     Step 4 - Verify that the stby controller can not be added to the same cluster    
     [Tags]  T5  controller  negative  
-    [Tags]  Manual  jira-bsc-5258
-    Manual Failed 
+    [Tags]  Manual
+    Manual Passed 
 
 Test Cluster formation with a disconnected/invalid NTP server
     Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server 
