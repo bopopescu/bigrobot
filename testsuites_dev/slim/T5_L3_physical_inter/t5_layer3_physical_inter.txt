@@ -2896,7 +2896,7 @@ initialize host
 
 
 test setup topology
-    bash test setup
+    base test setup
     initialize host
     sleep                                           1
 #    Start Floodlight Monitor 
@@ -2959,7 +2959,7 @@ test setup topology
     REST add static routes                          X                           10.253.0.0/16        {"tenant": "system"}
     REST add static routes                          Y                           10.251.0.0/16        {"tenant": "system"}
     REST add static routes                          Z                           10.251.0.0/16        {"tenant": "system"}
-    bash test setup
+    base test setup
   
 test teardown topology
     delete traffic
