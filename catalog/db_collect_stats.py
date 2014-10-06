@@ -422,10 +422,10 @@ def display_stats(args):
     else:
         total_passes = total_fails = 0
         for author, status in pass_rate.items():
-            print "Author: %10s  Passes: %3d  Fails: %3d  Total: %3d" % (author, status['PASS'], status['FAIL'], status['PASS'] + status['FAIL'])
+            print "Author: %14s  Passes: %3d  Fails: %3d  Total: %3d" % (author, status['PASS'], status['FAIL'], status['PASS'] + status['FAIL'])
             total_passes += status['PASS']
             total_fails += status['FAIL']
-        print "        %10s  Passes: %3d  Fails: %3d  Total: %3d" % ('Combined', total_passes, total_fails, total_passes + total_fails)
+        print "        %14s  Passes: %3d  Fails: %3d  Total: %3d" % ('Combined', total_passes, total_fails, total_passes + total_fails)
         print ""
         print details_str
 
