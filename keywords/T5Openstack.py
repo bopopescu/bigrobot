@@ -1161,9 +1161,9 @@ S
 		return portgroup_members
 	
 	def openstack_verify_multiple_scale(self, tcount, ncount, tname='p'):
-		'''Function to create multiple segments in a given tenant
-			Input: tenantName , count , name starts with segment
-			Output: given number of segments created in neutron server using neutron command
+		'''Function to verify total number of segment in each tenant
+			Input: tenantName , count , expected network count
+			Output: verify each tenant with expected network count in each tenant
 	    '''
 		t = test.Test()
 		c = t.controller('master')
@@ -1184,6 +1184,5 @@ S
 			i = i + 1
 		return True
 				
-		
 		
 		
