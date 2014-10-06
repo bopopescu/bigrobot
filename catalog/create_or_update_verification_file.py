@@ -35,8 +35,6 @@ sys.path.insert(1, exscript_path)
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
-if not 'BUILD_NAME' in os.environ:
-    helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
 
 
 def sanitize_string(value):
@@ -117,8 +115,11 @@ class VerificationFileBuilder(object):
     def verification_file(self, author):
         build_str = re.sub(' ', '_', self.aggregated_build_name())
         build_str = re.sub('#', '', build_str)
-        return ('../data/verification/verification.%s.%s.yaml'
-                % (build_str, author))
+        path = '../data/verification/%s' % build_str
+        if helpers.file_not_exists(path):
+            helpers.mkdir_p(path)
+        return ('%s/verification_%s.yaml'
+                % (path, author))
 
     def catalog(self):
         if not self._cat:
@@ -171,6 +172,7 @@ class VerificationFileBuilder(object):
         # based on the failed test cases.
         query = { "build_name": self.aggregated_build_name(),
                   "status": 'FAIL',
+                  # "tags": { "$all": ['ironhorse']},
                  }
         aggr_cursor = self.catalog().find_test_cases_archive(query)
         fail_count = aggr_cursor.count()
@@ -188,7 +190,7 @@ class VerificationFileBuilder(object):
             file_name = self.verification_file(author)
 
             if helpers.file_exists(file_name):
-                print "Loading file %s" % file_name
+                # print "Loading file %s" % file_name
                 tc_list = PseudoYAML(file_name).load_yaml_file()
                 self._test_case_dict[author] = {}
 
@@ -225,7 +227,7 @@ class VerificationFileBuilder(object):
                 helpers.file_copy(self.verification_header_template(),
                                   new_file_name)
                 print "Creating file %s" % new_file_name
-                first_pass[new_file_name] = True
+                first_pass[new_file_name] = file_name
 
             key = product_suite + ' ' + tc_name
             if key in self._test_case_dict[author]:
@@ -301,6 +303,11 @@ class VerificationFileBuilder(object):
                     tc['name'] = sanitize_string(tc['name'])
                     self.write_entry_to_file(tc, new_file_name)
 
+        # for key, value in first_pass.iteritems():
+        #    if helpers.file_not_exists(value):
+        #        helpers.file_rename(key, value)
+        #        print "Renamed file to %s" % value
+
 
 def prog_args():
     descr = """\
@@ -308,10 +315,18 @@ Search for all FAILed test cases in a (aggregated) build and generate
 verification records for each failed test case.
 
 The specified build (BUILD_NAME) must be the name of an aggregated build.
+
+Examples:
+    -- Generate the verification file for 'mingtao'
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user mingtao
+
+    -- Generate the verification files for all QA engineers
+    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user all
 """
-    parser = argparse.ArgumentParser(prog='create_verification_files',
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=descr)
+    parser = argparse.ArgumentParser(
+                prog='create_or_update_verification_file',
+                formatter_class=argparse.RawDescriptionHelpFormatter,
+                description=descr)
     parser.add_argument(
                 '--build',
                 help=("Build name,"

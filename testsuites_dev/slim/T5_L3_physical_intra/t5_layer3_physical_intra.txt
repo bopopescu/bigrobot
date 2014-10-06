@@ -3611,7 +3611,7 @@ initialize host
 
 
 test setup topology
-    bash test setup
+    base test setup
     initialize host
     sleep                                           1
 #   Start Floodlight Monitor 
@@ -3678,7 +3678,7 @@ test teardown topology
 #    BASH restart networking service                 h1                          timeout=60
 #    BASH restart networking service                 h3                          timeout=60
 #    BASH restart networking service                 h6                          timeout=60
-    bash test teardown
+    base test teardown
 
 
 T5 base suite setup

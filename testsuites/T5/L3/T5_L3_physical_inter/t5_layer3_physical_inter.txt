@@ -66,7 +66,7 @@ L3 inter tenant traceroute with icmp and udp probe
 
 Add and delete endpoints with L3 inter tenant traffic
     Add and delete endpoints with L3 inter tenant traffic
-    [Tags]          feature         TC012
+    [Tags]          feature         TC012  fail_run
 
 Verify private subnet cannot be routed via system router
     Verify private subnet cannot be routed via system router
@@ -94,7 +94,7 @@ Controller HA failover with dhcp-relay
 
 Active Controller reboot with dhcp-relay
     Active Controller reboot with dhcp-relay
-    [Tags]          feature         dhcp-relay          HA  TC019
+    [Tags]          feature         dhcp-relay          HA  TC019  fail_run
 
 Verify inter tenant L3 traffic is getting drop with null next hop
     Verify inter tenant L3 traffic is getting drop with null next hop
@@ -114,7 +114,7 @@ Dhcp request from overlapping private IP and public IP
                     
 Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
-    [Tags]          feature     testpath          runfailed     TC024
+    [Tags]          feature     testpath          fail_run     TC024
 
 * Keywords
 
@@ -1005,10 +1005,12 @@ Add and delete endpoints with L3 inter tenant traffic
     REST delete portgroup from vns              X                               X1                      ${leaf2_pc1}            -1
     sleep                                       1
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100  
     sleep                                       1
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40    
 #   ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=1000             frame_size=9216             frame_cnt=10000
@@ -1166,7 +1168,9 @@ Active Controller reboot with dhcp-relay
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
     Should Be True                              ${loss} < 20    
     ${value} =                                  BASH release dhcpv4 address     h2                      bond0.1002
@@ -1197,7 +1201,9 @@ Active Controller reboot with dhcp-relay
     Should Contain                              ${ipAddr}                       ${ipAddr5}
     sleep                                       1
     ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr2}              count=10
     Should Be True                              ${loss} < 20    
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
     ${loss} =                                   BASH ping                       h1                      ${ipAddr5}              count=10
     Should Be True                              ${loss} < 20        
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
@@ -1836,23 +1842,28 @@ Enable and disable tenant logical router interface
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
+    BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST disable router intf                    system                          Y
     sleep                                       1
+    BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
     Should Be True  ${returnVal}      
     REST enable router intf                     system                          Y
+    BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 50    
     REST disable router intf                    X                               system
+    BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
     ${returnVal}=  rest verify testpath error code  uninstalled interface  src-ip=10.251.1.11  dst-ip=10.252.1.11
     Should Be True  ${returnVal}      
     REST enable router intf                     X                               system 
+    BASH ping                       h5                      10.252.1.11             count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} < 50 
     rest clear testpath   
@@ -2051,6 +2062,7 @@ test setup topology
     
 
 test teardown topology
+    base test teardown
     delete traffic
     REST delete vns ip                              X                           X1              10.251.1.1              24  
     REST delete vns ip                              X                           X2              10.251.2.1              24  

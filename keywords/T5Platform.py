@@ -227,7 +227,7 @@ class T5Platform(object):
 
         helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
         t.node_reconnect(actual_node_name)
-        
+
         if(singleNode):
             newMasterID = self.getNodeID(False)
         else:
@@ -342,7 +342,7 @@ class T5Platform(object):
 
         helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
         t.node_reconnect(actual_node_name)
-        
+
         if(singleNode):
             newMasterID = self.getNodeID(False)
         else:
@@ -2208,7 +2208,7 @@ class T5Platform(object):
         return True
 
 
-    def cli_upgrade_launch(self, node='master', option='',soft_error=False):
+    def cli_upgrade_launch(self, node='master', option='', soft_error=False):
         '''
           upgrade launch  -  2 step of upgrade
           Author: Mingtao
@@ -2227,10 +2227,10 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]',c.get_prompt()],timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
         if options[0] == 1:
             content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)            
+            helpers.log("*****Output is :\n%s" % content)
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("USR INFO:   list   is :\n%s" % temp)
@@ -2246,8 +2246,8 @@ class T5Platform(object):
                 return line
             else:
                 return False
-            
-        c.send("yes")    
+
+        c.send("yes")
         options = c.expect([r'fabric is redundant', r'.*\("y" or "yes" to continue\):'])
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
@@ -2407,7 +2407,7 @@ class T5Platform(object):
 
 
 
-    def rest_get_num_nodes(self,node='master'):
+    def rest_get_num_nodes(self, node='master'):
         '''
           return the number of nodes in the system
           Author: Mingtao
@@ -4081,9 +4081,9 @@ class T5Platform(object):
                     try:
                         if (index > len(args) - 1):
                             helpers.warn("Test Path Warning:Expected # of Hops:%s /Actual # of Hops:%s-Probably due to dynamic topology changes" % ((len(args), len(result[0]['physical-path']))))
-                            #helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-path']))))
-                            #return False
-                        
+                            # helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-path']))))
+                            # return False
+
                         if(index < len(args) - 1):
                             if args[index] not in hop["hop-name"]:
                                 helpers.log("Test Path Error: Expected - %s / Actual - %s" % (args[index], hop["hop-name"]))
@@ -4092,7 +4092,7 @@ class T5Platform(object):
                                 currentHops.append(hop['hop-name'])
                                 currentFlowCount[hop["hop-name"]] = hop["tcam-counter"].strip('[]')
                                 currentPktInCount[hop["hop-name"]] = hop["pktin-counter"].strip('[]')
-                        
+
                         else:
                             currentHops.append(hop['hop-name'])
                             currentFlowCount[hop["hop-name"]] = hop["tcam-counter"].strip('[]')
@@ -4103,8 +4103,8 @@ class T5Platform(object):
                         return  False
 
                 if(len(args) != len(currentHops)):
-                    #helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
-                    #return False
+                    # helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
+                    # return False
                     helpers.warn("Test Path Warning:Expected # of Hops:%s /Actual # of Hops:%s-Probably due to dynamic topology changes" % ((len(args), len(result[0]['physical-path']))))
 
                 break
@@ -5008,7 +5008,7 @@ class T5Platform(object):
         """
         t = test.Test()
         c = t.controller(node)
- 
+
         if switch is None:
             url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
             helpers.log("get switch fabric connection state")
@@ -5029,7 +5029,7 @@ class T5Platform(object):
             c.enable('')
             c.send("system reboot switch %s" % ip)
 
-            options = c.expect([r'.*\(\"y\" or \"yes\" to continue\): ', c.get_prompt()], timeout = 60)
+            options = c.expect([r'.*\(\"y\" or \"yes\" to continue\): ', c.get_prompt()], timeout=60)
             if options[0] == 0:  # login prompt
                 c.send('yes')
                 c.expect()
@@ -5290,13 +5290,13 @@ class T5Platform(object):
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
         if role == 'active':
-            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role)) 
-            helpers.summary_log('Active controller is upgradeing ..... ')       
-            options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'],timeout=300)
+            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role))
+            helpers.summary_log('Active controller is upgradeing ..... ')
+            options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'], timeout=300)
             if options[0] == 1:
-                c.send("yes")   
+                c.send("yes")
             try:
-                options = c.expect([r'The system is going down for reboot NOW!', r'.*upgrade has been aborted' , c.get_prompt()], timeout=1200)
+                options = c.expect([r'The system is going down for reboot NOW!', r'.*aborted' , c.get_prompt()], timeout=1200)
             except:
                 helpers.log('ERROR: upgrade stuck for more than 20 minutes!!!!!!!!!!')
                 c.send(helpers.ctrl('c'))
@@ -5559,7 +5559,7 @@ class T5Platform(object):
 
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_get_upgrade_progress' )
+        helpers.log('INFO: Entering ==> cli_get_upgrade_progress')
         c.enable(" show upgrade progress")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
@@ -5576,7 +5576,7 @@ class T5Platform(object):
             return {'local': 'not active', 'remote': 'not active'}
 
         else:
-            match =  re.match(r'.* Local: (.*)Remote: (.*)', temp[0])
+            match = re.match(r'.* Local: (.*)Remote: (.*)', temp[0])
             if match:
                 local = match.group(1)
                 remote = match.group(2)
@@ -5597,59 +5597,59 @@ class T5Platform(object):
           output:  return True when hit the breakpoint
 
         '''
-        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch' )
+        helpers.log('INFO: Entering ==> cli_monitor_upgrade_launch')
         is_continuous = True
         iteration = 0
         while is_continuous:
-            is_continuous = False  
-            iteration +=1       
+            is_continuous = False
+            iteration += 1
             result = self.cli_get_upgrade_progress(node=node)
             local = result['local']
             remote = result['remote']
-            helpers.log("USER INFO: **** %d. upgrade state: Local -  %s ; Remote - %s*****" % (iteration, local, remote)) 
+            helpers.log("USER INFO: **** %d. upgrade state: Local -  %s ; Remote - %s*****" % (iteration, local, remote))
             if ('phase1' == breakpoint) and ('phase-1-migrate' == remote):
-                helpers.log("USER INFO:  upgrade is in:  Phase 1 migrate "  )                
+                helpers.log("USER INFO:  upgrade is in:  Phase 1 migrate ")
                 return True
             elif ('phase2' == breakpoint) and ('phase-2-migrate' == remote):
-                helpers.log("USER INFO: upgrade is in:   Phase 2 migrate "  )                
+                helpers.log("USER INFO: upgrade is in:   Phase 2 migrate ")
                 return True
 
             elif 'not active' in local  and  'not active' in remote:
                 return  True
-            else:                
+            else:
                 is_continuous = True
-                
+
             if iteration >= 40 :
-                helpers.log('USR ERROR: exceed 20 minutes ' ) 
+                helpers.log('USR ERROR: exceed 20 minutes ')
                 return False
 
             helpers.sleep(30)
 
 
-    def cli_show_endpoint_pattern(self,pattern):
+    def cli_show_endpoint_pattern(self, pattern):
         '''
         '''
-        helpers.test_log("Entering ==> cli_show_endpoint_filter: %s"  % pattern)           
+        helpers.test_log("Entering ==> cli_show_endpoint_filter: %s" % pattern)
         t = test.Test()
-        c = t.controller('master')         
-        cli= 'show endpoint | grep ' + pattern + ' | wc -l'
-        content = c.cli(cli)['content']   
-        temp = helpers.strip_cli_output(content)        
+        c = t.controller('master')
+        cli = 'show endpoint | grep ' + pattern + ' | wc -l'
+        content = c.cli(cli)['content']
+        temp = helpers.strip_cli_output(content)
         return temp
 
     def rest_get_switch_connection(self, switch=None):
         '''
                 Objective:
-                - Get the switch connections from controller 
-    
+                - Get the switch connections from controller
+
                 Input:
                 | switch name |
 
                 Return Value:
                 - Content if present
                 - Null on failure
-                
-        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch[name="spine0"]?select=connection 
+
+        GET http://127.0.0.1:8080/api/v1/data/controller/core/switch[name="spine0"]?select=connection
         GET http://127.0.0.1:8080/api/v1/data/controller/core/switch?select=connection
         '''
         t = test.Test()
@@ -5660,7 +5660,7 @@ class T5Platform(object):
             data = c.rest.content()
             if len(data) == 0:
                 return {}
-            else: 
+            else:
                 return data
         else:
             url = '/api/v1/data/controller/core/switch?select=connection'
@@ -5668,59 +5668,59 @@ class T5Platform(object):
             data = c.rest.content()
             if len(data) == 0:
                 return {}
-            else: 
-                return data    
+            else:
+                return data
 
 
     def cli_remove_node_standby(self):
         '''
         '''
-        helpers.test_log("Entering ==> cli_remove_node_standby" )           
+        helpers.test_log("Entering ==> cli_remove_node_standby")
         t = test.Test()
-        c = t.controller('master')  
+        c = t.controller('master')
         bsn_common = bsnCommon()
-        node = bsn_common.get_node_name('master')              
-        helpers.log("USER INFO: the master controller is:  %s" % node )   
-                
-        num = self.rest_get_num_nodes(node)         
+        node = bsn_common.get_node_name('master')
+        helpers.log("USER INFO: the master controller is:  %s" % node)
+
+        num = self.rest_get_num_nodes(node)
         if num == 1:
-            helpers.log("USER INFO:  There is only 1 node in cluster"  )   
-            return True       
-        
+            helpers.log("USER INFO:  There is only 1 node in cluster")
+            return True
+
         else:
-            url = '/api/v1/data/controller/core/high-availability/node' 
+            url = '/api/v1/data/controller/core/high-availability/node'
             c.rest.get(url)
             content = c.rest.content()
-            helpers.log("USER INFO: content is:  %s"  % content)         
+            helpers.log("USER INFO: content is:  %s" % content)
             if content:
                 for i in range (0, len(content)):
-                    if  content[i]["role"]=='standby':
+                    if  content[i]["role"] == 'standby':
                         standby = content[i]["hostname"]
-                        helpers.log("USER INFO:  stande by controller is;  %s"  %standby)                     
+                        helpers.log("USER INFO:  stande by controller is;  %s" % standby)
                         break
-                    
-           
+
+
                 cli = 'system remove-node ' + standby
-                c.enable(cli, prompt= 'Conform remove-node \(\"y\" or \"yes\" to continue\):')
-                c.enable('yes',timeout=60)   
-                helpers.sleep(60)      
-                       
-                num = self.rest_get_num_nodes(node)        
+                c.enable(cli, prompt='Conform remove-node \(\"y\" or \"yes\" to continue\):')
+                c.enable('yes', timeout=60)
+                helpers.sleep(60)
+
+                num = self.rest_get_num_nodes(node)
                 if num == 1:
-                    helpers.log("USER INFO: standby node has been removed"  )   
-                    return True       
+                    helpers.log("USER INFO: standby node has been removed")
+                    return True
                 else:
                     return False
             return False
-           
-                
+
+
     def cli_detect_bonding_links(self):
-        
+
         t = test.Test()
         master = t.controller("master")
         slave = t.controller("slave")
-        
-        try: 
+
+        try:
             master.cli("debug bash")
             master.send('ssh bsn@169.254.13.2')
             master.expect('password: ')
@@ -5731,7 +5731,7 @@ class T5Platform(object):
             master.expect('Link detected: yes')
             master.send('exit')
             master.send('exit')
-            
+
             slave.cli("debug bash")
             slave.send('ssh bsn@169.254.13.2')
             slave.expect('password: ')
@@ -5742,10 +5742,105 @@ class T5Platform(object):
             slave.expect('Link detected: yes')
             slave.send('exit')
             slave.send('exit')
-                       
+
             return True
-            
+
         except:
             helpers.test_failure("Error Detected during bond link detection.Looks like ")
             return False
-         
+
+
+
+    def cli_show_boot_partition(self, node='master'):
+            '''
+            '''
+            helpers.test_log("Entering ==> cli_show_boot_partition")
+            t = test.Test()
+            c = t.controller(node)
+            c.enable('show boot partition')
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+    #        helpers.log("*****Output list   is :\n%s" % temp)
+            assert(len(temp) == 4)
+            temp.pop(0);temp.pop(0)
+            partition = {}
+            for line in temp:
+                helpers.log("*****line is :\n%s" % line)
+
+                if 'Pending Launch' in line:
+                    helpers.log(" there is Pending Launch")
+                    line = line.replace("Pending Launch", "Pending_Launch")
+                if  'Active, Boot' in line:
+                    helpers.log(" there is Active, Boot")
+                    line = line.replace("Active, Boot", "Active_Boot")
+                line = line.split()
+                helpers.log("*****line is :\n%s" % line)
+                partition[line[0]] = {}
+                if line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed':
+                    partition[line[0]]['state'] = 'None'
+                    partition[line[0]]['upgrade'] = line[1]
+                else:
+                    partition[line[0]]['state'] = line[1]
+                    partition[line[0]]['upgrade'] = line[2]
+
+            return partition
+
+
+
+    def cli_verify_node_upgrade_partition(self, singleNode=False):
+
+        ''' Reboot a node and verify the cluster leadership.
+            Reboot Master in dual node setup: masterNode == True
+        '''
+
+        if(singleNode):
+            partition = self.cli_show_boot_partition()
+            for key in partition:
+                if partition[key]['upgrade'] == ['complete' or 'Pending Launch']:
+                    continue
+                else:
+                    return False
+            return True
+        else:
+            partition1 = self.cli_show_boot_partition()
+            partition2 = self.cli_show_boot_partition(node='slave')
+            for key in partition1:
+                if partition1[key]['state'] == 'Active_Boot':
+                        active1 = key
+                        break
+            for key in partition2:
+                if partition2[key]['state'] == 'Active_Boot':
+                        active2 = key
+                        break
+
+            if active1 == active2:
+                helpers.log("system at same partition: %s" % active1)
+                return True
+            else:
+                helpers.log("system at differnet partition: %s  -  %s" % (active1, active2))
+                return False
+
+
+    def cli_verify_switch_configured(self, switch):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_verify_switch_configured")
+        t = test.Test()
+        c = t.controller('master')
+        c.enable("show switch %s" % switch)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("*****Output list   is :\n%s" % temp)
+        for line in temp:
+            helpers.log("*****line is :\n%s" % line)
+            if 'None' in line:
+                helpers.log(" The switch is not found in fabric:  %s" % switch)
+                return False
+            if switch in line:
+                helpers.log(" The switch is found in fabric:  %s" % switch)
+                return True
+        helpers.test_failure('Error: can not decide the switch in fabric ')
+        return False
+

@@ -102,37 +102,6 @@ T6.1 Generate a Support Bundle
 T6.2 Delete Support Bundle
 	Delete All Support Bundles	
 
-#### Logging							Logger												Log Level
-
-T7.1 Create a Debug logging level
-	Create Logging Level				com.bigswitch.floodlight.bvs.endpointmanager		Debug
-T7.2 Create a Trace logging level
-	Create Logging Level				com.bigswitch.floodlight.bvs						Trace
-T7.3 Create a Error logging level
-	Create Logging Level				com.bigswitch.floodlight							Error
-T7.4 Edit the Debug logging level to Info
-	Edit Logging Level Info				com.bigswitch.floodlight.bvs.endpointmanager		Info			
-T7.5 Edit the Trace logging level to Off
-	Edit Logging Level Info				com.bigswitch.floodlight.bvs						Off
-T7.6 Edit the Error logging level to Warn
-	Edit Logging Level Info				com.bigswitch.floodlight							Warn
-T7.7 Configure a remote server1
-	Configure Remote Server				1.2.3.5												22
-T7.8 Configure a remote server2
-	Configure Remote Server				2.2.2.5												890
-T7.9 Edit the port number of the remote server1
-	Edit Remote Server Info				1.2.3.5												420
-T7.10 Edit the port number of the remote server2
-	Edit Remote Server Info				2.2.2.5												900
-T7.11 Delete the Warn logging level
-	Delete Logging Level				com.bigswitch.floodlight
-T7.12 Delete All Logging Levels
-	Delete All Logging Levels
-T7.13 Delete remote server1
-	Delete Remote Server				1.2.3.5		
-T7.14 Delete All Remote Servers
-	Delete All Remote Servers
-
 			
 * Keyword
 config suite setup
