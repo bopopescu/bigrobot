@@ -863,7 +863,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -872,7 +872,7 @@ S
 			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -947,6 +947,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-delete %s " % (netName))
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -1041,6 +1042,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 		
@@ -1059,6 +1061,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 	
