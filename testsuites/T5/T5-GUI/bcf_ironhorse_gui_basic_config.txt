@@ -97,19 +97,37 @@ T5.6 Delete Port groups
     
 #### Support Bundles
 
-T6.1 Generate a Support Bundle
-	Generate Support Bundle		
-T6.2 Delete Support Bundle
-	Delete All Support Bundles	
+#T6.1 Generate a Support Bundle
+#	Generate Support Bundle		
+#T6.2 Delete Support Bundle
+#	Delete All Support Bundles	
 
-			
+### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
+T7.1 User with password 	
+ 	Configure User			user1				testtest			testtest					User with password		${EMPTY}
+T7.2 User no password		
+ 	Configure User			user2				${EMPTY}			${EMPTY}					User no password		${EMPTY}
+T7.3 User wrong password
+ 	Configure User			user3				testtest1			testtest					User wrong password		${EMPTY}
+T7.4 User no full name	
+ 	Configure User			user4				testtest			testtest					${EMPTY}				${EMPTY}
+T7.5 User group admin
+ 	Configure User			user5				adminadmin			adminadmin					User group admin		admin
+T7.6 User wrong password and new group
+ 	Configure User			user6				adminadmin			adminadmin					User new group			admin
+#T7.7 User unhashable pass
+#	Configure User			user7				;"$					testtest					User unhashable pass	${EMPTY}
+T7 Teardown
+ 	Delete All Users
+ 	
+ 				
 * Keyword
 config suite setup
     base suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
+    Start Selenium Server  -trustAllSSLCertificates
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page
