@@ -26,6 +26,7 @@ ${TEST PATH TITLE}    		Test Path
 ${SUPPORT BUNDLES TITLE}	Support
 ${MONITOR SESSIONS TITLE}	Monitor Session
 ${LOGGING TITLE}			Logging
+${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
 ${SIGNOUT TITLE}  			Login
 
@@ -105,10 +106,10 @@ ${LEAF ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/inp
 ${LEAF GROUP NAME FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
 ${SAVE SWITCH CONFIG BUTTON}	xpath=//span[@id='dijit_form_Button_4']
 
-${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure Switch')]
+${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure')]
 ${CONFIGURE SWITCH POPUP}					xpath=//div[@title='Configure Switch']	
 ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_4']			
-${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Switch Configuration')]
+${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Configuration')]
 ${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
 ${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
 
@@ -353,6 +354,22 @@ ${MATCH CRITERIA DESTINATION IP FIELD}				xpath=//div[@data-dojo-attach-point='t
 ${MATCH CRITERIA DESTINATION MAC MASK PREFIX FIELD}  xpath=//input[@id='dijit_form_NumberSpinner_5']
 ${MATCH CRITERIA SUBMIT BUTTON}						xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
+#### Users Page
+
+${MAIN PLUS BUTTON}				xpath=//div[@id='users_table']/descendant::div[@class='icon_node plus']
+${CREATE USER POPUP}			xpath=//div[@title='Create User']
+${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
+${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
+${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${INCORRECT PASSWORD ICON} 		xpath=//div[@class='status_icon_text_right' and contains(text(), 'Confirmed')]/parent::div/following-sibling::div/div[1]
+${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon_text_right' and contains(text(), 'Confirmed')]
+${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
+${SAVE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Groups')]
+${GROUP ASSOCIATE PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
+${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
+${APPEND GROUP BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 
 
 *** Keywords ***
@@ -371,6 +388,7 @@ Set URLs
 	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
 	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
+	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
 
 Valid Login
@@ -473,6 +491,12 @@ Go To Logging Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOGGING TITLE}
     Sleep  1
+    
+Go To Security Users Page
+	Go To  ${USERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${USERS TITLE}
+    Sleep  1 
 
 Go To Signout Page
 	Go To  ${SIGNOUT URL}
@@ -496,6 +520,13 @@ Delete All Port Groups
 	
 Delete All Support Bundles
 	Go To Support Bundles Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
+Delete All Users
+	Go To Security Users Page
     Delete All
     Verify Element Visible   ${PROCEED DELTE BUTTON}
 	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
@@ -632,7 +663,8 @@ Select Checkbox And Verify
 	[Arguments]  ${attachment_point}  ${text}
     ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
     Verify Page Contains Element  ${checkbox}
-	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
+	Click Element  ${checkbox}  and don't wait  
+	#Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
 	Checkbox Should Be Selected	  ${checkbox}
 
 
@@ -688,6 +720,13 @@ Check Hover
 	Click Element  ${label}
 	Location Should Be  ${dst}
 	Title Should Contain  ${title}
+
+Generate Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
+    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
+    [Return]  ${xpath}
+
 	
 Generate Action Menu Xpath Switch
 	[Arguments]  ${attachment_point}  ${text}
@@ -848,7 +887,7 @@ Clear Switch Config
 	Verify Page Contains Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}
 	Click Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}  and don't wait
 	
-	Verify Element Invisible  ${CLEAR SWITCH CONFIG POPUP}
+	#Verify Element Invisible  ${CLEAR SWITCH CONFIG POPUP}
 	
 	
 Create Port Group
@@ -1593,5 +1632,58 @@ Delete Monitor Session
 	
 	#Verify Element Invisible  ${DELETE CONFIRM MONITOR SESSION POPUP}
     
-    
+Configure User
+	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
+
+    Go To Security Users Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE USER POPUP}
+
+    #${random_username}  Generate Random Name  User  5
+    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+
+    Input Text And Verify  ${USERNAME FIELD}  ${username}    
+    Input Text And Verify  ${PASSWORD FIELD}  ${password}    
+    Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${conf_password}    
+    Input Text And Verify  ${FULL NAME FIELD}  ${full_name}
+
+    Run Keyword Unless  '${password}'=='${conf_password}'  
+    ...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
+    Run Keyword Unless  '${password}'=='${conf_password}'
+    ...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}
+
+    Run Keyword Unless  '${password}'=='${EMPTY}'  
+    ...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
+
+    Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
+
+    Run Keyword Unless  '${group}'=='${EMPTY}'  
+    ...		Associate Group  ${group}
+
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE USER POPUP}
+    Verify Page Contains Text   ${username}
+
+
+Associate Group
+	[Arguments]  ${group}
+	Click Element  ${GROUPS BUTTON}  and don't wait
+	Verify Page Contains Element  ${GROUP ASSOCIATE PLUS BUTTON}
+
+	Click Element  ${GROUP ASSOCIATE PLUS BUTTON}  and don't wait
+	Verify Page Contains Element  ${MANAGE GROUPS POPUP} 
+
+	#${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_Dialog_1']  ${group}
+	${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${group}
+	#${checkbox}  div[@id="bsn_widgets_form_CheckBox_4"]
+	Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait
+	Checkbox Should Be Selected	  ${checkbox}
+
+	Click Element  ${APPEND GROUP BUTTON}  and don't wait
+	Verify Element Invisible  ${MANAGE GROUPS POPUP}
+   
 	
