@@ -5444,6 +5444,7 @@ class T5Platform(object):
         scpLocation = "scp://root@" + nodeIP + ":/root/autoConfig1.txt"
         returnVal = self.cli_copy("running-config", scpLocation)
         if(returnVal):
+            helpers.sleep(3)
             scpLocation = "scp://root@" + nodeIP + ":/root/autoConfig2.txt"
             returnVal = self.cli_copy("running-config", scpLocation, "slave")
             if(returnVal):
