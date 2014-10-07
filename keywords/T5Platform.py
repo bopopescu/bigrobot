@@ -2227,7 +2227,7 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]',c.get_prompt()],timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
         if options[0] == 1:
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
@@ -2407,7 +2407,7 @@ class T5Platform(object):
 
 
 
-    def rest_get_num_nodes(self,node='master'):
+    def rest_get_num_nodes(self, node='master'):
         '''
           return the number of nodes in the system
           Author: Mingtao
@@ -4227,7 +4227,7 @@ class T5Platform(object):
         # Match controller prompt for various modes (cli, enable, config, bash, etc).
         # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
         prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
-        c.expect(prompt_re)
+        c.expect(prompt_re, timeout=100)
         # c.expect(r'[\r\n\x07][\w-]+[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
@@ -5029,7 +5029,7 @@ class T5Platform(object):
             c.enable('')
             c.send("system reboot switch %s" % ip)
 
-            options = c.expect([r'.*\(\"y\" or \"yes\" to continue\): ', c.get_prompt()], timeout = 60)
+            options = c.expect([r'.*\(\"y\" or \"yes\" to continue\): ', c.get_prompt()], timeout=60)
             if options[0] == 0:  # login prompt
                 c.send('yes')
                 c.expect()
@@ -5290,9 +5290,9 @@ class T5Platform(object):
         helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
         if role == 'active':
-            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role)) 
-            helpers.summary_log('Active controller is upgradeing ..... ')       
-            options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'],timeout=300)
+            helpers.log("USER INFO: I AM controller : %s is:   %s" % (node, role))
+            helpers.summary_log('Active controller is upgradeing ..... ')
+            options = c.expect([r'fabric is redundant', r'.* \(\"y\" or \"yes\" to continue\):'], timeout=300)
             if options[0] == 1:
                 c.send("yes")
             try:
