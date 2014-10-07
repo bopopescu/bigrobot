@@ -90,6 +90,7 @@ Get ixia stream rate   [Arguments]   ${stream}  ${stream_name}
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  received_frame_rate
+    Log To Console   \n*******stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}******* 
 	Log to file     log_interface_counter   ixia TX and Rx rate    stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}
  
 verify ixia packet   [Arguments]    ${stream}  ${stream_name}
