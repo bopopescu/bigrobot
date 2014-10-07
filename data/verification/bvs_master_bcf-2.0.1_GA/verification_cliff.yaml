@@ -40,63 +40,63 @@
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T2 Verify 'show switch' command completion
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T3 Verify 'show tenant' command completion
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T4 Verify 'show segment' command completion
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T5 Verify 'show port-group' command completion
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T6 Verify 'show endpoint' command completion
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed) 
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T7 Verify 'tenant' command completion in config mode
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T8 Verify 'segment' command completion in config mode
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed)
 
 ### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: T19 Verify 'port-group' command completion in config mode
   product_suite: T5/T5-Platform/T5_cli_check
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #33'
   jira: 
-  notes: 
+  notes: passed on rerun (personal testbed) 
