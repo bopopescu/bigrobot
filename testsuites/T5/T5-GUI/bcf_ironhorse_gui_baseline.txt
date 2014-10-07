@@ -37,9 +37,13 @@ T1.10 Check Support Bundles Page
     Go To Support Bundles Page
 T1.11 Check Monitor Sessions Page
     Go To Monitor Sessions Page 
+T1.12 Check Clock Page
+    Go To Clock Page 
 T1.12 Check Logging Page
     Go To Logging Page  
-T1.13 Check Signout Page
+T1.13 Check Users Page
+    Go To Security Users Page  
+T1.14 Check Signout Page
     Go To Signout Page 
 
 
@@ -64,7 +68,11 @@ T2.7 Monitor Sessions
 	Check Hover					${VISIBILITY MENU}			${MONITOR SESSIONS LABEL} 		${MONITOR SESSIONS URL}		${MONITOR SESSIONS TITLE}
 T2.8 Logging			
 	Check Hover					${SETTINGS MENU}			${LOGGING LABEL}				${LOGGING URL}				${LOGGING TITLE}
-T2.9 Sign Out		
+T2.8 Clock			
+	Check Hover					${SETTINGS MENU}			${CLOCK LABEL}					${CLOCK URL}				${CLOCK TITLE}
+T2.9 Users			
+	Check Hover					${SECURITY MENU}			${USERS LABEL}					${USERS URL}				${USERS TITLE}
+T2.10 Sign Out		
 	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 				${LOG IN URL}				${LOG IN TITLE}
 
 
