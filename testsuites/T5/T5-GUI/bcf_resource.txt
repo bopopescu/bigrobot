@@ -25,6 +25,7 @@ ${FABRIC SUMMARY TITLE}		Summary
 ${TEST PATH TITLE}    		Test Path
 ${SUPPORT BUNDLES TITLE}	Support
 ${MONITOR SESSIONS TITLE}	Monitor Session
+${CLOCK TITLE}				Big 
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
@@ -49,6 +50,7 @@ ${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
 #${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
 ${VISIBILITY MENU}		  		xpath=//div[@class='nav' and contains(text(), 'Visibility')]
 ${SETTINGS MENU}				xpath=//div[@class='nav' and contains(text(), 'Settings')]
+${SECURITY MENU}				xpath=//a[@class='nav' and contains(text(), 'Security')]
 ${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
 ${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
 ${INTERFACES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Interfaces')]
@@ -59,7 +61,9 @@ ${FABRIC SUMMARY LABEL}			xpath=//div[@class='nav_menu_item' and contains(text()
 ${TEST PATH LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Test Path')]
 ${SUPPORT BUNDLES LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Support Bundles')]
 ${MONITOR SESSIONS LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Monitor Sessions')]	
+${CLOCK LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Clock')]
 ${LOGGING LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Logging')]
+${USERS LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Users')]
 ${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
 
 
@@ -387,6 +391,7 @@ Set URLs
 	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
 	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
 	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
+	Set Suite Variable     	${CLOCK URL}				https://${SERVER}/bcf/clock
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
@@ -484,6 +489,12 @@ Go To Monitor Sessions Page
   	Go To  ${MONITOR SESSIONS URL}
     Wait Until Page Loaded 
     Title Should Contain  ${MONITOR SESSIONS TITLE}
+    Sleep  1
+    
+Go To Clock Page 
+	Go To  ${CLOCK URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${CLOCK TITLE}
     Sleep  1
     
 Go To Logging Page  
