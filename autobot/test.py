@@ -1485,6 +1485,13 @@ class Test(object):
         helpers.log("Re-Login in console of switch after reboot...")
         helpers.log("Initializaing leafs and Spines normally..")
         con = self.dev_console(name)
+
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            helpers.log("Disabling switch config auto-reloads...")
+            con.bash('touch /mnt/flash/local.d/no-auto-reload')
+        else:
+            helpers.log("Skipping to disable auto-reloads , which disallows switch SSH Handles")
+
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
@@ -1497,11 +1504,6 @@ class Test(object):
             self.params(name, 'ip', new_val=mgt_ip)
         else:
             helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
-        if helpers.bigrobot_no_auto_reload().lower() == 'true':
-            helpers.log("Disabling switch config auto-reloads...")
-            con.bash('touch /mnt/flash/local.d/no-auto-reload')
-        else:
-            helpers.log("Skipping to disable auto-reloads , which disallows switch SSH Handles")
         con.cli("")
         self.node_reconnect(name)
         helpers.log("Closing dev_console session for switch : %s" % name)

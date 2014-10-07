@@ -1084,7 +1084,7 @@ T35 Interface tenant add/remove permit policy src-ip-port to dest-vns
     ${report}=             fetch port stats  stream=${stream}
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 T36 Interface tenant add/remove deny policy src-ip-port to dest-vns
-	[Tags]  smoke  feature  run
+	[Tags]  smoke  feature  
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -1094,8 +1094,7 @@ T36 Interface tenant add/remove deny policy src-ip-port to dest-vns
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
-    clear stats
-    pause
+    clear stats  
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
