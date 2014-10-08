@@ -3031,7 +3031,7 @@ restart ofad on leaf
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s1                              ofad
+    BASH restart process                        s3                              ofad
 #    console bash restart process                s1                              ofad                    timeout=60
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
@@ -3594,6 +3594,18 @@ initialize host
     BASH release dhcpv4 address                 h4                              bond0
     BASH release dhcpv4 address                 h5                              bond0
     BASH release dhcpv4 address                 h6                              bond0
+    BASH kill process                           h1                              dhclient
+    BASH kill process                           h2                              dhclient
+    BASH kill process                           h3                              dhclient
+    BASH kill process                           h4                              dhclient
+    BASH kill process                           h5                              dhclient
+    BASH kill process                           h6                              dhclient 
+    BASH kill process                           h1                              ping
+    BASH kill process                           h2                              ping
+    BASH kill process                           h3                              ping
+    BASH kill process                           h4                              ping
+    BASH kill process                           h5                              ping
+    BASH kill process                           h6                              ping     
     ${result} =                                 BASH run command                h1                     ifconfig
     log                                         host1 ifconfig is ${result}
     ${result} =                                 BASH run command                h2                     ifconfig

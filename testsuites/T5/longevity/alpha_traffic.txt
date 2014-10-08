@@ -4,7 +4,7 @@ Suite Setup      base suite setup
 Suite Teardown   T5 longevity suite teardown
 Test Setup       base test setup 
 Test Teardown    base test teardown 
-Force Tags       IronHorse   T5
+Force Tags       IronHorse   T5   longevity
 Library		keywords/BsnCommon.py
 Library		keywords/Controller.py
 Library		keywords/Mininet.py
@@ -66,7 +66,8 @@ T2 setup traffic make sure all traffic can be forwarded without loss after learn
  		sleep  300
  		 : FOR    ${index}   IN RANGE    1   ${last}   
  		\   Log To Console   \n******* traffic verification : ${index} out of ${last}*******    
-		\   verify ixia stream rate       ${L3_1}   L3_1  
+#		\   #verify ixia stream rate       ${L3_1}   L3_1  
+		\   Get ixia stream rate   ${L3_1}   L3_1
 		\   ${result}=  rest_get_fabric_interface_stats            ${sw1}   ${int1}
 		\ 	Log to file     log_interface_counter    switch:${sw1} interface: ${int1} stats    ${result} 
 		\   ${result}=  rest_get_fabric_interface_rate            ${sw1}   ${int1}
@@ -83,6 +84,14 @@ T2 setup traffic make sure all traffic can be forwarded without loss after learn
  
 * Keywords
 ###### setup the system
+
+Get ixia stream rate   [Arguments]   ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  received_frame_rate
+    Log To Console   \n*******stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}******* 
+	Log to file     log_interface_counter   ixia TX and Rx rate    stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}
  
 verify ixia packet   [Arguments]    ${stream}  ${stream_name}
     Sleep  5

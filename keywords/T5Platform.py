@@ -4910,7 +4910,7 @@ class T5Platform(object):
             # Match controller prompt for various modes (cli, enable, config, bash, etc).
             # See exscript/src/Exscript/protocols/drivers/bsn_controller.py
             prompt_re = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] '
-            c.expect(prompt_re)
+            c.expect(prompt_re, timeout=100)
 
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)

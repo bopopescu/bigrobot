@@ -20,11 +20,11 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 * Test Case 
 
 add/delete 5 network interfaces
-	[Tags]  openstack  	 	 
+	[Tags]  openstack   	 	 
 	openstack segment scale  admin  70  5
 	openstack verify segment scale  admin  6
 	openstack interface to router scale  r1  5
-	sleep  30
+	sleep  20
 	rest verify endpoint in system  7
 
 delete openstack 5 segment/routers leftovers
@@ -34,16 +34,16 @@ delete openstack 5 segment/routers leftovers
 
 add/delete 3995 network interfaces
 	[Tags]  openstack  	 
-	openstack segment scale  admin  70  3995
-	openstack verify segment scale  admin  3996
-	openstack interface to router scale  r1  3995
-	sleep  150
-	rest verify endpoint in system  3997
+	openstack segment scale  admin  70  3990
+	openstack verify segment scale  admin  3991
+	openstack interface to router scale  r1  3990
+	sleep  60
+	rest verify endpoint in system  3992
 	
 delete openstack 3995 segment/routers leftovers
 	[Tags]  openstack 
-	openstack interface to router scale delete  r1  3995
-	openstack segment scale delete  3995
+	openstack interface to router scale delete  r1  3990
+	openstack segment scale delete  3990
 	
 * keywords
 T5 Functional Suite Setup

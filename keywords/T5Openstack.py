@@ -863,7 +863,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -872,7 +872,7 @@ S
 			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -947,6 +947,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-delete %s " % (netName))
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -1041,6 +1042,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 		
@@ -1059,6 +1061,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 	
@@ -1161,9 +1164,9 @@ S
 		return portgroup_members
 	
 	def openstack_verify_multiple_scale(self, tcount, ncount, tname='p'):
-		'''Function to create multiple segments in a given tenant
-			Input: tenantName , count , name starts with segment
-			Output: given number of segments created in neutron server using neutron command
+		'''Function to verify total number of segment in each tenant
+			Input: tenantName , count , expected network count
+			Output: verify each tenant with expected network count in each tenant
 	    '''
 		t = test.Test()
 		c = t.controller('master')
@@ -1184,6 +1187,5 @@ S
 			i = i + 1
 		return True
 				
-		
 		
 		

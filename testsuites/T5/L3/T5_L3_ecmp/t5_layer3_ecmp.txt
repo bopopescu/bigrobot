@@ -83,7 +83,6 @@ Add and delete more specific route for L3 inter tenant traffic to external host
 Add and delete config changes
     Add and delete config changes
     [Tags]                       smoke                          sanity              run30
-
     
 Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
     Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
@@ -92,7 +91,11 @@ Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
 Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
     [Tags]                                                 sanity              run101
-    
+
+Verify ecmp forwarding after controller upgrade     
+    manual passed
+    [Tags]                  manual          feature                 ecmp        run201
+            
     
 * Keywords
 
