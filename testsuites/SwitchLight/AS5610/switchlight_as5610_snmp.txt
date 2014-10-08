@@ -11,7 +11,7 @@ Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.0.0
+${switchlight_version}      Switch Light OS SWL-BT-4.0.2
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -20,12 +20,12 @@ ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6002
 ${snmp_location_2}          CS214-6002    
-${snmp_trap_svr_1}          10.9.18.2
-${snmp_trap_svr_2}          10.9.18.3
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
 ${tenG_intf}                ethernet2
 ${fortyG_intf}              ethernet49
 ${pc_intf_1}                49-50
-${pc_intf_2}                9-10
+${pc_intf_2}                11-12
 ${pc_number}                1
 ${pc_name}                  port-channel1
 
@@ -217,7 +217,7 @@ TC35: Verify SNMP OID ifOperStatus of PortChannel across 10G Interface
     verify snmp attribute  s1  ifOperStatus.1061  up
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  10G  Lag  runthis
         
 TC36: Verify SNMP OID ifSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
