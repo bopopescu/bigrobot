@@ -101,12 +101,12 @@ T3.3. Change ZTN configuration, do not reload the switch, restore old config (ch
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
 	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Sleep  30
+	Sleep  100
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Sleep  30
+	Sleep  100
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
 	Verify All Switches Connected
@@ -115,12 +115,12 @@ T3.5. Change ZTN configuration, reload half of switches, restore old config - ve
 	Cli Copy  running-config  snapshot://temp-config
 	Randomize ZTN Configuration
 	Cli Run  master  show run
-	Sleep  30
+	Sleep  100
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
 	Cli Copy  snapshot://temp-config  running-config
 	Cli Run  master  show run
-	Sleep  30
+	Sleep  100
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
 	Verify All Switches Connected
