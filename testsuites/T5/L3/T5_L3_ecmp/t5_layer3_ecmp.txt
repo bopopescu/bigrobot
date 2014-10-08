@@ -3173,10 +3173,8 @@ Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
 initialize host
     BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete tag                             h2                              bond0.1002              soft_error=${true}
-    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
     BASH delete tag                             h4                              bond0.1004              soft_error=${true}
     BASH delete tag                             h5                              bond0.1005              soft_error=${true}
-    BASH delete tag                             h6                              bond0.1006              soft_error=${true}
     BASH run command                                h1-rack0                                ifdown bond0
     BASH run command                                h2-rack0                                ifdown bond0
     BASH run command                                h1-rack1                                ifdown bond0
@@ -3679,7 +3677,8 @@ T5 base suite teardown
     CLI arista enable disable interface        s11                             port-channel 4           disable=${False}    
     CLI arista enable disable interface        s11                             port-channel 5           disable=${False}    
     CLI arista enable disable interface        s11                             ethernet 1               disable=${False}    
-    CLI arista enable disable interface        s11                             ethernet 2               disable=${False}    
+    CLI arista enable disable interface        s11                             ethernet 2               disable=${False} 
+    sleep                                      60   
     base suite teardown 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}  ${range}=5
