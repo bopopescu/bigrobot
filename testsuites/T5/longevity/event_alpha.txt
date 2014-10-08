@@ -165,14 +165,14 @@ T51 continues Event
     ${loop}=  Set Variable   1	
     : FOR   ${index}    IN RANGE    0    ${repeat}	
 	\  Log To Console   "\n========******* in continues event loop: ${index} out of ${repeat} ******====== " 
-	\  ${random}=	Evaluate	 random.randint(1,6)    random,sys
+	\  ${random}=	Evaluate	 random.randint(1,5)    random,sys
 	\  Log To Console   "--------random number is ${random} --------" 
 	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 	 
 	\  Run Keyword if    ${random}==2   T27 data Link down/up event between leaf and spine       
 	\  Run Keyword if    ${random}==3   T28 data Link down/up event between leafs 
 	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
-	\  Run Keyword if    ${random}==6   T23 controller node event failover
+#	\  Run Keyword if    ${random}==6   T23 controller node event failover
   	\  sleep  ${betweenevent}
    
 	[Tags] 	longevity    traffic     
