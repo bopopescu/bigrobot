@@ -219,7 +219,7 @@ T15 'from mode ...' in login mode
 	...  ? enable
 	...  show
 	Cli Run  master  enable
-	[Tags]  BSC-5020
+	[Tags]  BSC-5020  skipped
 
 T16 Switch commands in config-switch-if submode
 	Cli Run and Verify Output  master
