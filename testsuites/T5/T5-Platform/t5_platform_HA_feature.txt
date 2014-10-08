@@ -63,10 +63,10 @@ T10 Verify the correct controller role changes on both leaf & spine switches dur
     
 T11 Flap eth0 of the management interface
 	[Tags]  feature  manual
-    manual passed
+    manual failed
     
 T12 Swap eth0 & eth1 in bare metal server 
-	[Tags]  feature  manual  jira-BSC-6595
+	[Tags]  feature  manual  jira-BSC-6054
     manual failed
     
 T13 Pump line rate traffic: look for split brain and other HA sync loss situations.
