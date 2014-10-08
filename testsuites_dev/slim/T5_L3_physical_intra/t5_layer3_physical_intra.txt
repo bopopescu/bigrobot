@@ -3031,7 +3031,7 @@ restart ofad on leaf
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s1                              ofad
+    BASH restart process                        s3                              ofad
 #    console bash restart process                s1                              ofad                    timeout=60
     sleep                                       5
 #   CLI execute command                         s3                              debug ofad "autoneg 24"
