@@ -33,7 +33,7 @@ ${Vflapnum}     100
 ${bigconfigsleep}  300 
 
 
-${loop}        10
+${loop}        5
 ${repeat}      60
 
 
