@@ -3773,6 +3773,7 @@ T5 base suite teardown
     REST delete portgroup                               ${leaf1_pc2}
     REST delete portgroup                               ${leaf2_pc1}
     REST delete portgroup                               ${leaf2_pc2}
+    sleep                                               60
     base suite teardown
     
 

@@ -1235,22 +1235,15 @@ L3 inter tenant with CRC errors
     sleep  10
     stop traffic                                ${stream2}
     ${report} =                                 fetch port stats    stream=${stream2}  
-    ${tx_value} =                               verify dict key     ${report}  stream2  transmitted_frames
-    ${rx_value} =                               verify dict key     ${report}  stream2  received_valid_frames
-    ${loss} =                                   evaluate            ${tx_value} - ${rx_value}
-    Should Be True                              ${loss} == ${tx_value}
+    ${loss} =                                   verify dict key     ${report}               stream2             loss_percentage
+    Should Be True                              ${loss} == 100
+#    ${tx_value} =                               verify dict key     ${report}  stream2  transmitted_frames
+#    ${rx_value} =                               verify dict key     ${report}  stream2  received_valid_frames
+#    ${loss} =                                   evaluate            ${tx_value} - ${rx_value}
+#    Should Be True                              ${loss} == ${tx_value}
 #    calculate loss                              transmitted_frames              received_valid_frames   ${stream2}              stream2    
     BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
     BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
-
-
-
-
-    ${report} =     fetch port stats    stream=${stream}  
-    ${tx_value} =   verify dict key     ${report}  ${stream_name}  ${transmitted_frames}
-    ${rx_value} =   verify dict key     ${report}  ${stream_name}  ${received_valid_frames}
-    ${loss} =       evaluate            ${tx_value} - ${rx_value}
-
 
 
 L3 inter tenant traceroute with icmp and udp probe
@@ -1643,7 +1636,6 @@ Inter tenant dhcp relay with multiple dhcp servers
     #REST enable dhcp relay                      X                               X2  
     REST add dhcp relay                         Y                               Y2                      10.251.1.11
     REST add dhcprelay circuitid                Y                               Y2                      10.251.1.11             private vns Y2
-    #REST enable dhcp relay                      Y                               Y2  
     sleep                                       5
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Not Be Empty                         ${ipAddr1}
@@ -1671,12 +1663,18 @@ Inter tenant dhcp relay with multiple dhcp servers
     Should Contain                              ${value}                        is stopped
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Be Empty                             ${ipAddr1}
+    ${value} =                                  BASH release dhcpv4 address     h4                      bond0
+    Should Be True                              ${value}
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0
+    Should Not Be Empty                         ${ipAddr4}
     BASH stop service                           h2                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
     Should Contain                              ${value}                        is stopped
     ${value} =                                  BASH release dhcpv4 address     h4                      bond0
     Should Be True                              ${value}
+    ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0
+    Should Be Empty                             ${ipAddr4}
     BASH delete route                           h2                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
@@ -3049,6 +3047,7 @@ T5 base suite teardown
     REST delete portgroup                               ${leaf1_pc2}
     REST delete portgroup                               ${leaf2_pc1}
     REST delete portgroup                               ${leaf2_pc2}
+    sleep                                               60
     delete fabric switch  
     base suite teardown
 
