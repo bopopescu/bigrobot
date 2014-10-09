@@ -62,7 +62,7 @@ Verify system creates ecmp group when there is more than one member and back
 
 restart ofad on single-leaf rack with ecmp nexthop
     restart ofad on single-leaf rack with ecmp nexthop
-    [Tags]                       ecmp                           negative              run24
+    [Tags]                       ecmp                           negative              run24     skipped
     
 restart ofad on dual-leaf rack with ecmp nexthop
     restart ofad on dual-leaf rack with ecmp nexthop    
