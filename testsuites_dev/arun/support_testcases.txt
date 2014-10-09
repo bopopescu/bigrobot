@@ -42,6 +42,16 @@ TC05 Check Controller cli show command output are logged
 	${result}=  check_controller_cli_cmds  /tmp/${support_bundle_name}  c1
 	Should be True  ${result}
 	[Tags]  support  run
+	
+TC06 Check show dump core are seen after creating core dumps
+	manual passed
+	
+TC07 Check Sizes of core dumps
+    manual passed
+TC08 Check Endpoints from the Support logs with 4k static endpoints configured
+	manual passed
+TC09 Check Show segments from Support logs with 4k+ segments configured
+	manual passed
 * Keywords
 T5 support suite setup
 	delete support bundles

@@ -1,7 +1,0 @@
-status: 200
-content-location: http://10.8.30.7:8000/rest/v1/system/ha/role
-server: Apache/2.2.17 (Ubuntu)
-date: Thu, 02 Oct 2014 06:47:03 GMT
-content-type: application/json
-
-{"clustername": "f940e41e-86bd-49a2-970a-b7d7cbb25c57.1", "change-date-time": "2014-10-02T06:45:52.145Z", "change-description": "Master re-election or failover.", "role": "MASTER"}
