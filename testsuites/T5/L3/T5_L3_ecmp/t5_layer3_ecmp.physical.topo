@@ -46,7 +46,7 @@ s1:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 20        
-    mac: 70:72:CF:AB:3A:98
+    mac: 70:72:CF:B7:6E:3A
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0
@@ -61,7 +61,7 @@ s2:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 19    
-    mac: 70:72:CF:AB:39:98   
+    mac: 70:72:CF:B6:01:F2  
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0       
@@ -132,7 +132,7 @@ s4:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 3
-    mac: 70:72:CF:A9:BA:72
+    mac: 70:72:CF:BC:C4:7A
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack3
