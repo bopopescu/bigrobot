@@ -2435,9 +2435,9 @@ restart ofad on dual-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s3                                      ofad                    timeout=60
+    BASH restart process                            s1                                      ofad                    timeout=60
     sleep                                           5
-    ${value} =                                      BASH check service status               s3                      ofad
+    ${value} =                                      BASH check service status               s1                      ofad
     Should Contain                                  ${value}                                is started
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
@@ -2473,9 +2473,9 @@ restart ofad on dual-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s4                                      ofad                    timeout=60
+    BASH restart process                            s2                                      ofad                    timeout=60
     sleep                                           5
-    ${value} =                                      BASH check service status               s4                      ofad
+    ${value} =                                      BASH check service status               s2                      ofad
     Should Contain                                  ${value}                                is started
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
@@ -2565,9 +2565,9 @@ restart ofad on spine with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s1                                      ofad                    timeout=60
+    BASH restart process                            s7                                      ofad                    timeout=60
     sleep                                           5
-    ${value} =                                      BASH check service status               s1                      ofad
+    ${value} =                                      BASH check service status               s7                      ofad
     Should Contain                                  ${value}                                is started
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
@@ -2601,9 +2601,9 @@ restart ofad on spine with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s2                                      ofad                    timeout=60
+    BASH restart process                            s8                                      ofad                    timeout=60
     sleep                                           5
-    ${value} =                                      BASH check service status               s2                      ofad
+    ${value} =                                      BASH check service status               s8                      ofad
     Should Contain                                  ${value}                                is started
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
