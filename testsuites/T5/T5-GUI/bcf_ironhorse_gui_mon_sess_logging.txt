@@ -113,8 +113,8 @@ config suite setup
 config suite teardown	
 	Delete All Tenants
 	Delete All Port Groups
-	#Clear Switch Config    switch-1
-	#Clear Switch Config	switch-2
+	Clear Switch Config    switch-1
+	Clear Switch Config	   switch-2
 	Close Browser
     #Stop Selenium Server
     base suite teardown

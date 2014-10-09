@@ -37,18 +37,16 @@
 #
 
 
-### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: Test with traffic invalid dst mac and verify that traffic is dropped
   product_suite: T5/T5-Platform/t5_platform_negativetestcases
   status: FAIL
-  build_name_verified: 'bvs master #nnn'
-  jira: 
-  notes: 
+  build_name_verified: 'bcf-2.0.1 #35'
+  jira: PAN-1162
+  notes: This test case failed. JIRA has been moved to future release. 
 
-### new entry in recent 'bvs master #bcf-2.0.1_25'
 - name: Test Cluster formation with 2 different versions
   product_suite: T5/T5-Platform/t5_platform_negativetestcases
-  status: FAIL
-  build_name_verified: 'bvs master #nnn'
+  status: PASS
+  build_name_verified: 'bcf-2.0.1 #35'
   jira: 
-  notes: 
+  notes: Manually verified and It Pass. 
