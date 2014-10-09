@@ -197,7 +197,7 @@ Reboot
 	manual passed
 Process failure (OFAD) all spine
 	[Tags]  solution  openstack  IronHorse  manual
-	manual pased
+	manual passed
 
 
 OVS - Nova Controller start/stop process
