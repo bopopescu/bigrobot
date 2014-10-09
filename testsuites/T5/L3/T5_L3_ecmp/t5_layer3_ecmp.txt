@@ -2283,6 +2283,9 @@ Verify system creates ecmp group when there is more than one member and back
     REST delete nexthop group                       External                                test 
 	
 restart ofad on single-leaf rack with ecmp nexthop
+    bigrobot test ztn                               False
+    REST delete fabric switch                       leaf1-b
+    sleep                                           10
     REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
     REST add interface to vns                       External                        External-Host           leaf2-a         ethernet33          -1
     REST add nexthop group                          External                        test
@@ -2345,9 +2348,9 @@ restart ofad on single-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s5                                      ofad                    timeout=60
+    BASH restart process                            s3                                      ofad                    timeout=60
     sleep                                           5
-    ${value} =                                      BASH check service status               s5                      ofad
+    ${value} =                                      BASH check service status               s3                      ofad
     Should Contain                                  ${value}                                is started
     sleep                                           5
     ${result} =                                     REST get fabric interface stats         leaf0-a                     ethernet17
@@ -2371,6 +2374,9 @@ restart ofad on single-leaf rack with ecmp nexthop
 #    verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1           1200000
     calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
+    add fabric switch
+    sleep                                           20
+    bigrobot test ztn                               True
     
 restart ofad on dual-leaf rack with ecmp nexthop
     REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   

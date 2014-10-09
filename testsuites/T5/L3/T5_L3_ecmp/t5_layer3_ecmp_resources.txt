@@ -25,6 +25,11 @@ add fabric switch
 	rest add leaf group  leaf1-a  rack1
 	rest add dpid  leaf1-a  00:00:70:72:cf:b5:e7:5a
 
+    rest add switch  leaf1-b 
+    rest add fabric role  leaf1-b  leaf
+    rest add leaf group  leaf1-b  rack1
+    rest add dpid  leaf1-b  00:00:70:72:CF:AB:39:98
+
 	rest add switch  leaf2-a 
 	rest add fabric role  leaf2-a  leaf
 	rest add leaf group  leaf2-a  rack2
