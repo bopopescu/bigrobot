@@ -3544,10 +3544,10 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s8							c2
 	Should Be True									${result}
-	${result} = 									CLI verify controller       s9							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s9							c2
-	Should Be True									${result}
+#	${result} = 									CLI verify controller       s9							c1
+#	Should Be True									${result}
+#	${result} = 									CLI verify controller       s9							c2
+#	Should Be True									${result}
     REST add portgroup                      Arista1-pc1
     REST add portgroup                      Arista1-pc2
     REST add portgroup                      Arista1-pc3
