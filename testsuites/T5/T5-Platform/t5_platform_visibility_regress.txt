@@ -278,7 +278,8 @@ T10 Configure SPAN session for Port-Group interface - Direction Both
 	Should be true  ${returnVal}
 	rest activate monitor session	2
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo
-	Should be true  ${returnVal}
+	#Should be true  ${returnVal}
+	Run Keyword If  '${returnVal}' == 'False'  rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request  ICMP echo reply
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
