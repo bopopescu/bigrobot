@@ -1439,11 +1439,11 @@ class Test(object):
 
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
-        con.bash('rm -rf /mnt/flash/boot-config')
-        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+#         con.bash('rm -rf /mnt/flash/boot-config')
+#         con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+#         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+#         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+#         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
         con.send('')
         if helpers.bigrobot_ztn_installer().lower() != "true":
