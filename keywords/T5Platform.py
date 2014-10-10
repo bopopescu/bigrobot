@@ -1944,6 +1944,7 @@ class T5Platform(object):
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
+                    return False
                     return ("Error: %s" % line)
                 else:
                     helpers.test_failure("Error: %s" % line)
@@ -2227,7 +2228,7 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\): ]', c.get_prompt()], timeout=180)
         if options[0] == 1:
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)

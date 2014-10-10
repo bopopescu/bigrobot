@@ -13,7 +13,7 @@ Library	         keywords/T5Platform.py
 Resource	     testsuites/T5/T5-Platform/t5_platform_infra_resource.txt 
 
 * Variable
-${imageonserver}    bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.0-beta1-20.pkg
+${imageonserver}    bsn@regress:/home/bsn/bvs/jenkins-bcf-2.0.1-42/controller-upgrade-bcf-2.0.1.pkg
 ${bigtapimage}      bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
 ${image}     bsn@regress:/home/bsn/bvs/jenkins-bcf-2.0.1-43/controller-upgrade-bcf-2.0.1.pkg
 
