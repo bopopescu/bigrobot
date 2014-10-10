@@ -24,7 +24,7 @@ ${snmp_trap_svr_1}          10.9.18.3
 ${snmp_trap_svr_2}          10.9.18.2
 ${tenG_intf}                ethernet2
 ${fortyG_intf}              ethernet49
-${pc_intf_1}                49-50
+${pc_intf_1}                50-52
 ${pc_intf_2}                9-10
 ${pc_number}                1
 ${pc_name}                  port-channel1
@@ -101,33 +101,33 @@ TC17: Verify SNMP OID ifPhysAddress of 10Gig Data Port
     [Tags]  10G      
         
 TC18: Verify SNMP OID ifDescr of 40Gig Data Port  
-    verify snmp attribute  s1  ifDescr.1049  ${fortyG_intf}
+    verify snmp attribute  s1  ifDescr.1050  ${fortyG_intf}
     [Tags]  40G
         
 TC19: Verify SNMP OID ifType of 40Gig Data Port  
-    verify snmp attribute  s1  ifType.1049  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1050  ethernetCsmacd
     [Tags]  40G    
     
 TC20: Verify SNMP OID ifAdminStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifAdminStatus.1049  up
+    verify snmp attribute  s1  ifAdminStatus.1050  up
     [Tags]  40G    
     
 TC21: Verify SNMP OID ifOperStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1049  up
+    verify snmp attribute  s1  ifOperStatus.1050  up
     [Tags]  40G    
     
 TC22: Verify SNMP OID ifSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1049  4294967295
+    verify snmp attribute  s1  ifSpeed.1050  4294967295
     [Tags]  40G    
     
 TC23: Verify SNMP OID ifHighSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1049  40000
+    verify snmp attribute  s1  ifHighSpeed.1050  40000
     [Tags]  40G    
 
 TC24: Verify SNMP OID ifPhysAddress of 40Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${fortyG_intf} 
     ${my_mac_address}=  strip character from string  ${mac_address1}  ${0}  blank   
-    verify snmp attribute  s1  ifPhysAddress.1049  ${my_mac_address}
+    verify snmp attribute  s1  ifPhysAddress.1050  ${my_mac_address}
     [Tags]  40G
 
 TC25: Verify SNMP OID ifDescr of PortChannel across 40G Interface
