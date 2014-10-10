@@ -18,8 +18,8 @@ ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6004
 ${snmp_location_2}          CS214-6004   
-${snmp_trap_svr_1}          10.9.18.2
-${snmp_trap_svr_2}          10.9.18.3
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
 
 
 
