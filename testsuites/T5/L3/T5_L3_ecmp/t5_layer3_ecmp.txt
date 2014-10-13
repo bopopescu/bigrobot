@@ -2375,7 +2375,7 @@ restart ofad on single-leaf rack with ecmp nexthop
     calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
     add fabric switch
-    sleep                                           20
+    sleep                                           60
     bigrobot test ztn                               True
     
 restart ofad on dual-leaf rack with ecmp nexthop
