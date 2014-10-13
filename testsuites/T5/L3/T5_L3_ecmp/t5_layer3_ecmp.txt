@@ -62,7 +62,7 @@ Verify system creates ecmp group when there is more than one member and back
 
 restart ofad on single-leaf rack with ecmp nexthop
     restart ofad on single-leaf rack with ecmp nexthop
-    [Tags]                       ecmp                           negative              run24
+    [Tags]                       ecmp                           negative              run24     skipped
     
 restart ofad on dual-leaf rack with ecmp nexthop
     restart ofad on dual-leaf rack with ecmp nexthop    
@@ -2375,7 +2375,7 @@ restart ofad on single-leaf rack with ecmp nexthop
     calculate loss                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
     REST delete nexthop group                       External                                test 
     add fabric switch
-    sleep                                           20
+    sleep                                           60
     bigrobot test ztn                               True
     
 restart ofad on dual-leaf rack with ecmp nexthop
@@ -3550,10 +3550,10 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s8							c2
 	Should Be True									${result}
-#	${result} = 									CLI verify controller       s9							c1
-#	Should Be True									${result}
-#	${result} = 									CLI verify controller       s9							c2
-#	Should Be True									${result}
+	${result} = 									CLI verify controller       s9							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s9							c2
+	Should Be True									${result}
     REST add portgroup                      Arista1-pc1
     REST add portgroup                      Arista1-pc2
     REST add portgroup                      Arista1-pc3
