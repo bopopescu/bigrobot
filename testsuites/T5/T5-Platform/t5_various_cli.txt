@@ -205,21 +205,12 @@ T14 a\n in banner
 	...  Banner : a\r
 	[Tags]  banner  BSC-5366
 
-T15 'from mode ...' in login mode
-	Cli Run  master  enable
-	Cli Run  master  exit
-	Sleep  5
-	Cli Run and Verify Output  master
-	...  ? enable
-	...  from mode
-	...  flag=False
-	Cli Run  master  enable
-	Cli Run  master  exit
-	Cli Run and Verify Output  master
-	...  ? enable
-	...  show
-	Cli Run  master  enable
-	[Tags]  BSC-5020  skipped
+T15 no tacacs server timeout
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  no tacacs server timeout 5
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  no tacacs server timeout
+	[Tags]  BSC-6651  AAA
 
 T16 Switch commands in config-switch-if submode
 	Cli Run and Verify Output  master
