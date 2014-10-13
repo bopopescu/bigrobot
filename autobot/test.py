@@ -651,7 +651,7 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller', quiet=0):
+                   device_type='controller', protocol='ssh', quiet=0):
         t = self
         if not node:
             node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
@@ -679,7 +679,14 @@ class Test(object):
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.HostNode(node, ip, user, password, t)
+            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol)
+        elif device_type == 'pdu':
+            helpers.log("Initializing host '%s'" % node)
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol)
         else:
             # !!! FIXME: Need to support other device types (see the list of
             #            devices in node_connect().

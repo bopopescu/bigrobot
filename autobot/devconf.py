@@ -35,7 +35,7 @@ class DevConf(object):
         self._user = user
         self._password = password
         self._port = port
-        self._protocol = protocol
+        self._protocol = protocol if protocol else 'ssh'
         self._console_info = console_info
         self._debug = debug
         self._privatekey = privatekey
@@ -1039,6 +1039,16 @@ class T6MininetDevConf(MininetDevConf):
         # helpers.log("Closing T6MininetDevConf '%s' (%s)"
         #            % (self.name(), self._host))
         super(T6MininetDevConf, self).close()
+
+
+class PduDevConf(DevConf):
+    def __init__(self, *args, **kwargs):
+        super(PduDevConf, self).__init__(*args, **kwargs)
+
+    def close(self):
+        helpers.log("Closing PduDevConf '%s' (%s)"
+                    % (self.name(), self._host))
+        super(PduDevConf, self).close()
 
 
 class HostDevConf(DevConf):
