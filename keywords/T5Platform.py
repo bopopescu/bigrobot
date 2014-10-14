@@ -1944,7 +1944,6 @@ class T5Platform(object):
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
-                    return False
                     return ("Error: %s" % line)
                 else:
                     helpers.test_failure("Error: %s" % line)
@@ -2034,7 +2033,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> check_image with soft_error: %s' % str(soft_error))
-        c.enable('')
+
         c.enable("show image")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
@@ -2130,7 +2129,7 @@ class T5Platform(object):
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_stage')
 
-        c.config('')
+        c.enable('')
         if image is None:
             (num, images) = self.cli_check_image(node)
             if num == 1:
@@ -2228,7 +2227,7 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\): ]', c.get_prompt()], timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
         if options[0] == 1:
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
@@ -5753,40 +5752,67 @@ class T5Platform(object):
 
 
     def cli_show_boot_partition(self, node='master'):
-            '''
-            '''
-            helpers.test_log("Entering ==> cli_show_boot_partition")
-            t = test.Test()
-            c = t.controller(node)
-            c.enable('show boot partition')
-            content = c.cli_content()
-            temp = helpers.strip_cli_output(content)
-            temp = helpers.str_to_list(temp)
-    #        helpers.log("*****Output list   is :\n%s" % temp)
-            assert(len(temp) == 4)
-            temp.pop(0);temp.pop(0)
-            partition = {}
-            for line in temp:
-                helpers.log("*****line is :\n%s" % line)
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_show_boot_partition")
+        t = test.Test()
+        c = t.controller(node)
+        c.enable('show boot partition')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+#        helpers.log("*****Output list   is :\n%s" % temp)
+        assert(len(temp) == 4)
+        temp.pop(0);temp.pop(0)
+        partition = {}
+        for line in temp:
+            helpers.log("*****line is :\n%s" % line)
 
-                if 'Pending Launch' in line:
-                    helpers.log(" there is Pending Launch")
-                    line = line.replace("Pending Launch", "Pending_Launch")
-                if  'Active, Boot' in line:
-                    helpers.log(" there is Active, Boot")
-                    line = line.replace("Active, Boot", "Active_Boot")
-                line = line.split()
-                helpers.log("*****line is :\n%s" % line)
-                partition[line[0]] = {}
-                if line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed':
-                    partition[line[0]]['state'] = 'None'
-                    partition[line[0]]['upgrade'] = line[1]
-                else:
-                    partition[line[0]]['state'] = line[1]
-                    partition[line[0]]['upgrade'] = line[2]
+            if 'Pending Launch' in line:
+                helpers.log(" there is Pending Launch")
+                line = line.replace("Pending Launch", "Pending_Launch")
+            if  'Active, Boot' in line:
+                helpers.log(" there is Active, Boot")
+                line = line.replace("Active, Boot", "Active_Boot")
+            line = line.split()
+            helpers.log("*****line is :\n%s" % line)
+            partition[line[0]] = {}
+            if line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed':
+                partition[line[0]]['state'] = 'None'
+                partition[line[0]]['upgrade'] = line[1]
+            else:
+                partition[line[0]]['state'] = line[1]
+                partition[line[0]]['upgrade'] = line[2]
 
-            return partition
+        return partition
 
+    def get_boot_partition(self, node,flag):
+        '''
+        input:  flag type - Active,  Boot   Pending
+        '''
+        helpers.test_log("Entering ==> get_boot_partition")
+            
+        partition = self.cli_show_boot_partition(node)
+        if flag=='active':
+            for key in partition:
+                if 'Active' in partition[key]['state']:
+                        return key
+                        break
+            return False
+        if flag=='Boot':
+            for key in partition:
+                if 'Boot' in partition[key]['state']:
+                        return key
+                        break
+            return False
+        if flag=='Pending_launch':
+            for key in partition:
+                if 'Pending_Launch' in partition[key]['upgrade']:
+                        return key
+                        break
+            helpers.log("There is no image Pending Launch ")               
+            return True
+          
 
 
     def cli_verify_node_upgrade_partition(self, singleNode=False):
