@@ -9,8 +9,8 @@ s1:
   pdu:
     ip: pdu-314-b.bigswitch.com
     port: 20
-    user: apc
-    password: apc
+    #user: apc
+    #password: apc
 
 #  set_session_ssh: false
 #  set_init_ping: false
