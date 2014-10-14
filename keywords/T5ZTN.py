@@ -1047,11 +1047,6 @@ class T5ZTN(object):
                 if "snmp-server enable" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
-                # temp override BSC-5629
-                if re.match(r'snmp-server community ro public$',
-                            running_config_line):
-                    helpers.log("Skipping line: %s" % running_config_line)
-                    continue
                 if re.match(r'snmp-server contact|snmp-server location',
                              running_config_line):
                     temp_line = running_config_line.replace("\'", "")
