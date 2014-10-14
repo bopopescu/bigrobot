@@ -365,7 +365,7 @@ T16 Configure SPAN session - Direction Both
 	
 
 T17 Configure SPAN Session - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
@@ -383,7 +383,7 @@ T17 Configure SPAN Session - Direction Ingress
 	
 	
 T18 Configure SPAN Session - Direction Egress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
@@ -401,7 +401,7 @@ T18 Configure SPAN Session - Direction Egress
 
 
 T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
@@ -434,7 +434,7 @@ T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
 
 
 T20 Configure SPAN session for SRC-PORT - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
@@ -464,7 +464,7 @@ T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
@@ -497,7 +497,7 @@ T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	
 	
 T22 Configure SPAN session for DST-PORT - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
@@ -528,7 +528,7 @@ T22 Configure SPAN session for DST-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T23 Configure SPAN session for SRC-MAC - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
