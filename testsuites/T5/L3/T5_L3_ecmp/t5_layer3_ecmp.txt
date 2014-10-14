@@ -1885,6 +1885,10 @@ Verify system nexthop group uses all members across rack
     ${rx_49_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${rx_50_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-b                     ethernet49
+    ${rx_49_ucast_cnt1B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-b                     ethernet50
+    ${rx_50_ucast_cnt1B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     sleep                                           12
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
     ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
@@ -1910,6 +1914,10 @@ Verify system nexthop group uses all members across rack
     ${rx_49_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet50
     ${rx_50_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-b                     ethernet49
+    ${rx_49_ucast_cnt1B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-b                     ethernet50
+    ${rx_50_ucast_cnt1B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['rx-unicast-packet']}
     stop traffic                                    ${stream1}
     ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
     ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
@@ -1923,9 +1931,11 @@ Verify system nexthop group uses all members across rack
     ${diffA10} =                                    evaluate                                ${rx_50_ucast_cnt2A-2} - ${rx_50_ucast_cnt2A-1}
     ${diffA11} =                                    evaluate                                ${rx_49_ucast_cnt2B-2} - ${rx_49_ucast_cnt2B-1}
     ${diffA12} =                                    evaluate                                ${rx_50_ucast_cnt2B-2} - ${rx_50_ucast_cnt2B-1}
+    ${diffA13} =                                    evaluate                                ${rx_49_ucast_cnt1B-2} - ${rx_49_ucast_cnt1B-1}
+    ${diffA14} =                                    evaluate                                ${rx_50_ucast_cnt1B-2} - ${rx_50_ucast_cnt1B-1}
     ${sumA} =                                       evaluate                                ${diffA1} + ${diffA2}
     ${sumB} =                                       evaluate                                ${diffA3} + ${diffA4} + ${diffA5} + ${diffA6} 
-    ${sumC} =                                       evaluate                                ${diffA7} + ${diffA8}
+    ${sumC} =                                       evaluate                                ${diffA7} + ${diffA8} + ${diffA13} + ${diffA14}
     ${sumD} =                                       evaluate                                ${diffA9} + ${diffA10} + ${diffA11} + ${diffA12}
     Should Be True                                  ${sumA} > 500000 
     Should Be True                                  ${sumB} > 500000
