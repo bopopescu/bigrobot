@@ -53,6 +53,16 @@ ${s1IxiaDstInt}		ethernet26
 ${s1IxiaVerifyHost}  h2
 ${s1IxiaVerifyInt}	eth1
 
+${subMask}  24
+${seg1ip}  192.168.4.100
+${seg2ip}  192.168.0.100
+${seg3ip}  192.168.1.100
+${Ixia1v1IP}  100.1.1.100
+${Ixia1v2IP}  100.1.2.100
+${Ixia3v1IP}  100.3.1.100
+${Ixia4v1IP}  100.4.1.100
+${Ixia5v1IP}  100.5.1.100
+${Ixia6v1IP}  100.5.1.100
 
 * Test Case 
 
@@ -1009,18 +1019,6 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
 
 
 Configure Tenants For SPAN & Test Path
-   
-   Set Test Variable  ${subMask}  24
-   Set Test Variable  ${seg1ip}  192.168.4.100
-   Set Test Variable  ${seg2ip}  192.168.0.100
-   Set Test Variable  ${seg3ip}  192.168.1.100
-   Set Test Variable  ${Ixia1v1IP}  100.1.1.100
-   Set Test Variable  ${Ixia1v2IP}  100.1.2.100
-   Set Test Variable  ${Ixia3v1IP}  100.3.1.100
-   Set Test Variable  ${Ixia4v1IP}  100.4.1.100
-   Set Test Variable  ${Ixia5v1IP}  100.5.1.100
-   Set Test Variable  ${Ixia6v1IP}  100.5.1.100
-
    rest add tenant  autoT1
    rest add vns  autoT1  v1
    rest add portgroup to vns  autoT1  v1  p1  10
