@@ -1168,8 +1168,7 @@ class T5PlatformThreads(Thread):
 
         myhost = Host.Host()
         loss = myhost.bash_ping(host, IP, count=10)
-        helpers.log("Exiting Thread ...%s" % str(self.threadID)
-
+        helpers.log("Exiting Thread ...%s" % str(self.threadID))
 
 
 
