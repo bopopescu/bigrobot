@@ -1165,10 +1165,10 @@ class T5PlatformThreads(Thread):
         return returnVal
 
     def host_ping(self, host, IP):
-
+        print ("Starting Thread ID.. %s" % str(self.threadID))
         myhost = Host.Host()
         loss = myhost.bash_ping(host, IP, count=10)
-        helpers.log("Exiting Thread ...%s" % str(self.threadID))
+        print("Exiting Thread ...%s" % str(self.threadID))
 
 
 
