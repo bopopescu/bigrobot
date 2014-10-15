@@ -346,6 +346,12 @@ class Test(object):
     def switch_password(self):
         return self.bsn_config('switch_password')
 
+    def pdu_user(self):
+        return self.bsn_config('pdu_user')
+
+    def pdu_password(self):
+        return self.bsn_config('pdu_password')
+
     def alias(self, name, ignore_error=False):
         """
         :param ignore_error: (Bool) If true, don't trigger exception when
@@ -683,9 +689,9 @@ class Test(object):
         elif device_type == 'pdu':
             helpers.log("Initializing host '%s'" % node)
             if not user:
-                user = self.host_user()
+                user = self.pdu_user()
             if not password:
-                password = self.host_password()
+                password = self.pdu_password()
             n = a_node.PduNode(node, ip, user, password, t, protocol=protocol)
         else:
             # !!! FIXME: Need to support other device types (see the list of

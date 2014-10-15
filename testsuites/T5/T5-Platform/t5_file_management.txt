@@ -381,7 +381,7 @@ T5.9.2 Verify: copy scp://<running-config> file
 
 T5.9.3 Verify: copy scp://<running-config> snapshot://
 	Cli Copy  running-config  ${scp RC}
-	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp RC}  ${config}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid snapshot file*  Cli Copy  ${scp RC}  ${config}
 	[Tags]  SCP
 
 T5.9.4 Verify: copy scp://<file> running-config
@@ -401,7 +401,7 @@ T5.9.5 Verify: copy scp://<file> file
 T5.9.6 Verify: copy scp://<file> snapshot://
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp file}
-	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp file}  ${config}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid snapshot file*  Cli Copy  ${scp file}  ${config}
 	[Tags]  SCP
 
 T5.9.7 Verify: copy scp://<snapshot://> running-config

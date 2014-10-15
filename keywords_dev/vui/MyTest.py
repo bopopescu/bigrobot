@@ -1221,7 +1221,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         t = test.Test()
         pdu = t.params(node='s1', key='pdu')
         helpers.log("pdu: %s" % pdu)
-        p = t.node_spawn(ip=pdu["ip"], user=pdu["user"], password=pdu["password"], device_type='pdu', protocol='telnet')
+        p = t.node_spawn(ip=pdu["ip"], device_type='pdu', protocol='telnet')
         p.cli('about')
         p.cli('olStatus 20')
         p.close()
