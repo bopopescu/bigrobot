@@ -18,3 +18,52 @@ h1:
   #user: bsn
   #password: bsn
 
+s2:
+#  ip: 10.195.0.34
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: 70:72:CF:B5:EB:66
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7002
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+#  ip: 10.195.0.35
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:CF:B7:6C:C8
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7003
+  set_session_ssh: false
+  set_init_ping: false
+s4:
+#  ip: 10.195.0.36
+  alias: leaf1-b
+  leaf-group: rack1
+  mac: 70:72:CF:B6:00:36
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7004
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+#  ip: 10.195.0.31
+  alias: leaf2-a
+  leaf-group: rack2
+  mac: 70:72:CF:BD:DA:B6
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7005
+  set_session_ssh: false
+  set_init_ping: false
+
