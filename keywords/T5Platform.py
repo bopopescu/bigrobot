@@ -1944,7 +1944,6 @@ class T5Platform(object):
             if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
                 helpers.log("Error: %s" % line)
                 if soft_error:
-                    return False
                     return ("Error: %s" % line)
                 else:
                     helpers.test_failure("Error: %s" % line)
@@ -2034,7 +2033,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> check_image with soft_error: %s' % str(soft_error))
-        c.enable('')
+
         c.enable("show image")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
@@ -2130,7 +2129,7 @@ class T5Platform(object):
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_stage')
 
-        c.config('')
+        c.enable('')
         if image is None:
             (num, images) = self.cli_check_image(node)
             if num == 1:
@@ -2211,7 +2210,7 @@ class T5Platform(object):
 
     def cli_upgrade_launch(self, node='master', option='', soft_error=False):
         '''
-          upgrade launch  -  2 step of upgrade
+          upgrade launch  -  3 step of upgrade  - this is for single node upgrade
           Author: Mingtao
           input:  node  - controller
                           master, slave, c1 c2
@@ -2228,7 +2227,7 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\): ]', c.get_prompt()], timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
         if options[0] == 1:
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
@@ -2264,6 +2263,9 @@ class T5Platform(object):
             return False
         else:
             helpers.log('INFO: upgrade launch  successfully')
+            
+         # modify the idle time out TBD Mingtao
+            
             return True
         return False
 
@@ -5315,7 +5317,14 @@ class T5Platform(object):
                     helpers.log("ERROR: upgrade FAILED")
 
                     return False
-
+                # TBD Mingtao  change the idle timer
+                helpers.log("INFO: Active Node - %s is rebooting" % c.name())
+                if self.verify_controller_reachable(node):
+                    helpers.log("INFO: Active Node - %s is UP - Wating for it to come to full function" % c.name())
+                    helpers.sleep(60)
+                    c.node_reconnect(c.name())
+                    c.enable('show switch')
+                    t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
                 return True
 
         elif role == 'standby':
@@ -5341,7 +5350,15 @@ class T5Platform(object):
                     helpers.log("ERROR: upgrade FAILED")
 
                     return False
-
+                # TBD  Mingtao                 
+                helpers.log("INFO: Standby Node - %s is rebooting" % c.name())
+                if self.verify_controller_reachable(node):
+                    helpers.log("INFO: Standby Node - %s is UP - Wating for it to come to full function" % c.name())
+                    helpers.sleep(60)
+                    c.node_reconnect(c.name())
+                    c.enable('show switch')
+                    t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+              
                 return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
@@ -5392,8 +5409,8 @@ class T5Platform(object):
                     ip_addr = helpers.get_next_address('ipv4', base, step)
                     base = ip_addr
                     i = i + 1
-            c.cli('show running-config tenant')['content']
-
+                    
+        c.cli('show running-config tenant')['content']
         return True
 
 
@@ -5753,40 +5770,75 @@ class T5Platform(object):
 
 
     def cli_show_boot_partition(self, node='master'):
-            '''
-            '''
-            helpers.test_log("Entering ==> cli_show_boot_partition")
-            t = test.Test()
-            c = t.controller(node)
-            c.enable('show boot partition')
-            content = c.cli_content()
-            temp = helpers.strip_cli_output(content)
-            temp = helpers.str_to_list(temp)
-    #        helpers.log("*****Output list   is :\n%s" % temp)
-            assert(len(temp) == 4)
-            temp.pop(0);temp.pop(0)
-            partition = {}
-            for line in temp:
-                helpers.log("*****line is :\n%s" % line)
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_show_boot_partition")
+        t = test.Test()
+        c = t.controller(node)
+        c.enable('show boot partition')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+#        helpers.log("*****Output list   is :\n%s" % temp)
+        assert(len(temp) == 4)
+        temp.pop(0);temp.pop(0)
+        partition = {}
+        for line in temp:
+            helpers.log("*****line is :\n%s" % line)
 
-                if 'Pending Launch' in line:
-                    helpers.log(" there is Pending Launch")
-                    line = line.replace("Pending Launch", "Pending_Launch")
-                if  'Active, Boot' in line:
-                    helpers.log(" there is Active, Boot")
-                    line = line.replace("Active, Boot", "Active_Boot")
-                line = line.split()
-                helpers.log("*****line is :\n%s" % line)
-                partition[line[0]] = {}
-                if line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed':
-                    partition[line[0]]['state'] = 'None'
-                    partition[line[0]]['upgrade'] = line[1]
-                else:
-                    partition[line[0]]['state'] = line[1]
-                    partition[line[0]]['upgrade'] = line[2]
+            if 'Pending Launch' in line:
+                helpers.log(" there is Pending Launch")
+                line = line.replace("Pending Launch", "Pending_Launch")
+            if  'Active, Boot' in line:
+                helpers.log(" there is Active, Boot")
+                line = line.replace("Active, Boot", "Active_Boot")
+            line = line.split()
+            helpers.log("*****line is :\n%s" % line)
+            partition[line[0]] = {}
+            if (line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed' or 
+                line[1]== 'Unformatted'):
+                partition[line[0]]['state'] = 'None'
+                partition[line[0]]['upgrade'] = line[1]
+            else:
+                partition[line[0]]['state'] = line[1]
+                partition[line[0]]['upgrade'] = line[2]
 
-            return partition
+        return partition
 
+    def get_boot_partition(self, node,flag):
+        '''
+        input:  flag type - Active,  Boot   Pending
+        '''
+        helpers.test_log("Entering ==> get_boot_partition")
+            
+        partition = self.cli_show_boot_partition(node)
+        if flag=='active':
+            for key in partition:
+                if 'Active' in partition[key]['state']:
+                    return key
+                    break
+            return False
+        if flag=='Boot':
+            for key in partition:
+                if 'Boot' in partition[key]['state']:
+                    return key
+                    break
+            return False
+        if flag=='Pending_launch':
+            for key in partition:
+                if 'Pending_Launch' in partition[key]['upgrade']:
+                        return key
+                        break
+            helpers.log("There is no partition Pending Launch ")               
+            return -1
+        if flag=='Unformatted':
+            for key in partition:
+                if 'Unformatted' in partition[key]['upgrade']:
+                    return key
+                    break
+            helpers.log("There is no partition unformated ")               
+            return -1
+          
 
 
     def cli_verify_node_upgrade_partition(self, singleNode=False):
@@ -5845,3 +5897,25 @@ class T5Platform(object):
         helpers.test_failure('Error: can not decide the switch in fabric ')
         return False
 
+
+    def verify_controller_reachable(self, node):
+        '''
+        '''        
+        helpers.test_log("Entering ==> verify_controller_reachable")
+        t = test.Test()
+        c = t.controller(node)
+        ipAddr = c.ip() 
+        count = 0
+        while (True):
+            loss = helpers.ping(ipAddr)
+            helpers.log("loss is: %s" % loss)
+            if(loss != 0):
+                if (count > 5):
+                    helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                    return False
+                sleep(60)
+                count += 1
+                helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+            else:
+                helpers.log("Controller is alive")                
+                return True
