@@ -341,9 +341,9 @@ class Ixia(object):
         handle.commit()
         return trafficStream1
 
-    def ix_setup_traffic_streams_raw(self, src_mac=None, dst_mac=None, frameType, frameSize, frameRate,
-                                     lacp_src_mac=None, frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
-                                      burst_count=None, burst_gap=None,
+    def ix_setup_traffic_streams_raw(self, frameType, frameSize, frameRate, frameMode, frameCount, flow, name,
+                                     lacp_src_mac=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                      burst_count=None, burst_gap=None, dst_cnt=None, src_cnt=None, src_mac_step=None, dst_mac_step=None,
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False, payload=None, src_vport=None, dst_vport=None):
         '''
            Return Traffic stream with quick flow creation similar to IxNetwork
@@ -1053,9 +1053,15 @@ class Ixia(object):
 
         lacp = kwargs.get('lacp', False)
         lldp = kwargs.get('lldp', False)
-
+        src_mac = kwargs.get('src_mac', None)
+        dst_mac = kwargs.get('dst_mac', None)
+        d_cnt = kwargs.get('dst_cnt', 1)
+        s_cnt = kwargs.get('src_cnt', 1)
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
 
         if lacp:
+            helpers.log("Getting LCAP Parameters..")
             lacp_src_mac = kwargs.get('lacp_src_mac', '00:00:99:99:88:77')
             s_cnt = kwargs.get('src_cnt', 1)
             src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
@@ -1063,12 +1069,8 @@ class Ixia(object):
         if lldp:
             src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
             dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-            d_cnt = kwargs.get('dst_cnt', 1)
-            s_cnt = kwargs.get('src_cnt', 1)
-            dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
-            src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
 
-        if ix_tcl_server is None or ix_ports :
+        if ix_tcl_server is None or ix_ports is None :
             helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
             raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L3_ADD helper method !!')
         get_version = ix_handle.getVersion()
@@ -1119,10 +1121,10 @@ class Ixia(object):
         helpers.log("src ixia port used :%s dst ixia port used :%s" % (src_ix_port, dst_ix_port))
         src_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', src_ix_port)[0]
         dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
-        traffic_item = self.ix_setup_traffic_streams_raw(None, None, frame_type, self._frame_size, frame_rate, frame_mode,
-                                                              frame_cnt, stream_flow, name, src_vport=src_vport, dst_vport=dst_vport,
-                                                              src_mac=src_mac, dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
-                                                              lacp_src_mac=lacp_src_mac)
+        traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode,
+                                                              frame_cnt, stream_flow, name, lacp_src_mac=lacp_src_mac, src_mac=src_mac,
+                                                              dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
+                                                              src_vport=src_vport, dst_vport=dst_vport)
         traffic_stream1.append(traffic_item)
         self.ix_apply_traffic()
         return traffic_stream1[0]
