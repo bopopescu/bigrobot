@@ -413,10 +413,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Pass: Transmit:%d, Receive:%d" % (tx, rx))
             return True
         else:
-            helpers.log("Fail: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Fail: Transmit:%d, Receive:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
