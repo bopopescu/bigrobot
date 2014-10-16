@@ -4136,12 +4136,12 @@ class T5Platform(object):
                 helpers.log("Test Path Error During Validating Hops List: %s" % str(e))
                 return  False
 
-
         if(trafficMode == 'Ixia'):
             if 'stream' in kwargs:
                 ixia.stop_traffic(kwargs.get('stream'))
         if(trafficMode == 'HostPing'):
-            pingThread.join()
+            helpers.log("Waiting for Ping threads to Finish...Default time out : 30")
+            pingThread.join(30)
 
         return True
 
