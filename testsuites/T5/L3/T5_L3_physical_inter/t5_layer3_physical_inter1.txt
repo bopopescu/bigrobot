@@ -1136,9 +1136,9 @@ initialize host
     sleep                                           1
     BASH run command                                h6                                ifup eth3
     sleep                                           1
-    BASH run command                                h6                                ifup p1p1
+    BASH run command                                h6                                ifup eth2
     sleep                                           1
-    BASH run command                                h6                                ifup p1p2
+    BASH run command                                h6                                ifup eth3
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
@@ -1187,9 +1187,9 @@ initialize host
     # BASH init intf                              h5                              eth1
     # BASH init intf                              h5                              eth2
     # BASH init intf                              h5                              eth3
-    # BASH init intf                              h6                              em2
-    # BASH init intf                              h6                              p1p1
-    # BASH init intf                              h6                              p1p2
+    # BASH init intf                              h6                              eth1
+    # BASH init intf                              h6                              eth2
+    # BASH init intf                              h6                              eth3
     # BASH init intf                              h1                              bond0
     # BASH init intf                              h2                              bond0
     # BASH init intf                              h3                              bond0

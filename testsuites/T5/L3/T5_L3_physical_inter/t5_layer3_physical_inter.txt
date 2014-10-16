@@ -123,11 +123,11 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
-    BASH ifup intf                              h6                              em2
+    BASH ifup intf                              h6                              eth1
     BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+    BASH init intf                              h6                              eth1
     BASH add ip address                         h5                              10.251.1.31/24          eth1
-    BASH add ip address                         h6                              10.252.1.31/24          em2
+    BASH add ip address                         h6                              10.252.1.31/24          eth1
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
@@ -143,7 +143,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2a_host5}
-    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${mac2} =                                   BASH get intf mac               h6                      eth1
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -159,7 +159,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     ${returnVal}=  rest verify testpath fabric view  Test-SameRackDifferentSwitch  HostPing  leaf  spine  leaf  host=h5  ip=10.252.1.31
     Should Be True  ${returnVal}
     BASH init intf                              h5                              eth1
-    BASH init intf                              h6                              em2
+    BASH init intf                              h6                              eth1
     
 
 Overlapping IP subnet with and without private keyword
@@ -1905,9 +1905,9 @@ initialize host
     sleep                                           1
     BASH run command                                h6                                ifup eth3
     sleep                                           1
-    BASH run command                                h6                                ifup p1p1
+    BASH run command                                h6                                ifup eth2
     sleep                                           1
-    BASH run command                                h6                                ifup p1p2
+    BASH run command                                h6                                ifup eth3
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
@@ -1956,9 +1956,9 @@ initialize host
     # BASH init intf                              h5                              eth1
     # BASH init intf                              h5                              eth2
     # BASH init intf                              h5                              eth3
-    # BASH init intf                              h6                              em2
-    # BASH init intf                              h6                              p1p1
-    # BASH init intf                              h6                              p1p2
+    # BASH init intf                              h6                              eth1
+    # BASH init intf                              h6                              eth2
+    # BASH init intf                              h6                              eth3
     # BASH init intf                              h1                              bond0
     # BASH init intf                              h2                              bond0
     # BASH init intf                              h3                              bond0

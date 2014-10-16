@@ -1646,10 +1646,16 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        n = self.topology(name)
+        con = self.dev_console(name)
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+            con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
+
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
             return
-        n = self.topology(name)
 
         if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
