@@ -1111,8 +1111,8 @@ class Ixia(object):
             dst_ix_port = match_uni1.group(2).lower()
         elif match_uni2:
             stream_flow = 'uni-directional'
-            src_ix_port = match_uni1.group(2).lower()
-            dst_ix_port = match_uni1.group(1).lower()
+            src_ix_port = match_uni2.group(2).lower()
+            dst_ix_port = match_uni2.group(1).lower()
         elif match_bi:
             stream_flow = 'bi-directional'
             src_ix_port = match_bi.group(1).lower()
@@ -1237,8 +1237,8 @@ class Ixia(object):
                 dst_ix_port = match_uni1.group(2).lower()
             elif match_uni2:
                 stream_flow = 'uni-directional'
-                src_ix_port = match_uni1.group(2).lower()
-                dst_ix_port = match_uni1.group(1).lower()
+                src_ix_port = match_uni2.group(2).lower()
+                dst_ix_port = match_uni2.group(1).lower()
             elif match_bi:
                 stream_flow = 'bi-directional'
                 src_ix_port = match_bi.group(1).lower()
