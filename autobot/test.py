@@ -1641,6 +1641,7 @@ class Test(object):
         if helpers.bigrobot_no_auto_reload().lower() == 'true':
             helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
 
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
