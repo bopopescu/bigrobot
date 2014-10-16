@@ -1270,7 +1270,9 @@ class Test(object):
         helpers.sleep(sleep_time)
         return True
 
-    def setup_controller_reauth_and_idle_timeout(self, name):
+    def cli_add_controller_idle_and_reauth_timeout(self, name,
+                                                   reconfig_idle=True,
+                                                   reconfig_reauth=True):
         """
         When logging into the BCF controller for the first time, modify the
         idle timeout setting in Floodlight's application.py. Then reconnect
@@ -1284,8 +1286,16 @@ class Test(object):
         if not helpers.is_bcf(platform):
             return True
 
-        status1 = self._setup_controller_idle_timeout(name)
-        status2 = self._setup_controller_reauth_timeout(name)
+        status1 = status2 = False
+
+        if reconfig_idle:
+            status1 = self._setup_controller_idle_timeout(name)
+        else:
+            helpers.log("reconfig_idle=%s" % reconfig_idle)
+        if reconfig_reauth:
+            status2 = self._setup_controller_reauth_timeout(name)
+        else:
+            helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
@@ -1544,7 +1554,7 @@ class Test(object):
 
         for key in params:
             if helpers.is_controller(key):
-                self.setup_controller_reauth_and_idle_timeout(key)
+                self.cli_add_controller_idle_and_reauth_timeout(key)
 
         # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
