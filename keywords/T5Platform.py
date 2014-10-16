@@ -2139,18 +2139,27 @@ class T5Platform(object):
                 c.send('upgrade stage ' + image)
         else:
             c.send('upgrade stage ' + image)
-        options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition'])
+        options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition',c.get_prompt()])
 
         if options[0] == 1:
-            helpers.log('USER INFO:  image is staged already ')
+            helpers.log('USER INFO:  image is staged already,  stage again ... ')
+#            return True
+        elif options[0] == 0:
+            c.send("yes")
+        elif options[0] == 2:
             return True
 
-        c.send("yes")
-
-        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition'])
+        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition',c.get_prompt()])
         if options[0] == 0:
             c.send("yes")
-
+            newoptions = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition',c.get_prompt()])
+            if newoptions[0] == 0:
+                c.send("yes")
+            elif newoptions[0] == 2:
+                return True 
+        elif options[0] == 2:
+            return True
+                    
         try:
             c.expect(timeout=900)
         except:
@@ -2264,8 +2273,16 @@ class T5Platform(object):
         else:
             helpers.log('INFO: upgrade launch  successfully')
             
-         # modify the idle time out TBD Mingtao
-            
+            # modify the idle time out TBD Mingtao
+            helpers.log("INFO: Standby Node - %s is rebooting" % c.name())
+            if self.verify_controller_reachable(node):
+                helpers.log("INFO: Standby Node - %s is UP - Wating for it to come to full function" % c.name())
+                helpers.sleep(60)
+                helpers.log("Node reconnect for '%s'" % c.name())
+                c = t.node_reconnect(c.name())
+                c.enable('show switch')
+                t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+   
             return True
         return False
 
@@ -5279,6 +5296,7 @@ class T5Platform(object):
                   False  -upgrade launched Not successfully
         '''
 
+        
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch_HA ')
@@ -5308,7 +5326,7 @@ class T5Platform(object):
                 return False
             else:
                 content = c.cli_content()
-                helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+                helpers.log("*****USER INFO: the upgrade outout is *****\n%s\n\n*****" % content)
                 if options[0] == 1:
                     helpers.log("ERROR: upgrade ABORTED")
                     c.expect(timeout=900)
@@ -5322,9 +5340,13 @@ class T5Platform(object):
                 if self.verify_controller_reachable(node):
                     helpers.log("INFO: Active Node - %s is UP - Wating for it to come to full function" % c.name())
                     helpers.sleep(60)
-                    c.node_reconnect(c.name())
+                    helpers.log("Node reconnect for '%s'" % c.name())
+                    c = t.node_reconnect(c.name())
                     c.enable('show switch')
                     t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+                else:
+                    helpers.log("INFO: self.verify_controller_reachable is false")
+                              
                 return True
 
         elif role == 'standby':
@@ -5340,7 +5362,7 @@ class T5Platform(object):
                 return False
             else:
                 content = c.cli_content()
-                helpers.log("*****USER INFO: the upgrade outout is *****\n%s" % content)
+                helpers.log("*****USER INFO: the upgrade outout is *****\n%s\n\n*****" % content)
 
                 if options[0] == 1:
                     helpers.log("ERROR: upgrade ABORTED")
@@ -5348,16 +5370,19 @@ class T5Platform(object):
                     return False
                 elif options[0] == 2 :
                     helpers.log("ERROR: upgrade FAILED")
-
                     return False
+
                 # TBD  Mingtao                 
                 helpers.log("INFO: Standby Node - %s is rebooting" % c.name())
                 if self.verify_controller_reachable(node):
                     helpers.log("INFO: Standby Node - %s is UP - Wating for it to come to full function" % c.name())
                     helpers.sleep(60)
-                    c.node_reconnect(c.name())
+                    helpers.log("Node reconnect for '%s'" % c.name())
+                    c = t.node_reconnect(c.name())
                     c.enable('show switch')
                     t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+                else:
+                    helpers.log("INFO: self.verify_controller_reachable is false")
               
                 return True
         else:
@@ -5919,3 +5944,61 @@ class T5Platform(object):
             else:
                 helpers.log("Controller is alive")                
                 return True
+
+    def verify_upgrade_not_progress(self):
+        '''
+        '''        
+        helpers.test_log("Entering ==> verify_upgrade_not_progress")
+        t = test.Test()       
+        bsn_common = bsnCommon()
+        nodes = bsn_common.get_all_controller_nodes()
+        for node in nodes:
+            c = t.controller(node)
+            c.enable("show upgrade progress")
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            line = temp[-1]
+            helpers.log("USR INFO:  line is :'%s'" % line)
+            if re.match(r'Error: Invalid Use: upgrade not active', line):
+                helpers.log("USR INFO: no upgrade in node: %s" % node)
+            else:
+                helpers.log("USR INFO:  upgrade is in progress")   
+                return False         
+       
+        for node in nodes:
+            if self.cli_check_user_present(user='upgrader',node=node):
+                helpers.log("USR INFO:  user upgrader still exist")    
+                return False
+        return True
+    
+    def cli_check_user_present(self, user, node='master'):
+        '''
+        check user present
+        '''        
+      
+        t = test.Test()
+        c = t.controller(node)
+        url = "/api/v1/data/controller/core/aaa/local-user"
+ 
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        content= c.rest.content()     
+        helpers.log("INFO: %s " % c.rest.content())  
+           
+        Users = []
+        for i in range (0, len(content)):
+            Users.append(content[i]['user-name'])
+            
+        helpers.log("USR INFO: all the users are:  %s" % Users)        
+        if user not in Users:
+            helpers.warn("User: %s NOT present" % user)
+            return False
+        else:
+            helpers.log("USER %s is present " % user)  
+            return True
+        
+          
+        
+       
