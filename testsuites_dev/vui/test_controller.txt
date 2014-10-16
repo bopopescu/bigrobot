@@ -311,4 +311,5 @@ Test bash command line editing
     enable            c1   show sessions
     sudo              c1   find /tmp         # we should see in devconf log 'set +o emacs'
     cli               c1   show user
+    cli add controller idle and reauth timeout    c1    reconfig_reauth=${false}
 

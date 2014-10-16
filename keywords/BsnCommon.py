@@ -1852,6 +1852,22 @@ class BsnCommon(object):
             n = t.node(node)
             return n.monitor_reauth(*args, **kwargs)
 
+    def cli_add_controller_idle_and_reauth_timeout(self, node, *args, **kwargs):
+        """
+        Reconfigure the idle timeout and reauth timeout on the controller.
+
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | reconfig_idle | Default is ${true}. Set to $[false} if you don't want to reconfigure idle timeout. |
+        | reconfig_reauth | Default is ${true}. Set to $[false} if you don't want to reconfigure reauth timeout. |
+
+        Return Value:
+        - ${true} on success, else ${false} on failure.
+
+        """
+        t = test.Test()
+        return t.cli_add_controller_idle_and_reauth_timeout(node, *args, **kwargs)
+
     def node_disconnect(self, node):
         """
         Disconnect the devconf session (SSH/Telnet) on the specified node.
