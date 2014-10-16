@@ -1647,8 +1647,8 @@ class Test(object):
         - delete the controller IP address
         """
         n = self.topology(name)
-        con = self.dev_console(name)
         if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            con = self.dev_console(name)
             helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
             con.cli("")
