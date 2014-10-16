@@ -1,0 +1,62 @@
+*Variables
+
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf1-a
+${switch7_name}=  spine0
+
+${tenant}=        testTenant 
+${vns1}=           v1
+${vns2}=           v2
+${ip1}=            10.200.0.1
+${ip2}=            10.200.16.1
+${mask1}=           24
+${mask2}=           24
+${vlan}=          -1
+${leaf0a_ixia}=        ethernet24
+${leaf1a_ixia}=        ethernet25
+
+${src_mac1}=       00:11:01:00:00:01
+${dst_mac1}=       00:12:01:00:00:01
+${src_mac2}=       00:11:01:00:00:02
+${dst_mac2}=       00:12:01:00:00:02
+${src_ip1}=        10.200.0.2
+${src_gw1}=        10.200.0.1
+${dst_ip1}=        10.200.16.2
+${dst_gw1}=        10.200.16.1
+${frame_rate}=     10000
+${frame_cnt}=      2000000
+${ratetolerance}=  20
+${countertolerance}=  100
+
+## Leaf-spine Link 
+## leaf0-a ethernet52  spine0 ethernet21 
+## leaf0-a ethernet54  spine0 ethernet31 
+## leaf1-a ethernet50  spine0 ethernet25 
+## leaf1-a ethernet51  spine0 ethernet27 
+
+${numlinks}=  2
+${leaf0a_spine0_intf1}=   ethernet52
+${spine0_leaf0a_intf1}=   ethernet21
+${leaf0a_spine0_intf2}=   ethernet54
+${spine0_leaf0a_intf2}=   ethernet31
+
+${leaf1a_spine0_intf1}=   ethernet50
+${spine0_leaf1a_intf1}=   ethernet25
+#${leaf1a_spine0_intf2}=  ethernet51
+#${spine0_leaf1a_intf2}=  ethernet27
+
+
+
+  
+   
+      
+     
+
+
+
+
+
+
+
+
+
