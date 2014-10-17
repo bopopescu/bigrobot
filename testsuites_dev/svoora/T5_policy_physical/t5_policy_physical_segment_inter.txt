@@ -479,6 +479,50 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
     delete traffic
 
 
+###CLI TESTING###
+
+T13 cli policy config and show/verify
+	[Tags]  cli
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should not be true  ${result}
+
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy-list ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should not be true  ${result}
+	
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Creating a policy-list with ${policy_rule} and apply to logical-router
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should not be true  ${result}
+		
+	
 * Keywords
 verify results   [Arguments]  ${port_1}   ${port_2}  
    ${report}=  fetch port stats
