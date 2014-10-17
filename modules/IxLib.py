@@ -26,6 +26,8 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        self._raw_stream = None
+        self._raw_stream_id = 1
         # Connect to IXIA Chassis and IXIA TCL Server
         self._handle = self.ix_connect()
         if clear_ownership:
@@ -349,77 +351,91 @@ class Ixia(object):
            Return Traffic stream with quick flow creation similar to IxNetwork
         '''
         helpers.log("Adding Raw Type Stream with given Raw stream Parameters..")
-        trafficStream1 = self._handle.add(self._handle.getRoot() + 'traffic', 'trafficItem', '-name',
-                                        name, '-trafficItemType', 'quick', '-enabled', True, '-trafficType', 'raw')
-        self._handle.commit()
-        trafficStream1 = self._handle.remapIds(trafficStream1)[0]
+        if self._raw_stream is None:
+            helpers.log("Creating a New RAW_STREAM ITEM..")
+            trafficStream1 = self._handle.add(self._handle.getRoot() + '/traffic', 'trafficItem', '-name',
+                                            name, '-trafficItemType', 'quick', '-enabled', True, '-trafficType', 'raw')
+            trafficStream1 = self._handle.remapIds(trafficStream1)[0]
+            self._raw_stream = trafficStream1
+            self._handle.commit()
+        else:
+            trafficStream1 = self._raw_stream
+            self._raw_stream_id = self._raw_stream_id + 1
+
+        stream_name_id = '/highLevelStream:%s' % str(self._raw_stream_id)
+        helpers.log("Stream_name_id : %s" % stream_name_id)
+        helpers.log("Stream_Name : %s " % trafficStream1)
         helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_vport))
+        helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
+
         endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
                                         '-destinations', dst_vport + '/protocols')
         self._handle.commit()
         endpointSet1 = self._handle.remapIds(endpointSet1)[0]
-        helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
-        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1', '-name', name,
+        self._handle.setMultiAttribute(trafficStream1 + stream_name_id, '-name', name,
                                            '-txPortId', src_vport)
+        self._handle.commit()
         self._handle.setAttribute(trafficStream1, '-enabled', True)
         self._handle.commit()
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-type', frameType)
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-type', frameType)
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-fixedSize', frameSize)
+        self._handle.commit()
+
         if src_mac is not None and dst_mac is not None:
             helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
                                       '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
                                       '-optionalEnabled', True, '-countValue', '1')
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
                                       '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
                                       '-optionalEnabled', True, '-countValue', '1')
         if line_rate is not None:
             helpers.log('Adding Line Rate Value !')
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', line_rate)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + 'frameRate', '-rate', line_rate)
 
         if burst_count is not None:
             helpers.log('Adding BURST COUNT and BURST GAP !!!!')
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-interStreamGap', 0,
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-interStreamGap', 0,
                                            '-burstPacketCount', burst_count, '-type', 'custom',
                                  '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate,
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate,
                                            '-enforceMinimumInterPacketGap', 0)
         if line_rate is None:
             helpers.log('Adding Frame Rate !!!!')
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate)
         if frameCount is not None:
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-type',
                                 'fixedFrameCount')
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl',
                                 '-frameCount', frameCount)
         if crc is not None:
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1', '-crc', 'badCrc')
+            self._handle.setAttribute(trafficStream1 + stream_name_id, '-crc', 'badCrc')
         if ethertype is not None:
             helpers.log('Adding Ethertype %s !!!' % ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-auto', False)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-fieldValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-singleValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-countValue', 1)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-fixedBits', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-optionalEnabled ', True)
         if lacp_src_mac is not None:
             helpers.log("Adding LACP SRC MAC for Raw Stream ..")
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
                                       '-auto', False, '-fieldValue', '01:80:c2:00:00:02', '-singleValue', '01:80:c2:00:00:02',
                                       '-optionalEnabled', True, '-countValue', '1')
-            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
                                       '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
                                       '-optionalEnabled', True, '-countValue', '1')
 
         self._handle.commit()
-        return trafficStream1
+        return trafficStream1 + stream_name_id
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
