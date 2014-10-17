@@ -37,13 +37,19 @@ T1.10 Check Support Bundles Page
     Go To Support Bundles Page
 T1.11 Check Monitor Sessions Page
     Go To Monitor Sessions Page 
-T1.12 Check Clock Page
+T1.12 Check Fabric Settings Page
+    Go To Fabric Settings Page
+T1.13 Check Clock Page
     Go To Clock Page 
-T1.12 Check Logging Page
+T1.14 Check SNMP Page
+    Go To SNMP Page
+T1.15 Check Tacacs Page
+    Go To Tacacs Page
+T1.16 Check Logging Page
     Go To Logging Page  
-T1.13 Check Users Page
+T1.17 Check Users Page
     Go To Security Users Page  
-T1.14 Check Signout Page
+T1.18 Check Signout Page
     Go To Signout Page 
 
 
