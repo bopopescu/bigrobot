@@ -312,7 +312,6 @@ class Ixia(object):
                 handle.commit()
                 handle.remapIds(ixia_refs['manualGatewayMac_singleValue'])[0]
 
-
         i = 1
         for mac_device in mac_devices:
             name = "Device_" + str(i)
@@ -344,7 +343,7 @@ class Ixia(object):
         return trafficStream1
 
     def ix_setup_traffic_streams_raw(self, frameType, frameSize, frameRate, frameMode, frameCount, flow, name,
-                                     lacp_src_mac=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                     lacp_src_mac=None, lld_tlv_chassis_id=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
                                       burst_count=None, burst_gap=None, dst_cnt=None, src_cnt=None, src_mac_step=None, dst_mac_step=None,
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False, payload=None, src_vport=None, dst_vport=None):
         '''
@@ -433,7 +432,11 @@ class Ixia(object):
             self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
                                       '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
                                       '-optionalEnabled', True, '-countValue', '1')
-
+        if lld_tlv_chassis_id is not None:
+            helpers.log("Adding LLDP ttlv chassis id in RAW STREAM..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-2"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"',
+                                      '-auto', False, '-fieldValue', lld_tlv_chassis_id, '-singleValue', lld_tlv_chassis_id,
+                                      '-optionalEnabled', True, '-countValue', '1')
         self._handle.commit()
         return trafficStream1 + stream_name_id
 
@@ -1075,7 +1078,7 @@ class Ixia(object):
         s_cnt = kwargs.get('src_cnt', 1)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
         src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
-
+        lacp_src_mac = None
         if lacp:
             helpers.log("Getting LCAP Parameters..")
             lacp_src_mac = kwargs.get('lacp_src_mac', '00:00:99:99:88:77')
@@ -1083,8 +1086,10 @@ class Ixia(object):
             src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
 
         if lldp:
+            helpers.log("Getting LLDP Parameters..")
             src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
             dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+            lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", 1)
 
         if ix_tcl_server is None or ix_ports is None :
             helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
@@ -1138,7 +1143,7 @@ class Ixia(object):
         src_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', src_ix_port)[0]
         dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
         traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode,
-                                                              frame_cnt, stream_flow, name, lacp_src_mac=lacp_src_mac, src_mac=src_mac,
+                                                              frame_cnt, stream_flow, name, lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id,
                                                               dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
                                                               src_vport=src_vport, dst_vport=dst_vport)
         traffic_stream1.append(traffic_item)
