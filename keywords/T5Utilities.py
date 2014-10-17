@@ -170,57 +170,57 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
 
             if(consistencyChecker == "Yes"):
-                portgroups_after = self._gather_port_groups()
-            else:
                 portgroups_after = self._gather_port_groups("slave")
+            else:
+                portgroups_after = self._gather_port_groups()
             warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
 
             if(consistencyChecker == "Yes"):
-                fwdARPTable_after = self._gather_forwarding('arp-table')
-            else:
                 fwdARPTable_after = self._gather_forwarding('arp-table', "slave")
+            else:
+                fwdARPTable_after = self._gather_forwarding('arp-table')
             warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEPTable_after = self._gather_forwarding('ep-table')
-            else:
                 fwdEPTable_after = self._gather_forwarding('ep-table', "slave")
+            else:
+                fwdEPTable_after = self._gather_forwarding('ep-table')
             warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
-            else:
                 fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table', "slave")
+            else:
+                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
             warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
-            else:
                 fwdL3HostTable_after = self._gather_forwarding('l3-host-table', "slave")
+            else:
+                fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
             warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
 
             if(consistencyChecker == "Yes"):
-                fwdMyStationTable_after = self._gather_forwarding('my-station-table')
-            else:
                 fwdMyStationTable_after = self._gather_forwarding('my-station-table', "slave")
+            else:
+                fwdMyStationTable_after = self._gather_forwarding('my-station-table')
             warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
 
             if(consistencyChecker == "Yes"):
-                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
-            else:
                 fwdRouterIPTable_after = self._gather_forwarding('router-ip-table', "slave")
+            else:
+                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
             warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
-            else:
                 fwdEcmpTable_after = self._gather_forwarding('ecmp-table', "slave")
+            else:
+                fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
             warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
 
             if(consistencyChecker == "Yes"):
-                fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
-            else:
                 fwdDhcpTable_after = self._gather_forwarding('dhcp-table', "slave")
+            else:
+                fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
             warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
 
         if(fabricErrorEncounteredFlag):
