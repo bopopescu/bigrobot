@@ -26,6 +26,8 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        self._raw_stream = None
+        self._raw_stream_id = 1
         # Connect to IXIA Chassis and IXIA TCL Server
         self._handle = self.ix_connect()
         if clear_ownership:
@@ -310,7 +312,6 @@ class Ixia(object):
                 handle.commit()
                 handle.remapIds(ixia_refs['manualGatewayMac_singleValue'])[0]
 
-
         i = 1
         for mac_device in mac_devices:
             name = "Device_" + str(i)
@@ -340,6 +341,104 @@ class Ixia(object):
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
         handle.commit()
         return trafficStream1
+
+    def ix_setup_traffic_streams_raw(self, frameType, frameSize, frameRate, frameMode, frameCount, flow, name,
+                                     lacp_src_mac=None, lld_tlv_chassis_id=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                      burst_count=None, burst_gap=None, dst_cnt=None, src_cnt=None, src_mac_step=None, dst_mac_step=None,
+                                      line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False, payload=None, src_vport=None, dst_vport=None):
+        '''
+           Return Traffic stream with quick flow creation similar to IxNetwork
+        '''
+        helpers.log("Adding Raw Type Stream with given Raw stream Parameters..")
+        if self._raw_stream is None:
+            helpers.log("Creating a New RAW_STREAM ITEM..")
+            trafficStream1 = self._handle.add(self._handle.getRoot() + '/traffic', 'trafficItem', '-name',
+                                            name, '-trafficItemType', 'quick', '-enabled', True, '-trafficType', 'raw')
+            trafficStream1 = self._handle.remapIds(trafficStream1)[0]
+            self._raw_stream = trafficStream1
+            self._handle.commit()
+        else:
+            trafficStream1 = self._raw_stream
+            self._raw_stream_id = self._raw_stream_id + 1
+
+        stream_name_id = '/highLevelStream:%s' % str(self._raw_stream_id)
+        helpers.log("Stream_name_id : %s" % stream_name_id)
+        helpers.log("Stream_Name : %s " % trafficStream1)
+        helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_vport))
+        helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
+
+        endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
+                                        '-destinations', dst_vport + '/protocols')
+        self._handle.commit()
+        endpointSet1 = self._handle.remapIds(endpointSet1)[0]
+        self._handle.setMultiAttribute(trafficStream1 + stream_name_id, '-name', name,
+                                           '-txPortId', src_vport)
+        self._handle.commit()
+        self._handle.setAttribute(trafficStream1, '-enabled', True)
+        self._handle.commit()
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-type', frameType)
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-fixedSize', frameSize)
+        self._handle.commit()
+
+        if src_mac is not None and dst_mac is not None:
+            helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                      '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
+                                      '-optionalEnabled', True, '-countValue', '1')
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                      '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
+                                      '-optionalEnabled', True, '-countValue', '1')
+        if line_rate is not None:
+            helpers.log('Adding Line Rate Value !')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + 'frameRate', '-rate', line_rate)
+
+        if burst_count is not None:
+            helpers.log('Adding BURST COUNT and BURST GAP !!!!')
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-interStreamGap', 0,
+                                           '-burstPacketCount', burst_count, '-type', 'custom',
+                                 '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate,
+                                           '-enforceMinimumInterPacketGap', 0)
+        if line_rate is None:
+            helpers.log('Adding Frame Rate !!!!')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate)
+        if frameCount is not None:
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-type',
+                                'fixedFrameCount')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl',
+                                '-frameCount', frameCount)
+        if crc is not None:
+            self._handle.setAttribute(trafficStream1 + stream_name_id, '-crc', 'badCrc')
+        if ethertype is not None:
+            helpers.log('Adding Ethertype %s !!!' % ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-auto', False)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fieldValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-singleValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-countValue', 1)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fixedBits', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-optionalEnabled ', True)
+        if lacp_src_mac is not None:
+            helpers.log("Adding LACP SRC MAC for Raw Stream ..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
+                                      '-auto', False, '-fieldValue', '01:80:c2:00:00:02', '-singleValue', '01:80:c2:00:00:02',
+                                      '-optionalEnabled', True, '-countValue', '1')
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                                      '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
+                                      '-optionalEnabled', True, '-countValue', '1')
+        if lld_tlv_chassis_id is not None:
+            helpers.log("Adding LLDP ttlv chassis id in RAW STREAM..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-2"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"',
+                                      '-auto', False, '-fieldValue', lld_tlv_chassis_id, '-singleValue', lld_tlv_chassis_id,
+                                      '-optionalEnabled', True, '-countValue', '1')
+        self._handle.commit()
+        return trafficStream1 + stream_name_id
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
@@ -381,7 +480,7 @@ class Ixia(object):
         trafficStream1 = self._handle.remapIds(trafficStream1)[0]
 
         if payload:
-            helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_port))
+            helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_vport))
             endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
                                             '-destinations', dst_vport + '/protocols')
             self._handle.commit()
@@ -955,6 +1054,102 @@ class Ixia(object):
             helpers.log ("Success Creating Ip Devices !!!")
             return ip_devices
 
+    def ix_raw_add(self, **kwargs):
+        '''
+            Helper function to create similar to IxNetwork Quick Streams
+            As per user requests this method needs to be enchanced with Options Available in IxNetwork
+        '''
+        ix_handle = self._handle
+        ix_ports = [port for port in self._port_map_list.values()]
+        ix_tcl_server = self._tcl_server_ip
+        flow = kwargs.get('flow', None)
+        frame_rate = kwargs.get('frame_rate', 100)
+        frame_cnt = kwargs.get('frame_cnt', None)
+        frame_type = kwargs.get('frame_type', 'fixed')
+        frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
+        self._frame_size = kwargs.get('frame_size', 128)
+        name = kwargs.get('name', 'gobot_default')
+
+        lacp = kwargs.get('lacp', False)
+        lldp = kwargs.get('lldp', False)
+        src_mac = kwargs.get('src_mac', None)
+        dst_mac = kwargs.get('dst_mac', None)
+        d_cnt = kwargs.get('dst_cnt', 1)
+        s_cnt = kwargs.get('src_cnt', 1)
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
+        lacp_src_mac = None
+        if lacp:
+            helpers.log("Getting LCAP Parameters..")
+            lacp_src_mac = kwargs.get('lacp_src_mac', '00:00:99:99:88:77')
+            s_cnt = kwargs.get('src_cnt', 1)
+            src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
+
+        if lldp:
+            helpers.log("Getting LLDP Parameters..")
+            src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+            dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+            lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", 1)
+
+        if ix_tcl_server is None or ix_ports is None :
+            helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L3_ADD helper method !!')
+        get_version = ix_handle.getVersion()
+
+        self._traffi_apply = False
+        traffic_stream1 = []
+
+        helpers.log("###Current Version of Ixia Chassis : %s " % get_version)
+        ix_handle.setDebug(False)  # Set Debug True to print Ixia Server Interactions
+        # Create vports:
+        if len(self._vports) == 0:
+            vports = self.ix_create_vports()
+            helpers.log('### vports Created : %s' % vports)
+            if self.ix_map_vports_pyhsical_ports():
+                helpers.log('### Successfully mapped vport to physical ixia ports..')
+            else:
+                helpers.log('Unable to connect to Ixia Chassis')
+                return False
+        else:
+            helpers.log('### vports already Created : %s' % self._vports)
+
+
+        helpers.log("Need to create Ixia Quick Flows similar to Raw Streams..")
+        helpers.log("No Hosts are created and No gw arps are resolved, Hence correct dst_mac should be provided for L3 traffic to work..")
+
+        helpers.log("Skipping Creating Topologies ...")
+        match_uni1 = re.match(r'(\w+)->(\w+)', flow)
+        match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
+        match_bi = re.match(r'(\w+)<->(\w+)', flow)
+
+        stream_flow = ''
+        src_ix_port = ''
+        dst_ix_port = ''
+
+        if match_uni1:
+            stream_flow = 'uni-directional'
+            src_ix_port = match_uni1.group(1).lower()
+            dst_ix_port = match_uni1.group(2).lower()
+        elif match_uni2:
+            stream_flow = 'uni-directional'
+            src_ix_port = match_uni2.group(2).lower()
+            dst_ix_port = match_uni2.group(1).lower()
+        elif match_bi:
+            stream_flow = 'bi-directional'
+            src_ix_port = match_bi.group(1).lower()
+            dst_ix_port = match_bi.group(2).lower()
+
+        helpers.log("src ixia port used :%s dst ixia port used :%s" % (src_ix_port, dst_ix_port))
+        src_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', src_ix_port)[0]
+        dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
+        traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode,
+                                                              frame_cnt, stream_flow, name, lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id,
+                                                              dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
+                                                              src_vport=src_vport, dst_vport=dst_vport)
+        traffic_stream1.append(traffic_item)
+        self.ix_apply_traffic()
+        return traffic_stream1[0]
+
     def ix_l3_add(self, **kwargs):
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
@@ -1028,8 +1223,8 @@ class Ixia(object):
         flow = kwargs.get('flow', None)
 
         if ix_tcl_server is None or ix_ports is None or src_ip is None or dst_ip is None:
-            helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
-            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
+            helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L3_ADD helper method !!')
         get_version = ix_handle.getVersion()
 
         helpers.log("###Current Version of Ixia Chassis : %s " % get_version)
@@ -1063,8 +1258,8 @@ class Ixia(object):
                 dst_ix_port = match_uni1.group(2).lower()
             elif match_uni2:
                 stream_flow = 'uni-directional'
-                src_ix_port = match_uni1.group(2).lower()
-                dst_ix_port = match_uni1.group(1).lower()
+                src_ix_port = match_uni2.group(2).lower()
+                dst_ix_port = match_uni2.group(1).lower()
             elif match_bi:
                 stream_flow = 'bi-directional'
                 src_ix_port = match_bi.group(1).lower()
