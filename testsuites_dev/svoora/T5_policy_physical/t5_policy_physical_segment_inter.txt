@@ -566,7 +566,7 @@ T13 cli policy config and show/verify
 	
 	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
 	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
-	Log  Creating a policy-list with ${policy_rule_1}
+	Log  Testcase5:Creating a policy-list with ${policy_rule_1}
 	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
 	Log  Creating a policy-list with ${policy_rule_2}
 	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
