@@ -88,5 +88,5 @@ curl -i -H "Content-Type: application/json" -X POST \
 
 mesg "Generating QA Dashboard reports."
 (cd ../catalog; ./gen_report.sh -all)
-return $failed_count
+exit $failed_count
 
