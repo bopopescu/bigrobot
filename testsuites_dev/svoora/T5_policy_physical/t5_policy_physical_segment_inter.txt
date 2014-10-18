@@ -519,6 +519,71 @@ T13 cli policy config and show/verify
 	${none}=  Set Variable
 	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
 	should be true  ${result}
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule_1}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep ${tenant2_polname}|grep -v apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	Log  Deleting a tenant ${tenantX}
+	cli delete tenant  tenant=${tenantX}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	
 		
 	
 * Keywords

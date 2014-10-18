@@ -157,15 +157,24 @@ class T5Platform(object):
         c = t.controller('master')
         
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s, policy-rule:%s" % (tenant, policy_list, policy_rule))
+        c.config("config")
+        c.config('tenant ' + tenant)
+        c.config('logical-router')
         try:
-            c.config("config")
-            c.config('tenant ' + tenant)
-            c.config('logical-router')
-            c.config('policy-list ' + policy_list)
-            c.config(policy_rule)
-            
+            c.send('policy-list ' + policy_list)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+                  
+            c.send(policy_rule)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+                      
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
@@ -180,19 +189,23 @@ class T5Platform(object):
         c = t.controller('master')
         
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s, policy-rule:%s" % (tenant, policy_list, policy_rule))
+        c.config("config")
+        c.config('tenant ' + tenant)
+        c.config('logical-router')
+        c.config('policy-list ' + policy_list)
         try:
-            c.config("config")
-            c.config('tenant ' + tenant)
-            c.config('logical-router')
-            c.config('policy-list ' + policy_list)
-            c.config('no ' + policy_rule)
-            
+            c.send('no ' + policy_rule)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
-
+        
+        
     def cli_delete_policy(self, tenant, policy_list):
         ''' Function to delete policy  using cli commands
             Input: tenant-name, policy-list-name, rule 
@@ -201,18 +214,24 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
         
-        helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s, policy-rule:%s" % (tenant, policy_list))
+        helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s " % (tenant, policy_list))
+        c.config("config")
+        c.config('tenant ' + tenant)
+        c.config('logical-router')
         try:
-            c.config("config")
-            c.config('tenant ' + tenant)
-            c.config('logical-router')
-            c.config('no policy-list ' + policy_list)
-                        
+            c.send('no policy-list ' + policy_list)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
+            
+                        
+        
 
 
     def cli_apply_policy(self, tenant, policy_list):
@@ -224,17 +243,23 @@ class T5Platform(object):
         c = t.controller('master')
         
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s" % (tenant, policy_list))
+        c.config("config")
+        c.config('tenant ' + tenant)
+        c.config('logical-router')
         try:
-            c.config("config")
-            c.config('tenant ' + tenant)
-            c.config('logical-router')
-            c.config('apply policy-list ' + policy_list)
-                      
+            c.send('apply policy-list ' + policy_list)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
+           
+                      
+        
 
 
     def cli_remove_policy(self, tenant, policy_list):
@@ -246,17 +271,45 @@ class T5Platform(object):
         c = t.controller('master')
         
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s" % (tenant, policy_list))
+        c.config("config")
+        c.config('tenant ' + tenant)
+        c.config('logical-router')
         try:
-            c.config("config")
-            c.config('tenant ' + tenant)
-            c.config('logical-router')
-            c.config('no apply policy-list ' + policy_list)
-                      
+            c.send('no apply policy-list ' + policy_list)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
+           
+    def cli_delete_tenant(self, tenant):
+        ''' Function to delete tenant using cli commands
+            Input: tenant
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.log("Provided cli path: tenant-name:%s" % (tenant))
+        c.config("config")
+        
+        try:
+            c.send('no tenant ' + tenant)
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+        else:
+            return True
+                                         
+        
 
     def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
