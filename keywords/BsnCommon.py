@@ -413,10 +413,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Pass: Transmit:%d, Receive:%d" % (tx, rx))
             return True
         else:
-            helpers.log("Fail: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Fail: Transmit:%d, Receive:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
@@ -1851,6 +1851,22 @@ class BsnCommon(object):
         if helpers.is_controller_or_error(node):
             n = t.node(node)
             return n.monitor_reauth(*args, **kwargs)
+
+    def cli_add_controller_idle_and_reauth_timeout(self, node, *args, **kwargs):
+        """
+        Reconfigure the idle timeout and reauth timeout on the controller.
+
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | reconfig_idle | Default is ${true}. Set to $[false} if you don't want to reconfigure idle timeout. |
+        | reconfig_reauth | Default is ${true}. Set to $[false} if you don't want to reconfigure reauth timeout. |
+
+        Return Value:
+        - ${true} on success, else ${false} on failure.
+
+        """
+        t = test.Test()
+        return t.cli_add_controller_idle_and_reauth_timeout(node, *args, **kwargs)
 
     def node_disconnect(self, node):
         """

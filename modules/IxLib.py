@@ -183,7 +183,7 @@ class Ixia(object):
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None, p_priority=0):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -231,8 +231,16 @@ class Ixia(object):
 #             for eth_device in eth_devices:
 #                 helpers.log("Setting Vlan True in Ixia Ethernet Device")
 #                 self._handle.setMultiAttribute(eth_device, '-useVlans', True)
-#                 self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name', "VLAN\ 1")
+#                 self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name') #Vlan name removed
 #                 self._handle.commit()
+#                 tpid = self._handle.getAttribute(eth_device + '/vlan:1', '-tpid') #get tpid
+#                 self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue') #
+#                 eth_type=self._handle.add(tpid, 'singleValue') #
+#                 self._handle.setMultiAttribute(eth_type, 'value', 'ethertype8100') #
+#                 prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority') #
+#                 self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue') #
+#                 1p=self._handle.add(prio, 'singleValue') #
+#                 self._handle.setMultiAttribute(1p, 'value', p_priority) #need to add 1p_priority as an argument
 #                 ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
 #                 self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
 #                 self._handle.commit()

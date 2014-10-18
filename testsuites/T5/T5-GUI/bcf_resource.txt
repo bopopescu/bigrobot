@@ -25,7 +25,10 @@ ${FABRIC SUMMARY TITLE}		Summary
 ${TEST PATH TITLE}    		Test Path
 ${SUPPORT BUNDLES TITLE}	Support
 ${MONITOR SESSIONS TITLE}	Monitor Session
+${FABRIC SETTINGS TITLE}	Fabric Settings
 ${CLOCK TITLE}				Big 
+${SNMP TITLE}				SNMP
+${TACACS TITLE}				TACACS
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
@@ -48,8 +51,8 @@ ${PERIOD}						3 sec
 ${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
 #${TENANTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Tenants')]
 #${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
-${VISIBILITY MENU}		  		xpath=//div[@class='nav' and contains(text(), 'Visibility')]
-${SETTINGS MENU}				xpath=//div[@class='nav' and contains(text(), 'Settings')]
+${VISIBILITY MENU}		  		xpath=//a[@class='nav' and contains(text(), 'Visibility')]
+${SETTINGS MENU}				xpath=//a[@class='nav' and contains(text(), 'Settings')]
 ${SECURITY MENU}				xpath=//a[@class='nav' and contains(text(), 'Security')]
 ${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
 ${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
@@ -375,6 +378,21 @@ ${GROUP ASSOCIATE PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='groupNode']/
 ${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
 ${APPEND GROUP BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 
+#### SNMP Page
+
+${CONFIGURE SNMP BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[1]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP POPUP}				xpath=//div[@title='Configure SNMP']
+${CONFIGURE SNMP CONTACT FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Contact')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP LOCATION FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Location')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP COMMUNITY FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Community')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Traps')]/parent::h2/parent::div/following-sibling::div/div[3]/div/div/div[@class='knob_icon']		
+${SNMP HOSTS STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), 'Hosts')]
+${ADD SNMP TRAP HOST PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='hostsNode']/descendant::div[@class='icon_node plus']
+${SNMP TRAP HOST SERVER FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP HOST UDP PORT FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'UDP Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${SNMP TRAP HOST APPEND BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
+
 
 *** Keywords ***
 Set URLs
@@ -391,7 +409,10 @@ Set URLs
 	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
 	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
 	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
+	Set Suite Variable     	${FABRIC SETTINGS URL}  	https://${SERVER}/bcf/fabric_settings
 	Set Suite Variable     	${CLOCK URL}				https://${SERVER}/bcf/clock
+	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
+	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
@@ -491,12 +512,30 @@ Go To Monitor Sessions Page
     Title Should Contain  ${MONITOR SESSIONS TITLE}
     Sleep  1
     
+Go To Fabric Settings Page  
+	Go To  ${FABRIC SETTINGS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${FABRIC SETTINGS TITLE}
+    Sleep  1
+      
 Go To Clock Page 
 	Go To  ${CLOCK URL}
     Wait Until Page Loaded 
     Title Should Contain  ${CLOCK TITLE}
     Sleep  1
+
+Go To SNMP Page
+	Go To  ${SNMP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SNMP TITLE}
+    Sleep  1
     
+Go To Tacacs Page
+	Go To  ${TACACS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TACACS TITLE}
+    Sleep  1
+	    
 Go To Logging Page  
 	Go To  ${LOGGING URL}
     Wait Until Page Loaded 
@@ -1696,5 +1735,59 @@ Associate Group
 
 	Click Element  ${APPEND GROUP BUTTON}  and don't wait
 	Verify Element Invisible  ${MANAGE GROUPS POPUP}
+	
+Configure SNMP
+	[Arguments]  ${contact}  ${location}  ${community}  ${traps}  ${server}  ${port}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP BUTTON}
+    Click Element  ${CONFIGURE SNMP BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP POPUP}
+    
+    Run Keyword Unless  '${contact}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP CONTACT FIELD}  ${contact}
+	
+	Run Keyword Unless  '${location}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP LOCATION FIELD}  ${location}
+	
+	Run Keyword Unless  '${community}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP COMMUNITY FIELD}    ${community}
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Disabled')]  Disabled
+    Run Keyword If  '${traps}' == 'Disabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Disabled
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enabled
+    Run Keyword If  '${traps}' == 'Enabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Enabled
+	
+	Verify Element Visible  ${SNMP HOSTS STEP BUTTON}
+	Click Element  ${SNMP HOSTS STEP BUTTON}  and don't wait
+	
+	Verify Element Visible  ${ADD SNMP TRAP HOST PLUS BUTTON}
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${ADD SNMP TRAP HOST PLUS BUTTON}   and don't wait
+    
+    Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST SERVER FIELD}  ${server}
+	
+	Run Keyword Unless  '${port}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST UDP PORT FIELD}  ${port}
+	
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${SNMP TRAP HOST APPEND BUTTON}   and don't wait
+	Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIGURE SNMP POPUP}
+	
+Configure SNMP Traps
+	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${flow-table-threshold}  ${full-match-tcam-threshold}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP BUTTON}
+    Click Element  ${CONFIGURE SNMP BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP POPUP}
+
+
    
 	

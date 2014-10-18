@@ -1,0 +1,146 @@
+* Settings
+Documentation     T5  Traffic LinkFlap Test suite- Iron Horse
+#Suite Setup       T5 traffic linkflap test setup
+#Suite Teardown    T5 traffic linkflap test teardown
+Test Teardown     traffic teardown
+#Force Tags        T5  IronHorse
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords_dev/kranti/ironhorse/T5SwitchTraffic.py       
+Library         String
+Resource        testsuites_dev/kranti/ironhorse/t5_traffic_linkflap_variables.txt
+
+*Test Case 
+
+Setup the configuration for the linkflap traffic test
+    [Tags]  T5  linkflap  setup   
+    T5 traffic linkflap test setup 
+
+Basic Uni directional L3 Traffic flow from a->b  
+    [Tags]    feature  switch  linkflap  test1
+    ${stream1}=   L3 add  name=a_b_flow1  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=100000  frame_size=64 
+    ${stream2}=   L3 add  name=a_b_flow2  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.3  dst_gw=10.200.16.1  src_mac=${src_mac2}  dst_mac=${dst_mac2}
+    ...                 frame_rate=100000  frame_size=64 
+     
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic       
+
+Interface counter stats verification for L3 Unidirectional traffic  
+    [Tags]    feature  switch  linkflap  test2
+    ${stream1}=   L3 add  name=a_b_flow1  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=10000  frame_size=64  frame_cnt=2000000 
+ 
+    rest disable fabric interface  ${switch1_name}  ${leaf0a_spine0_intf2}
+    rest clear fabric interface stats 
+    ixia.clear stats
+    ixia.start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    sleep   10
+    ixia.stop traffic
+    sleep  5
+    ${report}=     fetch port stats
+    ${ixiatx}=  verify dict key  ${report}  a  transmitted_frames   
+    verify interface counters  ${switch1_name}  ${leaf0a_ixia}  rxstat  ${ixiatx}  ${countertolerance}
+    verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx}  ${countertolerance}
+    verify interface counters  ${switch7_name}  ${spine0_leaf0a_intf1}  rxstat  ${ixiatx}  ${countertolerance}
+    verify interface counters  ${switch7_name}  ${spine0_leaf1a_intf1}  txstat  ${ixiatx}  ${countertolerance}
+    verify interface counters  ${switch3_name}  ${leaf1a_spine0_intf1}  rxstat  ${ixiatx}  ${countertolerance}
+    verify interface counters  ${switch3_name}  ${leaf1a_ixia}  txstat  ${ixiatx}  ${countertolerance}
+    sleep  2
+    verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}    
+    sleep  5
+    rest enable fabric interface  ${switch1_name}  ${leaf0a_spine0_intf2}
+    sleep  2 
+    
+
+*Keywords 
+
+T5 traffic linkflap test setup
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch3_name}
+   #${swDpid3}=  rest return switch dpid from ip  s3
+   #rest add dpid  ${switch3_name}   ${swDpid3}
+   #rest add fabric role  ${switch3_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   #sleep  2   
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns1}
+   rest add vns  ${tenant}  ${vns2}  
+   rest add router intf  ${tenant}  ${vns1}
+   sleep  2
+   rest add router intf  ${tenant}  ${vns2} 
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+   sleep  2 
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${leaf0a_ixia}  ${vlan} 
+   sleep  2   
+   rest add interface to vns  ${tenant}  ${vns2}  ${switch3_name}  ${leaf1a_ixia}  ${vlan}
+   sleep  2
+   
+
+T5 traffic linkflap test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   sleep  5   
+   
+traffic teardown
+    delete traffic  
+   
+verify rate traffic  [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range}
+
+verify ixia counters traffic  [Arguments]  ${transmitted_frames}  ${received_valid_frames}  ${tolerance} 
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance}
+    Should be true  ${in_range}
+      
+verify interface counters  [Arguments]  ${switch}  ${intf}  ${stat}  ${ixiatx}  ${tolerance}       
+    Sleep  2
+    ${intfstat}=  rest get switch interface stats  ${switch}  ${intf}  ${stat}
+    ${in_range}=  ixia verify traffic rate  ${ixiatx}  ${intfstat}  ${tolerance}      
+    Should be true  ${in_range}
+
+
+
+
+
+
+
+
