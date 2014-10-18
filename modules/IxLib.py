@@ -390,12 +390,22 @@ class Ixia(object):
 
         if src_mac is not None and dst_mac is not None:
             helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
-                                      '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
-                                      '-optionalEnabled', True, '-countValue', '1')
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
-                                      '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
-                                      '-optionalEnabled', True, '-countValue', '1')
+            if dst_cnt is not None:
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                          '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+            else:
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                          '-stepValue', dst_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_cnt,
+                                          '-startValue', dst_mac)
+            if src_cnt is not None:
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                          '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+            else:
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                          '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
+                                          '-startValue', src_mac)
         if line_rate is not None:
             helpers.log('Adding Line Rate Value !')
             self._handle.setAttribute(trafficStream1 + stream_name_id + 'frameRate', '-rate', line_rate)
