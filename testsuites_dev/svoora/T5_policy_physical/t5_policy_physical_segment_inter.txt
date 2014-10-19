@@ -737,6 +737,93 @@ T14 cli policy config walk
 	${result}=  cli walk command  10 permit proto 45 any to  3  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	
+	Log  Testcase14.3
+	${result}=  cli walk command  10 deny  6  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.4
+	${result}=  cli walk command  10 deny any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.5
+	${result}=  cli walk command  10 deny any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.6
+	${result}=  cli walk command  10 deny any port 1234   1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.7
+	${result}=  cli walk command  10 deny any port 1234 to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.8
+	${result}=  cli walk command  10 deny any port 1234 to any  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.9
+	${result}=  cli walk command  10 deny any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.10
+	${result}=  cli walk command  10 deny any port 1234 to any next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	#Log  Testcase14.11
+	#${result}=  cli walk command  10 deny any port 1234 to any next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+	Log  Testcase14.12
+	${result}=  cli walk command  10 deny any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.13
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.14
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.15
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	#Log  Testcase14.16
+	#${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+	Log  Testcase14.17
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant ${tenantX}  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.18
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant ${tenantX} log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.19
+	${result}=  cli walk command  10 deny proto  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.20
+	${result}=  cli walk command  10 deny proto tcp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.21
+	${result}=  cli walk command  10 deny proto tcp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.22
+	${result}=  cli walk command  10 deny proto tcp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.23
+	${result}=  cli walk command  10 deny proto udp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.24
+	${result}=  cli walk command  10 deny proto udp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.25
+	${result}=  cli walk command  10 deny proto udp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.26
+	${result}=  cli walk command  10 deny proto icmp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.27
+	${result}=  cli walk command  10 deny proto icmp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.28
+	${result}=  cli walk command  10 deny proto icmp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.29
+	${result}=  cli walk command  10 deny proto 45  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.30
+	${result}=  cli walk command  10 deny proto 45 any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.31
+	${result}=  cli walk command  10 deny proto 45 any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
 	
 	
 	
