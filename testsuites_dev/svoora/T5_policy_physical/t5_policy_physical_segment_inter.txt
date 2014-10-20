@@ -753,37 +753,19 @@ T14 cli policy config walk
 	${result}=  cli walk command  10 deny any port 1234 to  3  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	Log  Testcase14.8
-	${result}=  cli walk command  10 deny any port 1234 to any  4  config_mode=${True}  multiline=${multiline}
+	${result}=  cli walk command  10 deny any port 1234 to any  3  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	Log  Testcase14.9
 	${result}=  cli walk command  10 deny any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
-	Log  Testcase14.10
-	${result}=  cli walk command  10 deny any port 1234 to any next-hop  2  config_mode=${True}  multiline=${multiline}
-	should be true  ${result}
-	#Log  Testcase14.11
-	#${result}=  cli walk command  10 deny any port 1234 to any next-hop tenant  1  config_mode=${True}  multiline=${multiline}
-	#should be true  ${result}
 	Log  Testcase14.12
 	${result}=  cli walk command  10 deny any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	Log  Testcase14.13
-	${result}=  cli walk command  10 deny any port 1234 to any port 1234  3  config_mode=${True}  multiline=${multiline}
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234  2  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	Log  Testcase14.14
 	${result}=  cli walk command  10 deny any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
-	should be true  ${result}
-	Log  Testcase14.15
-	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop  2  config_mode=${True}  multiline=${multiline}
-	should be true  ${result}
-	#Log  Testcase14.16
-	#${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant  1  config_mode=${True}  multiline=${multiline}
-	#should be true  ${result}
-	Log  Testcase14.17
-	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant ${tenantX}  2  config_mode=${True}  multiline=${multiline}
-	should be true  ${result}
-	Log  Testcase14.18
-	${result}=  cli walk command  10 deny any port 1234 to any port 1234 next-hop tenant ${tenantX} log  1  config_mode=${True}  multiline=${multiline}
 	should be true  ${result}
 	Log  Testcase14.19
 	${result}=  cli walk command  10 deny proto  4  config_mode=${True}  multiline=${multiline}
