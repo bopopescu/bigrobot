@@ -383,6 +383,9 @@ class Test(object):
           t.params(node='c1', key='ip')
           t.params(node='tg1', key='type', default='ixia')
                             # if type is not defined, return 'ixia' for type
+          t.params('common', 'my_image')
+                            # BigRobot convention is to use 'common' to hold
+                            # common key/values which are not node-specific.
         - If no argument is specified, return the entire topology dictionary.
             {   'c1': {
                     'ip': '10.192.5.116'

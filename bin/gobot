@@ -404,7 +404,7 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
-    parser.add_argument('--param', metavar=('key1=value1', 'key2=value2'),
+    parser.add_argument('--params', metavar=('key1=value1', 'key2=value2'),
                         nargs='*',
                         help='Define parameters for topology file')
     parser.add_argument('--test',
@@ -442,7 +442,7 @@ def test_command(*args):
 
     include_tags = args.include
     exclude_tags = args.exclude
-    params = args.param
+    params = args.params
 
     if not exclude_tags:
         exclude_tags = []

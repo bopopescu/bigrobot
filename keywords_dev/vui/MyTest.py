@@ -1225,3 +1225,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         p.cli('about')
         p.cli('olStatus 20')
         p.close()
+
+    def test_common_params(self):
+        t = test.Test()
+        helpers.log("\n**** params: %s" % helpers.prettify(t.params()))

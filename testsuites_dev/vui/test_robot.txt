@@ -302,12 +302,19 @@ Test ++++++Maximum limit of started keywords exceeded++++++
     Do A
 
 Test run_cmd keyword
+    [Tags]           skipped
     ${out}=         run_cmd   cmd=ls -la /etc   shell=${true}
     log             Output: ${out}
     ${out}=         run_cmd   cmd=grepp vui /etc/hosts   shell=${true}
     log             Output: ${out}
     ${out}=         run_cmd   cmd=grep vui /etc/hosts   shell=${true}
     log             Output: status=${out[0]} output='${out[1]}' error_code=${out[2]}
+
+Test BigRobot params argument
+    #[Tags]           skipped
+    #${val}=         params    common.my_image
+    #print           Value = ${val}
+    test common params
 
 
 * Keywords
