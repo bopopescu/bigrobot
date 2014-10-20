@@ -1228,4 +1228,4 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
 
     def test_common_params(self):
         t = test.Test()
-        helpers.log("\n**** params: %s" % helpers.prettify(t.params()))
+        helpers.log("**** params:\n%s" % helpers.prettify(t.params()))

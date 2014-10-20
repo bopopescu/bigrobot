@@ -315,8 +315,11 @@ Test bash command line editing
 
 Test common Params
     #[Tags]  skipped
-    test common params
     ${val}=         params    common    my_image
     log             Value = ${val}
 
+    ${val}=         params    c1    my_image
+    log             Value = ${val}
+
+    test common params
 
