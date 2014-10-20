@@ -6,7 +6,6 @@ Test Setup      base test setup
 Test Teardown   atest teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
-#Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/Ixia.py
 
@@ -453,7 +452,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  sanity  bigtap  run  L3
+    [Tags]  traffic  sanity  bigtap    L3
     
 33_BiDirectional L3 Traffic with TCP and custom Payload with control Bits
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -467,6 +466,46 @@ Test IXIA
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
     [Tags]  traffic  sanity  bigtap  L3
+
+34_IXIA_RAW_STREAM_LACP with just the lacp_src_mac
+	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99
+	${stream1}=  raw stream add  name=b_a_flow  flow=a<-b  lacp=True  lacp_src_mac=00:00:99:99:99:99
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    start traffic  ${stream1}
+    sleep  ${sleep_time}
+    stop traffic  ${stream1}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    [Tags]  traffic  lacp
+    
+35_IXIA_RAW_STREAM_LLDP with just the LLDP HEADER
+	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lldp=True  src_mac=00:00:99:99:88:99
+	${stream1}=  raw stream add  name=b_a_flow  flow=a<-b  lldp=True  src_mac=00:00:99:99:99:99
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    start traffic  ${stream1}
+    sleep  ${sleep_time}
+    stop traffic  ${stream1}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    [Tags]  traffic  lacp
+
+35_IXIA_RAW_STREAM_LACP with just the lacp_src_mac and different src_mac
+	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  s_cnt=100  src_mac_step=00:00:00:00:00:02
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    stop traffic  ${stream}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    [Tags]  traffic  lacp  run
 *Keywords
 atest teardown
 	delete traffic
