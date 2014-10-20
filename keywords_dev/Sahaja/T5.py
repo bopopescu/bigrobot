@@ -777,6 +777,7 @@ class T5(object):
             helpers.test_log("There are more entries for a given mac")
             return False
 
+
     def rest_verify_switch_l2_table(self, switch, mac, Val_exists=True):
         ''' Verify that the mac exists/does not exist as per test
 
