@@ -1125,7 +1125,7 @@ class T5(object):
             helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), len(data)))
             return False
 
- 
+
     def rest_clear_vns_stats(self, vns=None):
         ''' Function to clear the VNS stats
         Input: vns name
@@ -1894,7 +1894,7 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        max = int(timeout)/3
+        max = int(timeout) / 3
         for loop in range (0, int(max)):
             url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
             c.rest.get(url2)
@@ -1905,9 +1905,9 @@ class T5(object):
             if data[0]["interface"][0]["state"] == "up":
                 helpers.log("Interface state is up")
                 return True
-            
-            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " %(switch,  intf, int(loop+1)*3 )  )      
-            helpers.sleep(3)  
+
+            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " % (switch, intf, int(loop + 1) * 3))
+            helpers.sleep(3)
         helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
         return False
 
@@ -2809,7 +2809,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-        
+
     def rest_get_fabric_interface_rate(self, switch, intf):
         ''' Function to return a switch fabric interface rate stats
         Input: switch and interface
@@ -2817,7 +2817,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="ethernet33"][switch-dpid="00:00:70:72:cf:b5:f0:e4"]?select=interface[name="ethernet33"]
 
 
- 
+
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2831,9 +2831,9 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-                
-        
-        
+
+
+
 
     def rest_set_vlan_mapping_mode(self, mode):
         '''
@@ -2926,3 +2926,15 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             helpers.test_failure("Expected tenant count not correct Expected=%d , Actual=%d" % (int(tcount), int(len(data))))
             return False
+
+    def remove_no_auto_reload(self, name):
+        """
+        Remove no-auto-reoload file through given switch console
+        """
+        con = self.dev_console(name)
+        helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+        con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+        con.cli("")
+        return True
+
+
