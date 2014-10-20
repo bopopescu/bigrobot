@@ -393,6 +393,25 @@ ${SNMP TRAP HOST UDP PORT FIELD}	xpath=//div[@data-dojo-attach-point='titleNode'
 ${SNMP TRAP HOST APPEND BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
 ${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
 
+${CONFIGURE SNMP TRAPS BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[2]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP TRAPS POPUP}			xpath=//div[@title='Configure SNMP Traps']
+${POWER SUPPLY KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${POWER SUPPLY TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${FAN STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${FAN STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${LINK STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${LINK STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${AUTH FAILURE KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[3]/div/descendant::div[@class='knob_icon']
+${SNMP TRAPS THRESHOLDS STEP BUTTON}	xpath=//div[@class='step_text' and contains(text(), 'Thresholds')]
+${CPU THRESHOLDS KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${CPU THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${MEMORY THRESHOLDS KNOB}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${MEMORY THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${L2 FLOW TABLE THRESHOLDS KNOB}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${L2 FLOW THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${TCAM FLOW THRESHOLDS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${TCAM THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+
 
 *** Keywords ***
 Set URLs
@@ -1776,18 +1795,120 @@ Configure SNMP
 	
 	Run Keyword Unless  '${server}' == '${EMPTY}'
 	...		Click Element  ${SNMP TRAP HOST APPEND BUTTON}   and don't wait
+	
 	Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
 	Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+	
 	Verify Element Invisible  ${CONFIGURE SNMP POPUP}
 	
 Configure SNMP Traps
 	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${flow-table-threshold}  ${full-match-tcam-threshold}
 	
 	Go To SNMP Page
-    Verify Element Visible  ${CONFIGURE SNMP BUTTON}
-    Click Element  ${CONFIGURE SNMP BUTTON}   and don't wait
-    Verify Element Visible  ${CONFIGURE SNMP POPUP}
-
-
-   
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS BUTTON}
+    Click Element  ${CONFIGURE SNMP TRAPS BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS POPUP}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Power
+    Run Keyword If  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=No Power
 	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Power
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=Power
+    
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Input Text And Verify   ${POWER SUPPLY TRAP FIELD}  ${power}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Fan
+    Run Keyword If  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=No Fan
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Fan
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=Fan
+    
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Input Text And Verify   ${FAN STATUS TRAP FIELD}  ${fan}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Link
+    Run Keyword If  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=No Link
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Link
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=Link
+    
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Input Text And Verify   ${LINK STATUS TRAP FIELD}  ${link}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Auth
+    Run Keyword If  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=No Auth
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap')]  Auth
+    Run Keyword Unless  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=Auth
+    
+    
+	Verify Element Visible  ${SNMP TRAPS THRESHOLDS STEP BUTTON}
+	Click Element  ${SNMP TRAPS THRESHOLDS STEP BUTTON}  and don't wait
+	
+   
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No CPU
+    Run Keyword If  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=No CPU
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  CPU
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=CPU
+    
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Input Text And Verify   ${CPU THRESHOLD PERCENTAGE FIELD}  ${cpu-threshold}
+    
+    
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Memory
+   Run Keyword If  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=No Memory
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  Memory
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=Memory
+    
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${MEMORY THRESHOLD PERCENTAGE FIELD}  ${memory-threshold}
+   
+   
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No L2
+   Run Keyword If  '${flow-table-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=No L2
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  L2
+   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=L2
+    
+   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${L2 FLOW THRESHOLD PERCENTAGE FIELD}  ${flow-table-threshold}
+    
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No TCAM 
+   Run Keyword If  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=No TCAM
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  TCAM
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=TCAM
+    
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${TCAM THRESHOLD PERCENTAGE FIELD}  ${full-match-tcam-threshold}
+   
+   
+   Sleep  20
+   Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+   Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+   
+   Verify Element Invisible  ${CONFIGURE SNMP TRAPS POPUP}
+    

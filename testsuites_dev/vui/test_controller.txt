@@ -303,7 +303,7 @@ Get controller IPs
     #${c2_ip}=         get node ip      c2
 
 Test bash command line editing
-    #[Tags]  skipped
+    [Tags]  skipped
     cli               c1   show user
     config            c1   show version
     bash              c1   cat /etc/hosts    # we should see in devconf log 'set +o emacs'
@@ -312,4 +312,14 @@ Test bash command line editing
     sudo              c1   find /tmp         # we should see in devconf log 'set +o emacs'
     cli               c1   show user
     cli add controller idle and reauth timeout    c1    reconfig_reauth=${false}
+
+Test common Params
+    #[Tags]  skipped
+    ${val}=         params    common    my_image
+    log             Value = ${val}
+
+    ${val}=         params    c1    my_image
+    log             Value = ${val}
+
+    test common params
 

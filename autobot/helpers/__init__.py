@@ -2090,8 +2090,8 @@ def params_dot_notation_to_dict(params):
     """
     new_dict = {}
     for param in params:
-        keys = param.split('.')
-        keys[-1], value = keys[-1].split('=')
+        keys = param.split('.', 1)
+        keys[-1], value = keys[-1].split('=', 1)
         ref = new_dict
         key_counter = 1
         for key in keys:

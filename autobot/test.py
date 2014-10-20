@@ -383,6 +383,9 @@ class Test(object):
           t.params(node='c1', key='ip')
           t.params(node='tg1', key='type', default='ixia')
                             # if type is not defined, return 'ixia' for type
+          t.params('common', 'my_image')
+                            # BigRobot convention is to use 'common' to hold
+                            # common key/values which are not node-specific.
         - If no argument is specified, return the entire topology dictionary.
             {   'c1': {
                     'ip': '10.192.5.116'
@@ -1556,6 +1559,12 @@ class Test(object):
             if helpers.is_controller(key):
                 self.cli_add_controller_idle_and_reauth_timeout(key)
 
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                    for key in params:
+                        self.setup_ztn_phase2(key)
+        else:
+            helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
         # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
@@ -1588,12 +1597,6 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
-                if helpers.bigrobot_no_auto_reload().lower() == 'true':
-                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                    for key in params:
-                        self.setup_ztn_phase2(key)
-                else:
-                    helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
