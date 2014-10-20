@@ -118,7 +118,7 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "after")
 
 
-    def cli_cluster_take_leader(self):
+    def cli_cluster_take_leader(self,node='slave'):
         ''' Function to trigger failover to slave controller via CLI. This function will verify the
             fabric integrity between states
 
@@ -126,7 +126,7 @@ class T5Platform(object):
             Output: True if successful, False otherwise
         '''
         t = test.Test()
-        c = t.controller('slave')
+        c = t.controller(node)
         obj = utilities()
         utilities.fabric_integrity_checker(obj, "before")
 
@@ -2399,7 +2399,8 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):]', c.get_prompt()], timeout=180)
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):', c.get_prompt()], timeout=180)         
+
         if options[0] == 1:
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
@@ -2427,19 +2428,19 @@ class T5Platform(object):
             c.send("yes")
 
         try:
-            c.expect(r'[\r\n].+[R|r]ebooting.*')
+            c.expect(r'[\r\n].+[R|r]ebooting.*',timeout=300)
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False
         else:
-            helpers.log('INFO: upgrade launch  successfully')
-            
+            helpers.log('INFO: upgrade launch  successfully')             
             # modify the idle time out TBD Mingtao
-            helpers.log("INFO: Standby Node - %s is rebooting" % c.name())
+            helpers.log("INFO: Node - %s is rebooting" % c.name())
+            helpers.sleep(60)
             if self.verify_controller_reachable(node):
-                helpers.log("INFO: Standby Node - %s is UP - Wating for it to come to full function" % c.name())
+                helpers.log("INFO: Node - %s is UP - Wating for it to come to full function" % c.name())
                 helpers.sleep(60)
                 helpers.log("Node reconnect for '%s'" % c.name())
                 c = t.node_reconnect(c.name())

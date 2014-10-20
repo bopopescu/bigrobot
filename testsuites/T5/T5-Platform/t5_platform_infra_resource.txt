@@ -1,14 +1,15 @@
 * Keywords
 
-set regression variables  
-	Set Suite Variable  ${gw}      10.9.16.1
-	Set Suite Variable  ${mask}    23
-	Set Suite Variable  ${VIP1}    10.9.16.19
-	Set Suite Variable  ${VIP2}    10.9.16.20
-	Set Suite Variable  ${namec1}    MY-C1
+set colo variables  
+	Set Suite Variable  ${gw}      10.210.1.1
+	Set Suite Variable  ${mask}    16
+	Set Suite Variable  ${VIP1}    10.210.96.150
+	Set Suite Variable  ${VIP2}    10.210.96.151
+ 	Set Suite Variable  ${namec1}    MY-C1
 	Set Suite Variable  ${namec2}    MY-C2
-	Set Suite Variable  ${ipcno}    10.9.16.255	
+	Set Suite Variable  ${ipcno}    10.210.96.255	 
 
+ 
 #  first boot  
 
 controller first boot static   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}  ${hostname}  
@@ -72,7 +73,9 @@ test cli whoami    [Arguments]    ${user}     ${group}
 	 Should Be Equal    ${result[0]}    ${user}
 	 Should Be Equal    ${result[1]}    ${group}
 
-  
+reboot node and verify it role
+	cluster_node_reboot    True    
+ 
 walk cli command 
 #	cli_exec_walk    file_name=cli_exec_walk
 #	cli_enable_walk    file_name=cli_enable_walk	
@@ -86,7 +89,7 @@ create user    [Arguments]    ${user}     ${passwd}   ${group}
 
 Verify VIP function    [Arguments]   ${vip} 
 	T5Platform.Rest Configure Virtual IP  ${vip}
-	 sleep  10
+	 sleep  5
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip}
 	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
@@ -107,6 +110,7 @@ Verification local node config    [Arguments]  ${node}  ${hostname}  ${ip}   ${m
 	Should Be Equal as Strings 		${dns}      ${localinfo['dns']}
 	Should Be Equal as Strings 		${domain}      ${localinfo['domain']}   
 
+
 Verify config in master and backup   
  	${c1config}=   cli_take_snapshot   c1  run_config=yes	 
  	${c2config}=   cli_take_snapshot   c2  run_config=yes	
@@ -114,3 +118,30 @@ Verify config in master and backup
 	Set Suite Variable       ${c1config}
  
  
+#######snmp
+setup snmp
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.192.66.230  162    
+    rest add firewall rule  service=snmp
+    Sleep  10        
+
+verify snmp config
+    ${snmp_output}=  rest show snmp
+    ${snmp_key}=  verify json key  ${snmp_output}  0  community  
+    Should Be Equal As Strings  ${snmp_key}  public
+    ${snmp_key}=  verify json key  ${snmp_output}  0  contact  
+    Should Be Equal As Strings  ${snmp_key}  Big Switch Networks        
+    ${snmp_key}=  verify json key  ${snmp_output}  0  location  
+    Should Be Equal As Strings  ${snmp_key}  Mountain View
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled  
+    Should Be True  ${snmp_key}
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  ipaddr      
+    Should Be Equal As Strings  ${new_snmp_key}  10.192.66.230
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port       
+    Should Be Equal As Integers  ${new_snmp_key}  162
+
+	
