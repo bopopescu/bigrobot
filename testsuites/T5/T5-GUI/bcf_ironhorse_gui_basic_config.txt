@@ -122,19 +122,19 @@ T7 Teardown
  	
 ### Configure SNMP Traps	Contact		Location	Community	Traps		Server		Port
 T8.1 Configure SNMP 	
- 	Configure SNMP			Contact1	L0cation2	Commun!ty3   Enabled  	${EMPTY}	${EMPTY}		
+ 	Configure SNMP			Contact1	L0cation2	Community3   Enabled  	${EMPTY}	${EMPTY}		
 T8.2 Configure SNMP		
- 	Configure SNMP			Cntct_2		L0cation_2  Commun!ty_3  Disabled	2.3.1.4		162
+ 	Configure SNMP			Cntct_2		L0cation_2  Community_3  Disabled	2.3.1.4		162
 T8.3 Configure SNMP
- 	Configure SNMP			Contact-3   L0cation-3  Commun!ty-3  Enabled	1.22.14.64  2300
-#T8.4 Configure SNMP Traps	
-# 	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
-#T8.5 Configure SNMP Traps
-# 	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	75			${EMPTY}
-#T8.6 Configure SNMP Traps
-#	Configure SNMP Traps		1		1			1			1			10			20			80			100
-#T8.7 Configure SNMP Traps
-#	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0			0
+ 	Configure SNMP			Contact-3   L0cation-3  Community-3  Enabled	1.22.14.64  2300
+T8.4 Configure SNMP Traps	
+ 	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+T8.5 Edit SNMP Traps
+ 	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	75			${EMPTY}
+T8.6 Edit SNMP Traps
+ 	Configure SNMP Traps		1		1			1			1			10			20			80			100
+T8.7 Edit SNMP Traps
+	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0			0
 
 				
 * Keyword
