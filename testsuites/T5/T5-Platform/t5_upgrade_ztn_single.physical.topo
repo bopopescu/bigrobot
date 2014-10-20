@@ -6,10 +6,9 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.8.28.10 
+  ip: 10.8.28.14 
   monitor_reauth: false  # default=true, set to false to disable  
-  
-
+ 
 s1:
   alias:  spine0
   mac: 70:72:cf:ae:b3:28
@@ -68,7 +67,7 @@ s5:
 
 s6:
   alias:  leaf1-b
-  mac: 70:72:cf:ab:3c:58
+  mac: 70:72:cf:b5:ff:0e
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -76,10 +75,14 @@ s6:
     port: 7006
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 14
+  
   
 s7:
   alias:  leaf2-a
-  mac: 70:72:cf:ab:3a:58
+  mac: 70:72:cf:b7:6d:5c
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -87,10 +90,13 @@ s7:
     port: 7007
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 13
 
 s8:
   alias:  leaf2-b
-  mac: 70:72:cf:ab:3b:18
+  mac: 70:72:cf:bc:c7:5e
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -98,6 +104,9 @@ s8:
     port: 7008
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 15
   
   
 h1:
@@ -111,3 +120,4 @@ h2:
   user: root
   password: bsn
   
+ 
