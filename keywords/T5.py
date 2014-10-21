@@ -2593,13 +2593,13 @@ class T5(object):
             line = line.lstrip()
             match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
             if match:
-#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" % 
+#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" %
 #                    (match.group(1), match.group(2), match.group(3)))
-                ID = match.group(1)+'_'+match.group(2)
+                ID = match.group(1) + '_' + match.group(2)
                 if match.group(3) == 0:
                     continue
-                info[ID]={}
-                info[ID]['outPkts']=  match.group(3)
+                info[ID] = {}
+                info[ID]['outPkts'] = match.group(3)
 
         helpers.log("***Exiting with info: %s  \n" % info)
         return info
@@ -2616,14 +2616,14 @@ class T5(object):
     def get_queue_with_traffic(self, node, port, threshold):
         '''
         '''
-        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))       
-        info = self.cli_get_qos_port_stat(node,port)
-        traffic_queue=[]
+        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))
+        info = self.cli_get_qos_port_stat(node, port)
+        traffic_queue = []
         for queue in info:
             helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
             if int(info[queue]['outPkts']) >= int(threshold):
-                traffic_queue.append(queue) 
-        return traffic_queue 
+                traffic_queue.append(queue)
+        return traffic_queue
 
 
     def cli_get_links_nodes_list(self, node1, node2):
@@ -3023,14 +3023,21 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             helpers.log("Entered the first else loop as exists value is %s" % (Val_exists))
             if mac in data:
-                 helpers.log("Expected mac exists in the l2 forwarding table")
-                 return True
+                helpers.log("Expected mac exists in the l2 forwarding table")
+                return True
             else:
                 helpers.test_log("Expected does not exist in the l2 table")
                 return False
 
-
-
+    def setup_switch_ssh_handle(self, name):
+        '''
+            SETUP SSH HANDLES for switch in ZTN MODE by touch /mnt/flash/local.d/no-auto-reload file in switches from console
+            and add ssh enable and admin / adminadmin user account and password in switchlight configuration
+        '''
+        t = test.Test()
+        helpers.log("Setting up SSH HANDLE FOR Switch : %s" % name)
+        t.setup_ztn_phase2(name)
+        return True
 
     def remove_no_auto_reload(self, name):
         """
