@@ -178,7 +178,7 @@ T9 Verify 'member port-group' command completion in config mode
     [Tags]  feature  CLI  cli-completion  smoke  
     
 T10 Verify 'member switch' command completion in config mode
-    ${result}=  cli walk command  member switch  8  config_mode=${True}  multiline=tenant A; segment A1 
+    ${result}=  cli walk command  member switch  6  config_mode=${True}  multiline=tenant A; segment A1 
     Should be true  ${result}
     [Tags]  feature  CLI  cli-completion  smoke  
   
