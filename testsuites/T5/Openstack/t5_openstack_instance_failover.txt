@@ -22,7 +22,9 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 bring up host bond0 interface
 	[Tags]  openstack  
 	bring up h1 bond0
-	sleep  2
+	sleep  5
+	bash add route  h1  30.0.0.0/16  192.168.4.2  bond0.10
+	sleep  5
 	
 add Fabric setup Three Rack Dual Leaf 
    [Tags]  openstack   
