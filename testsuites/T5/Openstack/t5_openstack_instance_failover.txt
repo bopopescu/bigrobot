@@ -20,36 +20,36 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 bring up host bond0 interface
-	[Tags]  openstack 
+	[Tags]  openstack  
 	bring up h1 bond0
 	sleep  2
 	
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  openstack  
+   [Tags]  openstack   
    rest verify fabric switch all
    rest verify fabric link 
 
 VM endpoint verification
-	[Tags]  openstack
+	[Tags]  openstack 
 	openstack source  keystonerc_admin
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
+	openstack source  keystonerc_t5test
 	openstack show instance all
 	openstack verify endpoint  app-inst1  app
 
 VM instance link failover test 
-	[Tags]   openstack
+	[Tags]   openstack  
+	openstack source  keystonerc_t5test
 	${inst_ip}=  openstack show instance ip  app-inst1  app 
 	${port_group}=  openstack compute node portgroup  app-inst1  app
 	${switch_list}=    Get Dictionary Items    ${port_group}
 	:FOR    ${key}    ${value}    IN    @{switch_list}
-	\   bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	\   bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	\   rest disable fabric interface  ${key}  ${value}
 	\   ${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	\   log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	\   Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	\   Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	\   Should be True  ${result['packet_loss']} < 20   
+	\   Should be True  ${result['packets_loss']} < 5  
 	\   rest enable fabric interface  ${key}  ${value}
 	\   sleep  5
 	   
@@ -59,66 +59,55 @@ VM instance leaf reboot
 	${port_group}=  openstack compute node portgroup  app-inst1  app
 	${switch_list}=    Get Dictionary Items    ${port_group}
 	:FOR    ${key}    IN    @{switch_list}
-	\   bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	\   bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	\   cli controller reboot switch  ${key}
 	\   sleep  10
 	\   ${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	\   log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	\   Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	\   Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	\   Should be True  ${result['packet_loss']} < 20
+	\   Should be True  ${result['packets_loss']} < 5
 	\   sleep  100				
 	
 VM instance spine reboot
 	[Tags]   openstack
 	${inst_ip}=  openstack show instance ip  app-inst1  app
-	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	cli controller reboot switch  spine0
 	sleep  10
 	${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	Should be True  ${result['packet_loss']} < 20
+	Should be True  ${result['packets_loss']} < 5
 	sleep  100
-	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	cli controller reboot switch  spine1
 	sleep  10
 	${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	Should be True  ${result['packet_loss']} < 20
+	Should be True  ${result['packets_loss']} < 5
 	sleep  100				
 
 VM instance controller failover
 	[Tags]   openstack
 	${inst_ip}=  openstack show instance ip  app-inst1  app
-	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	cli cluster take leader
 	sleep  10
 	${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	Should be True  ${result['packet_loss']} < 20
+	Should be True  ${result['packets_loss']} < 5
 
 VM instance controller reboot
 	[Tags]   openstack
 	${inst_ip}=  openstack show instance ip  app-inst1  app
-	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=eth1
+	bash ping background start    h1   label=linkfailover_ping   dest_ip=${inst_ip}  source_if=bond0.10
 	cluster node reboot
 	sleep  10
 	${result}=  bash ping background stop    h1   label=linkfailover_ping   return_stats=${true}		 
 	log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-	Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-	Log To Console   there are ${result} ping packet loss, 1 ping per sec
-	Should be True  ${result['packet_loss']} < 20
+	Should be True  ${result['packets_loss']} < 5
 
 * keywords
 T5 Functional Suite Setup
 	base suite setup
-	add fabric switch
 	rest add portgroup  p1 
     rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
     rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
@@ -133,13 +122,15 @@ T5 Functional Suite Setup
 	openstack add router  t5test  t5test-r1
 	openstack add subnet to router  t5test-r1  app
 	openstack source  keystonerc_t5test
+	openstack add secrule icmp  default
 	openstack add instance  cirros  app  app-inst1
 	openstack add router gw  t5test-r1  ext-net
+	openstack source  keystonerc_admin
 	${tenant}=  openstack_show_tenant  admin  
-	${segement}=  openstack show subnet  ext-net 
+	${segment}=  openstack show external network  ext-net 
 	rest add portgroup to vns  ${tenant}  ${segment}  p1  10 
-	sleep  30
-  	
+	sleep  40
+	  	
 T5 Functional Suite Teardown
 	openstack source  keystonerc_t5test
 	openstack delete instance  app-inst1
@@ -151,7 +142,6 @@ T5 Functional Suite Teardown
 	openstack delete net  ext-net
 	openstack delete tenant  t5test
 	openstack delete user  t5test
-	delete fabric switch
     rest delete portgroup  p1
 	base suite teardown
 	
