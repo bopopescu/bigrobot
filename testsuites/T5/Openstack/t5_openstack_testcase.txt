@@ -20,9 +20,7 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 	
-create a network same as DHCP server interface
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
+
 Create/delete VMs with floating IP
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed 
@@ -102,9 +100,6 @@ Ceph Storage sets
 Use seperate storage VLAN to provide a storage traffic going through the fabric (Most common used NFS,iSCSi traffic)
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
-Test to provide any Qos settings for storage traffic
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 
 Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
 	[Tags]  scaling  openstack  IronHorse  manual	
@@ -131,9 +126,6 @@ reboot Master neutron server
 
 
 Flap the link between Leaf switch and OVS (connection to block storage)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap the link between Service Rack Leaf switch and router
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
@@ -287,10 +279,6 @@ Add service between Data and App VNS and verify the traffic load balance
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-Out of sync script for new controller bringup and exsisting openstack setup
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-	
 shared resources VNS created under admin tenant (clemson univsersity)
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
