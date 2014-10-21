@@ -6163,6 +6163,26 @@ class T5Platform(object):
             helpers.log("USER %s is present " % user)  
             return True
         
+    def cli_get_debug_counter(self, pattern):
+        '''
+        get the debug counter
+        '''        
+      
+        t = test.Test()
+        c = t.controller('master')
+        string = 'show debug counters all | grep ' + pattern
+        c.enable(string)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        helpers.log("USR INFO: line is:  %s" % temp)        
+        match = re.match(r'.* (\d+)', temp)
+        counter = 0
+        if match:
+            counter = match.group(1)
+        return counter
+        
           
+
+
         
        

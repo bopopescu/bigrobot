@@ -2552,7 +2552,7 @@ class T5(object):
         else:
             helpers.log("Given switch name and role is not valid")
 
-    def cli_get_qos_weight(self, node, port):
+    def cli_get_qos_weight(self, node, port='0'):
         t = test.Test()
         s = t.switch(node)
         string = 'debug ofad "qos_weight_info ' + port + '"'
@@ -2573,28 +2573,39 @@ class T5(object):
 
         return info
 
-    def cli_get_qos_port_stat(self, node, port):
+    def cli_get_qos_port_stat(self, node, port='0'):
+        '''
+        get the packet
+        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
+
+        '''
+
         t = test.Test()
         s = t.switch(node)
         string = 'debug ofad "qos_port_stat ' + port + '"'
         content = s.enable(string)['content']
-        info = []
+        info = {}
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("***temp is: %s  \n" % temp)
 
         for line in temp:
-            helpers.log("***line is: %s  \n" % line)
+#            helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'.*queue=(\d+).* out_pkt.*=(\d+)', line)
+            match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
             if match:
-                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
-                info.append(match.group(2))
+#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" % 
+#                    (match.group(1), match.group(2), match.group(3)))
+                ID = match.group(1)+'_'+match.group(2)
+                if match.group(3) == 0:
+                    continue
+                info[ID]={}
+                info[ID]['outPkts']=  match.group(3)
 
         helpers.log("***Exiting with info: %s  \n" % info)
-
         return info
 
-    def cli_qos_clear_stat(self, node, port):
+
+    def cli_qos_clear_stat(self, node, port='0'):
         t = test.Test()
         s = t.switch(node)
         string = 'debug ofad "qos_clear_stat ' + port + '"'
@@ -2602,6 +2613,17 @@ class T5(object):
 
         return True
 
+    def get_queue_with_traffic(self, node, port, threshold):
+        '''
+        '''
+        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))       
+        info = self.cli_get_qos_port_stat(node,port)
+        traffic_queue=[]
+        for queue in info:
+            helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
+            if int(info[queue]['outPkts']) >= int(threshold):
+                traffic_queue.append(queue) 
+        return traffic_queue 
 
 
     def cli_get_links_nodes_list(self, node1, node2):
