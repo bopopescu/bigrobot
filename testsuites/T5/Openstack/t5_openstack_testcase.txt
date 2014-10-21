@@ -128,23 +128,8 @@ Configure 2 Nuetron server for openstack HA
 reboot Master neutron server
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Trigger HA failover via a process restart (floodlight restart) 
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA process restart Failover to slave correctly happens
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA process restart Existing flows should not be impacted
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Trigger HA process restart New flows should be established after failover
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 
 
-Flap the link between Leaf switch and OVS (connection to nova-controller)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 Flap the link between Leaf switch and OVS (connection to block storage)
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
