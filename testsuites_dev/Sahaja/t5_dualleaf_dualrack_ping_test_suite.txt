@@ -30,7 +30,7 @@ ${bm2_intf1}  leaf1b-eth8
 * Test Case 
 
 ping bm0 to bm2 dual rack dual leaf static switch endpoints
-   [Tags]  L2  sanity  IronHorse  feature
+   [Tags]  L2  sanity  IronHorse  feature 
    add portgroup to vns  A  A  p3  -1 
    add portgroup to vns  A  A  p1  -1
    sleep  10 
