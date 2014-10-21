@@ -390,26 +390,27 @@ class Ixia(object):
 
         if src_mac is not None and dst_mac is not None:
             helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
-            if dst_cnt is None:
-                helpers.log("Adding Single DST_MAC ..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
-                                          '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
-                                          '-optionalEnabled', True, '-countValue', '1')
-            else:
+            if dst_cnt is not None:
                 helpers.log("Adding DST_MAC COUNT VALUES..")
                 self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
                                           '-stepValue', dst_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_cnt,
                                           '-startValue', dst_mac)
-            if src_cnt is None:
-                helpers.log("Adding Single SRC_MAC..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
-                                          '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
-                                          '-optionalEnabled', True, '-countValue', '1')
             else:
+                helpers.log("Adding Single DST_MAC ..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                          '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+            if src_cnt is not None:
                 helpers.log("Adding SRC_CNT COUNT VALUES..")
                 self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
                                           '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
                                           '-startValue', src_mac)
+            else:
+                helpers.log("Adding Single SRC_MAC..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                          '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+
         if line_rate is not None:
             helpers.log('Adding Line Rate Value !')
             self._handle.setAttribute(trafficStream1 + stream_name_id + 'frameRate', '-rate', line_rate)
@@ -447,13 +448,20 @@ class Ixia(object):
             self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                       '-optionalEnabled ', True)
         if lacp_src_mac is not None:
-            helpers.log("Adding LACP SRC MAC for Raw Stream ..")
+            helpers.log("Adding LACP DST MAC for Raw Stream ..")
             self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
                                       '-auto', False, '-fieldValue', '01:80:c2:00:00:02', '-singleValue', '01:80:c2:00:00:02',
                                       '-optionalEnabled', True, '-countValue', '1')
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
-                                      '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
-                                      '-optionalEnabled', True, '-countValue', '1')
+            if src_cnt is not None:
+                helpers.log("Adding LACP SRC MAC COUNT with LACP SRC MAC...src_cnt: %s" % src_cnt)
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                                          '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
+                                          '-startValue', lacp_src_mac)
+            else:
+                helpers.log("Adding LACP SRC MAC..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                                          '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
         if lld_tlv_chassis_id is not None:
             helpers.log("Adding LLDP ttlv chassis id in RAW STREAM..")
             self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-2"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"',
@@ -1096,11 +1104,13 @@ class Ixia(object):
         lldp = kwargs.get('lldp', False)
         src_mac = kwargs.get('src_mac', None)
         dst_mac = kwargs.get('dst_mac', None)
-        d_cnt = kwargs.get('dst_cnt', 1)
-        s_cnt = kwargs.get('src_cnt', 1)
+        d_cnt = kwargs.get('dst_cnt', None)
+        s_cnt = kwargs.get('src_cnt', None)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
         src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
+        lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", None)
         lacp_src_mac = None
+
         if lacp:
             helpers.log("Getting LCAP Parameters..")
             lacp_src_mac = kwargs.get('lacp_src_mac', '00:00:99:99:88:77')
