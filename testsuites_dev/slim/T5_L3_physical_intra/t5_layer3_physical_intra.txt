@@ -2970,7 +2970,8 @@ restart ofad on spine
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s7                              ofad                    timeout=60
+    ${result} =                                 BASH restart process                        s7                              ofad                    timeout=60
+    Should Be True                              ${result}
 #    console bash restart process                s7                              ofad                    timeout=60
     sleep                                       5
     ${value} =                                  BASH check service status       s7                      ofad
@@ -3007,15 +3008,9 @@ restart ofad on leaf
     BASH add route                              h1                              10.251.3.0/24           10.251.1.1
     BASH add route                              h3                              10.251.1.0/24           10.251.3.1
     sleep                                       5   
-#    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-#    Should Not Be True                          ${value}        
-#    ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-#    Should Not Be True                          ${value}    
     BASH ping                                   h1                              10.251.3.11             count=10
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-#   Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h3                      10.251.3.1
-#   Should Be True                              ${value}        
     ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}                       
@@ -3031,12 +3026,9 @@ restart ofad on leaf
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s3                              ofad
-#    console bash restart process                s1                              ofad                    timeout=60
+    ${result} =                                 BASH restart process                        s3                              ofad
+    Should Be True                              ${result}
     sleep                                       5
-#   CLI execute command                         s3                              debug ofad "autoneg 24"
-#   sleep                                       1
-#    ${value} =                                  console check service status    s3                      ofad
     ${value} =                                  BASH check service status       s3                     ofad
     Should Contain                              ${value}                        is started  
     sleep                                       10
