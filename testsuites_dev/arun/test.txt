@@ -8,9 +8,20 @@ Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
-
+Library			keywords/T5ZTN.py
+Library			keywords/T5.py
 
 * Test Case
-Test controller rest session cookie
-    bounce session cookie
-    #[Tags]  skipped
+
+Test PDU consoles
+	[Tags]  skipped
+	power down switch  s7
+	power down switch  s8
+	power up switch  s7
+	power up switch  s8
+	power cycle switch  s7
+	power cycle switch  s8
+	
+Test switch console
+	[Tags]  run
+	setup switch ssh handle  s1
