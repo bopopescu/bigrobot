@@ -412,6 +412,18 @@ ${L2 FLOW THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='title
 ${TCAM FLOW THRESHOLDS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
 ${TCAM THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
 
+#### TACACS Page
+
+${ADD TACACS HOST PLUS BUTTON}				xpath=//div[@id='tacacs_hosts_table']/descendant::div[@class='icon_node plus']
+${CREATE TACACS SERVER POPUP}				xpath=//div[@title='Create TACACS Server']
+${TACACS SERVER ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER TIMEOUT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Timeout')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${TACACS SERVER SECRET FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Secret')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER SECRET ENCRYPTION BUTTON}	xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node lock']
+${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
+${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
 
 *** Keywords ***
 Set URLs
@@ -625,7 +637,14 @@ Delete All Remote Servers
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
 	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
-    
+
+Delete All TACACS Hosts
+	Go To TACACS Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	    
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
 	Click Element  ${CHECKBOX ALL}  and don't wait
@@ -1905,10 +1924,90 @@ Configure SNMP Traps
    Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
    ...			Input Text And Verify   ${TCAM THRESHOLD PERCENTAGE FIELD}  ${full-match-tcam-threshold}
    
-   
-   Sleep  20
    Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
    Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
    
    Verify Element Invisible  ${CONFIGURE SNMP TRAPS POPUP}
+   
+   
+Add TACACS Host
+	[Arguments]  ${server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	Verify Element Visible  ${ADD TACACS HOST PLUS BUTTON}
+    Click Element  ${ADD TACACS HOST PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${CREATE TACACS SERVER POPUP}
+    
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+       
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${CREATE TACACS SERVER POPUP}
+    
+    
+Edit TACACS Host
+	[Arguments]  ${server}  ${new-server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER EDIT MENU ITEM}
+    Click Element  ${TACACS SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT TACACS SERVER POPUP}
+	   
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+    
+    
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${EDIT TACACS SERVER POPUP}
+    
+  
+Delete TACACS Host
+	[Arguments]  ${server} 
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER DELETE MENU ITEM}
+    Click Element  ${TACACS SERVER DELETE MENU ITEM}  and don't wait
+    
+    Verify Element Visible  ${DELETE CONFIRM TACACS HOST POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Highlight Element  ${PROCEED DELTE BUTTON}
+	
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+    
     
