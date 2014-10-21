@@ -142,19 +142,20 @@ T8.7 Edit SNMP Traps
 T9.1 Add TACACS Host with timeout and no secret 	
  	Add TACACS Host				1.2.3.4		10			${EMPTY}		No		
 T9.2 Add TACACS Host with no timeout and secret		
- 	Add TACACS Host				2.3.1.0		${EMPTY}	Secret!23		No	
+ 	Add TACACS Host				2.3.1.0		30			Secret!23		No	
 T9.3 Add TACACS Host with timeout and secret and encryption		
- 	Add TACACS Host				2.3.1.4		162			Encryption_1-@  Yes
+ 	Add TACACS Host				2.3.1.4		16			Encryption_1-@  Yes
 T9.4 Edit TACACS Host
- 	Edit TACACS Host			1.2.3.4		1.22.14.64  2300			New-Secret		Yes
+ 	Edit TACACS Host			1.2.3.4		1.22.14.64  23			New-Secret		Yes
 T9.5 Edit TACACS Host	
- 	Edit TACACS Host			2.3.1.4		8.9.7.6		1240			New_Encrypt		No
+ 	Edit TACACS Host			2.3.1.4		8.9.7.6		14			New_Encrypt		Yes
 T9.6 Delete TACACS Host
- 	Delete TACACS Host			1.2.3.4
+ 	Delete TACACS Host			1.22.14.64
 T9.7 Delete TACACS Host
  	Delete TACACS Host			2.3.1.0	
 T9.8 Delete All TACACS Hosts
-	Delete All TACACS Hosts	 
+	Delete All TACACS Hosts	
+	 
 
 
 				
