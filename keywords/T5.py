@@ -2891,6 +2891,23 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             return True
 
+    def rest_add_switch_endpoint_to_vns(self, tenant, vns, endpoint, vlan, switch, switch_if):
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s vlan = %s switch = %s switch_if = %s" % (tenant, vns, endpoint, vlan, switch, switch_if))
+
+        # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/port-group-membership-rule[port-group="%s"]' % (tenant, vns, pg)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+
+        try:
+            c.rest.patch(url, {"interface": switch_if, "switch": switch, "vlan": vlan})
+        except:
+            return False
+        else:
+            return True
+
+
 
     def rest_delete_vlan_membership(self, tenant, segment):
         '''
@@ -2926,6 +2943,72 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             helpers.test_failure("Expected tenant count not correct Expected=%d , Actual=%d" % (int(tcount), int(len(data))))
             return False
+
+    def rest_verify_endpoint_static_exists_down(self, tenant, vns, vlan, mac):
+        '''Verify Static Endpoint entry
+
+            example show command: show endpoint mac 00:00:00:00:00:01
+
+            Input: vns name , vlan ID , mac , switch name, expected switch interface
+
+            Return: true if it matches Value specified and added attachment point is true
+         '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) == 1:
+            if str(data[0]["segment"]) == str(vns) and data[0]["mac"] == mac and int(data[0]["vlan"]) == int(vlan) and data[0]["tenant"] == tenant:
+                if str(data[0]["attachment-point-state"]) == "static":
+                    if str(data[0]["state"]) == "Attach Point Down":
+                        helpers.log("static endpoint state is down which is expected")
+                        return True
+                    else:
+                        helpers.log("static endpoint state is %s which is not what we expected" % (data[0]["state"]))
+                        return False
+
+            helpers.test_log("Given static endpoints are not present in the config")
+            return False
+        else:
+            helpers.test_log("There are more entries for a given mac")
+            return False
+
+
+    def rest_verify_switch_l2_table(self, switch, mac, Val_exists=True):
+        ''' Verify that the mac exists/does not exist as per test
+
+        example show command: show forwarding switch leaf0a l2-table | grep 00:00:00:00:00:01
+
+        Input: switch name, mac, exists
+
+        Return: true if mac exists or not according to the test
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("exists value got is %s" % (Val_exists))
+        if Val_exists is False:
+            helpers.log("Entered the first if loop as exists value is as before")
+            if len(data) == 0:
+                helpers.log("There are no mac entries for given switch which is expected")
+                return True
+            else:
+                helpers.log("There are some entries for given switch")
+                return False
+        else:
+            helpers.log("Entered the first else loop as exists value is %s" % (Val_exists))
+            if mac in data:
+                 helpers.log("Expected mac exists in the l2 forwarding table")
+                 return True
+            else:
+                helpers.test_log("Expected does not exist in the l2 table")
+                return False
+
+
+
 
     def remove_no_auto_reload(self, name):
         """
