@@ -2832,6 +2832,50 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             return c.rest.content()
 
+    def rest_get_interface_queue_stats(self, switch, intf, queue, tx='pkts'):
+        ''' Function to return a switch interface queue stats
+        Input: switch, interface, queue# and tx=pkts (default) or tx=bytes
+        Output: contents from the switch interface or error
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter[interface/name="ethernet1"][interface/queue/queue-id=8][switch-dpid="00:00:70:72:cf:bc:ce:4e"]?select=interface/queue
+
+
+REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter%5Binterface/name%3D%22ethernet1%22%5D%5Binterface/queue/queue-id%3D0%5D%5Bswitch-dpid%3D%2200%3A00%3A70%3A72%3Acf%3Ab5%3Ae7%3A10%22%5D?select=interface/queue 0:00:00.022328 reply "[ {
+  "interface" : [ {
+    "name" : "ethernet1",
+    "queue" : [ {
+      "counter" : {
+        "transmit-bytes" : 0,
+        "transmit-errors" : 0,
+        "transmit-packets" : 0
+      },
+      "queue-id" : 0
+    } ]
+  } ],
+  "switch-dpid" : "00:00:70:72:cf:b5:e7:10"
+} ]"
+
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        dpid = self.rest_get_dpid(switch)
+        helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s queue = %s and tx mode %s" % (switch, dpid, intf, queue, tx))
+        # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter[interface/name="%s"][interface/queue/queue-id=%s][switch-dpid="%s"]?select=interface/queue' % (intf, queue, dpid, intf)
+        try:
+            c.rest.get(url)
+            data = c.rest.content()
+            if (tx == 'pkts'):
+                return data[0]['interface'][0]['queue'][0]['counter']['transmit-packets']
+            else:
+                return data[0]['interface'][0]['queue'][0]['counter']['transmit-bytes']
+            
+        except:
+            helpers.test_failure(c.rest.error())
+        
+            
+
+
+
     def rest_get_fabric_interface_rate(self, switch, intf):
         ''' Function to return a switch fabric interface rate stats
         Input: switch and interface
