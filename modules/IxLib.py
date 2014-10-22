@@ -1246,7 +1246,7 @@ class Ixia(object):
         src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
         lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", None)
         lacp_src_mac = None
-        ethertype = kwargs.get('ethertype', '0800')
+        ethertype = kwargs.get('ethertype', None)
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
