@@ -1606,6 +1606,10 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
+                if helpers.bigrobot_no_auto_reload().lower() == 'true':
+                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                    for key in params:
+                        self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")
