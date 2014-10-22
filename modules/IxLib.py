@@ -1268,7 +1268,7 @@ class Ixia(object):
         icmp_code = kwargs.get('icmp_code', '0')
 
         ip_type = 'ipv4'
-        if ethertype.lower() == '86dd':
+        if str(ethertype).lower() == '86dd':
             src_ip = kwargs.get('src_ip', None)
             dst_ip = kwargs.get('dst_ip', None)
             src_ip_step = kwargs.get('src_ip_step', '0:0:0:0:0:0:1:0')
