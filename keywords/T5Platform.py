@@ -6181,8 +6181,36 @@ class T5Platform(object):
             counter = match.group(1)
         return counter
         
+    def cli_config_tenant_vns_intf(self, tenant='T', segmant='V',
+            ip=None, mask="24",switch=None,
+            intf=None, vlan='untagged'
+            ):
+        '''
+        Function to add configure tenant VNS and interface
+        Input: tennat , switch , interface
+        
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Entering ==> rest_add_tenant_vns_scale ")
+        string = 'tenant '+ tenant
+        c.config(string)
+        string = 'segment '+ segmant
+        c.config(string)
+        if switch is not None and intf is not None:
+            string = 'member switch ' + switch + ' interface '+ intf + ' vlan ' + vlan
+            c.config(string)            
+        if ip is not None:
+            c.config('logical-router')
+            string = 'interface segment '+ segmant
+            c.config(string)
+            string = 'ip address ' + ip +'/'+mask
+            c.config(string)
+              
+        c.cli('show running-config tenant')
+        return True
           
 
-
-        
-       
+ 

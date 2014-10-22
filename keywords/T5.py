@@ -1081,7 +1081,8 @@ class T5(object):
         while (i <= int(count)):
             endpoint_new = "%s_%d" % (endpoint, i)
             mac = EUI(mac).value
-            mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+     #       mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+            mac = "{0}".format(str(EUI(mac+1)).replace('-', ':'))       
             url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint' % (tenant, vns)
             c.rest.post(url, {"name": endpoint_new}, quiet=quiet)
             url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
