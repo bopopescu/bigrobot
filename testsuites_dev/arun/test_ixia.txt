@@ -498,14 +498,25 @@ Test IXIA
     [Tags]  traffic  lacp
 
 35_IXIA_RAW_STREAM_LACP with just the lacp_src_mac and different src_mac
-	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  s_cnt=100  src_mac_step=00:00:00:00:00:02
+	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  src_cnt=100  src_mac_step=00:00:00:00:00:02
 	clear stats
     start traffic  ${stream}
     sleep  ${sleep_time}
     stop traffic  ${stream}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  lacp  run
+    [Tags]  traffic  lacp
+36_IXIA_RAW_add with only src_mac count
+	${stream}=  raw_stream_add  name=L3_2  flow=a->b    frame_cnt=1000    frame_rate=100   frame_size=128
+    ...	src_ip=100.0.0.2  src_mac=00:00:12:12:12:01
+    ...	dst_ip=100.1.0.3  dst_mac=5c:16:c7:01:00:14   dst_mac_cnt=10   dst_ip_step=0.0.0.1  dst_ip_cnt=10
+    clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    stop traffic  ${stream}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    [Tags]  traffic  run
 *Keywords
 atest teardown
 	delete traffic

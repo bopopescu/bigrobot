@@ -1,12 +1,12 @@
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
-  tcl_server_ip: 10.8.21.10
+  tcl_server_ip: 10.9.19.251
   #tcl_server_port: 8009
   #ix_version: '7.10'
   #set_init_ping: false
   ports:
     a:
-      name: 3/10
+      name: 3/16
     b:
-      name: 3/8
+      name: 3/15
