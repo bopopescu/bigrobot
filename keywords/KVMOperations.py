@@ -134,12 +134,16 @@ class KVMOperations(object):
     def _get_latest_jenkins_build_number(self, vm_type='bcf',
                                          jenkins_server=JENKINS_SERVER,
                                          jenkins_user=JENKINS_USER,
-                                         jenkins_password=JENKINS_PASSWORD):
+                                         jenkins_password=JENKINS_PASSWORD, remote_qcow_path=None):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
         if vm_type == 'bcf':
-            output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
+            match = re.match(r'/var/lib/jenkins/jobs/(.*)/lastSuccessful/', remote_qcow_path)
+            if match:
+                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/%s/builds | grep lastSuccessfulBuild' % str(match.group(1)))['content']
+            else:
+                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/t6-mininet-vm/builds | grep lastSuccessfulBuild')['content']
 
@@ -169,7 +173,7 @@ class KVMOperations(object):
                 return 0
 
 
-    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bcf", build_number=None):
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bcf", build_number=None, scp=True):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
@@ -187,7 +191,7 @@ class KVMOperations(object):
         kvm_handle.bash('cd bvs_images')
         helpers.log("Latest VMDK will be copied to location : %s at KVM Host" % kvm_handle.bash('pwd')['content'])
         helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-        latest_build_number = self._get_latest_jenkins_build_number(vm_type)
+        latest_build_number = self._get_latest_jenkins_build_number(vm_type, remote_qcow_path=remote_qcow_path)
         latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle)
         if build_number is not None:
             helpers.log("Build Number is provided resetting latest builds to %s" % build_number)
@@ -201,7 +205,7 @@ class KVMOperations(object):
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
 
-        if str(latest_kvm_build_number) == str(latest_build_number):
+        if str(latest_kvm_build_number) == str(latest_build_number) and scp:
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
