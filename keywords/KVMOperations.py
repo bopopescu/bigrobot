@@ -134,14 +134,13 @@ class KVMOperations(object):
     def _get_latest_jenkins_build_number(self, vm_type='bcf',
                                          jenkins_server=JENKINS_SERVER,
                                          jenkins_user=JENKINS_USER,
-                                         jenkins_password=JENKINS_PASSWORD, remote_qcow_path=None):
+                                         jenkins_password=JENKINS_PASSWORD, jenkins_project_name=None):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
         if vm_type == 'bcf':
-            match = re.match(r'/var/lib/jenkins/jobs/(.*)/lastSuccessful/', remote_qcow_path)
-            if match:
-                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/%s/builds | grep lastSuccessfulBuild' % str(match.group(1)))['content']
+            if jenkins_project_name is not None:
+                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/%s/builds | grep lastSuccessfulBuild' % jenkins_project_name)['content']
             else:
                 output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
@@ -151,13 +150,13 @@ class KVMOperations(object):
         latest_build_number = output_lines[1].split('->')[-1]
         return latest_build_number.strip()
 
-    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None):
+    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None, jenkins_project_name="bcf_master"):
         output = None
         if vm_type == 'bcf':
-            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs | awk \'{print $9}\'')['content']
+            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep %s | awk \'{print $9}\'' % jenkins_project_name)['content']
             output_lines = output.split('\n')
             latest_image = output_lines[-2]
-            match = re.match(r'.*bvs-(\d+).*', latest_image)
+            match = re.match(r'.*%s-(\d+).*' % jenkins_project_name, latest_image)
             if match:
                 return match.group(1)
             else:
@@ -191,15 +190,20 @@ class KVMOperations(object):
         kvm_handle.bash('cd bvs_images')
         helpers.log("Latest VMDK will be copied to location : %s at KVM Host" % kvm_handle.bash('pwd')['content'])
         helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-        latest_build_number = self._get_latest_jenkins_build_number(vm_type, remote_qcow_path=remote_qcow_path)
-        latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle)
+        jenkins_project_name = None
+        if remote_qcow_path is not None:
+            match = re.match(r'/var/lib/jenkins/jobs/(.*)/lastSuccessful/', remote_qcow_path)
+            if match:
+                jenkins_project_name = match.group(1)
+        latest_build_number = self._get_latest_jenkins_build_number(vm_type, jenkins_project_name=jenkins_project_name)
+        latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle, jenkins_project_name=jenkins_project_name)
         if build_number is not None:
             helpers.log("Build Number is provided resetting latest builds to %s" % build_number)
             latest_build_number = build_number
             latest_kvm_build_number = build_number
         file_name = None
         if vm_type == 'bcf':
-            file_name = "controller-bvs-%s.qcow2" % latest_build_number
+            file_name = "controller-%s-%s.qcow2" % (jenkins_project_name, latest_build_number)
         elif vm_type == 'mininet':
             file_name = "mininet-%s.qcow2" % latest_build_number
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
