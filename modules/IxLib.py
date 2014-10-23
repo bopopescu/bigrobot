@@ -183,7 +183,7 @@ class Ixia(object):
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None, p_priority=0):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None, p_priority=None):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -227,26 +227,26 @@ class Ixia(object):
             topo_names.append(topo_name)
             self._handle.setAttribute(topo_device, '-multiplier', multi)
             eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
-#         if vlan_id is not None:
-#             for eth_device in eth_devices:
-#                 helpers.log("Setting Vlan True in Ixia Ethernet Device")
-#                 self._handle.setMultiAttribute(eth_device, '-useVlans', True)
-#                 self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name') #Vlan name removed
-#                 self._handle.commit()
-#                 tpid = self._handle.getAttribute(eth_device + '/vlan:1', '-tpid') #get tpid
-#                 self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue') #
-#                 eth_type=self._handle.add(tpid, 'singleValue') #
-#                 self._handle.setMultiAttribute(eth_type, 'value', 'ethertype8100') #
-#                 prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority') #
-#                 self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue') #
-#                 1p=self._handle.add(prio, 'singleValue') #
-#                 self._handle.setMultiAttribute(1p, 'value', p_priority) #need to add 1p_priority as an argument
-#                 ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
-#                 self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
-#                 self._handle.commit()
-#                 ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
-#                 self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
-#                 self._handle.commit()
+        if p_priority is not None:
+            for eth_device in eth_devices:
+                helpers.log("Setting Vlan True in Ixia Ethernet Device")
+                self._handle.setMultiAttribute(eth_device, '-useVlans', True)
+                self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name')  # Vlan name removed
+                self._handle.commit()
+                tpid = self._handle.getAttribute(eth_device + '/vlan:1', '-tpid')  # get tpid
+                self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue')  #
+                eth_type = self._handle.add(tpid, 'singleValue')  #
+                self._handle.setMultiAttribute(eth_type, 'value', 'ethertype8100')  #
+                prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority')  #
+                self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue')  #
+                vlan_1p = self._handle.add(prio, 'singleValue')  #
+                self._handle.setMultiAttribute(vlan_1p, 'value', p_priority)  # need to add 1p_priority as an argument
+                ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
+                self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
+                self._handle.commit()
+                ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
+                self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
+                self._handle.commit()
         self._handle.commit()
         mac_devices = []  # as this are added to ixia need to remap as per ixia API's
         ip_devices = []
@@ -1382,6 +1382,7 @@ class Ixia(object):
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
+        vlan_priority = kwargs.get('vlan_priority', None)
         line_rate = kwargs.get('line_rate', None)
         protocol = kwargs.get('protocol', None)
         burst_count = kwargs.get('burst_count', None)
@@ -1529,16 +1530,24 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                           dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                           dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
-                                                                          vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix)
+                                                                          vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
-
-                traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
-                                                           frame_type, self._frame_size, frame_rate, frame_mode,
-                                                           frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
-                                                           protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
-                                                           burst_count=burst_count, burst_gap=burst_gap,
-                                                           src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
-                                                           synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                if vlan_priority is None:
+                    traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
+                                                               frame_type, self._frame_size, frame_rate, frame_mode,
+                                                               frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                               protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                               burst_count=burst_count, burst_gap=burst_gap,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                else:
+                    traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
+                                                               frame_type, self._frame_size, frame_rate, frame_mode,
+                                                               frame_cnt, stream_flow, name, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
+                                                               protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                               burst_count=burst_count, burst_gap=burst_gap,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
 
                 traffic_stream1.append(traffic_stream)
             else:
