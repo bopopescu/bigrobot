@@ -1571,7 +1571,8 @@ class Ixia(object):
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
                 else:
                     traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
-                                                             frame_cnt, stream_flow, name, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
+                                                             frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                             vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
