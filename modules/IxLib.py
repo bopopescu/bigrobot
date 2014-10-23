@@ -231,22 +231,23 @@ class Ixia(object):
             for eth_device in eth_devices:
                 helpers.log("Setting Vlan True in Ixia Ethernet Device")
                 self._handle.setMultiAttribute(eth_device, '-useVlans', True)
-                self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name')  # Vlan name removed
+                self._handle.setMultiAttribute(eth_device + '/vlan:1', '-name')  # Vlan name removed
                 self._handle.commit()
                 tpid = self._handle.getAttribute(eth_device + '/vlan:1', '-tpid')  # get tpid
                 self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue')  #
                 eth_type = self._handle.add(tpid, 'singleValue')  #
-                self._handle.setMultiAttribute(eth_type, 'value', 'ethertype8100')  #
+                self._handle.setMultiAttribute(eth_type, '-value', 'ethertype8100')  #
                 prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority')  #
                 self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue')  #
                 vlan_1p = self._handle.add(prio, 'singleValue')  #
-                self._handle.setMultiAttribute(vlan_1p, 'value', p_priority)  # need to add 1p_priority as an argument
+                self._handle.setMultiAttribute(vlan_1p, '-value', p_priority)  # need to add 1p_priority as an argument
+                self._handle.commit()
                 ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
                 self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
                 self._handle.commit()
                 ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
                 self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
-                self._handle.commit()
+                
         self._handle.commit()
         mac_devices = []  # as this are added to ixia need to remap as per ixia API's
         ip_devices = []
@@ -1556,17 +1557,27 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                           dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                           dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id,
-                                                                          src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix)
+                                                                          src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
                 self.ix_start_hosts(ip_type=ip_type)
                 self._started_hosts = True
                 helpers.log("IP Devices: %s" % ip_devices)
-                traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+                if vlan_priority is None:
+                    traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                              frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
                                                              vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                else:
+                    traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+                                                             frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                             vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                             burst_count=burst_count, burst_gap=burst_gap,
+                                                             protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
+                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                    
                 traffic_stream1.append(traffic_item)
 
             helpers.log('### Created Traffic Stream with Ip Devices ...')

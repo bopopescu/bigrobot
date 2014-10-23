@@ -1081,7 +1081,8 @@ class T5(object):
         while (i <= int(count)):
             endpoint_new = "%s_%d" % (endpoint, i)
             mac = EUI(mac).value
-            mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+     #       mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+            mac = "{0}".format(str(EUI(mac+1)).replace('-', ':'))       
             url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint' % (tenant, vns)
             c.rest.post(url, {"name": endpoint_new}, quiet=quiet)
             url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
@@ -2552,79 +2553,6 @@ class T5(object):
         else:
             helpers.log("Given switch name and role is not valid")
 
-    def cli_get_qos_weight(self, node, port='0'):
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_weight_info ' + port + '"'
-        content = s.enable(string)['content']
-        info = []
-        temp = helpers.strip_cli_output(content, to_list=True)
-        helpers.log("***temp is: %s  \n" % temp)
-
-        for line in temp:
-            helpers.log("***line is: %s  \n" % line)
-            line = line.lstrip()
-            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
-            if match:
-                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
-                info.append(match.group(2))
-
-        helpers.log("***Exiting with info: %s  \n" % info)
-
-        return info
-
-    def cli_get_qos_port_stat(self, node, port='0'):
-        '''
-        get the packet
-        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
-
-        '''
-
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_port_stat ' + port + '"'
-        content = s.enable(string)['content']
-        info = {}
-        temp = helpers.strip_cli_output(content, to_list=True)
-        helpers.log("***temp is: %s  \n" % temp)
-
-        for line in temp:
-#            helpers.log("***line is: %s  \n" % line)
-            line = line.lstrip()
-            match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
-            if match:
-#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" %
-#                    (match.group(1), match.group(2), match.group(3)))
-                ID = match.group(1) + '_' + match.group(2)
-                if match.group(3) == 0:
-                    continue
-                info[ID] = {}
-                info[ID]['outPkts'] = match.group(3)
-
-        helpers.log("***Exiting with info: %s  \n" % info)
-        return info
-
-
-    def cli_qos_clear_stat(self, node, port='0'):
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_clear_stat ' + port + '"'
-        s.enable(string)
-
-        return True
-
-    def get_queue_with_traffic(self, node, port, threshold):
-        '''
-        '''
-        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))
-        info = self.cli_get_qos_port_stat(node, port)
-        traffic_queue = []
-        for queue in info:
-            helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
-            if int(info[queue]['outPkts']) >= int(threshold):
-                traffic_queue.append(queue)
-        return traffic_queue
-
 
     def cli_get_links_nodes_list(self, node1, node2):
         '''
@@ -3093,4 +3021,21 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         con.cli("")
         return True
 
+    def rest_get_router_mac(self,ip,node='master'):
+        '''get the router mac address
+            Input: router ip address
+            Return:   mac address
+        '''
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/router-ip-table'  
+        c.rest.get(url)
+        data = c.rest.content()
+ 
+        if len(data) != 0:
+                for i in range(0, len(data)):
+                    if str(data[i]["ip"]) == ip:                      
+                        return data[i]["mac"]                              
+        else:
+            return False
 
