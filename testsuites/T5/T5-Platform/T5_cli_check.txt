@@ -240,9 +240,9 @@ T21 Verify 'port-group rack0pg1 member switch leaf0a interface' command completi
 T22 Verify 'interface segment' command completion in config mode
     ${result}=  cli walk command  interface segment  3  config_mode=${True}  multiline=tenant A; logical-router  
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion 
+    [Tags]  feature  CLI  cli-completion  smoke
     
 T23 Verify 'interface segment ip address' command completion in config mode
     ${result}=  cli walk command  ip address  2  config_mode=${True}  multiline=tenant A; logical-router; interface segment A1  
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion     
+    [Tags]  feature  CLI  cli-completion  smoke     
