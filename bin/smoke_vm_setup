@@ -437,5 +437,7 @@ if __name__ == '__main__':
                         help="This used for vm RAM on  the KVM HOST Server")
     parser.add_argument("--jenkins_project_name",
                         help="This is project name used in jenkins.bigswitch.com Build Master")
+    parser.add_argument("--jenkins_qcow_path",
+                        help=("Use this option to SCP qcow image from Jenkins server to KVM host"))
     main()
     sys.exit(0)
