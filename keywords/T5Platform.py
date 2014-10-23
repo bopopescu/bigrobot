@@ -6221,6 +6221,14 @@ class T5Platform(object):
         s.enable(string)
 
         return True
+    
+    def cli_clear_lacpa(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "lacpa clear" '
+        s.enable(string)
+
+        return True
 
     
     def cli_get_agent_counters(self, switch,pattern,node='master'):
