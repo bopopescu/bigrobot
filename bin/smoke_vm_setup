@@ -18,9 +18,9 @@ if 'BIGROBOT_TESTBED' in os.environ:
     print "Unsetting env BIGROBOT_TESTBED..."
     del os.environ['BIGROBOT_TESTBED']
 
-vmdk_name = "/var/lib/jenkins/jobs/bcf\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-*.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-*.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
-vmdk_path = "/var/lib/jenkins/jobs/bcf\ master/lastSuccessful/archive/target/appliance/images/bcf/"
+vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/target/appliance/images/bcf/"
 kvm_host = "10.192.104.13"
 kvm_user = "root"
 kvm_pwd = "bsn"
