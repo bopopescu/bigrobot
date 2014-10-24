@@ -309,7 +309,59 @@ class T5Platform(object):
         else:
             return True
                                          
+
+    def cli_enable_qos(self):
+        ''' Function to enable qos using cli commands
+            Input: 
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
         
+        c.config("config")
+        
+        
+        try:
+            c.send('fabric')
+            c.expect([c.get_prompt()])
+            c.send('qos')
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+        else:
+            return True
+        
+
+    def cli_disable_qos(self):
+        ''' Function to enable qos using cli commands
+            Input: 
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        c.config("config")
+        
+        
+        try:
+            c.send('fabric')
+            c.expect([c.get_prompt()])
+            c.send('no qos')
+            c.expect([c.get_prompt()])
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+        else:
+            return True
+
+
 
     def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
