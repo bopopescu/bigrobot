@@ -1,0 +1,573 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+   ip: 10.9.0.10
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ #console:
+   #ip: regress
+   #libvirt_vm_name: amallina_ztn-c1_06251549
+   user: admin
+   password: adminadmin
+c2:
+   ip: 10.9.0.11
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ #console:
+   #ip: regress
+   #libvirt_vm_name: amallina_snt-c2_06251553
+   user: admin
+   password: adminadmin
+s1:
+  #ip: 10.8.0.147
+  alias: leaf0-a
+  leaf-group: rack0
+  mac: 70:72:cf:b7:6a:2e
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7005
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+  
+s2:
+  #ip: 10.8.0.150
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: 70:72:cf:bc:ce:04
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7006
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+  #ip: 10.8.0.146
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:cf:b7:6e:ce
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7007
+  set_session_ssh: false
+  set_init_ping: false
+s4:
+  #ip: 10.8.0.151
+  alias: leaf1-b
+  leaf-group: rack1
+  mac: 70:72:cf:ab:38:58
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7008
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+  #ip: 10.8.0.155
+  alias: leaf2-a
+  leaf-group: rack2
+  mac: 70:72:cf:b7:69:9a
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7009
+  set_session_ssh: false
+  set_init_ping: false
+s6:
+  #ip: 10.8.0.152
+  alias: leaf2-b
+  leaf-group: rack2
+  mac: 70:72:cf:ab:3b:98
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7010
+  set_session_ssh: false
+  set_init_ping: false
+s7:
+  #ip: 10.8.0.153
+  alias: leaf3-a
+  leaf-group: rack3
+  fabric-role: spine
+  mac: 70:72:cf:bc:ce:4e
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7011
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+  #ip: 10.8.0.153
+  alias: leaf3-b
+  leaf-group: rack3
+  fabric-role: spine
+  mac: 70:72:cf:b7:69:50
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7012
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s9:
+  #ip: 10.8.0.147
+  alias: leaf4-a
+  leaf-group: rack4
+  mac: 70:72:cf:b5:fc:be
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7013
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+  
+s10:
+  #ip: 10.8.0.150
+  alias: leaf4-b
+  leaf-group: rack4
+  mac: 70:72:cf:bc:c7:a8
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7014
+  set_session_ssh: false
+  set_init_ping: false
+s11:
+  #ip: 10.8.0.146
+  alias: leaf5-a
+  leaf-group: rack5
+  mac: 70:72:cf:b5:fd:e6
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7015
+  set_session_ssh: false
+  set_init_ping: false
+s12:
+  #ip: 10.8.0.151
+  alias: leaf5-b
+  leaf-group: rack5
+  mac: 70:72:cf:b7:69:e4
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7016
+  set_session_ssh: false
+  set_init_ping: false
+s13:
+  #ip: 10.8.0.155
+  alias: leaf6-a
+  leaf-group: rack6
+  mac: 70:72:cf:b7:6a:c2
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7017
+  set_session_ssh: false
+  set_init_ping: false
+s14:
+  #ip: 10.8.0.152
+  alias: leaf6-b
+  leaf-group: rack6
+  mac: 70:72:cf:b7:6c:34
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7018
+  set_session_ssh: false
+  set_init_ping: false
+s15:
+  #ip: 10.8.0.155
+  alias: leaf7-a
+  leaf-group: rack7
+  mac: 70:72:cf:b7:6b:56
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7019
+  set_session_ssh: false
+  set_init_ping: false
+s16:
+  #ip: 10.8.0.152
+  alias: leaf7-b
+  leaf-group: rack7
+  mac: 70:72:cf:b5:fd:52
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7020
+  set_session_ssh: false
+  set_init_ping: false
+  
+s17:
+  #ip: 10.8.0.147
+  alias: leaf8-a
+  leaf-group: rack8
+  mac: 70:72:cf:bc:c6:80
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7021
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+  
+s18:
+  #ip: 10.8.0.150
+  alias: leaf8-b
+  leaf-group: rack8
+  mac: 70:72:cf:bc:c6:ca
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7022
+  set_session_ssh: false
+  set_init_ping: false
+s19:
+  #ip: 10.8.0.146
+  alias: leaf9-a
+  leaf-group: rack9
+  mac: 70:72:cf:bc:c6:36
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7023
+  set_session_ssh: false
+  set_init_ping: false
+s20:
+  #ip: 10.8.0.151
+  alias: leaf9-b
+  leaf-group: rack9
+  mac: 70:72:cf:b5:fe:c4
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7024
+  set_session_ssh: false
+  set_init_ping: false
+s21:
+  #ip: 10.8.0.155
+  alias: leaf10-a
+  leaf-group: rack10
+  mac: 70:72:cf:b5:fb:e0
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7025
+  set_session_ssh: false
+  set_init_ping: false
+s22:
+  #ip: 10.8.0.152
+  alias: leaf10-b
+  leaf-group: rack10
+  mac: 70:72:cf:bc:c8:d0
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7026
+  set_session_ssh: false
+  set_init_ping: false
+s23:
+ #ip: 10.8.0.155
+  alias: leaf11-a
+  leaf-group: rack11
+  mac: 70:72:cf:b5:fc:2a
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7027
+  set_session_ssh: false
+  set_init_ping: false
+s24:
+  #ip: 10.8.0.152
+  alias: leaf11-b
+  leaf-group: rack11
+  mac: 70:72:cf:bc:cd:70
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7028
+  set_session_ssh: false
+  set_init_ping: false
+  
+s25:
+  #ip: 10.8.0.147
+  alias: leaf12-a
+  leaf-group: rack12
+  mac: 70:72:cf:bc:c5:a2
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7029
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+  
+s26:
+  #ip: 10.8.0.150
+  alias: leaf12-b
+  leaf-group: rack12
+  mac: 70:72:cf:bc:c4:30
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7030
+  set_session_ssh: false
+  set_init_ping: false
+s27:
+  #ip: 10.8.0.146
+  alias: leaf13-a
+  leaf-group: rack13
+  mac: 70:72:cf:b7:6a:78
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7031
+  set_session_ssh: false
+  set_init_ping: false
+s28:
+  #ip: 10.8.0.151
+  alias: leaf13-b
+  leaf-group: rack13
+  mac: 70:72:cf:b6:00:ca
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7032
+  set_session_ssh: false
+  set_init_ping: false
+s29:
+  #ip: 10.8.0.155
+  alias: leaf14-a
+  leaf-group: rack14
+  mac: 70:72:cf:b7:5f:32
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7033
+  set_session_ssh: false
+  set_init_ping: false
+s30:
+  #ip: 10.8.0.152
+  alias: leaf14-b
+  leaf-group: rack14
+  mac: 70:72:cf:b7:6d:a6
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7034
+  set_session_ssh: false
+  set_init_ping: false
+s31:
+ #ip: 10.8.0.155
+  alias: leaf15-a
+  leaf-group: rack15
+  mac: 70:72:cf:bc:c7:14
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7035
+  set_session_ssh: false
+  set_init_ping: false
+s32:
+  #ip: 10.8.0.152
+  alias: leaf15-b
+  leaf-group: rack15
+  mac: 70:72:cf:b6:00:80
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7036
+  set_session_ssh: false
+  set_init_ping: false
+  
+s33:
+   #ip: 10.8.0.153
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:cf:ae:a7:fc
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7001
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s34:
+  #ip: 10.8.0.149
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:cf:ae:b0:9e
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7002
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 20
+  set_session_ssh: false
+  set_init_ping: false
+  
+  
+s35:
+   #ip: 10.8.0.153
+  alias: spine2
+  fabric-role: spine
+  mac: 70:72:cf:ae:a5:72
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7003
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s36:
+  #ip: 10.8.0.149
+  alias: spine3
+  fabric-role: spine
+  mac: 70:72:cf:ae:9d:52
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7004
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 20
+  set_session_ssh: false
+  set_init_ping: false
+  
+s37:
+   #ip: 10.8.0.153
+  alias: spine4
+  fabric-role: spine
+  mac: 70:72:cf:bd:4b:00
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7047
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s38:
+  #ip: 10.8.0.149
+  alias: spine5
+  fabric-role: spine
+  mac: 70:72:cf:bd:4d:08
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.98
+    port: 7048
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 20
+  set_session_ssh: false
+  set_init_ping: false
+
+#h1:
+#  ip: 10.193.0.21
+#   ip: 10.195.0.103
+#   user: root
+#   password: bsn
+   
+      
+#h2:
+#  ip: 10.195.0.104
+#  user: root
+#  password: bsn
+  
+#h3:
+#  ip: 10.195.0.101
+#  user: root
+#  password: bsn
+   
+#h4:
+#  ip: 10.195.0.102
+#  user: root
+#  password: bsn
+     
+#h5:
+#  ip: 10.195.0.105
+#  user: root
+#  password: bsn
+     
+#h6:
+#  ip: 10.195.0.106
+#  user: root
+#  password: bsn
+  
+#tg1:
+#  platform: 'ixia'
+#  chassis_ip: 10.8.0.5
+#  tcl_server_ip: 10.9.19.231
+#  ports:
+#    a:
+#      name: 12/1
+#    b:
+#      name: 12/2
+#    c:
+#      name: 12/3
+#    d:
+#      name: 12/4
+#    e:
+#      name: 12/6
+#    f:
+#      name: 12/7
+        
+ 
