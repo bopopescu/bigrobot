@@ -16,8 +16,8 @@ ${version_string}  Big Tap Controller 4.0.0
 * Test Case
 TC1: Delete Switch level Configuration
     rest cleanconfig bigtap add grp
-    rest cleanconfig switch config
-    rest cleanconfig bigtap user defined offset
+    rest cleanconfig switch config    
     rest cleanconfig bigtap policy
+    rest cleanconfig bigtap user defined offset
     
                             

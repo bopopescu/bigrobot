@@ -878,19 +878,18 @@ class BigTapCommon(object):
         switch_data = c.rest.content()
         url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]'
        # url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"] {"role": "filter"}'
-        print "type of switch_data is %s" % (type(switch_data))
+        helpers.test_log("type of switch_data is %s" % (type(switch_data)))
         if len(switch_data) != 0:
             for intf in switch_data:
-                print "type of intf is %s" % (type(intf))
+                helpers.test_log("type of intf is %s" % (type(intf)))
                 if "interface" and "name" and "role" and "switch" in intf.keys():
-                    print  "Now will be deleting :: %s %s %s %s" % (intf["switch"], intf["role"], intf["interface"], intf["name"])
+                    helpers.test_log("Now will be deleting :: %s %s %s %s" % (intf["switch"], intf["role"], intf["interface"], intf["name"]))
                     final_url = url % (intf["interface"], intf["switch"])
                     c.rest.delete(url % (intf["interface"], intf["switch"]), {'role':intf["role"]})
         else:
             helpers.test_log("Switch data is empty no switches configured")
             return True
 
-               # print  policy_dict % (intf["switch"], intf["role"], intf["interface"], intf["name"])
         # Make sure there is no config left after deletion of roles
         c.rest.get(show_url)
         role_data_after_delete = c.rest.content()
@@ -906,7 +905,7 @@ class BigTapCommon(object):
         data = c.rest.content()
         for switch in data:
             if "dpid" in switch.keys():
-                print "Going to delete: %s" % (switch["dpid"])
+                helpers.test_log("Going to delete: %s" % (switch["dpid"]))
                 switch_delete_url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (switch["dpid"])
                 c.rest.delete(switch_delete_url)
         # Make sure all switches have been deleted
@@ -936,12 +935,16 @@ class BigTapCommon(object):
             return False
 
         show_url = "/api/v1/data/controller/applications/bigtap/ip-address-set?config=true"
-        c.rest.get(show_url)
-        addr_grp_data = c.rest.content()
+        try:
+            c.rest.get(show_url)
+            addr_grp_data = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
         delete_url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]'
         if len(addr_grp_data) != 0:
             for add_grp in addr_grp_data:
-                print "type of add_grp is %s" % (type(add_grp))
+                helpers.test_log("type of add_grp is %s" % (type(add_grp)))
                 if "name" in add_grp.keys():
                     c.rest.delete(delete_url % (add_grp['name']))
                 else:
