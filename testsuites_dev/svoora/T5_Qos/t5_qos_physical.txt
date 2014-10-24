@@ -1,24 +1,33 @@
 * Setting
 Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
-Suite Setup     test setup topology
-Suite Teardown  test teardown topology
-Test Setup      base test setup
-Test Teardown   test teardown
-Force Tags      IronHorse  T5  Policy
-Library         keywords/BsnCommon.py
-Library         keywords/Host.py
-Library         keywords/T5.py
-Library         keywords/T5L3.py
-Library         keywords/T5Platform.py
-Library			keywords/SwitchLight.py
-Library 		keywords/T5Utilities.py
-Library         keywords/BsnCommon.py
+Documentation    T5 Test Suite
+Suite Setup      fabric infra suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       IronHorse   T5
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs
+
+* Variable
+${short}  1
+${medium}  3
+${long}   10
+${verylong}     120 
 
 
 
@@ -27,36 +36,125 @@ Library         Dialogs
 ###### Policy at tenant interface ############
 #---------------------------------------------
 
-T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
+T1 With default QoS verify .1p mappings to queues
+	[Tags]  feature  qos
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+ 	
+ 	
+T2 With default QoS verify queue weights
+	[Tags]  feature  qos
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+
+T3 With QoS enabled verify .1p mappings and queue weights
+	[Tags]  feature  qos
+	${result}=  cli enable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  yes
+ 	\   Should be True  ${result}
+
+T4 With QoS disabled verify .1p mappings and queue weights
+	[Tags]  feature  qos
+	${result}=  cli disable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+
+
+T5 With default QoS leaf to leaf traffic
 	[Tags]  feature  ixia
-	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1  vlan_id=100  vlan_priority=3  frame_size=1500
-    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+	${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+    pause   FREEZEE!
+    ${stream_23}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_45}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_67}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
     clear stats
 	sleep				   5
-    start traffic  ${stream}
+    start traffic  ${stream_01}
+    start traffic  ${stream_23}
+    start traffic  ${stream_45}
+    start traffic  ${stream_67}
     sleep                  5
     pause  FREZZEE!!
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
 	sleep  2
-	rest remove policy on tenant				${tenantX}		${tenant2_polname}
-	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
-    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
-    clear stats
-    start traffic  ${stream}
-    sleep                  5
-    stop traffic   ${stream}
-    sleep  2                  
-    verify results   c   a
-    delete traffic
-
+	
 
 	
 	
 	
 	
 * Keywords
+
+fabric infra suite setup
+ 	base suite setup 
+	set fabric switches 	
+	rest_delete_portgroup_all 
+	rest_delete_tenant_all
+	cli disable qos
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+	test setup topology  
+ 	 
+  
+set fabric switches  
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+	rest add switch               ${node}
+	rest add dpid                 ${node}          ${dpid}  
+	rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+	rest add switch               ${node}
+	rest add dpid                 ${node}         ${dpid} 
+	rest add fabric role          ${node}         leaf
+	rest_add_leaf_group           ${node}         ${leafg} 
+ 
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}	
+
 verify results   [Arguments]  ${port_1}   ${port_2}  
    ${report}=  fetch port stats
    ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
@@ -89,7 +187,6 @@ verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${s
 
 
 test setup topology
-	base suite setup
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
@@ -110,10 +207,10 @@ test setup topology
 	REST add vns ip  								Y							Y1				10.252.1.1				24	
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add interface to vns						X							X1				leaf0-a					${ixia1}	100
-	REST add interface to vns						X							X2				leaf0-a					${ixia3}	100
-	REST add interface to vns						X							X3				leaf0-b					${ixia2}	100
-	REST add interface to vns						Y							Y1				leaf1-a					${ixia4}	100
-	REST add interface to vns						Z							Z1				leaf1-a					${ixia7}	100
+	REST add interface to vns						X							X1				leaf0-a					${ixia3}	100
+	REST add interface to vns						X							X1				leaf0-b					${ixia2}	100
+	REST add interface to vns						X							X1				leaf1-a					${ixia4}	100
+	REST add interface to vns						X							X1				leaf1-a					${ixia7}	100
 	
 	REST add tenant routers intf to system			X
 	REST add tenant routers intf to system			Y
@@ -146,42 +243,6 @@ test teardown topology
 	REST delete tenant routers intf to system		Y
 	REST delete tenant routers intf to system		Z
 	T5 base suite teardown
-	
-
-T5 base suite setup
-	base suite setup
-	#add fabric switch
-	sleep 											5
-	${result} = 									CLI verify controller		s1							c1		
-	Should Be True									${result}
-	${result} = 									CLI verify controller   	s1							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s2							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s2							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s3							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s3							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s4							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s4							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s5							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s5							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c2
-	Should Be True									${result}		
-
-
-  
-T5 base suite teardown
-	#delete fabric switch
-	base suite teardown  
 
 
 #verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
@@ -192,48 +253,6 @@ T5 base suite teardown
 #    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
 #    Should be true  ${in_range}	
   	
-add fabric switch
-  rest add switch  spine0  
-  rest add dpid  spine0  ${spine0_dpid}
-  rest add fabric role  spine0  spine 
-  rest add switch  spine1 
-  rest add dpid  spine1  ${spine1_dpid}
-  rest add fabric role  spine1  spine
-  rest add switch  leaf0-a 
-  rest add dpid  leaf0-a  ${leaf0a_dpid}
-  rest add fabric role  leaf0-a  leaf
-  rest add leaf group  leaf0-a  rack0
-  rest add switch  leaf0-b 
-  rest add dpid  leaf0-b  ${leaf0b_dpid}
-  rest add fabric role  leaf0-b  leaf
-  rest add leaf group  leaf0-b  rack0
-  rest add switch  leaf1-a 
-  rest add dpid  leaf1-a  ${leaf1a_dpid}
-  rest add fabric role  leaf1-a  leaf
-  rest add leaf group  leaf1-a  rack1
-  rest add switch  leaf1-b 
-  rest add dpid  leaf1-b  ${leaf1b_dpid}
-  rest add fabric role  leaf1-b  leaf
-  rest add leaf group  leaf1-b  rack1
-  rest add switch  leaf2-a 
-  rest add dpid  leaf2-a  ${leaf2a_dpid}
-  rest add fabric role  leaf2-a  leaf
-  rest add leaf group  leaf2-a  rack2
-  rest add switch  leaf2-b 
-  rest add dpid  leaf2-b  ${leaf2b_dpid}
-  rest add fabric role  leaf2-b  leaf
-  rest add leaf group  leaf2-b  rack2
-  
-delete fabric switch  
-  rest delete fabric switch  spine0 
-  rest delete fabric switch  spine1 
-  rest delete fabric switch  leaf2-a 
-  rest delete fabric switch  leaf2-b 
-  rest delete fabric switch  leaf0-a 
-  rest delete fabric switch  leaf0-b 
-  rest delete fabric switch  leaf1-a 
-  rest delete fabric switch  leaf1-b 
-
 
 test teardown
   delete traffic
