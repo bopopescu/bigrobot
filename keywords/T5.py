@@ -2574,6 +2574,92 @@ class T5(object):
 
         return info
 
+    def cli_get_verify_priority_queue_mapping(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_info"'
+        content = s.enable(string)['content']
+        priority_mapping=[]
+        queue_mapping=[]
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'priority (\d+).* queue (\d+)', line)
+            if match:
+                helpers.log("INFO: Global QOS parameters:: priority is: %s,  queue is: %s" % (match.group(1), match.group(2)))
+                priority_mapping.append(match.group(1))
+                queue_mapping.append(match.group(2))
+        helpers.log("Matched priority and queue values are: %s::%s" % (priority_mapping, queue_mapping))
+        if not priority_mapping:
+                helpers.test_failure("ERROR: failed to get priority mapping info")
+        queue=0
+        index=0
+        flag=True
+        while queue <= 3:
+            if (int(queue_mapping[index]) == queue):
+                if(int(queue_mapping[index+1]) == queue):
+                    helpers.log("Priority and Queue mappings matched")
+                else:
+                    helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" %(queue, queue_mapping[index]))
+                    flag=False
+                    return False
+            else:
+                helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" %(queue, queue_mapping[index]))
+                flag=False
+                return False
+            index=index+2
+            queue=queue+1
+        
+        if flag:
+            return True
+        else:
+            return False
+
+    def cli_get_verify_queue_weights(self, node, qos='no'):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_info"'
+        content = s.enable(string)['content']
+        global_mapping=[]
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'qid=(\d+).* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: Global QOS parameters:: qid is: %s,  queue weight is: %s" % (match.group(1), match.group(2)))
+                global_mapping.append(match.group(2))
+        helpers.log("Matched queue weights are: %s" % global_mapping)
+        if not global_mapping:
+                helpers.test_failure("ERROR: failed to get queue weights info")
+        index=global_mapping[0]
+        i=1
+        if (qos == 'yes'):
+            for key in global_mapping:
+                val=i*int(index)
+                if (int(key) == val):
+                    helpers.log("Matched queue weight from switch:%s and weight expected: %s" %(int(key), val))
+                else:
+                    helpers.test_failure("queue weights are not matched weight from switch:%s and weight expected: %s" %(int(key), val))
+                    return False
+                i=i+1
+        else:
+            for key in global_mapping:
+                if (key == '1'):
+                    helpers.log("Matched queue weight")
+                else:
+                    helpers.test_failure("queue weights are not matched")
+                    return False
+        return True
+            
+        
+
+
     def cli_get_qos_port_stat(self, node, port='0'):
         '''
         get the packet
