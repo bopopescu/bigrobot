@@ -195,6 +195,7 @@ class KVMOperations(object):
             match = re.match(r'/var/lib/jenkins/jobs/(.*)/lastSuccessful/', remote_qcow_path)
             if match:
                 jenkins_project_name = match.group(1)
+        helpers.summary_log("Using Jenkins Project Name: %s" % jenkins_project_name)
         latest_build_number = self._get_latest_jenkins_build_number(vm_type, jenkins_project_name=jenkins_project_name)
         latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle, jenkins_project_name=jenkins_project_name)
         if build_number is not None:
