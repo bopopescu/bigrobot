@@ -2553,6 +2553,7 @@ class T5(object):
         else:
             helpers.log("Given switch name and role is not valid")
 
+
     def cli_get_qos_weight(self, node, port='0'):
         t = test.Test()
         s = t.switch(node)
@@ -2711,6 +2712,7 @@ class T5(object):
             if int(info[queue]['outPkts']) >= int(threshold):
                 traffic_queue.append(queue)
         return traffic_queue
+
 
 
     def cli_get_links_nodes_list(self, node1, node2):
@@ -3180,4 +3182,21 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         con.cli("")
         return True
 
+    def rest_get_router_mac(self,ip,node='master'):
+        '''get the router mac address
+            Input: router ip address
+            Return:   mac address
+        '''
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/router-ip-table'  
+        c.rest.get(url)
+        data = c.rest.content()
+ 
+        if len(data) != 0:
+                for i in range(0, len(data)):
+                    if str(data[i]["ip"]) == ip:                      
+                        return data[i]["mac"]                              
+        else:
+            return False
 

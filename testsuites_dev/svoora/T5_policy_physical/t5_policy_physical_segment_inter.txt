@@ -28,7 +28,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
-	[Tags]  feature
+	[Tags]  feature  ixia
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -47,7 +47,7 @@ T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to des
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
-    #pause  FREZZEE!!
+    pause  FREZZEE!!
     stop traffic   ${stream}
     verify results   c   b
     delete traffic

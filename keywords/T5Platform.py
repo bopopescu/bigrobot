@@ -6265,4 +6265,175 @@ class T5Platform(object):
         return True
           
 
+    
+    def cli_clear_icmpa(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "icmpa clear" '
+        s.enable(string)
+
+        return True
+    
+    def cli_clear_lacpa(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "lacpa clear" '
+        s.enable(string)
+
+        return True
+
+    
+    def cli_get_agent_counters(self, switch,pattern,node='master'):
+        '''
+        get the packet
+        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
+
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+        string = 'show switch '+ switch + ' agent-counters  | grep '  + pattern      
+        c.enable(string)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        helpers.log("USR INFO: line is:  %s" % temp)        
+        match = re.match(r'.* (\d+)', temp)
+        counter = 0
+        if match:
+            counter = match.group(1)
+        return counter
+   
+    def cli_get_qos_weight(self, node, port='0'):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_weight_info ' + port + '"'
+        content = s.enable(string)['content']
+        info = []
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
+                info.append(match.group(2))
+
+        helpers.log("***Exiting with info: %s  \n" % info)
+
+        return info
+
+    def cli_get_qos_port_stat(self, node, port='0'):
+        '''
+        get the packet
+        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
+
+        '''
+
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_port_stat ' + port + '"'
+        content = s.enable(string)['content']
+        info = {}
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+#            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
+            if match:
+#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" %
+#                    (match.group(1), match.group(2), match.group(3)))
+                ID = match.group(1) + '_' + match.group(2)
+                if match.group(3) == 0:
+                    continue
+                info[ID] = {}
+                info[ID]['outPkts'] = match.group(3)
+
+        helpers.log("***Exiting with info: %s  \n" % info)
+        return info
+
+
+    def cli_qos_clear_stat(self, node, port='0'):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_clear_stat ' + port + '"'
+        s.enable(string)
+
+        return True
+
+    def cli_clear_pimu_stat(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "clear-rx-pimu-stats" '  
+        s.enable(string)
+
+        return True
+
+
+    def cli_get_pimu_stat(self, node):
+        '''
+        get the packet
+        # Name    Invoked    Drop  Forward     Fwd priority   Error        
+        '''
+
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "rx-pimu-stats" '
+        content = s.enable(string)['content']
+        info = {}
+        temp = helpers.strip_cli_output(content,to_list=True)
+        temp = temp[1:]        
+        helpers.log("***temp is: %s  \n" % temp)
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)            
+            if 'nonfab pdu' in line:
+                line = line.replace("nonfab pdu", "nonfab_pdu")
+            elif 'L2 miss/move' in line:
+                line = line.replace("L2 miss/move", "L2_miss_move")
+                 
+            elif 'debug/acl' in line:
+                line = line.replace("debug/acl", "debug_acl")
+                
+            elif 'L3 to cpu' in line:
+                line = line.replace("L3 to cpu", "L3_to_cpu")
+                
+            elif 'L3 Miss/ttl' in line:
+                line = line.replace("L3 Miss/ttl", "L3_Miss_ttl")
+                
+            elif 'unused 1' in line:
+                line = line.replace("unused 1", "unused_1")
+               
+            elif 'unused 2' in line:
+                line = line.replace("unused 2", "unused_2")
+                
+            line = line.lstrip()
+            fields = line.split()
+            info[fields[1]] = {} 
+            info[fields[1]]['name'] = fields[1]
+            info[fields[1]]['invoked'] = fields[2]
+            info[fields[1]]['drop'] = fields[3]
+            info[fields[1]]['forward'] = fields[4]
+            info[fields[1]]['priority'] = fields[5]
+            info[fields[1]]['error'] = fields[6]
+        helpers.log("***Exiting with info: %s  \n" % info)
+        return info
+ 
+
+
+    def get_queue_with_traffic(self, node, port, threshold):
+        '''
+        '''
+        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))
+        info = self.cli_get_qos_port_stat(node, port)
+        traffic_queue = []
+        for queue in info:
+            helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
+            if int(info[queue]['outPkts']) >= int(threshold):
+                traffic_queue.append(queue)
+        return traffic_queue
+
+  
  

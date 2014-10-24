@@ -68,6 +68,9 @@ T1 Setup Tenant and VNS
     rest add router intf  A  A2
     rest add vns ip  A  A1  10.0.0.254  24
     rest add vns ip  A  A2  20.0.0.254  24
+    rest add nexthop group  A  nh1 
+    rest add nexthopGroup ip  A  nh1  1.1.1.1
+    rest add policy  A  p1    
     mininet host ipcfg  bm0  bm0-bond0  10.0.0.1  24
     mininet host ipcfg  bm2  bm2-bond0  10.0.0.2  24
     mininet host ipcfg  bm1  bm1-bond0  20.0.0.1  24
@@ -240,9 +243,24 @@ T21 Verify 'port-group rack0pg1 member switch leaf0a interface' command completi
 T22 Verify 'interface segment' command completion in config mode
     ${result}=  cli walk command  interface segment  3  config_mode=${True}  multiline=tenant A; logical-router  
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion 
+    [Tags]  feature  CLI  cli-completion  smoke
     
 T23 Verify 'interface segment ip address' command completion in config mode
     ${result}=  cli walk command  ip address  2  config_mode=${True}  multiline=tenant A; logical-router; interface segment A1  
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion     
+    [Tags]  feature  CLI  cli-completion  smoke   
+    
+T24 Verify 'next-hop-group' command completion in config mode
+    ${result}=  cli walk command  next-hop-group  2  config_mode=${True}  multiline=tenant A; logical-router
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  smoke
+    
+T25 Verify 'next-hop-group ip' command completion in config mode
+    ${result}=  cli walk command  ip  2  config_mode=${True}  multiline=tenant A; logical-router; next-hop-group nh1
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  smoke
+    
+T26 Verify 'policy-list' command completion in config mode
+    ${result}=  cli walk command  policy-list  2  config_mode=${True}  multiline=tenant A; logical-router
+    Should be true  ${result}
+    [Tags]  feature  CLI  cli-completion  smoke       
