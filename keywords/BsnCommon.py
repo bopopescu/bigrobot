@@ -1978,7 +1978,7 @@ class BsnCommon(object):
         Return the Mac secified in Topo file against give switch node
         '''
         t = test.Test()
-        return t.params(node, 'mac')
+        return '00:00:' + t.params(node, 'mac')
 
     def get_next_mac(self, *args, **kwargs):
         """
