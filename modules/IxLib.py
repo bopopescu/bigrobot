@@ -180,6 +180,28 @@ class Ixia(object):
         helpers.log("### Done adding two device groups")
         return mac_devices
 
+    def get_eth_device_and_ip_device(self, mac, topo_name):
+        handle = self._handle
+        topos = handle.getList(handle.getRoot(), 'topology')
+        print("Topos found: %s" % topos)
+        for topo in topos:
+            ixia_topo_name = handle.getAttribute(topo, '-name')
+            helpers.debug("ixia_topo name found: %s" % ixia_topo_name)
+            if topo_name == ixia_topo_name:
+                dev_group = handle.getList(topo, 'deviceGroup')
+                helpers.debug("ixia_device group found: %s" % dev_group)
+                for device in dev_group:
+                    eth_devices = handle.getList(device, 'ethernet')
+                    helpers.debug("ixia eth_Devices found: %s" % eth_devices)
+                    for eth_device in eth_devices:
+                        ixia_mac = handle.getAttribute(eth_device, '-mac')
+                        ixia_mac_value = handle.getAttribute(ixia_mac + '/singleValue' , '-value')
+                        helpers.debug("ixia_mac_value found : %s" % ixia_mac_value)
+                        ixia_ip_devices = handle.getList(eth_device, 'ipv4')
+                        helpers.debug("ixia_ip_devices: %s" % ixia_ip_devices)
+                        if ixia_mac_value == mac:
+                            return eth_device, ixia_ip_devices[0]
+        return None, None
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
@@ -203,16 +225,23 @@ class Ixia(object):
         prefixs = [src_gw_prefix, dst_gw_prefix]
 
         topo_names = []
+        mac_devices = []  # as this are added to ixia need to remap as per ixia API's
+        ip_devices = []
+        ixia_refs = {}  # Dictionary to hold the Ixia References
+        topo_devices = []
+        eth_devices = []
 
         for topo in topology:
             if len(self._handle.getList(topo, 'deviceGroup')) > 0:
                 helpers.log('Ixia Device Group already created for this Topology so no need to created again')
             else:
+                helpers.log("First Stop Protocols on all topos before adding new Topo for Ixia port")
+                self._handle.execute('stop', topo)
+                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+                helpers.log('Sleeps 3 sec for Hosts to be Stopped')
                 self._handle.add(topo, 'deviceGroup')
 
         self._handle.commit()
-        topo_devices = []
-        eth_devices = []
 
         for topo in topology:
             dev_grp = self._handle.getList(topo, 'deviceGroup')
@@ -221,11 +250,23 @@ class Ixia(object):
             self._handle.setMultiAttribute(enabled_ref, '-clearOverlays', False, '-pattern', 'singleValue')
             topo_devices.append(topo_device)
             self._is_device_created = True
-        for (topo_device, multi, topo) in zip(topo_devices, mac_mults, topology):
+
+        # return if the mac_devices and ip_devices are already created with same mac
+#         if len(mac_devices) != 0:
+#             helpers.log("Returning ALready Created ETH_DEVICE AND IP_DEVCIES: %s %s" % (mac_devices, ip_devices))
+#             return mac_devices, ip_devices
+
+        for (topo_device, multi, topo, mac) in zip(topo_devices, mac_mults, topology, macs):
             helpers.log('### topo device : %s' % str(topo_device))
             topo_name = self._handle.getAttribute(topo, '-name')
             topo_names.append(topo_name)
             self._handle.setAttribute(topo_device, '-multiplier', multi)
+            (ixia_eth_device, ixia_ip_device) = self.get_eth_device_and_ip_device(mac, topo_name)
+            if ixia_eth_device is not None:
+                helpers.log("Using ALREADY CREATED IXIA ETH DEVICE AND IP DEVICE SKIPPING CREATING AGAIN FROM SAME MAC...")
+                eth_devices.append(ixia_eth_device)
+                continue
+            helpers.log("Adding NEW ETHERNET DEVICE for MAC: %s" % mac)
             eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
         if p_priority is not None:
             for eth_device in eth_devices:
@@ -247,21 +288,28 @@ class Ixia(object):
                 self._handle.commit()
                 ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
                 self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
-                
+
         self._handle.commit()
-        mac_devices = []  # as this are added to ixia need to remap as per ixia API's
-        ip_devices = []
-        ixia_refs = {}  # Dictionary to hold the Ixia References
+
         for eth_device in eth_devices:
             mac_devices.append(self._handle.remapIds(eth_device)[0])
-        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, prefix) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_steps, gw_ips, gw_macs, prefixs):
+        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, prefix, topo_name) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_steps, gw_ips, gw_macs, prefixs, topo_names):
             ip_name = handle.getAttribute(mac_device, '-name')
 #             ip_name = ip_name + 'IPv4\ 1'
             helpers.log('Values:')
             helpers.log('\nMac Device:%s\nMac_Multi:%s\nMac_Step:%s\nMac:%s\nIP_Steps:%s\nIP:%s\nGW_STEP:%s\nGW_IP:%s\nGW_MAC:%s\nVLAN:%s' %
                         (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, vlan_id))
             helpers.log ('Device: NAME : ' + str(ip_name))
-            ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
+            (ixia_eth_device, ixia_ip_device) = self.get_eth_device_and_ip_device(mac, topo_name)
+            if ixia_eth_device is not None:
+                helpers.log("USING ALREADY CREATED IXIA ETH DEVICE AND IP DEVICE SKIPPING CREATING AGAIN FROM SAME MAC...")
+                ip_device = ixia_ip_device
+                ip_device_ixia = handle.remapIds(ip_device)[0]
+                ip_devices.append(ip_device_ixia)
+                continue
+            else:
+                helpers.log("ADDING NEW IP_DEVICE  for MAC: %s" % mac)
+                ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
             ip_device_ixia = handle.remapIds(ip_device)[0]
             handle.commit()
             ip_devices.append(ip_device_ixia)
@@ -510,7 +558,7 @@ class Ixia(object):
                                               '-startValue', vlan_id)
                     self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
                                               '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
-                    
+
         helpers.log("Commiting vlan config in IXIA...")
         helpers.log("ip_type : %s, src_ip: %s" % (ip_type, src_ip))
         self._handle.commit()
@@ -1393,7 +1441,7 @@ class Ixia(object):
                                                         vlan_id=vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step, vlan_priority=vlan_priority,
                                                         hex_src_mac=src_mac, hex_dst_mac=dst_mac, src_port=src_port, dst_port=dst_port,
                                                         synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
-            
+
         traffic_stream1.append(traffic_item)
         self.ix_apply_traffic()
         return traffic_stream1[0]
@@ -1613,7 +1661,7 @@ class Ixia(object):
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
-                    
+
                 traffic_stream1.append(traffic_item)
 
             helpers.log('### Created Traffic Stream with Ip Devices ...')
@@ -1747,7 +1795,10 @@ class Ixia(object):
                             break
                         time.sleep(1)
                         mac_device1 = self._handle.getList(device1[0], 'ethernet')
-                        ip_device1 = self._handle.getList(mac_device1[0], ip_type)
+                        if len(mac_device1) == 0:
+                            helpers.log("No Mac devices created for port : %s" % port)
+                        else:
+                            ip_device1 = self._handle.getList(mac_device1[0], ip_type)
                         resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
                         helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
                         time.sleep(1)  # Sleep for the gw arp to get Resolved
