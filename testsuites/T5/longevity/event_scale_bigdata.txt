@@ -36,15 +36,25 @@ ${bigconfigsleep}  300
 ${loop}        5
 ${repeat}      60
 
+ 
+${leaf13-a}     leaf13-a 
+${leaf13-b}     leaf13-b  
+${leaf14-a}     leaf14-a 
+${leaf14-b}     leaf14-b  
+${leaf15-a}     leaf15-a 
+${leaf15-b}     leaf15-b  
 
-${leaf1-a}     dt-leaf1a
-${leaf1-b}     dt-leaf1b
-${leaf2-a}     dt-leaf2a
-${leaf2-b}     dt-leaf2b
  
-${spine1}      dt-spine1
-${spine2}      dt-spine2
  
+${spine0}      spine0
+${spine1}      spine1
+${spine2}      spine2 
+${spine3}      spine3
+${spine4}      spine4
+${spine5}      spine5
+ 
+
+
 * Test Case
  
 	    
@@ -62,9 +72,17 @@ T23 controller node event failover
 T21 spine switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* spine switch node down/up event: ${i}********   
-    \	switch node down/up event      ${spine1} 
+    \	switch node down/up event      ${spine0} 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${spine2}   
+    \	switch node down/up event      ${spine1}   
+    \   sleep  ${inevent}  
+    \	switch node down/up event      ${spine2} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine3}   
+    \   sleep  ${inevent}  
+    \	switch node down/up event      ${spine4} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine5}   
     \   sleep  ${inevent}  
        
 	[Tags] 	longevity   traffic    event      
@@ -72,19 +90,21 @@ T21 spine switch node down/up event
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* spine switch node down/up event: ${i}********   
-    \	switch node down/up event      ${lea1-a} 
+    \	switch node down/up event      ${leaf13-a} 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${leaf1-b} 
+    \	switch node down/up event      ${leaf13-b} 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${leaf2-a} 
+    \	switch node down/up event      ${leaf14-a} 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${leaf2-b} 
+    \	switch node down/up event      ${leaf14-b} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf15-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf15-b} 
     \   sleep  ${inevent}
     
          
-	[Tags] 	longevity   traffic    event   skipped    
-
-
+	[Tags] 	longevity   traffic    event     
 
 T27 data Link down/up event between leaf and spine
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -123,57 +143,21 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${inevent}  
  
  
-	[Tags] 	longevity     traffic     event     
-
-T28 data Link down/up event between leafs 
-    : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* date link down/up ${i}******* 
-	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
-	\  sleep  ${linkflap}  
-	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
-	\  sleep  ${linkflap}  
-	\  data Link down/up event between nodes  ${leaf2-a}    ${leaf2-b} 	
-	\  sleep  ${linkflap}  
-	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
-	\  sleep  ${inevent}  		
-   
-	[Tags] 	 longevity   traffic   event      
-
-T26 big configuration changes (around 500 tenants)
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* big configuration changes tenant ${i}******* 
- 	\  tenant configuration add/remove      ${Tflapnum}       3       
- 	\  sleep  ${bigconfigsleep}  
-   	
-	[Tags] 	longevity     traffic    event     
-
-
-T25 big configuration changes (around 500 vns change)
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* big configuration changes vns ${i}******* 
-  	\  vns configuration add/remove         ${Vflapnum}               
- 	\  sleep  ${bigconfigsleep}  
-  	
-	[Tags] 	longevity     traffic    event     
-
-
-
- 	
+	[Tags] 	longevity     traffic     event      	
 	 
 T51 continues Event
    	log  randomize all the event test cases from T23 to T30
     ${loop}=  Set Variable   1	
     : FOR   ${index}    IN RANGE    0    ${repeat}	
 	\  Log To Console   "\n========******* in continues event loop: ${index} out of ${repeat} ******====== " 
-	\  ${random}=	Evaluate	 random.randint(1,5)    random,sys
+	\  ${random}=	Evaluate	 random.randint(1,4)    random,sys
 	\  Log To Console   "--------random number is ${random} --------" 
-	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 	 
-	\  Run Keyword if    ${random}==2   T27 data Link down/up event between leaf and spine       
-	\  Run Keyword if    ${random}==3   T28 data Link down/up event between leafs 
-	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
-	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
-#	\  Run Keyword if    ${random}==6   T23 controller node event failover
+	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 
+	\  Run Keyword if    ${random}==2   T22 leaf switch node down/up event 		 
+	\  Run Keyword if    ${random}==3   T23 controller node event failover 
+	\  Run Keyword if    ${random}==4   T27 data Link down/up event between leaf and spine       
   	\  sleep  ${betweenevent}
+  	
    
 	[Tags] 	longevity    traffic     
 
@@ -342,84 +326,82 @@ check controller top  [Arguments]  ${node}
  
 ######## test case keyword
 
-T21 spine switch node down/up event 	 
-    : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
-    \	switch node down/up event      ${spine1} 
-    \   sleep  ${inevent}
-    \	switch node down/up event      ${spine2} 
-    \   sleep  ${inevent}  
-  	    
+ 
+        
 T23 controller node event failover        
      : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* controller node failover: ${i}*******    
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	 
 
-
-
+T21 spine switch node down/up event 	 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
+    \	switch node down/up event      ${spine0} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine1}   
+    \   sleep  ${inevent}  
+    \	switch node down/up event      ${spine2} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine3}   
+    \   sleep  ${inevent}  
+    \	switch node down/up event      ${spine4} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine5}   
+    \   sleep  ${inevent}  
+ 
+T22 leaf switch node down/up event 	 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
+    \	switch node down/up event      ${leaf13-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf13-b} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf14-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf14-b} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf15-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf15-b} 
+    \   sleep  ${inevent}
+ 	 
 T27 data Link down/up event between leaf and spine
     : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* data Link down/up event between leaf and spine ${i}******* 
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 	
-	\  sleep  ${inevent}  
+	\  sleep  ${linkflap}  
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-a} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap} 	
 	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf1-b}    ${spine2} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}   ${leaf1-b} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine1} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-a} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf2-b}    ${spine1} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-b} 	
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine2} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf2-a} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${leaf2-b}    ${spine2} 
-	\  sleep  ${inevent}  	
+	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf2-b} 
 	\  sleep  ${inevent}  
  
-  
-T28 data Link down/up event between leafs 
-    : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* date link down/up ${i}******* 
-	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
-	\  sleep  ${inevent}  
-	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
-	\  sleep  ${inevent}  
-	\  data Link down/up event between nodes  ${leaf2-a}    ${leaf2-b} 	
-	\  sleep  ${inevent}  
-	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
-	\  sleep  ${inevent}  		
-  
  
-T26 big configuration changes (around 500 tenants or vns change)
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* big configuration changes ${i}******* 
- 	\  tenant configuration add/remove      ${Tflapnum}       3       
- 	\  sleep  ${bigconfigsleep}  
-  	
-T25 big configuration changes (around 500 vns change)
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \  Log To Console   \n******* big configuration changes vns ${i}******* 
-  	\  vns configuration add/remove         ${Vflapnum}               
- 	\  sleep  ${bigconfigsleep}  
-  	
-	
+ 
