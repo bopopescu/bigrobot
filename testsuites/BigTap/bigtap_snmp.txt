@@ -9,7 +9,7 @@ Library  keywords/BsnCommon.py
 Library  String
 
 * Variable
-${version_string}  Big Tap Controller 4.0.0 
+${version_string}  Big Tap Controller 4.1.0 
 
     
 * Test Case
