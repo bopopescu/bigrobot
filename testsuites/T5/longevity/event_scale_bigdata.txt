@@ -293,7 +293,7 @@ clear stats in controller switch
  	Cli show commands for debug 
  	 
 T5 longevity suite setup
-   base suite setup
+#   base suite setup
     : FOR    ${j}    IN RANGE    0     500
     \ 	config    master     no tenant FLAP${j}
   		
