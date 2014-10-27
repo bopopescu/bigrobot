@@ -2145,7 +2145,9 @@ class BigTap(object):
                 content = c.rest.content()
                 version_string = content[0]['controller']
                 helpers.log("version string is %s" % version_string)
-                if "4.0.0" in str(version_string):
+                if ("3.0.0" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.1.1" in str(version_string)):
+                    data = {str(feature_name): False}
+                else:
                     if ("l3-l4" in str(feature_name)):
                         matchcondition = "full-match"
                         data = {"match-mode": str(matchcondition)}
@@ -2153,8 +2155,6 @@ class BigTap(object):
                     else:
                         data = {str(feature_name): False}
                         helpers.log("Data to be patched is %s" % data)
-                else:
-                    data = {str(feature_name): False}
             except:
                 helpers.test_log(c.rest.error())
                 return False
