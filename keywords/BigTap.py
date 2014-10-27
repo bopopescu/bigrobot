@@ -244,7 +244,13 @@ class BigTap(object):
             helpers.test_log(c.rest.error())
             return False
         data = c.rest.content()
-        if "4.0.0" in str(version_string):
+        if ("3.1.1" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.0.0" in str(version_string)):
+            if not data[0][feature]:
+                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                return "False"
+            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+            return str(data[0][feature])
+        else:
             if ("l3-l4" in feature) or ("full-match" in feature):
                 if "l3-l4-mode" in feature:
                     matchcondition = "bigtap-l3l4"
@@ -264,12 +270,6 @@ class BigTap(object):
                 helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
                 return str(data[0][feature])
 
-        else:
-            if not data[0][feature]:
-                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-                return "False"
-            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
-            return str(data[0][feature])
 
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
