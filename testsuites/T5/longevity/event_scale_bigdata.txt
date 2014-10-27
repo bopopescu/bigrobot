@@ -44,7 +44,12 @@ ${leaf14-b}     leaf14-b
 ${leaf15-a}     leaf15-a 
 ${leaf15-b}     leaf15-b  
 
- 
+${leaf1-a}     leaf1-a 
+${leaf1-b}     leaf1-b  
+${leaf2-a}     leaf2-a 
+${leaf2-b}     leaf2-b  
+${leaf3-a}     leaf3-a 
+${leaf3-b}     leaf3-b   
  
 ${spine0}      spine0
 ${spine1}      spine1
