@@ -327,8 +327,8 @@ class BigTap(object):
         else:
             helpers.test_failure(c.rest.error())
             return False
-        
-# Tomasz       
+
+# Tomasz
     def cli_configure_user(self, username, passwd=None):
         '''
             Objective:
@@ -348,20 +348,20 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller('master')
-            
+            c = t.controller('master')
+
             try:
                 string = "user %s" % str(username)
 
                 if (passwd is not None):
-                    string =  string + "; password %s" % str(passwd)
-                helpers.test_log("Issue command: %s" %string) 
+                    string = string + "; password %s" % str(passwd)
+                helpers.test_log("Issue command: %s" % string)
                 result = c.config(string)
-                helpers.log("Output: %s" % result) 
+                helpers.log("Output: %s" % result)
 
                 return True
             except:
-                helpers.test_failure("Something went wrong") 
+                helpers.test_failure("Something went wrong")
                 return False
 
 ###################################################
@@ -2195,7 +2195,9 @@ class BigTap(object):
                 content = c.rest.content()
                 version_string = content[0]['controller']
                 helpers.log("version string is %s" % version_string)
-                if "4.0.0" in str(version_string):
+                if ("3.1.1" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.0.0" in str(version_string)):
+                    data = {str(feature_name): True}
+                else:
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
                         if "l3-l4-mode" in str(feature_name):
                             matchcondition = "l3-l4-match"
@@ -2208,8 +2210,7 @@ class BigTap(object):
                     else:
                         data = {str(feature_name): True}
                         helpers.log("Data to be patched is %s" % data)
-                else:
-                    data = {str(feature_name): True}
+
             except:
                 return False
             else:
