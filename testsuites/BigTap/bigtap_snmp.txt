@@ -134,7 +134,9 @@ TC23: Restart process SNMP on Slave controller and verify snmpget
 TC24: Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
     ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}   
+    Should Contain  ${snmp_key}  ${version_string}
+    rest add snmp keyword  community  public      
+    sleep  5 
     [Tags]  bigtap  snmp  
 
 TC25: HW Appliance: Verify cpuload (UCD-SNMP-MIB::laLoadInt.1)
@@ -176,7 +178,7 @@ TC29: HW Appliance: Verify Power Supply
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 462  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp  jira-BT-1644
+    [Tags]  hw  snmp  jira-BSC-6090
  
 TC30: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4011
