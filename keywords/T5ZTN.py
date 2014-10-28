@@ -335,8 +335,8 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        s.expect("ONIE: Starting ONIE Service Discovery")
-        s.expect("ONIE: Starting ONIE Service Discovery")
+        s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
+        s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
         n.console_close()
         return True
 
