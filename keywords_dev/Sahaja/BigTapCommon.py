@@ -996,13 +996,13 @@ class BigTapCommon(object):
             helpers.test_log("There are no user-defined offsets to delete")
             return True
         # Make sure the deletion is successful
-        c.rest.get(show_url)
-        delete_ugrp_data = c.rest.content()
-        if len(delete_ugrp_data) == 0:
-            helpers.test_log("All the user-defined-groups have been deleted")
-        else:
-            helpers.test_failure("Few user-defined-groups have not been deleted %s" % (delete_ugrp_data))
-            return False
+#        c.rest.get(show_url)
+#        delete_ugrp_data = c.rest.content()
+#        if len(delete_ugrp_data) == 1:
+#            helpers.test_log("All the user-defined-groups have been deleted")
+#        else:
+#            helpers.test_failure("Few user-defined-groups have not been deleted %s" % (delete_ugrp_data))
+#            return False
 
 
     def rest_cleanconfig_bigtap_policy(self):
