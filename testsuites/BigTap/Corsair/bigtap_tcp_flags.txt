@@ -12,13 +12,13 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+${switch1_alias}                          app-ras5710-1  #Alias for switch 1
 
 ### Ixia Ports
 ${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-1-5        #Alias for filter interface on switch 1
 ${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-1-6        #Alias for delivery interface on switch 1
 
 ### BigTap Policy Configuration
 ${policy_name_1}                          policy_tcp_flags       #Policy Name that will use the tunnel interface
