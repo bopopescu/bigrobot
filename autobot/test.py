@@ -1560,9 +1560,10 @@ class Test(object):
                 self.cli_add_controller_idle_and_reauth_timeout(key)
 
         if helpers.bigrobot_no_auto_reload().lower() == 'true':
-                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                    for key in params:
-                        self.setup_ztn_phase2(key)
+            helpers.log("Reconnecting switch consoles and updating switch IP's....")
+            helpers.log("Please make sure switches are not in ZTN MODE ..before using BIGROBOT_NO_AUTO_RELOAD env")
+            for key in params:
+                self.setup_ztn_phase2(key)
         else:
             helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
         # Don't run the following section if test setup is disabled.
@@ -1660,6 +1661,8 @@ class Test(object):
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
             con.cli("")
 
+        helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
+        return
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
             return

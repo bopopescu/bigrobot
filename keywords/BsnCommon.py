@@ -1973,6 +1973,13 @@ class BsnCommon(object):
         helpers.debug("Host nodes used in test suite: %s" % nodes)
         return nodes
 
+    def get_switch_mac_topo(self, node):
+        '''
+        Return the Mac secified in Topo file against give switch node
+        '''
+        t = test.Test()
+        return '00:00:' + t.params(node, 'mac')
+
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
