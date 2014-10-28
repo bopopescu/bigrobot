@@ -23,5 +23,17 @@ Test PDU consoles
 	power cycle switch  s8
 	
 Test switch console
-	[Tags]  run
+	[Tags]
 	setup switch ssh handle  s1
+	
+	
+Test remove no auto reload
+	[Tags]  run
+	remove_no_auto_reload  s1
+	remove_no_auto_reload  s2
+	remove_no_auto_reload  s3
+	remove_no_auto_reload  s4
+	remove_no_auto_reload  s5
+	remove_no_auto_reload  s6
+	remove_no_auto_reload  s7
+	remove_no_auto_reload  s8

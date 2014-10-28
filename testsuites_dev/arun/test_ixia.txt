@@ -495,7 +495,7 @@ Test IXIA
     stop traffic  ${stream1}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  lacp
+    [Tags]  traffic  run
 
 35_IXIA_RAW_STREAM_LACP with just the lacp_src_mac and different src_mac
 	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  src_cnt=100  src_mac_step=00:00:00:00:00:02
@@ -516,7 +516,7 @@ Test IXIA
     stop traffic  ${stream}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  run
+    [Tags]  traffic
 *Keywords
 atest teardown
 	delete traffic
