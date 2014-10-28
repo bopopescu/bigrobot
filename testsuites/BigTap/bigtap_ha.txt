@@ -280,9 +280,9 @@ verify config
     ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
     ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  5  
+    Should Be Equal As Integers  ${switchFlowVal1}  4  
     ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  5
+    Should Be Equal As Integers  ${switchFlowVal2}  4
     
 verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Sleep  2

@@ -70,7 +70,8 @@ T1 Setup Tenant and VNS
     rest add vns ip  A  A2  20.0.0.254  24
     rest add nexthop group  A  nh1 
     rest add nexthopGroup ip  A  nh1  1.1.1.1
-    rest add policy  A  p1    
+    rest add policy  A  p1  
+    rest add user  1  
     mininet host ipcfg  bm0  bm0-bond0  10.0.0.1  24
     mininet host ipcfg  bm2  bm2-bond0  10.0.0.2  24
     mininet host ipcfg  bm1  bm1-bond0  20.0.0.1  24
@@ -216,9 +217,9 @@ T16 Verify 'switch leaf0a fabric-role' command completion in config mode
     [Tags]  feature  CLI  cli-completion  smoke    
               
 T17 Verify 'user' command completion in config mode
-    ${result}=  cli walk command  user  2  config_mode=${True}  
+    ${result}=  cli walk command  user  3  config_mode=${True}  
     Should be true  ${result}
-    [Tags]  feature  CLI  cli-completion  smoke  
+    [Tags]  feature  CLI  cli-completion  smoke
     
 T18 Verify 'group' command completion in config mode
     ${result}=  cli walk command  group  2  config_mode=${True}  

@@ -114,7 +114,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  IronHorse
+    [Tags]  L2  IronHorse  run
     bigrobot test ztn  False
     rest add tenant  t1
     rest add vns  t1  v1
@@ -130,8 +130,8 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     BuiltIn.Sleep  120
     rest verify endpoint in system  1000
     rest add switch  leaf0-a
-    ${leaf0a_mac}=  get_switch_mac_topo  s1
-    rest add dpid  leaf0-a  ${leaf0a_mac}
+    ${leaf0a_mac_dpid}=  get_switch_mac_topo  s1
+    rest add dpid  leaf0-a  ${leaf0a_mac_dpid}
     rest add fabric role  leaf0-a  leaf
     rest add leaf group  leaf0-a  rack0
     BuiltIn.Sleep  120

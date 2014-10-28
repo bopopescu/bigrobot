@@ -19,5 +19,5 @@ TC1: Delete Switch level Configuration
     rest cleanconfig switch config    
     rest cleanconfig bigtap policy
     rest cleanconfig bigtap user defined offset
-    
+    write version to file
                             

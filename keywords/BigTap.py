@@ -244,7 +244,13 @@ class BigTap(object):
             helpers.test_log(c.rest.error())
             return False
         data = c.rest.content()
-        if "4.0.0" in str(version_string):
+        if ("3.1.1" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.0.0" in str(version_string)):
+            if not data[0][feature]:
+                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+                return "False"
+            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+            return str(data[0][feature])
+        else:
             if ("l3-l4" in feature) or ("full-match" in feature):
                 if "l3-l4-mode" in feature:
                     matchcondition = "bigtap-l3l4"
@@ -264,12 +270,6 @@ class BigTap(object):
                 helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
                 return str(data[0][feature])
 
-        else:
-            if not data[0][feature]:
-                helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-                return "False"
-            helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
-            return str(data[0][feature])
 
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
@@ -327,8 +327,8 @@ class BigTap(object):
         else:
             helpers.test_failure(c.rest.error())
             return False
-        
-# Tomasz       
+
+# Tomasz
     def cli_configure_user(self, username, passwd=None):
         '''
             Objective:
@@ -348,20 +348,20 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller('master')
-            
+            c = t.controller('master')
+
             try:
                 string = "user %s" % str(username)
 
                 if (passwd is not None):
-                    string =  string + "; password %s" % str(passwd)
-                helpers.test_log("Issue command: %s" %string) 
+                    string = string + "; password %s" % str(passwd)
+                helpers.test_log("Issue command: %s" % string)
                 result = c.config(string)
-                helpers.log("Output: %s" % result) 
+                helpers.log("Output: %s" % result)
 
                 return True
             except:
-                helpers.test_failure("Something went wrong") 
+                helpers.test_failure("Something went wrong")
                 return False
 
 ###################################################
@@ -2145,7 +2145,9 @@ class BigTap(object):
                 content = c.rest.content()
                 version_string = content[0]['controller']
                 helpers.log("version string is %s" % version_string)
-                if "4.0.0" in str(version_string):
+                if ("3.0.0" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.1.1" in str(version_string)):
+                    data = {str(feature_name): False}
+                else:
                     if ("l3-l4" in str(feature_name)):
                         matchcondition = "full-match"
                         data = {"match-mode": str(matchcondition)}
@@ -2153,8 +2155,6 @@ class BigTap(object):
                     else:
                         data = {str(feature_name): False}
                         helpers.log("Data to be patched is %s" % data)
-                else:
-                    data = {str(feature_name): False}
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -2195,7 +2195,9 @@ class BigTap(object):
                 content = c.rest.content()
                 version_string = content[0]['controller']
                 helpers.log("version string is %s" % version_string)
-                if "4.0.0" in str(version_string):
+                if ("3.1.1" in str(version_string)) or ("3.1.0" in str(version_string)) or ("3.0.0" in str(version_string)):
+                    data = {str(feature_name): True}
+                else:
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
                         if "l3-l4-mode" in str(feature_name):
                             matchcondition = "l3-l4-match"
@@ -2208,8 +2210,7 @@ class BigTap(object):
                     else:
                         data = {str(feature_name): True}
                         helpers.log("Data to be patched is %s" % data)
-                else:
-                    data = {str(feature_name): True}
+
             except:
                 return False
             else:

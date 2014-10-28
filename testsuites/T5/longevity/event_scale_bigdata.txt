@@ -44,7 +44,12 @@ ${leaf14-b}     leaf14b-7034
 ${leaf15-a}     leaf15a-7035 
 ${leaf15-b}     leaf15b-7036
 
- 
+${leaf1-a}     leaf1-a 
+${leaf1-b}     leaf1-b  
+${leaf2-a}     leaf2-a 
+${leaf2-b}     leaf2-b  
+${leaf3-a}     leaf3-a 
+${leaf3-b}     leaf3-b   
  
 ${spine0}      spine0
 ${spine1}      spine1
@@ -293,7 +298,7 @@ clear stats in controller switch
  	Cli show commands for debug 
  	 
 T5 longevity suite setup
-   base suite setup
+#   base suite setup
     : FOR    ${j}    IN RANGE    0     500
     \ 	config    master     no tenant FLAP${j}
   		

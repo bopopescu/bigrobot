@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 class BigTapCommon(object):
 
@@ -995,13 +996,13 @@ class BigTapCommon(object):
             helpers.test_log("There are no user-defined offsets to delete")
             return True
         # Make sure the deletion is successful
-        c.rest.get(show_url)
-        delete_ugrp_data = c.rest.content()
-        if len(delete_ugrp_data) == 0:
-            helpers.test_log("All the user-defined-groups have been deleted")
-        else:
-            helpers.test_failure("Few user-defined-groups have not been deleted %s" % (delete_ugrp_data))
-            return False
+#        c.rest.get(show_url)
+#        delete_ugrp_data = c.rest.content()
+#        if len(delete_ugrp_data) == 1:
+#            helpers.test_log("All the user-defined-groups have been deleted")
+#        else:
+#            helpers.test_failure("Few user-defined-groups have not been deleted %s" % (delete_ugrp_data))
+#            return False
 
 
     def rest_cleanconfig_bigtap_policy(self):
@@ -1052,3 +1053,32 @@ class BigTapCommon(object):
         else:
              helpers.test_failure("Few policies have not been deleted %s" % (delete_policy_data))
              return False
+
+    def write_version_to_file(self):
+        '''Touch a file and write the version of the controller to file
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_version_url = "/rest/v1/system/version"
+        vf = open("ver.txt", "wb")
+        c.rest.get(show_version_url)
+        ver_data = c.rest.content()
+        helpers.test_log("Version string got is: %s" % (ver_data))
+        if ver_data:
+            ver = re.search('(.+?)\(.+\)', ver_data[0]["controller"])
+            if ver:
+                vf.write("export version=%s" % (ver.group(1)))
+            else:
+                helpers.test_failure("Did not match the version format, got %s" % (ver))
+                return False
+        else:
+            helpers.test_failure("Version string is empty")
+            return False
+
+
+
+
+

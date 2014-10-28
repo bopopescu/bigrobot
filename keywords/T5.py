@@ -2554,26 +2554,26 @@ class T5(object):
             helpers.log("Given switch name and role is not valid")
 
 
-    def cli_get_qos_weight(self, node, port='0'):
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_weight_info ' + port + '"'
-        content = s.enable(string)['content']
-        info = []
-        temp = helpers.strip_cli_output(content, to_list=True)
-        helpers.log("***temp is: %s  \n" % temp)
+#    def cli_get_qos_weight(self, node, port='0'):
+#        t = test.Test()
+#        s = t.switch(node)
+#        string = 'debug ofad "qos_weight_info ' + port + '"'
+#        content = s.enable(string)['content']
+#        info = []
+#        temp = helpers.strip_cli_output(content, to_list=True)
+#        helpers.log("***temp is: %s  \n" % temp)
 
-        for line in temp:
-            helpers.log("***line is: %s  \n" % line)
-            line = line.lstrip()
-            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
-            if match:
-                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
-                info.append(match.group(2))
+#        for line in temp:
+#            helpers.log("***line is: %s  \n" % line)
+#            line = line.lstrip()
+#            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+#            if match:
+#                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
+#                info.append(match.group(2))
 
-        helpers.log("***Exiting with info: %s  \n" % info)
+#        helpers.log("***Exiting with info: %s  \n" % info)
 
-        return info
+#        return info
 
     def cli_get_verify_priority_queue_mapping(self, node):
         t = test.Test()
@@ -2658,6 +2658,44 @@ class T5(object):
                     return False
         return True
 
+
+    def get_hw_queue_counters(self, node, port, queue_id):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "port-hw counters-all ' + port + '"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+        total_queue_count = {}
+        total_queue_diff_count = {}
+        flag = False
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            # Look for the line:
+            # UC_PERQ_PKT(8).xe16     :                15,585                +155
+            match = re.match(r'UC_PERQ_PKT\((\d)\)\.xe\d+\s*:\s*(\d+)\,*(\d*)\s*\+*(\d+)\,*(\d*)', line)
+            if match:
+                flag = True
+                queue = match.group(1)
+                if match.group(3):
+                    total_count = match.group(2) + match.group(3)
+                else:
+                    total_count = match.group(2)
+                if match.group(5):
+                    total_diff_count = match.group(4) + match.group(5)
+                else:
+                    total_diff_count = match.group(4)
+
+                helpers.log("Matched queue: %s, total counter: %s and diff counter: %s" % (match.group(1), total_count, total_diff_count))
+                total_queue_count[queue] = total_count
+                total_queue_diff_count[queue] = total_diff_count
+                if queue_id:
+                    return total_queue_count[queue_id]
+
+        if not flag:
+            helpers.test_failure("No Matched queue counters found")
+            return False
 
 
 
