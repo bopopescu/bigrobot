@@ -207,7 +207,7 @@ TC1:AS4600:Verify bidirectional tunnel interface
     Should be true  ${verify_tun_sw1}         
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
     Should be true  ${verify_tun_sw2}
-    [Tags]  feature  as4600  runthisnow
+    [Tags]  feature  as4600  
 
 TC2:AS4600:Verify receive-only tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
@@ -767,34 +767,34 @@ TC29:Verify that overlapping feature works on tunnel based policy
  
 TC30:Delete and restore complete configuration. Verify tunnel gets re-established.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-destination ip ${tunnel_sw1_dip}
-    config  c1  tunnel-encap-type gre
-    config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
-    config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
-    config  c1  tunnel-type tunnel tunnel-direction bidirectional ${tunnel_sw1_loopback}          
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-destination ip ${tunnel_sw1_dip}
+    config  master  tunnel-encap-type gre
+    config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
+    config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    [Tags]  negative
+    [Tags]  negative  runthisnow
 
 TC31:Delete and restore partial configuration. Do not add tunnel-destination. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-encap-type gre
-    config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
-    config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
-    config  c1  tunnel-type tunnel tunnel-direction bidirectional ${tunnel_sw1_loopback}          
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-encap-type gre
+    config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
+    config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
@@ -808,16 +808,16 @@ TC31:Delete and restore partial configuration. Do not add tunnel-destination. Ve
 
 TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-destination ip ${tunnel_sw1_dip}
-    config  c1  tunnel-encap-type gre
-    config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
-    config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-destination ip ${tunnel_sw1_dip}
+    config  master  tunnel-encap-type gre
+    config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
+    config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
@@ -831,16 +831,16 @@ TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tu
 
 TC33:Delete and restore partial configuration. Do not add tunnel-encap-type. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-destination ip ${tunnel_sw1_dip}
-    config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
-    config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
-    config  c1  tunnel-type tunnel tunnel-direction bidirectional ${tunnel_sw1_loopback}          
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-destination ip ${tunnel_sw1_dip}
+    config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
+    config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
@@ -854,16 +854,16 @@ TC33:Delete and restore partial configuration. Do not add tunnel-encap-type. Ver
 
 TC34:Delete and restore partial configuration. Do not add tunnel-interface parent-interface. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-destination ip ${tunnel_sw1_dip}
-    config  c1  tunnel-encap-type gre
-    config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
-    config  c1  tunnel-type tunnel tunnel-direction bidirectional ${tunnel_sw1_loopback}          
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-destination ip ${tunnel_sw1_dip}
+    config  master  tunnel-encap-type gre
+    config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
@@ -877,16 +877,16 @@ TC34:Delete and restore partial configuration. Do not add tunnel-interface paren
 
 TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
-    config  c1  switch ${switch1_alias}
-    config  c1  no interface ${tunnel_sw1_name}
+    config  master  switch ${switch1_alias}
+    config  master  no interface ${tunnel_sw1_name}
     sleep  3    
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
-    config  c1  interface ${tunnel_sw1_name}
-    config  c1  tunnel-destination ip ${tunnel_sw1_dip}
-    config  c1  tunnel-encap-type gre
-    config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
-    config  c1  tunnel-type tunnel tunnel-direction bidirectional ${tunnel_sw1_loopback}          
+    config  master  interface ${tunnel_sw1_name}
+    config  master  tunnel-destination ip ${tunnel_sw1_dip}
+    config  master  tunnel-encap-type gre
+    config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
+    config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
@@ -901,9 +901,9 @@ TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify 
 TC36:Change tunnel parent interface to a different but valid interface. Verify tunnel gets re-established
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}                
-    ${output}=  config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_alternate} 
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}                
+    ${output}=  config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_alternate} 
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}     
@@ -918,9 +918,9 @@ TC36:Change tunnel parent interface to a different but valid interface. Verify t
 TC37:Change tunnel parent interface to a different but invalid interface. Verify tunnel is down
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_invalid} 
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_invalid} 
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}     
@@ -935,9 +935,9 @@ TC37:Change tunnel parent interface to a different but invalid interface. Verify
 TC38:Verify tunnel interface configuration does NOT allow invalid destination IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-destination ip ${tunnel_sw1_invalid_dip}
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-destination ip ${tunnel_sw1_invalid_dip}
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_dip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
@@ -951,9 +951,9 @@ TC38:Verify tunnel interface configuration does NOT allow invalid destination IP
 TC39:Verify tunnel interface configuration does NOT allow invalid source IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-source ip ${tunnel_sw1_invalid_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-source ip ${tunnel_sw1_invalid_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_sip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
@@ -967,9 +967,9 @@ TC39:Verify tunnel interface configuration does NOT allow invalid source IP addr
 TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_invalid_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_invalid_mask} gateway-ip ${tunnel_sw1_gip}    
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP address (dotted quad): ${tunnel_sw1_invalid_mask}; invalid string pattern  
     sleep  10
     #Restore configuration for next testcase
@@ -983,9 +983,9 @@ TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask
 TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_invalid_gip}    
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_invalid_gip}    
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_gip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
@@ -999,9 +999,9 @@ TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
 TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destination IP
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-destination ip ${tunnel_sw1_ipv6_dip}
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-destination ip ${tunnel_sw1_ipv6_dip}
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_dip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
@@ -1015,9 +1015,9 @@ TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destin
 TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-source ip ${tunnel_sw1_ipv6_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-source ip ${tunnel_sw1_ipv6_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_sip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
@@ -1031,9 +1031,9 @@ TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source
 TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gateway IP.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    config  c1  switch ${switch1_alias}
-    config  c1  interface ${tunnel_sw1_name}         
-    ${output}=  config  c1  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_ipv6_gip}    
+    config  master  switch ${switch1_alias}
+    config  master  interface ${tunnel_sw1_name}         
+    ${output}=  config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_ipv6_gip}    
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_gip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
