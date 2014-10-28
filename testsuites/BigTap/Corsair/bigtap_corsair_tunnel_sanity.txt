@@ -13,11 +13,11 @@ Library  keywords/Ixia.py
 Library  keywords/ThirdParty.py
 
 * Variable
-${switch1_alias}                        app-ac4600-1  #Alias for switch 1
-${switch2_alias}                        app-ac4600-2  #Alias for switch 2
-${switch3_alias}                        app-ac5710-4  #Alias for switch 3
-${switch4_alias}                        app-ac6700-1  #Alias for switch 4
-${switch8_alias}                        app-ac5610-2  #Alias for switch 8
+${switch1_alias}                        app-ras4600-1  #Alias for switch 1
+${switch2_alias}                        app-ras4600-2  #Alias for switch 2
+${switch3_alias}                        app-ras5710-4  #Alias for switch 3
+${switch4_alias}                        app-ras6700-1  #Alias for switch 4
+${switch8_alias}                        app-ras5610-2  #Alias for switch 8
 
 ## Switch 1: app-ac4600-1
 ${switch1_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
@@ -26,7 +26,7 @@ ${switch1_delivery_intf}                    ethernet2       #Delivery interface 
 ${switch1_delivery_alias}                   ixia-2-2        #Alias for delivery interface on switch scale-ac4600-1
 
 ${tunnel_sw1_name}                          tunnel1                 #Tunnel Name
-${tunnel_sw1_parent_intf}                   ethernet5               #Tunnel Parent Interface
+${tunnel_sw1_parent_intf}                   ethernet6               #Tunnel Parent Interface
 ${tunnel_sw1_sip}                           192.168.43.1            #Tunnel Source IP
 ${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Destination IP
 ${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
@@ -34,7 +34,7 @@ ${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subn
 ${tunnel_sw1_loopback}                      ethernet52              #Tunnel Loopback Interface
 ${tunnel_sw1_alias}                         extreme1_sw1_delivery_intf
 ${extreme1_sw1_tunnel_name}                 tunnel1
-${extreme1_sw1_tunnel_intf1}                5
+${extreme1_sw1_tunnel_intf1}                6
 ${extreme1_sw1_tunnel_ip}                   192.168.43.2  
 ${extreme1_sw1_tunnel_mask}                 255.255.255.0
 
@@ -203,11 +203,11 @@ ${policy_overlap}                       _ZP1_o_P1
 *Test Case
 
 TC1:AS4600:Verify bidirectional tunnel interface
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
-    Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip} 
+    Should be true  ${verify_tun_sw1}         
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
     Should be true  ${verify_tun_sw2}
-    [Tags]  feature  as4600
+    [Tags]  feature  as4600  runthisnow
 
 TC2:AS4600:Verify receive-only tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
