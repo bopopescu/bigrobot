@@ -1082,7 +1082,7 @@ class T5(object):
             endpoint_new = "%s_%d" % (endpoint, i)
             mac = EUI(mac).value
      #       mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
-            mac = "{0}".format(str(EUI(mac+1)).replace('-', ':'))       
+            mac = "{0}".format(str(EUI(mac + 1)).replace('-', ':'))
             url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint' % (tenant, vns)
             c.rest.post(url, {"name": endpoint_new}, quiet=quiet)
             url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
@@ -2580,8 +2580,8 @@ class T5(object):
         s = t.switch(node)
         string = 'debug ofad "qos_info"'
         content = s.enable(string)['content']
-        priority_mapping=[]
-        queue_mapping=[]
+        priority_mapping = []
+        queue_mapping = []
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("***temp is: %s  \n" % temp)
 
@@ -2596,24 +2596,24 @@ class T5(object):
         helpers.log("Matched priority and queue values are: %s::%s" % (priority_mapping, queue_mapping))
         if not priority_mapping:
                 helpers.test_failure("ERROR: failed to get priority mapping info")
-        queue=0
-        index=0
-        flag=True
+        queue = 0
+        index = 0
+        flag = True
         while queue <= 3:
             if (int(queue_mapping[index]) == queue):
-                if(int(queue_mapping[index+1]) == queue):
+                if(int(queue_mapping[index + 1]) == queue):
                     helpers.log("Priority and Queue mappings matched")
                 else:
-                    helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" %(queue, queue_mapping[index]))
-                    flag=False
+                    helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" % (queue, queue_mapping[index]))
+                    flag = False
                     return False
             else:
-                helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" %(queue, queue_mapping[index]))
-                flag=False
+                helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" % (queue, queue_mapping[index]))
+                flag = False
                 return False
-            index=index+2
-            queue=queue+1
-        
+            index = index + 2
+            queue = queue + 1
+
         if flag:
             return True
         else:
@@ -2624,7 +2624,7 @@ class T5(object):
         s = t.switch(node)
         string = 'debug ofad "qos_info"'
         content = s.enable(string)['content']
-        global_mapping=[]
+        global_mapping = []
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("***temp is: %s  \n" % temp)
 
@@ -2638,17 +2638,17 @@ class T5(object):
         helpers.log("Matched queue weights are: %s" % global_mapping)
         if not global_mapping:
                 helpers.test_failure("ERROR: failed to get queue weights info")
-        index=global_mapping[0]
-        i=1
+        index = global_mapping[0]
+        i = 1
         if (qos == 'yes'):
             for key in global_mapping:
-                val=i*int(index)
+                val = i * int(index)
                 if (int(key) == val):
-                    helpers.log("Matched queue weight from switch:%s and weight expected: %s" %(int(key), val))
+                    helpers.log("Matched queue weight from switch:%s and weight expected: %s" % (int(key), val))
                 else:
-                    helpers.test_failure("queue weights are not matched weight from switch:%s and weight expected: %s" %(int(key), val))
+                    helpers.test_failure("queue weights are not matched weight from switch:%s and weight expected: %s" % (int(key), val))
                     return False
-                i=i+1
+                i = i + 1
         else:
             for key in global_mapping:
                 if (key == '1'):
@@ -2657,8 +2657,8 @@ class T5(object):
                     helpers.test_failure("queue weights are not matched")
                     return False
         return True
-            
-        
+
+
 
 
     def cli_get_qos_port_stat(self, node, port='0'):
@@ -2957,11 +2957,11 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
                 return data[0]['interface'][0]['queue'][0]['counter']['transmit-packets']
             else:
                 return data[0]['interface'][0]['queue'][0]['counter']['transmit-bytes']
-            
+
         except:
             helpers.test_failure(c.rest.error())
-        
-            
+
+
 
 
 
@@ -3176,27 +3176,28 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         """
         Remove no-auto-reoload file through given switch console
         """
-        con = self.dev_console(name)
+        t = test.Test()
+        con = t.dev_console(name)
         helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
         con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
         con.cli("")
         return True
 
-    def rest_get_router_mac(self,ip,node='master'):
+    def rest_get_router_mac(self, ip, node='master'):
         '''get the router mac address
             Input: router ip address
             Return:   mac address
         '''
         t = test.Test()
         c = t.controller(node)
-        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/router-ip-table'  
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/router-ip-table'
         c.rest.get(url)
         data = c.rest.content()
- 
+
         if len(data) != 0:
                 for i in range(0, len(data)):
-                    if str(data[i]["ip"]) == ip:                      
-                        return data[i]["mac"]                              
+                    if str(data[i]["ip"]) == ip:
+                        return data[i]["mac"]
         else:
             return False
 
