@@ -577,6 +577,14 @@ def bigrobot_params(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
+def bigrobot_nose_setup(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to enable testing using the Nose test framework.
+    """
+    return _env_get_and_set('BIGROBOT_NOSE_SETUP', new_val, default)
+
+
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -870,6 +878,15 @@ def bigrobot_config_qa_authors():
 
 def bigrobot_config_rest_services():
     return _bigrobot_config_load('/rest_services.yaml')
+
+
+def print_bigrobot_env(minimum=False):
+    for env in sorted(bigrobot_env_list()):
+        if minimum and env not in ['BIGROBOT_PATH', 'BIGROBOT_LOG_PATH',
+                                   'BIGROBOT_SUITE', 'BIGROBOT_TOPOLOGY',
+                                   'BIGROBOT_LOG_PATH_EXEC_INSTANCE']:
+            continue
+        print("%s=%s" % (env, os.environ[env]))
 
 
 def load_config(yaml_file):
