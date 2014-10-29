@@ -1661,8 +1661,10 @@ class Test(object):
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
             con.cli("")
 
-        helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
-        return
+        if helpers.is_bcf(n.platform()):
+            helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
+            return
+
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
             return
