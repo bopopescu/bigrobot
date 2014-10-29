@@ -7,6 +7,7 @@ Documentation  BigTap SNMP Test Suite Release:Blackbird Feature:SNMP
 Force Tags   BigTap  SNMP
 Library  keywords/BsnCommon.py
 Library  keywords_dev/Sahaja/BigTapCommon.py 
+Library  keywords_dev/Sahaja/SwitchLight.py
 Library  String
 
 * Variable
@@ -15,9 +16,11 @@ ${version_string}  Big Tap Controller 4.0.0
     
 * Test Case
 TC1: Delete Switch level Configuration
+	rest cleanconfig bigtap user defined offset
     rest cleanconfig bigtap add grp
     rest cleanconfig switch config    
-    rest cleanconfig bigtap policy
-    rest cleanconfig bigtap user defined offset
+    rest cleanconfig bigtap policy    
     write version to file
+    delete port channel  s1  port-channel
+	delete port channel  s1  snmp-server
                             
