@@ -330,13 +330,30 @@ class T5ZTN(object):
         | node | Alias of the node to use |
 
         Return Value:
-        - True if ONIE Discovery process succeeded
+        - True if ONIE Discovery process failed
         """
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
         s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
         s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
+        n.console_close()
+        return True
+
+    def telnet_verify_onie_discovery_succeeded(self, node):
+        """
+        Verify that ONIE Discovery process succeeded
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - True if ONIE Discovery process succeeded
+        """
+        t = test.Test()
+        n = t.node(node)
+        s = t.dev_console(node, modeless=True)
+        s.expect("ONIE: Executing installer", timeout=60)
         n.console_close()
         return True
 
