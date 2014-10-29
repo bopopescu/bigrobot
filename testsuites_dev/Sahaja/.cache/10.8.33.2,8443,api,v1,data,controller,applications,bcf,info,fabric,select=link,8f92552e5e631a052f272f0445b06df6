@@ -1,0 +1,519 @@
+status: 200
+content-location: https://10.8.33.2:8443/api/v1/data/controller/applications/bcf/info/fabric?select=link
+accept-ranges: bytes
+vary: Accept-Charset, Accept-Encoding, Accept-Language, Accept
+server: nginx/1.1.19
+connection: keep-alive
+date: Mon, 20 Oct 2014 20:26:45 GMT
+content-type: application/json
+-varied-accept-encoding: gzip, deflate
+
+[ {
+  "link" : [ {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf0a-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf0a-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf0a-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf1a-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf1a-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "peer",
+    "src" : {
+      "interface" : {
+        "name" : "leaf1a-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0a-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0a-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1a-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1a-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine0-eth8",
+        "number" : 8
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:01",
+        "switch-name" : "spine0"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0a-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth1",
+        "number" : 1
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0a-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:01",
+        "switch-name" : "leaf0-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth2",
+        "number" : 2
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth3",
+        "number" : 3
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf0b-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:02",
+        "switch-name" : "leaf0-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth4",
+        "number" : 4
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1a-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth5",
+        "number" : 5
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1a-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:03",
+        "switch-name" : "leaf1-a"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth6",
+        "number" : 6
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  }, {
+    "dst" : {
+      "interface" : {
+        "name" : "leaf1b-eth7",
+        "number" : 7
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:02:00:04",
+        "switch-name" : "leaf1-b"
+      }
+    },
+    "link-direction" : "bidirectional",
+    "link-type" : "leaf-spine",
+    "src" : {
+      "interface" : {
+        "name" : "spine1-eth8",
+        "number" : 8
+      },
+      "switch-info" : {
+        "switch-dpid" : "00:00:00:00:00:01:00:02",
+        "switch-name" : "spine1"
+      }
+    }
+  } ]
+} ]

@@ -1,0 +1,26 @@
+status: 200
+content-location: http://10.9.18.7:8082/api/v1/data/controller/applications/bigtap/view?select=policy/name
+accept-ranges: bytes
+vary: Accept-Charset, Accept-Encoding, Accept-Language, Accept
+server: Restlet-Framework/2.1.0
+connection: keep-alive
+date: Fri, 24 Oct 2014 21:31:14 GMT
+content-type: application/json; charset=UTF-8
+-varied-accept-encoding: gzip, deflate
+
+[ {
+  "name" : "admin-view",
+  "policy" : [ {
+    "name" : "test2"
+  } ]
+}, {
+  "name" : "rbac1",
+  "policy" : [ {
+    "name" : "test1"
+  } ]
+}, {
+  "name" : "rbac2",
+  "policy" : [ {
+    "name" : "test3"
+  } ]
+} ]

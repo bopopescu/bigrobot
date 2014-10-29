@@ -1,0 +1,71 @@
+
+
+--------- 2014-10-28T11:01:18.725 New devconf conversation for 's1'
+
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Tue Oct 28 10:38:16 2014 from 10.1.13.94
+Switch Light OS 8fa21d0 (powerpc.internal,bt,2014.07.23.21.02,8fa21d0ef5e894090531c009dc6d7b3a0f3d39a6)
+app-lb9-intern-1> enable
+app-lb9-intern-1# configure
+app-lb9-intern-1(config)# show running-config
+!
+! hostname: app-lb9-intern-1
+! version: Switch Light OS 8fa21d0 (powerpc.internal,bt,2014.07.23.21.02,8fa21d0ef5e894090531c009dc6d7b3a0f3d39a6)
+! current time: 2014-10-28 11:01:29 PDT
+!
+!
+hostname app-lb9-intern-1
+!
+timezone America/Los_Angeles
+!
+interface ma1 ip-address 10.9.18.87/23
+ip default-gateway 10.9.18.1
+dns-domain qa.bigswitch.com
+dns-server 10.3.0.4
+!
+username admin secret hash $1$Gj7Eng2x$AfkGfAO4ns2vD85b1FtyC/
+username recovery secret hash $1$X7HqvGwl$ojaRgQTkeegTA.1RmArlL0
+!
+ssh enable
+!
+ntp enable
+ntp server time-c.nist.gov
+!
+no telnet enable
+!
+snmp-server enable
+snmp-server location '10.1.8.187 6007'
+snmp-server community ro public
+snmp-server trap linkUpDown interval 10
+!
+controller 10.8.33.4
+datapath id 00:00:5c:16:c7:1c:16:f2
+datapath description '10.1.8.187 6007'
+!
+port-channel 12 interface-list 1,2,3
+port-channel 18 interface-list 4,5,6
+app-lb9-intern-1(config)# no controller 10.8.33.4
+app-lb9-intern-1(config)# controller 10.8.33.4
+app-lb9-intern-1(config)# controller 10.8.33.4
+app-lb9-intern-1(config)# copy running-config startup-config
+app-lb9-intern-1(config)# end
+app-lb9-intern-1# exit
+app-lb9-intern-1> show running-config port-channel
+!
+port-channel 12 interface-list 1,2,3
+port-channel 18 interface-list 4,5,6
+app-lb9-intern-1> enable
+app-lb9-intern-1# configure
+app-lb9-intern-1(config)# no port-channel 12 interface-list 1,2,3
+app-lb9-intern-1(config)# 
+app-lb9-intern-1(config)# no port-channel 18 interface-list 4,5,6
+app-lb9-intern-1(config)# 
+app-lb9-intern-1(config)# end
+app-lb9-intern-1# exit
+app-lb9-intern-1> 

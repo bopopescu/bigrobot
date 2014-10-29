@@ -16,11 +16,12 @@ ${version_string}  Big Tap Controller 4.0.0
     
 * Test Case
 TC1: Delete Switch level Configuration
+	delete port channel  s1  port-channel
+	delete port channel  s1  snmp-server
+	return  True
 	rest cleanconfig bigtap user defined offset
     rest cleanconfig bigtap add grp
     rest cleanconfig switch config    
     rest cleanconfig bigtap policy    
     write version to file
-    delete port channel  s1  port-channel
-	delete port channel  s1  snmp-server
                             

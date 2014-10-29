@@ -1,0 +1,24 @@
+status: 200
+content-location: https://10.8.33.2:8443/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="00:00:00:00:00:01"]
+accept-ranges: bytes
+vary: Accept-Charset, Accept-Encoding, Accept-Language, Accept
+server: nginx/1.1.19
+connection: keep-alive
+date: Mon, 20 Oct 2014 20:26:13 GMT
+content-type: application/json
+-varied-accept-encoding: gzip, deflate
+
+[ {
+  "attachment-point" : "spine0|spine0-eth1",
+  "attachment-point-state" : "static",
+  "created-since" : "1970-01-01T00:00:00.000Z",
+  "detail" : true,
+  "interface" : "spine0-eth1",
+  "mac" : "00:00:00:00:00:01",
+  "name" : "e1",
+  "segment" : "A",
+  "state" : "Attach Point Down",
+  "switch" : "spine0",
+  "tenant" : "A",
+  "vlan" : -1
+} ]

@@ -1,0 +1,28 @@
+status: 200
+content-location: http://10.9.18.7:8082/api/v1/data/controller/applications/bigtap/user-defined-offset?config=true
+accept-ranges: bytes
+vary: Accept-Charset, Accept-Encoding, Accept-Language, Accept
+server: Restlet-Framework/2.1.0
+connection: keep-alive
+date: Fri, 24 Oct 2014 21:31:15 GMT
+content-type: application/json; charset=UTF-8
+-varied-accept-encoding: gzip, deflate
+
+[ {
+  "udf0" : {
+    "anchor" : "l4-start",
+    "offset" : 8
+  },
+  "udf1" : {
+    "anchor" : "l4-start",
+    "offset" : 12
+  },
+  "udf2" : {
+    "anchor" : "l4-start",
+    "offset" : 4
+  },
+  "udf3" : {
+    "anchor" : "l4-start",
+    "offset" : 20
+  }
+} ]
