@@ -74,9 +74,8 @@ T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-c
 
 
 T3.2. Verify that after ZTN configuration change (CLI, GUI, REST), admin is notified to trigger reload of configuration on the switch, and that after reload configuration on switch gets updated
-	Manual Passed
-	[Tags]  manual
-#we eventually expect to do this automatically, but this does not happen currently
+	[Tags]  skipped
+# this is happening automatically now, test case is obsolete
 T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
 	Cli Copy  running-config  snapshot://temp-config
 	Randomize ZTN Configuration
