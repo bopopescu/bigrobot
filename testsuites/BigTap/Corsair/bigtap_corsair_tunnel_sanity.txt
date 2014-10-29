@@ -717,6 +717,8 @@ TC28:Verify that changing match-mode no affect on tunnel based policy. .
 TC29:Verify that overlapping feature works on tunnel based policy
     clean config to suite setup state
     change tunnel direction to bidir
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}  
     ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_delivery}  loopback=${tunnel_sw1_loopback_ixia_delivery}  pinterface=${tunnel_sw1_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixiadelivery}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw1_gip_ixiadelivery}  gw_ip=${tunnel_sw1_sip_ixia_delivery}  port_name=b
@@ -763,7 +765,7 @@ TC29:Verify that overlapping feature works on tunnel based policy
     rest delete interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery     
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
     delete traffic  
-    [Tags]  feature        
+    [Tags]  feature  runthis   
  
 TC30:Delete and restore complete configuration. Verify tunnel gets re-established.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
@@ -913,7 +915,7 @@ TC36:Change tunnel parent interface to a different but valid interface. Verify t
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis
+    [Tags]  negative  
 
 TC37:Change tunnel parent interface to a different but invalid interface. Verify tunnel is down
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -930,7 +932,7 @@ TC37:Change tunnel parent interface to a different but invalid interface. Verify
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis
+    [Tags]  negative  
 
 TC38:Verify tunnel interface configuration does NOT allow invalid destination IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -946,7 +948,7 @@ TC38:Verify tunnel interface configuration does NOT allow invalid destination IP
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis
+    [Tags]  negative  
 
 TC39:Verify tunnel interface configuration does NOT allow invalid source IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -962,7 +964,7 @@ TC39:Verify tunnel interface configuration does NOT allow invalid source IP addr
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis    
+    [Tags]  negative      
 
 TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -978,7 +980,7 @@ TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis                                                          
+    [Tags]  negative                                                            
 
 TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -994,7 +996,7 @@ TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  runthis
+    [Tags]  negative  
     
 TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destination IP
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1010,7 +1012,7 @@ TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destin
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6  runthis        
+    [Tags]  negative  ipv6          
 
 TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source IP address.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1026,7 +1028,7 @@ TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6  runthis 
+    [Tags]  negative  ipv6   
 
 TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gateway IP.
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1042,7 +1044,7 @@ TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gatewa
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6  runthis
+    [Tags]  negative  ipv6  
 
 TC45: Verify tunnel can be setup with bidirectional on one side and receive-only on other-end
     tunnel teardown
