@@ -40,7 +40,7 @@ Verify all positive combinations of TCP flags
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
@@ -57,13 +57,13 @@ Verify all positive combinations of TCP6 flags
     \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     \    Should be true  ${verify_policy1}  
     \    ${flags}=  convert integer to tcpflag  ${INDEX}
-    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  ethertype=86dd  
     \    ...     src_mac=00:03:03:04:05:06  dst_mac=00:03:03:04:05:07  no_arp=True
     \    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
