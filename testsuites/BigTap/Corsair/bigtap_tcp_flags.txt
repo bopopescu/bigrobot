@@ -40,7 +40,7 @@ Verify all positive combinations of TCP flags
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
@@ -63,7 +63,7 @@ Verify all positive combinations of TCP6 flags
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
