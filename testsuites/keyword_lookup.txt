@@ -10,6 +10,7 @@ Library           Screenshot.py
 Library           String.py
 Library           Telnet.py
 Library           XML.py
+Library           BuiltIn.py
 # 3rd party Robot keyword libraries
 Library           SeleniumLibrary
 # BSN keyword libraries
@@ -28,6 +29,7 @@ Library           keywords/SwitchLight.py
 Library           keywords/T5.py
 Library           keywords/T5L3.py
 Library           keywords/T5Openstack.py
+Library           keywords/T5Platform.py
 Library           keywords/T5Utilities.py
 Library           keywords/T5ZTN.py
 Library           keywords/ThirdParty.py

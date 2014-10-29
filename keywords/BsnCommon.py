@@ -28,7 +28,6 @@ from paramiko.ssh_exception import BadHostKeyException, \
                                    SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account
-from robot.libraries.BuiltIn import BuiltIn
 import autobot.utils as br_utils
 from keywords.Host import Host
 
@@ -51,9 +50,12 @@ class BsnCommon(object):
         purposely want it to fail - there may be good reasons for doing that
         also.
         """
-        suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
-        helpers.bigrobot_test_suite_status(suite_status)
-        helpers.log("Test suite status: %s" % suite_status)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            from robot.libraries.BuiltIn import BuiltIn
+            suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
+            helpers.bigrobot_test_suite_status(suite_status)
+            helpers.log("Test suite status: %s" % suite_status)
+
         try:
             t = test.Test()
             t.teardown()
@@ -72,14 +74,18 @@ class BsnCommon(object):
         #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
-        test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
-        test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
-        if test_status == 'FAIL':
-            if helpers.bigrobot_test_postmortem().lower() == 'false':
-                helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
-                            " Skipping test postmortem.")
-            else:
-                self.base_test_postmortem(test_descr=test_descr)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            # Test postmortem is not supported by Nose framework. As a
+            # workaround, define it explicitly in the test case instead.
+            from robot.libraries.BuiltIn import BuiltIn
+            test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
+            test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
+            if test_status == 'FAIL':
+                if helpers.bigrobot_test_postmortem().lower() == 'false':
+                    helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
+                                " Skipping test postmortem.")
+                else:
+                    self.base_test_postmortem(test_descr=test_descr)
 
             if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
                 helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")

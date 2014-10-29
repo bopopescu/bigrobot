@@ -5,20 +5,44 @@ import re
 import platform
 import subprocess
 import autobot.helpers as helpers
+from nose.exc import SkipTest
+
+
+# Reserved for critical errors, such as suite setup failures.
+EXIT_ON_FAILURE = False
+
+
+def sleep(s):
+    helpers.log("Sleeping for %s seconds" % s)
+    helpers.sleep(s)
+
+
+def log_to_console(msg):
+    print(msg)
+    helpers.log(msg)
 
 
 def func_name():
     return sys._getframe(2).f_code.co_name  # pylint: disable=W0212
 
 
-def run(func):
+def run(func, exit_on_failure=False):
     """Nose fixture: run test"""
+    global EXIT_ON_FAILURE
     helpers.log("===========================================================")
     helpers.log("Test case: %s" % func_name())
     helpers.log("===========================================================")
+
+    if EXIT_ON_FAILURE:
+        helpers.error_exit("Detected critical error. Aborting.", 1)
+
     try:
         result = func()
+    except SkipTest:
+        raise
     except:
+        if exit_on_failure:
+            EXIT_ON_FAILURE = True
         helpers.log(" \n" + helpers.exception_info())
         raise
     else:
