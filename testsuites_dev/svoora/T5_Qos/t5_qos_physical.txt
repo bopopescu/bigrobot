@@ -505,7 +505,7 @@ T14 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     ${tx_before_6}=  get hw queue counters  s1  17  3
     start traffic  ${stream_04}
     sleep  5
-    pause  FREEZEEEEE!
+    #pause  FREEZEEEEE!
     #${tx_after_0}=  get hw queue counters  s1  17  0
     ${traffic_summary}=  fetch port stats  stream=${stream_01}
     ${rx_value_01}=  verify dict key  ${traffic_summary}  queue_0_1  received_frame_rate
@@ -519,15 +519,20 @@ T14 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     ${traffic_summary}=  fetch port stats  stream=${stream_04}
     ${rx_value_04}=  verify dict key  ${traffic_summary}  queue_6_7  received_frame_rate
     ${in_range}=  ixia verify traffic rate  ${rx_value_01}  ${rx_value_02}
-    Should be true  ${in_range}
-    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_04}
-    Should be true  ${in_range}
-    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_02}
-    Should be true  ${in_range}
     stop traffic  ${stream_01}
     stop traffic  ${stream_02}
     stop traffic  ${stream_03}
-    stop traffic  ${stream_04
+    stop traffic  ${stream_04}
+    ${compare}=  Evaluate  2*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_02}  15
+    Should be true  ${in_range}
+    ${compare}=  Evaluate  3*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_03}  15
+    Should be true  ${in_range}
+    ${compare}=  Evaluate  4*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_04}  15
+    Should be true  ${in_range}
+    
     delete traffic
     
     
