@@ -970,7 +970,7 @@ TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
     ${output}=  config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_invalid_mask} gateway-ip ${tunnel_sw1_gip}    
-    Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP address (dotted quad): ${tunnel_sw1_invalid_mask}; invalid netmask  
+    Should Contain  ${output['content']}  Error: Invalid argument: Invalid netmask (eg: 255.255.255.0): ${tunnel_sw1_invalid_mask}; invalid netmask  
     sleep  10
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
