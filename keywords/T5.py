@@ -2690,8 +2690,8 @@ class T5(object):
                 helpers.log("Matched queue: %s, total counter: %s and diff counter: %s" % (match.group(1), total_count, total_diff_count))
                 total_queue_count[queue] = total_count
                 total_queue_diff_count[queue] = total_diff_count
-                if queue_id:
-                    return total_queue_count[queue_id]
+        if queue_id:
+            return total_queue_count[queue_id]
 
         if not flag:
             helpers.test_failure("No Matched queue counters found")
