@@ -17,7 +17,7 @@ if 'BIGROBOT_TESTBED' in os.environ:
     print "Unsetting env BIGROBOT_TESTBED..."
     del os.environ['BIGROBOT_TESTBED']
 
-vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/"
 kvm_user = "root"
@@ -113,7 +113,7 @@ def main(*args):
         args.jenkins_qcow_path = vmdk_name
 
     if args.jenkins_project_name is not None:
-        args.jenkins_qcow_path = "/var/lib/jenkins/jobs/%s/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2" % args.jenkins_project_name
+        args.jenkins_qcow_path = "/var/lib/jenkins/jobs/%s/lastSuccessful/archive/controller-bcf-*.qcow2" % args.jenkins_project_name
 
 
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
