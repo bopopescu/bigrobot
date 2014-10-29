@@ -1624,7 +1624,7 @@ class Test(object):
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
-                helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
+                helpers.log("Env BIGROBOT_TEST_ZTN is True. Loading ZTN-based config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN on these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
                 master.enable("copy snapshot://ztn-base-config running-config ")
@@ -1640,7 +1640,7 @@ class Test(object):
                 master.enable("show switch")
 
         if helpers.bigrobot_ha_logging().lower() == "true":
-            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            helpers.log("Env BIGROBOT_HA_LOGGING is True. Enabling HA Debug logging for Dev to debug HA failures....")
             master.config("logging level org.projectfloodlight.ha debug")
             master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
             master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
@@ -1694,11 +1694,16 @@ class Test(object):
     def teardown(self):
         self.checkpoint("Test object teardown begins.")
         params = self.topology_params_nodes()
-        for key in params:
-            if helpers.is_controller(key):
-                pass
-            elif helpers.is_switch(key):
-                self.teardown_switch(key)
+
+        if helpers.bigrobot_test_teardown().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    pass
+                elif helpers.is_switch(key):
+                    self.teardown_switch(key)
+        else:
+            helpers.debug("Env BIGROBOT_TEST_TEARDOWN is False. Skipping device teardown.")
+
         helpers.debug("Test object teardown ends.%s"
                       % br_utils.end_of_output_marker())
 

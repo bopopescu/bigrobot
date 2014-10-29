@@ -593,6 +593,14 @@ def bigrobot_test_setup(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
 
 
+def bigrobot_test_teardown(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test teardown.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
+
+
 def bigrobot_test_postmortem(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -887,6 +895,7 @@ def print_bigrobot_env(minimum=False):
                                    'BIGROBOT_LOG_PATH_EXEC_INSTANCE']:
             continue
         print("%s=%s" % (env, os.environ[env]))
+    print("")
 
 
 def load_config(yaml_file):
