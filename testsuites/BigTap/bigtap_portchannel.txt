@@ -161,7 +161,6 @@ TC004: Verify port-channel interface (hash-mode:L2) can be used as a delivery in
     ${return_value}=    rest add policy interface  admin-view  ${policy_name}  ${delivery_lag_alias}    delivery 
     Should be true  ${return_value} 
     Sleep  30
-    pause
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     Sleep  5
