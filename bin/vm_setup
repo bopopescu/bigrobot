@@ -17,7 +17,7 @@ if 'BIGROBOT_TESTBED' in os.environ:
     print "Unsetting env BIGROBOT_TESTBED..."
     del os.environ['BIGROBOT_TESTBED']
 
-vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/"
 kvm_user = "root"
@@ -108,8 +108,13 @@ def main(*args):
     helpers.log("New TERM Value: %s" % term)
     helpers.bigrobot_test_ztn(False)
     helpers.bigrobot_test_setup(True)
+    no_scp = True
     if args.jenkins_qcow_path is None:
         args.jenkins_qcow_path = vmdk_name
+
+    if args.jenkins_project_name is not None:
+        args.jenkins_qcow_path = "/var/lib/jenkins/jobs/%s/lastSuccessful/archive/controller-bcf-*.qcow2" % args.jenkins_project_name
+
 
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
                                  kvm_user=kvm_user,
@@ -159,6 +164,7 @@ def main(*args):
                                       kvm_password=kvm_pwd,
                                       vm_type=args.vm_type,
                                       qcow_path=args.qcow_path,
+                                      remote_qcow_bvs_path=args.jenkins_qcow_path,
                                       ip=args.standby_ip,
                                       netmask=args.netmask,
                                       gateway=args.gateway,
@@ -166,7 +172,7 @@ def main(*args):
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
                                       build_number=args.build_number,
-                                      network_interface=args.network_interface, vm_ram=args.vm_ram)
+                                      network_interface=args.network_interface, vm_ram=args.vm_ram, no_scp=no_scp)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         # temporarily setting STANDBY_VM env for jenkins vm_setup
         helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
@@ -207,6 +213,8 @@ if __name__ == '__main__':
                         help="This used for virtual network interface on the KVM HOST Server")
     parser.add_argument("--vm_ram",
                         help="This used for vm RAM on  the KVM HOST Server")
+    parser.add_argument("--jenkins_project_name",
+                        help="This is project name used in jenkins.bigswitch.com Build Master")
     main()
     print "Success!!!"
     sys.exit(0)

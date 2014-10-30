@@ -542,7 +542,8 @@ TC26: Hash Mode:L3 Verify source IP address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=103.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_c_flow
     send and verify traffic  True  True  True  True  
-    [Tags]  l3srcip  L3
+    
+    [Tags]  l3srcip  L3  
 
 TC27: Hash Mode:L3 - Disable two links and Verify source IP address hashing
     configure lag interfaces with hash mode  L3
@@ -564,7 +565,7 @@ TC27: Hash Mode:L3 - Disable two links and Verify source IP address hashing
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_3} enable=1
     bash execute command    s1   ofad-ctl bshell port ${s1_lag_mem_4} enable=1
     sleep  1       
-    [Tags]  l3srcip  L3
+    [Tags]  l3srcip  L3  
 
 TC28: Hash Mode:L3 Verify destination IP address hashing
     configure lag interfaces with hash mode  L3
@@ -719,7 +720,7 @@ TC34: Hash Mode:L3 - Verify UDP source port hashing
     ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
     ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow    
     send and verify traffic  True  True  True  True  
-    [Tags]  l3UDPsrcport  L3
+    [Tags]  l3UDPsrcport  L3  runthis
 
 TC35: Hash Mode:L3 - Disable two links and verify UDP source port hashing    
     configure lag interfaces with hash mode  L3
@@ -1101,7 +1102,7 @@ send and verify traffic  [Arguments]  ${member1s1}  ${member2s1}  ${member3s1}  
     cli execute command  s5  clear interface statistics
     start traffic    
     sleep  10
-    stop traffic      
+    stop traffic    
     ${member1_s1}=  cli return member interface stats  s1  ${s1s4_10g_number}  ethernet49  tx
     Run keyword if  ${member1s1}=="True"  Should Not Be Equal As Integers  ${member1_s1}  0
     ${member2_s1}=  cli return member interface stats  s1  ${s1s4_10g_number}  ethernet50  tx

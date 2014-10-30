@@ -346,6 +346,12 @@ class Test(object):
     def switch_password(self):
         return self.bsn_config('switch_password')
 
+    def pdu_user(self):
+        return self.bsn_config('pdu_user')
+
+    def pdu_password(self):
+        return self.bsn_config('pdu_password')
+
     def alias(self, name, ignore_error=False):
         """
         :param ignore_error: (Bool) If true, don't trigger exception when
@@ -377,6 +383,9 @@ class Test(object):
           t.params(node='c1', key='ip')
           t.params(node='tg1', key='type', default='ixia')
                             # if type is not defined, return 'ixia' for type
+          t.params('common', 'my_image')
+                            # BigRobot convention is to use 'common' to hold
+                            # common key/values which are not node-specific.
         - If no argument is specified, return the entire topology dictionary.
             {   'c1': {
                     'ip': '10.192.5.116'
@@ -651,7 +660,7 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller', quiet=0):
+                   device_type='controller', protocol='ssh', quiet=0):
         t = self
         if not node:
             node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
@@ -679,7 +688,14 @@ class Test(object):
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.HostNode(node, ip, user, password, t)
+            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol)
+        elif device_type == 'pdu':
+            helpers.log("Initializing host '%s'" % node)
+            if not user:
+                user = self.pdu_user()
+            if not password:
+                password = self.pdu_password()
+            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol)
         else:
             # !!! FIXME: Need to support other device types (see the list of
             #            devices in node_connect().
@@ -978,25 +994,16 @@ class Test(object):
             action = "olReboot"
         else:
             helpers.test_error("Invalid PDU option '%s'" % action)
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
+        t = self
+        pdu = t.params(node, key='pdu')
+        pdu_port = pdu['port']
+        helpers.log("pdu: %s" % pdu)
+        p = t.node_spawn(ip=pdu["ip"], user="apc", password="apc", device_type='pdu', protocol='telnet')
+        p.cli('about')
+        p.cli('olStatus %s' % pdu_port)
         reboot_cmd = '%s %s' % (action, str(pdu_port))
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
-        tn.close()
+        p.cli(str(reboot_cmd).encode('ascii'))
+        p.close()
 
     def power_cycle(self, node, minutes=5):
         self._pdu_mgt(node, 'reboot')
@@ -1266,7 +1273,9 @@ class Test(object):
         helpers.sleep(sleep_time)
         return True
 
-    def setup_controller_reauth_and_idle_timeout(self, name):
+    def cli_add_controller_idle_and_reauth_timeout(self, name,
+                                                   reconfig_idle=True,
+                                                   reconfig_reauth=True):
         """
         When logging into the BCF controller for the first time, modify the
         idle timeout setting in Floodlight's application.py. Then reconnect
@@ -1280,8 +1289,16 @@ class Test(object):
         if not helpers.is_bcf(platform):
             return True
 
-        status1 = self._setup_controller_idle_timeout(name)
-        status2 = self._setup_controller_reauth_timeout(name)
+        status1 = status2 = False
+
+        if reconfig_idle:
+            status1 = self._setup_controller_idle_timeout(name)
+        else:
+            helpers.log("reconfig_idle=%s" % reconfig_idle)
+        if reconfig_reauth:
+            status2 = self._setup_controller_reauth_timeout(name)
+        else:
+            helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
@@ -1439,11 +1456,11 @@ class Test(object):
 
         helpers.log("Reload the switch for ZTN..")
         con.bash("")
-        con.bash('rm -rf /mnt/flash/boot-config')
-        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
+#         con.bash('rm -rf /mnt/flash/boot-config')
+#         con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
+#         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
+#         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
+#         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
         con.send('reboot')
         con.send('')
         if helpers.bigrobot_ztn_installer().lower() != "true":
@@ -1540,8 +1557,15 @@ class Test(object):
 
         for key in params:
             if helpers.is_controller(key):
-                self.setup_controller_reauth_and_idle_timeout(key)
+                self.cli_add_controller_idle_and_reauth_timeout(key)
 
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            helpers.log("Reconnecting switch consoles and updating switch IP's....")
+            helpers.log("Please make sure switches are not in ZTN MODE ..before using BIGROBOT_NO_AUTO_RELOAD env")
+            for key in params:
+                self.setup_ztn_phase2(key)
+        else:
+            helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
         # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
@@ -1574,12 +1598,6 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
-                if helpers.bigrobot_no_auto_reload().lower() == 'true':
-                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                    for key in params:
-                        self.setup_ztn_phase2(key)
-                else:
-                    helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1589,6 +1607,10 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
+                if helpers.bigrobot_no_auto_reload().lower() == 'true':
+                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                    for key in params:
+                        self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")
@@ -1602,7 +1624,7 @@ class Test(object):
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
-                helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
+                helpers.log("Env BIGROBOT_TEST_ZTN is True. Loading ZTN-based config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN on these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
                 master.enable("copy snapshot://ztn-base-config running-config ")
@@ -1618,7 +1640,7 @@ class Test(object):
                 master.enable("show switch")
 
         if helpers.bigrobot_ha_logging().lower() == "true":
-            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            helpers.log("Env BIGROBOT_HA_LOGGING is True. Enabling HA Debug logging for Dev to debug HA failures....")
             master.config("logging level org.projectfloodlight.ha debug")
             master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
             master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
@@ -1632,10 +1654,20 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        n = self.topology(name)
+        if helpers.bigrobot_no_auto_reload().lower() == 'true' and helpers.bigrobot_test_ztn().lower() == 'true':
+            con = self.dev_console(name)
+            helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+            con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
+
+        if helpers.is_bcf(n.platform()):
+            helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
+            return
+
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
             return
-        n = self.topology(name)
 
         if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
@@ -1662,11 +1694,16 @@ class Test(object):
     def teardown(self):
         self.checkpoint("Test object teardown begins.")
         params = self.topology_params_nodes()
-        for key in params:
-            if helpers.is_controller(key):
-                pass
-            elif helpers.is_switch(key):
-                self.teardown_switch(key)
+
+        if helpers.bigrobot_test_teardown().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    pass
+                elif helpers.is_switch(key):
+                    self.teardown_switch(key)
+        else:
+            helpers.debug("Env BIGROBOT_TEST_TEARDOWN is False. Skipping device teardown.")
+
         helpers.debug("Test object teardown ends.%s"
                       % br_utils.end_of_output_marker())
 

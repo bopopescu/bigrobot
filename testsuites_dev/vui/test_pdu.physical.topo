@@ -1,0 +1,16 @@
+#s1:
+#  ip: 10.192.81.115  # Animesh's Arista
+#  user: admin
+#  password: arastra
+
+s1:
+  ip: dummy
+
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 20
+    #user: apc
+    #password: apc
+
+#  set_session_ssh: false
+#  set_init_ping: false

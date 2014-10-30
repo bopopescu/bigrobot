@@ -577,12 +577,28 @@ def bigrobot_params(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
+def bigrobot_nose_setup(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to enable testing using the Nose test framework.
+    """
+    return _env_get_and_set('BIGROBOT_NOSE_SETUP', new_val, default)
+
+
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'False' to bypass Test setup.
     """
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
+
+
+def bigrobot_test_teardown(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test teardown.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
 
 
 def bigrobot_test_postmortem(new_val=None, default='True'):
@@ -870,6 +886,16 @@ def bigrobot_config_qa_authors():
 
 def bigrobot_config_rest_services():
     return _bigrobot_config_load('/rest_services.yaml')
+
+
+def print_bigrobot_env(minimum=False):
+    for env in sorted(bigrobot_env_list()):
+        if minimum and env not in ['BIGROBOT_PATH', 'BIGROBOT_LOG_PATH',
+                                   'BIGROBOT_SUITE', 'BIGROBOT_TOPOLOGY',
+                                   'BIGROBOT_LOG_PATH_EXEC_INSTANCE']:
+            continue
+        print("%s=%s" % (env, os.environ[env]))
+    print("")
 
 
 def load_config(yaml_file):
@@ -2090,8 +2116,8 @@ def params_dot_notation_to_dict(params):
     """
     new_dict = {}
     for param in params:
-        keys = param.split('.')
-        keys[-1], value = keys[-1].split('=')
+        keys = param.split('.', 1)
+        keys[-1], value = keys[-1].split('=', 1)
         ref = new_dict
         key_counter = 1
         for key in keys:

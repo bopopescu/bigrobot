@@ -1,0 +1,579 @@
+* Setting
+Documentation   T5 Policy Cli Test Cases
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown 
+Test Setup      base test setup
+Test Teardown   base suite teardown 
+Force Tags      IronHorse  T5  Policy
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
+Library			keywords/SwitchLight.py
+Library 		keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+#Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_cli_variables_virtual.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+* Variable
+${tenantX}			X
+${tenantY}			Y
+${tenantZ}			Z
+${tenant_system}	system
+${vnsX1}			X1
+${vnsX2}			X2
+${vnsX3}			X3
+${vnsY1}			Y1
+${vnsY2}			Y2
+${vnsY3}			Y3
+${vnsZ1}			Z1
+${vnsZ2}			Z2
+${vnsZ3}			Z3
+
+
+${ixia1_ip}			10.251.1.2/32
+${ixia2_ip}			10.251.3.2/32
+${nexthop}			10.251.3.2
+${ixia3_ip}			10.251.2.2/32
+${ixia4_ip}			10.252.1.2/32
+${ixia7_ip}			10.253.1.2/32
+${ixia6_ip}			
+${tcp_port}			1234
+${udp_port}			5678
+
+${ixia1_mac}		00:11:01:00:00:00
+${ixia2_mac}		00:22:01:00:00:00
+${ixia3_mac}		00:33:01:00:00:00
+${ixia4_mac}		00:44:01:00:00:00
+${ixia7_mac}		00:77:01:00:00:00
+${ixia6_mac}		00:66:01:00:00:00
+
+${tenant1_polname}	x1-to-x3
+${tenant2_polname}	x4-to-x1
+${next-hop-grp}		nhgrp
+${next-hop-ip}		10.251.3.2
+${next-hop-gw}		10.251.3.1
+${in_range}			30
+${multiline}        tenant ${tenantX}; logical-router; policy-list ${tenant2_polname}
+
+* Test Cases
+
+###CLI TESTING###
+
+T1 cli Creating/Deleting a policy rule
+	[Tags]  cli
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase1:Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${none}=  Set Variable  
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+
+T2 cli Creating/Deleteing a policy list
+	[Tags]  cli
+	
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase2:Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	
+T3 cli Creating/Removing a policy from logical-router
+	[Tags]  cli
+
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase3:Creating a policy-list with ${policy_rule} and apply to logical-router
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+
+T4 cli Creating/Deleting one after the other two policy rules in one list
+	[Tags]  cli
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase4:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule_1}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep ${tenant2_polname}|grep -v apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=flase
+	should be true  ${result}
+
+T5 cli Creating a policy list with two rules and deleting the tenant
+	[Tags]  cli
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase5:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	Log  Deleting a tenant ${tenantX}
+	cli delete tenant  tenant=${tenantX}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	
+T6 cli Creating a policy and deleting the list which did not present
+	[Tags]  cli
+
+
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_3}=  Set Variable   13 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32
+	${x_temp}=  Set Variable  x_temp
+	Log  Testcase6:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy-list which did not exist ${policy_rule_3}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_3}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy which did not exist ${x_temp}
+	cli delete policy   tenant=${tenantX}  policy_list=${x_temp}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep ${tenant2_polname}|grep -v apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy which did not exist from ${x_temp} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${x_temp}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}
+	should be true  ${result}
+
+
+T7 cli policy config walk
+	[Tags]  cli
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase14.1:Walking through policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	#cli walk command  member switch leaf0a interface  54  config_mode=${True}  multiline=port-group rack0pg1
+	${result}=  cli walk command  apply policy-list  2  cmd_argument=${tenant2_polname}  config_mode=${True}..multiline=tenant ${tenantX} logical-router
+	should be true  ${result}
+
+#T8 cli policy config walk
+	[Tags] 
+	Log  Testcase14.2
+	#${multiline}=  Set Variable  tenant ${tenantX}; logical-router; policy-list ${tenant2_polname}
+	${result}=  cli walk command  10  2  cmd_argument=deny permit  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T9 cli policy config walk
+	[Tags] 
+	Log  Testcase14.3
+	${result}=  cli walk command  10 permit  6  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T10 cli policy config walk
+	[Tags] 
+	Log  Testcase14.4
+	${result}=  cli walk command  10 permit any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T11 cli policy config walk
+	[Tags] 
+	Log  Testcase14.5
+	${result}=  cli walk command  10 permit any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T12 cli policy config walk
+	[Tags] 
+	Log  Testcase14.6
+	${result}=  cli walk command  10 permit any port 1234   1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T13 cli policy config walk
+	[Tags] 
+	Log  Testcase14.7
+	${result}=  cli walk command  10 permit any port 1234 to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T14 cli policy config walk
+	[Tags] 
+	Log  Testcase14.8
+	${result}=  cli walk command  10 permit any port 1234 to any  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T15 cli policy config walk
+	[Tags] 
+	Log  Testcase14.9
+	${result}=  cli walk command  10 permit any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T16 cli policy config walk
+	[Tags] 
+	Log  Testcase14.10
+	${result}=  cli walk command  10 permit any port 1234 to any next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T17 cli policy config walk
+	[Tags] 
+	#Log  Testcase14.11
+	#${result}=  cli walk command  10 permit any port 1234 to any next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+#T18 cli policy config walk
+	[Tags] 
+	Log  Testcase14.12
+	${result}=  cli walk command  10 permit any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T19 cli policy config walk
+	[Tags] 
+	Log  Testcase14.13
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T20 cli policy config walk
+	[Tags] 
+	Log  Testcase14.14
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T21 cli policy config walk
+	[Tags] 
+	Log  Testcase14.15
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	#Log  Testcase14.16
+	#${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+#T22 cli policy config walk
+	[Tags] 
+	Log  Testcase14.17
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant ${tenantX}  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T23 cli policy config walk
+	[Tags] 
+	Log  Testcase14.18
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant ${tenantX} log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T24 cli policy config walk
+	[Tags] 
+	Log  Testcase14.19
+	${result}=  cli walk command  10 permit proto  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T25 cli policy config walk
+	[Tags] 
+	Log  Testcase14.20
+	${result}=  cli walk command  10 permit proto tcp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T26 cli policy config walk
+	[Tags] 
+	Log  Testcase14.21
+	${result}=  cli walk command  10 permit proto tcp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T27 cli policy config walk
+	[Tags] 
+	Log  Testcase14.22
+	${result}=  cli walk command  10 permit proto tcp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T28 cli policy config walk
+	[Tags] 
+	Log  Testcase14.23
+	${result}=  cli walk command  10 permit proto udp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T29 cli policy config walk
+	[Tags] 
+	Log  Testcase14.24
+	${result}=  cli walk command  10 permit proto udp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T30 cli policy config walk
+	[Tags] 
+	Log  Testcase14.25
+	${result}=  cli walk command  10 permit proto udp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T31 cli policy config walk
+	[Tags] 
+	Log  Testcase14.26
+	${result}=  cli walk command  10 permit proto icmp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T32 cli policy config walk
+	[Tags] 
+	Log  Testcase14.27
+	${result}=  cli walk command  10 permit proto icmp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T33 cli policy config walk
+	[Tags] 
+	Log  Testcase14.28
+	${result}=  cli walk command  10 permit proto icmp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T34 cli policy config walk
+	[Tags] 
+	Log  Testcase14.29
+	${result}=  cli walk command  10 permit proto 45  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T35 cli policy config walk
+	[Tags] 
+	Log  Testcase14.30
+	${result}=  cli walk command  10 permit proto 45 any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T36 cli policy config walk
+	[Tags] 
+	Log  Testcase14.31
+	${result}=  cli walk command  10 permit proto 45 any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	
+#T37 cli policy config walk
+	[Tags] 
+	Log  Testcase14.3
+	${result}=  cli walk command  10 deny  6  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T38 cli policy config walk
+	[Tags] 
+	Log  Testcase14.4
+	${result}=  cli walk command  10 deny any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T39 cli policy config walk
+	[Tags] 
+	Log  Testcase14.5
+	${result}=  cli walk command  10 deny any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T40 cli policy config walk
+	[Tags] 
+	Log  Testcase14.6
+	${result}=  cli walk command  10 deny any port 1234   1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T41 cli policy config walk
+	[Tags] 
+	Log  Testcase14.7
+	${result}=  cli walk command  10 deny any port 1234 to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T42 cli policy config walk
+	[Tags] 
+	Log  Testcase14.8
+	${result}=  cli walk command  10 deny any port 1234 to any  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T43 cli policy config walk
+	[Tags] 
+	Log  Testcase14.9
+	${result}=  cli walk command  10 deny any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T44 cli policy config walk
+	[Tags] 
+	Log  Testcase14.12
+	${result}=  cli walk command  10 deny any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T45 cli policy config walk
+	[Tags] 
+	Log  Testcase14.13
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T46 cli policy config walk
+	[Tags] 
+	Log  Testcase14.14
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T47 cli policy config walk
+	[Tags] 
+	Log  Testcase14.19
+	${result}=  cli walk command  10 deny proto  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T48 cli policy config walk
+	[Tags] 
+	Log  Testcase14.20
+	${result}=  cli walk command  10 deny proto tcp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T49 cli policy config walk
+	[Tags] 
+	Log  Testcase14.21
+	${result}=  cli walk command  10 deny proto tcp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T50 cli policy config walk
+	[Tags] 
+	Log  Testcase14.22
+	${result}=  cli walk command  10 deny proto tcp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T51 cli policy config walk
+	[Tags] 
+	Log  Testcase14.23
+	${result}=  cli walk command  10 deny proto udp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T52 cli policy config walk
+	[Tags] 
+	Log  Testcase14.24
+	${result}=  cli walk command  10 deny proto udp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T53 cli policy config walk
+	[Tags] 
+	Log  Testcase14.25
+	${result}=  cli walk command  10 deny proto udp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T54 cli policy config walk
+	[Tags] 
+	Log  Testcase14.26
+	${result}=  cli walk command  10 deny proto icmp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T55 cli policy config walk
+	[Tags] 
+	Log  Testcase14.27
+	${result}=  cli walk command  10 deny proto icmp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T56 cli policy config walk
+	[Tags] 
+	Log  Testcase14.28
+	${result}=  cli walk command  10 deny proto icmp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T57 cli policy config walk
+	[Tags] 
+	Log  Testcase14.29
+	${result}=  cli walk command  10 deny proto 45  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T58 cli policy config walk
+	[Tags] 
+	Log  Testcase14.30
+	${result}=  cli walk command  10 deny proto 45 any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+#T59 cli policy config walk
+	[Tags] 
+	Log  Testcase14.31
+	${result}=  cli walk command  10 deny proto 45 any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+* Keywords
+verify results   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should be true  ${in_range}
+   
+verify results false   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should not be true  ${in_range}
+   
+verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
+    Should be true  ${in_range}
+    
+verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
+    Should not be true  ${in_range}
+
+
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+
+

@@ -120,7 +120,45 @@ T7.6 User wrong password and new group
 T7 Teardown
  	Delete All Users
  	
- 				
+### Configure SNMP Traps	Contact		Location	Community	Traps		Server		Port
+T8.1 Configure SNMP 	
+ 	Configure SNMP			Contact1	L0cation2	Community3   Enabled  	${EMPTY}	${EMPTY}		
+T8.2 Configure SNMP		
+ 	Configure SNMP			Cntct_2		L0cation_2  Community_3  Disabled	2.3.1.4		162
+T8.3 Configure SNMP
+ 	Configure SNMP			Contact-3   L0cation-3  Community-3  Enabled	1.22.14.64  2300
+T8.4 Configure SNMP Traps	
+ 	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+T8.5 Edit SNMP Traps
+ 	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	75			${EMPTY}
+T8.6 Edit SNMP Traps
+ 	Configure SNMP Traps		1		1			1			1			10			20			80			100
+T8.7 Edit SNMP Traps
+	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0			0
+
+
+#### Configure TACACS Server	Server		Timeout		Secret			Encryption
+
+T9.1 Add TACACS Host with timeout and no secret 	
+ 	Add TACACS Host				1.2.3.4		10			${EMPTY}		No		
+T9.2 Add TACACS Host with no timeout and secret		
+ 	Add TACACS Host				2.3.1.0		30			Secret!23		No	
+T9.3 Add TACACS Host with timeout and secret and encryption		
+ 	Add TACACS Host				2.3.1.4		16			Encryption_1-@  Yes
+T9.4 Edit TACACS Host
+ 	Edit TACACS Host			1.2.3.4		1.22.14.64  23			New-Secret		Yes
+T9.5 Edit TACACS Host	
+ 	Edit TACACS Host			2.3.1.4		8.9.7.6		14			New_Encrypt		Yes
+T9.6 Delete TACACS Host
+ 	Delete TACACS Host			1.22.14.64
+T9.7 Delete TACACS Host
+ 	Delete TACACS Host			2.3.1.0	
+T9.8 Delete All TACACS Hosts
+	Delete All TACACS Hosts	
+	 
+
+
+				
 * Keyword
 config suite setup
     base suite setup

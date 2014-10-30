@@ -1081,7 +1081,8 @@ class T5(object):
         while (i <= int(count)):
             endpoint_new = "%s_%d" % (endpoint, i)
             mac = EUI(mac).value
-            mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+     #       mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
+            mac = "{0}".format(str(EUI(mac + 1)).replace('-', ':'))
             url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint' % (tenant, vns)
             c.rest.post(url, {"name": endpoint_new}, quiet=quiet)
             url1 = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
@@ -1125,7 +1126,7 @@ class T5(object):
             helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), len(data)))
             return False
 
- 
+
     def rest_clear_vns_stats(self, vns=None):
         ''' Function to clear the VNS stats
         Input: vns name
@@ -1894,7 +1895,7 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        max = int(timeout)/3
+        max = int(timeout) / 3
         for loop in range (0, int(max)):
             url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
             c.rest.get(url2)
@@ -1905,9 +1906,9 @@ class T5(object):
             if data[0]["interface"][0]["state"] == "up":
                 helpers.log("Interface state is up")
                 return True
-            
-            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " %(switch,  intf, int(loop+1)*3 )  )      
-            helpers.sleep(3)  
+
+            helpers.log("USR INFO: time since unshut:  switch - %s interface - %s  time - %d sec " % (switch, intf, int(loop + 1) * 3))
+            helpers.sleep(3)
         helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
         return False
 
@@ -2552,55 +2553,203 @@ class T5(object):
         else:
             helpers.log("Given switch name and role is not valid")
 
-    def cli_get_qos_weight(self, node, port):
+
+#    def cli_get_qos_weight(self, node, port='0'):
+#        t = test.Test()
+#        s = t.switch(node)
+#        string = 'debug ofad "qos_weight_info ' + port + '"'
+#        content = s.enable(string)['content']
+#        info = []
+#        temp = helpers.strip_cli_output(content, to_list=True)
+#        helpers.log("***temp is: %s  \n" % temp)
+
+#        for line in temp:
+#            helpers.log("***line is: %s  \n" % line)
+#            line = line.lstrip()
+#            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+#            if match:
+#                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
+#                info.append(match.group(2))
+
+#        helpers.log("***Exiting with info: %s  \n" % info)
+
+#        return info
+
+    def cli_get_verify_priority_queue_mapping(self, node):
         t = test.Test()
         s = t.switch(node)
-        string = 'debug ofad "qos_weight_info ' + port + '"'
+        string = 'debug ofad "qos_info"'
         content = s.enable(string)['content']
-        info = []
+        priority_mapping = []
+        queue_mapping = []
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("***temp is: %s  \n" % temp)
 
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+            match = re.match(r'priority (\d+).* queue (\d+)', line)
             if match:
-                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
-                info.append(match.group(2))
+                helpers.log("INFO: Global QOS parameters:: priority is: %s,  queue is: %s" % (match.group(1), match.group(2)))
+                priority_mapping.append(match.group(1))
+                queue_mapping.append(match.group(2))
+        helpers.log("Matched priority and queue values are: %s::%s" % (priority_mapping, queue_mapping))
+        if not priority_mapping:
+                helpers.test_failure("ERROR: failed to get priority mapping info")
+        queue = 0
+        index = 0
+        flag = True
+        while queue <= 3:
+            if (int(queue_mapping[index]) == queue):
+                if(int(queue_mapping[index + 1]) == queue):
+                    helpers.log("Priority and Queue mappings matched")
+                else:
+                    helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" % (queue, queue_mapping[index]))
+                    flag = False
+                    return False
+            else:
+                helpers.log("ERROR: Priority and Qeueu mappings not matched, queue#:%s and queue_mapping:%s" % (queue, queue_mapping[index]))
+                flag = False
+                return False
+            index = index + 2
+            queue = queue + 1
 
-        helpers.log("***Exiting with info: %s  \n" % info)
+        if flag:
+            return True
+        else:
+            return False
 
-        return info
+    def cli_get_verify_queue_weights(self, node, qos='no'):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "qos_info"'
+        content = s.enable(string)['content']
+        global_mapping = []
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
 
-    def cli_get_qos_port_stat(self, node, port):
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'qid=(\d+).* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: Global QOS parameters:: qid is: %s,  queue weight is: %s" % (match.group(1), match.group(2)))
+                global_mapping.append(match.group(2))
+        helpers.log("Matched queue weights are: %s" % global_mapping)
+        if not global_mapping:
+                helpers.test_failure("ERROR: failed to get queue weights info")
+        index = global_mapping[0]
+        i = 1
+        if (qos == 'yes'):
+            for key in global_mapping:
+                val = i * int(index)
+                if (int(key) == val):
+                    helpers.log("Matched queue weight from switch:%s and weight expected: %s" % (int(key), val))
+                else:
+                    helpers.test_failure("queue weights are not matched weight from switch:%s and weight expected: %s" % (int(key), val))
+                    return False
+                i = i + 1
+        else:
+            for key in global_mapping:
+                if (key == '1'):
+                    helpers.log("Matched queue weight")
+                else:
+                    helpers.test_failure("queue weights are not matched")
+                    return False
+        return True
+
+
+    def get_hw_queue_counters(self, node, port, queue_id):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "port-hw counters-all ' + port + '"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+        total_queue_count = {}
+        total_queue_diff_count = {}
+        flag = False
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            # Look for the line:
+            # UC_PERQ_PKT(8).xe16     :                15,585                +155
+            match = re.match(r'UC_PERQ_PKT\((\d)\)\.xe\d+\s*:\s*(\d+)\,*(\d*)\s*\+*(\d+)\,*(\d*)', line)
+            if match:
+                flag = True
+                queue = match.group(1)
+                if match.group(3):
+                    total_count = match.group(2) + match.group(3)
+                else:
+                    total_count = match.group(2)
+                if match.group(5):
+                    total_diff_count = match.group(4) + match.group(5)
+                else:
+                    total_diff_count = match.group(4)
+
+                helpers.log("Matched queue: %s, total counter: %s and diff counter: %s" % (match.group(1), total_count, total_diff_count))
+                total_queue_count[queue] = total_count
+                total_queue_diff_count[queue] = total_diff_count
+        if queue_id:
+            return total_queue_count[queue_id]
+
+        if not flag:
+            helpers.test_failure("No Matched queue counters found")
+            return False
+
+
+
+    def cli_get_qos_port_stat(self, node, port='0'):
+        '''
+        get the packet
+        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
+
+        '''
+
         t = test.Test()
         s = t.switch(node)
         string = 'debug ofad "qos_port_stat ' + port + '"'
         content = s.enable(string)['content']
-        info = []
+        info = {}
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("***temp is: %s  \n" % temp)
 
         for line in temp:
-            helpers.log("***line is: %s  \n" % line)
+#            helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'.*queue=(\d+).* out_pkt.*=(\d+)', line)
+            match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
             if match:
-                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))
-                info.append(match.group(2))
+#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" %
+#                    (match.group(1), match.group(2), match.group(3)))
+                ID = match.group(1) + '_' + match.group(2)
+                if match.group(3) == 0:
+                    continue
+                info[ID] = {}
+                info[ID]['outPkts'] = match.group(3)
 
         helpers.log("***Exiting with info: %s  \n" % info)
-
         return info
 
-    def cli_qos_clear_stat(self, node, port):
+
+    def cli_qos_clear_stat(self, node, port='0'):
         t = test.Test()
         s = t.switch(node)
         string = 'debug ofad "qos_clear_stat ' + port + '"'
         s.enable(string)
 
         return True
+
+    def get_queue_with_traffic(self, node, port, threshold):
+        '''
+        '''
+        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))
+        info = self.cli_get_qos_port_stat(node, port)
+        traffic_queue = []
+        for queue in info:
+            helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
+            if int(info[queue]['outPkts']) >= int(threshold):
+                traffic_queue.append(queue)
+        return traffic_queue
 
 
 
@@ -2809,7 +2958,51 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-        
+
+    def rest_get_interface_queue_stats(self, switch, intf, queue, tx='pkts'):
+        ''' Function to return a switch interface queue stats
+        Input: switch, interface, queue# and tx=pkts (default) or tx=bytes
+        Output: contents from the switch interface or error
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter[interface/name="ethernet1"][interface/queue/queue-id=8][switch-dpid="00:00:70:72:cf:bc:ce:4e"]?select=interface/queue
+
+
+REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter%5Binterface/name%3D%22ethernet1%22%5D%5Binterface/queue/queue-id%3D0%5D%5Bswitch-dpid%3D%2200%3A00%3A70%3A72%3Acf%3Ab5%3Ae7%3A10%22%5D?select=interface/queue 0:00:00.022328 reply "[ {
+  "interface" : [ {
+    "name" : "ethernet1",
+    "queue" : [ {
+      "counter" : {
+        "transmit-bytes" : 0,
+        "transmit-errors" : 0,
+        "transmit-packets" : 0
+      },
+      "queue-id" : 0
+    } ]
+  } ],
+  "switch-dpid" : "00:00:70:72:cf:b5:e7:10"
+} ]"
+
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        dpid = self.rest_get_dpid(switch)
+        helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s queue = %s and tx mode %s" % (switch, dpid, intf, queue, tx))
+        # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-queue-counter[interface/name="%s"][interface/queue/queue-id=%s][switch-dpid="%s"]?select=interface/queue' % (intf, queue, dpid, intf)
+        try:
+            c.rest.get(url)
+            data = c.rest.content()
+            if (tx == 'pkts'):
+                return data[0]['interface'][0]['queue'][0]['counter']['transmit-packets']
+            else:
+                return data[0]['interface'][0]['queue'][0]['counter']['transmit-bytes']
+
+        except:
+            helpers.test_failure(c.rest.error())
+
+
+
+
+
     def rest_get_fabric_interface_rate(self, switch, intf):
         ''' Function to return a switch fabric interface rate stats
         Input: switch and interface
@@ -2817,7 +3010,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="ethernet33"][switch-dpid="00:00:70:72:cf:b5:f0:e4"]?select=interface[name="ethernet33"]
 
 
- 
+
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2831,9 +3024,9 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             helpers.test_failure(c.rest.error())
         else:
             return c.rest.content()
-                
-        
-        
+
+
+
 
     def rest_set_vlan_mapping_mode(self, mode):
         '''
@@ -2891,6 +3084,23 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             return True
 
+    def rest_add_switch_endpoint_to_vns(self, tenant, vns, endpoint, vlan, switch, switch_if):
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s vlan = %s switch = %s switch_if = %s" % (tenant, vns, endpoint, vlan, switch, switch_if))
+
+        # url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/port-group-membership-rule[port-group="%s"]' % (tenant, vns, pg)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+
+        try:
+            c.rest.patch(url, {"interface": switch_if, "switch": switch, "vlan": vlan})
+        except:
+            return False
+        else:
+            return True
+
+
 
     def rest_delete_vlan_membership(self, tenant, segment):
         '''
@@ -2926,3 +3136,106 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             helpers.test_failure("Expected tenant count not correct Expected=%d , Actual=%d" % (int(tcount), int(len(data))))
             return False
+
+    def rest_verify_endpoint_static_exists_down(self, tenant, vns, vlan, mac):
+        '''Verify Static Endpoint entry
+
+            example show command: show endpoint mac 00:00:00:00:00:01
+
+            Input: vns name , vlan ID , mac , switch name, expected switch interface
+
+            Return: true if it matches Value specified and added attachment point is true
+         '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) == 1:
+            if str(data[0]["segment"]) == str(vns) and data[0]["mac"] == mac and int(data[0]["vlan"]) == int(vlan) and data[0]["tenant"] == tenant:
+                if str(data[0]["attachment-point-state"]) == "static":
+                    if str(data[0]["state"]) == "Attach Point Down":
+                        helpers.log("static endpoint state is down which is expected")
+                        return True
+                    else:
+                        helpers.log("static endpoint state is %s which is not what we expected" % (data[0]["state"]))
+                        return False
+
+            helpers.test_log("Given static endpoints are not present in the config")
+            return False
+        else:
+            helpers.test_log("There are more entries for a given mac")
+            return False
+
+
+    def rest_verify_switch_l2_table(self, switch, mac, Val_exists=True):
+        ''' Verify that the mac exists/does not exist as per test
+
+        example show command: show forwarding switch leaf0a l2-table | grep 00:00:00:00:00:01
+
+        Input: switch name, mac, exists
+
+        Return: true if mac exists or not according to the test
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("exists value got is %s" % (Val_exists))
+        if Val_exists is False:
+            helpers.log("Entered the first if loop as exists value is as before")
+            if len(data) == 0:
+                helpers.log("There are no mac entries for given switch which is expected")
+                return True
+            else:
+                helpers.log("There are some entries for given switch")
+                return False
+        else:
+            helpers.log("Entered the first else loop as exists value is %s" % (Val_exists))
+            if mac in data:
+                helpers.log("Expected mac exists in the l2 forwarding table")
+                return True
+            else:
+                helpers.test_log("Expected does not exist in the l2 table")
+                return False
+
+    def setup_switch_ssh_handle(self, name):
+        '''
+            SETUP SSH HANDLES for switch in ZTN MODE by touch /mnt/flash/local.d/no-auto-reload file in switches from console
+            and add ssh enable and admin / adminadmin user account and password in switchlight configuration
+        '''
+        t = test.Test()
+        helpers.log("Setting up SSH HANDLE FOR Switch : %s" % name)
+        t.setup_ztn_phase2(name)
+        return True
+
+    def remove_no_auto_reload(self, name):
+        """
+        Remove no-auto-reoload file through given switch console
+        """
+        t = test.Test()
+        con = t.dev_console(name)
+        helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+        con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+        con.cli("")
+        return True
+
+    def rest_get_router_mac(self, ip, node='master'):
+        '''get the router mac address
+            Input: router ip address
+            Return:   mac address
+        '''
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/router-ip-table'
+        c.rest.get(url)
+        data = c.rest.content()
+
+        if len(data) != 0:
+                for i in range(0, len(data)):
+                    if str(data[i]["ip"]) == ip:
+                        return data[i]["mac"]
+        else:
+            return False
+

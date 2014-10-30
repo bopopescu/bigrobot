@@ -17,7 +17,7 @@ ${switch1_alias}                        app-ac4600-1  #Alias for switch 1
 ${switch2_alias}                        app-ac4600-2  #Alias for switch 2
 ${switch3_alias}                        app-ac5710-4  #Alias for switch 3
 ${switch4_alias}                        app-ac6700-1  #Alias for switch 4
-${switch8_alias}                        app-ac5610-2  #Alias for switch 8
+${switch8_alias}                        app-ac5610-1  #Alias for switch 8
 
 ## Switch 1: app-ac4600-1
 ${switch1_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
@@ -139,11 +139,11 @@ ${arista1_sw4_tunnel_intf1}             Et49/1
 ${arista1_sw4_tunnel_ip}                192.168.29.2  
 ${arista1_sw4_tunnel_mask}              255.255.255.0
 
-## Switch 8: app-ac5610-2
+## Switch 8: app-ac5610-1
 ${switch8_filter_intf}                  ethernet1       #filter interface on switch scale-ac4600-1
-${switch8_filter_alias}                 ixia-1-7        #Alias for filter interface on switch scale-ac4600-1
+${switch8_filter_alias}                 ixia-1-1        #Alias for filter interface on switch scale-ac4600-1
 ${switch8_delivery_intf}                ethernet2       #Delivery interface on switch scale-ac4600-1
-${switch8_delivery_alias}               ixia-1-8        #Alias for delivery interface on switch scale-ac4600-1
+${switch8_delivery_alias}               ixia-1-2        #Alias for delivery interface on switch scale-ac4600-1
 
 
 ${policy_name}                          tunnel_based_policy_as4600
@@ -155,6 +155,8 @@ ${tunnel_service_name}                  tunnel_based_service
 ${policy_overlap_1}                     P1
 ${policy_overlap_2}                     ZP1
 ${policy_overlap}                       _ZP1_o_P1
+
+${interswitch_link_5710_6700}           ethernet29
 
 *Test Case
 
@@ -2297,7 +2299,9 @@ corsair suite setup
     rest add switch alias  s2  ${switch2_alias}
     rest add switch alias  s3  ${switch3_alias}
     rest add switch alias  s4  ${switch4_alias}
-    rest add switch alias  s8  ${switch8_alias}    
+    rest add switch alias  s8  ${switch8_alias}
+    # Disable interswitch link between AS5710 and AS670
+    cli disable interface  s4  ${interswitch_link_5710_6700}    
     #CRC packets to be dropped
     bash  s1  ofad-ctl crc enable
     bash  s2  ofad-ctl crc enable
@@ -2364,6 +2368,7 @@ tunnel teardown
     
 corsair suite teardown
     tunnel teardown
+    cli enable interface  s4  ${interswitch_link_5710_6700}
     #Delete previously added ip address to 40G ports on arista
     cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
     cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull

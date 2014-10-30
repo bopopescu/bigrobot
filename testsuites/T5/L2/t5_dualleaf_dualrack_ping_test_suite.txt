@@ -16,6 +16,7 @@ Resource		 testsuites/T5/t5_dualleaf_resource.txt
 ${bm0_ip}  10.0.0.1
 ${bm1_ip}  10.0.0.2
 ${bm2_ip}  10.0.0.3
+${spine_ip}  192.168.111.1
 ${bm0_mac}  00:00:00:00:00:01
 ${bm1_mac}  00:00:00:00:00:02
 ${bm2_mac}  00:00:00:00:00:03
@@ -150,7 +151,22 @@ ping bm0 to bm2 dual rack dual leaf static endpoints tag
    ${loss}=  mininet ping  bm0  ${bm2_ip}
    Should Be True  ${loss} == 0  
    
-
+ping bm0 to bm2 dual rack dual leaf static switch endpoints
+   [Tags]  L2  sanity  IronHorse  feature 
+   add portgroup to vns  A  A  p3  -1 
+   add portgroup to vns  A  A  p1  -1
+   sleep  10 
+   ${loss}=  mininet ping  bm0  ${bm2_ip}  
+   REST add endpoint  A  A  e1 
+   REST add switch endpoint to vns  A  A  e1  -1  spine0  spine0-eth1
+   REST add ip endpoint  A  A  e1  ${spine_ip}
+   REST add mac endpoint  A  A  e1  ${bm0_mac}  
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} != 0	
+   ${result}=  REST verify endpoint static exists down  A  A  -1  ${bm0_mac} 	 
+   Should be True  ${result}
+   ${result}=  rest verify switch l2 table  leaf0a  ${bm0_mac}  Val_exists=${False}
+   Should be True  ${result}
    
 
 * Keywords

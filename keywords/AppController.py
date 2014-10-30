@@ -32,7 +32,7 @@ class AppController(object):
 
 
 
-    def cli_upgrade_image(self, node=None, package=None, timeout=200, sleep_time=200):
+    def cli_upgrade_image(self, node=None, package=None, timeout=600, sleep_time=600):
         '''
             Objective:
             - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
@@ -67,7 +67,6 @@ class AppController(object):
             helpers.test_log("More than two controllers or no controller configured")
             return False
 
-
         for i in range(0, controller_qty):
             try:
                 if controller_qty > 1:
@@ -75,7 +74,7 @@ class AppController(object):
                 else:
                     n = node_handles[0]
 
-                helpers.log("Upgrade '%s' to image '%s'" % (n.name(), package))
+                helpers.log("No %s : Upgrade '%s' to image '%s'" % (i, n.name(), package))
                 n.bash("cd /home/images/")
                 n.bash("sudo rm *")
                 n.bash("sudo wget  %s" % package)

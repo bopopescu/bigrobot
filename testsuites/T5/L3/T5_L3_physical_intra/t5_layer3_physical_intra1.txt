@@ -126,31 +126,31 @@ TC26 Set 32bit full mask on vns router ip
 TC27 Change tagged endpoint IP address
     Change tagged host endpoint IP address
     [Tags]              feature  run_pass 
-Verify vlsm forwarding
+TC28 Verify vlsm forwarding
     Verify vlsm forwarding
     [Tags]                  feature  run_pass     
 
-Verify split horizon forwarding
+TC29 Verify split horizon forwarding
     manual passed
     [Tags]                  feature  run_pass         manual      
     
-Configure overlapping router IP     
+TC30 Configure overlapping router IP     
     Configure overlapping IP on same tenant across VNS  
     [Tags]                  feature  run_pass         negative    
 
-Configure overlapping IP with private keyword on the same tenant
+TC31 Configure overlapping IP with private keyword on the same tenant
     Configure overlapping IP with private keyword on the same tenant
     [Tags]                  feature  run_pass     
 
-L3 intra tenant traffic between private and public subnet with overlapping IP
+TC32 L3 intra tenant traffic between private and public subnet with overlapping IP
     L3 intra tenant traffic between private and public subnet with overlapping IP
     [Tags]                      feature  run_pass             
     
-Verify host with different IP on vns router is not getting L3 service
+TC33 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
     [Tags]                      feature  run_fail  skipped  PAN-1116  Jack-Forest
     
-Trigger controller HA failover via CLI
+TC34 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
     [Tags]              feature  run_pass
       
@@ -392,20 +392,21 @@ Verify vlsm forwarding
     BASH ifup intf                              h4                              bond0   
     BASH ifup intf                              h5                              bond0   
     BASH ifup intf                              h6                              bond0           
-    REST add vns ip                             X                               X1                      10.251.0.1              17
+    REST del router intf                        X                               X3  
     REST add vns ip                             X                               X2                      10.252.0.1              25
+    REST add vns ip                             X                               X1                      10.251.0.1              17
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc2}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc1}            -1
-    BASH ifconfig ip address                            h4                              10.251.2.212/17         bond0
-    BASH ifconfig ip address                            h5                              10.252.0.211/25         bond0   
+    BASH ifconfig ip address                    h4                              10.251.2.212/17         bond0
+    BASH ifconfig ip address                    h5                              10.252.0.11/25         bond0   
     BASH add route                              h4                              10.252.0.0/25           10.251.0.1
     BASH add route                              h5                              10.251.0.0/17           10.252.0.1
     sleep                                       5   
-    BASH ping                                   h5                              10.252.0.211            count=10
+    BASH ping                                   h4                              10.252.0.11            count=10
     ${value} =                                  BASH verify arp                 h5                      10.252.0.1
-    Should Not Be True                          ${value}        
+    Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h4                      10.251.0.1
-    Should Not Be True                          ${value} 
+    Should Be True                              ${value} 
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}                       
@@ -413,7 +414,7 @@ Verify vlsm forwarding
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
-    ${loss} =                                   BASH ping                       h5                      10.252.0.211            count=10
+    ${loss} =                                   BASH ping                       h5                      10.251.2.212            count=10
     Should Be True                              ${loss} == 0
     BASH delete route                           h4                              10.252.0.0/25           10.251.0.1
     BASH delete route                           h5                              10.251.0.0/17           10.252.0.1
@@ -622,6 +623,9 @@ Delete and add router vns ip
     BASH ifconfig ip address                            h4                              10.251.2.11/24          bond0
     BASH add route                              h3                              10.251.2.0/24           10.251.1.1
     BASH add route                              h4                              10.251.1.0/24           10.251.2.1
+    sleep                                       10  
+    BASH ping                                   h3                              10.251.1.1              count=10
+    BASH ping                                   h4                              10.251.2.1              count=10
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h4                      10.251.2.1
@@ -657,7 +661,7 @@ Delete and add router vns ip
     ${loss} =                                   BASH ping                       h4                      10.251.1.11             count=10
     Should Be True                              ${loss} == 0            
     BASH delete route                           h3                              10.251.2.0/24           10.251.1.1
-    BASH delete route                           h4                              10.251.1.0/24           10.251.2.1 
+    BASH delete route                           h4                              10.251.1.0/24           10.251.2.1
     
 Set 32bit full mask on vns router ip
     BASH ifup intf                              h1                              bond0
@@ -726,7 +730,8 @@ Change tagged host endpoint IP address
     ${result} =                                 REST show endpoints mac         ${mac2}
     ${ipAddr} =                                 Set Variable                    ${result[0]['ip-address'][0]['ip-address']}  
 #    ${ipAddr} =                                 Get From Dictionary             ${result[0]}            ip-address
-    Should Contain                              ${ipAddr}                       10.251.3.212
+#    Should Contain                              ${ipAddr}                       10.251.3.212
+    Should match regexp                         ${ipAddr}                      (10\.251\.3\.212|10\.251\.3\.11)
     ${loss} =                                   BASH ping                       h1                      10.251.3.212            count=10
     Should Be True                              ${loss} < 20                            
     BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
@@ -754,10 +759,10 @@ initialize host
     BASH init intf                              h5                              eth1
     BASH init intf                              h5                              eth2
     BASH init intf                              h5                              eth3
-    BASH init intf                              h6                              em2
     BASH init intf                              h6                              eth1
-    BASH init intf                              h6                              p1p1
-    BASH init intf                              h6                              p1p2
+    BASH init intf                              h6                              eth1
+    BASH init intf                              h6                              eth2
+    BASH init intf                              h6                              eth3
     BASH init intf                              h1                              bond0
     BASH init intf                              h2                              bond0
     BASH init intf                              h3                              bond0
@@ -772,28 +777,28 @@ initialize host
     BASH run command                            h6                              ifdown bond0
     BASH run command                            h1                              ifup eth2
     BASH run command                            h1                              ifup eth3
-    BASH run command                            h1                              ifup p1p2
-    BASH run command                            h1                              ifup p1p2
+    BASH run command                            h1                              ifup eth3
+    BASH run command                            h1                              ifup eth3
     BASH run command                            h2                              ifup eth2
     BASH run command                            h2                              ifup eth3
-    BASH run command                            h2                              ifup p1p2
-    BASH run command                            h2                              ifup p1p2
+    BASH run command                            h2                              ifup eth3
+    BASH run command                            h2                              ifup eth3
     BASH run command                            h3                              ifup eth2
     BASH run command                            h3                              ifup eth3
-    BASH run command                            h3                              ifup p1p2
-    BASH run command                            h3                              ifup p1p2
+    BASH run command                            h3                              ifup eth3
+    BASH run command                            h3                              ifup eth3
     BASH run command                            h4                              ifup eth2
     BASH run command                            h4                              ifup eth3
-    BASH run command                            h4                              ifup p1p2
-    BASH run command                            h4                              ifup p1p2
+    BASH run command                            h4                              ifup eth3
+    BASH run command                            h4                              ifup eth3
     BASH run command                            h5                              ifup eth2
     BASH run command                            h5                              ifup eth3
-    BASH run command                            h5                              ifup p1p2
-    BASH run command                            h5                              ifup p1p2
+    BASH run command                            h5                              ifup eth3
+    BASH run command                            h5                              ifup eth3
     BASH run command                            h6                              ifup eth2
     BASH run command                            h6                              ifup eth3
-    BASH run command                            h6                              ifup p1p2
-    BASH run command                            h6                              ifup p1p2
+    BASH run command                            h6                              ifup eth3
+    BASH run command                            h6                              ifup eth3
     BASH release dhcpv4 address                 h1                              bond0
     BASH release dhcpv4 address                 h2                              bond0
     BASH release dhcpv4 address                 h3                              bond0
@@ -1655,11 +1660,11 @@ Intra tenant L3 traffic same rack different leaf switch
 #    BASH init intf                              h5                              bond0
 #    BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
-    BASH ifup intf                              h6                              em2
+    BASH ifup intf                              h6                              eth1
 #    BASH init intf                              h5                              eth1
-#    BASH init intf                              h6                              em2
+#    BASH init intf                              h6                              eth1
     BASH ifconfig ip address                    h5                              10.251.1.31/24          eth1
-    BASH ifconfig ip address                    h6                              10.251.2.31/24          em2
+    BASH ifconfig ip address                    h6                              10.251.2.31/24          eth1
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
@@ -1675,7 +1680,7 @@ Intra tenant L3 traffic same rack different leaf switch
     Should Be True                              ${result}   
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2a_host5}
-    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${mac2} =                                   BASH get intf mac               h6                      eth1
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -1684,7 +1689,7 @@ Intra tenant L3 traffic same rack different leaf switch
     ${loss} =                                   BASH ping                       h5                      10.251.2.31             count=10
     Should Be True                              ${loss} < 20        
 #    BASH init intf                              h5                              eth1
-#    BASH init intf                              h6                              em2
+#    BASH init intf                              h6                              eth1
 
 L3 intra tenant across rack tagged with dynamic endpoints
     BASH ifup intf                              h1                              bond0

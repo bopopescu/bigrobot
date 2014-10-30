@@ -11,7 +11,7 @@ Library  keywords/BigTap.py
 Library  keywords/BsnCommon.py
 
 * Variable
-${version_string}   Big Tap Controller 4.0.0
+${version_string}   Big Tap Controller 4.1.0
 
 * Test Case
 Verify policy name can have all lower-case alphabet in its name

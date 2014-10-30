@@ -116,10 +116,10 @@ TC008: Verify multiple interfaces can be added to delivery-interface-group
 TC009: Verify filter-interface group with multiple member interfaces can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
     Should be true  ${return_value}
-    Sleep  5      
+    Sleep  15      
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
@@ -135,12 +135,12 @@ TC010: Verify delivery-interface group with multiple member interfaces can be ad
     Sleep  5      
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
-    Sleep  5 
+    Sleep  15 
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     Sleep  5        
     [Tags]  feature      
@@ -156,7 +156,7 @@ TC011: Verify delivery-interface group and filter-interface group can be added t
     Should be true  ${return_value}
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
     Should be true  ${verify_policy1}      
     [Tags]  feature 
@@ -164,7 +164,7 @@ TC011: Verify delivery-interface group and filter-interface group can be added t
 TC012: Delete filter interface from filter-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}
     Should be true  ${return_value}
-    Sleep  5 
+    Sleep  15 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy1}
     [Tags]  feature
@@ -172,7 +172,7 @@ TC012: Delete filter interface from filter-interface group and verify policy get
 TC013: Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
     Should be true  ${return_value}   
-    Sleep  5          
+    Sleep  15          
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
     Should be true  ${verify_policy1}
     [Tags]  feature
@@ -180,7 +180,7 @@ TC013: Add the deleted filter interface back to the filter interface group and v
 TC014: Delete delivery interface from delivery-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}
     Should be true  ${return_value}
-    Sleep  5 
+    Sleep  15 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
     [Tags]  feature  
@@ -188,7 +188,7 @@ TC014: Delete delivery interface from delivery-interface group and verify policy
 TC015: Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
     Should be true  ${return_value}   
-    Sleep  5          
+    Sleep  15          
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
     Should be true  ${verify_policy1}
     [Tags]  feature  
@@ -200,7 +200,7 @@ TC016: Verify same filter interface can be added to a two groups
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_2}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['name']}  ${filter_interface_group_name_1}
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
@@ -218,7 +218,7 @@ TC017: Verify same delivery interface can be added to a two groups
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_2}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['name']}  ${delivery_interface_group_name_1}
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
@@ -238,7 +238,7 @@ TC018: Verify a filter interface and a filter interface group can be both added 
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=3  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
@@ -257,7 +257,7 @@ TC019: Verify a delivery interface and a delivery interface group can be both ad
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=3
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
@@ -276,7 +276,7 @@ TC020: Verify a filter interface and a filter interface group with common interf
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
@@ -296,7 +296,7 @@ TC021: Verify a delivery interface and a delivery interface group with common in
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_2}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
@@ -322,7 +322,7 @@ TC022: Verify filter interfaces, that are tagged with vlan-rewrite, can be added
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     [Tags]  feature                 
@@ -344,7 +344,7 @@ TC023: Verify interfaces tagged with and without vlan-rewrite can exist in a fil
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
-    Sleep  5     
+    Sleep  15     
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
@@ -367,7 +367,7 @@ TC024: Verify multiple filter interface groups can be added to a policy
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_2}  filter  ${switch1_filter_alias_3}    
     Should be true  ${return_value}
-    Sleep  5
+    Sleep  15
     rest add policy  admin-view  ${policy_name}  forward
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
@@ -570,16 +570,16 @@ TC052: Verify delivery-interface name in a delivery-interface-group can have all
       
 TC053: Verify via cli filter-interface-group can have all alphanumeric names with a .
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1.2group
+    ${return_value_1}=  config  master  bigtap filter-interface-group filter1.2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1             
     verify filter interface group name  filter1.2group  
     [Teardown]  delete interface group testcase configuration  filter1.2group  filter            
-    [Tags]  feature      
+    [Tags]  feature  runthis      
 
 TC054: Verify via cli delivery-interface-group can have all alphanumeric names with a .
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1.2group
+    ${return_value_1}=  config  master  bigtap delivery-interface-group delivery1.2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1       
     verify delivery interface group name  delivery1.2group       
@@ -588,7 +588,7 @@ TC054: Verify via cli delivery-interface-group can have all alphanumeric names w
     
 TC055: Verify via cli filter-interface-group can have all alphanumeric names with a :
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1:2group
+    ${return_value_1}=  config  master  bigtap filter-interface-group filter1:2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1              
     verify filter interface group name  filter1:2group 
@@ -597,7 +597,7 @@ TC055: Verify via cli filter-interface-group can have all alphanumeric names wit
 
 TC056: Verify via cli delivery-interface-group can have all alphanumeric names with a :
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1:2group
+    ${return_value_1}=  config  master  bigtap delivery-interface-group delivery1:2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  delivery1:2group       
@@ -606,7 +606,7 @@ TC056: Verify via cli delivery-interface-group can have all alphanumeric names w
     
 TC057: Verify via cli filter-interface-group can have all alphanumeric names with a _
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1_2group
+    ${return_value_1}=  config  master  bigtap filter-interface-group filter1_2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1  
     verify filter interface group name  filter1_2group 
@@ -615,7 +615,7 @@ TC057: Verify via cli filter-interface-group can have all alphanumeric names wit
 
 TC058: Verify via cli delivery-interface-group can have all alphanumeric names with a _
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1_2group
+    ${return_value_1}=  config  master  bigtap delivery-interface-group delivery1_2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  delivery1_2group      
@@ -625,7 +625,7 @@ TC058: Verify via cli delivery-interface-group can have all alphanumeric names w
     
 TC059: Verify via cli filter-interface-group can have all alphanumeric names with a -
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1-2group
+    ${return_value_1}=  config  master  bigtap filter-interface-group filter1-2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  filter1-2group 
@@ -634,7 +634,7 @@ TC059: Verify via cli filter-interface-group can have all alphanumeric names wit
 
 TC060: Verify via cli delivery-interface-group can have all alphanumeric names with a -
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1-2group
+    ${return_value_1}=  config  master  bigtap delivery-interface-group delivery1-2group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  delivery1-2group            
@@ -643,7 +643,7 @@ TC060: Verify via cli delivery-interface-group can have all alphanumeric names w
     
 TC061: Verify via cli filter-interface-group can have all alphanumeric (alphabet all capitals) names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group FILTER1234GROUP
+    ${return_value_1}=  config  master  bigtap filter-interface-group FILTER1234GROUP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  FILTER1234GROUP 
@@ -652,7 +652,7 @@ TC061: Verify via cli filter-interface-group can have all alphanumeric (alphabet
 
 TC062: Verify via cli delivery-interface-group can have all alphanumeric (alphabet all capitals) names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group DELIVERY1234GROUP
+    ${return_value_1}=  config  master  bigtap delivery-interface-group DELIVERY1234GROUP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  DELIVERY1234GROUP        
@@ -661,7 +661,7 @@ TC062: Verify via cli delivery-interface-group can have all alphanumeric (alphab
 
 TC063: Verify via cli filter-interface-group can have all alphanumeric (alphabet all small) names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filter1234group
+    ${return_value_1}=  config  master  bigtap filter-interface-group filter1234group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  filter1234group 
@@ -670,7 +670,7 @@ TC063: Verify via cli filter-interface-group can have all alphanumeric (alphabet
 
 TC064: Verify via cli delivery-interface-group can have all alphanumeric (alphabet all small) names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group delivery1234group
+    ${return_value_1}=  config  master  bigtap delivery-interface-group delivery1234group rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  delivery1234group       
@@ -679,7 +679,7 @@ TC064: Verify via cli delivery-interface-group can have all alphanumeric (alphab
 
 TC065: Verify via cli filter-interface-group can have mix of lower-case and upper-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group FiLtErGrOuP
+    ${return_value_1}=  config  master  bigtap filter-interface-group FiLtErGrOuP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  FiLtErGrOuP 
@@ -688,7 +688,7 @@ TC065: Verify via cli filter-interface-group can have mix of lower-case and uppe
 
 TC066: Verify via cli delivery-interface-group can have mix of lower-case and upper-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group DeLiVeRyGrOuP
+    ${return_value_1}=  config  master  bigtap delivery-interface-group DeLiVeRyGrOuP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  DeLiVeRyGrOuP     
@@ -697,7 +697,7 @@ TC066: Verify via cli delivery-interface-group can have mix of lower-case and up
 
 TC067: Verify via cli filter-interface-group can have all upper-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group FILTERGROUP
+    ${return_value_1}=  config  master  bigtap filter-interface-group FILTERGROUP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  FILTERGROUP 
@@ -706,7 +706,7 @@ TC067: Verify via cli filter-interface-group can have all upper-case alphabet na
 
 TC068: Verify via cli delivery-interface-group can have all upper-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group DELIVERYGROUP
+    ${return_value_1}=  config  master  bigtap delivery-interface-group DELIVERYGROUP rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  DELIVERYGROUP     
@@ -715,7 +715,7 @@ TC068: Verify via cli delivery-interface-group can have all upper-case alphabet 
 
 TC069: Verify via cli filter-interface-group can have all lower-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify filter interface group name  filtergroup 
@@ -724,7 +724,7 @@ TC069: Verify via cli filter-interface-group can have all lower-case alphabet na
 
 TC070: Verify via cli delivery-interface-group can have all lower-case alphabet names
     clean configuration 
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
     sleep  1
     verify delivery interface group name  deliverygroup     
@@ -736,9 +736,9 @@ TC071: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1.2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface filter1.2interface
+    ${return_value_2}=  config  master   filter-interface filter1.2interface
     Should not contain  ${return_value_2['content']}  Error 
     sleep  1             
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1.2interface
@@ -749,9 +749,9 @@ TC072: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1.2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface delivery1.2interface
+    ${return_value_2}=  config  master   delivery-interface delivery1.2interface
     Should not contain  ${return_value_2['content']}  Error
     sleep  1       
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1.2interface      
@@ -762,9 +762,9 @@ TC073: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1:2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface filter1:2interface
+    ${return_value_2}=  config  master   filter-interface filter1:2interface
     Should not contain  ${return_value_2['content']}  Error
     sleep  1              
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1:2interface
@@ -775,9 +775,9 @@ TC074: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1:2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface delivery1:2interface
+    ${return_value_2}=  config  master   delivery-interface delivery1:2interface
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1:2interface      
@@ -788,9 +788,9 @@ TC075: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1_2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface filter1_2interface
+    ${return_value_2}=  config  master   filter-interface filter1_2interface
     Should not contain  ${return_value_2['content']}  Error        
     sleep  1  
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1_2interface
@@ -801,9 +801,9 @@ TC076: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1_2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1  delivery-interface delivery1_2interface
+    ${return_value_2}=  config  master  delivery-interface delivery1_2interface
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1_2interface      
@@ -815,9 +815,9 @@ TC077: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1-2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1  filter-interface filter1-2interface
+    ${return_value_2}=  config  master  filter-interface filter1-2interface
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1-2interface
@@ -828,9 +828,9 @@ TC078: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1-2interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1  delivery-interface delivery1-2interface
+    ${return_value_2}=  config  master  delivery-interface delivery1-2interface
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1-2interface      
@@ -841,9 +841,9 @@ TC079: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FILTER1234INTERFACE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface FILTER1234INTERFACE
+    ${return_value_2}=  config  master   filter-interface FILTER1234INTERFACE
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTER1234INTERFACE
@@ -854,9 +854,9 @@ TC080: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DELIVERY1234INTERFACE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface DELIVERY1234INTERFACE
+    ${return_value_2}=  config  master   delivery-interface DELIVERY1234INTERFACE
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERY1234INTERFACE      
@@ -867,9 +867,9 @@ TC081: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filter1234interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface filter1234interface
+    ${return_value_2}=  config  master   filter-interface filter1234interface
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filter1234interface
@@ -880,9 +880,9 @@ TC082: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   delivery1234interface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface delivery1234interface
+    ${return_value_2}=  config  master   delivery-interface delivery1234interface
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  delivery1234interface      
@@ -893,9 +893,9 @@ TC083: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FiLtErInTeRfAcE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface FiLtErInTeRfAcE
+    ${return_value_2}=  config  master   filter-interface FiLtErInTeRfAcE
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FiLtErInTeRfAcE
@@ -906,9 +906,9 @@ TC084: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DeLiVeRyInTeRfAcE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface DeLiVeRyInTeRfAcE
+    ${return_value_2}=  config  master   delivery-interface DeLiVeRyInTeRfAcE
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DeLiVeRyInTeRfAcE      
@@ -919,9 +919,9 @@ TC085: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   FILTERINTERFACE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface FILTERINTERFACE
+    ${return_value_2}=  config  master   filter-interface FILTERINTERFACE
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  FILTERINTERFACE
@@ -932,9 +932,9 @@ TC086: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   DELIVERYINTERFACE  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface DELIVERYINTERFACE
+    ${return_value_2}=  config  master   delivery-interface DELIVERYINTERFACE
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  DELIVERYINTERFACE      
@@ -945,9 +945,9 @@ TC087: Verify via cli filter-interface name in a filter-interface-group can have
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter   filterinterface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap filter-interface-group filtergroup
+    ${return_value_1}=  config  master  bigtap filter-interface-group filtergroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   filter-interface filterinterface
+    ${return_value_2}=  config  master   filter-interface filterinterface
     Should not contain  ${return_value_2['content']}  Error          
     sleep  1
     verify filter interface name in interface group  filtergroup  ${switch1_filter_intf_3}  filterinterface
@@ -958,9 +958,9 @@ TC088: Verify via cli delivery-interface name in a delivery-interface-group can 
     clean configuration 
     ${return_value_0}=  rest add interface role  s1  ${switch1_filter_intf_3}  delivery   deliveryinterface  
     Should be true  ${return_value_0}    
-    ${return_value_1}=  config  c1  bigtap delivery-interface-group deliverygroup
+    ${return_value_1}=  config  master  bigtap delivery-interface-group deliverygroup rbac-permission admin-view
     Should not contain  ${return_value_1['content']}  Error    
-    ${return_value_2}=  config  c1   delivery-interface deliveryinterface
+    ${return_value_2}=  config  master   delivery-interface deliveryinterface
     Should not contain  ${return_value_2['content']}  Error   
     sleep  1
     verify delivery interface name in interface group  deliverygroup  ${switch1_filter_intf_3}  deliveryinterface      

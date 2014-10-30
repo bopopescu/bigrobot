@@ -1978,7 +1978,8 @@ Restart ofad on leaf switch
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s3                              ofad                    timeout=60
+    ${result} =                                 BASH restart process                        s3                              ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s3                      ofad
     Should Contain                              ${value}                        is started
@@ -2030,7 +2031,8 @@ Restart ofad on spine switch
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s2                              ofad                    timeout=60
+    ${result} =                                 BASH restart process            s2                      ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s2                      ofad
     Should Contain                              ${value}                        is started
@@ -2364,12 +2366,14 @@ Restart ofad on leaf with dhcp-relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
-    BASH restart process                        s3                              ofad                    timeout=60
+    ${result} =                                 BASH restart process            s3                              ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
-    BASH restart process                        s4                              ofad                    timeout=60
+    ${result} =                                 BASH restart process            s4                              ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
@@ -2462,12 +2466,14 @@ Restart ofad on spine with dhcp-relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
-    BASH restart process                        s1                              ofad                    timeout=60
+    ${result} =                                 BASH restart process            s1                              ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
-    BASH restart process                        s2                              ofad                    timeout=60
+    ${result} =                                 BASH restart process            s2                              ofad                    timeout=60
+    Should Be True                              ${result}
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started

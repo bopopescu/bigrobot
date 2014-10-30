@@ -1216,3 +1216,16 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             helpers.log("Benchmark data logged to %s" % output_log)
             helpers.log("Log results:\n%s"
                         % helpers.file_read_once(output_log))
+
+    def test_pdu(self):
+        t = test.Test()
+        pdu = t.params(node='s1', key='pdu')
+        helpers.log("pdu: %s" % pdu)
+        p = t.node_spawn(ip=pdu["ip"], device_type='pdu', protocol='telnet')
+        p.cli('about')
+        p.cli('olStatus 20')
+        p.close()
+
+    def test_common_params(self):
+        t = test.Test()
+        helpers.log("**** params:\n%s" % helpers.prettify(t.params()))

@@ -17,21 +17,21 @@ Base class for all drivers.
 """
 import re, string
 
-_flags          = re.I
-_printable      = re.escape(string.printable)
-_unprintable    = r'[^' + _printable + r']'
+_flags = re.I
+_printable = re.escape(string.printable)
+_unprintable = r'[^' + _printable + r']'
 _unprintable_re = re.compile(_unprintable)
-_ignore         = r'[\x1b\x07\x00]'
-_nl             = r'[\r\n]'
-_prompt_start   = _nl + r'(?:' + _unprintable + r'*|' + _ignore + '*)'
-_prompt_chars   = r'[\-\w\(\)@:~]'
-_filename       = r'(?:[\w\+\-\._]+)'
-_path           = r'(?:(?:' + _filename + r')?(?:/' + _filename + r')*/?)'
-_any_path       = r'(?:' + _path + r'|~' + _path + r'?)'
-_host           = r'(?:[\w+\-\.]+)'
-_user           = r'(?:[\w+\-]+)'
-_user_host      = r'(?:(?:' + _user + r'\@)?' + _host + r')'
-_prompt_re      = [re.compile(_prompt_start                 \
+_ignore = r'[\x1b\x07\x00]'
+_nl = r'[\r\n]'
+_prompt_start = _nl + r'(?:' + _unprintable + r'*|' + _ignore + '*)'
+_prompt_chars = r'[\-\w\(\)@:~]'
+_filename = r'(?:[\w\+\-\._]+)'
+_path = r'(?:(?:' + _filename + r')?(?:/' + _filename + r')*/?)'
+_any_path = r'(?:' + _path + r'|~' + _path + r'?)'
+_host = r'(?:[\w+\-\.]+)'
+_user = r'(?:[\w+\-]+)'
+_user_host = r'(?:(?:' + _user + r'\@)?' + _host + r')'
+_prompt_re = [re.compile(_prompt_start                 \
                             + r'[\[\<]?'                    \
                             + r'\w+'                        \
                             + _user_host + r'?'             \
@@ -45,16 +45,21 @@ _prompt_re      = [re.compile(_prompt_start                 \
                             + _unprintable + r'*'           \
                             + r'\Z', _flags)]
 
-_user_re    = [re.compile(r'(user ?name|user|login): *$', _flags)]
-_pass_re    = [re.compile(r'password:? *$',               _flags)]
-_errors     = [r'error',
+# Vui: Tweak for BSN
+#  'User Name : ' - APC PDU
+_user_re = [re.compile(r'(user ?name ?|user|login): *$', _flags)]
+
+# Vui: Tweak for BSN
+#  'Password  : ' - APC PDU
+_pass_re = [re.compile(r'password +:? *$', _flags)]
+_errors = [r'error',
                r'invalid',
                r'incomplete',
                r'unrecognized',
                r'unknown command',
                r'connection timed out',
                r'[^\r\n]+ not found']
-_error_re   = [re.compile(r'^%?\s*(?:' + '|'.join(_errors) + r')', _flags)]
+_error_re = [re.compile(r'^%?\s*(?:' + '|'.join(_errors) + r')', _flags)]
 _login_fail = [r'bad secrets',
                r'denied',
                r'invalid',
@@ -68,11 +73,11 @@ _login_fail_re = [re.compile(_nl          \
 
 class Driver(object):
     def __init__(self, name):
-        self.name           = name
-        self.user_re        = _user_re
-        self.password_re    = _pass_re
-        self.prompt_re      = _prompt_re
-        self.error_re       = _error_re
+        self.name = name
+        self.user_re = _user_re
+        self.password_re = _pass_re
+        self.prompt_re = _prompt_re
+        self.error_re = _error_re
         self.login_error_re = _login_fail_re
 
     def check_head_for_os(self, string):
