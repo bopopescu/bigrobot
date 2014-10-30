@@ -23,8 +23,9 @@ from keywords.Ixia import Ixia
 from keywords.T5 import T5
 from keywords.T5L3 import T5L3
 from keywords.T5Platform import T5Platform
-from keywords.SwitchLight import SwitchLight
 from keywords.T5Utilities import T5Utilities
+from keywords.T5ZTN import T5ZTN
+from keywords.SwitchLight import SwitchLight
 
 
 helpers.set_env('BIGROBOT_TEST_POSTMORTEM', 'False', quiet=True)
@@ -43,22 +44,44 @@ helpers.print_bigrobot_env(minimum=True)
 
 
 # Global variables (Test controls)
-LOOP = 5
+SHORT = 1
+MEDIUM = 3
+LONG = 30
+VERY_LONG = 120
+LINKFLAP = 120
 INEVENT = 300
+BETWEENEVENT = 600
+
+TFLAPNUM = 100
+VFLAPNUM = 100
+BIGCONFIGSLEEP = 300
+
+LOOP = 5
+REPEAT = 60
+
+LEAF1A = "dt-leaf1a"
+LEAF1B = "dt-leaf1b"
+LEAF2A = "dt-leaf2a"
+LEAF2B = "dt-leaf2b"
+
+SPINE1 = "dt-spine1"
+SPINE2 = "dt-spine2"
 
 
 #
 # Test case setup and teardown annotations.
 #
 
-def setup():
-    """Nose fixture: setup"""
-    # print("\nInside nose_setup")
+def tc_setup():
+    """Nose fixture: Test case setup"""
+    BsnCommon().base_test_setup()
 
 
-def teardown():
-    """Nose fixture: teardown"""
-    # print("\nInside nose_teardown")
+def test_teardown():
+    """Nose fixture: Test case teardown"""
+    BsnCommon().base_test_teardown()
+
+    # Warning: We should run some additional commands if test case fails.
 
 
 #
@@ -80,6 +103,27 @@ def controller_node_event_ha_failover(during=30):
     T5Platform().cli_cluster_take_leader()
     sleep(during)
     cli_show_commands_for_debug()
+
+
+def verify_all_switches_connected_back():
+    switches = T5Platform().rest_get_disconnect_switch('master')
+    cli_show_commands_for_debug()
+    helpers.log("the disconnected switches are %s" % switches)
+    assert switches == []  # Should be empty
+
+
+def switch_node_down_up_event(node):
+    helpers.log("reload switch")
+    log_to_console("================ Rebooting ${node} ===============")
+    cli_show_commands_for_debug()
+    T5ZTN().cli_reboot_switch('master', node)
+    cli_show_commands_for_debug()
+    sleep(LONG)
+
+    # Warning: The following action should not take longer than 10 min 30 sec
+    verify_all_switches_connected_back()
+
+
 #
 # Test case definitions
 #
@@ -87,14 +131,13 @@ def controller_node_event_ha_failover(during=30):
 def test_00_suite_setup():
     # Suite setup should be the first test. Raise critical error if setup fails.
     def func():
-        # raise SkipTest("not ready")
         BsnCommon().base_suite_setup()
         for i in range(0, 500):
             BsnCommon().config('master', 'no tenant FLAP%s' % i)
     return run(func, exit_on_failure=True)
 
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_01_controller_node_event_failover():
     def func():
         for i in range(0, LOOP):
@@ -104,14 +147,19 @@ def test_01_controller_node_event_failover():
     return run(func)
 
 
-@with_setup(setup, teardown)
-def test_02_t5_longevity_show_fabric_links():
+@with_setup(test_setup, test_teardown)
+def test_02_spine_switch_node_down_up_event():
     def func():
-        raise SkipTest("not ready")
+        for i in range(0, LOOP):
+            log_to_console("\n******* spine switch node down/up event: ${i}********" % i)
+            switch_node_down_up_event(SPINE1)
+            sleep(INEVENT)
+            switch_node_down_up_event(SPINE2)
+            sleep(INEVENT)
     return run(func)
 
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_03_t5_longevity_show_running_config():
     def func():
         raise SkipTest("not ready")

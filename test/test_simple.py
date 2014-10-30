@@ -1,7 +1,6 @@
 from __future__ import print_function
 import os
 import sys
-from nose.tools import with_setup
 from nose.exc import SkipTest
 
 
@@ -14,8 +13,8 @@ sys.path.insert(0, bigrobot_path)
 
 
 import autobot.helpers as helpers
-from autobot.setup_env import environment_setup, run
-from keywords_dev.vui.MyTest import MyTest
+from autobot.nose_support import environment_setup, run, log_to_console
+#from keywords.BsnCommon import BsnCommon
 
 helpers.remove_env('BIGROBOT_TOPOLOGY', quiet=True)
 # Test suite is defined as the name of the test script minus its extension.
@@ -23,40 +22,49 @@ helpers.bigrobot_suite(os.path.basename(__file__).split('.')[0])
 environment_setup()
 
 
-def setup():
-    """Nose fixture: setup"""
-    print("\nInside nose_setup")
+class TestSimple:
+    def tc_setup(self, tc_failed=False):
+        log_to_console("Inside test case setup")
 
+    def tc_teardown(self, tc_failed=False):
+        log_to_console("Inside test case teardown")
+        if tc_failed:
+            log_to_console("test case teardown: test case FAILED: running additional keywords...")
 
-def teardown():
-    """Nose fixture: teardown"""
-    print("\nInside nose_teardown")
+    #
+    # Test case definitions
+    #
 
+    def test_01_verify_environment(self):
+        """
+        Test case: test_01_verify_environment
+        """
+        def func():
+            assert helpers.bigrobot_path() != None
+            assert helpers.bigrobot_log_path_exec_instance() != None
+            assert helpers.bigrobot_suite() != None
+            helpers.print_bigrobot_env(minimum=True)
+        run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)
 
-#
-# Test case definitions
-#
+    def test_02_run_additional_keywords_on_fail(self):
+        """
+        Test case: test_02_run_additional_keywords_on_fail
+        """
+        def func():
+            try:
+                assert 1 == 2
+            except:
+                # Run additional keywords on fail
+                log_to_console("keyword #1:  1 + 2 + 3 = %s" % (1 + 2 + 3))
+                log_to_console("keyword #2:  A + B + C = %s" % ('A' + 'B' + 'C'))
+                # Still raise it as a test failure
+                raise
+        run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)
 
-@with_setup(setup, teardown)
-def test_01_verify_environment():
-    def func():
-        MyTest().strip_control_char_test()
-        assert helpers.bigrobot_path() != None
-        assert helpers.bigrobot_log_path_exec_instance() != None
-        assert helpers.bigrobot_suite() != None
-        print()
-        helpers.print_bigrobot_env(minimum=True)
-        assert 1 != 1
-    return run(func)
-
-
-@with_setup(setup, teardown)
-def test_02_verify_decorator():
-    def func():
-        assert 1 == 2
-        print("**** I am here")
-    return run(func)
-
-
-if __name__ == '__main__':
-    test_01_verify_environment()
+    def test_03_skip(self):
+        """
+        Test case: test_03_skip
+        """
+        def func():
+            raise SkipTest("not ready")
+        run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)
