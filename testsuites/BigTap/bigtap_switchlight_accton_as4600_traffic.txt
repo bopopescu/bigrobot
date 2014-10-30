@@ -461,9 +461,9 @@ TC31: Flap Filter Interface on AS4600 and verify traffic: frame size 1518 bytes
     sleep  5
     verify results  a  b  transmitted_frame_rate  received_frame_rate
     cli disable interface  s1  ${filter_1}
-    sleep  5
+    sleep  10
     cli enable interface  s1  ${filter_1}
-    sleep  5
+    sleep  30
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     verify results  a  b  transmitted_frame_rate  received_frame_rate               
@@ -483,9 +483,9 @@ TC32: Flap Delivery Interface on AS4600 and verify traffic: frame size 1518 byte
     sleep  5
     verify results  a  b  transmitted_frame_rate  received_frame_rate
     cli disable interface  s1  ${delivery_1}
-    sleep  5
+    sleep  10
     cli enable interface  s1  ${delivery_1}
-    sleep  60
+    sleep  30
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     verify results  a  b  transmitted_frame_rate  received_frame_rate               
