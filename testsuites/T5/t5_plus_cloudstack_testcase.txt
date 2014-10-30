@@ -1,7 +1,7 @@
-== T5 Functional Openstack Integration work flow test ==
+== T5 Functional Cloudstack Integration work flow test ==
 
 * Setting
-Documentation    T5 BCF  Openstack integration feature and solution work flow test suite
+Documentation    T5 BCF Cloudstack integration test suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
@@ -13,7 +13,7 @@ Library          keywords/T5Platform.py
 Library	         keywords/SwitchLight.py
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
-Library          keywords_dev/prashanth/T5Openstack.py
+Library          keywords/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
 Resource         testsuites/T5/t5_openstack_variables.txt
@@ -21,90 +21,94 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 * Test Case 
 	
 
-Create/delete VMs with floating IP
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed 
-check associations, dis-association of floating IP for the VM
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-delete VM with floating IP
+Test cloudstack deployment KVM host
+	[Tags]  feature  openstack  IronHorse  manual-untested
+	manual un-tested 
+cloudstack deployment with esx vmware enviorment
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-delete multiple VMs with floating IP
+cloudstack deployment with Xenserver enviorment
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-exhaust floating IPs in a tenant
+create a zone deployment
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Verify that traffic is correctly blocked between projects (tenants)
+create a VPC 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Test with different traffic (IP, TCP, Jumbo Frame)
+create a 3 networks (app/web/db) in VPC
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Verify behavior of broadcast traffic from VMs (ARP broadcast forward between VM)
+create a VM in each network and verify the endpoint in BCF
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Verify behavior of multicast traffic from VMs
+verify sync operation between cloudstack management and BCF controller
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Test L3 Silent Host scenario (Replace the device with non VRRP Scenario)
+Verify floating IP assignment to each VM
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Verify floating IP connectivity between 2 VNS
+delete a VM 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-verify floating IP connectivity between VNS and external router
+delete network in a VPC
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+delete VPC
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check the VM connectivity between VPC 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 
+check the VM connectivity within VPC 
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
 
-Use traceroute to verify traffic paths
+verify adding both (active and standby BCF controller) in cloudstack
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Use test packet path and check correctness of output
+Verify the VPC/network creation after BCF controller failover
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Run tests with and without Floating IP
+adding Manual membership rule to cloudstack tenants
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-Run show tech-support
+router workflow test in cloudstack
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Verify trace packet support in the Horizon 
+external connectivity workflow test in cloudstack 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-  
-
-Cinder: Volume create/Delete for block storage management
+Test adding cluster into exsisting zone with the new server addition
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Number of volumes to create??
+Delete and readd BCF controllers from the cloudstack management
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Cinder: Volume Attach/Detach of block storage to the server
+Upgrade cloudstack packagae workflow with BCF controllers present
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Cinder: Create/Delete Snapshots
+Verify sync operation using BCF CLI deleting a tenant
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Number of snapshots to create
+Verify sync opearation using BCF CLI deleting a network
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Cinder: Create a new Volume from Snapshot
+verify sync operation using BCF CLI deleting a endpoint
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Ceph Storage sets
+Upgrade BCF controller to check SSL ceritificate preserve 
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Use seperate storage VLAN to provide a storage traffic going through the fabric (Most common used NFS,iSCSi traffic)
+seperate storage VLAN workflow while deploying cloudstack
 	[Tags]  solution  openstack  IronHorse  manual 
 	manual passed
 
-Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
+Test deployment script for KVM
 	[Tags]  scaling  openstack  IronHorse  manual	
 	manual passed
-Measure Openstack Scaling limit (Topology: Single Nova controller)
+Test deployment script for Xenserver
 	[Tags]  scaling  openstack  IronHorse  manual
 	manual passed
 
@@ -112,188 +116,26 @@ Performance(between 2 VM using iperf)
 	[Tags]  performance  openstack  IronHorse  manual
 	manual passed
 
-
-Upgrade Iron Horse Image to a Iron Horse Official Release image.
+reboot cloudstack management server
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-Configure 2 Nuetron server for openstack HA
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-reboot Master neutron server
+reboot cloudstack KVM host node
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-
-Flap the link between Leaf switch and OVS (connection to block storage)
+restart cloudstack management service 
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-
-Flap all the links on nova-controller
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap all the links on compute node
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap all the links on storage server
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap all the links between Leaf and spine switches
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap all the links on spine switches (Distribution failure)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Multiple link flaps at different traffic rates
+Upgrade cloudstack package without restarting mysql database
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
 
-Leaf Connection to server - move/add/remove link
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Connection to Spine - move/add/remove link
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-service leaf Connection to server - move/add/remove link
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-service leaf Connection to Spine - move/add/remove link
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-All Spine reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Process failure (OFAD) all leaf
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Process failure (OFAD) all spine
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-
-OVS - Nova Controller start/stop process
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-OVS - Compute node start/stop process
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-OVS - Storage if any process starts
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-Multiple failure: All servers fail and recover
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Multiple failure: All Leafs in Service Rack fail
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Multiple failure: All Leafs in Compute Rack fail
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Multiple failure: All Spine switches fail
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Multiple failure: reboot whole P domain
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-Host reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Nova controller reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Nova compute node reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Storage reboot
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-Add/Delete new leaf
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Add/delete new spine
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Add/delete new Router
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-add/delete compute nodes
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed 
-
-
-Flap mgmt. link on nova controller
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-flap mgmt link of compute node
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-flap mgmt link on the compute rack
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-flap mgmt link on the service rack 
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Reboot one of the mgmt switch 
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Reboot second mgmt switch
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Flap one of the controller mgmt connectivity
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-Hardware replacement
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Replace a Leaf switch
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Replace a Spine switch
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-Scenario of replacing external router (With the same IP and different MAC)
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 Replacing server with same host name and IP
 	[Tags]  solution  openstack  IronHorse  manual
 	manual passed
-Test work flow of VM migration
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
 
-
-
-
-Add service between Data and App VNS and verify the traffic load balance
-	[Tags]  solution  openstack  IronHorse  manual
-	manual passed
-
-shared resources VNS created under admin tenant (clemson univsersity)
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-create a VM connected to tenant A and shared resource VNS (admin tenant)
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-create a multiple VM part of tenant A and have shared network connection , verify the forwarding
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-delete/add VM into shared resource network 
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
-Place VM in different project in same network
-	[Tags]  feature  openstack  IronHorse  manual
-	manual passed
 
 
 
