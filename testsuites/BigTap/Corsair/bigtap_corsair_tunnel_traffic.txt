@@ -211,7 +211,6 @@ TC005: AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional
     Should be true  ${verify_tun_sw4}
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:02:03:04:05:06", "sequence": 1}
     sleep  5
-    pause
     ## Verify BigTap policy is up
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2}
