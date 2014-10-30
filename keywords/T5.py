@@ -17,6 +17,7 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import re
+import sys
 from netaddr import *
 
 
@@ -1308,11 +1309,13 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
             for key, value in t.params().iteritems():
-                if value['alias'] == switch:
-                    helpers.log("Getting DPID from the MAC given in the topo file...")
-                    dpid = '00:00:' + value['mac']
+                if 'alias' in value:
+                    if value['alias'] == switch:
+                        helpers.log("Getting DPID from the MAC given in the topo file for switch : %s " % str(key))
+                        dpid = '00:00:' + value['mac']
             c.rest.patch(url, {"dpid": dpid})
         except:
+            helpers.log("Unexpected error: %s" % str(sys.exc_info()[0]))
             helpers.log("Error: Invalid argument: Invalid switch id (8-hex bytes): %s; switch %s doesn't exist" % (dpid, switch))
             return False
         else:
