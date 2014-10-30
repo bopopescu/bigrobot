@@ -1,14 +1,12 @@
 from __future__ import print_function
-import os
 import sys
 import time
 import autobot.helpers as helpers
-from autobot.setup_env import big_setup
 from nose.exc import SkipTest
 
 
 # Reserved for critical errors, such as suite setup failures.
-EXIT_ON_FAILURE = False
+CRITICAL_FAILURE = False
 
 
 def sleep(s):
@@ -25,8 +23,24 @@ def func_name(level=2):
     return sys._getframe(level).f_code.co_name  # pylint: disable=W0212
 
 
-def run(test, setup=None, teardown=None, exit_on_failure=False):
-    global EXIT_ON_FAILURE  # pylint: disable=W0603
+def run(test, setup=None, teardown=None, critical_failure=False):
+    """
+    Execute a test case. It also accepts test setup/teardown fixtures for an
+    all-in-one invocation.
+
+    Arguments:
+      - test: test function
+      - setup: test setup function
+      - teardown: test teardown function
+      - critical_failure: set to True if test is considered as critical and
+        execution shouldn't continue if test fails
+
+    Return value:
+      - On success (pass), return the value from test function. Not sure what
+        Nose does with it though... For the most part, it can simply be ignored.
+      - On failure, raise exception.
+    """
+    global CRITICAL_FAILURE  # pylint: disable=W0603
     helpers.log("===========================================================")
     helpers.log("Test case: %s" % func_name())
     helpers.log("===========================================================")
@@ -36,22 +50,22 @@ def run(test, setup=None, teardown=None, exit_on_failure=False):
 
     if setup:
         try:
-            setup(tc_failed=is_tc_failed)
+            setup()
         except:
             raise
 
-    if EXIT_ON_FAILURE:
+    if CRITICAL_FAILURE:
         helpers.error_exit("Detected critical error. Aborting.", 1)
 
     try:
-        test()
+        return test()
     except SkipTest:
         raise
     except:
         is_tc_failed = True
 
-        if exit_on_failure:
-            EXIT_ON_FAILURE = True
+        if critical_failure:
+            CRITICAL_FAILURE = True
         helpers.log(" \n" + helpers.exception_info())
 
         if teardown:
@@ -70,23 +84,31 @@ def run(test, setup=None, teardown=None, exit_on_failure=False):
                 raise
 
 
-def wait_until_keyword_succeeds(self, timeout, retry_interval, kw):
+def wait_until_keyword_succeeds(timeout, retry_interval, kw, *args):
+    """
+    Keep running a keyword again and again until it succeeds (success is
+    defined as not triggering an exception).
+
+    Arguments:
+      - timeout: Continue to run for this duration (in seconds)
+      - retry_interval: sleep for n seconds before re-run
+      - kw: keyword function
+      - args: keyword function arguments
+
+    Return value:
+      - On success, return value from keyword function.
+      - On failure, raise exception.
+    """
     maxtime = time.time() + timeout
     error = None
     while not error:
         try:
-            kw()
+            return kw(*args)
         except:
             if time.time() > maxtime:
-                raise
+                error = helpers.exception_info()
             else:
-                time.sleep(retry_interval)
-    raise AssertionError("Timeout %s exceeded. The last error was: %s"
-                         % (utils.secs_to_timestr(timeout), error))
+                sleep(retry_interval)
+    raise AssertionError("wait_until_keyword_succeeds: Timeout %s seconds exceeded. The last error was:\n%s"
+                         % (timeout, error))
 
-
-def environment_setup():
-    helpers.bigrobot_nose_setup("True")
-    big_setup(is_gobot='False')
-    os.environ["AUTOBOT_LOG"] = helpers.bigrobot_log_path_exec_instance() + "/debug.log"
-    print()

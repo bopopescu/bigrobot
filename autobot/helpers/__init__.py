@@ -21,7 +21,6 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
-import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -30,9 +29,9 @@ import autobot.utils as br_utils
 
 # All below are modules in the helpers package. So we can control and manage
 # name conflicts. Therefore it's assumed safe to do 'import *'.
-from log import *
-from gobot import *
-from exec_timer import *
+from log import *  # pylint: disable=W0401, W0403
+from gobot import *  # pylint: disable=W0401, W0403
+from exec_timer import *  # pylint: disable=W0401, W0403
 
 # Convenience helper function any_match() and first_match() imported from
 # Exscript. More info at
@@ -67,8 +66,15 @@ def bigrobot_module_dependencies():
     import Crypto
     import pexpect
     import httplib2
+
     s = "BigRobot version        %s\n" % get_version()
-    s += "Robot Framework version %s\n" % robot.version.VERSION
+
+    try:
+        import robot
+        s += "Robot Framework version %s\n" % robot.version.VERSION
+    except:
+        pass
+
     s += "Exscript version        %s\n" % Exscript.version.__version__
     s += "Paramiko version        %s\n" % paramiko.__version__
     s += "Crypto version          %s\n" % Crypto.__version__
