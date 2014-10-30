@@ -13,21 +13,25 @@ sys.path.insert(0, bigrobot_path)
 
 
 import autobot.helpers as helpers
-from autobot.nose_support import environment_setup, run, log_to_console
-#from keywords.BsnCommon import BsnCommon
+import autobot.setup_env as setup_env
+from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds
+# from keywords.BsnCommon import BsnCommon
 
 helpers.remove_env('BIGROBOT_TOPOLOGY', quiet=True)
 # Test suite is defined as the name of the test script minus its extension.
 helpers.bigrobot_suite(os.path.basename(__file__).split('.')[0])
-environment_setup()
+setup_env.standalone_environment_setup()
 
 
 class TestSimple:
-    def tc_setup(self, tc_failed=False):
-        log_to_console("Inside test case setup")
+    def __init__(self):
+        self.val = 0
+
+    def tc_setup(self):
+        log_to_console("Inside test case setup (common)")
 
     def tc_teardown(self, tc_failed=False):
-        log_to_console("Inside test case teardown")
+        log_to_console("Inside test case teardown (common)")
         if tc_failed:
             log_to_console("test case teardown: test case FAILED: running additional keywords...")
 
@@ -67,4 +71,16 @@ class TestSimple:
         """
         def func():
             raise SkipTest("not ready")
+        run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)
+
+    def test_04_run_until_keyword_succeeds(self):
+        """
+        Test case: test_04_run_until_keyword_succeeds
+        """
+        def kw():
+            self.val += 1
+            assert self.val == 3
+
+        def func():
+            wait_until_keyword_succeeds(10, 2, kw)
         run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)

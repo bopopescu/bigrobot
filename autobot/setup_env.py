@@ -198,7 +198,7 @@ def big_setup(is_gobot='True'):
     bigrobot_env_init(is_gobot=is_gobot)
 
 
-def environment_setup():
+def standalone_environment_setup():
     helpers.bigrobot_nose_setup("True")
     big_setup(is_gobot='False')
     os.environ["AUTOBOT_LOG"] = helpers.bigrobot_log_path_exec_instance() + "/debug.log"
