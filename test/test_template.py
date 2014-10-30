@@ -23,21 +23,19 @@ helpers.bigrobot_suite(os.path.basename(__file__).split('.')[0])
 environment_setup()
 
 
-def setup():
-    """Nose fixture: setup"""
-    print("\nInside nose_setup")
+def test_setup():
+    """Nose fixture: Test case setup"""
 
 
-def teardown():
-    """Nose fixture: teardown"""
-    print("\nInside nose_teardown")
+def test_teardown():
+    """Nose fixture: Test case teardown"""
 
 
 #
 # Test case definitions
 #
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_01_verify_environment():
     def func():
         MyTest().strip_control_char_test()
@@ -49,21 +47,21 @@ def test_01_verify_environment():
     return run(func)
 
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_02_show_config_commands():
     def func():
         MyTest().my_config_commands('c1')
     return run(func)
 
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_03_assert():
     def func():
         raise SkipTest("not ready")
     return run(func)
 
 
-@with_setup(setup, teardown)
+@with_setup(test_setup, test_teardown)
 def test_04_forced_failure():
     def func():
         assert 1 / 0
