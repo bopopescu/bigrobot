@@ -1295,6 +1295,10 @@ class T5(object):
             return True
 
     def rest_add_dpid(self, switch, dpid):
+        '''
+            switch is the alias like laef0-a / spine0 and that shoul be defined in Topo file
+            Get dpid from the topo file
+        '''
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
@@ -1303,6 +1307,10 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
+            for key, value in t.params().iteritems():
+                if value['alias'] == switch:
+                    helpers.log("Getting DPID from the MAC given in the topo file...")
+                    dpid = '00:00:' + value['mac']
             c.rest.patch(url, {"dpid": dpid})
         except:
             helpers.log("Error: Invalid argument: Invalid switch id (8-hex bytes): %s; switch %s doesn't exist" % (dpid, switch))
