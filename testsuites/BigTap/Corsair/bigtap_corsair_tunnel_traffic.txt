@@ -2367,32 +2367,32 @@ tunnel teardown
     Sleep  2
     
 corsair suite teardown
-    tunnel teardown
-    cli enable interface  s4  ${interswitch_link_5710_6700}
+    Run Keyword and Ignore Error  tunnel teardown
+    Run Keyword and Ignore Error  cli enable interface  s4  ${interswitch_link_5710_6700}
     #Delete previously added ip address to 40G ports on arista
-    cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
-    cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
-    cli arista delete mtu interface  s7  Ethernet49/1  9212
-    cli arista delete mtu interface  s7  Ethernet51/1  9212    
-    REST delete policy  admin-view  ${policy_name}
-    REST delete policy  admin-view  ${policy_name_1}
-    rest delete interface role  s1  ${switch1_filter_intf}  filter 
-    rest delete interface role  s2  ${switch2_delivery_intf}   delivery    
-    rest delete interface role  s3  ${switch3_filter_intf}  filter 
-    rest delete interface role  s8  ${switch8_delivery_intf}   delivery    
-    rest delete switch alias  s1
-    rest delete switch alias  s2
-    rest delete switch alias  s3
-    rest delete switch alias  s4
-    rest delete switch alias  s8    
-    rest delete switch  s1
-    rest delete switch  s2
-    rest delete switch  s3
-    rest delete switch  s4
-    rest delete switch  s8    
-    config  s6  delete vlan ${extreme1_sw1_tunnel_name}
-    config  s6  delete vlan ${extreme1_sw2_tunnel_name}
+    Run Keyword and Ignore Error  cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    Run Keyword and Ignore Error  cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
+    Run Keyword and Ignore Error  cli arista delete mtu interface  s7  Ethernet49/1  9212
+    Run Keyword and Ignore Error  cli arista delete mtu interface  s7  Ethernet51/1  9212    
+    Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name}
+    Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name_1}
+    Run Keyword and Ignore Error  rest delete interface role  s1  ${switch1_filter_intf}  filter 
+    Run Keyword and Ignore Error  rest delete interface role  s2  ${switch2_delivery_intf}   delivery    
+    Run Keyword and Ignore Error  rest delete interface role  s3  ${switch3_filter_intf}  filter 
+    Run Keyword and Ignore Error  rest delete interface role  s8  ${switch8_delivery_intf}   delivery    
+    Run Keyword and Ignore Error  rest delete switch alias  s1
+    Run Keyword and Ignore Error  rest delete switch alias  s2
+    Run Keyword and Ignore Error  rest delete switch alias  s3
+    Run Keyword and Ignore Error  rest delete switch alias  s4
+    Run Keyword and Ignore Error  rest delete switch alias  s8    
+    Run Keyword and Ignore Error  rest delete switch  s1
+    Run Keyword and Ignore Error  rest delete switch  s2
+    Run Keyword and Ignore Error  rest delete switch  s3
+    Run Keyword and Ignore Error  rest delete switch  s4
+    Run Keyword and Ignore Error  rest delete switch  s8    
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw1_tunnel_name}
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw2_tunnel_name}
     Sleep  2
-    extreme save config  s6
-    rest disable feature  tunneling    
-    base suite teardown        
+    Run Keyword and Ignore Error  extreme save config  s6
+    Run Keyword and Ignore Error  rest disable feature  tunneling    
+    Run Keyword and Ignore Error  base suite teardown        
