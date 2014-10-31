@@ -53,14 +53,14 @@ Resource		t5_ztn_resource.txt
 *** Test Cases ***
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	Manual Passed
-	[Tags]  manual
+	# covered by T10. section
+	[Tags]  skipped
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Passed
-	[Tags]  manual
+	# covered by T10. section
+	[Tags]  skipped
 T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Manual Passed
-	[Tags]  manual
+	# covered by T10. section
+	[Tags]  skipped
 T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
 	Manual Passed
 	[Tags]  manual

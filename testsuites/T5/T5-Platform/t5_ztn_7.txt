@@ -54,8 +54,17 @@ Resource		t5_ztn_resource.txt
 #7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
 #7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
 T7.26.1 - while Installer download - no SWI download
-	Manual Passed
-	[Tags]  manual
+	Cli Run  master  enable; config
+	Cli Run  master  system uninstall switch ${s1_alias} reboot factory-default
+	Sleep  20
+	Telnet Verify Onie Discovery Succeeded  s1
+	Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
+	Sleep  100
+	Telnet Verify ZTN Discovery Failed  s1
+	Telnet Verify ZTN Discovery Failed  s1
+	Verify Switch Connection State  False  ${s1_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
+
 T7.26.2 - while SWI download - no startup-config download if not cached, if cached - switch undefined (suspended)
 	Manual Passed
 	[Tags]  manual
@@ -87,7 +96,7 @@ T7.28.2 - while SWI download - switch undefined (suspended)
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch In Provisioned Mode  ${s1_alias}
-	
+
 T7.28.3 - while image startup - switch undefined (suspended)
 	Telnet Reboot Switch  s2
 	Telnet Wait For Switch To Start Booting  s2
@@ -97,7 +106,7 @@ T7.28.3 - while image startup - switch undefined (suspended)
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch In Provisioned Mode  ${s2_alias}
-	
+
 #7.29. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
 T7.29.1 - while Installer download - correct SWI download and fabric join
 	Manual Passed

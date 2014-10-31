@@ -53,6 +53,14 @@ Suite Setup
 	Randomize ZTN Configuration
 	Cli Run  master  show switch
 
+	Telnet Reinstall Switchlight  s1
+	Telnet Reinstall Switchlight  s2
+	Telnet Reinstall Switchlight  s3
+	Telnet Reinstall Switchlight  s4
+	Telnet Reinstall Switchlight  s5
+
+	Sleep  150
+
 	${status}=  Rest Get Switch Connection State  master  ${s1_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
 	${status}=  Rest Get Switch Connection State  master  ${s2_alias}
