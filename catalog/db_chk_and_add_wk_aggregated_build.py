@@ -34,9 +34,10 @@ Examples:
    % BUILD_NAME="bvs master #bcf-2.0.0_13" ./db_chk_and_add_wk_aggregated_build.py \\
                      --aggregated-build-name "bvs master bcf-2.0.0 aggregated"
 """
-    parser = argparse.ArgumentParser(prog='db_chk_and_add_wk_aggregated_build',
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=descr)
+    parser = argparse.ArgumentParser(
+                        prog='db_chk_and_add_wk_aggregated_build',
+                        formatter_class=argparse.RawDescriptionHelpFormatter,
+                        description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
                         help=("Print verbose output"))
@@ -63,16 +64,12 @@ Examples:
 if __name__ == '__main__':
     args = prog_args()
 
-    if re.match(r'.*#(\d+)$', args.build) or args.aggregated_build_name:
-        db = TestCatalog()
-        doc = db.find_and_add_aggregated_build(
-                        args.build,
-                        aggregated_build_name=args.aggregated_build_name,
-                        quiet=not args.verbose)
+    db = TestCatalog()
+    doc = db.find_and_add_aggregated_build(
+                    args.build,
+                    aggregated_build_name=args.aggregated_build_name,
+                    quiet=not args.verbose)
 
-        if args.verbose: print "Doc: %s" % helpers.prettify(doc)
-        print "%s" % doc["name"]
-        sys.exit(0)
-    else:
-        print "ERROR: BUILD_NAME '%s' is not added to weekly aggregated build."
-        sys.exit(1)
+    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+    print "%s" % doc["name"]
+    sys.exit(0)
