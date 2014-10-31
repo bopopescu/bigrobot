@@ -1435,6 +1435,7 @@ class T5ZTN(object):
         - True if successfully requested switchlight reinstall, False otherwise
         """
         t = test.Test()
+        n = t.node(switch)
         self.telnet_reboot_switch(switch)
         s = t.dev_console(switch, modeless=True)
         try:
@@ -1448,6 +1449,7 @@ class T5ZTN(object):
         s.expect([r'\=\>'], timeout=30)
         s.send("run onie_bootcmd")
         s.expect("Loading Open Network Install Environment")
+        n.console_close()
         return True
 
     def enter_loader_shell(self, switch):
