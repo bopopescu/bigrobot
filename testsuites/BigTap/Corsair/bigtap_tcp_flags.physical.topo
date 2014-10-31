@@ -15,7 +15,6 @@ s1:
   ip: 10.9.19.7
 
 tg1:
-tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
   tcl_server_ip: 10.9.19.222
