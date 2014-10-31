@@ -71,8 +71,8 @@ T21 spine switch node down/up event
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
-    \	switch node down/up event      ${lea1-a} 
+    \	Log To Console   \n******* switch switch node down/up event: ${i}********   
+    \	switch node down/up event      ${leaf1-a} 
     \   sleep  ${inevent}
     \	switch node down/up event      ${leaf1-b} 
     \   sleep  ${inevent}
@@ -97,6 +97,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
 	\  sleep  ${linkflap}  	
+	
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
@@ -105,6 +106,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}   ${leaf1-b} 
 	\  sleep  ${linkflap}  	
+	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-a} 
@@ -112,7 +114,8 @@ T27 data Link down/up event between leaf and spine
 	\  data Link down/up event between nodes  ${leaf2-b}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-b} 	
-	\  sleep  ${linkflap}  	
+	\  sleep  ${linkflap}
+	  	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf2-a} 
