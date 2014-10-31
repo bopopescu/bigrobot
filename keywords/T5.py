@@ -1295,7 +1295,7 @@ class T5(object):
         else:
             return True
 
-    def rest_add_dpid(self, switch, dpid):
+    def rest_add_dpid(self, switch, dpid=''):
         '''
             switch is the alias like laef0-a / spine0 and that shoul be defined in Topo file
             Get dpid from the topo file
