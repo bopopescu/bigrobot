@@ -689,12 +689,12 @@ TC31: Restart process OFAD on switch S1
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
     bash restart process  s1  ofad
-    Sleep  30
+    Sleep  90
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2} 
-    sleep  90
+    sleep  10
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
     stop traffic
