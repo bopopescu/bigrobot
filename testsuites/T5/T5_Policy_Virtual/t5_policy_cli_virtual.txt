@@ -229,10 +229,13 @@ T6 cli Creating a policy and deleting the list which did not present
 	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
 	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}
 	should be true  ${result}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_3}
+	
 
 
 T7 cli policy config walk
 	[Tags]  cli
+	cli delete tenant  tenant=${tenantX}
 	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
 	Log  Testcase14.1:Walking through policy-list with ${policy_rule}
 	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
