@@ -149,11 +149,15 @@ class ThirdParty(object):
                 switch.config(cli_input_4)
                 cli_input_5 = "switchport trunk allowed vlan " + str(vlan_number)
                 switch.config(cli_input_5)
+                cli_input_6 = "switchport"
+                switch.config(cli_input_6)
             else:
                 cli_input_4 = "switchport mode access"
                 switch.config(cli_input_4)
                 cli_input_5 = "switchport access vlan " + str(vlan_number)
                 switch.config(cli_input_5)
+                cli_input_6 = "switchport"
+                switch.config(cli_input_6)
             return True
 
     def cli_arista_delete_vlan(self, node, vlan_number, vlan_name, interface_name, mode="trunk"):
