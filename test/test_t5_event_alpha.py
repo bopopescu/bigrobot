@@ -17,16 +17,9 @@ import autobot.helpers as helpers
 import autobot.setup_env as setup_env
 from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep
 from keywords.BsnCommon import BsnCommon
-from keywords.Controller import Controller
-from keywords.Mininet import Mininet
-from keywords.Host import Host
-from keywords.Ixia import Ixia
 from keywords.T5 import T5
-from keywords.T5L3 import T5L3
 from keywords.T5Platform import T5Platform
-from keywords.T5Utilities import T5Utilities
 from keywords.T5ZTN import T5ZTN
-from keywords.SwitchLight import SwitchLight
 
 
 helpers.set_env('BIGROBOT_TEST_POSTMORTEM', 'False', quiet=True)
@@ -223,7 +216,7 @@ class TestT5Longevity:
         Test case: test_01_controller_node_event_failover
         """
         def func():
-            raise SkipTest("removed from regression")
+            # raise SkipTest("removed from regression")
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* controller node failover: %s *******" % i)
@@ -236,7 +229,7 @@ class TestT5Longevity:
         Test case: test_02_spine_switch_node_down_up_event
         """
         def func():
-            raise SkipTest("removed from regression")
+            # raise SkipTest("removed from regression")
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* spine switch node down/up event: %s ********" % i)
@@ -251,7 +244,7 @@ class TestT5Longevity:
         Test case: test_02_leave_switch_node_down_up_event
         """
         def func():
-            raise SkipTest("removed from regression")
+            # raise SkipTest("removed from regression")
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* leaf switch node down/up event: %s ********" % i)
@@ -270,6 +263,8 @@ class TestT5Longevity:
         Test case: test_04_data_link_down_up_event_between_leaf_and_spine
         """
         def func():
+            # raise SkipTest("removed from regression")
+
             for i in range(0, self.LOOP):
                 log_to_console("\n******* data link down/up event between leaf and spine: %s ********" % i)
                 self.data_link_down_up_event_between_nodes(self.LEAF1A, self.SPINE1)
@@ -314,6 +309,8 @@ class TestT5Longevity:
         Test case: test_05_data_link_down_up_event_between_leafs
         """
         def func():
+            # raise SkipTest("removed from regression")
+
             for i in range(0, self.LOOP):
                 log_to_console("\n******* date link down/up %s*******" % i)
                 self.data_link_down_up_event_between_nodes(self.LEAF1A, self.LEAF1B)
@@ -331,6 +328,8 @@ class TestT5Longevity:
         Test case: test_06_big_configuration_changes_around_500_tenants
         """
         def func():
+            # raise SkipTest("removed from regression")
+
             for i in range(0, self.LOOP):
                 log_to_console("\n******* big configuration changes tenant %s*******" % i)
                 self.tenant_configuration_add_remove(self.TFLAPNUM, 3)
@@ -342,6 +341,8 @@ class TestT5Longevity:
         Test case: test_07_big_configuration_changes_around_500_vns
         """
         def func():
+            # raise SkipTest("removed from regression")
+
             for i in range(0, self.LOOP):
                 log_to_console("\n******* big configuration changes vns %s*******" % i)
                 self.vns_configuration_add_remove(self.VFLAPNUM)
@@ -353,6 +354,8 @@ class TestT5Longevity:
         Test case: test_08_continues_event
         """
         def func():
+            # raise SkipTest("removed from regression")
+
             helpers.log("randomize execution of all the event test cases")  # from T23 to T30
             for i in range(0, self.REPEAT):
                 log_to_console("\n========******* in continues event loop: %s out of %s ******======" % (i, self.REPEAT))
