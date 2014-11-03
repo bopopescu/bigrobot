@@ -1627,7 +1627,7 @@ class Test(object):
                 helpers.log("Env BIGROBOT_TEST_ZTN is True. Loading ZTN-based config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN on these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
-                master.enable("copy snapshot://ztn-base-config running-config ")
+#                 master.enable("copy snapshot://ztn-base-config running-config ")
                 master.config("show logging level")
                 master.enable("show running-config")
                 master.enable("show switch")
@@ -1731,13 +1731,13 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN knob is True just loding the ztn-base-config")
-            helpers.log("Loading ztn-base-config ...")
-            c.config("copy snapshot://ztn-base-config running-config")
-        else:
-            helpers.log("Loading firstboot-config ...")
-            c.config("copy snapshot://firstboot-config running-config")
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN knob is True just loding the ztn-base-config")
+#             helpers.log("Loading ztn-base-config ...")
+#             c.config("copy snapshot://ztn-base-config running-config")
+#         else:
+        helpers.log("Loading firstboot-config ...")
+        c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True
