@@ -50,8 +50,8 @@ TC2: Verify traffic with match any
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames       
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames       
     [Tags]  policy-vlanrewrite  match-any
 
 TC3: Verify traffic with match on src-mac
@@ -70,8 +70,8 @@ TC3: Verify traffic with match on src-mac
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  match-mac
 
 TC4: Verify traffic with match on dst-mac
@@ -90,8 +90,8 @@ TC4: Verify traffic with match on dst-mac
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  match-mac
 
 
@@ -109,8 +109,8 @@ TC5: Verify traffic with match on ethertype
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  match-ethertype    
 
 TC6: Verify traffic with match on IPv4
@@ -129,8 +129,8 @@ TC6: Verify traffic with match on IPv4
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip 
 
 TC7: Verify traffic with match on IPv4 src-ip
@@ -149,8 +149,8 @@ TC7: Verify traffic with match on IPv4 src-ip
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchsrcip 
 
 TC8: Verify traffic with match on IPv4 dst-ip
@@ -169,8 +169,8 @@ TC8: Verify traffic with match on IPv4 dst-ip
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchdstip     
 
 TC9: Verify traffic with match on IPv4 TCP
@@ -191,8 +191,8 @@ TC9: Verify traffic with match on IPv4 TCP
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp                
 
 TC10: Verify traffic with match on IPv4 TCP SRC-PORT
@@ -213,8 +213,8 @@ TC10: Verify traffic with match on IPv4 TCP SRC-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpsrcport
 
 TC11: Verify traffic with match on IPv4 TCP SRC-PORT RANGE
@@ -235,8 +235,8 @@ TC11: Verify traffic with match on IPv4 TCP SRC-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpsrcport
     
 
@@ -258,8 +258,8 @@ TC12: Verify traffic with match on IPv4 TCP DST-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpdstport    
 
 TC13: Verify traffic with match on IPv4 TCP DST-PORT RANGE
@@ -280,8 +280,8 @@ TC13: Verify traffic with match on IPv4 TCP DST-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpdstport     
  
 
@@ -303,8 +303,8 @@ TC14: Verify traffic with match on IPv4 UDP
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp                
 
 TC15: Verify traffic with match on IPv4 UDP SRC-PORT
@@ -325,8 +325,8 @@ TC15: Verify traffic with match on IPv4 UDP SRC-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpsrcport
 
 TC16: Verify traffic with match on IPv4 UDP SRC-PORT RANGE
@@ -347,8 +347,8 @@ TC16: Verify traffic with match on IPv4 UDP SRC-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpsrcport
     
 
@@ -370,8 +370,8 @@ TC17: Verify traffic with match on IPv4 UDP DST-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpdstport    
 
 TC18: Verify traffic with match on IPv4 UDP DST-PORT RANGE
@@ -392,8 +392,8 @@ TC18: Verify traffic with match on IPv4 UDP DST-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcpdstport  
 
 ######
@@ -414,8 +414,8 @@ TC19: Verify traffic with match on IPv6
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip6 
 
 
@@ -435,8 +435,8 @@ TC20: Verify traffic with match on IPv6 Src IP (unicast)
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip6-srcip 
 
 TC21: Verify traffic with match on IPv6 Src IP (Link Local Unicast)
@@ -455,8 +455,8 @@ TC21: Verify traffic with match on IPv6 Src IP (Link Local Unicast)
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip6-srcip-ll 
     
 
@@ -477,8 +477,8 @@ TC22: Verify traffic with match on IPv6 DST IP (Global unicast)
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip6-dstip  
 
 TC23: Verify traffic with match on IPv6 Dst IP (Link Local Unicast)
@@ -497,8 +497,8 @@ TC23: Verify traffic with match on IPv6 Dst IP (Link Local Unicast)
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchip6-dstip-ll 
 
 
@@ -520,8 +520,8 @@ TC24: Verify traffic with match on TCP6
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp6
 
 
@@ -543,8 +543,8 @@ TC25: Verify traffic with match on TCP6 SRC-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp6
 
 
@@ -566,8 +566,8 @@ TC26: Verify traffic with match on TCP6 DST-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp6
 
 
@@ -589,8 +589,8 @@ TC27: Verify traffic with match on TCP6 SRC-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp6
 
 
@@ -612,8 +612,8 @@ TC28: Verify traffic with match on TCP6 DST-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchtcp6            
 
 
@@ -635,8 +635,8 @@ TC29: Verify traffic with match on UDP6
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchUDP6
 
 
@@ -658,8 +658,8 @@ TC30: Verify traffic with match on UDP6 SRC-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchUDP6
 
 
@@ -681,8 +681,8 @@ TC31: Verify traffic with match on UDP6 DST-PORT
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchUDP6
 
 
@@ -704,8 +704,8 @@ TC32: Verify traffic with match on UDP6 SRC-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchUDP6
 
 
@@ -727,8 +727,8 @@ TC33: Verify traffic with match on UDP6 DST-PORT RANGE
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  matchUDP6
 
 TC34: Verify traffic with match on IPv4, strip vlan
@@ -796,8 +796,8 @@ TC36: Verify traffic with match on L2 IPv4 Multicast MAC Address
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames 
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames 
     [Tags]  policy-vlanrewrite  ipv4-multicast 
 
 TC37: Verify traffic with match on IPv4 Multicast Dst-IP Address
@@ -816,8 +816,8 @@ TC37: Verify traffic with match on IPv4 Multicast Dst-IP Address
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames  
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames  
     [Tags]  policy-vlanrewrite  ipv4-multicast 
 
 
@@ -835,8 +835,8 @@ TC38: Verify traffic with match on L2 IPv6 Multicast MAC Address
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames 
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames 
     [Tags]  policy-vlanrewrite  ipv6-multicast 
 
 TC39: Verify traffic with match on IPv6 Multicast Dst-IP Address
@@ -855,8 +855,8 @@ TC39: Verify traffic with match on IPv6 Multicast Dst-IP Address
     start traffic
     sleep  10
     stop traffic
-    verify results  a  transmitted_frames  c  received_crc_errored_frames
-    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    verify results  a  transmitted_frames  c  received_valid_frames
+    verify results  b  transmitted_frames  d  received_valid_frames      
     [Tags]  policy-vlanrewrite  ipv6-multicast 
 
 * Keywords
