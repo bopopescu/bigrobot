@@ -854,7 +854,7 @@ class T5ZTN(object):
         ztn_config = ztn_config_temp
         ztn_config.append("interface ma1 ip-address dhcp")
         ztn_config.append("hostname %s" % switch_name)
-        ztn_config.append("datapath id 00:00:%s" % mac)
+        ztn_config.append("datapath id 00:00:%s" % mac.lower())
         ztn_config.append("controller %s port 6653" % master_ip)
         ztn_config.append("ssh enable")
         ztn_config.append("logging host %s" % master_ip)
