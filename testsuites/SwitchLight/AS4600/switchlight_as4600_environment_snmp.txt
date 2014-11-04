@@ -142,7 +142,7 @@ TC11: Verify Description for Thermal Sensor 3 is reported correctly in CLI in SN
     ${comp_value_6}=  Catenate  ${compare_value_7}  ${comp_value_5}      
     ${compare_value}=  Catenate  ${compare_value_8}  ${comp_value_6}      
     ${fan_thermal}=  Convert To String  ${thermal_value}          
-    Should be equal as strings  ${compare_value}  ${fan_thermal}
+    Should contain  ${fan_thermal}  ${compare_value}  
     [Tags]    thermal  description   
 
 TC12: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SNMP Walk Output
