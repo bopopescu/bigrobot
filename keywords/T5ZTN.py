@@ -903,7 +903,7 @@ class T5ZTN(object):
                      "snmp-server trap PSU 2 status good",
                      "snmp-server trap PSU 2 status failed",
                      "snmp-server trap PSU 2 status missing"]
-        fan_lines_leaf = ["snmp-server trap Fan 1 status good",
+        fan_lines = ["snmp-server trap Fan 1 status good",
                      "snmp-server trap Fan 1 status failed",
                      "snmp-server trap Fan 1 status missing",
                      "snmp-server trap Fan 2 status good",
@@ -918,27 +918,9 @@ class T5ZTN(object):
                      "snmp-server trap Fan 5 status good",
                      "snmp-server trap Fan 5 status failed",
                      "snmp-server trap Fan 5 status missing",
-                     "snmp-server trap Fan 6 status good",
-                     "snmp-server trap Fan 6 status failed",
-                     "snmp-server trap Fan 6 status missing"]
-        fan_lines_spine = ["snmp-server trap Fan 1 status good",
-                     "snmp-server trap Fan 1 status failed",
-                     "snmp-server trap Fan 1 status missing",
-                     "snmp-server trap Fan 2 status good",
-                     "snmp-server trap Fan 2 status failed",
-                     "snmp-server trap Fan 2 status missing",
-                     "snmp-server trap Fan 3 status good",
-                     "snmp-server trap Fan 3 status failed",
-                     "snmp-server trap Fan 3 status missing",
-                     "snmp-server trap Fan 4 status good",
-                     "snmp-server trap Fan 4 status failed",
-                     "snmp-server trap Fan 4 status missing",
-                     "snmp-server trap Fan 5 status good",
-                     "snmp-server trap Fan 5 status failed",
-                     "snmp-server trap Fan 5 status missing",
-                     "snmp-server trap Fan 7 status good",
-                     "snmp-server trap Fan 7 status failed",
-                     "snmp-server trap Fan 7 status missing"]
+                     "snmp-server trap Fan 6/7 status good",
+                     "snmp-server trap Fan 6/7 status failed",
+                     "snmp-server trap Fan 6/7 status missing"]
 
         s = t.dev_console(hostname, modeless=True)
         s.send("\n")
@@ -1001,14 +983,9 @@ class T5ZTN(object):
                     interval = startup_config_line.split("interval ")[1]
                     helpers.log("Expanding line %s" % startup_config_line)
                     helpers.log("Interval is %s" % str(interval))
-                    if switch_type == "spine":
-                        for fan_line in fan_lines_spine:
-                            startup_config_temp.append("%s interval %s"
-                                 % (fan_line, str(interval)))
-                    elif switch_type == "leaf":
-                        for fan_line in fan_lines_leaf:
-                            startup_config_temp.append("%s interval %s"
-                                 % (fan_line, str(interval)))
+                    for fan_line in fan_lines:
+                        startup_config_temp.append("%s interval %s"
+                             % (fan_line, str(interval)))
                     continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
@@ -1041,9 +1018,6 @@ class T5ZTN(object):
             helpers.log("Analyzing line %s" % running_config_line)
             # Excluding comments and empty lines
             if not re.match(r'!|^\s*$', running_config_line):
-                # if "timezone Etc/UTC" in running_config_line:
-                #    helpers.log("Skipping line: %s" % running_config_line)
-                #    continue
                 if "show running-config" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
@@ -1063,6 +1037,15 @@ class T5ZTN(object):
                     continue
                 if "snmp-server enable" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
+                    continue
+                if re.match(r'snmp-server trap Fan 6|snmp-server trap Fan 7',
+                             running_config_line):
+                    if "Fan 6" in running_config_line:
+                        tmp_ln = running_config_line.replace("Fan 6", "Fan 6/7")
+                    elif "Fan 7" in running_config_line:
+                        tmp_ln = running_config_line.replace("Fan 7", "Fan 6/7")
+                    running_config_temp.append(tmp_ln)
+                    helpers.log("Rearranging line: %s" % tmp_ln)
                     continue
                 if re.match(r'snmp-server contact|snmp-server location',
                              running_config_line):
