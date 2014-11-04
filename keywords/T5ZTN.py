@@ -239,14 +239,18 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        #s.expect(r'[\r\n]Switch Light OS', timeout=120)
+        # s.expect(r'[\r\n]Switch Light OS', timeout=120)
         s.send("\n")
-        options = s.expect([r'=> ', r'[\r\n].*login: $', s.get_prompt()],
-                  timeout=120)
+        options = s.expect([r'=> ', r'[\r\n].*login: $',
+                            r'Installer Mode Enabled', s.get_prompt()],
+                            timeout=120)
         if options[0] == 0:  # Uboot prompt
             s.send('boot')
             s.expect(r'[\r\n].*login: $', timeout=120)
         elif options[0] == 2:
+            s.send('reboot')
+            s.expect(r'[\r\n].*login: $', timeout=200)
+        elif options[0] == 3:
             n.console_close()
             helpers.test_failure("Switch did not reboot. Returning False")
             return False
