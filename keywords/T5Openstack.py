@@ -259,7 +259,7 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 
-		result = os1.bash("neutron net-external-list %s" % (extName))
+		result = os1.bash("neutron subnet-show %s" % (extName))
 		output = result["content"]
 		match = re.search(r'Unable to find subnet with name', output)
 		if match:
@@ -267,12 +267,7 @@ class T5Openstack(object):
 			return ''
 		else:
 			out_dict = helpers.openstack_convert_table_to_dict(output)
-			extId = None
-			for key in out_dict:
-				name = out_dict[key]['name']
-				match = re.search(extName, name)
-				if match:
-					extId = key
+			extId = out_dict["network_id"]["value"]
 			return extId
 	
 	
@@ -560,6 +555,17 @@ class T5Openstack(object):
 		os1.bash("nova keypair-delete %s" % (keypairName))
 		return True
 
+	def openstack_add_secrule_icmp(self, secName):
+		'''Adding security rule to exsisting security group name
+			Input:
+				exsisting security name
+			Return: None
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		os1.bash("nova secgroup-add-rule %s icmp -1 -1 0.0.0.0/0" % (secName))
+		return True
+	
 	def openstack_add_router_gw(self, routerName, extName):
 		'''set tenant router gateway
 			Input:
@@ -1158,8 +1164,9 @@ S
 		url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (port_group_name)
 		c.rest.get(url1)
 		data1 = c.rest.content()
-		for i in len(data1[0]["interface"][0]):
-			k, v = data1[0]["interface"][0][i]["switch-name"], data1[0]["interface"][0][i]["interface-name"]
+		helpers.log("length=%d" % len(data1[0]["interface"]))
+		for i in range(0, len(data1[0]["interface"])):
+			k, v = data1[0]["interface"][i]["switch-name"], data1[0]["interface"][i]["interface-name"]
 			portgroup_members[k] = v 
 		return portgroup_members
 	

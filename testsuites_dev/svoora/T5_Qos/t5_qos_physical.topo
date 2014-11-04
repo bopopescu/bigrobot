@@ -1,0 +1,183 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+   ip: 10.8.22.10
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ #console:
+   #ip: regress
+   #libvirt_vm_name: amallina_ztn-c1_06251549
+   user: admin
+   password: adminadmin
+c2:
+   ip: 10.8.22.11
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ #console:
+   #ip: regress
+   #libvirt_vm_name: amallina_snt-c2_06251553
+   user: admin
+   password: adminadmin
+s1:
+  #ip: 10.8.0.128
+  alias: leaf0-a
+  leaf-group: rack0
+  mac: 70:72:cf:b5:e7:10
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6003
+    protocol: telnet
+  set_session_ssh: false
+  set_init_ping: false
+  
+s2:
+  #ip: 10.8.0.150
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: 70:72:cf:ab:39:58
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6004
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+  #ip: 10.8.0.146
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:cf:b5:e9:60
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6005
+  set_session_ssh: false
+  set_init_ping: false
+s4:
+  #ip: 10.8.0.151
+  alias: leaf1-b
+  leaf-group: rack1
+  mac: 70:72:cf:b5:f1:c2
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6006
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+  #ip: 10.8.0.155
+  alias: leaf2-a
+  leaf-group: rack2
+  mac: 70:72:cf:ab:37:58
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6007
+  set_session_ssh: false
+  set_init_ping: false
+s6:
+  #ip: 10.8.0.152
+  alias: leaf2-b
+  leaf-group: rack2
+  mac: 70:72:cf:b5:e5:54
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6008
+  set_session_ssh: false
+  set_init_ping: false
+s7:
+  #ip: 10.8.0.153
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:cf:ae:b4:ae
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6001
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 19
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+  #ip: 10.8.0.149
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:cf:ae:b5:30
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6002
+  #pdu:
+    #ip: pdu-314-b.bigswitch.com
+    #port: 20
+  set_session_ssh: false
+  set_init_ping: false
+  
+
+
+#h1:
+#  ip: 10.193.0.21
+#   ip: 10.195.0.103
+#   user: root
+#   password: bsn
+   
+      
+#h2:
+#  ip: 10.195.0.104
+#  user: root
+#  password: bsn
+  
+#h3:
+#  ip: 10.195.0.101
+#  user: root
+#  password: bsn
+   
+#h4:
+#  ip: 10.195.0.102
+#  user: root
+#  password: bsn
+     
+#h5:
+#  ip: 10.195.0.105
+#  user: root
+#  password: bsn
+     
+#h6:
+#  ip: 10.195.0.106
+#  user: root
+#  password: bsn
+  
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.5
+  tcl_server_ip: 10.9.19.231
+  ports:
+    a:
+      name: 12/1
+    b:
+      name: 12/2
+    c:
+      name: 12/3
+    d:
+      name: 12/4
+    e:
+      name: 12/6
+    f:
+      name: 12/7
+        
+ 

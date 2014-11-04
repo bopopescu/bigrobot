@@ -4,8 +4,8 @@
 Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY}  
 	log  step 0 - snap shot current state
   		${key_a}=   bash_get_key 	 
-		${c1config_before}=   cli_take_snapshot   c1  run_config=yes			 
-		Verify Ping   h1     ${h2ip}		
+		${c1config_before}=   cli_take_snapshot   c1  run_config=yes
+  		Verify Ping is successful    h1     ${h2ip} 		
  		fabric_integrity_checker    before   single		
 		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
 	     	
@@ -23,10 +23,12 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
 		Upgrade show command    master
-		
+		enable   c1   copy running-config file://
  		##  need verify the in other partition
+		${C}=  cli_take_snapshot    c1  filepath=/home/admin	
  		 
 	log  step 3 - launch upgrade 
+		${c1activepartition}=  get_boot_partition   c1   active	
 		Log time    ${File}    before launch image
 		${result}= 	cli_upgrade_launch    c1      ${option}
  		Should be True     ${result} 
@@ -43,15 +45,20 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
  		Should Be Equal as Strings  ${key_a}  ${key_b} 
  		${c1config_after}=   cli_take_snapshot   c1  run_config=yes
 		Should Be Equal    ${c1config_before}    ${c1config_after} 	
-		
+		${D}=  cli_take_snapshot    c1   filepath=/home/admin		
+		Should Be Equal    ${C}    ${D}	 		
+
+  		Verify Ping is successful    h1     ${h2ip} 		
  		# stop the ping and see how much traffic lost
 		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
 		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
 		
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-		Log To Console   there are ${result} ping packet loss, 1 ping per sec
- 		fabric_integrity_checker    after   single   		
-		Verify Ping   h1     ${h2ip} 				
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+ 		fabric_integrity_checker    after   single  
+ 		 			 
+		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
+		Should Be True     ${result}							
 		Return From Keyword   True
 
 Copy image  [Arguments]    ${upgradeimage}    ${node}=master
@@ -64,8 +71,8 @@ Copy image  [Arguments]    ${upgradeimage}    ${node}=master
 		
 Copy image if no image exist   [Arguments]    ${node}
 		${num}  ${_}=	   cli_check_image  		
-		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image1}	 ${node}
-		${num}  ${_}=	   cli_check_image 
+		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}	 ${node}
+		${num}  ${_}=	   cli_check_image    ${node}
 		Should Be Equal As Integers     ${num}    1      	   	
 		
 
@@ -86,7 +93,7 @@ Launch image   [Arguments]    ${node}=master
 Verify switch are booted with correct image
   		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back 
  		Log time   ${File}   all switches connected back	
- 		cli   master  show switch	 
+ 		enable   master  show switch	 
 		${switches}=  rest_get_suspended_switch 
  		Should Be Empty   ${switches} 
 		sleep  ${long} 		
@@ -94,27 +101,28 @@ Verify switch are booted with correct image
 		log   switches are ${switches}
  		: FOR    ${sw}   IN   @{switches}   
 		\   ${alias}=   get_node_alias   ${sw} 	 
-		\   Verify Switch SWI Version   ${alias}
+		\   ${result}=  cli_verify_switch_configured    ${alias}
+		\   Run Keyword if    ${result}    Verify Switch SWI Version   ${alias}
  
 
-Reboot all switches by alias 
-		cli   master  show switch
+Reboot all switches by alias    [Arguments]    ${node}=master
+		enable   ${node}  show switch
  		${switches}=  get_all_switch_nodes  
 		log   switches are ${switches}
-  		cli_reboot_switch_name     master   
+  		cli_reboot_switch_name     ${node}   
  
 
-Reboot all switches by ip 
-		cli   master  show switch
+Reboot all switches by ip   [Arguments]    ${node}=master
+		enable   ${node}  show switch
  		${switches}=  get_all_switch_nodes  
 		log   switches are ${switches}
-  		cli_reboot_switch_ip     master   
+  		cli_reboot_switch_ip     ${node}  
  
-Reboot all switches by mac
-		cli   master  show switch
+Reboot all switches by mac   [Arguments]    ${node}=master
+		enable   ${node}  show switch
  		${switches}=  get_all_switch_nodes  
 		log   switches are ${switches}
- 		cli_reboot_switch_mac     master   
+ 		cli_reboot_switch_mac     ${node}   
 
 
  
@@ -147,7 +155,7 @@ Verify All Switch Running Config
 	\   verify_switch_running_config  ${mac}  ${alias}
   
 Verify All Switch Startup Config
-	cli   master  show switch
+	enable   master  show switch
  	${switches}=  get_all_switch_nodes  
 	log   switches are ${switches}
  	: FOR    ${sw}   IN   @{switches}   
@@ -172,15 +180,16 @@ Verify config in master and backup
 	Set Suite Variable       ${c1config}
 
 
-Upgrade show command   [Arguments]   ${node}	 
-	cli  ${node}    show debug upgrade status
-	cli  ${node}    show upgrade staged 
-	cli  ${node}    show boot partition  
-	cli  ${node}    show switch
-	cli  ${node}    show link
-	cli  ${node}    show upgrade progress	  
-	cli  ${node}    show running-config switch		
-	cli  ${node}    show clock;show forwarding switch leaf0-a lag-table;show forwarding switch leaf0-b lag-table;show forwarding switch leaf1-a lag-table;show forwarding switch leaf1-b lag-table;show forwarding switch leaf2-a lag-table;show forwarding switch leaf2-b lag-table;show forwarding switch spine0 lag-table;show forwarding switch spine1 lag-table;show upgrade progress
+Upgrade show command   [Arguments]   ${node}=master	 
+	enable  ${node}    show debug upgrade status
+	enable  ${node}    show upgrade staged 
+	enable  ${node}    show boot partition  
+	enable  ${node}    show switch
+	enable  ${node}    show link
+	enable  ${node}    show upgrade progress	  
+	enable  ${node}    show running-config switch;show controller		
+	enable  ${node}    show clock
+#	enable  ${node}    show forwarding switch leaf0-a lag-table;show forwarding switch leaf0-b lag-table;show forwarding switch leaf1-a lag-table;show forwarding switch leaf1-b lag-table;show forwarding switch leaf2-a lag-table;show forwarding switch leaf2-b lag-table;show forwarding switch spine0 lag-table;show forwarding switch spine1 lag-table;show upgrade progress
 
 
 
@@ -191,6 +200,10 @@ Find Index   [Arguments]    ${element}    @{items}
    \    ${index} =    Set Variable    ${index + 1}
    Return From Keyword    ${-1}    # Also [Return] would work here.
 
+
+Set switch to factory default for next reboot     [Arguments]    ${sw}  
+	${alias}=   get_node_alias   ${sw} 	
+	 enable   master  system uninstall switch ${alias} factory-default 
 
 
 Remove switch from controller   [Arguments]    ${sw}   
@@ -234,6 +247,7 @@ Reboot all the suspended switch
  
 Upgrade Suite Setup
 	Base Suite Setup
+	tenant FLAP configuration remove
 #	Cli Copy   ${config}   running-config    node=master  scp_passwd=bsn	
 	
 	
@@ -242,6 +256,8 @@ Upgrade suite teardown
 
 Upgrade base test setup
 	base test setup
+	config  master    no switch dummy
+	
 	${switches}=  rest_get_suspended_switch  
 	${len}=  Get Length    ${switches}
 	Pass Execution If   '${len}' == '0' 	test setup: all the switches are connected   
@@ -253,7 +269,7 @@ Upgrade base test setup
 
 Upgrade base test teardown
 	base test teardown
-	${switches}=  rest_get_suspended_switch  
+ 	${switches}=  rest_get_suspended_switch  
 	${len}=  Get Length    ${switches}
 	Pass Execution If   '${len}' == '0' 	test teardown: all the switches are connected   
 	log   suspended switches are ${switches}
@@ -262,7 +278,13 @@ Upgrade base test teardown
 	Reboot all the suspended switch 	
 	Verify switch are booted with correct image
  
+Upgrade Suite Setup single controller
+	Base Suite Setup
+	${num}=   rest_get_num_nodes
+	${role}=  rest_get_node_role   c1
 
+	Run Keyword if   '${role}' != 'active'  cli_cluster_take_leader    c1
+	Run Keyword if   ${num}!= 1             cli_remove_node_standby	
 
 
 Log time    [Arguments]   ${File}    ${message}  
@@ -337,21 +359,23 @@ CLI add fabric switch spine   [Arguments]   ${node}   ${mac}
   config    master       switch ${node}
   config    master       fabric-role spine
   config    master       mac ${mac}
+  enable    master       show switch 
   
 CLI add fabric switch leaf   [Arguments]   ${node}   ${mac}   ${leafg}     
   config    master       switch ${node}
   config    master       fabric-role leaf
   config    master       leaf-group ${leafg} 
   config    master       mac ${mac}
+  enable    master       show switch 
  
 
-
-
+Verify Ping is successful    [Arguments]   ${src}   ${dest}
+	Wait Until Keyword Succeeds  	5 min	10 sec   Verify Ping    ${src}      ${dest} 		
  
-Verify Ping   [Arguments]   ${src}   ${dest}    ${count}=10
+Verify Ping   [Arguments]   ${src}   ${dest}    
 	BASH ping		${src}			 ${dest} 	count=1	
 	sleep  ${medium}
-	${loss} = 			BASH ping		${src}		${dest} 	count=${count}
+	${loss} = 			BASH ping		${src}		${dest} 	count=10
 	Should Be True  	${loss} == 0	
 
 
@@ -364,7 +388,8 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		${config_before_c1}=   cli_take_snapshot   c1  run_config=yes
 		${config_before_c2}=   cli_take_snapshot   c2  run_config=yes
 					 
-		Verify Ping   h1     ${h2ip}		
+		Verify Ping is successful   h1     ${h2ip} 		
+	
  		fabric_integrity_checker    before    
 		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
 	     	
@@ -391,11 +416,17 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		  		 
  		 
 	log  step 3 - launch upgrade 
+		${c1activepartition}=  get_boot_partition   c1   active
+		${c2activepartition}=  get_boot_partition   c2   active
+	
 		Log time    ${File}    before launch image
 		${result}= 	upgrade_launch_image_HA_parallel  nodes=@{nodes}  option=${option}
- 		Should be True     ${result}  		  
+ 		Should be True     ${result}  	
+ 		
+ 			  
 		sleep  ${verylong} 	
-		
+		Wait Until Keyword Succeeds  	5 min	10 sec   verify_upgrade_not_progress
+		 
  	log  step 4 - check switch are upgrade with new image
 		Verify switch are booted with correct image
 		Upgrade show command    master
@@ -408,15 +439,20 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		Compare runningconfig 	c2    ${config_before_c2}
 			
  		# stop the ping and see how much traffic lost
-	 
+ 		
+	   	Verify Ping is successful    h1     ${h2ip} 	
 		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
 		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
 		
 		log  there are ${result} ping packet loss, 1 ping per sec
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-		Log To Console   there are ${result} ping packet loss, 1 ping per sec
- 		fabric_integrity_checker    after      		
-		Verify Ping   h1     ${h2ip} 				
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+ 		fabric_integrity_checker    after      						
+		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
+		Should Be True     ${result}		
+		${result}=   Verify active partition changed after upgrade		c2  ${c2activepartition}
+		Should Be True     ${result}
+		Return From Keyword   True
 
 Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage} 
 		Log time to console   before copy image
@@ -467,4 +503,26 @@ Verify VIP function    [Arguments]   ${vip}
 	${mac2} =  Rest Get MAC Using Virtual IP   master
 	Should Be Equal as Strings  ${mac1}  ${mac2}
 
-	 
+tenant FLAP configuration add 
+	rest_add_tenant_vns_scale    tenantcount=10   tname=FLAP     vnscount=2   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	${vlan}=    Set Variable   1000
+    : FOR    ${j}    IN RANGE    0     10
+    \	rest_add_interface_to_all_vns      FLAP${j}     leaf1-a    ethernet3  vlan=${vlan}
+    \   ${vlan}=  expr  ${vlan} + 10
+	\   sleep  10
+	
+tenant FLAP configuration remove
+    : FOR    ${j}    IN RANGE    0     10
+    \ 	config    master     no tenant FLAP${j}
+
+Upgrade launch negative    [Arguments]   ${node}   ${message}
+	${result}=	cli_upgrade_launch   node=${node}    soft_error=True 
+	Should Contain  ${result}     ${message}	 
+
+
+Verify active partition changed after upgrade    [Arguments]   ${node}   ${old}
+	${c1activepartition}=  get_boot_partition   c1   active
+	Run Keyword if   '${c1activepartition}' == '${old}'	   Return From Keyword      False 
+	...  ELSE   Return From Keyword     True
+	
+ 		 

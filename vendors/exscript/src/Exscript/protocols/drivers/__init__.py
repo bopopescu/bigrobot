@@ -21,10 +21,11 @@ from Exscript.protocols.drivers.arista_switch import AristaSwitchDriver
 from Exscript.protocols.drivers.extreme_switch import ExtremeSwitchDriver
 from Exscript.protocols.drivers.mininet import MininetDriver
 from Exscript.protocols.drivers.shell_unix import UnixShellDriver
+from Exscript.protocols.drivers.apc_pdu import ApcPduDriver
 
 driver_classes = []
-drivers        = []
-driver_map     = {}
+drivers = []
+driver_map = {}
 
 def isdriver(o):
     return inspect.isclass(o) and issubclass(o, Driver) and not o is Driver

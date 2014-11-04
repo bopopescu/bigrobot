@@ -1,0 +1,227 @@
+* Settings
+Documentation     T5 Breakout Cable Test suite- Iron Horse Plus 
+#Suite Setup       T5 breakout cable test setup
+#Suite Teardown    T5 breakout cable test teardown
+Test Teardown     traffic teardown
+#Force Tags        T5  IronHorse
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Switch.py
+#Library        keywords_dev/kranti/ironhorse/T5SwitchTraffic.py       
+Library         String
+#Resource        testsuites_dev/kranti/ironhorse/t5_traffic_interfacestats_variables.txt
+
+*Test Case 
+#### Topology - Spine 40G port - Leaf 4 x 10 G ports 
+TC Verify breakout cable detection on spine for 40 G port 
+    [Tags]  feature  T5     
+    Log     Step 1 - verify 40G port identifies the cable 
+    Log     Step 2 - show inventory  output for spine 
+    Manual untested
+
+TC Verify breakout cable detection on leaf for 10G ports 
+    [Tags]  feature  T5  
+     Log     Step 1 - verify 40G port identifies the cable 
+     Log     Step 2 - show inventory output for leaf
+    Manual untested  
+
+TC Verify breakout cable detection show interface command for spine 
+    [Tags]  feature  T5
+    Log     Step 1 - verify show interface command output for spine on cntrlr
+    Manual untested
+    
+TC Verify breakout cable detection show interface command for leaf 
+    [Tags]  feature  T5
+    Log     Step 1 - verify show interface command for leaf interface on cntrlr
+    Manual untested   
+
+TC Verify breakout cable detection show link on controller
+    [Tags]  feature  T5 
+    Log     Step 1 - verify show link detects it as leaf-spine link 
+    Log     Step 2 - verify show link output # any differentiator for breakout cable 
+    Manual untested
+
+TC Verify interface shutdown for spine port 40G breakout cable
+    [Tags]  feature  T5
+    Log     Step 1 - verify 40G port port shutdown and bring up 
+    Manual untested
+
+TC Verify interface shutdown for leaf switch port sub interface port shutdown
+    [Tags]  feature  T5  
+    Log     Step 1 - verify sub interface port down on leaf side - one 10G port
+     Log    Step 2 - verify show interface status on spine port 
+    Manual untested
+    
+TC Verify interface shutdown for all breakdown interfaces on leaf 
+    [Tags]  feature  T5  
+    Log     Step 1 - verify sub interface port down on leaf side - one 10G port
+     Log     Step 2 - verify show interface status on spine port 
+    Manual untested
+    
+TC Verify the 40G breakout cable taken out and reinserted back on same port different port on spine
+    [Tags]  feature  T5 
+    Log     Step 1 - Verify interface detection 
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+    
+TC Verify the 40G breakout cable sub-interface port taken out and reinserted back on leaf side
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface detection 
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the same segment member port breakout interface configuration 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface configuration for the same segment interface using breakout cable  
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the different segment member port breakout interface configuration 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface configuration for the different segment interface using breakout cable  
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the different segment member port with Vlan breakout interface configuration 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface configuration for the different segment interface with Vlan using breakout cable  
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the different tenant segment member port breakout interface configuration 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface configuration for the different tenant interface with Vlan using breakout cable  
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the port group configuration with all breakout interfaces 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify port group configuration with all breakout interfaces   
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+    
+TC Verify the port group configuration with two breakout interfaces in two different port groups 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify port group configuration with two breakout interfaces   
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the the breakout interfaces configuration delete in port group and add in another port-group 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify delete interface from the port group configuration with two breakout interfaces   
+    Log     Step 2 - verify show interface status for leaf and spine 
+    Manual untested
+
+TC Verify the the breakout interfaces configuration delete in segment and and add in another segment in same tenant
+     [Tags]  feature  T5
+     Log     Step 1 - Verify the the breakout interfaces configuration delete in segment and and add in another segment in same tenant    
+     Manual untested
+
+TC Verify the the breakout interfaces configuration delete in segment and and add in another segment in different tenant 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify the the breakout interfaces configuration delete in segment and and add in another segment in different tenant 
+    Manual untested
+
+TC Verify bpdu guard protection when breakout interface is connected with Arista switch 
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify when STP is enabled on thirdparty vendor 
+    Log     Step 2 - Verify when bpdu comes to the breakout interface the interface is shutdown with bpdu error message  
+    Manual untested
+    
+#### Traffic test : Topology - Leaf- spine-Leaf [ leaf 10G breakoutport- Spine 40G port ]
+
+TC Verify same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify unidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify jumbo frame same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic        
+    Manual untested 
+
+TC Verify same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify unidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify jumbo frame same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
+    Manual untested   
+
+TC Verify same segment L2 traffic bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify bidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify jumbo frame same segment L2 traffic bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify jumbo frame bidirectional same segment L2 traffic        
+    Manual untested 
+
+TC Verify same segment L2 traffic with vlan bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify bidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify jumbo frame same segment L2 traffic with vlan bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
+    Manual untested   
+     
+  
+    
+    
+ 
+ 
+ 
+
+     
+    
+   
+    
+    
+*Keywords 
+
+T5 traffic interface stats test setup
+   base suite setup
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns1}
+   rest add vns  ${tenant}  ${vns2}  
+   rest add router intf  ${tenant}  ${vns1}
+   sleep  2
+   rest add router intf  ${tenant}  ${vns2} 
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+   sleep  2 
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${leaf0a_ixia}  ${vlan} 
+   sleep  2   
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch3_name}  ${leaf1a_ixia}  ${vlan}
+   sleep  2
+   
+
+T5 traffic interface stats test teardown
+   rest delete tenant  ${tenant}  
+   base suite teardown
+   sleep  5   
+   
+traffic teardown
+    delete traffic  
+   
+
+  
+
+
+
+
+

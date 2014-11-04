@@ -15,3 +15,6 @@ host_password: bsn
 
 host_root_user: root
 host_root_password: bsn
+
+pdu_user: apc
+pdu_password: apc

@@ -736,7 +736,7 @@ T34 Verify traffic loss/convergence after removing static endpoints
    Log   Verify/measure traffic loss/convergence
    #manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 T35 Verify image upgrade of controller
    Log   Repeat T3
@@ -746,7 +746,7 @@ T35 Verify image upgrade of controller
    Log   Verify/measure traffic loss/convergence
    #Manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 	
 T37 Verify parallel upgrades of all spines/leafs
@@ -757,7 +757,7 @@ T37 Verify parallel upgrades of all spines/leafs
    Log   Verify/measure traffic loss/convergence
    #manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed	
+   Manual passed	
 	
 T38 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
    Log   Repeat T3
@@ -830,7 +830,7 @@ T44 Verify traffic loss in half switches connected to master and rest have conne
    Log   Verify/measure traffic loss/convergence
    #manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Repeat T3
@@ -840,7 +840,7 @@ T45 Repeat T44, all switches connect back to master, verify fabric stability
    Log   Verify/measure traffic loss/convergence
    #manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 	
 T46 Verify snmp polling (get/getnext/getbulk)

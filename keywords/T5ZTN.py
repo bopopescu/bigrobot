@@ -144,16 +144,16 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(hostname)
         s = t.dev_console(hostname)
-        #s.send(helpers.ctrl('c'))
-        #options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
+        # s.send(helpers.ctrl('c'))
+        # options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
         #                   s.get_prompt()])
-        #if options[0] == 0:  # login prompt
+        # if options[0] == 0:  # login prompt
         #    s.send('admin')
         #    options = s.expect([r'[Pp]assword:', s.get_prompt()])
         #    if options[0] == 0:
         #        helpers.log("Logging in as admin with password %s" % password)
         #        s.cli(password)
-        #if options[0] == 2:  # bash mode
+        # if options[0] == 2:  # bash mode
         #    s.cli('exit')
         output = s.cli("show version")['content']
         output = helpers.str_to_list(output)
@@ -239,14 +239,18 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        #s.expect(r'[\r\n]Switch Light OS', timeout=120)
+        # s.expect(r'[\r\n]Switch Light OS', timeout=120)
         s.send("\n")
-        options = s.expect([r'=> ', r'[\r\n].*login: $', s.get_prompt()],
-                  timeout=120)
+        options = s.expect([r'=> ', r'[\r\n].*login: $',
+                            r'Installer Mode Enabled', s.get_prompt()],
+                            timeout=120)
         if options[0] == 0:  # Uboot prompt
             s.send('boot')
             s.expect(r'[\r\n].*login: $', timeout=120)
         elif options[0] == 2:
+            s.send('reboot')
+            s.expect(r'[\r\n].*login: $', timeout=200)
+        elif options[0] == 3:
             n.console_close()
             helpers.test_failure("Switch did not reboot. Returning False")
             return False
@@ -330,13 +334,30 @@ class T5ZTN(object):
         | node | Alias of the node to use |
 
         Return Value:
+        - True if ONIE Discovery process failed
+        """
+        t = test.Test()
+        n = t.node(node)
+        s = t.dev_console(node, modeless=True)
+        s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
+        s.expect("ONIE: Starting ONIE Service Discovery", timeout=60)
+        n.console_close()
+        return True
+
+    def telnet_verify_onie_discovery_succeeded(self, node):
+        """
+        Verify that ONIE Discovery process succeeded
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
         - True if ONIE Discovery process succeeded
         """
         t = test.Test()
         n = t.node(node)
         s = t.dev_console(node, modeless=True)
-        s.expect("ONIE: Starting ONIE Service Discovery")
-        s.expect("ONIE: Starting ONIE Service Discovery")
+        s.expect("ONIE: Executing installer", timeout=60)
         n.console_close()
         return True
 
@@ -404,21 +425,21 @@ class T5ZTN(object):
         s.send('enable; config')
         if state == 'up':
             helpers.log("Setting interface MA1 up")
-            #s.send('interface ma1 ip-address dhcp')
+            # s.send('interface ma1 ip-address dhcp')
             s.send("debug bash")
             s.send("ifconfig ma1 up")
             s.send("exit")
         elif state == 'down':
             helpers.log("Setting interface MA1 down")
-            #s.send('no interface ma1 ip-address dhcp')
+            # s.send('no interface ma1 ip-address dhcp')
             s.send("debug bash")
             s.send("ifconfig ma1 down")
             s.send("exit")
         elif state == 'flap':
             helpers.log("Setting interface MA1 down and up")
-            #s.send('no interface ma1 ip-address dhcp')
-            #helpers.sleep(10)
-            #s.send('interface ma1 ip-address dhcp')
+            # s.send('no interface ma1 ip-address dhcp')
+            # helpers.sleep(10)
+            # s.send('interface ma1 ip-address dhcp')
             s.send("debug bash")
             s.send("ifconfig ma1 down")
             helpers.sleep(10)
@@ -729,7 +750,7 @@ class T5ZTN(object):
                 if "snmp-server enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                #if re.match(r'snmp-server trap', startup_config_line):
+                # if re.match(r'snmp-server trap', startup_config_line):
                 #    helpers.log("Skipping line: %s" % startup_config_line)
                 #    continue
                 if "ntp enable" in startup_config_line:
@@ -798,14 +819,14 @@ class T5ZTN(object):
                            "snmp-server switch trap fan-status",
                            "snmp-server trap fan all status all interval")
                         if "mem-total-free" in ztn_config_line:
-                           helpers.log("Need to divide value in %s "
-                                       "by 1024" % ztn_config_line)
-                           split = ztn_config_line.split(" ")
-                           value = split[len(split)-1]
-                           helpers.log("Value is %s" % value)
-                           new_value = int(int(value)/1024)
-                           helpers.log("New value is %s" % new_value)
-                           ztn_config_line = ztn_config_line.replace(
+                            helpers.log("Need to divide value in %s "
+                                        "by 1024" % ztn_config_line)
+                            split = ztn_config_line.split(" ")
+                            value = split[len(split) - 1]
+                            helpers.log("Value is %s" % value)
+                            new_value = int(int(value) / 1024)
+                            helpers.log("New value is %s" % new_value)
+                            ztn_config_line = ztn_config_line.replace(
                                              value, str(new_value))
                     else:
                         helpers.log(("Skipping line - %s - because"
@@ -833,7 +854,7 @@ class T5ZTN(object):
         ztn_config = ztn_config_temp
         ztn_config.append("interface ma1 ip-address dhcp")
         ztn_config.append("hostname %s" % switch_name)
-        ztn_config.append("datapath id 00:00:%s" % mac)
+        ztn_config.append("datapath id 00:00:%s" % mac.lower())
         ztn_config.append("controller %s port 6653" % master_ip)
         ztn_config.append("ssh enable")
         ztn_config.append("logging host %s" % master_ip)
@@ -886,7 +907,7 @@ class T5ZTN(object):
                      "snmp-server trap PSU 2 status good",
                      "snmp-server trap PSU 2 status failed",
                      "snmp-server trap PSU 2 status missing"]
-        fan_lines_leaf = ["snmp-server trap Fan 1 status good",
+        fan_lines = ["snmp-server trap Fan 1 status good",
                      "snmp-server trap Fan 1 status failed",
                      "snmp-server trap Fan 1 status missing",
                      "snmp-server trap Fan 2 status good",
@@ -901,32 +922,14 @@ class T5ZTN(object):
                      "snmp-server trap Fan 5 status good",
                      "snmp-server trap Fan 5 status failed",
                      "snmp-server trap Fan 5 status missing",
-                     "snmp-server trap Fan 6 status good",
-                     "snmp-server trap Fan 6 status failed",
-                     "snmp-server trap Fan 6 status missing"]
-        fan_lines_spine = ["snmp-server trap Fan 1 status good",
-                     "snmp-server trap Fan 1 status failed",
-                     "snmp-server trap Fan 1 status missing",
-                     "snmp-server trap Fan 2 status good",
-                     "snmp-server trap Fan 2 status failed",
-                     "snmp-server trap Fan 2 status missing",
-                     "snmp-server trap Fan 3 status good",
-                     "snmp-server trap Fan 3 status failed",
-                     "snmp-server trap Fan 3 status missing",
-                     "snmp-server trap Fan 4 status good",
-                     "snmp-server trap Fan 4 status failed",
-                     "snmp-server trap Fan 4 status missing",
-                     "snmp-server trap Fan 5 status good",
-                     "snmp-server trap Fan 5 status failed",
-                     "snmp-server trap Fan 5 status missing",
-                     "snmp-server trap Fan 7 status good",
-                     "snmp-server trap Fan 7 status failed",
-                     "snmp-server trap Fan 7 status missing"]
+                     "snmp-server trap Fan 6/7 status good",
+                     "snmp-server trap Fan 6/7 status failed",
+                     "snmp-server trap Fan 6/7 status missing"]
 
         s = t.dev_console(hostname, modeless=True)
         s.send("\n")
-        #s.send(helpers.ctrl('c'))
-        #s.send("\x03")
+        # s.send(helpers.ctrl('c'))
+        # s.send("\x03")
         options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:',
                             r'[\r\n]* root@.*:\~\#', r'loader\#', r'=> ',
                             s.get_prompt()], timeout=30)
@@ -984,14 +987,9 @@ class T5ZTN(object):
                     interval = startup_config_line.split("interval ")[1]
                     helpers.log("Expanding line %s" % startup_config_line)
                     helpers.log("Interval is %s" % str(interval))
-                    if switch_type == "spine":
-                        for fan_line in fan_lines_spine:
-                            startup_config_temp.append("%s interval %s"
-                                 % (fan_line, str(interval)))
-                    elif switch_type == "leaf":
-                        for fan_line in fan_lines_leaf:
-                            startup_config_temp.append("%s interval %s"
-                                 % (fan_line, str(interval)))
+                    for fan_line in fan_lines:
+                        startup_config_temp.append("%s interval %s"
+                             % (fan_line, str(interval)))
                     continue
                 if "timezone UTC" in startup_config_line:
                     temp_line = startup_config_line.replace("UTC", "Etc/UTC")
@@ -1024,9 +1022,6 @@ class T5ZTN(object):
             helpers.log("Analyzing line %s" % running_config_line)
             # Excluding comments and empty lines
             if not re.match(r'!|^\s*$', running_config_line):
-                # if "timezone Etc/UTC" in running_config_line:
-                #    helpers.log("Skipping line: %s" % running_config_line)
-                #    continue
                 if "show running-config" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
@@ -1047,10 +1042,14 @@ class T5ZTN(object):
                 if "snmp-server enable" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
-                # temp override BSC-5629
-                if re.match(r'snmp-server community ro public$',
-                            running_config_line):
-                    helpers.log("Skipping line: %s" % running_config_line)
+                if re.match(r'snmp-server trap Fan 6|snmp-server trap Fan 7',
+                             running_config_line):
+                    if "Fan 6" in running_config_line:
+                        tmp_ln = running_config_line.replace("Fan 6", "Fan 6/7")
+                    elif "Fan 7" in running_config_line:
+                        tmp_ln = running_config_line.replace("Fan 7", "Fan 6/7")
+                    running_config_temp.append(tmp_ln)
+                    helpers.log("Rearranging line: %s" % tmp_ln)
                     continue
                 if re.match(r'snmp-server contact|snmp-server location',
                              running_config_line):
@@ -1286,7 +1285,7 @@ class T5ZTN(object):
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
         s.send("\x03")
-        options = s.expect([r'[\r\n]*.*login: $',r'[Pp]assword:',r'root@.*:\~\#',
+        options = s.expect([r'[\r\n]*.*login: $', r'[Pp]assword:', r'root@.*:\~\#',
                             r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'press control-c now to enter loader shell',
                             r'Trying manifest'], timeout=120)
@@ -1331,7 +1330,7 @@ class T5ZTN(object):
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
-            #else:
+            # else:
             #    s.expect(r'Clock Configuration:', timeout=120)
             helpers.log("Switch %s rebooted" % switch)
         except:
@@ -1423,6 +1422,7 @@ class T5ZTN(object):
         - True if successfully requested switchlight reinstall, False otherwise
         """
         t = test.Test()
+        n = t.node(switch)
         self.telnet_reboot_switch(switch)
         s = t.dev_console(switch, modeless=True)
         try:
@@ -1436,6 +1436,7 @@ class T5ZTN(object):
         s.expect([r'\=\>'], timeout=30)
         s.send("run onie_bootcmd")
         s.expect("Loading Open Network Install Environment")
+        n.console_close()
         return True
 
     def enter_loader_shell(self, switch):
@@ -1537,37 +1538,37 @@ class T5ZTN(object):
         helpers.log("Reset connection command executed successfully")
         return True
 
-    def console_bash_switch_mode_nonztn(self, node ):
+    def console_bash_switch_mode_nonztn(self, node):
         """
         Set the bootmode for switch - non ztn
         Author- Mingtao
         Inputs:
         | node | Alias of the switch |
-        Return Value:  True         
+        Return Value:  True
         """
-        
-        t = test.Test()        
+
+        t = test.Test()
         s = t.dev_console(node)
-        content = s.bash('cat /mnt/flash/boot-config')['content'] 
-        temp = helpers.strip_cli_output(content) 
-        
+        content = s.bash('cat /mnt/flash/boot-config')['content']
+        temp = helpers.strip_cli_output(content)
+
         helpers.log('USR OUTPUT: %s ' % temp)
-        
-        if (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)): 
-            helpers.log('The switch: %s is in ZTN mode ' % node)    
-            image =  'SWI=http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release-bcf.swi'
-            sedstring = 's;^BOOTMODE.*;'+image+';'       
+
+        if (re.match(r'.*BOOTMODE=ztn.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s is in ZTN mode ' % node)
+            image = 'SWI=http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release-bcf.swi'
+            sedstring = 's;^BOOTMODE.*;' + image + ';'
             line = 'sed -i.orig \'' + sedstring + '\'  /mnt/flash/boot-config'
-            s.bash(line)        
-            s.bash('cat /mnt/flash/boot-config')         
-            helpers.log(s.bash('')['content'])                              
-        elif (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)):
-            helpers.log('The switch: %s is NOT in  ztn mode ' % node)  
+            s.bash(line)
+            s.bash('cat /mnt/flash/boot-config')
+            helpers.log(s.bash('')['content'])
+        elif (re.match(r'.*SWI=.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s is NOT in  ztn mode ' % node)
         else:
-            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
-            helpers.test_failure('ERROR:  not able to figure out the boot mode')         
-         
-        s.cli('')                  
+            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)
+            helpers.test_failure('ERROR:  not able to figure out the boot mode')
+
+        s.cli('')
         return True
 
     def console_bash_switch_mode_ztn(self, node):
@@ -1576,90 +1577,90 @@ class T5ZTN(object):
         Author- Mingtao
         Inputs:
         | node | Alias of the switch |
-        Return Value:  True         
+        Return Value:  True
         """
-        t = test.Test()        
+        t = test.Test()
         s = t.dev_console(node)
-        content = s.bash('cat /mnt/flash/boot-config')['content'] 
-        temp = helpers.strip_cli_output(content)         
+        content = s.bash('cat /mnt/flash/boot-config')['content']
+        temp = helpers.strip_cli_output(content)
         helpers.log('USR OUTPUT: %s ' % temp)
-                
-        if (re.match(r'.*SWI=.*', temp,flags=re.DOTALL)): 
-            helpers.log('The switch: %s is NOT in  ztn mode, setting to ztn ' % node)    
-            bootmode =  'BOOTMODE=ztn'
-            sedstring = 's;^SWI=.*;'+bootmode+';'       
+
+        if (re.match(r'.*SWI=.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s is NOT in  ztn mode, setting to ztn ' % node)
+            bootmode = 'BOOTMODE=ztn'
+            sedstring = 's;^SWI=.*;' + bootmode + ';'
             line = 'sed -i.orig \'' + sedstring + '\'  /mnt/flash/boot-config'
-            s.bash(line) 
-            s.bash('cat /mnt/flash/boot-config') 
-            helpers.log(s.bash('')['content'])            
-        elif (re.match(r'.*BOOTMODE=ztn.*', temp,flags=re.DOTALL)):
-            helpers.log('The switch: %s is in  ztn mode ' % node) 
+            s.bash(line)
+            s.bash('cat /mnt/flash/boot-config')
+            helpers.log(s.bash('')['content'])
+        elif (re.match(r'.*BOOTMODE=ztn.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s is in  ztn mode ' % node)
         else:
-            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)              
-            helpers.test_failure('ERROR:  not able to figure out the boot mode')         
-        s.cli('')                  
+            helpers.log('ERROR:  not able to figure out the boot mode of switch: %s ' % node)
+            helpers.test_failure('ERROR:  not able to figure out the boot mode')
+        s.cli('')
         return True
 
-    def console_bash_switch_add_ztnserver(self, node,ztnserver):
+    def console_bash_switch_add_ztnserver(self, node, ztnserver):
         """
         add ztn server to switch
         Author- Mingtao
         Inputs:
-            node  -  Alias of the switch  
+            node  -  Alias of the switch
             ztnserver  - ztnservers
-        
-        Return Value:  True         
+
+        Return Value:  True
         """
-        t = test.Test()        
+        t = test.Test()
         s = t.dev_console(node)
-        content = s.bash('cat /mnt/flash/boot-config')['content'] 
-        temp = helpers.strip_cli_output(content) 
-        helpers.log('USR OUTPUT: %s ' % temp)                       
-        if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
-            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
-            #line= 'cat /mnt/flash/boot-config | sed -i.orig \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'
-            line= "sed -i.orig '/^ZTNSERVERS.*/d' /mnt/flash/boot-config"           
-            helpers.log("the sed line is:  '%s'"  % line)
-            s.bash(line) 
-            s.bash('cat /mnt/flash/boot-config') 
-            helpers.log(s.bash('')['content'])            
-              
+        content = s.bash('cat /mnt/flash/boot-config')['content']
+        temp = helpers.strip_cli_output(content)
+        helpers.log('USR OUTPUT: %s ' % temp)
+        if (re.match(r'.*ZTNSERVERS.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)
+            # line= 'cat /mnt/flash/boot-config | sed -i.orig \''+ '/^ZTNSERVERS.*/d\' > /mnt/flash/boot-config'
+            line = "sed -i.orig '/^ZTNSERVERS.*/d' /mnt/flash/boot-config"
+            helpers.log("the sed line is:  '%s'" % line)
+            s.bash(line)
+            s.bash('cat /mnt/flash/boot-config')
+            helpers.log(s.bash('')['content'])
+
         else:
-            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)                            
-        helpers.log('Adding ZTNSERVER  %s to switch %s' % (ztnserver,node)) 
-        line='echo ' +'\"ZTNSERVERS='+ ztnserver + '\"' + " >> " + '/mnt/flash/boot-config'            
-        s.bash(line) 
-        s.bash('cat /mnt/flash/boot-config')         
-        helpers.log(s.bash('')['content'])                       
-        
-        s.cli('')                  
+            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)
+        helpers.log('Adding ZTNSERVER  %s to switch %s' % (ztnserver, node))
+        line = 'echo ' + '\"ZTNSERVERS=' + ztnserver + '\"' + " >> " + '/mnt/flash/boot-config'
+        s.bash(line)
+        s.bash('cat /mnt/flash/boot-config')
+        helpers.log(s.bash('')['content'])
+
+        s.cli('')
         return True
-    
+
     def console_bash_switch_delete_ztnserver(self, node):
         """
         remove ztn server to switch
         Author- Mingtao
         Inputs:
-            node  -  Alias of the switch  
-                    
-        Return Value:  True         
+            node  -  Alias of the switch
+
+        Return Value:  True
         """
         t = test.Test()
-        
+
         s = t.dev_console(node)
-        content = s.bash('cat /mnt/flash/boot-config')['content'] 
-        temp = helpers.strip_cli_output(content) 
-        helpers.log('USR OUTPUT: %s ' % temp)                       
-        if (re.match(r'.*ZTNSERVERS.*', temp,flags=re.DOTALL)): 
-            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)                
-            line= "sed -i.orig '/^ZTNSERVERS.*/d\'  /mnt/flash/boot-config"            
-            helpers.log('the sed line is:  %s'  % line)
-            s.bash(line) 
-            s.bash('cat /mnt/flash/boot-config')         
-            helpers.log(s.bash('')['content'])                       
+        content = s.bash('cat /mnt/flash/boot-config')['content']
+        temp = helpers.strip_cli_output(content)
+        helpers.log('USR OUTPUT: %s ' % temp)
+        if (re.match(r'.*ZTNSERVERS.*', temp, flags=re.DOTALL)):
+            helpers.log('The switch: %s has ZTNSERVER, remove it ' % node)
+            line = "sed -i.orig '/^ZTNSERVERS.*/d\'  /mnt/flash/boot-config"
+            helpers.log('the sed line is:  %s' % line)
+            s.bash(line)
+            s.bash('cat /mnt/flash/boot-config')
+            helpers.log(s.bash('')['content'])
         else:
-            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)                            
-        s.cli('')                  
+            helpers.log('The switch: %s does NOT have ZTNSERVER' % node)
+        s.cli('')
         return True
 
     def console_bash_switch_default_boot_config(self, node):
@@ -1667,24 +1668,24 @@ class T5ZTN(object):
         remove ztn server to switch
         Author- Mingtao
         Inputs:
-            node  -  Alias of the switch  
-                    
-        Return Value:  True         
+            node  -  Alias of the switch
+
+        Return Value:  True
         """
         t = test.Test()
-        
+
         s = t.dev_console(node)
-        content = s.bash('cat /mnt/flash/boot-config')['content'] 
-        temp = helpers.strip_cli_output(content) 
-        helpers.log('USR OUTPUT: %s ' % temp)   
+        content = s.bash('cat /mnt/flash/boot-config')['content']
+        temp = helpers.strip_cli_output(content)
+        helpers.log('USR OUTPUT: %s ' % temp)
         s.bash('echo " NETDEV=ma1" > /mnt/flash/boot-config')
         s.bash('echo " NETAUTO=dhcp" >> /mnt/flash/boot-config')
         s.bash('echo " BOOTMODE=ztn" >> /mnt/flash/boot-config')
- 
-        s.bash('cat /mnt/flash/boot-config')         
-        helpers.log(s.bash('')['content'])                       
-                               
-        s.cli('')                  
+
+        s.bash('cat /mnt/flash/boot-config')
+        helpers.log(s.bash('')['content'])
+
+        s.cli('')
         return True
 
 
@@ -1751,11 +1752,11 @@ class T5ZTN(object):
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_get_switch_image ')
-        c.cli('show switch %s version ' %switch)
+        c.cli('show switch %s version ' % switch)
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
-  
+
         version = ''
 
         if image == 'installer':
@@ -1787,6 +1788,6 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(switch)
         s = t.dev_console(switch)
-        helpers.log("Running command %s" %cmd)
+        helpers.log("Running command %s" % cmd)
         s.config(cmd)
         return True

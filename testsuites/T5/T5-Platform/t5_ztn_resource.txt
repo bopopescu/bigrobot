@@ -47,11 +47,19 @@ Suite Setup
 	@{spineList}=  Create List  ${s1_dpid}  ${s5_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
-	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
 	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
 	Cli Run  master  show switch
+
+	Telnet Reinstall Switchlight  s1
+	Telnet Reinstall Switchlight  s2
+	Telnet Reinstall Switchlight  s3
+	Telnet Reinstall Switchlight  s4
+	Telnet Reinstall Switchlight  s5
+
+	Sleep  150
 
 	${status}=  Rest Get Switch Connection State  master  ${s1_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
@@ -63,7 +71,7 @@ Suite Setup
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
 	${status}=  Rest Get Switch Connection State  master  ${s5_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	Sleep  120
+	Sleep  150
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}

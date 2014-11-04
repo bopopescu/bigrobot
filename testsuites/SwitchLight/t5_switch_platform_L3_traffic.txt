@@ -308,7 +308,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
 * Keywords
       
 T5 switch platform test setup
-   #base suite setup
+   base suite setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}

@@ -50,6 +50,16 @@ class Ixia(object):
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_l3_add(**kwargs)
 
+    def raw_stream_add(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_raw_add(**kwargs)
+
     def l3_add_host(self, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:

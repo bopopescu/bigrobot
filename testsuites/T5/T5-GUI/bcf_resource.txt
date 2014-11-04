@@ -25,7 +25,10 @@ ${FABRIC SUMMARY TITLE}		Summary
 ${TEST PATH TITLE}    		Test Path
 ${SUPPORT BUNDLES TITLE}	Support
 ${MONITOR SESSIONS TITLE}	Monitor Session
+${FABRIC SETTINGS TITLE}	Fabric Settings
 ${CLOCK TITLE}				Big 
+${SNMP TITLE}				SNMP
+${TACACS TITLE}				TACACS
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
@@ -48,8 +51,8 @@ ${PERIOD}						3 sec
 ${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
 #${TENANTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Tenants')]
 #${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
-${VISIBILITY MENU}		  		xpath=//div[@class='nav' and contains(text(), 'Visibility')]
-${SETTINGS MENU}				xpath=//div[@class='nav' and contains(text(), 'Settings')]
+${VISIBILITY MENU}		  		xpath=//a[@class='nav' and contains(text(), 'Visibility')]
+${SETTINGS MENU}				xpath=//a[@class='nav' and contains(text(), 'Settings')]
 ${SECURITY MENU}				xpath=//a[@class='nav' and contains(text(), 'Security')]
 ${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
 ${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
@@ -375,6 +378,52 @@ ${GROUP ASSOCIATE PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='groupNode']/
 ${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
 ${APPEND GROUP BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 
+#### SNMP Page
+
+${CONFIGURE SNMP BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[1]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP POPUP}				xpath=//div[@title='Configure SNMP']
+${CONFIGURE SNMP CONTACT FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Contact')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP LOCATION FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Location')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP COMMUNITY FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Community')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Traps')]/parent::h2/parent::div/following-sibling::div/div[3]/div/div/div[@class='knob_icon']		
+${SNMP HOSTS STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), 'Hosts')]
+${ADD SNMP TRAP HOST PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='hostsNode']/descendant::div[@class='icon_node plus']
+${SNMP TRAP HOST SERVER FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP HOST UDP PORT FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'UDP Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${SNMP TRAP HOST APPEND BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
+
+${CONFIGURE SNMP TRAPS BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[2]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP TRAPS POPUP}			xpath=//div[@title='Configure SNMP Traps']
+${POWER SUPPLY KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${POWER SUPPLY TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${FAN STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${FAN STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${LINK STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${LINK STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${AUTH FAILURE KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[3]/div/descendant::div[@class='knob_icon']
+${SNMP TRAPS THRESHOLDS STEP BUTTON}	xpath=//div[@class='step_text' and contains(text(), 'Thresholds')]
+${CPU THRESHOLDS KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${CPU THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${MEMORY THRESHOLDS KNOB}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${MEMORY THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${L2 FLOW TABLE THRESHOLDS KNOB}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${L2 FLOW THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${TCAM FLOW THRESHOLDS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${TCAM THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+
+#### TACACS Page
+
+${ADD TACACS HOST PLUS BUTTON}				xpath=//div[@id='tacacs_hosts_table']/descendant::div[@class='icon_node plus']
+${CREATE TACACS SERVER POPUP}				xpath=//div[@title='Create TACACS Server']
+${TACACS SERVER ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER TIMEOUT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Timeout')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${TACACS SERVER SECRET FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Secret')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER SECRET ENCRYPTION BUTTON}	xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node lock']
+${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
+${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
 
 *** Keywords ***
 Set URLs
@@ -391,7 +440,10 @@ Set URLs
 	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
 	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
 	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
+	Set Suite Variable     	${FABRIC SETTINGS URL}  	https://${SERVER}/bcf/fabric_settings
 	Set Suite Variable     	${CLOCK URL}				https://${SERVER}/bcf/clock
+	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
+	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
@@ -491,12 +543,30 @@ Go To Monitor Sessions Page
     Title Should Contain  ${MONITOR SESSIONS TITLE}
     Sleep  1
     
+Go To Fabric Settings Page  
+	Go To  ${FABRIC SETTINGS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${FABRIC SETTINGS TITLE}
+    Sleep  1
+      
 Go To Clock Page 
 	Go To  ${CLOCK URL}
     Wait Until Page Loaded 
     Title Should Contain  ${CLOCK TITLE}
     Sleep  1
+
+Go To SNMP Page
+	Go To  ${SNMP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SNMP TITLE}
+    Sleep  1
     
+Go To Tacacs Page
+	Go To  ${TACACS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TACACS TITLE}
+    Sleep  1
+	    
 Go To Logging Page  
 	Go To  ${LOGGING URL}
     Wait Until Page Loaded 
@@ -567,7 +637,14 @@ Delete All Remote Servers
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
 	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
-    
+
+Delete All TACACS Hosts
+	Go To TACACS Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	    
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
 	Click Element  ${CHECKBOX ALL}  and don't wait
@@ -1696,5 +1773,241 @@ Associate Group
 
 	Click Element  ${APPEND GROUP BUTTON}  and don't wait
 	Verify Element Invisible  ${MANAGE GROUPS POPUP}
-   
 	
+Configure SNMP
+	[Arguments]  ${contact}  ${location}  ${community}  ${traps}  ${server}  ${port}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP BUTTON}
+    Click Element  ${CONFIGURE SNMP BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP POPUP}
+    
+    Run Keyword Unless  '${contact}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP CONTACT FIELD}  ${contact}
+	
+	Run Keyword Unless  '${location}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP LOCATION FIELD}  ${location}
+	
+	Run Keyword Unless  '${community}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP COMMUNITY FIELD}    ${community}
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Disabled')]  Disabled
+    Run Keyword If  '${traps}' == 'Disabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Disabled
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enabled
+    Run Keyword If  '${traps}' == 'Enabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Enabled
+	
+	Verify Element Visible  ${SNMP HOSTS STEP BUTTON}
+	Click Element  ${SNMP HOSTS STEP BUTTON}  and don't wait
+	
+	Verify Element Visible  ${ADD SNMP TRAP HOST PLUS BUTTON}
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${ADD SNMP TRAP HOST PLUS BUTTON}   and don't wait
+    
+    Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST SERVER FIELD}  ${server}
+	
+	Run Keyword Unless  '${port}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST UDP PORT FIELD}  ${port}
+	
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${SNMP TRAP HOST APPEND BUTTON}   and don't wait
+	
+	Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CONFIGURE SNMP POPUP}
+	
+Configure SNMP Traps
+	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${flow-table-threshold}  ${full-match-tcam-threshold}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS BUTTON}
+    Click Element  ${CONFIGURE SNMP TRAPS BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS POPUP}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Power
+    Run Keyword If  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=No Power
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Power
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=Power
+    
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Input Text And Verify   ${POWER SUPPLY TRAP FIELD}  ${power}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Fan
+    Run Keyword If  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=No Fan
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Fan
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=Fan
+    
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Input Text And Verify   ${FAN STATUS TRAP FIELD}  ${fan}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Link
+    Run Keyword If  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=No Link
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Link
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=Link
+    
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Input Text And Verify   ${LINK STATUS TRAP FIELD}  ${link}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Auth
+    Run Keyword If  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=No Auth
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap')]  Auth
+    Run Keyword Unless  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=Auth
+    
+    
+	Verify Element Visible  ${SNMP TRAPS THRESHOLDS STEP BUTTON}
+	Click Element  ${SNMP TRAPS THRESHOLDS STEP BUTTON}  and don't wait
+	
+   
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No CPU
+    Run Keyword If  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=No CPU
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  CPU
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=CPU
+    
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Input Text And Verify   ${CPU THRESHOLD PERCENTAGE FIELD}  ${cpu-threshold}
+    
+    
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Memory
+   Run Keyword If  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=No Memory
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  Memory
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=Memory
+    
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${MEMORY THRESHOLD PERCENTAGE FIELD}  ${memory-threshold}
+   
+   
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No L2
+   Run Keyword If  '${flow-table-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=No L2
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  L2
+   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=L2
+    
+   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${L2 FLOW THRESHOLD PERCENTAGE FIELD}  ${flow-table-threshold}
+    
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No TCAM 
+   Run Keyword If  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=No TCAM
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  TCAM
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=TCAM
+    
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${TCAM THRESHOLD PERCENTAGE FIELD}  ${full-match-tcam-threshold}
+   
+   Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+   Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+   
+   Verify Element Invisible  ${CONFIGURE SNMP TRAPS POPUP}
+   
+   
+Add TACACS Host
+	[Arguments]  ${server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	Verify Element Visible  ${ADD TACACS HOST PLUS BUTTON}
+    Click Element  ${ADD TACACS HOST PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${CREATE TACACS SERVER POPUP}
+    
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+       
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${CREATE TACACS SERVER POPUP}
+    
+    
+Edit TACACS Host
+	[Arguments]  ${server}  ${new-server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER EDIT MENU ITEM}
+    Click Element  ${TACACS SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT TACACS SERVER POPUP}
+	   
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+    
+    
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${EDIT TACACS SERVER POPUP}
+    
+  
+Delete TACACS Host
+	[Arguments]  ${server} 
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER DELETE MENU ITEM}
+    Click Element  ${TACACS SERVER DELETE MENU ITEM}  and don't wait
+    
+    Verify Element Visible  ${DELETE CONFIRM TACACS HOST POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Highlight Element  ${PROCEED DELTE BUTTON}
+	
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+    
+    

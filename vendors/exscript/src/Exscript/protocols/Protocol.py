@@ -262,7 +262,7 @@ class Protocol(object):
             self.stdout = open(os.devnull, 'w')
         else:
             self.stdout = stdout
-        if stderr is None:
+        if stderr is None and debug != 0:
             # self.stderr = sys.stderr
 
             # VUI: Workaround to stderr getting closed. See 'bin/gobot' for

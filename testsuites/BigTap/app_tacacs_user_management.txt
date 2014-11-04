@@ -13,7 +13,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Virtual Switch Appliance
-${version}      Big Tap Controller 4.0.0  
+${version}      Big Tap Controller 4.1.0  
     
 * Test Case
 Verify Running-Configuration

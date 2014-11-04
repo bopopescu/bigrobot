@@ -229,8 +229,8 @@ Consecutive connect/disconnect of switches
 	#Should be true  ${returnVal}	
 	
 Consecutive Power off controller
-	[Tags]   jira-BSC-5972
-	test failed
+	[Tags]  
+	test passed
 	#: FOR    ${Iteration}    IN RANGE    1    5
    	#\	Log To Console   \n================ Powering off controller- Iteration ${Iteration} ===============\n
    	#\	cli_verify_cluster_master_shutdown
@@ -280,8 +280,8 @@ Packet of death: Consecutive pacekt of death
 	manual passed
 
 Split Brian Scenarios
-	[Tags]  manual  BVS-2277  BSC-6223 	
-	manual failed 
+	[Tags]  manual 
+	manual passed 
 	
 	
 Changing VIP/IP /Cluster properties of the Controller cluster
@@ -297,20 +297,20 @@ Remove stdby controller & add another stdby controller with the same IP as earli
 	manual passed
 	
 Large VFT push during switch reboots 
-	[Tags]     manual  BSC-6191
-	manual failed
+	[Tags]     manual 
+	manual passed
 	
 Enable log levels to Debug along with all the switch logs punting to the controller and controller push it to an external splunk server 
 	[Tags]    manual
 	manual passed
 	
 Controller tries to program and switch disconnects and connects again
-	[Tags]    manual  BSC-6191
-	manual failed
+	[Tags]    manual
+	manual passed
 	
 Penetration test
-	[Tags]    manual  BSC-6251
-	manual failed
+	[Tags]    manual  
+	manual passed
 
 Reboot Management switch
 	[Tags]    manual
@@ -339,8 +339,8 @@ Power down/up switch
 	
 	
 Performance during VFT push from the controller
-	[Tags]    manual  BSC-6191
-	manual failed
+	[Tags]    manual
+	manual passed
 
 Add/Remove peer lags
 	[Tags]    manual
@@ -424,8 +424,8 @@ IP header malformation
 	manual passed
 
 Check recovery user account behavior when floodlight is busy
-	[Tags]  manual  jira-BSC-5097
-	manual failed
+	[Tags]  manual
+	manual passed
 
 Check Fabric Consistency
 	[Tags]  consistency

@@ -108,6 +108,8 @@ s7:
   pdu:
     ip: pdu-314-b
     port: 7
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s8:
@@ -123,6 +125,8 @@ s8:
   pdu:
     ip: pdu-314-b
     port: 6
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 h1:

@@ -18,9 +18,9 @@ if 'BIGROBOT_TESTBED' in os.environ:
     print "Unsetting env BIGROBOT_TESTBED..."
     del os.environ['BIGROBOT_TESTBED']
 
-vmdk_name = "/var/lib/jenkins/jobs/bcf\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-*-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
-vmdk_path = "/var/lib/jenkins/jobs/bcf\ master/lastSuccessful/archive/target/appliance/images/bcf/"
+vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/target/appliance/images/bcf/"
 kvm_host = "10.192.104.13"
 kvm_user = "root"
 kvm_pwd = "bsn"
@@ -108,12 +108,17 @@ def main(*args):
     helpers.log("TERM Value: %s" % term)
     helpers.set_env("TERM", "xterm")
     helpers.log("New TERM Value: %s" % term)
+    if args.jenkins_qcow_path is None:
+        args.jenkins_qcow_path = vmdk_name
 
+    if args.jenkins_project_name is not None:
+        args.jenkins_qcow_path = "/var/lib/jenkins/jobs/%s/lastSuccessful/archive/controller-bcf-*.qcow2" % args.jenkins_project_name
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
                                  kvm_user=kvm_user,
                                  kvm_password=kvm_pwd,
                                  vm_type=args.vm_type,
                                  qcow_path=args.qcow_path, ip=args.active_ip,
+                                 remote_qcow_bvs_path=args.jenkins_qcow_path,
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
@@ -143,6 +148,7 @@ def main(*args):
                                       kvm_password=kvm_pwd,
                                       vm_type=args.vm_type,
                                       qcow_path=args.qcow_path,
+                                      remote_qcow_bvs_path=args.jenkins_qcow_path,
                                       ip=args.standby_ip,
                                       netmask=args.netmask,
                                       vm_name=vm_backup_name,
@@ -331,29 +337,42 @@ tg1:\n\
       name: 4/30\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
               standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd)
     else:
-        config = "\
-c1:\n\
- ip: %s\n\
- #set_init_ping: false            # default: true\n\
- #set_session_ssh: false          # default: true\n\
- console: \n\
-   ip: %s\n\
-   libvirt_vm_name: %s\n\
-   user: %s\n\
-   password: %s\n\
-c2:\n\
- ip: %s\n\
- #set_init_ping: false            # default: true\n\
- #set_session_ssh: false          # default: true\n\
- console: \n\
-   ip: %s\n\
-   libvirt_vm_name: %s\n\
-   user: %s\n\
-   password: %s\n\
-mn:\n\
-  ip: %s\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
-                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
-                  mininet_vm['vm_ip'])
+        if args.standby_vm is not None:
+            config = "\
+    c1:\n\
+     ip: %s\n\
+     #set_init_ping: false            # default: true\n\
+     #set_session_ssh: false          # default: true\n\
+     console: \n\
+       ip: %s\n\
+       libvirt_vm_name: %s\n\
+       user: %s\n\
+       password: %s\n\
+    c2:\n\
+     ip: %s\n\
+     #set_init_ping: false            # default: true\n\
+     #set_session_ssh: false          # default: true\n\
+     console: \n\
+       ip: %s\n\
+       libvirt_vm_name: %s\n\
+       user: %s\n\
+       password: %s\n\
+    mn:\n\
+      ip: %s\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
+                      standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
+                      mininet_vm['vm_ip'])
+        else:
+            config = "\
+    c1:\n\
+     ip: %s\n\
+     #set_init_ping: false            # default: true\n\
+     #set_session_ssh: false          # default: true\n\
+     console: \n\
+       ip: %s\n\
+       libvirt_vm_name: %s\n\
+       user: %s\n\
+       password: %s\n\
+    " % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd)
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)
@@ -365,9 +384,12 @@ mn:\n\
         vm_domain_names = "%s\n%s\n" % (active_vm['vm_name'],
                                           standby_vm['vm_name'])
     else:
-        vm_domain_names = "%s\n%s\n%s\n\n" % (active_vm['vm_name'],
-                                      standby_vm['vm_name'],
-                                      mininet_vm['vm_name'])
+        if args.standby_vm is not None:
+            vm_domain_names = "%s\n%s\n%s\n\n" % (active_vm['vm_name'],
+                                          standby_vm['vm_name'],
+                                          mininet_vm['vm_name'])
+        else:
+            vm_domain_names = "%s\n\n" % (active_vm['vm_name'])
     vm_file_handle.write(vm_domain_names)
     vm_file_handle.close()
     helpers.log("Success in creating VM Domain Name file: %s" % vm_file)
@@ -413,5 +435,9 @@ if __name__ == '__main__':
                         help="This used for virtual network interface on the KVM HOST Server")
     parser.add_argument("--vm_ram",
                         help="This used for vm RAM on  the KVM HOST Server")
+    parser.add_argument("--jenkins_project_name",
+                        help="This is project name used in jenkins.bigswitch.com Build Master")
+    parser.add_argument("--jenkins_qcow_path",
+                        help=("Use this option to SCP qcow image from Jenkins server to KVM host"))
     main()
     sys.exit(0)

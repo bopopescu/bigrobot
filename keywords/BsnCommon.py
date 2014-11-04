@@ -28,7 +28,6 @@ from paramiko.ssh_exception import BadHostKeyException, \
                                    SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account
-from robot.libraries.BuiltIn import BuiltIn
 import autobot.utils as br_utils
 from keywords.Host import Host
 
@@ -51,9 +50,12 @@ class BsnCommon(object):
         purposely want it to fail - there may be good reasons for doing that
         also.
         """
-        suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
-        helpers.bigrobot_test_suite_status(suite_status)
-        helpers.log("Test suite status: %s" % suite_status)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            from robot.libraries.BuiltIn import BuiltIn
+            suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
+            helpers.bigrobot_test_suite_status(suite_status)
+            helpers.log("Test suite status: %s" % suite_status)
+
         try:
             t = test.Test()
             t.teardown()
@@ -72,14 +74,18 @@ class BsnCommon(object):
         #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
-        test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
-        test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
-        if test_status == 'FAIL':
-            if helpers.bigrobot_test_postmortem().lower() == 'false':
-                helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
-                            " Skipping test postmortem.")
-            else:
-                self.base_test_postmortem(test_descr=test_descr)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            # Test postmortem is not supported by Nose framework. As a
+            # workaround, define it explicitly in the test case instead.
+            from robot.libraries.BuiltIn import BuiltIn
+            test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
+            test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
+            if test_status == 'FAIL':
+                if helpers.bigrobot_test_postmortem().lower() == 'false':
+                    helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
+                                " Skipping test postmortem.")
+                else:
+                    self.base_test_postmortem(test_descr=test_descr)
 
             if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
                 helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
@@ -413,10 +419,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Pass: Transmit:%d, Receive:%d" % (tx, rx))
             return True
         else:
-            helpers.log("Fail: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Fail: Transmit:%d, Receive:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
@@ -1852,6 +1858,22 @@ class BsnCommon(object):
             n = t.node(node)
             return n.monitor_reauth(*args, **kwargs)
 
+    def cli_add_controller_idle_and_reauth_timeout(self, node, *args, **kwargs):
+        """
+        Reconfigure the idle timeout and reauth timeout on the controller.
+
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | reconfig_idle | Default is ${true}. Set to $[false} if you don't want to reconfigure idle timeout. |
+        | reconfig_reauth | Default is ${true}. Set to $[false} if you don't want to reconfigure reauth timeout. |
+
+        Return Value:
+        - ${true} on success, else ${false} on failure.
+
+        """
+        t = test.Test()
+        return t.cli_add_controller_idle_and_reauth_timeout(node, *args, **kwargs)
+
     def node_disconnect(self, node):
         """
         Disconnect the devconf session (SSH/Telnet) on the specified node.
@@ -1956,6 +1978,13 @@ class BsnCommon(object):
         nodes = [n for n in t.topology().keys() if helpers.is_host(n)]
         helpers.debug("Host nodes used in test suite: %s" % nodes)
         return nodes
+
+    def get_switch_mac_topo(self, node):
+        '''
+        Return the Mac secified in Topo file against give switch node
+        '''
+        t = test.Test()
+        return '00:00:' + t.params(node, 'mac')
 
     def get_next_mac(self, *args, **kwargs):
         """

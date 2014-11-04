@@ -21,7 +21,6 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
-import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -30,9 +29,9 @@ import autobot.utils as br_utils
 
 # All below are modules in the helpers package. So we can control and manage
 # name conflicts. Therefore it's assumed safe to do 'import *'.
-from log import *
-from gobot import *
-from exec_timer import *
+from log import *  # pylint: disable=W0401, W0403
+from gobot import *  # pylint: disable=W0401, W0403
+from exec_timer import *  # pylint: disable=W0401, W0403
 
 # Convenience helper function any_match() and first_match() imported from
 # Exscript. More info at
@@ -67,8 +66,15 @@ def bigrobot_module_dependencies():
     import Crypto
     import pexpect
     import httplib2
+
     s = "BigRobot version        %s\n" % get_version()
-    s += "Robot Framework version %s\n" % robot.version.VERSION
+
+    try:
+        import robot
+        s += "Robot Framework version %s\n" % robot.version.VERSION
+    except:
+        pass
+
     s += "Exscript version        %s\n" % Exscript.version.__version__
     s += "Paramiko version        %s\n" % paramiko.__version__
     s += "Crypto version          %s\n" % Crypto.__version__
@@ -577,12 +583,28 @@ def bigrobot_params(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
+def bigrobot_nose_setup(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to enable testing using the Nose test framework.
+    """
+    return _env_get_and_set('BIGROBOT_NOSE_SETUP', new_val, default)
+
+
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'False' to bypass Test setup.
     """
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
+
+
+def bigrobot_test_teardown(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test teardown.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
 
 
 def bigrobot_test_postmortem(new_val=None, default='True'):
@@ -870,6 +892,16 @@ def bigrobot_config_qa_authors():
 
 def bigrobot_config_rest_services():
     return _bigrobot_config_load('/rest_services.yaml')
+
+
+def print_bigrobot_env(minimum=False):
+    for env in sorted(bigrobot_env_list()):
+        if minimum and env not in ['BIGROBOT_PATH', 'BIGROBOT_LOG_PATH',
+                                   'BIGROBOT_SUITE', 'BIGROBOT_TOPOLOGY',
+                                   'BIGROBOT_LOG_PATH_EXEC_INSTANCE']:
+            continue
+        print("%s=%s" % (env, os.environ[env]))
+    print("")
 
 
 def load_config(yaml_file):
@@ -2090,8 +2122,8 @@ def params_dot_notation_to_dict(params):
     """
     new_dict = {}
     for param in params:
-        keys = param.split('.')
-        keys[-1], value = keys[-1].split('=')
+        keys = param.split('.', 1)
+        keys[-1], value = keys[-1].split('=', 1)
         ref = new_dict
         key_counter = 1
         for key in keys:

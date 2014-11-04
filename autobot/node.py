@@ -5,7 +5,8 @@ import modules.IxLib as IxLib
 import modules.IxBigtapLib as IxBigtapLib
 
 class Node(object):
-    def __init__(self, name, ip, user=None, password=None, params=None):
+    def __init__(self, name, ip, user=None, password=None, params=None,
+                 protocol=None):
         if not name:
             helpers.environment_failure("Node name is not defined")
 
@@ -38,7 +39,7 @@ class Node(object):
             self.node_params = {}
 
         self._port = self.node_params.get('port', None)
-        self._protocol = self.node_params.get('protocol', 'ssh')
+        self._protocol = protocol if protocol else self.node_params.get('protocol', 'ssh')
         self._privatekey = self.node_params.get('privatekey', None)
         self._privatekey_password = self.node_params.get(
                                             'privatekey_password', None)
@@ -225,9 +226,10 @@ class Node(object):
 
 
 class ControllerNode(Node):
-    def __init__(self, name, ip, user, password, t):
+    def __init__(self, name, ip, user, password, t, protocol=None):
         super(ControllerNode, self).__init__(name, ip, user, password,
-                                             t.topology_params())
+                                             t.topology_params(),
+                                             protocol=protocol)
 
         self._monitor_reauth = False  # default
 
@@ -253,7 +255,8 @@ class ControllerNode(Node):
         self.dev = self.connect(name=name,
                                 host=ip,
                                 user=user,
-                                password=password)
+                                password=password,
+                                protocol=protocol)
 
         if 'http_port' in self.node_params:
             self.http_port = self.node_params['http_port']
@@ -452,9 +455,10 @@ class ControllerNode(Node):
 class MininetNode(Node):
     def __init__(self, name, ip, user, password, t,
                  controller_ip, controller_ip2=None,
-                 openflow_port=None):
+                 openflow_port=None, protocol=None):
         super(MininetNode, self).__init__(name, ip, user, password,
-                                          t.topology_params())
+                                          t.topology_params(),
+                                          protocol=protocol)
 
         self.controller_ip = controller_ip
         self.controller_ip2 = controller_ip2
@@ -499,7 +503,8 @@ class MininetNode(Node):
         self.dev = self.connect(name=name,
                                 host=ip,
                                 user=user,
-                                password=password)
+                                password=password,
+                                protocol=protocol)
 
         # Shortcuts
         self.cli = self.dev.cli
@@ -569,10 +574,56 @@ class MininetNode(Node):
         helpers.environment_failure("Console is currently not supported for Mininet node.")
 
 
+class PduNode(Node):
+    def __init__(self, name, ip, user, password, t, protocol=None):
+        super(PduNode, self).__init__(name, ip, user, password,
+                                      t.topology_params(), protocol=protocol)
+
+        self.dev = self.connect(name=name,
+                                host=ip,
+                                user=user,
+                                password=password,
+                                protocol=protocol)
+
+        # Shortcuts
+        self.cli = self.dev.cli  # CLI mode
+        self.cli_content = self.dev.content
+        self.cli_result = self.dev.result
+        self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
+
+    def connect(self, user, password, port=None, protocol=None, host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        if not port:
+            port = self._port
+        if not protocol:
+            protocol = self._protocol
+        return devconf.PduDevConf(
+                            name=name,
+                            host=host,
+                            user=user,
+                            password=password,
+                            port=port,
+                            protocol=protocol,
+                            debug=self.dev_debug_level,
+                            privatekey=self._privatekey,
+                            privatekey_password=self._privatekey_password,
+                            privatekey_type=self._privatekey_type)
+
+    def devconf(self):
+        return self.dev
+
+
 class HostNode(Node):
-    def __init__(self, name, ip, user, password, t):
+    def __init__(self, name, ip, user, password, t, protocol=None):
         super(HostNode, self).__init__(name, ip, user, password,
-                                       t.topology_params())
+                                       t.topology_params(), protocol=protocol)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -585,7 +636,8 @@ class HostNode(Node):
         self.dev = self.connect(name=name,
                                 host=ip,
                                 user=user,
-                                password=password)
+                                password=password,
+                                protocol=protocol)
 
         # Shortcuts
         self.bash = self.dev.bash
@@ -674,14 +726,16 @@ class HostNode(Node):
 
 
 class OpenStackNode(HostNode):
-    def __init__(self, name, ip, user, password, t):
-        super(OpenStackNode, self).__init__(name, ip, user, password, t)
+    def __init__(self, name, ip, user, password, t, protocol=None):
+        super(OpenStackNode, self).__init__(name, ip, user, password, t,
+                                            protocol=protocol)
 
 
 class SwitchNode(Node):
-    def __init__(self, name, ip, user, password, t):
+    def __init__(self, name, ip, user, password, t, protocol=None):
         super(SwitchNode, self).__init__(name, ip, user, password,
-                                         t.topology_params())
+                                         t.topology_params(),
+                                         protocol=protocol)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -694,7 +748,8 @@ class SwitchNode(Node):
         self.dev = self.connect(name=name,
                                 host=ip,
                                 user=user,
-                                password=password)
+                                password=password,
+                                protocol=protocol)
 
         # Shortcuts
         self.cli = self.dev.cli  # CLI mode

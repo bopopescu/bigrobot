@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import keywords.T5 as T5
 import string
 import telnetlib
 import re
@@ -540,7 +541,41 @@ class  T5Switch(object):
         except:
             helpers.test_failure("Could not execute command in thermal env. Please check log for errors")
             return False   
-        
+    
+    
+    def rest_get_switch_interface_stats (self, switch, intf, stat="txstat"):
+        ''' Function to clear the switch interface counter. 
+            input - switch, interface 
+            output - none
+        '''
+        t = test.Test()
+        fabric = T5.T5()
+        c = t.controller('master')
+        dpid = fabric.rest_get_dpid(switch)
+            
+        helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+            
+        try:
+            c.rest.get(url)
+            data = c.rest.content()
+            helpers.log("The output data is %s" % data[0])
+            intf1 = data[0]["interface"][0]["name"]
+            txstat1 = data[0]["interface"][0]["counter"]["tx-unicast-packet"]
+            rxstat1 = data[0]["interface"][0]["counter"]["rx-unicast-packet"]
+            helpers.log("The output intf %s, tx %d , rx %d" % (intf1, txstat1, rxstat1))
+            helpers.log("The return asked is %s" % stat)
+            if ("txstat" in stat):
+                return  txstat1
+            if ("rxstat" in stat):
+                return  rxstat1
+            else:
+                helpers.log("Could not get either txstat or rxstat.\n")
+                return  False
+            
+        except:
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return  False    
         
     def cli_t5_switch_add_dhcp_ip(self, node):
         '''
@@ -631,11 +666,11 @@ class  T5Switch(object):
         t = test.Test()
         tn = t.dev_console(node)
         tn.close()
-        if version_string in  output:
-            return True
-        else:
-            t.cli_t5_switch_change_user_password(node, user, current_password, "adminadmin")
-            return False
+#        if version_string in  output:
+#            return True
+#        else:
+        t.cli_t5_switch_change_user_password(node, user, current_password, "adminadmin")
+        return False
 
     def cli_t5_switch_change_user_password(self, node, user, current_password, new_password):
         '''
@@ -670,4 +705,5 @@ class  T5Switch(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
-                   
+        
+        
