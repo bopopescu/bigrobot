@@ -15,7 +15,7 @@ Library 		keywords/T5Utilities.py
 Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables_regression.txt
+Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs
