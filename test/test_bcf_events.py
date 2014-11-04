@@ -17,9 +17,7 @@ import autobot.helpers as helpers
 import autobot.setup_env as setup_env
 from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep
 from keywords.BsnCommon import BsnCommon
-from keywords.T5 import T5
-from keywords.T5Platform import T5Platform
-from keywords.T5ZTN import T5ZTN
+from keywords.T5Torture import T5Torture
 
 
 helpers.set_env('BIGROBOT_TEST_POSTMORTEM', 'False', quiet=True)
@@ -37,7 +35,7 @@ assert helpers.bigrobot_suite() != None
 helpers.print_bigrobot_env(minimum=True)
 
 
-class TestT5Longevity:
+class TestBcfEvents:
     def __init__(self):
         #
         # Constants - test controls
@@ -96,12 +94,12 @@ class TestT5Longevity:
     def controller_node_event_ha_failover(self, during=30):
         log_to_console("=============HA failover ===============")
         self.cli_show_commands_for_debug()
-        T5Platform().cli_cluster_take_leader()
+        T5Torture().cli_cluster_take_leader()
         sleep(during)
         self.cli_show_commands_for_debug()
 
     def verify_all_switches_connected_back(self):
-        switches = T5Platform().rest_get_disconnect_switch('master')
+        switches = T5Torture().rest_get_disconnect_switch('master')
         self.cli_show_commands_for_debug()
         helpers.log("the disconnected switches are %s" % switches)
         assert switches == []  # Should be empty
@@ -110,7 +108,7 @@ class TestT5Longevity:
         helpers.log("reload switch")
         log_to_console("================ Rebooting %s ===============" % node)
         self.cli_show_commands_for_debug()
-        T5ZTN().cli_reboot_switch('master', node)
+        T5Torture().cli_reboot_switch('master', node)
         self.cli_show_commands_for_debug()
         sleep(self.LONG)
         wait_until_keyword_succeeds(60 * 10, 30,
@@ -118,16 +116,16 @@ class TestT5Longevity:
 
     def disable_links_between_nodes(self, node, intf):
         self.cli_show_commands_for_debug()
-        T5().rest_disable_fabric_interface(node, intf)
+        T5Torture().rest_disable_fabric_interface(node, intf)
 
     def enable_links_between_nodes(self, node, intf):
         self.cli_show_commands_for_debug()
-        T5().rest_enable_fabric_interface(node, intf)
+        T5Torture().rest_enable_fabric_interface(node, intf)
 
     def data_link_down_up_event_between_nodes(self, node1, node2):
         log_to_console("================ data link down/up for %s and %s ===============" % (node1, node2))
         helpers.log("disable/enable link from nodes")
-        _list = T5().cli_get_links_nodes_list(node1, node2)
+        _list = T5Torture().cli_get_links_nodes_list(node1, node2)
         for intf in _list:
             self.disable_links_between_nodes(node1, intf)
             sleep(60)
@@ -145,13 +143,13 @@ class TestT5Longevity:
         BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
 
         helpers.log("Big scale configuration tenant add")
-        T5Platform().rest_add_tenant_vns_scale(
+        T5Torture().rest_add_tenant_vns_scale(
                     tenantcount=tnumber, tname="FLAP", vnscount=vnumber,
                     vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
         BsnCommon().cli("master", "show running-config tenant FLAP0")
         vlan = 1000
         for i in range(0, tnumber):
-            T5().rest_add_interface_to_all_vns(
+            T5Torture().rest_add_interface_to_all_vns(
                     tenant="FLAP%s" % i, switch=self.LEAF1A, intf="ethernet3",
                     vlan=vlan)
             BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
@@ -170,10 +168,10 @@ class TestT5Longevity:
         BsnCommon().enable("master", "copy running-config config://config_vns_old")
 
         vlan = 1000
-        T5Platform().rest_add_tenant_vns_scale(
+        T5Torture().rest_add_tenant_vns_scale(
                 tenantcount=1, tname="FLAP", vnscount=vnumber,
                 vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
-        T5().rest_add_interface_to_all_vns(
+        T5Torture().rest_add_interface_to_all_vns(
                 tenant="FLAP0", switch=self.LEAF1A, intf="ethernet3",
                 vlan=vlan)
         sleep(sleep_timer)
