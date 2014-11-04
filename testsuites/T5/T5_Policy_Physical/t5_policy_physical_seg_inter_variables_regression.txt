@@ -49,17 +49,17 @@ ${leaf1-a}                      leaf1-a
 ${leaf1-b}                      leaf1-b
 ${leaf2-a}                      leaf2-a
 ${leaf2-b}                      leaf2-b
-${ixia1}                        ethernet17 
+${ixia1}                        ethernet24
 #leaf0a
-${ixia2}                        ethernet17 
+${ixia2}                        ethernet24 
 #leaf0b
-${ixia3}                        ethernet18 
+${ixia3}                        ethernet24 
 #leaf0a
-${ixia4}                        ethernet17 
+${ixia4}                        ethernet24 
 #leaf1a
-${ixia7}                        ethernet17 
+${ixia7}                        ethernet24
 #leaf1a
-${ixia6}                        ethernet17 
+${ixia6}                        ethernet24 
 #leaf1b
 
 
