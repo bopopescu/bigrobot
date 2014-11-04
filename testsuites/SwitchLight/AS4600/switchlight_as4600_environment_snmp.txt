@@ -164,7 +164,7 @@ TC12: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SN
     ${compare_value}=  Catenate  ${compare_value_7}  ${comp_value_5}      
     ${fan_thermal}=  Convert To String  ${thermal_value}          
     Should contain  ${fan_thermal}  ${compare_value}  
-    [Tags]    thermal  description  honey   
+    [Tags]    thermal  description   
 
 TC13: Verify Status for Thermal Sensor 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Status
