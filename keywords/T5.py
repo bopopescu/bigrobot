@@ -2842,8 +2842,6 @@ class T5(object):
                 traffic_queue.append(queue)
         return traffic_queue
 
-
-
     def cli_get_links_nodes_list(self, node1, node2):
         '''
         '''
@@ -2854,7 +2852,7 @@ class T5(object):
         content = c.cli(cli)['content']
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("INFO: *** output  *** \n  %s" % temp)
-        list = []
+        a_list = []
         for line in temp:
             line = line.lstrip()
             fields = line.split()
@@ -2866,7 +2864,7 @@ class T5(object):
 
 
         helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1, list))
-        return list
+        return a_list
 
     def rest_clear_blocked_endpoint(self, tenant, segment, mac):
         ''' Function to clear blocked endpoint
