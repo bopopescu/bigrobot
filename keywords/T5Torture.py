@@ -58,6 +58,90 @@ floodlightMonitorFlag = False
 
 class T5Torture(object):
 
+    # T5
+    def rest_show_switch(self, node='master', soft_error=False):
+        """
+        Return dictionary containing all switches connected to current controller
+
+        Inputs:
+        | node | name of the controller, default is 'master' |
+
+        Return value:
+        | List | on success, returns list of switches (each entry is a dictionary) |
+        | None   | on failure, if soft_error is True |
+        | Exception | on failure, if soft_error is False |
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
+
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_error("REST GET error", soft_error=soft_error)
+            return None
+        else:
+            content = c.rest.content()
+            return content
+
+    # T5
+    def rest_get_switch_names(self, node='master', soft_error=False):
+        """
+        Return list containing all switch names which are connected to current controller
+
+        Inputs:
+        | node | name of the controller, default is 'master' |
+
+        Return value:
+        | List | on success, returns list of switch names |
+        | None   | on failure, if soft_error is True |
+        | Exception | on failure, if soft_error is False |
+        """
+        result = self.rest_show_switch(node, soft_error)
+        if result:
+            return [helpers.utf8(s['name']) for s in result]
+        else:
+            return None
+
+    # T5
+    def rest_get_spine_switch_names(self, node='master', soft_error=False):
+        """
+        Return list containing all spine switch names which are connected to current controller
+
+        Inputs:
+        | node | name of the controller, default is 'master' |
+
+        Return value:
+        | List | on success, returns list of spine switch names |
+        | None   | on failure, if soft_error is True |
+        | Exception | on failure, if soft_error is False |
+        """
+        result = self.rest_get_switch_names(node, soft_error)
+        if result:
+            return [s for s in result if re.match(r'.*spine.*', s)]
+        else:
+            return None
+
+    # T5
+    def rest_get_leaf_switch_names(self, node='master', soft_error=False):
+        """
+        Return list containing all leaf switch names which are connected to current controller
+
+        Inputs:
+        | node | name of the controller, default is 'master' |
+
+        Return value:
+        | List | on success, returns list of leaf switch names |
+        | None   | on failure, if soft_error is True |
+        | Exception | on failure, if soft_error is False |
+        """
+        result = self.rest_get_switch_names(node, soft_error)
+        if result:
+            return [s for s in result if re.match(r'.*leaf.*', s)]
+        else:
+            return None
+
+
     # T5Utilities
     def fabric_integrity_checker(self, state, cluster="HA", consistencyChecker="No"):
         '''
