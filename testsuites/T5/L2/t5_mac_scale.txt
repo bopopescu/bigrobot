@@ -26,7 +26,8 @@ add Dual Leaf Three Rack setup
    [Tags]  L2  scaling  IronHorse   
   	base suite setup
   	add fabric switch
-  	bring up 1 gig interface
+  	#bring up 1 gig interface
+  	reconnect switch ips
   	sleep  5
   	rest verify fabric switch all
   	rest verify fabric link common
