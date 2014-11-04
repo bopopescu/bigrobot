@@ -2858,10 +2858,9 @@ class T5(object):
             fields = line.split()
             helpers.log("fields: %s" % fields)
             if fields[1] == node1 :
-                list.append(fields[2])
+                a_list.append(fields[2])
             elif fields[3] == node1 :
-                list.append(fields[4])
-
+                a_list.append(fields[4])
 
         helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1, list))
         return a_list
