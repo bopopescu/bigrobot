@@ -244,7 +244,7 @@ class TestT5Longevity:
         Test case: test_02_leave_switch_node_down_up_event
         """
         def func():
-            # raise SkipTest("removed from regression")
+            raise SkipTest("removed from regression")
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* leaf switch node down/up event: %s ********" % i)
@@ -359,7 +359,7 @@ class TestT5Longevity:
             helpers.log("randomize execution of all the event test cases")  # from T23 to T30
             for i in range(0, self.REPEAT):
                 log_to_console("\n========******* in continues event loop: %s out of %s ******======" % (i, self.REPEAT))
-                tc_index = random.randint(1, 5)
+                tc_index = random.randint(1, 6)
                 log_to_console("--------random number is %s --------" % tc_index)
                 if tc_index == 1:
                     self.test_02_spine_switch_node_down_up_event()
@@ -367,13 +367,13 @@ class TestT5Longevity:
                 #    test_03_leaf_switch_node_down_up_event()
                 elif tc_index == 2:
                     self.test_04_data_link_down_up_event_between_leaf_and_spine()
-                elif tc_index == 2:
+                elif tc_index == 3:
                     self.test_05_data_link_down_up_event_between_leafs()
-                elif tc_index == 2:
+                elif tc_index == 4:
                     self.test_06_big_configuration_changes_around_500_tenants()
-                elif tc_index == 2:
+                elif tc_index == 5:
                     self.test_07_big_configuration_changes_around_500_vns()
-                elif tc_index == 2:
+                elif tc_index == 6:
                     self.test_01_controller_node_event_failover()
                 sleep(self.BETWEENEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
