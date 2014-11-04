@@ -139,7 +139,8 @@ TC11: Verify Description for Thermal Sensor 3 is reported correctly in CLI in SN
     ${comp_value_3}=  Catenate  ${compare_value_4}  ${comp_value_2}      
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}      
-    ${compare_value}=  Catenate  ${compare_value_7}  ${comp_value_5}      
+    ${comp_value_6}=  Catenate  ${compare_value_7}  ${comp_value_5}      
+    ${compare_value}=  Catenate  ${compare_value_8}  ${comp_value_6}      
     ${fan_thermal}=  Convert To String  ${thermal_value}          
     Should be equal as strings  ${compare_value}  ${fan_thermal}
     [Tags]    thermal  description   
