@@ -819,14 +819,14 @@ class T5ZTN(object):
                            "snmp-server switch trap fan-status",
                            "snmp-server trap fan all status all interval")
                         if "mem-total-free" in ztn_config_line:
-                           helpers.log("Need to divide value in %s "
-                                       "by 1024" % ztn_config_line)
-                           split = ztn_config_line.split(" ")
-                           value = split[len(split) - 1]
-                           helpers.log("Value is %s" % value)
-                           new_value = int(int(value) / 1024)
-                           helpers.log("New value is %s" % new_value)
-                           ztn_config_line = ztn_config_line.replace(
+                            helpers.log("Need to divide value in %s "
+                                        "by 1024" % ztn_config_line)
+                            split = ztn_config_line.split(" ")
+                            value = split[len(split) - 1]
+                            helpers.log("Value is %s" % value)
+                            new_value = int(int(value) / 1024)
+                            helpers.log("New value is %s" % new_value)
+                            ztn_config_line = ztn_config_line.replace(
                                              value, str(new_value))
                     else:
                         helpers.log(("Skipping line - %s - because"
