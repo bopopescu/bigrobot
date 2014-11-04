@@ -59,6 +59,31 @@ floodlightMonitorFlag = False
 class T5Torture(object):
 
     # T5
+    def cli_get_links_nodes_list(self, node1, node2):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s" % (node1, node2))
+        t = test.Test()
+        c = t.controller('master')
+        cli = 'show link | grep ' + node1 + ' | grep ' + node2
+        content = c.cli(cli)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("INFO: *** output  *** \n  %s" % temp)
+        a_list = []
+        for line in temp:
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("fields: %s" % fields)
+            if fields[1] == node1 :
+                list.append(fields[2])
+            elif fields[3] == node1 :
+                list.append(fields[4])
+
+
+        helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1, list))
+        return a_list
+
+    # T5
     def rest_show_switch(self, node='master', soft_error=False):
         """
         Return dictionary containing all switches connected to current controller
