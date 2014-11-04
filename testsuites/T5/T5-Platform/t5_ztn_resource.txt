@@ -71,7 +71,7 @@ Suite Setup
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
 	${status}=  Rest Get Switch Connection State  master  ${s5_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	Sleep  120
+	Sleep  150
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
