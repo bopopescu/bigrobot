@@ -65,12 +65,41 @@ T7.26.1 - while Installer download - no SWI download
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
 
-T7.26.2 - while SWI download - no startup-config download if not cached, if cached - switch undefined (suspended)
-	Manual Passed
-	[Tags]  manual
+T7.26.2.1 - while SWI download - startup-config not cached - switch does not boot
+    Telnet Delete ZTN Cache  all  s2
+    Cli Reboot Switch  master  ${s2_mac}
+    Telnet Wait For Switch To Find Manifest  s2
+    Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
+    Sleep  60
+    Telnet Verify ZTN Discovery Failed  s2
+    Telnet Verify ZTN Discovery Failed  s2
+    Verify Switch Connection State  False  ${s2_alias}
+    Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+
+T7.26.2.2 - while SWI download - startup-config cached - switch undefined
+    Telnet Delete ZTN Cache  swi  s3
+    Cli Reboot Switch  master  ${s3_mac}
+    Sleep  30
+    Telnet Wait For Switch To Find Manifest  s3
+    Cli Run  master  switch ${s3_alias}; no mac ${s3_mac}
+    Sleep  60
+    Verify Switch Connection State  False  ${s3_alias}
+    Cli Run and Verify Output  master
+    ...  show switch
+    ...  ${s3_ip} suspended (No fabric role configured)
+
 T7.26.3 - while image startup - switch rebooted (starts up, gets removed)
-	Manual Passed
-	[Tags]  manual
+    Cli Reboot Switch  master  ${s4_mac}
+    Sleep  30
+    Telnet Wait For Switch To Start Booting  s4
+    Cli Run  master  switch ${s4_alias}; no mac ${s4_mac}
+    Sleep  60
+    Verify Switch Connection State  False  ${s4_alias}
+    Cli Run and Verify Output  master
+    ...  show switch
+    ...  ${s4_ip} suspended (No fabric role configured)
+
+
 #7.27. Verify following behaviors when switch's name is changed during switch boot up
 T7.27.1 - while Installer download - correct SWI download and fabric join
 	Manual Passed
