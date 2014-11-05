@@ -208,8 +208,8 @@ class TestBcfEvents:
         def func():
             BsnCommon().base_suite_setup()
 
-            self.SPINE_LIST = T5Torture.rest_get_spine_switch_names()
-            self.LEAF_LIST = T5Torture.rest_get_leaf_switch_names()
+            self.SPINE_LIST = T5Torture().rest_get_spine_switch_names()
+            self.LEAF_LIST = T5Torture().rest_get_leaf_switch_names()
 
             # Note: You can run tests on a subset of switches also (see below).
             # self.SPINE_LIST = [self.SPINE1, self.SPINE2]
@@ -269,8 +269,8 @@ class TestBcfEvents:
             for i in range(0, self.LOOP):
                 log_to_console("\n******* data link down/up event between leaf and spine: %s ********" % i)
 
-                T5Torture.cli_event_link_flap(self.SPINE_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
-                T5Torture.cli_event_link_flap(self.LEAF_LIST, self.SPINE_LIST, interval=self.LINKFLAP)
+                T5Torture().cli_event_link_flap(self.SPINE_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
+                T5Torture().cli_event_link_flap(self.LEAF_LIST, self.SPINE_LIST, interval=self.LINKFLAP)
 
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
@@ -285,7 +285,7 @@ class TestBcfEvents:
             for i in range(0, self.LOOP):
                 log_to_console("\n******* date link down/up %s*******" % i)
 
-                T5Torture.cli_event_link_flap(self.LEAF_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
+                T5Torture().cli_event_link_flap(self.LEAF_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
 
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
