@@ -15,7 +15,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep
+from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep, Singleton
 from keywords.BsnCommon import BsnCommon
 from keywords.T5Torture import T5Torture
 
@@ -36,6 +36,8 @@ helpers.print_bigrobot_env(minimum=True)
 
 
 class TestBcfEvents:
+    __metaclass__ = Singleton
+
     def __init__(self):
         #
         # Constants - test controls
@@ -243,7 +245,7 @@ class TestBcfEvents:
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* spine switch node down/up event: %s ********" % i)
-                for spine in [self.SPINE_LIST]:
+                for spine in self.SPINE_LIST:
                     self.switch_node_down_up_event(spine)
                     sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
