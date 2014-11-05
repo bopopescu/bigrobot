@@ -3327,7 +3327,6 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         else:
             return False
 
-
     def cli_link_flap_between_nodes(self, node1, node2, interval=60):
         '''
         '''
@@ -3349,8 +3348,10 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
 
         for node1 in list1:
             for node2 in list2:
+                if node1 == node2:
+                    helpers.test_log("INFO: node pairs are same: %s  - %s. Don't run test." % (node1, node2))
+                    continue
                 helpers.test_log("INFO: node pair: %s  - %s" % (node1, node2))
                 self.cli_link_flap_between_nodes(node1, node2, interval)
 
         return True
-
