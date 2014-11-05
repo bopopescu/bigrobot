@@ -116,7 +116,7 @@ class T5Torture(object):
     # T5
     def rest_show_switch(self, node='master', soft_error=False):
         """
-        Return dictionary containing all switches connected to current controller
+        Return dictionary containing all switches connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -142,7 +142,7 @@ class T5Torture(object):
     # T5
     def rest_get_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all switch names which are connected to current controller
+        Return list containing all switch names which are connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -161,7 +161,8 @@ class T5Torture(object):
     # T5
     def rest_get_spine_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all spine switch names which are connected to current controller
+        Return list containing all spine switch names which are connected to current controller.
+        The convention is to include the word 'spine' in the name of the spine switch, e.g., 'dt-spine1'.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -180,7 +181,8 @@ class T5Torture(object):
     # T5
     def rest_get_leaf_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all leaf switch names which are connected to current controller
+        Return list containing all leaf switch names which are connected to current controller.
+        The convention is to include the word 'leaf' in the name of the leaf switch, e.g., 'dt-leaf1a'.
 
         Inputs:
         | node | name of the controller, default is 'master' |
