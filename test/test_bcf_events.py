@@ -215,6 +215,9 @@ class TestBcfEvents:
             # self.SPINE_LIST = [self.SPINE1, self.SPINE2]
             # self.LEAF_LIST = [self.LEAF1A, self.LEAF1B, self.LEAF2A, self.LEAF2B]
 
+            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
+            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
+
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
                    critical_failure=True)
 
