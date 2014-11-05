@@ -59,6 +59,37 @@ floodlightMonitorFlag = False
 class T5Torture(object):
 
     # T5
+    def cli_link_flap_between_nodes(self, node1, node2, interval=60):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_event_link_flap:  node1 - %s  node2  - %s " % (node1, node2))
+        ints = self.cli_get_links_nodes_list(node1, node2)
+
+        for interface in ints:
+            helpers.test_log("INFO: flap interface - %s" % interface)
+            self.rest_disable_fabric_interface(node1, interface)
+            helpers.sleep(interval)
+            self.rest_enable_fabric_interface(node1, interface)
+            helpers.sleep(interval)
+        return True
+
+    # T5
+    def cli_event_link_flap(self, list1, list2, interval=60):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_event_link_flap:  list1 - %s  list22  - %s " % (list1, list2))
+
+        for node1 in list1:
+            for node2 in list2:
+                if node1 == node2:
+                    helpers.test_log("INFO: node pairs are same: %s  - %s. Don't run test." % (node1, node2))
+                    continue
+                helpers.test_log("INFO: node pair: %s  - %s" % (node1, node2))
+                self.cli_link_flap_between_nodes(node1, node2, interval)
+
+        return True
+
+    # T5
     def cli_get_links_nodes_list(self, node1, node2):
         '''
         '''
