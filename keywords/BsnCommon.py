@@ -585,7 +585,7 @@ class BsnCommon(object):
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]

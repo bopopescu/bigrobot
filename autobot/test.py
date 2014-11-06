@@ -1559,13 +1559,13 @@ class Test(object):
             if helpers.is_controller(key):
                 self.cli_add_controller_idle_and_reauth_timeout(key)
 
-        if helpers.bigrobot_no_auto_reload().lower() == 'true':
-            helpers.log("Reconnecting switch consoles and updating switch IP's....")
-            helpers.log("Please make sure switches are not in ZTN MODE ..before using BIGROBOT_NO_AUTO_RELOAD env")
-            for key in params:
-                self.setup_ztn_phase2(key)
-        else:
-            helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
+#         if helpers.bigrobot_no_auto_reload().lower() == 'true':
+#             helpers.log("Reconnecting switch consoles and updating switch IP's....")
+#             helpers.log("Please make sure switches are not in ZTN MODE ..before using BIGROBOT_NO_AUTO_RELOAD env")
+#             for key in params:
+#                 self.setup_ztn_phase2(key)
+#         else:
+#             helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
         # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
             for key in params:
