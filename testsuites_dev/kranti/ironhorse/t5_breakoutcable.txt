@@ -176,8 +176,54 @@ TC Verify jumbo frame same segment L2 traffic with vlan bidirectional
     [Tags]  feature  T5  
     Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
     Manual untested   
+
+TC Verify interface stats incoming same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats outgoing same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats incoming same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify interface stats outgoing same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats incoming same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+
+
+TC Verify interface stats outgoing jumbo frame same segment L2 traffic with vlan bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing jumbo frame unidirectional same segment L2 traffic with vlan         
+    Manual untested
+
+
+
+
+TC Verify SPAN configuration for breakout cable - Ingress  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify SPAN configuration for breakout cable - Ingress         
+    Manual untested   
+
+TC Verify SPAN configuration for breakout cable - Egress  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify SPAN configuration for breakout cable - Egress         
+    Manual untested 
+    
+    
      
-  
+## Adding Deleting, HA, Reboot, Failure, Upgrade test  
     
     
  
