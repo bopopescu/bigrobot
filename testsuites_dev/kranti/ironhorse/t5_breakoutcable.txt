@@ -18,8 +18,24 @@ Library         keywords/T5Switch.py
 Library         String
 #Resource        testsuites_dev/kranti/ironhorse/t5_traffic_interfacestats_variables.txt
 
+### Multiple Topology:
+### Topology 1 - Spine AS6700 40G port - Leaf 4 x 10G port 
+### Topology 2 - Peer Link - AS5710 as same rack switch 
+### Topology 3 - AS 5710 as SPINE and the leaf-spine link with breakout cable 
+### General Test Case scenarios 
+### Breakout cable inventory detection, Interface detection
+### Breakout cable remove and insert - same interfaces / Different interfaces 
+### Breakout cable remove and insert - Different interfaces - continuos or non-continuos interfaces 
+### Breakout cable - Configuration - Same segment, different segment, intra tenant, inter tenant 
+### Breakout cable - Configuration change , update - add / delete  - Same segment, different segment, intra tenant, inter tenant
+### Breakout cable - Traffic test - L2 , L2 with Vlan, Intra tenant L3 , inter tenant L3 
+### Breakout cable - Traffic test with Interface shut/ no shut, reboot switch , controller failover, config change  
+### Breakout cable - Switch Reboot, Controller Failover
+### Breakout cable - Upgrade - Non Supported bcf package to supported, supported to supported 
+ 
+
 *Test Case 
-#### Topology - Spine 40G port - Leaf 4 x 10 G ports 
+#### Topology 1 - Spine 40G port - Leaf 4 x 10 G ports 
 TC Verify breakout cable detection on spine for 40 G port 
     [Tags]  feature  T5     
     Log     Step 1 - verify 40G port identifies the cable 
@@ -176,18 +192,185 @@ TC Verify jumbo frame same segment L2 traffic with vlan bidirectional
     [Tags]  feature  T5  
     Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
     Manual untested   
-     
-  
-    
-    
- 
- 
- 
 
+TC Verify interface stats incoming same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats outgoing same segment L2 traffic unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats incoming same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+    
+TC Verify interface stats outgoing same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing unidirectional same segment L2 traffic        
+    Manual untested
+
+TC Verify interface stats incoming same segment L2 traffic with vlan unidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats incoming unidirectional same segment L2 traffic        
+    Manual untested
+
+
+TC Verify interface stats outgoing jumbo frame same segment L2 traffic with vlan bidirectional  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify interface stats outgoing jumbo frame unidirectional same segment L2 traffic with vlan         
+    Manual untested
+
+TC Verify SPAN configuration for breakout cable - Ingress  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify SPAN configuration for breakout cable - Ingress         
+    Manual untested   
+
+TC Verify SPAN configuration for breakout cable - Egress  
+    [Tags]  feature  T5  
+    Log     Step 1 - Verify SPAN configuration for breakout cable - Egress         
+    Manual untested 
      
+## Adding Deleting, HA, Reboot, Failure, Upgrade test  
+TC Bring up the leaf switch with breakout cable 
+    [Tags]  feature  T5  
+    Log     Step 1 - Bring up the leaf switch with breakout cable         
+    Manual untested    
+
+TC Remove the breakout cable and plugged in back on the same interfaces
+    [Tags]  feature  T5  
+    Log     Step 1 - Remove the breakout cable and plugged in back on the same interfaces         
+    Manual untested   
+ 
+TC Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces 
+    [Tags]  feature  T5  
+    Log     Step 1 - Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces         
+    Manual untested   
+ 
+TC Insert first Breakout cable -Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side 
+    [Tags]  feature  T5  
+    Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
+    Manual untested
+     
+TC Insert first 40G DAC cable -Remove the DAC cable and insert the breakout cable - same interface on spine side 
+    [Tags]  feature  T5  
+    Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
+    Manual untested   
+
+TC Breakout cable plugged-in reboot the switch leaf/spine 
+    [Tags]  feature  T5  
+    Log     Step 1 - Breakout cable plugged-in reboot the switch leaf/spine         
+    Manual untested
+
+TC Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable  
+    [Tags]  feature  T5  
+    Log     Step 1 - Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable         
+    Manual untested  
+
+TC Breakout cable plugged-in failover the controller with traffic  
+    [Tags]  feature  T5  
+    Log     Step 1 - Breakout cable plugged-in failover the controller with traffic         
+    Manual untested
+ 
+TC Breakout cable plugged-in upgrade the controller - supported software package to another one 
+    [Tags]  feature  T5  
+    Log     Step 1 - Breakout cable plugged-in upgrade the controller         
+    Manual untested
+
+TC Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package 
+    [Tags]  feature  T5  
+    Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
+    Manual untested   
     
-   
+#### Topology 2 - Peer link between Leaf switches - 40G on one and 4x10G on other     
+TC Peer Link -Verify breakout cable inventory detection on leaf for 10G ports 
+    [Tags]  feature  T5  
+     Log     Step 1 - Verify the show inventory for the breakout cable 
+    Manual untested
+
+TC Peer Link -Verify breakout cable interface detection on leaf for 10G ports 
+    [Tags]  feature  T5  
+     Log     Step 1 - Verify the show inventory for the breakout cable 
+    Manual untested
+        
+TC Peer Link - Verify breakout cable interface shut no shut on leaf  
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify breakout cable interface shut no shut on leaf
+    Manual untested   
+
+TC Peer Link - Verify L2 traffic same segment vlan untagged breakout cable
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L2 traffic same segment vlan untagged breakout cable
+    Manual untested 
+
+TC Peer Link - Verify L2 traffic same segment with vlan breakout cable
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L2 traffic same segment with vlan breakout cable
+    Manual untested 
+
+TC Peer Link - Verify L3 traffic intra tenant breakout cable
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L3 traffic intra tenant breakout cable
+    Manual untested
+
+TC Peer Link - Verify L3 traffic inter tenant breakout cable
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L3 traffic inter tenant breakout cable
+    Manual untested
     
+TC Peer Link - Verify L2 traffic shut no shut of breakout cable 
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L2 traffic shut no shut of breakout cable
+    Manual untested
+
+TC Peer Link - Verify L3 traffic shut no shut of breakout cable 
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link - Verify L3 traffic shut no shut of breakout cable
+    Manual untested
+
+TC Peer Link Multiple - Verify L2 traffic and hashing 
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link Multiple - Verify L2 traffic and hashing 
+    Manual untested    
+
+TC Peer Link Multiple - Verify L3 traffic and hashing 
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link Multiple - Verify L3 traffic and hashing 
+    Manual untested 
+
+TC Peer Link Multiple - Verify L2 traffic shut no shut and hashing 
+    [Tags]  feature  T5  
+     Log     Step 1 - Peer Link Multiple - Verify L2 traffic shut no shut and hashing 
+    Manual untested 
+    
+      
+#### Topology 3 - Leaf AS5710 as Spine 
+TC Leaf AS5710 as spine -Verify breakout cable inventory detection on leaf for 10G ports 
+    [Tags]  feature  T5  
+     Log     Step 1 - Verify the show inventory for the breakout cable 
+    Manual untested
+
+TC Leaf AS5710 as spine -Verify breakout cable interface detection on leaf for 10G ports 
+    [Tags]  feature  T5  
+     Log     Step 1 - Verify the show inventory for the breakout cable 
+    Manual untested
+        
+TC Leaf AS5710 as spine - Verify breakout cable interface shut no shut on leaf  
+    [Tags]  feature  T5  
+     Log     Step 1 - Leaf AS5710 as spine - Verify breakout cable interface shut no shut on leaf
+    Manual untested   
+
+TC Leaf AS5710 as spine - Verify breakout cable interface shut no shut on leaf  
+    [Tags]  feature  T5  
+     Log     Step 1 - Leaf AS5710 as spine - Verify breakout cable interface shut no shut on leaf
+    Manual untested 
+
+
+  
+
     
 *Keywords 
 

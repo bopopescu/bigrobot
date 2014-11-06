@@ -87,9 +87,9 @@ class BsnCommon(object):
                 else:
                     self.base_test_postmortem(test_descr=test_descr)
 
-            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
-                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
-                self.pause_on_fail(keyword=test_descr)
+                if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                    helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                    self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
