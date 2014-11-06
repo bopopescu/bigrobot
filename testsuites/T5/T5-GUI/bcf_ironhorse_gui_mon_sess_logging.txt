@@ -3,7 +3,7 @@ Documentation   	Test suite with tests to configure tenants. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	GUI BCF Ironhorse
+Force Tags              T5  GUI  BCF  Feature  IronHorse
 Library         	keywords/BsnCommon.py
 Library         	keywords/T5Utilities.py
 Library        		keywords/BsnSelenium.py

@@ -30,118 +30,235 @@ T0 Basic check
 	Sleep  5
 	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
 
-T1 Deleting lines
+T1.1. Deleting ntp time-zone
 	${command}=  Set Variable  ntp time-zone America/Los_Angeles
 	${diff}=  Create List  ntp time-zone America/Los_Angeles
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T1.2. Deleting ntp time-zone
+	${command}=  Set Variable  ntp time-zone XXX
+	${diff}=  Create List  ntp time-zone America/Los_Angeles
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T1.3. Deleting ntp time-zone
+    ${command}=  Set Variable  ntp time-zone
+    ${diff}=  Create List  ntp time-zone America/Los_Angeles
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T2 Deleting lines
-	${command}=  Set Variable  banner
+T2.1. Deleting banner
+	${command}=  Set Variable  banner 'Hello To BVS\\nI will be your guide\\nTest 1.2.3 $$'
 	${diff}=  Create List
 	...  banner 'Hello To BVS\\nI will be your guide\\nTest 1.2.3 $$'
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T2.2. Deleting banner
+    ${command}=  Set Variable  banner XXX
+    ${diff}=  Create List
+    ...  banner 'Hello To BVS\\nI will be your guide\\nTest 1.2.3 $$'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T2.3. Deleting banner
+    ${command}=  Set Variable  banner
+    ${diff}=  Create List
+    ...  banner 'Hello To BVS\\nI will be your guide\\nTest 1.2.3 $$'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T3 Deleting lines
+T3. Deleting logging remote
 	${command}=  Set Variable  logging remote
 	${diff}=  Create List  logging remote
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T4 Deleting lines
+T4.1. Deleting logging remote server
+    Cli Run  master  logging remote 2.2.2.2; logging remote 3.3.3.3 33
 	${command}=  Set Variable  logging remote 1.2.3.4 44
 	${diff}=  Create List  logging remote 1.2.3.4 44
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T4.2. Deleting logging remote server
+    ${command}=  Set Variable  logging remote 1.2.3.4
+    ${diff}=  Create List  logging remote 1.2.3.4 44
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T4.3. Deleting logging remote server
+    Cli Run  master  logging remote 3.2.4.2
+    ${command}=  Set Variable  logging remote 123.123.123.123
+    ${diff}=  Set Variable  ${Empty}
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T4.4. Deleting logging remote server
+    Cli Run  master  logging remote 4.3.42.2
+    ${command}=  Set Variable  logging remote 4.3.42.2 55
+    ${diff}=  Create List  logging remote 4.3.42.2
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T5 Deleting lines
-	${command}=  Set Variable  snmp-server community ro
+T5.1. Deleting snmp-server community ro
+	${command}=  Set Variable  snmp-server community ro Test_12-test
 	${diff}=  Create List  snmp-server community ro Test_12-test
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T5.2. Deleting snmp-server community ro
+    ${command}=  Set Variable  snmp-server community ro XXX
+    ${diff}=  Create List  snmp-server community ro Test_12-test
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T5.3. Deleting snmp-server community ro
+    ${command}=  Set Variable  snmp-server community ro
+    ${diff}=  Create List  snmp-server community ro Test_12-test
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T6 Deleting lines
-	${command}=  Set Variable  snmp-server contact
+T6.1. Deleting snmp-server contact
+	${command}=  Set Variable
+	...  snmp-server contact Tomasz@\\0xc5\\0x82\\0xc3\\0xb3d\\0xc5\\0xba.p
 	${diff}=  Create List
 	...  snmp-server contact Tomasz@\\0xc5\\0x82\\0xc3\\0xb3d\\0xc5\\0xba.pl
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T6.2. Deleting snmp-server contact
+    ${command}=  Set Variable  snmp-server contact XXX
+    ${diff}=  Create List
+    ...  snmp-server contact Tomasz@\\0xc5\\0x82\\0xc3\\0xb3d\\0xc5\\0xba.pl
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T6.3. Deleting snmp-server contact
+    ${command}=  Set Variable  snmp-server contact
+    ${diff}=  Create List
+    ...  snmp-server contact Tomasz@\\0xc5\\0x82\\0xc3\\0xb3d\\0xc5\\0xba.pl
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T7 Deleting lines
+T7. Deleting lines
 	${command}=  Set Variable  snmp-server enable traps
 	${diff}=  Create List  snmp-server enable traps
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T8 Deleting lines
+T8.1. Deleting snmp-server host
+    Cli Run  master  snmp-server host 1.2.3.4 udp-port 12
 	${command}=  Set Variable  snmp-server host 4.3.2.1
 	${diff}=  Create List  snmp-server host 4.3.2.1
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T8.2. Deleting snmp-server host
+    Cli Run  master  snmp-server host 1.2.3.4 udp-port 12
+    ${command}=  Set Variable  snmp-server host XXX
+    ${diff}=  Set Variable  ${Empty}
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T8.3. Deleting snmp-server host
+    Cli Run  master  snmp-server host 1.2.3.4 udp-port 12
+    ${command}=  Set Variable  snmp-server host 4.3.2.1 udp-port 12
+    ${diff}=  Set Variable  ${Empty}
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T8.4. Deleting snmp-server host
+    ${command}=  Set Variable  snmp-server host
+    ${diff}=  Create List  snmp-server host 4.3.2.1
+    Run Keyword and Expect Error
+    ...  *Error: Unexpected end of command*
+    ...  Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T9 Deleting lines
-	${command}=  Set Variable  snmp-server location
+T9.1. Deleting snmp-server location
+	${command}=  Set Variable  snmp-server location \'44 DD\'
 	${diff}=  Create List  snmp-server location \'44 DD\'
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T9.2. Deleting snmp-server location
+    ${command}=  Set Variable  snmp-server location XXX
+    ${diff}=  Create List  snmp-server location \'44 DD\'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T9.3. Deleting snmp-server location
+    ${command}=  Set Variable  snmp-server location
+    ${diff}=  Create List  snmp-server location \'44 DD\'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T10 Deleting lines
+T10. Deleting server host
 	${command}=  Set Variable  tacacs server host 1.1.1.1
 	${diff}=  Create List  tacacs server host 1.1.1.1
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T11 Deleting lines
+T11. Deleting server host
 	${command}=  Set Variable  tacacs server host 1.2.3.4
 	${diff}=  Create List  tacacs server host 1.2.3.4
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T12 Deleting lines
+T12. Deleting server host
 	${command}=  Set Variable  tacacs server host 2.2.2.2
 	${diff}=  Create List  tacacs server host 2.2.2.2
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T13 Deleting lines
-	${command}=  Set Variable  tacacs server host 4.3.2.1
-	${diff}=  Create List  tacacs server host 4.3.2.1
-	Delete single running config line and verify
-	...  ${command}
-	...  ${diff}
+T13. Deleting server host
+    ${command}=  Set Variable  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
+    ${diff}=  Create List
+    ...  tacacs server host 2.2.2.2 timeout 20
+    ...  tacacs server host 2.2.2.2 timeout 20 key 7 68010e0f162f3f
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T14 Deleting lines
+T14. Deleting server host
 	${command}=  Set Variable  tacacs server key 7 4244565147511f
 	${diff}=  Create List  tacacs server key 7 4244565147511f
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T15 Deleting lines
+T15. Deleting lines
 	${command}=  Set Variable  tacacs server timeout 10
 	${diff}=  Create List  tacacs server timeout 10
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T16 Deleting lines
-	# Placeholder, userd to be the same as T15
-	Cli Run  master  show run
+T16. Deleting lines
+    ${command}=  Set Variable  tacacs server host 2.2.2.2 timeout 20
+    ${diff}=  Create List
+    ...  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
+    ...  tacacs server host 2.2.2.2 timeout 20 key 7 68010e0f162f3f
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
-T17 Deleting lines
+T17.1. Deleting user
+    Cli Run  master  user test
 	${command}=  Set Variable  user test-user123
 	${diff}=  Create List
 	...  user test-user123
@@ -149,6 +266,22 @@ T17 Deleting lines
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
+T17.2. Deleting user
+    Cli Run  master  user test
+    ${command}=  Set Variable  user XXX
+    ${diff}=  Set Variable  ${Empty}
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T17.3. Deleting user
+    Cli Run  master  user test
+    ${command}=  Set Variable  user
+    ${diff}=  Create List  user test
+    Run Keyword and Expect Error
+    ...  *Error: Unexpected end of command*
+    ...  Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
 
 T18 Deleting lines
 	[Tags]  skipped

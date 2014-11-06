@@ -750,9 +750,6 @@ class T5ZTN(object):
                 if "snmp-server enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                # if re.match(r'snmp-server trap', startup_config_line):
-                #    helpers.log("Skipping line: %s" % startup_config_line)
-                #    continue
                 if "ntp enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
@@ -854,7 +851,7 @@ class T5ZTN(object):
         ztn_config = ztn_config_temp
         ztn_config.append("interface ma1 ip-address dhcp")
         ztn_config.append("hostname %s" % switch_name)
-        ztn_config.append("datapath id 00:00:%s" % mac)
+        ztn_config.append("datapath id 00:00:%s" % mac.lower())
         ztn_config.append("controller %s port 6653" % master_ip)
         ztn_config.append("ssh enable")
         ztn_config.append("logging host %s" % master_ip)
@@ -1790,4 +1787,32 @@ class T5ZTN(object):
         s = t.dev_console(switch)
         helpers.log("Running command %s" % cmd)
         s.config(cmd)
+        return True
+
+    def telnet_delete_ztn_cache(self, resource, switch):
+        """
+        Delete ZTN cache on a switch by executing bash command
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if cache cleared successfully, False otherwise
+        """
+        t = test.Test()
+        n = t.node(switch)
+        s = t.dev_console(switch)
+        if resource == 'all':
+            helpers.log("Running command 'ztn --delete' in bash mode")
+            s.bash("ztn --delete")
+        elif resource == 'swi':
+            helpers.log("Running command 'rm -r /mnt/flash2/ztn/cache/swi/' in bash mode")
+            s.bash("rm -r /mnt/flash2/ztn/cache/swi/")
+        elif resource == 'startup':
+            helpers.log("Running command 'rm -r /mnt/flash2/ztn/cache/startup-config/' in bash mode")
+            s.bash("rm -r /mnt/flash2/ztn/cache/startup-config/")
+        else:
+            helpers.log("Resource is none of all, swi, startup")
+            return False
+        n.console_close()
         return True

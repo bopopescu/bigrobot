@@ -9,6 +9,13 @@ from nose.exc import SkipTest
 CRITICAL_FAILURE = False
 
 
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
 def sleep(s):
     helpers.log("Sleeping for %s seconds" % s)
     helpers.sleep(s)
@@ -111,4 +118,3 @@ def wait_until_keyword_succeeds(timeout, retry_interval, kw, *args):
                 sleep(retry_interval)
     raise AssertionError("wait_until_keyword_succeeds: Timeout %s seconds exceeded. The last error was:\n%s"
                          % (timeout, error))
-
