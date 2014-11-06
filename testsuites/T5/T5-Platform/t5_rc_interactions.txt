@@ -148,7 +148,7 @@ T6.3. Deleting snmp-server contact
     ...  ${command}
     ...  ${diff}
 
-T7. Deleting lines
+T7. Deleting snmp-server enable traps
 	${command}=  Set Variable  snmp-server enable traps
 	${diff}=  Create List  snmp-server enable traps
 	Delete single running config line and verify
@@ -204,28 +204,28 @@ T9.3. Deleting snmp-server location
     ...  ${command}
     ...  ${diff}
 
-T10. Deleting server host
+T10. Deleting tacacs server host
 	${command}=  Set Variable  tacacs server host 1.1.1.1
 	${diff}=  Create List  tacacs server host 1.1.1.1
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T11. Deleting server host
+T11. Deleting tacacs server host
 	${command}=  Set Variable  tacacs server host 1.2.3.4
 	${diff}=  Create List  tacacs server host 1.2.3.4
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T12. Deleting server host
+T12. Deleting tacacs server host
 	${command}=  Set Variable  tacacs server host 2.2.2.2
 	${diff}=  Create List  tacacs server host 2.2.2.2
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T13. Deleting server host
+T13. Deleting tacacs server host
     ${command}=  Set Variable  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
     ${diff}=  Create List
     ...  tacacs server host 2.2.2.2 timeout 20
@@ -234,21 +234,21 @@ T13. Deleting server host
     ...  ${command}
     ...  ${diff}
 
-T14. Deleting server host
+T14. Deleting tacacs server key
 	${command}=  Set Variable  tacacs server key 7 4244565147511f
 	${diff}=  Create List  tacacs server key 7 4244565147511f
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T15. Deleting lines
+T15. Deleting tacacs server timeout
 	${command}=  Set Variable  tacacs server timeout 10
 	${diff}=  Create List  tacacs server timeout 10
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
-T16. Deleting lines
+T16. Deleting tacacs server host timeout
     ${command}=  Set Variable  tacacs server host 2.2.2.2 timeout 20
     ${diff}=  Create List
     ...  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
@@ -287,15 +287,31 @@ T18 Deleting lines
 	[Tags]  skipped
 	# Not Applicable any more
 
-T19 Deleting lines
-	${command}=  Set Variable  virtual-ip
+T19.1. Deleting virtual-ip
+	${command}=  Set Variable  virtual-ip 4.4.4.4
 	${diff}=  Create List  virtual-ip 4.4.4.4
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 	...  controller
+T19.2. Deleting virtual-ip
+    ${command}=  Set Variable  virtual-ip 11.11.11.11
+    ${diff}=  Create List  virtual-ip 4.4.4.4
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: Value specified, but doesn't match current value*
+    ...  Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  controller
+T19.3. Deleting virtual-ip
+    ${command}=  Set Variable  virtual-ip
+    ${diff}=  Create List  virtual-ip 4.4.4.4
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  controller
 
-T20 Deleting lines
+T20. Deleting switch
 	${command}=  Set Variable  switch test
 	${diff}=  Create List
 	...  switch test
@@ -307,7 +323,7 @@ T20 Deleting lines
 	...  ${command}
 	...  ${diff}
 
-T21 Deleting lines
+T21. Deleting switch fabric-role
 	${command}=  Set Variable  fabric-role spine
 	${diff}=  Create List
 	...  fabric-role spine
@@ -316,7 +332,7 @@ T21 Deleting lines
 	...  ${diff}
 	...  switch test
 
-T22 Deleting lines
+T22.1. Deleting switch mac
 	${command}=  Set Variable  mac 11:22:33:44:55:66
 	${diff}=  Create List
 	...  mac aa:bb:cc:dd:ee:ff
@@ -324,8 +340,26 @@ T22 Deleting lines
 	...  ${command}
 	...  ${diff}
 	...  switch test
+T22.2. Deleting switch mac
+    ${command}=  Set Variable  mac 44:33:22:11:55:44
+    ${diff}=  Create List
+    ...  mac aa:bb:cc:dd:ee:ff
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  switch test
+T22.3. Deleting switch mac
+    ${command}=  Set Variable  mac
+    ${diff}=  Create List
+    ...  mac aa:bb:cc:dd:ee:ff
+    Run Keyword and Expect Error
+    ...  *Error: Unexpected end of command*
+    ...  Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  switch test
 
-T23 Deleting lines
+T23. Deleting switch interface
 	${command}=  Set Variable  interface ethernet1
 	${diff}=  Create List
 	...  interface ethernet1
@@ -335,7 +369,7 @@ T23 Deleting lines
 	...  ${diff}
 	...  switch test
 
-T24 Deleting lines
+T24. Deleting switch interface shutdown
 	${command}=  Set Variable  shutdown
 	${diff}=  Create List
 	...  shutdown
