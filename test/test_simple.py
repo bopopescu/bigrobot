@@ -14,7 +14,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds
+from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, Singleton
 # from keywords.BsnCommon import BsnCommon
 
 helpers.remove_env('BIGROBOT_TOPOLOGY', quiet=True)
@@ -24,6 +24,8 @@ setup_env.standalone_environment_setup()
 
 
 class TestSimple:
+    __metaclass__ = Singleton
+
     def __init__(self):
         self.val = 0
 
