@@ -107,55 +107,55 @@ T7.27.1 - while Installer download - correct SWI download and fabric join
     Sleep  20
     Telnet Verify Onie Discovery Succeeded  s5
     Cli Run  master  switch ${s5_alias}; no mac ${s5_mac}
-    Cli Run  master  switch temp_name; mac ${s5_mac}
+    Cli Run  master  switch temp-name; mac ${s5_mac}; fabric-role spine
     Sleep  100
     Telnet Wait For Switch To Reload  s5
-    Sleep  30
-    Verify Switch Startup Config  ${s5_mac}  temp_name
-    Verify Switch Running Config  ${s5_mac}  temp_name
-    Verify Switch In Provisioned Mode  temp_name
+    Sleep  60
+    Verify Switch Startup Config  ${s5_mac}  temp-name
+    Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+    Verify Switch In Provisioned Mode  temp-name
 
 T7.27.2.1 - while SWI download - startup-config not cached - switch boots properly
     Telnet Delete ZTN Cache  all  s1
     Cli Reboot Switch  master  ${s1_mac}
     Telnet Wait For Switch To Find Manifest  s1
     Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
-    Cli Run  master  switch temp_name; mac ${s1_mac}
+    Cli Run  master  switch temp-name; mac ${s1_mac}; fabric-role spine
     Sleep  200
     Telnet Wait For Switch To Reload  s1
     Sleep  30
-    Verify Switch Startup Config  ${s1_mac}  temp_name
-    Verify Switch Running Config  ${s1_mac}  temp_name
-    Verify Switch In Provisioned Mode  temp_name
+    Verify Switch Startup Config  ${s1_mac}  temp-name
+    Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+    Verify Switch In Provisioned Mode  temp-name
 
 T7.27.2.2 - while SWI download - startup-config cached - switch undefined
     Telnet Delete ZTN Cache  all  s2
     Cli Reboot Switch  master  ${s2_mac}
     Telnet Wait For Switch To Find Manifest  s2
     Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
-    Cli Run  master  switch temp_name; mac ${s2_mac}
+    Cli Run  master  switch temp-name; mac ${s2_mac}; fabric-role leaf
     Sleep  200
     Telnet Wait For Switch To Reload  s2
     Sleep  60
-    Verify Switch Startup Config  ${s2_mac}  temp_name
-    Verify Switch Running Config  ${s2_mac}  temp_name
-    Verify Switch In Provisioned Mode  temp_name
+    Verify Switch Startup Config  ${s2_mac}  temp-name
+    Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+    Verify Switch In Provisioned Mode  temp-name
 
 T7.27.3 - while image startup - reload indicated
     Cli Reboot Switch  master  ${s3_mac}
     Sleep  30
     Telnet Wait For Switch To Start Booting  s3
     Cli Run  master  switch ${s3_alias}; no mac ${s3_mac}
-    Cli Run  master  switch temp_name; mac ${s3_mac}
+    Cli Run  master  switch temp-name; mac ${s3_mac}; fabric-role leaf
     Sleep  60
-    Verify Switch Startup Config  ${s3_mac}  temp_name
-    Verify Switch Running Config  ${s3_mac}  temp_name
-    Verify Switch In Provisioned Mode  temp_name
+    Verify Switch Startup Config  ${s3_mac}  temp-name
+    Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+    Verify Switch In Provisioned Mode  temp-name
 
 #7.28. Verify following behaviors when ZTN config is changed during switch boot up
 T7.28.1 - while Installer download - correct SWI download and fabric join
     Cli Run  master  enable; config
-    Cli Run  master  system reinstall switch ${s4_alias} reboot factory-default
+    Cli Run  master  system reinstall switch ${s4_alias} reboot
     Sleep  20
     Telnet Verify Onie Discovery Succeeded  s4
     Randomize ZTN Configuration
@@ -189,7 +189,7 @@ T7.28.3 - while image startup - switch undefined (suspended)
 #7.29. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
 T7.29.1 - while Installer download - correct SWI download and fabric join
     Cli Run  master  enable; config
-    Cli Run  master  system reinstall switch ${s3_alias} reboot factory-default
+    Cli Run  master  system reinstall switch ${s3_alias} reboot
     Sleep  20
     Telnet Verify Onie Discovery Succeeded  s3
     Set All Switches Mode Standby
