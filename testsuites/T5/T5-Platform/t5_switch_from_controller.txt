@@ -201,6 +201,7 @@ TC28 Get and Verify the switch PSU Type information from controller
       
 T5 switch platform test setup
    base suite setup
+   reconnect switch ips
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
