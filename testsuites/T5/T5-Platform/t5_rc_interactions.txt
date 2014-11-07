@@ -283,10 +283,43 @@ T17.3. Deleting user
     ...  ${command}
     ...  ${diff}
 
-T18 Deleting lines
-	[Tags]  skipped
-	# Not Applicable any more
+T18.1. Deleting monitor session
+    ${command}=  Set Variable  monitor session 1
+    ${diff}=  Create List
+    ...  monitor session 1
+    ...  active
+    ...  destination switch test interface e10
+    ...  destination switch test interface e11
+    ...  destination switch test interface e12
+    ...  source switch test interface e1
+    ...  source switch test interface e2
+    ...  source switch test interface e3
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T18.2. Deleting monitor session active
+    ${command}=  Set Variable  active
+    ${diff}=  Create List  active
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  monitor session 1
+T18.3. Deleting monitor session destination
+    ${command}=  Set Variable  destination switch test interface e10
+    ${diff}=  Create List  destination switch test interface e10
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  monitor session 1
+T18.4. Deleting monitor session source
+    ${command}=  Set Variable  source switch test interface e2
+    ${diff}=  Create List  source switch test interface e2
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  monitor session 1
 
+# IMO the best behavior is as in virtual-ip deletion
 T19.1. Deleting virtual-ip
 	${command}=  Set Variable  virtual-ip 4.4.4.4
 	${diff}=  Create List  virtual-ip 4.4.4.4
@@ -377,6 +410,163 @@ T24. Deleting switch interface shutdown
 	...  ${command}
 	...  ${diff}
 	...  switch test; interface ethernet1
+
+T25.1. Deleting port-group
+    ${command}=  Set Variable  port-group pg1
+    ${diff}=  Create List
+    ...  port-group pg1
+    ...  member switch swich1 interface ethernet1
+    ...  member switch swich1 interface ethernet2
+    ...  member switch swich1 interface ethernet3
+    ...  mode lacp
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T25.2. Deleting port-group mode
+    ${command}=  Set Variable  mode lacp
+    ${diff}=  Create List  mode lacp
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  port-group pg1
+T25.3. Deleting port-group member
+    ${command}=  Set Variable  member switch swich1 interface ethernet3
+    ${diff}=  Create List  member switch swich1 interface ethernet3
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  port-group pg1
+
+T26.1. Deleting tenant route
+    ${command}=  Set Variable  route 4.0.0.0/8 next-hop tenant system
+    ${diff}=  Create List  route 4.0.0.0/8 next-hop tenant system
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.2. Deleting tenant apply policy-list
+    ${command}=  Set Variable  apply policy-list test-policy-list1
+    ${diff}=  Create List  apply policy-list test-policy-list1
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.3. Deleting tenant description
+    ${command}=  Set Variable  description 'Test\\nrouter\\ndesc'
+    ${diff}=  Create List  description 'Test\\nrouter\\ndesc'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.4. Deleting tenant interface
+    ${command}=  Set Variable  interface tenant system
+    ${diff}=  Create List  interface tenant system
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.5. Deleting tenant next-hop-group
+    ${command}=  Set Variable  next-hop-group nh1
+    ${diff}=  Create List
+    ...  next-hop-group nh1
+    ...  ip 6.6.6.6
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.6. Deleting tenant next-hop-group ip
+    ${command}=  Set Variable  ip 6.6.6.6
+    ${diff}=  Create List  ip 6.6.6.6
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; next-hop-group nh1
+T26.7. Deleting tenant policy-list
+    ${command}=  Set Variable  policy-list test
+    ${diff}=  Create List
+    ...  policy-list test
+    ...  1 deny any to any
+    ...  4 permit proto tcp any to any
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T26.8. Deleting tenant policy-list rule
+    ${command}=  Set Variable  1 deny any to any
+    ${diff}=  Create List  1 deny any to any
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; policy-list test
+
+T27.1. Deleting tenant segment
+    ${command}=  Set Variable  segment green-segment1
+    ${diff}=  Create List
+    ...  segment green-segment1
+    ...  description 'Test\\n123'
+    ...  endpoint test-endpoint1
+    ...  attachment-point port-group test vlan untagged
+    ...  ip 5.5.5.5
+    ...  mac aa:aa:aa:aa:aa:aa
+    ...  member port-group pg1 vlan 123
+    ...  member switch any interface any vlan 44
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router
+T27.2. Deleting tenant segment description
+    ${command}=  Set Variable  description 'Test\\n123'
+    ${diff}=  Create List  description 'Test\\n123'
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1
+T27.3. Deleting tenant segment endpoint
+    ${command}=  Set Variable  endpoint test-endpoint1
+    ${diff}=  Create List
+    ...  endpoint test-endpoint1
+    ...  attachment-point port-group test vlan untagged
+    ...  ip 5.5.5.5
+    ...  mac aa:aa:aa:aa:aa:aa
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1
+T27.4. Deleting tenant segment endpoint attachment-point
+    ${command}=  Set Variable  attachment-point port-group test vlan untagged
+    ${diff}=  Create List  attachment-point port-group test vlan untagged
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1; endpoint test-endpoint1
+T27.5. Deleting tenant segment endpoint IP
+    ${command}=  Set Variable  ip 5.5.5.5
+    ${diff}=  Create List  ip 5.5.5.5
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1; endpoint test-endpoint1
+T27.6. Deleting tenant segment mac
+    ${command}=  Set Variable  mac aa:aa:aa:aa:aa:aa
+    ${diff}=  Create List  mac aa:aa:aa:aa:aa:aa
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1; endpoint test-endpoint1
+T27.7. Deleting tenant segment member port-group
+    ${command}=  Set Variable  member port-group pg1 vlan 123
+    ${diff}=  Create List  member port-group pg1 vlan 123
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1
+T27.8. Deleting tenant segment member switch
+    ${command}=  Set Variable  member switch any interface any vlan 44
+    ${diff}=  Create List  member switch any interface any vlan 44
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+    ...  tenant green; logical-router; segment green-segment1
 
 
 *** Keywords ***
