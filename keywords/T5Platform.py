@@ -3,7 +3,6 @@ import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from T5Utilities import T5PlatformThreads
 from BsnCommon import BsnCommon as bsnCommon
-from time import sleep
 import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
@@ -84,8 +83,8 @@ class T5Platform(object):
         else:
             slave.rest.post(url, {"rigged": False})
 
-        # sleep(30)
-        sleep(90)
+        # helpers.sleep(30)
+        helpers.sleep(90)
 
         newMasterID = self.getNodeID(False)
         if(newMasterID == -1):
@@ -113,12 +112,12 @@ class T5Platform(object):
         returnVal = self._cluster_election(True)
         if(not returnVal):
             return False
-        # sleep(30)
-        sleep(90)
+        # helpers.sleep(30)
+        helpers.sleep(90)
         return utilities.fabric_integrity_checker(obj, "after")
 
 
-    def cli_cluster_take_leader(self,node='slave'):
+    def cli_cluster_take_leader(self, node='slave'):
         ''' Function to trigger failover to slave controller via CLI. This function will verify the
             fabric integrity between states
 
@@ -139,8 +138,8 @@ class T5Platform(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)?")
             c.config("yes")
-            # sleep(30)
-            sleep(90)
+            # helpers.sleep(30)
+            helpers.sleep(90)
         except:
             helpers.test_log(c.cli_content())
             return False
@@ -150,12 +149,12 @@ class T5Platform(object):
 
     def cli_create_policy_list(self, tenant, policy_list, policy_rule):
         ''' Function to create policy list using cli commands
-            Input: tenant-name, policy-list-name, rule 
+            Input: tenant-name, policy-list-name, rule
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s, policy-rule:%s" % (tenant, policy_list, policy_rule))
         c.config("config")
         c.config('tenant ' + tenant)
@@ -166,13 +165,13 @@ class T5Platform(object):
             if "Error" in c.cli_content():
                 helpers.test_failure(c.cli_content())
                 return False
-                  
+
             c.send(policy_rule)
             c.expect([c.get_prompt()])
             if "Error" in c.cli_content():
                 helpers.test_failure(c.cli_content())
                 return False
-                      
+
         except:
             helpers.test_failure(c.cli_content())
             return False
@@ -182,12 +181,12 @@ class T5Platform(object):
 
     def cli_delete_policy_list(self, tenant, policy_list, policy_rule):
         ''' Function to delete policy rule using cli commands
-            Input: tenant-name, policy-list-name, rule 
+            Input: tenant-name, policy-list-name, rule
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s, policy-rule:%s" % (tenant, policy_list, policy_rule))
         c.config("config")
         c.config('tenant ' + tenant)
@@ -204,16 +203,16 @@ class T5Platform(object):
             return False
         else:
             return True
-        
-        
+
+
     def cli_delete_policy(self, tenant, policy_list):
         ''' Function to delete policy  using cli commands
-            Input: tenant-name, policy-list-name, rule 
+            Input: tenant-name, policy-list-name, rule
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s " % (tenant, policy_list))
         c.config("config")
         c.config('tenant ' + tenant)
@@ -229,19 +228,19 @@ class T5Platform(object):
             return False
         else:
             return True
-            
-                        
-        
+
+
+
 
 
     def cli_apply_policy(self, tenant, policy_list):
         ''' Function to apply policy using cli commands
-            Input: tenant-name, policy-list-name 
+            Input: tenant-name, policy-list-name
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s" % (tenant, policy_list))
         c.config("config")
         c.config('tenant ' + tenant)
@@ -257,19 +256,19 @@ class T5Platform(object):
             return False
         else:
             return True
-           
-                      
-        
+
+
+
 
 
     def cli_remove_policy(self, tenant, policy_list):
         ''' Function to remove policy using cli commands
-            Input: tenant-name, policy-list-name 
+            Input: tenant-name, policy-list-name
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s, policy-list-name:%s" % (tenant, policy_list))
         c.config("config")
         c.config('tenant ' + tenant)
@@ -285,7 +284,7 @@ class T5Platform(object):
             return False
         else:
             return True
-           
+
     def cli_delete_tenant(self, tenant):
         ''' Function to delete tenant using cli commands
             Input: tenant
@@ -293,10 +292,10 @@ class T5Platform(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         helpers.log("Provided cli path: tenant-name:%s" % (tenant))
         c.config("config")
-        
+
         try:
             c.send('no tenant ' + tenant)
             c.expect([c.get_prompt()])
@@ -308,19 +307,19 @@ class T5Platform(object):
             return False
         else:
             return True
-                                         
+
 
     def cli_enable_qos(self):
         ''' Function to enable qos using cli commands
-            Input: 
+            Input:
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         c.config("config")
-        
-        
+
+
         try:
             c.send('fabric')
             c.expect([c.get_prompt()])
@@ -334,19 +333,19 @@ class T5Platform(object):
             return False
         else:
             return True
-        
+
 
     def cli_disable_qos(self):
         ''' Function to enable qos using cli commands
-            Input: 
+            Input:
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('master')
-        
+
         c.config("config")
-        
-        
+
+
         try:
             c.send('fabric')
             c.expect([c.get_prompt()])
@@ -371,8 +370,8 @@ class T5Platform(object):
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
-        # sleep(30)
-        sleep(60)
+        # helpers.sleep(30)
+        helpers.sleep(60)
         return utilities.fabric_integrity_checker(obj, "after")
 
 
@@ -410,8 +409,8 @@ class T5Platform(object):
                 master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
-                # sleep(90)
-                sleep(160)
+                # helpers.sleep(90)
+                helpers.sleep(160)
             else:
                 slave = t.controller("slave")
                 actual_node_name = slave.name()
@@ -419,11 +418,11 @@ class T5Platform(object):
                 slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
-                # sleep(90)
-                sleep(160)
+                # helpers.sleep(90)
+                helpers.sleep(160)
         except:
             helpers.log("Node is rebooting")
-            sleep(90)
+            helpers.sleep(90)
             count = 0
             while (True):
                 loss = helpers.ping(ipAddr)
@@ -432,12 +431,12 @@ class T5Platform(object):
                     if (count > 5):
                         helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
                         return False
-                    sleep(60)
+                    helpers.sleep(60)
                     count += 1
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     helpers.log("Controller just came alive. Waiting for it to become fully functional")
-                    sleep(120)
+                    helpers.sleep(120)
                     break
 
         helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
@@ -525,8 +524,8 @@ class T5Platform(object):
                 master.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
                 helpers.log("Master is reloading")
-                # sleep(90)
-                sleep(160)
+                # helpers.sleep(90)
+                helpers.sleep(160)
             else:
                 slave = t.controller("slave")
                 actual_node_name = slave.name()
@@ -534,11 +533,11 @@ class T5Platform(object):
                 slave.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is reloading")
-                # sleep(90)
-                sleep(160)
+                # helpers.sleep(90)
+                helpers.sleep(160)
         except:
             helpers.log("Node is reloading")
-            sleep(90)
+            helpers.sleep(90)
             count = 0
             while (True):
                 loss = helpers.ping(ipAddr)
@@ -547,12 +546,12 @@ class T5Platform(object):
                     if (count > 5):
                         helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
                         return False
-                    sleep(60)
+                    helpers.sleep(60)
                     count += 1
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     helpers.log("Controller just came alive. Waiting for it to become fully functional")
-                    sleep(120)
+                    helpers.sleep(120)
                     break
 
         helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
@@ -624,13 +623,13 @@ class T5Platform(object):
             master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
             master.enable("yes")
             helpers.log("Master is shutting down")
-            sleep(10)
+            helpers.sleep(10)
         else:
             slave = t.controller("slave")
             slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
             slave.enable("yes")
             helpers.log("Slave is shutting down")
-            sleep(10)
+            helpers.sleep(10)
 
         newMasterID = self.getNodeID(False)
         if(newMasterID == -1):
@@ -773,7 +772,7 @@ class T5Platform(object):
                 helpers.log("Starting thread: %s" % thread)
                 thread.start()
                 if (i == disruptThreadCounter - 1):
-                    sleep(45)
+                    helpers.sleep(45)
         else:
             for thread in threadList:
                 helpers.log("Starting thread: %s" % thread)
@@ -784,7 +783,7 @@ class T5Platform(object):
             helpers.log("Joining thread: %s" % thread)
             thread.join()
 
-        sleep(60)
+        helpers.sleep(60)
         return utilities.fabric_integrity_checker(obj, "after")
 
         # Create new threads
@@ -806,7 +805,7 @@ class T5Platform(object):
             user = "user" + str(i + 1)
             usersString.append(user)
             master.rest.post(url, {"user-name": user})
-            sleep(1)
+            helpers.sleep(1)
 
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
@@ -822,7 +821,7 @@ class T5Platform(object):
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
-            sleep(5)
+            helpers.sleep(5)
             for user in usersString:
                 if user not in showUsers:
                     numWarn += 1
@@ -844,7 +843,7 @@ class T5Platform(object):
             usersString.append(user)
             url = url + user + "\"]"
             master.rest.delete(url, {})
-            sleep(1)
+            helpers.sleep(1)
 
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
@@ -860,7 +859,7 @@ class T5Platform(object):
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
-            sleep(5)
+            helpers.sleep(5)
             for user in usersString:
                 if user in showUsers:
                     numWarn += 1
@@ -1158,7 +1157,7 @@ class T5Platform(object):
         mynet = mininet.Mininet()
         loss = mynet.mininet_ping(src, dst)
         if (loss != '0'):
-            # sleep(5)
+            # helpers.sleep(5)
             loss = mynet.mininet_ping(src, dst)
             if (loss != '0'):
                 if(mininetPingFails == 5):
@@ -1184,7 +1183,7 @@ class T5Platform(object):
         myhost = Host.Host()
         loss = myhost.bash_ping(src, dst)
         if (loss == '100'):
-            sleep(30)
+            helpers.sleep(30)
             loss = myhost.bash_ping(src, dst)
             if (loss == '100'):
                 if(hostPingFails == 5):
@@ -1217,7 +1216,7 @@ class T5Platform(object):
             helpers.log("Bug Report Location is: %s " % out)
             for i in range(0, 2):
                 helpers.warn("Show run output is not correct for VNS members. Please collect switch support logs")
-                sleep(30)
+                helpers.sleep(30)
         else:
             helpers.log("Show run output is correct for VNS members")
 
@@ -1258,7 +1257,7 @@ class T5Platform(object):
             except(KeyError):
                 if(numTries < 5):
                     helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
-                    sleep(10)
+                    helpers.sleep(10)
                     numTries += 1
                 else:
                     helpers.log("Error: KeyError detected during master ID retrieval")
@@ -1278,7 +1277,7 @@ class T5Platform(object):
                 except(KeyError):
                     if(numTries < 5):
                         helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
-                        sleep(10)
+                        helpers.sleep(10)
                         numTries += 1
                     else:
                         helpers.log("Error: KeyError detected during slave ID retrieval")
@@ -2354,7 +2353,7 @@ class T5Platform(object):
                 c.send('upgrade stage ' + image)
         else:
             c.send('upgrade stage ' + image)
-        options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition',c.get_prompt()])
+        options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition', c.get_prompt()])
 
         if options[0] == 1:
             helpers.log('USER INFO:  image is staged already,  stage again ... ')
@@ -2364,17 +2363,17 @@ class T5Platform(object):
         elif options[0] == 2:
             return True
 
-        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition',c.get_prompt()])
+        options = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition', c.get_prompt()])
         if options[0] == 0:
             c.send("yes")
-            newoptions = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition',c.get_prompt()])
+            newoptions = c.expect([r'[\r\n].*to continue.*', r'.*copying image into alternate partition', c.get_prompt()])
             if newoptions[0] == 0:
                 c.send("yes")
             elif newoptions[0] == 2:
-                return True 
+                return True
         elif options[0] == 2:
             return True
-                    
+
         try:
             c.expect(timeout=900)
         except:
@@ -2451,7 +2450,7 @@ class T5Platform(object):
         string = 'upgrade launch ' + option
 #        c.send('upgrade launch')
         c.send(string)
-        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):', c.get_prompt()], timeout=180)         
+        options = c.expect([r'[\r\n].+ \("y" or "yes" to continue\):', c.get_prompt()], timeout=180)
 
         if options[0] == 1:
             content = c.cli_content()
@@ -2480,14 +2479,14 @@ class T5Platform(object):
             c.send("yes")
 
         try:
-            c.expect(r'[\r\n].+[R|r]ebooting.*',timeout=300)
+            c.expect(r'[\r\n].+[R|r]ebooting.*', timeout=300)
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False
         else:
-            helpers.log('INFO: upgrade launch  successfully')             
+            helpers.log('INFO: upgrade launch  successfully')
             # modify the idle time out TBD Mingtao
             helpers.log("INFO: Node - %s is rebooting" % c.name())
             helpers.sleep(60)
@@ -2498,7 +2497,7 @@ class T5Platform(object):
                 c = t.node_reconnect(c.name())
                 c.enable('show switch')
                 t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
-   
+
             return True
         return False
 
@@ -4292,13 +4291,13 @@ class T5Platform(object):
                 helpers.log("Test Path: Starting Ixia Stream: %s" % kwargs.get('stream'))
                 ixia = Ixia.Ixia()
                 ixia.start_traffic(kwargs.get('stream'))
-                sleep(10)
+                helpers.sleep(10)
 
         elif(trafficMode == 'HostPing'):
             pingThread = T5PlatformThreads(1, "hostPing", host=kwargs.get('host'), IP=kwargs.get('ip'))
             helpers.log("Starting ping thread to ping from %s to destIP: %s" % (kwargs.get('host'), kwargs.get('ip')))
             pingThread.start()
-            sleep(3)
+            helpers.sleep(3)
 
         url = '/api/v1/data/controller/applications/bcf/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
@@ -4350,7 +4349,7 @@ class T5Platform(object):
                 helpers.log("Test Path: No Hops Detected. Retrying ...")
 
 
-        sleep(3)
+        helpers.sleep(3)
         url = '/api/v1/data/controller/applications/bcf/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
         for hop in result[0]['physical-path']:
@@ -5512,7 +5511,7 @@ class T5Platform(object):
                   False  -upgrade launched Not successfully
         '''
 
-        
+
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch_HA ')
@@ -5562,7 +5561,7 @@ class T5Platform(object):
                     t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
                 else:
                     helpers.log("INFO: self.verify_controller_reachable is false")
-                              
+
                 return True
 
         elif role == 'standby':
@@ -5588,7 +5587,7 @@ class T5Platform(object):
                     helpers.log("ERROR: upgrade FAILED")
                     return False
 
-                # TBD  Mingtao                 
+                # TBD  Mingtao
                 helpers.log("INFO: Standby Node - %s is rebooting" % c.name())
                 if self.verify_controller_reachable(node):
                     helpers.log("INFO: Standby Node - %s is UP - Wating for it to come to full function" % c.name())
@@ -5599,7 +5598,7 @@ class T5Platform(object):
                     t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
                 else:
                     helpers.log("INFO: self.verify_controller_reachable is false")
-              
+
                 return True
         else:
             helpers.test_failure("ERROR: can not determine the role of the controller")
@@ -5650,7 +5649,7 @@ class T5Platform(object):
                     ip_addr = helpers.get_next_address('ipv4', base, step)
                     base = ip_addr
                     i = i + 1
-                    
+
         c.cli('show running-config tenant')['content']
         return True
 
@@ -6036,8 +6035,8 @@ class T5Platform(object):
             line = line.split()
             helpers.log("*****line is :\n%s" % line)
             partition[line[0]] = {}
-            if (line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed' or 
-                line[1]== 'Unformatted'):
+            if (line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed' or
+                line[1] == 'Unformatted'):
                 partition[line[0]]['state'] = 'None'
                 partition[line[0]]['upgrade'] = line[1]
             else:
@@ -6046,40 +6045,40 @@ class T5Platform(object):
 
         return partition
 
-    def get_boot_partition(self, node,flag):
+    def get_boot_partition(self, node, flag):
         '''
         input:  flag type - Active,  Boot   Pending
         '''
         helpers.test_log("Entering ==> get_boot_partition")
-            
+
         partition = self.cli_show_boot_partition(node)
-        if flag=='active':
+        if flag == 'active':
             for key in partition:
                 if 'Active' in partition[key]['state']:
                     return key
                     break
             return False
-        if flag=='Boot':
+        if flag == 'Boot':
             for key in partition:
                 if 'Boot' in partition[key]['state']:
                     return key
                     break
             return False
-        if flag=='Pending_launch':
+        if flag == 'Pending_launch':
             for key in partition:
                 if 'Pending_Launch' in partition[key]['upgrade']:
                         return key
                         break
-            helpers.log("There is no partition Pending Launch ")               
+            helpers.log("There is no partition Pending Launch ")
             return -1
-        if flag=='Unformatted':
+        if flag == 'Unformatted':
             for key in partition:
                 if 'Unformatted' in partition[key]['upgrade']:
                     return key
                     break
-            helpers.log("There is no partition unformated ")               
+            helpers.log("There is no partition unformated ")
             return -1
-          
+
 
 
     def cli_verify_node_upgrade_partition(self, singleNode=False):
@@ -6141,11 +6140,11 @@ class T5Platform(object):
 
     def verify_controller_reachable(self, node):
         '''
-        '''        
+        '''
         helpers.test_log("Entering ==> verify_controller_reachable")
         t = test.Test()
         c = t.controller(node)
-        ipAddr = c.ip() 
+        ipAddr = c.ip()
         count = 0
         while (True):
             loss = helpers.ping(ipAddr)
@@ -6154,18 +6153,18 @@ class T5Platform(object):
                 if (count > 5):
                     helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
                     return False
-                sleep(60)
+                helpers.sleep(60)
                 count += 1
                 helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
             else:
-                helpers.log("Controller is alive")                
+                helpers.log("Controller is alive")
                 return True
 
     def verify_upgrade_not_progress(self):
         '''
-        '''        
+        '''
         helpers.test_log("Entering ==> verify_upgrade_not_progress")
-        t = test.Test()       
+        t = test.Test()
         bsn_common = bsnCommon()
         nodes = bsn_common.get_all_controller_nodes()
         for node in nodes:
@@ -6179,93 +6178,93 @@ class T5Platform(object):
             if re.match(r'Error: Invalid Use: upgrade not active', line):
                 helpers.log("USR INFO: no upgrade in node: %s" % node)
             else:
-                helpers.log("USR INFO:  upgrade is in progress")   
-                return False         
-       
+                helpers.log("USR INFO:  upgrade is in progress")
+                return False
+
         for node in nodes:
-            if self.cli_check_user_present(user='upgrader',node=node):
-                helpers.log("USR INFO:  user upgrader still exist")    
+            if self.cli_check_user_present(user='upgrader', node=node):
+                helpers.log("USR INFO:  user upgrader still exist")
                 return False
         return True
-    
+
     def cli_check_user_present(self, user, node='master'):
         '''
         check user present
-        '''        
-      
+        '''
+
         t = test.Test()
         c = t.controller(node)
         url = "/api/v1/data/controller/core/aaa/local-user"
- 
+
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
-        content= c.rest.content()     
-        helpers.log("INFO: %s " % c.rest.content())  
-           
+        content = c.rest.content()
+        helpers.log("INFO: %s " % c.rest.content())
+
         Users = []
         for i in range (0, len(content)):
             Users.append(content[i]['user-name'])
-            
-        helpers.log("USR INFO: all the users are:  %s" % Users)        
+
+        helpers.log("USR INFO: all the users are:  %s" % Users)
         if user not in Users:
             helpers.warn("User: %s NOT present" % user)
             return False
         else:
-            helpers.log("USER %s is present " % user)  
+            helpers.log("USER %s is present " % user)
             return True
-        
+
     def cli_get_debug_counter(self, pattern):
         '''
         get the debug counter
-        '''        
-      
+        '''
+
         t = test.Test()
         c = t.controller('master')
         string = 'show debug counters all | grep ' + pattern
         c.enable(string)
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
-        helpers.log("USR INFO: line is:  %s" % temp)        
+        helpers.log("USR INFO: line is:  %s" % temp)
         match = re.match(r'.* (\d+)', temp)
         counter = 0
         if match:
             counter = match.group(1)
         return counter
-        
+
     def cli_config_tenant_vns_intf(self, tenant='T', segmant='V',
-            ip=None, mask="24",switch=None,
+            ip=None, mask="24", switch=None,
             intf=None, vlan='untagged'
             ):
         '''
         Function to add configure tenant VNS and interface
         Input: tennat , switch , interface
-        
+
         '''
 
         t = test.Test()
         c = t.controller('master')
 
         helpers.test_log("Entering ==> rest_add_tenant_vns_scale ")
-        string = 'tenant '+ tenant
+        string = 'tenant ' + tenant
         c.config(string)
-        string = 'segment '+ segmant
+        string = 'segment ' + segmant
         c.config(string)
         if switch is not None and intf is not None:
-            string = 'member switch ' + switch + ' interface '+ intf + ' vlan ' + vlan
-            c.config(string)            
+            string = 'member switch ' + switch + ' interface ' + intf + ' vlan ' + vlan
+            c.config(string)
         if ip is not None:
             c.config('logical-router')
-            string = 'interface segment '+ segmant
+            string = 'interface segment ' + segmant
             c.config(string)
-            string = 'ip address ' + ip +'/'+mask
+            string = 'ip address ' + ip + '/' + mask
             c.config(string)
-              
+
         c.cli('show running-config tenant')
         return True
-          
 
-    
+
+
     def cli_clear_icmpa(self, node):
         t = test.Test()
         s = t.switch(node)
@@ -6273,7 +6272,7 @@ class T5Platform(object):
         s.enable(string)
 
         return True
-    
+
     def cli_clear_lacpa(self, node):
         t = test.Test()
         s = t.switch(node)
@@ -6282,8 +6281,8 @@ class T5Platform(object):
 
         return True
 
-    
-    def cli_get_agent_counters(self, switch,pattern,node='master'):
+
+    def cli_get_agent_counters(self, switch, pattern, node='master'):
         '''
         get the packet
         BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
@@ -6292,17 +6291,17 @@ class T5Platform(object):
 
         t = test.Test()
         c = t.controller('master')
-        string = 'show switch '+ switch + ' agent-counters  | grep '  + pattern      
+        string = 'show switch ' + switch + ' agent-counters  | grep ' + pattern
         c.enable(string)
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
-        helpers.log("USR INFO: line is:  %s" % temp)        
+        helpers.log("USR INFO: line is:  %s" % temp)
         match = re.match(r'.* (\d+)', temp)
         counter = 0
         if match:
             counter = match.group(1)
         return counter
-   
+
     def cli_get_qos_weight(self, node, port='0'):
         t = test.Test()
         s = t.switch(node)
@@ -6367,7 +6366,7 @@ class T5Platform(object):
     def cli_clear_pimu_stat(self, node):
         t = test.Test()
         s = t.switch(node)
-        string = 'debug ofad "clear-rx-pimu-stats" '  
+        string = 'debug ofad "clear-rx-pimu-stats" '
         s.enable(string)
 
         return True
@@ -6376,7 +6375,7 @@ class T5Platform(object):
     def cli_get_pimu_stat(self, node):
         '''
         get the packet
-        # Name    Invoked    Drop  Forward     Fwd priority   Error        
+        # Name    Invoked    Drop  Forward     Fwd priority   Error
         '''
 
         t = test.Test()
@@ -6384,34 +6383,34 @@ class T5Platform(object):
         string = 'debug ofad "rx-pimu-stats" '
         content = s.enable(string)['content']
         info = {}
-        temp = helpers.strip_cli_output(content,to_list=True)
-        temp = temp[1:]        
+        temp = helpers.strip_cli_output(content, to_list=True)
+        temp = temp[1:]
         helpers.log("***temp is: %s  \n" % temp)
         for line in temp:
-            helpers.log("***line is: %s  \n" % line)            
+            helpers.log("***line is: %s  \n" % line)
             if 'nonfab pdu' in line:
                 line = line.replace("nonfab pdu", "nonfab_pdu")
             elif 'L2 miss/move' in line:
                 line = line.replace("L2 miss/move", "L2_miss_move")
-                 
+
             elif 'debug/acl' in line:
                 line = line.replace("debug/acl", "debug_acl")
-                
+
             elif 'L3 to cpu' in line:
                 line = line.replace("L3 to cpu", "L3_to_cpu")
-                
+
             elif 'L3 Miss/ttl' in line:
                 line = line.replace("L3 Miss/ttl", "L3_Miss_ttl")
-                
+
             elif 'unused 1' in line:
                 line = line.replace("unused 1", "unused_1")
-               
+
             elif 'unused 2' in line:
                 line = line.replace("unused 2", "unused_2")
-                
+
             line = line.lstrip()
             fields = line.split()
-            info[fields[1]] = {} 
+            info[fields[1]] = {}
             info[fields[1]]['name'] = fields[1]
             info[fields[1]]['invoked'] = fields[2]
             info[fields[1]]['drop'] = fields[3]
@@ -6420,7 +6419,7 @@ class T5Platform(object):
             info[fields[1]]['error'] = fields[6]
         helpers.log("***Exiting with info: %s  \n" % info)
         return info
- 
+
 
 
     def get_queue_with_traffic(self, node, port, threshold):
@@ -6435,5 +6434,5 @@ class T5Platform(object):
                 traffic_queue.append(queue)
         return traffic_queue
 
-  
- 
+
+
