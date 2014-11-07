@@ -373,7 +373,7 @@ class T5Torture(object):
             return True
         else:
             # helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
-            # sleep(36000)
+            # helpers.sleep(36000)
             return True
 
     # T5Utilities
@@ -852,7 +852,7 @@ class T5Torture(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)?")
             c.config("yes")
-            # sleep(30)
+            # helpers.sleep(30)
             helpers.sleep(90)
         except:
             helpers.test_log(c.cli_content())
@@ -860,16 +860,83 @@ class T5Torture(object):
         else:
             return self.fabric_integrity_checker("after")
 
-    # T5 Platform  Mingtao
+    # T5Platform
+    def getNodeID(self, slaveNode=True):
+
+        '''
+        Description:
+        -    This function will handout the NodeID's for master & slave nodes
+
+        Objective:
+        -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
+            reachable or it's powered down this function will handle the logic
+
+        Inputs:
+        |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
+
+        Outputs:
+        |    If slaveNode: return (masterID, slaveID)
+        |    else:    return (masterID)
+
+
+        '''
+        numTries = 0
+        t = test.Test()
+        master = t.controller("master")
+
+
+        while(True):
+            try:
+                showUrl = '/api/v1/data/controller/cluster'
+                helpers.log("Master is : %s " % master.name)
+                result = master.rest.get(showUrl)['content']
+                masterID = result[0]['status']['local-node-id']
+                break
+            except(KeyError):
+                if(numTries < 5):
+                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
+                    helpers.sleep(10)
+                    numTries += 1
+                else:
+                    helpers.log("Error: KeyError detected during master ID retrieval")
+                    if slaveNode:
+                        return (-1, -1)
+                    else:
+                        return -1
+
+        if(slaveNode):
+            slave = t.controller("slave")
+            while(True):
+                try:
+                    showUrl = '/api/v1/data/controller/cluster'
+                    result = slave.rest.get(showUrl)['content']
+                    slaveID = result[0]['status']['local-node-id']
+                    break
+                except(KeyError):
+                    if(numTries < 5):
+                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
+                        helpers.sleep(10)
+                        numTries += 1
+                    else:
+                        helpers.log("Error: KeyError detected during slave ID retrieval")
+                        return (-1, -1)
+
+
+        if(slaveNode):
+            return (masterID, slaveID)
+        else:
+            return masterID
+
+    # T5Platform  (Mingtao)
     def cli_verify_cluster_master_reload(self):
-        
+
         self.fabric_integrity_checker("before")
         returnVal = self.cluster_node_reload()
         if(not returnVal):
             return False
         return self.fabric_integrity_checker("after")
 
-    # T5 Platform   Mingtao
+    # T5Platform  (Mingtao)
     def cluster_node_reload(self, masterNode=True):
 
         ''' Reload a node and verify the cluster leadership.
@@ -877,7 +944,7 @@ class T5Torture(object):
         '''
         t = test.Test()
         master = t.controller("master")
- 
+
         if (self.cli_get_num_nodes() == 1):
             singleNode = True
         else:
@@ -903,7 +970,7 @@ class T5Torture(object):
                 master.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
                 helpers.log("Master is reloading")
-                # sleep(90)
+                # helpers.sleep(90)
                 helpers.sleep(160)
             else:
                 slave = t.controller("slave")
@@ -912,7 +979,7 @@ class T5Torture(object):
                 slave.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is reloading")
-                # sleep(90)
+                # helpers.sleep(90)
                 helpers.sleep(160)
         except:
             helpers.log("Node is reloading")
@@ -1286,7 +1353,7 @@ class T5Torture(object):
             # return c.rest.content()
             return True
 
-    #T5Untility        
+    # T5Utility
     def cli_get_num_nodes(self):
         '''
             return the number of nodes in a cluster.
@@ -1311,5 +1378,5 @@ class T5Torture(object):
         helpers.log("INFO: There are %d of controller(s) in the cluster" % num)
         return num
 
-        
-        
+
+

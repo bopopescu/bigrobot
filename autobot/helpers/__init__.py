@@ -484,6 +484,13 @@ def bigrobot_listener_log(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_LISTENER_LOG', new_val, default)
 
 
+def bigrobot_global_params(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_GLOBAL_PARAMS', new_val, default)
+
+
 def bigrobot_additional_params(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.

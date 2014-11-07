@@ -469,6 +469,20 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def params_global(self, *args, **kwargs):
+        """
+        Return the value for a 'global' params attributes.
+
+        Inputs:
+        | key  | name of attribute (e.g., 'my_test_knob') |
+        | default | (option) if attribute is undefined, return the value defined by default |
+
+        Return Value:
+        - Value for attribute
+        """
+        t = test.Test()
+        return t.params_global(*args, **kwargs)
+
     def params_nodes(self, *args, **kwargs):
         """
         Return the value for a params node(s) attributes.
