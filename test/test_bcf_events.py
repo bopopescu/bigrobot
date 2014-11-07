@@ -14,7 +14,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep, Singleton
+from autobot.nose_support import run, log_to_console, sleep, Singleton
 from keywords.BsnCommon import BsnCommon
 from keywords.T5Torture import T5Torture
 
@@ -46,10 +46,6 @@ class TestBcfEvents:
         self.big_config_sleep = BsnCommon().params_global('big_config_sleep')
         self.loop = BsnCommon().params_global('loop')
         self.repeat = BsnCommon().params_global('repeat')
-        self.spine_list = BsnCommon().params_global('spine_list')
-        self.leaf_list = BsnCommon().params_global('leaf_list')
-        self.switch_dut = BsnCommon().params_global('switch_dut')
-        self.switch_interface_dut = BsnCommon().params_global('switch_interface_dut')
 
     #
     # Test case setup & teardown
@@ -67,142 +63,6 @@ class TestBcfEvents:
             pass
 
     #
-    # Supporting keywords
-    #
-
-    def cli_show_commands_for_debug(self):
-        BsnCommon().cli('master', 'show ver', timeout=60)
-        BsnCommon().enable('master', 'show running-config switch', timeout=60)
-        BsnCommon().enable('master', 'show switch', timeout=60)
-        BsnCommon().enable('master', 'show link', timeout=60)
-        BsnCommon().cli('master', 'show ver', timeout=60)
-        BsnCommon().cli('slave', 'show ver', timeout=60)
-
-    def controller_node_event_ha_failover(self, during=30):
-        log_to_console("=============HA failover ===============")
-        self.cli_show_commands_for_debug()
-        T5Torture().cli_cluster_take_leader()
-        sleep(during)
-        self.cli_show_commands_for_debug()
-
-    def controller_node_event_reload_active(self, during=30):
-        log_to_console("=============Reload active controller ===============")
-        self.cli_show_commands_for_debug()
-        T5Torture().cli_verify_cluster_master_reload()
-        sleep(during)
-        self.cli_show_commands_for_debug()
-
-    def verify_all_switches_connected_back(self):
-        switches = T5Torture().rest_get_disconnect_switch('master')
-        self.cli_show_commands_for_debug()
-        helpers.log("the disconnected switches are %s" % switches)
-        assert switches == []  # Should be empty
-
-    def switch_node_down_up_event(self, node):
-        helpers.log("reload switch")
-        log_to_console("================ Rebooting %s ===============" % node)
-        self.cli_show_commands_for_debug()
-        T5Torture().cli_reboot_switch('master', node)
-        self.cli_show_commands_for_debug()
-        sleep(BsnCommon().params_global('long_sleep'))
-        wait_until_keyword_succeeds(60 * 10, 30,
-                                    self.verify_all_switches_connected_back)
-
-    def disable_links_between_nodes(self, node, intf):
-        self.cli_show_commands_for_debug()
-        T5Torture().rest_disable_fabric_interface(node, intf)
-
-    def enable_links_between_nodes(self, node, intf):
-        self.cli_show_commands_for_debug()
-        T5Torture().rest_enable_fabric_interface(node, intf)
-
-    def data_link_down_up_event_between_nodes(self, node1, node2):
-        log_to_console("================ data link down/up for %s and %s ===============" % (node1, node2))
-        helpers.log("disable/enable link from nodes")
-        _list = T5Torture().cli_get_links_nodes_list(node1, node2)
-        for intf in _list:
-            self.disable_links_between_nodes(node1, intf)
-            sleep(60)
-            self.enable_links_between_nodes(node1, intf)
-            sleep(60)
-
-    def clear_stats_in_controller_switch(self):
-        BsnCommon().enable("master", "clear switch all interface all counters")
-        self.cli_show_commands_for_debug()
-
-    def tenant_configuration_add_remove(self, tnumber, vnumber, sleep_timer=1):
-        log_to_console("================tenant configuration changes: %s===============" % tnumber)
-        self.clear_stats_in_controller_switch()
-        BsnCommon().enable("master", "copy running-config config://config_tenant_old")
-        BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
-
-        helpers.log("Big scale configuration tenant add")
-        T5Torture().rest_add_tenant_vns_scale(
-                    tenantcount=tnumber, tname="FLAP", vnscount=vnumber,
-                    vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
-        BsnCommon().cli("master", "show running-config tenant FLAP0")
-        vlan = 1000
-        for i in range(0, tnumber):
-            T5Torture().rest_add_interface_to_all_vns(
-                    tenant="FLAP%s" % i,
-                    switch=self.switch_dut,
-                    intf=self.switch_interface_dut,
-                    vlan=vlan)
-            BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
-            vlan = vlan + vnumber
-            sleep(sleep_timer)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-        BsnCommon().enable("master", "copy running-config config://config_tenant_new")
-
-        helpers.log("big scale configuration tenant delete")
-        for i in range(0, tnumber):
-            BsnCommon().config("master", "no tenant FLAP%s" % i)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-
-    def vns_configuration_add_remove(self, vnumber, sleep_timer=1):
-        log_to_console("================vns configuration changes: %s===============" % vnumber)
-        BsnCommon().enable("master", "copy running-config config://config_vns_old")
-
-        vlan = 1000
-        T5Torture().rest_add_tenant_vns_scale(
-                tenantcount=1, tname="FLAP", vnscount=vnumber,
-                vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
-        T5Torture().rest_add_interface_to_all_vns(
-                tenant="FLAP0",
-                switch=self.switch_dut,
-                intf=self.switch_interface_dut,
-                vlan=vlan)
-        sleep(sleep_timer)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-        BsnCommon().enable("master", "copy running-config config://config_vns_new")
-
-        helpers.log("Big scale configuration tenant delete")
-        BsnCommon().config("master", "tenant FLAP0")
-
-        vns = 1 + vnumber
-        for i in range(1, vns):
-            BsnCommon().config("master", "no segment V%s" % i)
-        BsnCommon().config("master", "logical-router")
-        for i in range(1, vns):
-            BsnCommon().config("master", "no interface segment V%s" % i)
-        BsnCommon().config("master", "no tenant FLAP0")
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-
-    def randomize_spines(self):
-        if BsnCommon().params_global('randomize_spine_list'):
-            random.shuffle(self.spine_list)
-            helpers.log("New spine list order: %s" % self.spine_list)
-
-    def randomize_leafs(self):
-        if BsnCommon().params_global('randomize_leaf_list'):
-            random.shuffle(self.leaf_list)
-            helpers.log("New leaf list order: %s" % self.leaf_list)
-
-    def randomize_spines_and_leafs(self):
-        self.randomize_spines()
-        self.randomize_leafs()
-
-    #
     # Test case definitions
     #
 
@@ -216,13 +76,18 @@ class TestBcfEvents:
         def func():
             BsnCommon().base_suite_setup()
 
-            if not self.spine_list:
-                self.spine_list = T5Torture().rest_get_spine_switch_names()
-            if not self.leaf_list:
-                self.leaf_list = T5Torture().rest_get_leaf_switch_names()
+            spines = BsnCommon().params_global('spine_list')
+            leafs = BsnCommon().params_global('leaf_list')
 
-            helpers.log("spine_list: %s" % self.spine_list)
-            helpers.log("leaf_list: %s" % self.leaf_list)
+            if not spines:
+                spines = T5Torture().rest_get_spine_switch_names()
+                BsnCommon().params_global('spine_list', leafs)
+            if not leafs:
+                leafs = T5Torture().rest_get_leaf_switch_names()
+                BsnCommon().params_global('leaf_list', leafs)
+
+            helpers.log("spine list: %s" % BsnCommon().params_global('spine_list'))
+            helpers.log("leaf list: %s" % BsnCommon().params_global('leaf_list'))
 
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
                    critical_failure=True)
@@ -239,7 +104,7 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* controller node failover: %s *******" % i)
-                self.controller_node_event_ha_failover()
+                T5Torture().controller_node_event_ha_failover()
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -259,7 +124,7 @@ class TestBcfEvents:
 
             for i in range(0, self.loop):
                 log_to_console("\n******* controller node failover: %s *******" % i)
-                self.controller_node_event_reload_active()
+                T5Torture().controller_node_event_reload_active()
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -274,11 +139,11 @@ class TestBcfEvents:
         Pass criteria:  Spine joins the fabric after it comes back
         """
         def func():
-            self.randomize_spines()
+            T5Torture().randomize_spines()
             for i in range(0, self.loop):
                 log_to_console("\n******* spine switch node down/up event: %s ********" % i)
-                for spine in self.spine_list:
-                    self.switch_node_down_up_event(spine)
+                for spine in BsnCommon().params_global('spine_list'):
+                    T5Torture().switch_node_down_up_event(spine)
                     sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -296,9 +161,9 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* leaf switch node down/up event: %s ********" % i)
-                self.randomize_leafs()
-                for leaf in self.leaf_list:
-                    self.switch_node_down_up_event(leaf)
+                T5Torture().randomize_leafs()
+                for leaf in BsnCommon().params_global('leaf_list'):
+                    T5Torture().switch_node_down_up_event(leaf)
                     sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -317,10 +182,16 @@ class TestBcfEvents:
             for i in range(0, self.loop):
                 log_to_console("\n******* data link down/up event between leaf and spine: %s ********" % i)
 
-                self.randomize_spines_and_leafs()
-                T5Torture().cli_event_link_flap(self.spine_list, self.leaf_list, interval=self.link_flap_sleep)
-                self.randomize_spines_and_leafs()
-                T5Torture().cli_event_link_flap(self.leaf_list, self.spine_list, interval=self.link_flap_sleep)
+                T5Torture().randomize_spines_and_leafs()
+                T5Torture().cli_event_link_flap(
+                        BsnCommon().params_global('spine_list'),
+                        BsnCommon().params_global('leaf_list'),
+                        interval=self.link_flap_sleep)
+                T5Torture().randomize_spines_and_leafs()
+                T5Torture().cli_event_link_flap(
+                        BsnCommon().params_global('leaf_list'),
+                        BsnCommon().params_global('spine_list'),
+                        interval=self.link_flap_sleep)
 
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
@@ -340,8 +211,11 @@ class TestBcfEvents:
             for i in range(0, self.loop):
                 log_to_console("\n******* date link down/up %s*******" % i)
 
-                self.randomize_leafs()
-                T5Torture().cli_event_link_flap(self.leaf_list, self.leaf_list, interval=self.link_flap_sleep)
+                T5Torture().randomize_leafs()
+                T5Torture().cli_event_link_flap(
+                        BsnCommon().params_global('leaf_list'),
+                        BsnCommon().params_global('leaf_list'),
+                        interval=self.link_flap_sleep)
 
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
@@ -359,7 +233,7 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes tenant %s*******" % i)
-                self.tenant_configuration_add_remove(self.tflapnum, 3)
+                T5Torture().tenant_configuration_add_remove(self.tflapnum, 3)
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -376,7 +250,7 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes vns %s*******" % i)
-                self.vns_configuration_add_remove(self.vflapnum)
+                T5Torture().vns_configuration_add_remove(self.vflapnum)
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 

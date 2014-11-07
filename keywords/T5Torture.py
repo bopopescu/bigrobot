@@ -13,8 +13,11 @@
 ###  WARNING !!!!!!!
 '''
 import re
+import random
 import autobot.helpers as helpers
 import autobot.test as test
+from keywords.BsnCommon import BsnCommon
+from autobot.nose_support import log_to_console, wait_until_keyword_succeeds
 
 
 # Global variables to save the state
@@ -967,7 +970,7 @@ class T5Torture(object):
             if(masterNode):
                 actual_node_name = master.name()
                 ipAddr = master.ip()
-                master.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
                 master.enable("yes")
                 helpers.log("Master is reloading")
                 # helpers.sleep(90)
@@ -976,7 +979,7 @@ class T5Torture(object):
                 slave = t.controller("slave")
                 actual_node_name = slave.name()
                 ipAddr = slave.ip()
-                slave.enable("system reload controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is reloading")
                 # helpers.sleep(90)
@@ -1217,7 +1220,7 @@ class T5Torture(object):
                     base = ip_addr
                     i = i + 1
 
-        c.cli('show running-config tenant')['content']
+        c.cli('show running-config tenant')
         return True
 
     # T5
@@ -1377,6 +1380,150 @@ class T5Torture(object):
                 helpers.log("INFO: not for controller  %s" % line)
         helpers.log("INFO: There are %d of controller(s) in the cluster" % num)
         return num
+
+
+    #
+    # Torture-specific methods
+    #
+
+    def cli_show_commands_for_debug(self):
+        BsnCommon().cli('master', 'show ver', timeout=60)
+        BsnCommon().enable('master', 'show running-config switch', timeout=60)
+        BsnCommon().enable('master', 'show switch', timeout=60)
+        BsnCommon().enable('master', 'show link', timeout=60)
+        BsnCommon().cli('master', 'show ver', timeout=60)
+        BsnCommon().cli('slave', 'show ver', timeout=60)
+
+    def controller_node_event_ha_failover(self, during=30):
+        log_to_console("=============HA failover ===============")
+        self.cli_show_commands_for_debug()
+        self.cli_cluster_take_leader()
+        helpers.sleep(during)
+        self.cli_show_commands_for_debug()
+
+    def controller_node_event_reload_active(self, during=30):
+        log_to_console("=============Reload active controller ===============")
+        self.cli_show_commands_for_debug()
+        self.cli_verify_cluster_master_reload()
+        helpers.sleep(during)
+        self.cli_show_commands_for_debug()
+
+    def verify_all_switches_connected_back(self):
+        switches = self.rest_get_disconnect_switch('master')
+        self.cli_show_commands_for_debug()
+        helpers.log("the disconnected switches are %s" % switches)
+        assert switches == []  # Should be empty
+
+    def switch_node_down_up_event(self, node):
+        helpers.log("reload switch")
+        log_to_console("================ Rebooting %s ===============" % node)
+        self.cli_show_commands_for_debug()
+        self.cli_reboot_switch('master', node)
+        self.cli_show_commands_for_debug()
+        helpers.sleep(BsnCommon().params_global('long_sleep'))
+        wait_until_keyword_succeeds(60 * 10, 30,
+                                    self.verify_all_switches_connected_back)
+
+    def disable_links_between_nodes(self, node, intf):
+        self.cli_show_commands_for_debug()
+        self.rest_disable_fabric_interface(node, intf)
+
+    def enable_links_between_nodes(self, node, intf):
+        self.cli_show_commands_for_debug()
+        self.rest_enable_fabric_interface(node, intf)
+
+    def data_link_down_up_event_between_nodes(self, node1, node2):
+        log_to_console("================ data link down/up for %s and %s ===============" % (node1, node2))
+        helpers.log("disable/enable link from nodes")
+        _list = self.cli_get_links_nodes_list(node1, node2)
+        for intf in _list:
+            self.disable_links_between_nodes(node1, intf)
+            helpers.sleep(60)
+            self.enable_links_between_nodes(node1, intf)
+            helpers.sleep(60)
+
+    def clear_stats_in_controller_switch(self):
+        BsnCommon().enable("master", "clear switch all interface all counters")
+        self.cli_show_commands_for_debug()
+
+    def tenant_configuration_add_remove(self, tnumber, vnumber, sleep_timer=1):
+        log_to_console("================tenant configuration changes: %s===============" % tnumber)
+        self.clear_stats_in_controller_switch()
+        BsnCommon().enable("master", "copy running-config config://config_tenant_old")
+        BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
+
+        helpers.log("Big scale configuration tenant add")
+        self.rest_add_tenant_vns_scale(
+                    tenantcount=tnumber, tname="FLAP", vnscount=vnumber,
+                    vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
+        BsnCommon().cli("master", "show running-config tenant FLAP0")
+        vlan = 1000
+        for i in range(0, tnumber):
+            self.rest_add_interface_to_all_vns(
+                    tenant="FLAP%s" % i,
+                    switch=BsnCommon().params_global('switch_dut'),
+                    intf=BsnCommon().params_global('switch_interface_dut'),
+                    vlan=vlan)
+            BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
+            vlan = vlan + vnumber
+            helpers.sleep(sleep_timer)
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+        BsnCommon().enable("master", "copy running-config config://config_tenant_new")
+
+        helpers.log("big scale configuration tenant delete")
+        for i in range(0, tnumber):
+            BsnCommon().config("master", "no tenant FLAP%s" % i)
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+
+    def vns_configuration_add_remove(self, vnumber, sleep_timer=1):
+        log_to_console("================vns configuration changes: %s===============" % vnumber)
+        BsnCommon().enable("master", "copy running-config config://config_vns_old")
+
+        vlan = 1000
+        self.rest_add_tenant_vns_scale(
+                tenantcount=1, tname="FLAP", vnscount=vnumber,
+                vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
+        self.rest_add_interface_to_all_vns(
+                tenant="FLAP0",
+                switch=BsnCommon().params_global('switch_dut'),
+                intf=BsnCommon().params_global('switch_interface_dut'),
+                vlan=vlan)
+        helpers.sleep(sleep_timer)
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+        BsnCommon().enable("master", "copy running-config config://config_vns_new")
+
+        helpers.log("Big scale configuration tenant delete")
+        BsnCommon().config("master", "tenant FLAP0")
+
+        vns = 1 + vnumber
+        for i in range(1, vns):
+            BsnCommon().config("master", "no segment V%s" % i)
+        BsnCommon().config("master", "logical-router")
+        for i in range(1, vns):
+            BsnCommon().config("master", "no interface segment V%s" % i)
+        BsnCommon().config("master", "no tenant FLAP0")
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+
+    def randomize_spines(self):
+        if BsnCommon().params_global('randomize_spine_list'):
+            spines = BsnCommon().params_global('spine_list')
+            random.shuffle(spines)
+            BsnCommon().params_global('spine_list', spines)
+            helpers.log("New spine list order: %s"
+                        % BsnCommon().params_global('spine_list'))
+
+    def randomize_leafs(self):
+        if BsnCommon().params_global('randomize_leaf_list'):
+            leafs = BsnCommon().params_global('leaf_list')
+            random.shuffle(leafs)
+            BsnCommon().params_global('leaf_list', leafs)
+            helpers.log("New leaf list order: %s"
+                        % BsnCommon().params_global('leaf_list'))
+
+    def randomize_spines_and_leafs(self):
+        self.randomize_spines()
+        self.randomize_leafs()
+
 
 
 
