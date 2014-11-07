@@ -1431,38 +1431,33 @@ class Test(object):
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
-        helpers.sleep(10)
+        helpers.log("Waitinf for the switche to get connected to Controller..")
+        helpers.sleep(30)
         if helpers.bigrobot_ztn_reload().lower() != "true":
             helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
-        else:
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
+#         if re.match(r'.*spine.*', self.params(name, 'alias')):
+#             helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+#             con = self.dev_console(name, modeless=True)
+#             con.send('admin')
+#             helpers.sleep(2)
+#             con.send('adminadmin')
+#             helpers.sleep(2)
+#             con.send('enable;conf;no snmp-server enable')
+#             con = self.dev_console(name)
+#         else:
+        helpers.log("Initializaing switches normally..")
+        con = self.dev_console(name)
+        helpers.log("Reload the switch for ZTN..")
+        con.bash("")
+        con.send('reboot')
+        con.send('')
         if not helpers.is_switchlight(con.platform()):
             helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
             return True
-
-        helpers.log("Reload the switch for ZTN..")
-        con.bash("")
-#         con.bash('rm -rf /mnt/flash/boot-config')
-#         con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-#         con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-#         con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-#         con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
-        con.send('reboot')
-        con.send('')
         if helpers.bigrobot_ztn_installer().lower() != "true":
             helpers.log("Finish sending Reboot on switch : %s" % name)
             return
@@ -1470,7 +1465,6 @@ class Test(object):
             con.expect("Hit any key to stop autoboot")
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
-
         con.send("")
         con.expect([r'\=\>'], timeout=30)
         con.send("setenv onie_boot_reason install")
