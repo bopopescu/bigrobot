@@ -51,7 +51,6 @@ class TestBcfEvents:
         self.switch_dut = BsnCommon().params_global('switch_dut')
         self.switch_interface_dut = BsnCommon().params_global('switch_interface_dut')
 
-
     #
     # Test case setup & teardown
     #
@@ -233,7 +232,6 @@ class TestBcfEvents:
         Test case:      test_01_controller_node_event_failover
         Description:    Failover for controllers nodes is performed by issuing 'system failover' in standby controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
-        Input:          self.INEVENT - idle timer between event - this can be modified by .....
         Output:         Previous active controller becomes standby controller, standby controller becomes active controller.
         Requirement:    2 controller nodes
         Pass criteria:  Controller nodes switch roles.
@@ -244,7 +242,7 @@ class TestBcfEvents:
             assert 1 == 2
             for i in range(0, self.loop):
                 log_to_console("\n******* controller node failover: %s *******" % i)
-                self.controller_node_event_ha_failover(self.in_event_sleep)
+                self.controller_node_event_ha_failover()
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -253,7 +251,6 @@ class TestBcfEvents:
         Test case:      test_02_controller_node_event_master_reload
         Description:    Failover for controllers nodes is performed by issuing 'system reload controller' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
-        Input:          self.INEVENT - idle timer between event - this can be modified by .....
         Output:         Active controller vm get rebooted, previous active controller becomes standby controller, standby
                         controller becomes active controller.
         Requirement:    2 controller nodes
@@ -265,7 +262,7 @@ class TestBcfEvents:
 
             for i in range(0, self.loop):
                 log_to_console("\n******* controller node failover: %s *******" % i)
-                self.controller_node_event_reload_active(self.in_event_sleep)
+                self.controller_node_event_reload_active()
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -275,7 +272,6 @@ class TestBcfEvents:
         Description:    Spine nodes is rebooted by issuing 'system reboot switch SWITCH' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         spine switch reboots.
         Requirement:    2 or more spines to guarantee at any time at least 1 spine is function
         Pass criteria:  Spine joins the fabric after it comes back
@@ -295,7 +291,6 @@ class TestBcfEvents:
         Description:    Leaf switch is rebooted by issuing 'system reboot switch SWITCH' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         leaf switch reboots.
         Requirement:    2 leafs in a rack
                         Host is connected to leaf switches through port group
@@ -318,7 +313,6 @@ class TestBcfEvents:
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
                         self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         Links are flapped.
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.         """
@@ -341,7 +335,6 @@ class TestBcfEvents:
                         to disable and enable the interface. The flap is executed at both sides for each connection.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         leaf switch reboots.
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.
@@ -362,7 +355,6 @@ class TestBcfEvents:
         Description:    Tenants are created and deleted by calling API to controller
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.TFLAPNUM - the number of tenants to be created and deleted.  self.TFLAPNUM can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         None
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
         Pass criteria:  Tenants are created and deleted successfully.
@@ -380,7 +372,6 @@ class TestBcfEvents:
         Description:    Segments are created and deleted by calling API to controller
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.VFLAPNUM -  the number of segments to be created and deleted.  self.TFLAPNUM can be modified by .....
-                        self.INEVENT - idle timer between event - this can be modified by .....
         Output:         None
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
         Pass criteria:  Segments are created and deleted successfully.
