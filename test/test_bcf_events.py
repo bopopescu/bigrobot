@@ -102,6 +102,16 @@ class TestBcfEvents:
         T5Torture().cli_cluster_take_leader()
         sleep(during)
         self.cli_show_commands_for_debug()
+ 
+    # mingtao       
+    def controller_node_event_reload_active(self, during=30):
+        log_to_console("=============Reload active controller ===============")
+        self.cli_show_commands_for_debug()        
+        T5Torture().cli_verify_cluster_master_reload()     
+        sleep(during)
+        self.cli_show_commands_for_debug()
+ 
+
 
     def verify_all_switches_connected_back(self):
         switches = T5Torture().rest_get_disconnect_switch('master')
@@ -225,7 +235,14 @@ class TestBcfEvents:
 
     def test_01_controller_node_event_failover(self):  # T23
         """
-        Test case: test_01_controller_node_event_failover
+        Test case:      test_01_controller_node_event_failover
+        Description:    Failover for controllers nodes is performed by issuing 'system failover' in standby controller. 
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         Previous active controller becomes standby controller, standby controller becomes active controller. 
+        Requirement:    2 controller nodes
+        Pass criteria:  Controller nodes switch roles.  
+          
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -236,9 +253,40 @@ class TestBcfEvents:
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
+    #  Mingtao 
+    def test_01_controller_node_event_master_reload(self):  # new test case
+        """
+        Test case:      test_01_controller_node_event_master_reload
+        Description:    Failover for controllers nodes is performed by issuing 'system reload controller' in active controller. 
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         Active controller vm get rebooted, previous active controller becomes standby controller, standby 
+                        controller becomes active controller. 
+        Requirement:    2 controller nodes
+        Pass criteria:  Controller nodes switch roles.  
+          
+        """
+        def func():
+            # raise SkipTest("removed from regression")
+
+            for i in range(0, self.LOOP):
+                log_to_console("\n******* controller node failover: %s *******" % i)
+                self.controller_node_event_reload_active(self.INEVENT)
+                sleep(self.INEVENT)
+        return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
+
+
     def test_02_spine_switch_node_down_up_event(self):  # T21
         """
-        Test case: test_02_spine_switch_node_down_up_event
+        Test case:      test_02_spine_switch_node_down_up_event
+        Description:    Spine nodes is rebooted by issuing 'system reboot switch SWITCH' in active controller. 
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         spine switch reboots.  
+        Requirement:    2 or more spines to guarantee at any time at least 1 spine is function
+        Pass criteria:  Spine joins the fabric after it comes back  
+        
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -252,7 +300,16 @@ class TestBcfEvents:
 
     def test_03_leaf_switch_node_down_up_event(self):  # T22
         """
-        Test case: test_02_leave_switch_node_down_up_event
+        Test case:      test_03_leaf_switch_node_down_up_event
+        Description:    Leaf switch is rebooted by issuing 'system reboot switch SWITCH' in active controller. 
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         leaf switch reboots.                          
+        Requirement:    2 leafs in a rack 
+                        Host is connected to leaf switches through port group  
+        Pass criteria:  Leaf joins the fabric after it comes back  
+        
         """
         def func():
             raise SkipTest("removed from regression")
@@ -267,6 +324,16 @@ class TestBcfEvents:
     def test_04_data_link_down_up_event_between_leaf_and_spine(self):  # T27
         """
         Test case: test_04_data_link_down_up_event_between_leaf_and_spine
+        Description:    Link between spine switch and leaf switch is flapped by calling API to controller  
+                        to disable and enable the interface. The flap is executed at both spine side and leaf side.
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+                        self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         Links are flapped.                         
+        Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf                        
+        Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled. 
+        
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -283,6 +350,16 @@ class TestBcfEvents:
     def test_05_data_link_down_up_event_between_leafs(self):  # T28
         """
         Test case: test_05_data_link_down_up_event_between_leafs
+        Description:    Link between leaf pair switches is flapped by calling API to controller  
+                        to disable and enable the interface. The flap is executed at both sides for each connection.
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         leaf switch reboots.                          
+        Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf                        
+        Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.  
+
+
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -295,9 +372,16 @@ class TestBcfEvents:
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
-    def test_06_big_configuration_changes_around_500_tenants(self):  # T26
+    def test_06_big_configuration_changes_tenants(self):  # T26
         """
-        Test case: test_06_big_configuration_changes_around_500_tenants
+        Test case: test_06_big_configuration_changes_tenants
+        Description:    Tenants are created and deleted by calling API to controller  
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.TFLAPNUM - the number of tenants to be created and deleted.  self.TFLAPNUM can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         None
+        Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf                        
+        Pass criteria:  Tenants are created and deleted successfully. 
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -308,9 +392,17 @@ class TestBcfEvents:
                 sleep(self.BIGCONFIGSLEEP)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
-    def test_07_big_configuration_changes_around_500_vns(self):  # T25
+    def test_07_big_configuration_changes_vns(self):  # T25
         """
-        Test case: test_07_big_configuration_changes_around_500_vns
+        Test case: test_07_big_configuration_changes_vns
+        Description:    Segments are created and deleted by calling API to controller  
+                        The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+        Input:          self.VFLAPNUM -  the number of segments to be created and deleted.  self.TFLAPNUM can be modified by .....
+                        self.INEVENT - idle timer between event - this can be modified by .....
+        Output:         None
+        Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf                        
+        Pass criteria:  Segments are created and deleted successfully. 
+        
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -324,6 +416,16 @@ class TestBcfEvents:
     def test_08_continues_event(self):  # T51
         """
         Test case: test_08_continues_event
+        Description:    Combination of all the test cases. 
+                        A random number is generated, based on the random number a testcase event is executed. 
+                        The testcase event is executed once.
+                        Total of self.REPEAT random numbers are generated. The event runs at the gap of self.BETWEENEVENT seconds
+        Input:          self.REPEAT -  the times random number to be generated.  self.TFLAPNUM can be modified by .....
+                        self.BETWEENEVENT - idle timer between events - this can be modified by .....
+        Output:         None
+        Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf                        
+        Pass criteria:  Segments are created and deleted successfully. 
+        
         """
         def func():
             # raise SkipTest("removed from regression")
@@ -342,9 +444,9 @@ class TestBcfEvents:
                 elif tc_index == 3:
                     self.test_05_data_link_down_up_event_between_leafs()
                 elif tc_index == 4:
-                    self.test_06_big_configuration_changes_around_500_tenants()
+                    self.test_06_big_configuration_changes_tenants()
                 elif tc_index == 5:
-                    self.test_07_big_configuration_changes_around_500_vns()
+                    self.test_07_big_configuration_changes_vns()
                 elif tc_index == 6:
                     self.test_01_controller_node_event_failover()
                 sleep(self.BETWEENEVENT)
