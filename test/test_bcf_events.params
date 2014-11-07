@@ -1,10 +1,7 @@
 global:
 
   # Sleep times are specified in seconds.
-  short_sleep:             1
-  medium_sleep:            3
   long_sleep:             30
-  very_long_sleep:       120
 
   link_flap_sleep:       120
   in_event_sleep:        300
