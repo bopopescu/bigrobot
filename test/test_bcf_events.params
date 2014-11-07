@@ -38,7 +38,7 @@ global:
       #test_01_controller_node_event_failover,
       #test_02_controller_node_event_master_reload,
       #test_03_spine_switch_node_down_up_event,
-      #test_04_leaf_switch_node_down_up_event,
+      test_04_leaf_switch_node_down_up_event,
       #test_05_data_link_down_up_event_between_leaf_and_spine,
       #test_06_data_link_down_up_event_between_leafs,
       #test_07_big_configuration_changes_tenants,
