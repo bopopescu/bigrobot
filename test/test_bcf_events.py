@@ -237,9 +237,6 @@ class TestBcfEvents:
         Pass criteria:  Controller nodes switch roles.
         """
         def func():
-
-            helpers.log("**** I am here!!!")
-            assert 1 == 2
             for i in range(0, self.loop):
                 log_to_console("\n******* controller node failover: %s *******" % i)
                 self.controller_node_event_ha_failover()
