@@ -17,7 +17,13 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import re
+# import keywords.BsnCommon as BsnCommon
+import SwitchLight as SwitchLight
 from netaddr import *
+
+# import sys
+# sys.path.append('keywords_dev/Sahaja')
+# from SwitchLight import parse_switch_op
 
 
 class T5(object):
@@ -2919,6 +2925,81 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             return c.rest.content()
 
 
+    def rest_get_list_of_switch_connections(self):
+        '''
+        Function which returns all the connections between switches from controller perspective
+        Input : None
+        Output : List of connections
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/fabric?select=link'
+        try:
+            helpers.log("Trying to issue the command %s" % (url))
+            c.rest.get(url)
+            helpers.log("Could issue the command")
+        except:
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()
+        helpers.log("Data received from cmd is %s" % (data))
+        # List of all switches will be stored in dpids
+        # dpids = []
+        # for i in data:
+        #    dpids.append(i["dpid"])
+        # Create a tuple of dpids
+        # temp_dpid = [(a,b) for a in dpids for b in dpids if b !=a] # this will create a tuple but has [(a,b),(b,a)]
+        # dpid_pair = list(set(map(lambda x: tuple(sorted(x)),temp_dpid))) # Removes repeated tuples
+        con_l = []
+        for link in data[0].values()[0]:
+            dic = {}
+            src_mac = re.sub(r'^(.+?):(.+?):', '', str(link[u'src'][u'switch-info'][u'switch-dpid']))
+            dst_mac = re.sub(r'^(.+?):(.+?):', '', str(link[u'dst'][u'switch-info'][u'switch-dpid']))
+            dic[str(link[u'src'][u'switch-info'][u'switch-name'])] = [src_mac, str(link[u'src'][u'interface'][u'number'])]
+            dic[str(link[u'dst'][u'switch-info'][u'switch-name'])] = [dst_mac, str(link[u'dst'][u'interface'][u'number'])]
+            con_l.append(dic)
+        helpers.log("Final list of dictionary is %s" % con_l)
+        return con_l
+
+    def rest_check_sfp(self, lis):
+        '''
+        Function which returns list of links which has same sfp
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        sl = SwitchLight.SwitchLight()
+        for pair in lis:
+            sw1_url = '/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/inventory' % (pair.values()[0][0])
+            sw2_url = '/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/inventory' % (pair.values()[1][0])
+            try:
+                c.rest.get(sw1_url)
+            except:
+                helpers.test_failure(c.rest.error())
+            sw1_data = c.rest.content()
+            try:
+                c.rest.get(sw2_url)
+            except:
+                helpers.test_failure(c.rest.error())
+            sw2_data = c.rest.content()
+
+            # print "sw1 data received is {}".format(sw1_data)
+            # print "sw2 data received is {}".format(sw2_data)
+            # Create a dictionary for both the data's
+            sw1_dic = sl.parse_switch_op(str(sw1_data[0].values()[0]).split('\n'))
+            sw2_dic = sl.parse_switch_op(str(sw2_data[0].values()[0]).split('\n'))
+
+            helpers.log("*********Dictionary got for sw1 %s *****************" % (sw1_dic))
+            helpers.log("*********Dictionary got for sw2 %s *****************" % (sw2_dic))
+
+            # pair.values()[1][1] and pair.values()[0][1] has port # for a switch
+            for sw1_link in sw1_dic:
+                if sw1_link['Port'] == pair.values()[0][1]:
+                    for sw2_link in sw2_dic:
+                        if sw2_link['Port'] == pair.values()[1][1]:
+                            if sw1_link['Vendor'] == sw2_link['Vendor'] and sw1_link['Model'] == sw2_link['Model']:
+                                helpers.log("Port {} on sw1 {} and Port {} on sw2 {} have same model {} and vendor {}".format(sw1_link['Port'], pair.keys()[0], sw2_link['Port'], pair.keys()[1], sw1_link['Model'], sw1_link['Vendor']))
+
+
+
 
 
     def rest_set_vlan_mapping_mode(self, mode):
@@ -3012,3 +3093,4 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         else:
             helpers.test_failure("Expected tenant count not correct Expected=%d , Actual=%d" % (int(tcount), int(len(data))))
             return False
+
