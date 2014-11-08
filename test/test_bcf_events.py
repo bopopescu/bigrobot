@@ -81,7 +81,7 @@ class TestBcfEvents:
 
             if not spines:
                 spines = T5Torture().rest_get_spine_switch_names()
-                BsnCommon().params_global('spine_list', leafs)
+                BsnCommon().params_global('spine_list', spines)
             if not leafs:
                 leafs = T5Torture().rest_get_leaf_switch_names()
                 BsnCommon().params_global('leaf_list', leafs)
