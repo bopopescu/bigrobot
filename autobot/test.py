@@ -1431,7 +1431,7 @@ class Test(object):
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
-        helpers.log("Waitinf for the switche to get connected to Controller..")
+        helpers.log("Waiting 30 secs for the switche to get connected to Controller..")
         helpers.sleep(55)
         if helpers.bigrobot_ztn_reload().lower() != "true":
             helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
