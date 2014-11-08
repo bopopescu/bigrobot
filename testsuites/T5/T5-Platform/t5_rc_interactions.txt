@@ -568,6 +568,80 @@ T27.8. Deleting tenant segment member switch
     ...  ${diff}
     ...  tenant green; logical-router; segment green-segment1
 
+T28.1. Deleting aaa accounting
+    Cli Run  master  no tacacs server host 1.1.1.1
+    Cli Run  master  no tacacs server host 1.2.3.4
+    Cli Run  master  no tacacs server host 2.2.2.2
+    Cli Run  master  no tacacs server host 4.3.2.1
+    Cli Run  master  aaa accounting exec default start-stop group tacacs+
+    ${command}=  Set Variable  aaa accounting exec default start-stop group tacacs+
+    ${diff}=  Create List  aaa accounting exec default start-stop group tacacs+
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T28.2. Deleting aaa accounting
+    Cli Run  master  no tacacs server host 1.1.1.1
+    Cli Run  master  no tacacs server host 1.2.3.4
+    Cli Run  master  no tacacs server host 2.2.2.2
+    Cli Run  master  no tacacs server host 4.3.2.1
+    Cli Run  master  aaa accounting exec default start-stop local group tacacs+
+    ${command}=  Set Variable  aaa accounting exec default start-stop local group tacacs+
+    ${diff}=  Create List  aaa accounting exec default start-stop local group tacacs+
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+### This is wrong! It should be necessary to add "group tacacs+" at the end of the command below
+T28.3. Deleting aaa accounting
+    Cli Run  master  aaa accounting exec default start-stop local
+    ${command}=  Set Variable  aaa accounting exec default start-stop local group tacacs+
+    ${diff}=  Create List  aaa accounting exec default start-stop local
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+
+T29.1. Deleting aaa authentication
+    Cli Run  master  no tacacs server host 1.1.1.1
+    Cli Run  master  no tacacs server host 1.2.3.4
+    Cli Run  master  no tacacs server host 2.2.2.2
+    Cli Run  master  no tacacs server host 4.3.2.1
+    Cli Run  master  aaa authentication login default group tacacs+ local
+    ${command}=  Set Variable  aaa authentication login default group tacacs+ local
+    ${diff}=  Create List  aaa authentication login default group tacacs+ local
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T29.2. Deleting aaa authentication
+    Cli Run  master  no tacacs server host 1.1.1.1
+    Cli Run  master  no tacacs server host 1.2.3.4
+    Cli Run  master  no tacacs server host 2.2.2.2
+    Cli Run  master  no tacacs server host 4.3.2.1
+    Cli Run  master  aaa authentication login default local group tacacs+
+    ${command}=  Set Variable  aaa authentication login default local group tacacs+
+    ${diff}=  Create List  aaa authentication login default local group tacacs+
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+### This is wrong! It should be necessary to add "group tacacs+/local" at the end of the commands below
+T29.3. Deleting aaa authentication
+    Cli Run  master  aaa authentication login default local
+    ${command}=  Set Variable  aaa authentication login default local group tacacs+
+    ${diff}=  Create List  aaa authentication login default local
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+T29.4. Deleting aaa authentication
+    Cli Run  master  no tacacs server host 1.1.1.1
+    Cli Run  master  no tacacs server host 1.2.3.4
+    Cli Run  master  no tacacs server host 2.2.2.2
+    Cli Run  master  no tacacs server host 4.3.2.1
+    Cli Run  master  aaa authentication login default group tacacs+
+    ${command}=  Set Variable  aaa authentication login default group tacacs+ local
+    ${diff}=  Create List  aaa authentication login default group tacacs+
+    Delete single running config line and verify
+    ...  ${command}
+    ...  ${diff}
+
+
 
 *** Keywords ***
 Generate Random Name
