@@ -2281,7 +2281,7 @@ class SwitchLight(object):
 
 
 
-    def parse_switch_op(self, node, cmd):
+    def parse_switch_cmd(self, node, cmd):
         ''' Return dictionary of data so that it can be easily read
 
         Input: s1,etc and show command
@@ -2299,12 +2299,15 @@ class SwitchLight(object):
 
         sw_content = string.split(switch.cli_content(), '\n')
         sw_content = sw_content[1:]
-        if " " in sw_content[1]:
-            sw_content[1] = re.sub('\s+', '||', sw_content[1])
-            indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '||']
-        indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']
+        if "  " in sw_content[1]:
+            sw_content[1] = re.sub('\s+', '|', sw_content[1])
+            indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']  # Will have entry like [4, 5, 10, 11, 26, 27, 34, 35, 42, 43, 49, 50, 67, 68, 85, 86]
+            indeces = [indeces[i] for i in range(0, len(indeces)) if i % 2 != 0]  # Will have [5, 11, 27, 35, 43, 50, 68, 86]
+        else:
+            indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']
+
+        shifted_indeces = indeces
         indeces.insert(0, 0)
-        shifted_indeces = indeces[1:]
         len_fields = zip(indeces, shifted_indeces)
         header = [sw_content[0][x:y] for (x, y) in len_fields]
         header = map(lambda x : x.strip(), header)
@@ -2318,4 +2321,36 @@ class SwitchLight(object):
         helpers.log("List of dictionaries %s" % dic_data)
         return dic_data
 
-            # l_dic = map(lambda k, v: dic.update({k: v}), header, frst_el)
+    def parse_switch_op(self, sw_content):
+        '''
+        Return dictionary of data from above provided output
+
+        Input : Unorganized output
+
+        Output : Dictionary so that the output can be easily parsed
+        '''
+        print "Switch content got is {} and length is {}".format(sw_content, len(sw_content))
+        if "  " in sw_content[1]:
+            sw_content[1] = re.sub('\s+', '||', sw_content[1])
+            indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']  # Will have entry like [4, 5, 10, 11, 26, 27, 34, 35, 42, 43, 49, 50, 67, 68, 85, 86]
+            indeces = [indeces[i] for i in range(0, len(indeces)) if i % 2 != 0]  # Will have [5, 11, 27, 35, 43, 50, 68, 86]
+        else:
+            indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']
+
+        # shifted_indeces = indeces
+        indeces.insert(0, 0)
+        shifted_indeces = indeces[1:]
+        len_fields = zip(indeces, shifted_indeces)
+        header = [sw_content[0][x:y] for (x, y) in len_fields]
+        header = map(lambda x : x.strip(), header)
+        dic_data = []
+        # ignore_last = len(sw_content)
+        for row in sw_content[2:len(sw_content) - 1]:
+            data_row = [row[x:y] for (x, y) in len_fields]
+            data_row = map(lambda x: x.strip(), data_row)
+            row_dict = dict(zip(header, data_row))
+            dic_data.append(row_dict)
+        # helpers.log("List of dictionaries %s" % dic_data)
+        return dic_data
+
+
