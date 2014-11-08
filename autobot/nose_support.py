@@ -54,10 +54,16 @@ def run(test, setup=None, teardown=None, critical_failure=False):
     helpers.log("===========================================================")
     print("")
 
-    if func_name() in BsnCommon().params_global('skip_tests'):
-        helpers.log("'%s' is defined in global params 'skip_tests'. Skipping."
-                    % func_name())
-        raise SkipTest
+    try:
+        skip_tests = BsnCommon().params_global('skip_tests')
+    except:
+        # Skip_tests attribute is not defined in global params. Silently ignore.
+        pass
+    else:
+        if func_name() in skip_tests:
+            helpers.log("'%s' is defined in global params 'skip_tests'. Skipping."
+                        % func_name())
+            raise SkipTest
 
     is_tc_failed = False
 

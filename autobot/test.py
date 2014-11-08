@@ -218,8 +218,13 @@ class Test(object):
             if (helpers.bigrobot_additional_params() and
                 helpers.file_exists(helpers.bigrobot_global_params())):
                 self.merge_params_attributes(helpers.bigrobot_global_params())
-            self.init_alias_lookup_table()
 
+            if 'global' not in self._topology_params:
+                # Initialize the global space (equivalent to a node) if one
+                # doesn't exist.
+                self._topology_params['global'] = {}
+
+            self.init_alias_lookup_table()
             self._topology = {}
 
         def merge_params_attributes(self, params_file):
@@ -303,8 +308,7 @@ class Test(object):
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
-                                     " global")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
@@ -445,7 +449,7 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
-                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    helpers.log("Node '%s' does not have attribute '%s' defined" % (node, key))
                     if key == "console_ip":
                         helpers.log("console_ip key is not defined check another sub level")
                         if "console" in self._topology_params[node]:
@@ -1465,7 +1469,7 @@ class Test(object):
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
-        helpers.log("Waitinf for the switche to get connected to Controller..")
+        helpers.log("Waiting for the switch to get connected to Controller..")
         helpers.sleep(55)
         if helpers.bigrobot_ztn_reload().lower() != "true":
             helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
