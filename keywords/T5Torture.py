@@ -1524,6 +1524,3 @@ class T5Torture(object):
         self.randomize_spines()
         self.randomize_leafs()
 
-
-
-
