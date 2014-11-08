@@ -168,8 +168,12 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_devcmd_log(
           default=(helpers.bigrobot_log_path_exec_instance() +
                    '/dev_commands.log'))
-    helpers.bigrobot_global_params(
-          default=(helpers.bigrobot_suite() + '.params'))
+    if helpers.bigrobot_suite() is None:
+        #!!! FIXME: need to handle None value..
+        pass
+    else:
+        helpers.bigrobot_global_params(
+              default=(helpers.bigrobot_suite() + '.params'))
     helpers.bigrobot_additional_params(
           default=(helpers.bigrobot_log_path_exec_instance() +
                    '/additional-params.topo'))
