@@ -93,8 +93,9 @@ class Log(object):
             Log.autobot_logger = logging.getLogger()
             self.set_autobot_log_level()
 
-            formatter = logging.Formatter(self.ts_logger()
-                                          + " - %(levelname)s : %(message)s")
+            # Display timestamp in format: 20141107 18:56:42.989
+            formatter = logging.Formatter("%(asctime)s.%(msecs)03d - %(levelname)s : %(message)s",
+                                          "%Y%m%d %H:%M:%S")
             file_handler = logging.FileHandler(Log.log_file)
             file_handler.setLevel(Log.autobot_log_level)
             file_handler.setFormatter(formatter)
@@ -108,8 +109,9 @@ class Log(object):
             Log.autobot_logger.handlers[0].stream.close()
             Log.autobot_logger.removeHandler(Log.autobot_logger.handlers[0])
 
-            formatter = logging.Formatter(self.ts_logger()
-                                          + " - %(levelname)s : %(message)s")
+            # Display timestamp in format: 20141107 18:56:42.989
+            formatter = logging.Formatter("%(asctime)s.%(msecs)03d - %(levelname)s : %(message)s",
+                                          "%Y%m%d %H:%M:%S")
             file_handler = logging.FileHandler(Log.log_file)
             file_handler.setLevel(Log.autobot_log_level)
             file_handler.setFormatter(formatter)
