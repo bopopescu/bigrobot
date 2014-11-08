@@ -7,14 +7,14 @@
 # os  : Openstack server
 
 c1:
-  ip: 10.9.16.178
+  ip: 10.9.16.64
 c2:
-  ip: 10.9.16.212
+  ip: 10.9.16.65
 
 os1:
   ip: 10.9.16.34
   user: root
-  privatekey: /Users/prashanth/Documents/workspace/bigrobot/testsuites/T5/Openstack/fuel-rsa
+  privatekey: /Users/mallinaarun/Documents/workspace/bigrobot/testsuites/T5/Openstack/fuel_rsa
   
 
 
