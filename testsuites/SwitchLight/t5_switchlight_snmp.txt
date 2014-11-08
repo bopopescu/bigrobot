@@ -193,6 +193,7 @@ Restart process SNMPD and verify SNMP Stats
     
 * Keywords  
 snmp suite setup
+	reconnect switch ips
     base suite setup
     bash execute command    s1   ofad-ctl autoneg 6        
     cli add snmp keyword   s1   community   ro public       
@@ -260,7 +261,6 @@ restart snmpd
     Should Contain  ${snmp_key}  ${snmp_contact} 
 
 snmp suite teardown  
-	reconnect switch ips
     cli disable switch snmp   s1            
     cli delete snmp keyword   s1   community   ro public       
     cli delete snmp keyword   s1   location   ${snmp_location_1}  
