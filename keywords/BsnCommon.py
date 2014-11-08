@@ -2105,6 +2105,7 @@ class BsnCommon(object):
         Reconnects the Switches IP by getting them from consoles
         """
         t = test.Test()
+        helpers.bigrobot_no_auto_reload("True")
         params = t.topology_params_nodes()
         for key in params:
             t.setup_ztn_phase2(key)
