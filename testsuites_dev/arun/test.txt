@@ -37,3 +37,14 @@ Test remove no auto reload
 	remove_no_auto_reload  s6
 	remove_no_auto_reload  s7
 	remove_no_auto_reload  s8
+	
+Test Console Reboot all Switches
+	[Tags]  reboot
+	telnet_reboot_switch  s1
+	telnet_reboot_switch  s2
+	telnet_reboot_switch  s3
+	telnet_reboot_switch  s4
+	telnet_reboot_switch  s5
+	telnet_reboot_switch  s6
+	telnet_reboot_switch  s7
+	telnet_reboot_switch  s8

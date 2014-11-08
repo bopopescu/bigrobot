@@ -105,6 +105,8 @@ class Test(object):
             mininet_id = 1
             params_dict = {}
 
+            # If env BIGROBOT_TESTBED is defined then we are dealing with a
+            # dynamic topology.
             self._testbed_type = helpers.bigrobot_testbed()
             if self._testbed_type:
                 helpers.info("BIGROBOT_TESTBED: %s" % self._testbed_type)
@@ -148,6 +150,10 @@ class Test(object):
 
                 elif (self._testbed_type.lower() == "static" or
                       self._testbed_type.lower() == "libvirt"):
+                    # !!! FIXME: Static and libvirt have become virtually
+                    #            identical. They both rely on the env var
+                    #            BIGROBOT_PARAMS_INPUT. Consider removing or
+                    #            repurposing BIGROBOT_TESTBED in the future.
 
                     # Static nodes and libvirt nodes are similarly defined.
                     static_nodes = helpers.bigrobot_params_input()
@@ -171,9 +177,11 @@ class Test(object):
                 else:
                     helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
 
+                # For Mininet, clean up logical name. Change 'mn' to 'mn1'.
                 if 'mn' in params_dict:
                     params_dict['mn1'] = params_dict['mn']
                     del params_dict['mn']
+
                 yaml_str = helpers.to_yaml(params_dict)
 
                 # This file contain a list of nodes:
@@ -187,7 +195,7 @@ class Test(object):
                 helpers.file_write_once(self._params_file, yaml_str)
                 helpers.bigrobot_params(new_val=self._params_file)
 
-            self._topology_params = self.load_topology()
+            self._topology_params = self.load_params()
             if self._topology_params:
                 self._has_a_topo_file = True
 
@@ -205,8 +213,18 @@ class Test(object):
             else:
                 if helpers.file_exists(helpers.bigrobot_additional_params()):
                     self.merge_params_attributes(helpers.bigrobot_additional_params())
-            self.init_alias_lookup_table()
 
+            # Load merge global parameters if file exists.
+            if (helpers.bigrobot_additional_params() and
+                helpers.file_exists(helpers.bigrobot_global_params())):
+                self.merge_params_attributes(helpers.bigrobot_global_params())
+
+            if 'global' not in self._topology_params:
+                # Initialize the global space (equivalent to a node) if one
+                # doesn't exist.
+                self._topology_params['global'] = {}
+
+            self.init_alias_lookup_table()
             self._topology = {}
 
         def merge_params_attributes(self, params_file):
@@ -219,7 +237,14 @@ class Test(object):
             if helpers.file_not_exists(params_file):
                 helpers.environment_failure("Params file '%s' does not exist"
                                             % params_file)
-            self._params = self.load_topology(topo_file=params_file)
+            self._params = self.load_params(params_file=params_file)
+
+            # We only merge in the attributes for a node if that node is
+            # defined in the test suite topo file. But we need to give
+            # specially treatment to 'global' which is not a node. Merge
+            # all global attributes.
+            if 'global' in self._params and 'global' not in self._topology_params:
+                self._topology_params['global'] = self._params['global']
 
             for n in self._topology_params:
                 # if n not in self._params:
@@ -244,17 +269,24 @@ class Test(object):
                     self._topology_params[n][key] = self._params[n][key]
             return True
 
-        def load_topology(self, topo_file=None):
-            if not topo_file:
-                topo_file = helpers.bigrobot_topology()
-            if helpers.file_not_exists(topo_file):
-                helpers.debug("Topology file not specified (%s)" % topo_file)
-                topo = {}
+        def load_params(self, params_file=None):
+            if not params_file:
+                params_file = helpers.bigrobot_topology()
+
+            if re.match(r'.*\.topo$', params_file):
+                _type = 'topology'
             else:
-                topo = helpers.load_config(topo_file)
-                helpers.debug("Loaded topology file %s\n%s"
-                              % (topo_file, helpers.prettify(topo)))
-            return topo
+                _type = 'params'
+
+            if helpers.file_not_exists(params_file):
+                helpers.debug("%s file not specified (%s)"
+                              % (_type.capitalize(), params_file))
+                params = {}
+            else:
+                params = helpers.load_config(params_file)
+                helpers.debug("Loaded %s file %s\n%s"
+                              % (_type, params_file, helpers.prettify(params)))
+            return params
 
         def init_alias_lookup_table(self):
             for node in self._topology_params:
@@ -264,20 +296,19 @@ class Test(object):
                     self._node_static_aliases[alias] = node
 
                     # BSN QA convention is to name the aliases as:
-                    #   common - for settings which may be common to all nodes
-                    #            or which are not node specific
+                    #   global - for global parameters which may be used to
+                    #            manipulate test conditions (user defined)
                     #   spine0, spine1, etc.
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
                     #   h1-rack1 - for hosts
                     #   h1-vm1-rack1 - for virtual hosts
-                    r = r'^(common|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
-                                     " common")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
@@ -376,15 +407,15 @@ class Test(object):
             return self._settings.get(name, None)
         return self._settings  # return entire settings dictionary
 
-    def topology_params(self, node=None, key=None, default=None, new_val=None):
+    def topology_params(self, node=None, key=None, new_val=None, default=None):
         """
         Usage:
         - t.params('c1')  # return attributes for c1
           t.params(node='c1', key='ip')
           t.params(node='tg1', key='type', default='ixia')
                             # if type is not defined, return 'ixia' for type
-          t.params('common', 'my_image')
-                            # BigRobot convention is to use 'common' to hold
+          t.params('global', 'my_image')
+                            # BigRobot convention is to use 'global' to hold
                             # common key/values which are not node-specific.
         - If no argument is specified, return the entire topology dictionary.
             {   'c1': {
@@ -418,7 +449,7 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
-                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    helpers.log("Node '%s' does not have attribute '%s' defined" % (node, key))
                     if key == "console_ip":
                         helpers.log("console_ip key is not defined check another sub level")
                         if "console" in self._topology_params[node]:
@@ -441,14 +472,21 @@ class Test(object):
     # Alias
     params = topology_params
 
+    def params_global(self, key=None, new_val=None, default=None):
+        """
+        Getter/setter for global parameters.
+        """
+        return self.topology_params(node='global', key=key, new_val=new_val,
+                                    default=default)
+
     def topology_params_nodes(self, **kwargs):
         """
         Returns the list of node params only. Ignore other params which are
         not nodes.
         """
         params = dict(self.topology_params(**kwargs))
-        if 'common' in params:
-            del params['common']
+        if 'global' in params:
+            del params['global']
         return params
 
     # Alias

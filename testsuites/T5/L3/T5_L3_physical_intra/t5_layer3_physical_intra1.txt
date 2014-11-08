@@ -21,130 +21,130 @@ Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 TC01 Intra tenant L3 untagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack untagged with dynamic endpoints
-    [Tags]              feature  run_pass         sanity  
+    [Tags]              feature           sanity  
 
 TC02 Intra tenant L3 tagged traffic with dynamic endpoints same rack
     L3 intra tenant same rack tagged with dynamic endpoints
-    [Tags]              feature  run_pass         sanity          
+    [Tags]              feature           sanity          
 
 TC03 Intra tenant L3 tagged traffic with dynamic endpoints across rack
     L3 intra tenant across rack tagged with dynamic endpoints
-    [Tags]              feature  run_pass         sanity      
+    [Tags]              feature           sanity      
 
 TC04 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
-    [Tags]              feature  run_pass             sanity 
+    [Tags]              feature               sanity 
 
 TC05 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                  feature  run_pass  
+    [Tags]                  feature    
 
 TC06 Intra tenant L3 untagged traffic with static endpoints same rack
     L3 intra tenant same rack untagged with static endpoints
-    [Tags]                  feature  run_pass         sanity          
+    [Tags]                  feature           sanity          
 
 TC07 Intra tenant L3 untagged traffic with static endpoints across rack
     L3 intra tenant across rack untagged with static endpoints
-    [Tags]                  feature  run_pass         sanity          
+    [Tags]                  feature           sanity          
 
 TC08 Intra tenant L3 tagged traffic with static endpoints same rack
     L3 intra tenant same rack tagged with static endpoints
-    [Tags]                  feature  run_pass         sanity          
+    [Tags]                  feature           sanity          
 
 TC09 Intra tenant L3 tagged traffic with static endpoints across rack
     L3 intra tenant across rack tagged with static endpoints
-    [Tags]                  feature  run_pass       sanity  
+    [Tags]                  feature         sanity  
 
 TC10 Dhcp discover on the same vns as server with dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-    [Tags]                   feature  run_pass            sanity                  dhcp-relay
+    [Tags]                   feature              sanity                  dhcp-relay
 
 TC11 Dhcp discover on the same vns as server without dhcp relay enabled
     L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-    [Tags]                              feature  run_pass                 dhcp-relay  
+    [Tags]                              feature                   dhcp-relay  
 
 TC12 Intra tenant dhcp relay 
     L3 intra tenant dhcp relay on same rack
-    [Tags]                   feature  run_pass            sanity                  dhcp-relay  
+    [Tags]                   feature              sanity                  dhcp-relay  
     
 TC13 Intra tenant dhcp relay with circuit id
     L3 intra tenant dhcp relay with circuit id on same rack
-    [Tags]                   feature  run_pass         sanity                  dhcp-relay
+    [Tags]                   feature           sanity                  dhcp-relay  run_fail
 
 TC14 Intra tenant dhcp relay across rack
     L3 intra tenant dhcp relay across rack
-    [Tags]                   feature  run_pass            feature  run_pass                 dhcp-relay  
+    [Tags]                   feature              feature                   dhcp-relay  
     
 TC15 Intra tenant dhcp relay with circuit id across rack
     L3 intra tenant dhcp relay with circuit id across rack
-    [Tags]                   feature  run_fail            feature  run_pass                 dhcp-relay  
+    [Tags]                   feature                   dhcp-relay  
 
 TC16 Delete and Add dhcp relay
     L3 dhcp request without dhcp relay enabled
-    [Tags]                   feature  run_pass                    dhcp-relay  
+    [Tags]                   feature                      dhcp-relay  
     
 TC17 Move host from one vns to another vns in the same tenant and verify dhcp request is working
     Move host from one vns to another vns in the same tenant and verify dhcp request is working
-    [Tags]                  feature  run_pass             dhcp-relay              
+    [Tags]                  feature               dhcp-relay              
 
 TC18 Verify dhcp host is not aged out
     Verify dhcp host is not being aged out
-    [Tags]              feature  run_pass                 dhcp-relay         
+    [Tags]              feature                   dhcp-relay         
 
 TC19 Dhcp relay with dhcp server configured as static endpoint
     Dhcp relay with static dhcp server endpoint
-    [Tags]              feature  run_pass                 dhcp-relay  
+    [Tags]              feature                   dhcp-relay  
     
 TC20 Verify add and delete of dhcp server config works
     Verify add and delete of dhcp server config works
-    [Tags]             feature  run_pass                 dhcp-relay 
+    [Tags]             feature                   dhcp-relay 
 
 TC21 Verify L3 endpoint aging
     Check L3 endpoint aging 
-    [Tags]              feature  run_pass 
+    [Tags]              feature   
     
 TC22 Verify L3 ttl 1 is not being forwarded
     Check L3 ttl 1 is dropped
-    [Tags]              feature  run_pass         
+    [Tags]              feature           
 
 TC23 Verify icmpa is sending destination unreachable for L3 destination miss
     Verify icmpa is sending destination unreachable for L3 destination miss
-    [Tags]              feature  run_pass      sanity         
+    [Tags]              feature        sanity         
 
 TC24 Change router vns ip
     Change router ip address
-    [Tags]              feature  run_pass                
+    [Tags]              feature                  
 
 TC25 Delete and add router vns ip
     Delete and add router vns ip 
-    [Tags]              feature  run_pass         
+    [Tags]              feature           
 
 TC26 Set 32bit full mask on vns router ip
     Set 32bit full mask on vns router ip
-    [Tags]              feature  run_pass     
+    [Tags]              feature       
     
 TC27 Change tagged endpoint IP address
     Change tagged host endpoint IP address
-    [Tags]              feature  run_pass 
+    [Tags]              feature   
 TC28 Verify vlsm forwarding
     Verify vlsm forwarding
-    [Tags]                  feature  run_pass     
+    [Tags]                  feature       
 
 TC29 Verify split horizon forwarding
     manual passed
-    [Tags]                  feature  run_pass         manual      
+    [Tags]                  feature           manual      
     
 TC30 Configure overlapping router IP     
     Configure overlapping IP on same tenant across VNS  
-    [Tags]                  feature  run_pass         negative    
+    [Tags]                  feature           negative    
 
 TC31 Configure overlapping IP with private keyword on the same tenant
     Configure overlapping IP with private keyword on the same tenant
-    [Tags]                  feature  run_pass     
+    [Tags]                  feature       
 
 TC32 L3 intra tenant traffic between private and public subnet with overlapping IP
     L3 intra tenant traffic between private and public subnet with overlapping IP
-    [Tags]                      feature  run_pass             
+    [Tags]                      feature               
     
 TC33 Verify host with different IP on vns router is not getting L3 service
     Verify host with different IP on vns router is not getting L3 service
@@ -152,7 +152,7 @@ TC33 Verify host with different IP on vns router is not getting L3 service
     
 TC34 Trigger controller HA failover via CLI
     Controller HA failover via CLI  
-    [Tags]              feature  run_pass
+    [Tags]              feature  
       
 * Keywords
 Controller HA failover via CLI

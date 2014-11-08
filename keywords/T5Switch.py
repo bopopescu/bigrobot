@@ -705,5 +705,36 @@ class  T5Switch(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
-        
+
+    def verify_port_hashing_stats (self, totalcntr, numlinks=2, switch=None, intfList= [], tolerance=1000):
+            ''' Function to verify that the port counters are distributed through the links. 
+                input - totalcntr ( total number of packets), numlinks ( number of links) 
+                output - none
+            '''
+            t = test.Test()
+            fabric = T5.T5()
+            c = t.controller('master')
+            if switch == None  or intfList == []:
+                helpers.log("Provide the switch name and interface List to check .\n")
+                return False 
+            
+            helpers.log("The input information is switch %s and intflist is %s" % (switch, intfList)) 
+            helpers.log("The interfaces are %s and %s" % intfList[0], intfList[1])
+            dpid = fabric.rest_get_dpid(switch)
+            expintfcntr = int(totalcntr) / int(numlinks)
+            helpers.log("The expected cntr per interface is %d"  % expintfcntr)
+            rangeLink = int(numlinks) - 1 
+            statList1 = []
+            for i in range(int(rangeLink)):
+                statList1[i] = self.rest_get_switch_interface_stats(switch, intfList[i], "txstat")
+                range1 = int(statList1[i]) - int(tolerance)
+                range2 = int(statList1[i]) + int(tolerance) 
+                if ( range1 < expintfcntr < range2 ):
+                    helpers.log("The actual counter is %d and exp counter is %d", statList1[i], expintfcntr)
+                    return True
+                else:
+                    helpers.log("The actual counter is %d and exp counter is %d", statList1[i], expintfcntr)
+                    return False   
+               
+                    
         

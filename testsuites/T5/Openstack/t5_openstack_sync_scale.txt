@@ -43,7 +43,7 @@ verify 1k tenant 4k segment sync
 	openstack verify multiple scale  995  4
 
 Delete all tenant/networks
-	[Tags]  openstack   
+	[Tags]  openstack   run
     openstack segment scale delete  3980
     openstack tenant scale delete  995	
 

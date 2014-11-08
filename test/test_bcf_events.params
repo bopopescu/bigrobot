@@ -1,0 +1,47 @@
+global:
+
+  # Sleep times are specified in seconds.
+  long_sleep:             30
+
+  link_flap_sleep:       120
+  in_event_sleep:        300
+  between_event_sleep:   600
+
+  tflapnum:              100
+  vflapnum:              100
+  big_config_sleep:      300
+
+  loop:                    1  #  5
+  repeat:                  6  # 60
+
+  spine_list:
+    #[
+    #  dt-spine1,
+    #  dt-spine2,
+    #]
+  randomize_spine_list:    true
+
+  leaf_list:
+    #[
+    #  dt-leaf1a,
+    #  dt-leaf1b,
+    #  dt-leaf2a,
+    #  dt-leaf2b,
+    #]
+  randomize_leaf_list:     true
+
+  switch_dut:              dt-leaf1a
+  switch_interface_dut:    ethernet3
+
+  skip_tests:
+    [
+      #test_01_controller_node_event_failover,
+      #test_02_controller_node_event_master_reload,
+      #test_03_spine_switch_node_down_up_event,
+      test_04_leaf_switch_node_down_up_event,
+      #test_05_data_link_down_up_event_between_leaf_and_spine,
+      #test_06_data_link_down_up_event_between_leafs,
+      #test_07_big_configuration_changes_tenants,
+      #test_08_big_configuration_changes_vns,
+      #test_09_continues_event,
+    ]

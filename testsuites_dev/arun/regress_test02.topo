@@ -28,6 +28,11 @@ s1:
     ip: 10.1.8.46
     port: 7017
     protocol: telnet
+  pdu:
+    ip: pdu-314-a
+    port: 2
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -41,6 +46,11 @@ s2:
   console:
     ip: 10.1.8.46
     port: 7018
+  pdu:
+    ip: pdu-314-a
+    port: 3
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -54,6 +64,11 @@ s3:
   console:
     ip: 10.1.8.46
     port: 7019
+  pdu:
+    ip: pdu-314-a
+    port: 4
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -67,6 +82,11 @@ s4:
   console:
     ip: 10.1.8.46
     port: 7020
+  pdu:
+    ip: pdu-314-a
+    port: 5
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -80,6 +100,11 @@ s5:
   console:
     ip: 10.1.8.46
     port: 7021
+  pdu:
+    ip: pdu-314-a
+    port: 6
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s6:
@@ -93,6 +118,11 @@ s6:
   console:
     ip: 10.1.8.46
     port: 7022
+  pdu:
+    ip: pdu-314-a
+    port: 7
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s7:
@@ -156,7 +186,7 @@ h6:
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
-  tcl_server_ip: 10.8.21.10
+  tcl_server_ip: 10.9.19.251
   #tcl_server_port: 8009
   #ix_version: '7.10'
   #set_init_ping: false
