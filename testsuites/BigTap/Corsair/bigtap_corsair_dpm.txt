@@ -541,7 +541,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  20
     Should be true  ${in_range}
     
 verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -549,7 +549,7 @@ verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_fra
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  20
     Should not be true  ${in_range}
 
 offset test teardown
