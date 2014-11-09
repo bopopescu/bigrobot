@@ -1761,7 +1761,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should be true  ${verify_policy12}
     sleep  10
     cli disable interface  s3  ${s3s1_core_link_2}
-    sleep  10
+    sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1770,7 +1770,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should not be true  ${verify_policy12}
     sleep  3
     cli enable interface  s3  ${s3s1_core_link_1}
-    sleep  20
+    sleep  45
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1779,6 +1779,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should be true  ${verify_policy12}
     sleep  5
     cli enable interface  s3  ${s3s1_core_link_2}
+    sleep  45
     reconnect switch to fabric  s2
     reconnect switch to fabric  s4
     reconnect switch to fabric  s5
@@ -1840,7 +1841,7 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     Should be true  ${verify_policy12}
     sleep  10
     cli enable interface  s3  ${s3s1_core_link_1}
-    sleep  10    
+    sleep  45    
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=4  num_delivery_intf=2
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=3
@@ -2125,7 +2126,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should be true  ${in_range}
     
 overlap test teardown
