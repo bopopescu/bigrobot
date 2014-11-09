@@ -1433,7 +1433,8 @@ class T5Torture(object):
         self.rest_enable_fabric_interface(node, intf)
 
     def data_link_down_up_event_between_nodes(self, node1, node2):
-        log_to_console("================ data link down/up for %s and %s ===============" % (node1, node2))
+        log_to_console("================ data link down/up for %s and %s ==============="
+                       % (node1, node2))
         helpers.log("disable/enable link from nodes")
         _list = self.cli_get_links_nodes_list(node1, node2)
         for intf in _list:
@@ -1447,7 +1448,8 @@ class T5Torture(object):
         self.cli_show_commands_for_debug()
 
     def tenant_configuration_add_remove(self, tnumber, vnumber, sleep_timer=1):
-        log_to_console("================tenant configuration changes: %s===============" % tnumber)
+        log_to_console("================tenant configuration changes: %s==============="
+                       % tnumber)
         self.clear_stats_in_controller_switch()
         BsnCommon().enable("master", "copy running-config config://config_tenant_old")
         BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
@@ -1467,8 +1469,10 @@ class T5Torture(object):
             BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
             vlan = vlan + vnumber
             helpers.sleep(sleep_timer)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-        BsnCommon().enable("master", "copy running-config config://config_tenant_new")
+        BsnCommon().cli("master",
+                        "show running-config tenant", timeout=120)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_tenant_new")
 
         helpers.log("big scale configuration tenant delete")
         for i in range(0, tnumber):
@@ -1476,8 +1480,10 @@ class T5Torture(object):
         BsnCommon().cli("master", "show running-config tenant", timeout=120)
 
     def vns_configuration_add_remove(self, vnumber, sleep_timer=1):
-        log_to_console("================vns configuration changes: %s===============" % vnumber)
-        BsnCommon().enable("master", "copy running-config config://config_vns_old")
+        log_to_console("================vns configuration changes: %s==============="
+                       % vnumber)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_vns_old")
 
         vlan = 1000
         self.rest_add_tenant_vns_scale(
@@ -1489,8 +1495,10 @@ class T5Torture(object):
                 intf=BsnCommon().params_global('switch_interface_dut'),
                 vlan=vlan)
         helpers.sleep(sleep_timer)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
-        BsnCommon().enable("master", "copy running-config config://config_vns_new")
+        BsnCommon().cli("master",
+                        "show running-config tenant", timeout=120)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_vns_new")
 
         helpers.log("Big scale configuration tenant delete")
         BsnCommon().config("master", "tenant FLAP0")
@@ -1509,7 +1517,7 @@ class T5Torture(object):
             spines = BsnCommon().params_global('spine_list')
             random.shuffle(spines)
             BsnCommon().params_global('spine_list', spines)
-            helpers.log("New spine list order: %s"
+            helpers.log("Randomized spines. New list order: %s"
                         % BsnCommon().params_global('spine_list'))
 
     def randomize_leafs(self):
@@ -1517,7 +1525,7 @@ class T5Torture(object):
             leafs = BsnCommon().params_global('leaf_list')
             random.shuffle(leafs)
             BsnCommon().params_global('leaf_list', leafs)
-            helpers.log("New leaf list order: %s"
+            helpers.log("Randomized leafs. New list order: %s"
                         % BsnCommon().params_global('leaf_list'))
 
     def randomize_spines_and_leafs(self):
