@@ -765,7 +765,7 @@ TC29:Verify that overlapping feature works on tunnel based policy
     rest delete interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery     
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
     delete traffic  
-    [Tags]  feature  runthis   
+    [Tags]  feature     
  
 TC30:Delete and restore complete configuration. Verify tunnel gets re-established.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
@@ -1125,7 +1125,7 @@ TC47: With bigtap policy installed with transmit only tunnel on one side and rec
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                        
-    [Tags]  feature  
+    [Tags]  feature  runthis  
 
 TC48: With bigtap policy installed with bidirectional tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
@@ -1203,7 +1203,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  30
     Should be true  ${in_range}
     
 extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${tunnel_address}  ${tunnel_mask}
