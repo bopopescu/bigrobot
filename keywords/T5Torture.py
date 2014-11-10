@@ -59,9 +59,64 @@ floodlightMonitorFlag = False
 class T5Torture(object):
 
     # T5
+    def cli_link_flap_between_nodes(self, node1, node2, interval=60):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_event_link_flap:  node1 - %s  node2  - %s " % (node1, node2))
+        ints = self.cli_get_links_nodes_list(node1, node2)
+
+        for interface in ints:
+            helpers.test_log("INFO: flap interface - %s" % interface)
+            self.rest_disable_fabric_interface(node1, interface)
+            helpers.sleep(interval)
+            self.rest_enable_fabric_interface(node1, interface)
+            helpers.sleep(interval)
+        return True
+
+    # T5
+    def cli_event_link_flap(self, list1, list2, interval=60):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_event_link_flap:  list1 - %s  list22  - %s " % (list1, list2))
+
+        for node1 in list1:
+            for node2 in list2:
+                if node1 == node2:
+                    helpers.test_log("INFO: node pairs are same: %s  - %s. Don't run test." % (node1, node2))
+                    continue
+                helpers.test_log("INFO: node pair: %s  - %s" % (node1, node2))
+                self.cli_link_flap_between_nodes(node1, node2, interval)
+
+        return True
+
+    # T5
+    def cli_get_links_nodes_list(self, node1, node2):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s" % (node1, node2))
+        t = test.Test()
+        c = t.controller('master')
+        cli = 'show link | grep ' + node1 + ' | grep ' + node2
+        content = c.cli(cli)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("INFO: *** output  *** \n  %s" % temp)
+        a_list = []
+        for line in temp:
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("fields: %s" % fields)
+            if fields[1] == node1 :
+                a_list.append(fields[2])
+            elif fields[3] == node1 :
+                a_list.append(fields[4])
+
+        helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1, list))
+        return a_list
+
+    # T5
     def rest_show_switch(self, node='master', soft_error=False):
         """
-        Return dictionary containing all switches connected to current controller
+        Return dictionary containing all switches connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -87,7 +142,7 @@ class T5Torture(object):
     # T5
     def rest_get_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all switch names which are connected to current controller
+        Return list containing all switch names which are connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -106,7 +161,8 @@ class T5Torture(object):
     # T5
     def rest_get_spine_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all spine switch names which are connected to current controller
+        Return list containing all spine switch names which are connected to current controller.
+        The convention is to include the word 'spine' in the name of the spine switch, e.g., 'dt-spine1'.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -125,7 +181,8 @@ class T5Torture(object):
     # T5
     def rest_get_leaf_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all leaf switch names which are connected to current controller
+        Return list containing all leaf switch names which are connected to current controller.
+        The convention is to include the word 'leaf' in the name of the leaf switch, e.g., 'dt-leaf1a'.
 
         Inputs:
         | node | name of the controller, default is 'master' |

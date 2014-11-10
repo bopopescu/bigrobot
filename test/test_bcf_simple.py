@@ -15,7 +15,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep
+from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep, Singleton
 from keywords.BsnCommon import BsnCommon
 from keywords.T5Torture import T5Torture
 
@@ -35,22 +35,25 @@ assert helpers.bigrobot_suite() != None
 helpers.print_bigrobot_env(minimum=True)
 
 
-class TestBcfEvents:
+class TestBcfEvents(object):
+    __metaclass__ = Singleton
+
     def __init__(self):
-        pass
+        self.SPINE_LIST = None  # initialized later during setup
+        self.LEAF_LIST = None  # initialized later during setup
 
     #
     # Test case setup & teardown
     #
 
     def tc_setup(self):
-        #BsnCommon().base_test_setup()
+        # BsnCommon().base_test_setup()
         pass
 
 
     def tc_teardown(self, tc_failed=False):
-        #BsnCommon().base_test_teardown()
-        #if tc_failed:
+        # BsnCommon().base_test_teardown()
+        # if tc_failed:
         #    # Test case failed. You can run additional keywords here,
         #    # e.g., test postmortem.
         #    pass
@@ -59,6 +62,27 @@ class TestBcfEvents:
     #
     # Test case definitions
     #
+    def test_00_suite_setup(self):
+        """
+        Test case: test_00_suite_setup
+        Suite setup should be the first test in suite. Raise critical error
+        if setup fails.
+        """
+        def func():
+            BsnCommon().base_suite_setup()
+
+            self.SPINE_LIST = T5Torture().rest_get_spine_switch_names()
+            self.LEAF_LIST = T5Torture().rest_get_leaf_switch_names()
+
+            # Note: You can run tests on a subset of switches also (see below).
+            # self.SPINE_LIST = [self.SPINE1, self.SPINE2]
+            # self.LEAF_LIST = [self.LEAF1A, self.LEAF1B, self.LEAF2A, self.LEAF2B]
+
+            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
+            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
+
+        return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
+                   critical_failure=True)
 
     def test_01_get_switch_aliases(self):  # T23
         """
@@ -66,10 +90,11 @@ class TestBcfEvents:
         """
         def func():
             # raise SkipTest("removed from regression")
-            #switch_names = T5().rest_get_switch_names()
-            #helpers.log("switch_names: %s" % switch_names)
-            helpers.log("spine switch names: %s" % T5Torture().rest_get_spine_switch_names())
-            helpers.log("leaf switch names: %s" % T5Torture().rest_get_leaf_switch_names())
+            # switch_names = T5().rest_get_switch_names()
+            # helpers.log("switch_names: %s" % switch_names)
+
+            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
+            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
 
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 

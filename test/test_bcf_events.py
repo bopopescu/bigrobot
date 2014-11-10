@@ -15,7 +15,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep
+from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep, Singleton
 from keywords.BsnCommon import BsnCommon
 from keywords.T5Torture import T5Torture
 
@@ -36,6 +36,8 @@ helpers.print_bigrobot_env(minimum=True)
 
 
 class TestBcfEvents:
+    __metaclass__ = Singleton
+
     def __init__(self):
         #
         # Constants - test controls
@@ -63,6 +65,9 @@ class TestBcfEvents:
 
         self.SPINE1 = "dt-spine1"
         self.SPINE2 = "dt-spine2"
+
+        self.SPINE_LIST = None  # initialized later during setup
+        self.LEAF_LIST = None  # initialized later during setup
 
     #
     # Test case setup & teardown
@@ -204,8 +209,17 @@ class TestBcfEvents:
         """
         def func():
             BsnCommon().base_suite_setup()
-            for i in range(0, 500):
-                BsnCommon().config('master', 'no tenant FLAP%s' % i)
+
+            self.SPINE_LIST = T5Torture().rest_get_spine_switch_names()
+            self.LEAF_LIST = T5Torture().rest_get_leaf_switch_names()
+
+            # Note: You can run tests on a subset of switches also (see below).
+            # self.SPINE_LIST = [self.SPINE1, self.SPINE2]
+            # self.LEAF_LIST = [self.LEAF1A, self.LEAF1B, self.LEAF2A, self.LEAF2B]
+
+            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
+            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
+
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
                    critical_failure=True)
 
@@ -231,10 +245,9 @@ class TestBcfEvents:
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* spine switch node down/up event: %s ********" % i)
-                self.switch_node_down_up_event(self.SPINE1)
-                sleep(self.INEVENT)
-                self.switch_node_down_up_event(self.SPINE2)
-                sleep(self.INEVENT)
+                for spine in self.SPINE_LIST:
+                    self.switch_node_down_up_event(spine)
+                    sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
     def test_03_leaf_switch_node_down_up_event(self):  # T22
@@ -246,14 +259,9 @@ class TestBcfEvents:
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* leaf switch node down/up event: %s ********" % i)
-                self.switch_node_down_up_event(self.LEAF1A)
-                sleep(self.INEVENT)
-                self.switch_node_down_up_event(self.LEAF1B)
-                sleep(self.INEVENT)
-                self.switch_node_down_up_event(self.LEAF2A)
-                sleep(self.INEVENT)
-                self.switch_node_down_up_event(self.LEAF2B)
-                sleep(self.INEVENT)
+                for leaf in self.LEAF_LIST:
+                    self.switch_node_down_up_event(leaf)
+                    sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
     def test_04_data_link_down_up_event_between_leaf_and_spine(self):  # T27
@@ -265,40 +273,10 @@ class TestBcfEvents:
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* data link down/up event between leaf and spine: %s ********" % i)
-                self.data_link_down_up_event_between_nodes(self.LEAF1A, self.SPINE1)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE1, self.LEAF1A)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF1B, self.SPINE1)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE1, self.LEAF1B)
-                sleep(self.LINKFLAP)
 
-                self.data_link_down_up_event_between_nodes(self.LEAF1A, self.SPINE2)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE2, self.LEAF1A)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF1B, self.SPINE2)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE2, self.LEAF1B)
-                sleep(self.LINKFLAP)
+                T5Torture().cli_event_link_flap(self.SPINE_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
+                T5Torture().cli_event_link_flap(self.LEAF_LIST, self.SPINE_LIST, interval=self.LINKFLAP)
 
-                self.data_link_down_up_event_between_nodes(self.LEAF2A, self.SPINE1)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE1, self.LEAF2A)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF2B, self.SPINE1)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE1, self.LEAF2B)
-                sleep(self.LINKFLAP)
-
-                self.data_link_down_up_event_between_nodes(self.LEAF2A, self.SPINE2)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE2, self.LEAF2A)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF2B, self.SPINE2)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.SPINE2, self.LEAF2B)
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -311,13 +289,9 @@ class TestBcfEvents:
 
             for i in range(0, self.LOOP):
                 log_to_console("\n******* date link down/up %s*******" % i)
-                self.data_link_down_up_event_between_nodes(self.LEAF1A, self.LEAF1B)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF1B, self.LEAF1A)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF2A, self.LEAF2B)
-                sleep(self.LINKFLAP)
-                self.data_link_down_up_event_between_nodes(self.LEAF2B, self.LEAF2A)
+
+                T5Torture().cli_event_link_flap(self.LEAF_LIST, self.LEAF_LIST, interval=self.LINKFLAP)
+
                 sleep(self.INEVENT)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 

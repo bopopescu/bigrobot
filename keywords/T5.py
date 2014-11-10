@@ -61,7 +61,7 @@ class T5(object):
 
     def rest_show_switch(self, node='master', soft_error=False):
         """
-        Return dictionary containing all switches connected to current controller
+        Return dictionary containing all switches connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -86,7 +86,7 @@ class T5(object):
 
     def rest_get_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all switch names which are connected to current controller
+        Return list containing all switch names which are connected to current controller.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -104,7 +104,8 @@ class T5(object):
 
     def rest_get_spine_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all spine switch names which are connected to current controller
+        Return list containing all spine switch names which are connected to current controller.
+        The convention is to include the word 'spine' in the name of the spine switch, e.g., 'dt-spine1'.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -122,7 +123,8 @@ class T5(object):
 
     def rest_get_leaf_switch_names(self, node='master', soft_error=False):
         """
-        Return list containing all leaf switch names which are connected to current controller
+        Return list containing all leaf switch names which are connected to current controller.
+        The convention is to include the word 'leaf' in the name of the leaf switch, e.g., 'dt-leaf1a'.
 
         Inputs:
         | node | name of the controller, default is 'master' |
@@ -2842,8 +2844,6 @@ class T5(object):
                 traffic_queue.append(queue)
         return traffic_queue
 
-
-
     def cli_get_links_nodes_list(self, node1, node2):
         '''
         '''
@@ -2854,19 +2854,18 @@ class T5(object):
         content = c.cli(cli)['content']
         temp = helpers.strip_cli_output(content, to_list=True)
         helpers.log("INFO: *** output  *** \n  %s" % temp)
-        list = []
+        a_list = []
         for line in temp:
             line = line.lstrip()
             fields = line.split()
             helpers.log("fields: %s" % fields)
             if fields[1] == node1 :
-                list.append(fields[2])
+                a_list.append(fields[2])
             elif fields[3] == node1 :
-                list.append(fields[4])
-
+                a_list.append(fields[4])
 
         helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1, list))
-        return list
+        return a_list
 
     def rest_clear_blocked_endpoint(self, tenant, segment, mac):
         ''' Function to clear blocked endpoint
@@ -3330,7 +3329,6 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         else:
             return False
 
-
     def cli_link_flap_between_nodes(self, node1, node2, interval=60):
         '''
         '''
@@ -3352,8 +3350,10 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
 
         for node1 in list1:
             for node2 in list2:
+                if node1 == node2:
+                    helpers.test_log("INFO: node pairs are same: %s  - %s. Don't run test." % (node1, node2))
+                    continue
                 helpers.test_log("INFO: node pair: %s  - %s" % (node1, node2))
                 self.cli_link_flap_between_nodes(node1, node2, interval)
 
         return True
-

@@ -529,6 +529,72 @@ T43 Next-hop-group names
 	Cli Run  master  tenant test; logical-router
 	Verify Regular Name  next-hop-group
 
+T44 no tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run  master  tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201 timeout 10 key
+    Cli Run  master  no tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201
+    Cli Run  master  no tacacs server host 10.2.3.201
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201
+    ...  flag=False
+    [Tags]  AAA  BSC-6596
+
+T45 snmp-server switch trap fan-status
+    Run Keyword and Expect Error
+    ...  *Error: Invalid argument: range: expected [10..100000]*
+    ...  Cli Run  master  snmp-server switch trap fan-status 1
+    Run Keyword and Expect Error
+    ...  *Error: Invalid argument: range: expected [10..100000]*
+    ...  Cli Run  master  snmp-server switch trap fan-status 100000000
+    [Tags]  SNMP  ZTN  BSC-6530
+
+T46 system reboot switch 22:22:22:22:22:22
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: reboot only supported using IP Address for disconnected switches*
+    ...  Cli Run  master  system reboot switch 22:22:22:22:22:22
+    [Tags]  ZTN  BSC-6304
+
+T47 copy running-config foo
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: dest foo not supported*
+    ...  Cli Run  master  copy running-config foo
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: source foo not supported *
+    ...  Cli Run  master  copy foo running-config
+    [Tags]  running-config  BSC-6229
+
+T48 show switch foo inventory
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: unsupported action: "show" for unknown/unmanaged switch: "foo"*
+    ...  Cli Run  master  show switch foo inventory
+    [Tags]  ZTN  PAN-1189
+
+T49 no logging enable switch-remote
+    Cli Run  master  logging switch-remote
+    Cli Run and Verify Output  master
+    ...  show running-config logging
+    ...  logging switch-remote
+    Cli Run  master  no logging switch-remote
+    Cli Run and Verify Output  master
+    ...  show running-config logging
+    ...  logging switch-remote
+    ...  flag=False
+    [Tags]  ZTN  BSC-6089  logging
+
+T50 route 0.0.0.0/32 next-hop null
+    Cli Run  master  tenant test; logical-router
+    Cli Run  master  route 0.0.0.0/32 next-hop null
+    Cli Run and Verify Output  master
+    ...  show running-config tenant
+    ...  route 0.0.0.0/32 next-hop null
+    [Tags]  BVS-2036
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
