@@ -8,6 +8,9 @@ Force Tags   platform Sanity
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
+Library  Collections.py
+Library  OperatingSystem.py
+Library  String.py
 
 * Variables
 #${version}  Big Tap Controller 4.1.0
