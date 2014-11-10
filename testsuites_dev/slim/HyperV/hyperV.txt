@@ -5,99 +5,201 @@ Suite Teardown  T5 base suite teardown
 Force Tags      IronHorse-plus
 
 
-
 * Test Cases
-Configure lacp nic teaming on hyperV host
+TC001 Configure lacp on 10gig nic teaming on hyperV host
     manual passed
     [Tags]              feature         manual          hyperV
     
-Flap single nic teaming member and verify VM traffic switch to second member
+TC002 Flap single 10gig nic teaming member and verify VM traffic switch to second member
     manual untested
     [Tags]              feature         manual          hyperV
 
-Configure static nic teaming on hyperV host
+TC003 Reboot hyperV host and verify 10gig lacp nic teaming works after reboot
     manual untested
     [Tags]              feature         manual          hyperV
     
-Flap single static nic teaming member and verify VM traffic switch to second member
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-Configure switch independent nic teaming on hyperV host
+TC004 Configure static nic teaming on hyperV host
     manual untested
     [Tags]              feature         manual          hyperV
     
-Flap active member and verify VM traffic switch to second member
+TC005 Flap single static nic teaming member and verify VM traffic switch to second member
     manual untested
     [Tags]              feature         manual          hyperV
 
-Verify SCVMM is able to manage hyperV host through fabric
+TC006 Configure switch independent all active adapter nic teaming on hyperV host
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC007 Flap active member and verify VM traffic switch to second member
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC008 Verify SCVMM is able to manage hyperV host through fabric
     manual passed
     [Tags]              feature         manual          hyperV
 
-Verify SCVMM is able to spawn VM through fabric
+TC009 Verify SCVMM is able to spawn VM through fabric
     manual passed
     [Tags]              feature         manual          hyperV
     
-Spawn VM across two hyperV host in the same segment
+TC010 Spawn VM across two hyperV host in the same segment
     manual passed
     [Tags]              feature         manual          hyperV
 
-Spawn VM across two hyperV host across segment same tenant
+TC011 Spawn VM across two hyperV host across segment same tenant
     manual untested
     [Tags]              feature         manual          hyperV
 
-Spawn VM across two hyperV host across tenant
+TC012 Spawn VM across two hyperV host across tenant
     manual untested
     [Tags]              feature         manual          hyperV
 
-Spawn two VM in the same host different segment
+TC013 Spawn two VM in the same host different segment
     manual untested
     [Tags]              feature         manual          hyperV
 
-Spawn two VM in the same host different tenant
+TC014 Spawn two VM in the same host different tenant
     manual untested
     [Tags]              feature         manual          hyperV
 
-Verify VM is able to obtain dhcp assigned address through fabric without dhcp relay
+TC015 Verify VM is able to obtain dhcp assigned address through fabric without dhcp relay
     manual untested
     [Tags]              feature         manual          hyperV
 
-Verify VM is able to obtain dhcp assigned address through fabric dhcp relay
+TC016 Verify VM is able to obtain dhcp assigned address through fabric dhcp relay
     manual untested
     [Tags]              feature         manual          hyperV
 
-Verify Controller HA failover does not impact VM creation or VM traffic
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-Verify master/standby controller reboot/powercycle does not impact VM creation or VM traffic
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-Verify spine reboot does not impact VM creation or VM traffic
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-Verify leaf switch reboot does not impact VM traffic
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-VM Live Migration to another host
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-Clone VM to another host same network
-    manual passed
-    [Tags]              feature         manual          hyperV
-
-Clone VM to another host different network
+TC017 Configure lacp on 40gig nic teaming on hyper-V host
     manual passed
     [Tags]              feature         manual          hyperV
     
+TC018 Flap single 40gig nic teaming member and verify VM traffic switch to second member
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC019 Reboot hyperV host and verify 40gig lacp nic teaming works after reboot
+    manual untested
+    [Tags]              feature         manual          hyperV
     
+TC020 L2 performance testing using iperf between two Ubuntu VM in a 10gig hyper-V host
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC021 L2 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host in the same rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC022 L2 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host across rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC023 L3 performance testing using iperf between two Ubuntu VM in a 10gig hyper-V host
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC024 L3 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host in the same rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC025 L3 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host across rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC026 L2 performance testing using iperf between two Ubuntu VM in a 40gig hyper-V host
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC027 L2 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host in the same rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC028 L2 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host across rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC029 L3 performance testing using iperf between two Ubuntu VM in a 40gig hyper-V host
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC030 L3 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host in the same rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC031 L3 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host across rack
+    manual untested
+    [Tags]              feature         manual          hyperV
+        
     
 
+
+     
+TC040 NVGRE through fabric
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC041 using Windows server as gateway for VM
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+
+
+
+TC050 Verify Controller HA failover does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC051 Verify master controller reboot does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC052 Verify standby controller reboot does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC053 Verify master controller powercycle does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC054 Verify standby controller powercycle does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV        
+
+TC055 Verify spine reboot does not impact VM creation or VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC056 Verify leaf switch reboot does not impact VM traffic
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+
+
+TC060 VM Live Migration to another host
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC061 Clone VM to another host same network
+    manual passed
+    [Tags]              feature         manual          hyperV
+
+TC062 Clone VM to another host different network
+    manual passed
+    [Tags]              feature         manual          hyperV
+    
+TC063 Spawn VM in controller headless mode
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+TC064 Verify spawn VM in headless mode will be able to forward traffic after controller is online
+    manual untested
+    [Tags]              feature         manual          hyperV
+ 
+TC065 Change VM from one network to another and verify endpoint is updated correctly
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+    
 T5 base suite setup
     sleep                                       1
     
