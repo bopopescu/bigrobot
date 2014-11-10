@@ -68,9 +68,9 @@ class BigTap(object):
                 return False
             else:
                 if return_value is not None:
-                    return content[0]['stats']['table'][1][return_value]
+                    return content[0]['stats']['table'][0][return_value]
                 else:
-                    return content[0]['stats']['table'][1]['active-count']
+                    return content[0]['stats']['table'][0]['active-count']
 
     def rest_return_switch_flow(self, node, flow_index, flow_key, switch_alias=None, sw_dpid=None, soft_error=False):
         '''
