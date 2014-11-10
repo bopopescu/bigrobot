@@ -28,8 +28,8 @@ ${policy_name}                          policy-cli
 ${service_name}                         app-lb9-1-service
 
 ${switch2_alias}                        app-rly2-1
-${delivery_intf_1}                      ethernet1
-${delivery_alias_1}                     ixia-4-2
+${delivery_intf_1}                      ethernet2
+${delivery_alias_1}                     ixia-4-3
 
 
 *Test Case
