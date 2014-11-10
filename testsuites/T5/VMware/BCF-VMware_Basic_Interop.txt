@@ -19,7 +19,7 @@ TC02 Configure vSwitch with 1G uplinks on a ESXi host & verify basic traffic for
 	manual untested
     [Tags]              feature         manual          vmware	
     
-TC03 Flap Single uplink member port and veriy traffic failover
+TC03 Flap Single uplink member port and veriy traffic failove
 	manual untested
     [Tags]              feature         manual          vmware	
     
