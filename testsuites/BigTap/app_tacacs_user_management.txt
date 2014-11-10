@@ -10,10 +10,8 @@ Library  keywords/AppController.py
 Library  keywords/BsnCommon.py
 Library  keywords/BigTap.py
 Library  Collections.py
-
-* Variable
-${projectname}  Big Virtual Switch Appliance
-${version}      Big Tap Controller 4.1.0  
+Library  OperatingSystem.py
+Library  String.py 
     
 * Test Case
 Verify Running-Configuration
@@ -121,11 +119,18 @@ Restart process tacacs_plus on Master and verify users can login
 * Keywords
 
 tacacs test setup
+    set version from controller
     rest add tacacs server  10.2.3.201  secret  300
     rest add tacacs authentication
     rest add tacacs authorization
     rest add user to group  tacacsadmin  admin
     sleep  3
+
+set version from controller
+    ${version_string}=  rest show version
+    ${version}=  split string  ${version_string}
+    Set Environment Variable  controller_version  ${version[3]}
+    Environment Variable Should Be Set  controller_version 
     
 Verify Tacacs Configuration  [Arguments]  ${index}  ${tacacs-server}  ${timeout}
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
@@ -152,10 +157,9 @@ Verify AAA Authentication Configuration
     summary log  Verify AAA Authentication configuration is a PASS
 
 verify version  [Arguments]  ${username}  ${new_password}  ${local}
-    ${content}=  rest show version  string=version  user=${username}  password=${new_password}  local=${local}
-    Should Contain  ${content}  ${version}
-    #${content}=  rest show version  string=name  user=${username}  password=${new_password}  local=${local}
-    #Should Contain  ${content}  ${projectname}
+    ${myversion}=  Get Environment Variable  controller_version
+    ${content}=  rest show version  user=${username}  password=${new_password}
+    Should Contain  ${content}  ${myversion}
 
 tacacs test teardown
     cli delete user from group  tacacsadmin  admin
