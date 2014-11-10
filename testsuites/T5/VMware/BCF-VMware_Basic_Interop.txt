@@ -1,0 +1,144 @@
+== BCF-VMware Basic Interop Suite ==
+
+* Setting
+Documentation    BCF-VMware Basic Interop Suite 
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
+Test Setup       T5 Platform test setup
+Test Teardown    T5 Platform test teardown
+Force Tags       IronHorse-plus
+
+
+* Test Case 
+
+TC01 Configure vSwitch with 10G uplinks on a ESXi host & verify basic traffic forwaring
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC02 Configure vSwitch with 1G uplinks on a ESXi host & verify basic traffic forwaring
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC03 Flap Single uplink member port and veriy traffic failover
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC04 Configure dvSwitch with 10G uplinks, enable LACP and verify LACP negotiation
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC05 Configure dvSwitch with 1G uplinks, enable LACP and verify LACP negotiation
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC06 Flap Single uplink member port from LACP lag and veriy traffic failover
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC07 Verify LACP lag formation after rebooting an ESX host
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC08 Verify forwarding via VST Mode (vSwitch/dvSwitch tagging) 
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC09 Verify forwarding via EST Mode (vSwitch/dvSwitch tagged with untagged) 
+	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC10 Verify forwarding via VGT Mode (Guest VM is handling traffic tragging)
+	manual untested
+    [Tags]              feature         manual          vmware	
+   
+TC11 Add iSCSI shared storage and verify iSCSI traffic flow through the fabric
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC12 Add NFS shared storage and veriy NFS traffic flow thorugh the fabric
+  	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC13 vMotion a VM between two ESXi hosts 
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC14 vMotion a VM between two ESXi hosts using multiple VMKernel interfaces
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC15 Verify storage vMotion between iSCSI and NFS storage 
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC16 L2 traffic performance between two guest VMs in a single ESXi host in a same segment
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC17 L2 traffic performance between two guest VMs across two ESXi hosts in a same segment
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC18 L3 traffic performance between two guest VMs in a single ESXi host in a same tenant
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC19 L3 traffic performance between two guest VMs across two ESXi hosts in a same tenant
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC20 L3 traffic performance between two guest VMs across two ESXi hosts in different tenant
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC21 L3 traffic performance within a VM between different vNICs belong to a same tenant
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC22 Verify guest VM can obtain a dhcp address through the fabric without DHCP relay
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC23 Verify guest VM can obtain a dhcp address through the fabric with DHCP relay
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC24 DRS cluster with automatic setting
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC25 Enable HA in the ESXi cluster level
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC26 Enable port mirroring on a dvSwitch and couple it with a fabric span
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+
+TC27 ESXi as compute nodes in a Openstack cluster through Fuel-vCenter Integration
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+    
+TC28 Add and delete ESXi compute nodes from Openstack cluster
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+ 
+TC29 Verify service insertion using third party guest VM appliances running on ESXi Clsuter
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+
+TC30 Controller failover and fabric intergrity while running ESXi workloads
+ 	manual untested
+    [Tags]              feature         manual          vmware	
+
+
+
+
+
+
+
+
+
+
+
+
