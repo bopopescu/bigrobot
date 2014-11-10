@@ -10,7 +10,7 @@ Library  keywords/AppController.py
 Library  keywords/BigTap.py
 
 * Variables
-${version}  Big Tap Controller 4.1.0
+#${version}  Big Tap Controller 4.1.0
 
 *Test Case
 TC1: Verify username userChkPassword can have all lower-case alphabet password
@@ -188,7 +188,15 @@ bigtap suite setup
     rest add filter interface to rbac  chkpassword-view  filter_name='allow-all'     
     rest add delivery interface to rbac  chkpassword-view  delivery_name='allow-all' 
     rest add match to rbac  chkpassword-view  match_name='allow-all'       
+
+
+set version from controller
+    ${version_string}=  rest show version
+    ${version}=  split string  ${version_string}
+    Set Environment Variable  controller_version  ${version[3]}
+    Environment Variable Should Be Set  controller_version 
     
 verify config  [Arguments]  ${username}  ${new_password}
+    ${myversion}=  Get Environment Variable  controller_version
     ${content}=  rest show version  user=${username}  password=${new_password}
-    Should Contain  ${content}  ${version}
+    Should Contain  ${content}  ${myversion}
