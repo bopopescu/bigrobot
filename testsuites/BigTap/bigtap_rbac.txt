@@ -13,13 +13,13 @@ Library  keywords/Ixia.py
 Library  Collections.py
 
 *Variable
-${filter_1}  ethernet1  
+${filter_1}  ethernet13  
 ${filter_nick_1}  F1
-${filter_2}  ethernet1  
+${filter_2}  ethernet13  
 ${filter_nick_2}  F2
-${delivery_1}  ethernet2  
+${delivery_1}  ethernet14  
 ${delivery_nick_1}  D1
-${delivery_2}  ethernet2  
+${delivery_2}  ethernet14  
 ${delivery_nick_2}  D2
 ${base_group_name}  bigswitch
 
