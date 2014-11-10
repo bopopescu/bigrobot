@@ -8,6 +8,9 @@ Force Tags   platform Sanity
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
+Library  Collections.py
+Library  OperatingSystem.py
+Library  String.py
 
 * Variables
 #${version}  Big Tap Controller 4.1.0
@@ -180,6 +183,7 @@ TC33: Verify username userChkPassword can have a alphanumeric password with a `
 
 bigtap suite setup
     base suite setup
+    set version from controller
     rest add user  userChkPassword
     rest add user password  userChkPassword  bsnbsn
     rest add rbac group  groupChkPassword  chkpassword-view
