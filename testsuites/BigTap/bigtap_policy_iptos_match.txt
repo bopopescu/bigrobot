@@ -417,7 +417,7 @@ verify packet count
 
 iptos suite setup
     base suite setup
-    rest enable feature  fullt-match
+    rest enable feature  full-match
     rest add switch alias  s1  ${switch_alias}
     rest add interface role  s1  ${switch_filter_intf}      filter        intf_nickname=${switch_filter_alias}
     rest add interface role  s1  ${switch_delivery_intf}    delivery      intf_nickname=${switch_delivery_alias}
