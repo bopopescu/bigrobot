@@ -116,6 +116,11 @@ Enable and disable tenant logical router interface
     Enable and disable tenant logical router interface
     [Tags]          feature     testpath          fail_run     TC024
 
+LineRate traffic with 2000 private segment with the same host IP
+    manual passed
+    [Tags]          feature     customer        manual         TC025
+    
+    
 * Keywords
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch

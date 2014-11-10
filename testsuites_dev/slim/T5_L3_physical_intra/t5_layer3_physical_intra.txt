@@ -1784,7 +1784,7 @@ Check L3 ttl 1 is dropped
     BASH ping                                   h3                              10.251.1.1              count=10
     BASH ping                                   h4                              10.251.2.1              count=10
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
-    Should Be True                              ${value}        
+    Should Be True                              ${value}      
     ${value} =                                  BASH verify arp                 h4                      10.251.2.1
     Should Be True                              ${value} 
     ${mac1} =                                   BASH get intf mac               h3                      bond0

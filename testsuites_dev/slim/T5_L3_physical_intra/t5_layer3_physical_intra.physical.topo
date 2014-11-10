@@ -160,6 +160,36 @@ s12:
   user: admin
   password: bsn
     
+s13:
+    console:
+        ip: cs-120
+        port: 7011
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 9
+    mac: 70:72:CF:AE:AE:96
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack4
+    alias: leaf4-a
+    user: admin
+    password: adminadmin
+       
+s14:
+    console:
+        ip: cs-120
+        port: 7012
+    pdu:
+        ip: pdu-120-b.bigswitch.com
+        port: 2
+    mac: 70:72:CF:C8:FB:AF
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack4
+    alias: leaf4-b
+    user: admin
+    password: adminadmin 
+        
 h1:
    ip: 10.8.24.31
    alias: h1-rack0
