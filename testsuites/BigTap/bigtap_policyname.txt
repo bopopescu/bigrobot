@@ -9,9 +9,9 @@ Force Tags   bigtap Platform
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 Library  keywords/BsnCommon.py
-
-* Variable
-${version_string}   Big Tap Controller 4.1.0
+Library  Collections.py
+Library  OperatingSystem.py
+Library  String.py
 
 * Test Case
 Verify policy name can have all lower-case alphabet in its name
