@@ -2,7 +2,6 @@ from __future__ import print_function
 import os
 import sys
 import random
-from nose.exc import SkipTest
 
 
 # Derive BigRobot path from the script's location, which should be
@@ -15,7 +14,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, sleep, Singleton
+from autobot.nose_support import run, log_to_console, sleep, Singleton
 from keywords.BsnCommon import BsnCommon
 from keywords.T5Torture import T5Torture
 
@@ -39,8 +38,8 @@ class TestBcfEvents(object):
     __metaclass__ = Singleton
 
     def __init__(self):
-        self.SPINE_LIST = None  # initialized later during setup
-        self.LEAF_LIST = None  # initialized later during setup
+        self.spine_list = None  # initialized later during setup
+        self.leaf_list = None  # initialized later during setup
 
     #
     # Test case setup & teardown
@@ -71,15 +70,11 @@ class TestBcfEvents(object):
         def func():
             BsnCommon().base_suite_setup()
 
-            self.SPINE_LIST = T5Torture().rest_get_spine_switch_names()
-            self.LEAF_LIST = T5Torture().rest_get_leaf_switch_names()
+            self.spine_list = T5Torture().rest_get_spine_switch_names()
+            self.leaf_list = T5Torture().rest_get_leaf_switch_names()
 
-            # Note: You can run tests on a subset of switches also (see below).
-            # self.SPINE_LIST = [self.SPINE1, self.SPINE2]
-            # self.LEAF_LIST = [self.LEAF1A, self.LEAF1B, self.LEAF2A, self.LEAF2B]
-
-            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
-            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
+            helpers.log("spine_list: %s" % self.spine_list)
+            helpers.log("leaf_list: %s" % self.leaf_list)
 
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
                    critical_failure=True)
@@ -93,8 +88,8 @@ class TestBcfEvents(object):
             # switch_names = T5().rest_get_switch_names()
             # helpers.log("switch_names: %s" % switch_names)
 
-            helpers.log("SPINE_LIST: %s" % self.SPINE_LIST)
-            helpers.log("LEAF_LIST: %s" % self.LEAF_LIST)
+            helpers.log("spine_list: %s" % self.spine_list)
+            helpers.log("leaf_list: %s" % self.leaf_list)
 
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 

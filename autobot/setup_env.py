@@ -132,6 +132,7 @@ def bigrobot_env_init(is_gobot='True'):
         _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
         _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
 
+        # There should exist a topo file for the test suite.
         if helpers.file_exists(_topo_p):
             topo_file = _topo_p
         elif helpers.file_exists(_topo_v):
@@ -141,7 +142,7 @@ def bigrobot_env_init(is_gobot='True'):
 
         helpers.bigrobot_topology(default=topo_file)
         print("BigRobot suite: %s" % helpers.bigrobot_suite())
-        print("BigRobot topology: %s" % helpers.bigrobot_topology())
+        print("BigRobot suite topology: %s" % helpers.bigrobot_topology())
 
     helpers.bigrobot_params(default='None')
     helpers.bigrobot_continuous_integration()
@@ -167,6 +168,12 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_devcmd_log(
           default=(helpers.bigrobot_log_path_exec_instance() +
                    '/dev_commands.log'))
+    if helpers.bigrobot_suite() is None:
+        #!!! FIXME: need to handle None value..
+        pass
+    else:
+        helpers.bigrobot_global_params(
+              default=(helpers.bigrobot_suite() + '.params'))
     helpers.bigrobot_additional_params(
           default=(helpers.bigrobot_log_path_exec_instance() +
                    '/additional-params.topo'))

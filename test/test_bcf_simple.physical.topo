@@ -3,76 +3,9 @@
 # c<n>: Controllers
 # s<n>: Switches
 # h<n>: Hosts (including bare metal)
-# mn  : Mininet server
 
 c1:
   ip: 10.1.6.6
 c2:
   ip: 10.1.6.5
 
-# s1:
-#   alias: leaf1-a
-#   mac: 70:72:cf:b7:6d:f0
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7048
-#   set_session_ssh: false
-#   set_init_ping: false
-# 
-# s2:
-#   alias: leaf1-b
-#   mac: 70:72:cf:bc:cf:2c
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7043
-#   set_session_ssh: false
-#   set_init_ping: false
-# 
-# s3:
-#   alias: leaf2-a
-#   mac: 70:72:cf:b7:6d:12
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7045
-#   set_session_ssh: false
-#   set_init_ping: false
-# 
-# s4:
-#   alias: leaf2-b
-#   mac: 70:72:cf:b5:ff:ec
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7044
-#   set_session_ssh: false
-#   set_init_ping: false
-# 
-# s5:
-#   alias: spine1
-#   mac: 70:72:cf:ae:a5:f4
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7047
-#   set_session_ssh: false
-#   set_init_ping: false
-# 
-# s6:
-#   alias: spine2
-#   mac: 70:72:cf:ae:a0:5e
-#   fabric-role: leaf
-#   console:
-#     ip: 10.1.8.20
-#     protocol: telnet
-#     port: 7046
-#   set_session_ssh: false
-#   set_init_ping: false
-# 

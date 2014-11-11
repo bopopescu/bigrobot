@@ -11,7 +11,7 @@ Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.0.2
+${switchlight_version}      Switch Light OS SWL-BT-4.1.0-beta1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch

@@ -3,6 +3,7 @@ import sys
 import time
 import autobot.helpers as helpers
 from nose.exc import SkipTest
+from keywords.BsnCommon import BsnCommon
 
 
 # Reserved for critical errors, such as suite setup failures.
@@ -53,6 +54,17 @@ def run(test, setup=None, teardown=None, critical_failure=False):
     helpers.log("===========================================================")
     print("")
 
+    try:
+        skip_tests = BsnCommon().params_global('skip_tests')
+    except:
+        # Skip_tests attribute is not defined in global params. Silently ignore.
+        pass
+    else:
+        if func_name() in skip_tests:
+            helpers.log("'%s' is defined in global params 'skip_tests'. Skipping."
+                        % func_name())
+            raise SkipTest
+
     is_tc_failed = False
 
     if setup:
@@ -66,8 +78,6 @@ def run(test, setup=None, teardown=None, critical_failure=False):
 
     try:
         return test()
-    except SkipTest:
-        raise
     except:
         is_tc_failed = True
 

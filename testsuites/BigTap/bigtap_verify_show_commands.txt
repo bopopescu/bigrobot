@@ -28,8 +28,8 @@ ${policy_name}                          policy-cli
 ${service_name}                         app-lb9-1-service
 
 ${switch2_alias}                        app-rly2-1
-${delivery_intf_1}                      ethernet1
-${delivery_alias_1}                     ixia-4-2
+${delivery_intf_1}                      ethernet2
+${delivery_alias_1}                     ixia-4-3
 
 
 *Test Case
@@ -69,7 +69,7 @@ TC1: Verify CLI command show bigtap
 
 TC2: Verify CLI show bigtap completion
     ${myversion}=  Get Environment Variable  controller_version
-    ${result}=  Run Keyword If  '${myversion}' == '4.1.0'  cli walk command  show bigtap  17  ELSE IF  '${myversion}' == '3.0.0'   cli walk command  show bigtap  12  
+    ${result}=  Run Keyword If  '${myversion}' == '4.1.1'  cli walk command  show bigtap  17  ELSE IF  '${myversion}' == '3.0.0'   cli walk command  show bigtap  12  
     Should be true  ${result}    
     [Tags]  feature  cli-completion
     
@@ -315,9 +315,9 @@ TC37: Add service to policy and verify show bigtap policy
     
 TC38: Verify CLI command show bigtap topology service
     ${myversion}=  Get Environment Variable  controller_version
-    ${result}=  Run Keyword If  '${myversion}' == '4.1.0'  cli verify command  show bigtap topology service  6  ${service_pre_alias}  ELSE IF  '${myversion}' == '3.0.0'   cli verify command  show bigtap topology service  4  ${service_pre_alias}  
+    ${result}=  Run Keyword If  '${myversion}' == '4.1.1'  cli verify command  show bigtap topology service  6  ${service_pre_alias}  ELSE IF  '${myversion}' == '3.0.0'   cli verify command  show bigtap topology service  4  ${service_pre_alias}  
     Should be true  ${result}  
-    ${result}=  Run Keyword If  '${myversion}' == '4.1.0'  cli verify command  show bigtap topology service  6  ${service_post_alias}  ELSE IF  '${myversion}' == '3.0.0'   cli verify command  show bigtap topology service  4  ${service_post_alias}  
+    ${result}=  Run Keyword If  '${myversion}' == '4.1.1'  cli verify command  show bigtap topology service  6  ${service_post_alias}  ELSE IF  '${myversion}' == '3.0.0'   cli verify command  show bigtap topology service  4  ${service_post_alias}  
     Should be true  ${result}           
     [Tags]  feature  cli        
 

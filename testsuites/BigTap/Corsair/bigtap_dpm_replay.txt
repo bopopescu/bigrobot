@@ -572,7 +572,6 @@ TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     ${set_policy_match_2}=  rest add policy match  admin-view  ${policy_name_1}  2   {"sequence": 2, "offset-match-1": {"mask": 4294901760, "anchor": "l4-start", "value": 17498112, "offset": 36}, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 65535, "anchor": "l4-start", "value": 51201, "offset": 32}, "dst-tp-port": 1701}
     Should be true  ${set_policy_match_2}
     sleep  5
-    pause
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
     sleep  1    
@@ -600,7 +599,6 @@ TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    pause
     [Tags]  l2tp  runthis
                                    
 * Keyword

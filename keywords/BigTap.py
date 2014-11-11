@@ -68,11 +68,11 @@ class BigTap(object):
                 return False
             else:
                 if return_value is not None:
-                    return content[0]['stats']['table'][1][return_value]
+                    return content[0]['stats']['table'][0][return_value]
                 else:
-                    return content[0]['stats']['table'][1]['active-count']
+                    return content[0]['stats']['table'][0]['active-count']
 
-    def rest_return_switch_flow(self, node, flow_index, flow_key, switch_alias=None, sw_dpid=None, soft_error=False):
+    def rest_return_switch_flow(self, node, flow_index, flow_key, flow_id=0, switch_alias=None, sw_dpid=None, soft_error=False):
         '''
             Objective: Verify flow is pushed via controller
             
@@ -107,7 +107,7 @@ class BigTap(object):
                 helpers.test_log("Could not execute command")
                 return False
             else:
-                return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]
+                return content[0]['stats']['flow'][int(flow_id)]['match-field'][int(flow_index)][str(flow_key)]
 
 
 # Mingtao

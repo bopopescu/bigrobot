@@ -87,9 +87,9 @@ class BsnCommon(object):
                 else:
                     self.base_test_postmortem(test_descr=test_descr)
 
-            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
-                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
-                self.pause_on_fail(keyword=test_descr)
+                if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                    helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                    self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -469,6 +469,20 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def params_global(self, *args, **kwargs):
+        """
+        Return the value for a 'global' params attributes.
+
+        Inputs:
+        | key  | name of attribute (e.g., 'my_test_knob') |
+        | default | (option) if attribute is undefined, return the value defined by default |
+
+        Return Value:
+        - Value for attribute
+        """
+        t = test.Test()
+        return t.params_global(*args, **kwargs)
+
     def params_nodes(self, *args, **kwargs):
         """
         Return the value for a params node(s) attributes.
@@ -539,7 +553,7 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -558,7 +572,7 @@ class BsnCommon(object):
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):
@@ -585,7 +599,7 @@ class BsnCommon(object):
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -2091,6 +2105,7 @@ class BsnCommon(object):
         Reconnects the Switches IP by getting them from consoles
         """
         t = test.Test()
+        helpers.bigrobot_no_auto_reload("True")
         params = t.topology_params_nodes()
         for key in params:
             t.setup_ztn_phase2(key)

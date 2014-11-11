@@ -26,21 +26,38 @@ class T5ZTN(object):
         output = c.cli_content()
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
-        if len(output) != 3:
+        if len(output) != 5:
             return helpers.test_failure("Too many files in images"
                                         " directory - %s" % str(len(output)))
 
         if (re.match(r'.*internal.*', output[1])
-            or re.match(r'.*internal.*', output[2])):
+            or re.match(r'.*internal.*', output[2])
+            or re.match(r'.*internal.*', output[3])
+            or re.match(r'.*internal.*', output[4])):
             return helpers.test_failure("SL internal image in the bundle!")
+        helpers.log("Trying to check if SL amd64 installer is in %s"
+                    % output[2])
+        if not re.match(r'.*switchlight*amd64*release.ztn.*installer',
+                        output[2]):
+            return helpers.test_failure("SL amd64 installer not found")
+        helpers.log("Trying to check if SL amd64 SWI image is in %s"
+                    % output[1])
+        if not re.match(r'.*switchlight*amd64*release-bcf.*swi',
+                        output[1]):
+            return helpers.test_failure("SL amd64 SWI image not found")
+        helpers.log("Switch Light amd64 installer and SWI image are present")
 
-        helpers.log("Trying to check if SL installer is in %s" % output[2])
-        if not re.match(r'.*switchlight-.*release.ztn.*installer', output[2]):
-            return helpers.test_failure("SL installer not found")
-        helpers.log("Trying to check if SL SWI image is in %s" % output[1])
-        if not re.match(r'.*switchlight-.*release-bcf.*swi', output[1]):
-            return helpers.test_failure("SL SWI image not found")
-        helpers.log("Switch Light installer and SWI image are present")
+        helpers.log("Trying to check if SL powerpc installer is in %s"
+                    % output[4])
+        if not re.match(r'.*switchlight*powerpc*release.ztn.*installer',
+                        output[4]):
+            return helpers.test_failure("SL powerpc installer not found")
+        helpers.log("Trying to check if SL powerpc SWI image is in %s"
+                    % output[3])
+        if not re.match(r'.*switchlight*powerpc*release-bcf.*swi',
+                        output[3]):
+            return helpers.test_failure("SL powerpc SWI image not found")
+        helpers.log("Switch Light powerpc installer and SWI image are present")
         c.config("enable")
 
         return True
@@ -58,10 +75,10 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        helpers.log("Verifying if SwitchLight manifests"
+        helpers.log("Verifying if SwitchLight powerpc manifests"
                     " are present on node %s" % node)
         c.bash("unzip -p /usr/share/floodlight/zerotouch/"
-               "switchlight*installer zerotouch.json")
+               "switchlight*powerpc*installer zerotouch.json")
         output = c.cli_content()
         output = helpers.strip_cli_output(output)
         installer_manifest = ast.literal_eval(output)
@@ -73,8 +90,37 @@ class T5ZTN(object):
         if installer_operation != 'os-install':
             helpers.test_failure("Wrong installer operation - %s"
                                   % installer_operation)
-        c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*swi"
-               " zerotouch.json")
+        c.bash("unzip -p /usr/share/floodlight/zerotouch/"
+               "switchlight*powerpc*swi zerotouch.json")
+        output = c.cli_content()
+        output = helpers.strip_cli_output(output)
+        swi_manifest = ast.literal_eval(output)
+        swi_release = swi_manifest['release']
+        swi_platform = swi_manifest['platform']
+        swi_operation = swi_manifest['operation']
+        swi_sha1 = swi_manifest['sha1']
+        swi_manifest_version = swi_manifest['manifest_version']
+        if swi_operation != 'ztn-runtime':
+            helpers.test_failure("Wrong swi operation - %s"
+                                  % swi_operation)
+
+        helpers.log("Verifying if SwitchLight amd64 manifests"
+                    " are present on node %s" % node)
+        c.bash("unzip -p /usr/share/floodlight/zerotouch/"
+               "switchlight*amd64*installer zerotouch.json")
+        output = c.cli_content()
+        output = helpers.strip_cli_output(output)
+        installer_manifest = ast.literal_eval(output)
+        installer_release = installer_manifest['release']
+        installer_platform = installer_manifest['platform']
+        installer_operation = installer_manifest['operation']
+        installer_sha1 = installer_manifest['sha1']
+        installer_manifest_version = installer_manifest['manifest_version']
+        if installer_operation != 'os-install':
+            helpers.test_failure("Wrong installer operation - %s"
+                                  % installer_operation)
+        c.bash("unzip -p /usr/share/floodlight/zerotouch/"
+               "switchlight*amd64*swi zerotouch.json")
         output = c.cli_content()
         output = helpers.strip_cli_output(output)
         swi_manifest = ast.literal_eval(output)
@@ -87,37 +133,43 @@ class T5ZTN(object):
             helpers.test_failure("Wrong swi operation - %s"
                                   % swi_operation)
         c.config("")
+
         return True
 
-    def bash_get_switchlight_version(self, image, node='master'):
+    def bash_get_switchlight_version(self, image, node='master',
+                                     arch='powerpc'):
         """
         Get SWI or Installer Versions in the controller bundle
 
         Inputs:
         | image | SL image - swi or installer |
         | node | reference to switch/controller as defined in .topo file |
+        | arch | Architecture type - powerpc or amd64 |
 
         Return Value:
         - SWI or Installer Versions, None in case of errors
         """
         t = test.Test()
         c = t.controller(node)
-        helpers.log("Verifying if SwitchLight manifests"
-                    " are present on node %s" % node)
+        helpers.log("Verifying if SwitchLight %s manifests"
+                    " are present on node %s" % (arch, node))
         if image != 'swi' and image != 'installer':
             helpers.log("Please use \'swi\' or \'installer\'")
             return None
+        if arch != 'powerpc' and arch != 'amd64':
+            helpers.log("Please use \'powerpc\' or \'amd64\'")
+            return None
         if image == 'installer':
             c.bash("unzip -p /usr/share/floodlight/zerotouch/"
-                   "switchlight*installer zerotouch.json")
+                   "switchlight*%s*installer zerotouch.json" % arch)
             output = c.cli_content()
             output = helpers.strip_cli_output(output)
             installer_manifest = ast.literal_eval(output)
             installer_release = installer_manifest['release']
             return installer_release
         if image == 'swi':
-            c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*swi"
-                   " zerotouch.json")
+            c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*%s*swi"
+                   " zerotouch.json" % arch)
             output = c.cli_content()
             output = helpers.strip_cli_output(output)
             swi_manifest = ast.literal_eval(output)
@@ -177,12 +229,13 @@ class T5ZTN(object):
         n.console_close()
         return version
 
-    def bash_get_supported_platforms(self, image):
+    def bash_get_supported_platforms(self, image, arch='powerpc'):
         """
         Get list of platforms supported by SWI or SwitchLight installer
 
         Inputs:
         | image |  Image - SWI or installer |
+        | arch | Architecture type - powerpc or amd64 |
 
         Return Value:
         - List of supported platforms or None in case of errors
@@ -193,10 +246,10 @@ class T5ZTN(object):
                     " for SwitchLight %s" % image)
         if image == "installer":
             c.bash("unzip -p /usr/share/floodlight/zerotouch/"
-                   "switchlight*installer zerotouch.json")
+                   "switchlight*%s*installer zerotouch.json" % arch)
         elif image == "swi":
             c.bash("unzip -p /usr/share/floodlight/zerotouch/"
-                   "switchlight*swi zerotouch.json")
+                   "switchlight*%s*swi zerotouch.json" % arch)
         else:
             helpers.test_failure("Requested platforms for neither SWI"
                                  " nor Installer image")

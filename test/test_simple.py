@@ -1,7 +1,6 @@
 from __future__ import print_function
 import os
 import sys
-from nose.exc import SkipTest
 
 
 # Derive BigRobot path from the script's location, which should be
@@ -14,7 +13,7 @@ sys.path.insert(0, bigrobot_path)
 
 import autobot.helpers as helpers
 import autobot.setup_env as setup_env
-from autobot.nose_support import run, log_to_console, wait_until_keyword_succeeds, Singleton
+from autobot.nose_support import run, log_to_console, Singleton, wait_until_keyword_succeeds
 # from keywords.BsnCommon import BsnCommon
 
 helpers.remove_env('BIGROBOT_TOPOLOGY', quiet=True)
@@ -58,7 +57,7 @@ class TestSimple:
         """
         def func():
             try:
-                assert 1 == 2
+                assert 1 == 1
             except:
                 # Run additional keywords on fail
                 log_to_console("keyword #1:  1 + 2 + 3 = %s" % (1 + 2 + 3))
@@ -72,7 +71,7 @@ class TestSimple:
         Test case: test_03_skip
         """
         def func():
-            raise SkipTest("not ready")
+            pass
         run(test=func, setup=self.tc_setup, teardown=self.tc_teardown)
 
     def test_04_run_until_keyword_succeeds(self):

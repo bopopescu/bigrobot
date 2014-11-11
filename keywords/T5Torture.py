@@ -13,8 +13,11 @@
 ###  WARNING !!!!!!!
 '''
 import re
+import random
 import autobot.helpers as helpers
 import autobot.test as test
+from keywords.BsnCommon import BsnCommon
+from autobot.nose_support import log_to_console, wait_until_keyword_succeeds
 
 
 # Global variables to save the state
@@ -373,7 +376,7 @@ class T5Torture(object):
             return True
         else:
             # helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
-            # sleep(36000)
+            # helpers.sleep(36000)
             return True
 
     # T5Utilities
@@ -852,13 +855,203 @@ class T5Torture(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)?")
             c.config("yes")
-            # sleep(30)
+            # helpers.sleep(30)
             helpers.sleep(90)
         except:
             helpers.test_log(c.cli_content())
             return False
         else:
             return self.fabric_integrity_checker("after")
+
+    # T5Platform
+    def getNodeID(self, slaveNode=True):
+
+        '''
+        Description:
+        -    This function will handout the NodeID's for master & slave nodes
+
+        Objective:
+        -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
+            reachable or it's powered down this function will handle the logic
+
+        Inputs:
+        |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
+
+        Outputs:
+        |    If slaveNode: return (masterID, slaveID)
+        |    else:    return (masterID)
+
+
+        '''
+        numTries = 0
+        t = test.Test()
+        master = t.controller("master")
+
+
+        while(True):
+            try:
+                showUrl = '/api/v1/data/controller/cluster'
+                helpers.log("Master is : %s " % master.name)
+                result = master.rest.get(showUrl)['content']
+                masterID = result[0]['status']['local-node-id']
+                break
+            except(KeyError):
+                if(numTries < 5):
+                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
+                    helpers.sleep(10)
+                    numTries += 1
+                else:
+                    helpers.log("Error: KeyError detected during master ID retrieval")
+                    if slaveNode:
+                        return (-1, -1)
+                    else:
+                        return -1
+
+        if(slaveNode):
+            slave = t.controller("slave")
+            while(True):
+                try:
+                    showUrl = '/api/v1/data/controller/cluster'
+                    result = slave.rest.get(showUrl)['content']
+                    slaveID = result[0]['status']['local-node-id']
+                    break
+                except(KeyError):
+                    if(numTries < 5):
+                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
+                        helpers.sleep(10)
+                        numTries += 1
+                    else:
+                        helpers.log("Error: KeyError detected during slave ID retrieval")
+                        return (-1, -1)
+
+
+        if(slaveNode):
+            return (masterID, slaveID)
+        else:
+            return masterID
+
+    # T5Platform  (Mingtao)
+    def cli_verify_cluster_master_reload(self):
+
+        self.fabric_integrity_checker("before")
+        returnVal = self.cluster_node_reload()
+        if(not returnVal):
+            return False
+        return self.fabric_integrity_checker("after")
+
+    # T5Platform  (Mingtao)
+    def cluster_node_reload(self, masterNode=True):
+
+        ''' Reload a node and verify the cluster leadership.
+            Reboot Master in dual node setup: masterNode == True
+        '''
+        t = test.Test()
+        master = t.controller("master")
+
+        if (self.cli_get_num_nodes() == 1):
+            singleNode = True
+        else:
+            singleNode = False
+
+
+        if(singleNode):
+            masterID = self.getNodeID(False)
+        else:
+            masterID, slaveID = self.getNodeID()
+
+        if(singleNode):
+            if (masterID == -1):
+                return False
+        else:
+            if(masterID == -1 and slaveID == -1):
+                return False
+
+        try:
+            if(masterNode):
+                actual_node_name = master.name()
+                ipAddr = master.ip()
+                master.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("yes")
+                helpers.log("Master is reloading")
+                # helpers.sleep(90)
+                helpers.sleep(160)
+            else:
+                slave = t.controller("slave")
+                actual_node_name = slave.name()
+                ipAddr = slave.ip()
+                slave.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is reloading")
+                # helpers.sleep(90)
+                helpers.sleep(160)
+        except:
+            helpers.log("Node is reloading")
+            helpers.sleep(90)
+            count = 0
+            while (True):
+                loss = helpers.ping(ipAddr)
+                helpers.log("loss is: %s" % loss)
+                if(loss != 0):
+                    if (count > 5):
+                        helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                        return False
+                    helpers.sleep(60)
+                    count += 1
+                    helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+                else:
+                    helpers.log("Controller just came alive. Waiting for it to become fully functional")
+                    helpers.sleep(120)
+                    break
+
+        helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)
+        t.node_reconnect(actual_node_name)
+
+        if(singleNode):
+            newMasterID = self.getNodeID(False)
+        else:
+            newMasterID, newSlaveID = self.getNodeID()
+
+        if(singleNode):
+            if (newMasterID == -1):
+                return False
+        else:
+            if(newMasterID == -1 and newSlaveID == -1):
+                return False
+
+
+        if(singleNode):
+            if(masterID == newMasterID):
+                # obj.restart_floodlight_monitor("master")
+                helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
+                    After the reboot Master is: %s " % (masterID, newMasterID))
+        else:
+            # if(masterNode):
+            #    obj.restart_floodlight_monitor("slave")
+            # else:
+            #    obj.restart_floodlight_monitor("master")
+
+            if(masterNode):
+                if(masterID == newSlaveID and slaveID == newMasterID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    # obj.stop_floodlight_monitor()
+                    return False
+            else:
+                if(masterID == newMasterID and slaveID == newSlaveID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    # obj.stop_floodlight_monitor()
+                    return False
+
 
     # T5Platform
     def rest_get_disconnect_switch(self, node='master'):
@@ -1027,7 +1220,7 @@ class T5Torture(object):
                     base = ip_addr
                     i = i + 1
 
-        c.cli('show running-config tenant')['content']
+        c.cli('show running-config tenant')
         return True
 
     # T5
@@ -1162,3 +1355,180 @@ class T5Torture(object):
             # helpers.test_log("Output: %s" % c.rest.result_json())
             # return c.rest.content()
             return True
+
+    # T5Utility
+    def cli_get_num_nodes(self):
+        '''
+            return the number of nodes in a cluster.
+            Returns:
+                1 : single node cluster
+                2 : HA cluster
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        c.cli('show controller')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        num = 0
+        for line in temp:
+            match = re.match(r'.*(active|standby).*', line)
+            if match:
+                num = num + 1
+            else:
+                helpers.log("INFO: not for controller  %s" % line)
+        helpers.log("INFO: There are %d of controller(s) in the cluster" % num)
+        return num
+
+
+    #
+    # Torture-specific methods
+    #
+
+    def cli_show_commands_for_debug(self):
+        BsnCommon().cli('master', 'show ver', timeout=60)
+        BsnCommon().enable('master', 'show running-config switch', timeout=60)
+        BsnCommon().enable('master', 'show switch', timeout=60)
+        BsnCommon().enable('master', 'show link', timeout=60)
+        BsnCommon().cli('master', 'show ver', timeout=60)
+        BsnCommon().cli('slave', 'show ver', timeout=60)
+
+    def controller_node_event_ha_failover(self, during=30):
+        log_to_console("=============HA failover ===============")
+        self.cli_show_commands_for_debug()
+        self.cli_cluster_take_leader()
+        helpers.sleep(during)
+        self.cli_show_commands_for_debug()
+
+    def controller_node_event_reload_active(self, during=30):
+        log_to_console("=============Reload active controller ===============")
+        self.cli_show_commands_for_debug()
+        self.cli_verify_cluster_master_reload()
+        helpers.sleep(during)
+        self.cli_show_commands_for_debug()
+
+    def verify_all_switches_connected_back(self):
+        switches = self.rest_get_disconnect_switch('master')
+        self.cli_show_commands_for_debug()
+        helpers.log("the disconnected switches are %s" % switches)
+        assert switches == []  # Should be empty
+
+    def switch_node_down_up_event(self, node):
+        helpers.log("reload switch")
+        log_to_console("================ Rebooting %s ===============" % node)
+        self.cli_show_commands_for_debug()
+        self.cli_reboot_switch('master', node)
+        self.cli_show_commands_for_debug()
+        helpers.sleep(BsnCommon().params_global('long_sleep'))
+        wait_until_keyword_succeeds(60 * 10, 30,
+                                    self.verify_all_switches_connected_back)
+
+    def disable_links_between_nodes(self, node, intf):
+        self.cli_show_commands_for_debug()
+        self.rest_disable_fabric_interface(node, intf)
+
+    def enable_links_between_nodes(self, node, intf):
+        self.cli_show_commands_for_debug()
+        self.rest_enable_fabric_interface(node, intf)
+
+    def data_link_down_up_event_between_nodes(self, node1, node2):
+        log_to_console("================ data link down/up for %s and %s ==============="
+                       % (node1, node2))
+        helpers.log("disable/enable link from nodes")
+        _list = self.cli_get_links_nodes_list(node1, node2)
+        for intf in _list:
+            self.disable_links_between_nodes(node1, intf)
+            helpers.sleep(60)
+            self.enable_links_between_nodes(node1, intf)
+            helpers.sleep(60)
+
+    def clear_stats_in_controller_switch(self):
+        BsnCommon().enable("master", "clear switch all interface all counters")
+        self.cli_show_commands_for_debug()
+
+    def tenant_configuration_add_remove(self, tnumber, vnumber, sleep_timer=1):
+        log_to_console("================tenant configuration changes: %s==============="
+                       % tnumber)
+        self.clear_stats_in_controller_switch()
+        BsnCommon().enable("master", "copy running-config config://config_tenant_old")
+        BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
+
+        helpers.log("Big scale configuration tenant add")
+        self.rest_add_tenant_vns_scale(
+                    tenantcount=tnumber, tname="FLAP", vnscount=vnumber,
+                    vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
+        BsnCommon().cli("master", "show running-config tenant FLAP0")
+        vlan = 1000
+        for i in range(0, tnumber):
+            self.rest_add_interface_to_all_vns(
+                    tenant="FLAP%s" % i,
+                    switch=BsnCommon().params_global('switch_dut'),
+                    intf=BsnCommon().params_global('switch_interface_dut'),
+                    vlan=vlan)
+            BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
+            vlan = vlan + vnumber
+            helpers.sleep(sleep_timer)
+        BsnCommon().cli("master",
+                        "show running-config tenant", timeout=120)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_tenant_new")
+
+        helpers.log("big scale configuration tenant delete")
+        for i in range(0, tnumber):
+            BsnCommon().config("master", "no tenant FLAP%s" % i)
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+
+    def vns_configuration_add_remove(self, vnumber, sleep_timer=1):
+        log_to_console("================vns configuration changes: %s==============="
+                       % vnumber)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_vns_old")
+
+        vlan = 1000
+        self.rest_add_tenant_vns_scale(
+                tenantcount=1, tname="FLAP", vnscount=vnumber,
+                vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
+        self.rest_add_interface_to_all_vns(
+                tenant="FLAP0",
+                switch=BsnCommon().params_global('switch_dut'),
+                intf=BsnCommon().params_global('switch_interface_dut'),
+                vlan=vlan)
+        helpers.sleep(sleep_timer)
+        BsnCommon().cli("master",
+                        "show running-config tenant", timeout=120)
+        BsnCommon().enable("master",
+                           "copy running-config config://config_vns_new")
+
+        helpers.log("Big scale configuration tenant delete")
+        BsnCommon().config("master", "tenant FLAP0")
+
+        vns = 1 + vnumber
+        for i in range(1, vns):
+            BsnCommon().config("master", "no segment V%s" % i)
+        BsnCommon().config("master", "logical-router")
+        for i in range(1, vns):
+            BsnCommon().config("master", "no interface segment V%s" % i)
+        BsnCommon().config("master", "no tenant FLAP0")
+        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+
+    def randomize_spines(self):
+        if BsnCommon().params_global('randomize_spine_list'):
+            spines = BsnCommon().params_global('spine_list')
+            random.shuffle(spines)
+            BsnCommon().params_global('spine_list', spines)
+            helpers.log("Randomized spines. New list order: %s"
+                        % BsnCommon().params_global('spine_list'))
+
+    def randomize_leafs(self):
+        if BsnCommon().params_global('randomize_leaf_list'):
+            leafs = BsnCommon().params_global('leaf_list')
+            random.shuffle(leafs)
+            BsnCommon().params_global('leaf_list', leafs)
+            helpers.log("Randomized leafs. New list order: %s"
+                        % BsnCommon().params_global('leaf_list'))
+
+    def randomize_spines_and_leafs(self):
+        self.randomize_spines()
+        self.randomize_leafs()
+
