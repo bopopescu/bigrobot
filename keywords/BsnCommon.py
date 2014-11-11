@@ -568,7 +568,7 @@ class BsnCommon(object):
                         content = c_user.rest.content()
                         output_value = content[0]['controller']
                     except:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        t.node_reconnect(node='master')
                         return False
                     else:
                         if local is True:
