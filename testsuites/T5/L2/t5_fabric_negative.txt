@@ -30,9 +30,9 @@ Setup Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    BuiltIn.Sleep  155
+    BuiltIn.Sleep  25
     rest verify fabric switch all
-    BuiltIn.Sleep  155
+    BuiltIn.Sleep  25
 	rest verify fabric link common 	
 
 verify static endpoints with port-group
@@ -430,7 +430,7 @@ T5 test setup
 	bigrobot test ztn  False
 	base test setup
 	add fabric switch
-	BuiltIn.Sleep  155
+	BuiltIn.Sleep  55
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25

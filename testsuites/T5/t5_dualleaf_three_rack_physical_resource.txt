@@ -42,7 +42,7 @@ add fabric switch
   rest add dpid  leaf2-b  ${leaf2b_dpid}
   rest add fabric role  leaf2-b  leaf
   rest add leaf group  leaf2-b  rack2
-  
+  BuiltIn.Sleep  155
 delete fabric switch  
   rest delete fabric switch  spine0 
   rest delete fabric switch  spine1 
