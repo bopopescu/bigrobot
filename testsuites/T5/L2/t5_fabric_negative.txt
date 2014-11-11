@@ -21,6 +21,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 Setup Three Rack Dual Leaf Topology
 	[Tags]  L2  IronHorse
+	bigrobot test ztn  False
 	base suite setup   
     add fabric switch
     bring up h1 bond0
@@ -145,8 +146,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify endpoint in system  2000
     stop traffic  ${stream}
-    rest delete tenant  t1  
-    bigrobot test ztn  True             
+    rest delete tenant  t1               
      
 shut/no shut the switch with traffic forward
 	[Tags]  L2  IronHorse     
@@ -427,6 +427,7 @@ T5 test teardown
 	delete fabric switch
 
 T5 test setup
+	bigrobot test ztn  False
 	base test setup
 	add fabric switch
 	BuiltIn.Sleep  155
