@@ -2002,6 +2002,7 @@ class BsnCommon(object):
             return '00:00:' + t.params(node, 'mac')
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
 
     def get_next_mac(self, *args, **kwargs):
         """
