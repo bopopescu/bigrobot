@@ -63,6 +63,7 @@ verify static endpoints with port-group
 restart ofad to verify the fabric link
 	[Tags]  L2  IronHorse
 	rest verify fabric link common
+	reconnect_switch_ips
 	bash execute command  leaf2-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  13
