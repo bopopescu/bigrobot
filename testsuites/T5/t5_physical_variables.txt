@@ -1,7 +1,7 @@
 * Setting 
 Library  keywords/BsnCommon.py
 
-* Keywords
+* Variables
 ${spine0_dpid}=	 get_switch_mac_topo  s7
 ${spine1_dpid}=	 get_switch_mac_topo  s8
 ${leaf0a_dpid}=	 get_switch_mac_topo  s1
@@ -10,7 +10,7 @@ ${leaf1a_dpid}=	 get_switch_mac_topo  s3
 ${leaf1b_dpid}=	 get_switch_mac_topo  s4
 ${leaf2a_dpid}=	 get_switch_mac_topo  s5
 ${leaf2b_dpid}=	 get_switch_mac_topo  s6
-*Variables
+#*Variables
 ${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39
 ${leaf0a_spine1_intf0}	ethernet52

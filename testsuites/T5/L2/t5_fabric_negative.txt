@@ -424,7 +424,7 @@ T5 test teardown
 	rest delete tenant  internal
 	rest delete tenant  external
 	rest delete tenant  system
-	delete fabric switch
+#	delete fabric switch
 
 T5 test setup
 	bigrobot test ztn  False
