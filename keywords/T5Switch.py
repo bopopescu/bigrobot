@@ -544,43 +544,41 @@ class  T5Switch(object):
     
     
     def rest_get_switch_interface_stats (self, switch, intf, stat="txstat"):
-        ''' Function to clear the switch interface counter. 
-            input - switch, interface 
-            output - none
-        '''
-        t = test.Test()
-        fabric = T5.T5()
-        c = t.controller('master')
-        dpid = fabric.rest_get_dpid(switch)
+            ''' Function to clear the switch interface counter. 
+                input - switch, interface 
+                output - none
+            '''
+            t = test.Test()
+            fabric = T5.T5()
+            c = t.controller('master')
+            dpid = fabric.rest_get_dpid(switch)
             
-        helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
-        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+            helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
+            url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
             
-        try:
-            c.rest.get(url)
-            data = c.rest.content()
-            helpers.log("The output data is %s" % data[0])
-            intf1 = data[0]["interface"][0]["name"]
-            txstat1 = data[0]["interface"][0]["counter"]["tx-unicast-packet"]
-            rxstat1 = data[0]["interface"][0]["counter"]["rx-unicast-packet"]
-            helpers.log("The output intf %s, tx %d , rx %d" % (intf1, txstat1, rxstat1))
-            helpers.log("The return asked is %s" % stat)
-            if ("txstat" in stat):
-                return  txstat1
-            if ("rxstat" in stat):
-                return  rxstat1
-            else:
-                helpers.log("Could not get either txstat or rxstat.\n")
-                return  False
+            try:
+                c.rest.get(url)
+                data = c.rest.content()
+                helpers.log("The output data is %s" % data[0])
+                intf1 = data[0]["interface"][0]["name"]
+                txstat1 = data[0]["interface"][0]["counter"]["tx-unicast-packet"]
+                rxstat1 = data[0]["interface"][0]["counter"]["rx-unicast-packet"]
+                helpers.log("The output intf %s, tx %d , rx %d" % (intf1, txstat1, rxstat1))
+                helpers.log("The return asked is %s" % stat)
+                if ("txstat" in stat):
+                    return  txstat1
+                if ("rxstat" in stat):
+                    return  rxstat1
+                else:
+                    helpers.log("Could not get either txstat or rxstat.\n")
+                    return  False
             
-        except:
-            helpers.log("Could not get the rest output.see log for errors\n")
-            return  False    
+            except:
+                helpers.log("Could not get the rest output.see log for errors\n")
+                return  False    
         
-  
-
-           
-    def verify_port_hashing_stats (self, switch=None, intfList= [], numlinks=2, totalcntr, tolerance=1000):
+             
+    def verify_port_hashing_stats (self, switch=None, intfList= [], numlinks=2, tolerance=1000, totalcntr):
             ''' Function to verify that the port counters are distributed through the links. 
                 input - totalcntr ( total number of packets), numlinks ( number of links) 
                 output - none
