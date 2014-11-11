@@ -2,14 +2,14 @@
 Library  keywords/BsnCommon.py
 
 * Variables
-${spine0_dpid}=	 get_switch_mac_topo  s7
-${spine1_dpid}=	 get_switch_mac_topo  s8
-${leaf0a_dpid}=	 get_switch_mac_topo  s1
-${leaf0b_dpid}=	 get_switch_mac_topo  s2
-${leaf1a_dpid}=	 get_switch_mac_topo  s3
-${leaf1b_dpid}=	 get_switch_mac_topo  s4
-${leaf2a_dpid}=	 get_switch_mac_topo  s5
-${leaf2b_dpid}=	 get_switch_mac_topo  s6
+${spine0_dpid}=	 
+${spine1_dpid}=	 
+${leaf0a_dpid}=	 
+${leaf0b_dpid}=	 
+${leaf1a_dpid}=	
+${leaf1b_dpid}=	 
+${leaf2a_dpid}=	 
+${leaf2b_dpid}=	 
 *Keywords
 ${spine0_dpid}=	 get_switch_mac_topo  s7
 ${spine1_dpid}=	 get_switch_mac_topo  s8
