@@ -13,7 +13,7 @@ ${mask1}=           24
 ${mask2}=           24
 ${vlan}=            -1
 ${leaf0a_ixia}=        ethernet24
-${leaf1a_ixia}=        ethernet25
+${leaf1a_ixia}=        ethernet24
 
 ${src_mac1}=       00:a1:b1:c1:bb:0c
 ${dst_mac1}=       00:1a:1b:1c:aa:0a
@@ -37,8 +37,8 @@ ${countertolerance}=  100
 
 ${numlinks}=  2
 ${leaf0a_spine0_intf1}=   ethernet52
-${spine0_leaf0a_intf1}=   ethernet21
-${leaf1a_spine0_intf1}=   ethernet51
+${spine0_leaf0a_intf1}=   ethernet15
+${leaf1a_spine0_intf1}=   ethernet49
 ${spine0_leaf1a_intf1}=   ethernet27
 
 
