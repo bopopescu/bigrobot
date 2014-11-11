@@ -34,6 +34,7 @@ Setup Three Rack Dual Leaf Topology
     rest verify fabric switch all
     BuiltIn.Sleep  25
 	rest verify fabric link common 	
+	Set switch dpid variables
 
 verify static endpoints with port-group
 	[Tags]  L2  IronHorse
