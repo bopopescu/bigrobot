@@ -2104,13 +2104,16 @@ class BsnCommon(object):
     def bigrobot_test_ztn(self, new_value=False):
         return helpers.bigrobot_test_ztn(new_value)
 
-    def reconnect_switch_ips(self):
+    def reconnect_switch_ips(self, node=None):
         """
         Reconnects the Switches IP by getting them from consoles
         """
         t = test.Test()
         helpers.bigrobot_no_auto_reload("True")
-        params = t.topology_params_nodes()
-        for key in params:
-            t.setup_ztn_phase2(key)
+        if node is None:
+            params = t.topology_params_nodes()
+            for key in params:
+                t.setup_ztn_phase2(key)
+        else:
+            t.setup_ztn_phase2(node)
         return True
