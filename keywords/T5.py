@@ -1362,9 +1362,9 @@ class T5(object):
 
             Returns: add the fabric switch
         '''
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1382,9 +1382,9 @@ class T5(object):
             switch is the alias like laef0-a / spine0 and that shoul be defined in Topo file
             Get dpid from the topo file
         '''
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1404,9 +1404,9 @@ class T5(object):
             return True
 
     def rest_add_fabric_role(self, switch, role):
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
 
         t = test.Test()
         c = t.controller('master')
@@ -1420,9 +1420,9 @@ class T5(object):
             return True
 
     def rest_add_leaf_group(self, switch, group):
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1440,9 +1440,9 @@ class T5(object):
            Function to delete the specific leaf group
            Input:  Switch name
         '''
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/leaf-group' % (switch)
@@ -1454,9 +1454,9 @@ class T5(object):
             return True
 
     def rest_delete_fabric_switch(self, switch=None):
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be deleting switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be deleting switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
 
@@ -1540,9 +1540,9 @@ class T5(object):
         return False
 
     def rest_delete_fabric_role(self, switch, role=None):
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN is enabled , should not be adding switch again..")
-            return True
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN is enabled , should not be adding switch again..")
+#             return True
         t = test.Test()
         c = t.controller('master')
 
