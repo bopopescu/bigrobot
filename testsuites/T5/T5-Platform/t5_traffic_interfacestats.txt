@@ -20,7 +20,6 @@ Resource        testsuites/T5/T5-Platform/t5_traffic_interfacestats_variables.tx
 #Resource        testsuites_dev/kranti/ironhorse/t5_traffic_interfacestats_variables.txt
 
 *Test Case 
-
 Setup the configuration for the interface stats traffic test
     [Tags]  T5  L2  intfStats  setup    
     T5 traffic interface stats test setup 
@@ -145,7 +144,9 @@ Interface stats outgoing Same src mac to two different dst mac Uni directional L
     stop traffic    
     sleep   10
     ixia.stop traffic
-    sleep   5 
+    sleep   5
+    ${report}=     fetch port stats
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames 
     verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx}  ${countertolerance}
     verify interface counters  ${switch7_name}  ${spine0_leaf1a_intf1}  txstat  ${ixiatx}  ${countertolerance}
         
