@@ -93,7 +93,7 @@ class Test(object):
             #
             self._node_static_aliases = {}
 
-            self._bsn_config = helpers.bigrobot_config_bsn()
+            self._bsn_config = helpers.bigrobot_config_common()
             helpers.log("Loaded config file %s" % self._bsn_config['this_file'])
 
             # self._is_ci = helpers.bigrobot_continuous_integration()
@@ -771,7 +771,7 @@ class Test(object):
         # Check for user name and password. Here is the order of preference:
         # 1) prefer user/password provided in method arguments
         # 2) else prefer user/password provided in topo file
-        # 3) else prefer user/password provided in config/bsn.yaml
+        # 3) else prefer user/password provided in config/common.yaml
 
         authen = t.topology_params_authen(node)
 
