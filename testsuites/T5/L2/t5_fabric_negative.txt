@@ -29,9 +29,9 @@ Setup Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    BuiltIn.Sleep  10
+    BuiltIn.Sleep  155
     rest verify fabric switch all
-    BuiltIn.Sleep  10
+    BuiltIn.Sleep  155
 	rest verify fabric link common 	
 
 verify static endpoints with port-group
@@ -217,7 +217,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest add dpid  leaf2-b  ${leaf2b_dpid}
     rest add fabric role  leaf2-b  leaf 
     rest add leaf group  leaf2-b  rack2
-    BuiltIn.Sleep  20
+    BuiltIn.Sleep  200
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
@@ -381,10 +381,10 @@ verifying flow reconsilation when new switch is connected to the fabric
     rest add dpid  leaf2-a  ${leaf2a_dpid}
     rest add fabric role  leaf2-a  leaf
     rest add leaf group  leaf2-a  rack2
-    BuiltIn.Sleep  2
+    BuiltIn.Sleep  200
     cli add controller  leaf2-a  c1
     cli add controller  leaf2-a  c2
-    BuiltIn.Sleep  2
+    BuiltIn.Sleep  200
     rest verify fabric switch  leaf2-a
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
@@ -429,7 +429,7 @@ T5 test teardown
 T5 test setup
 	base test setup
 	add fabric switch
-	BuiltIn.Sleep  15
+	BuiltIn.Sleep  155
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
