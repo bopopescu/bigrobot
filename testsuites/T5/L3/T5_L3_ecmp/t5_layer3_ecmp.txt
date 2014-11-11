@@ -3128,114 +3128,6 @@ Add and delete config changes
     Should Be True                              ${loss} < 40
    
    
-
-Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
-    REST add portgroup to vns                   X                               X1          leaf0-pc1           1001
-    REST add portgroup to vns                   X                               X2          leaf1-pc2           2002 
-    REST add dhcp relay                         X                               X2                      10.251.1.9
-    REST add dhcprelay circuitid                X                               X2                      10.251.1.9              private vns X2
-    sleep                                       1
-    ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
-    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
-    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Equal                             ${circuitid}                    private vns X2
-    Should Be Equal                             ${dhcpip}                       10.251.1.9
-    Should Be Equal                             ${routerip}                     10.251.2.1
-    BASH add tag                                h1-rack0                        bond0                   1001
-    BASH add tag                                h2-rack1                        bond0                   2002
-    BASH ifup intf                              h1-rack0                        bond0.1001
-    BASH ifup intf                              h2-rack1                        bond0.2002
-    BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    sleep                                       1
-    BASH add route                              h1-rack0                        10.251.2.0/24           10.251.1.1
-    BASH add route                              h1-rack0                        10.251.3.0/24           10.251.1.1
-    sleep                                       1
-    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0.2002
-    Should Be True                              ${value}
-    sleep                                       1
-    ${ipAddr} =                                 BASH renew dhcpv4 address       h2-rack1                bond0.2002
-    Should Not Be Empty                         ${ipAddr}
-    sleep                                       1
-    BASH ping                                   h1-rack0                        ${ipAddr}               count=10
-    ${value} =                                  BASH verify arp                 h1-rack0                10.251.1.1
-    Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h2-rack1                10.251.2.1
-    Should Be True                              ${value}    
-    ${mac1} =                                   BASH get intf mac               h1-rack0                      bond0.1001
-    ${result} =                                 REST show endpoints mac         ${mac1}
-    Should Be True                              ${result}                       
-    ${mac2} =                                   BASH get intf mac               h2-rack1                      bond0.2002
-    ${result} =                                 REST show endpoints mac         ${mac2}
-    Should Be True                              ${result}                       
-    ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
-    Should Be True                              ${loss} == 0    
-    ${value} =                                  REST verify cluster election take leader
-    Should Be True                              ${value}
-    sleep                                       10
-    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0.2002
-    Should Be True                              ${value}
-    sleep                                       1
-    ${ipAddr} =                                 BASH renew dhcpv4 address       h2-rack1                bond0.2002
-    Should Not Be Empty                         ${ipAddr}
-    sleep                                       1
-    ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
-    Should Be True                              ${loss} == 0    
-
-
-Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
-    REST add portgroup to vns                   X                               X1                      leaf0-pc1           1001
-    REST add portgroup to vns                   Y                               Y3                      leaf1-pc2           2002 
-    REST add dhcp relay                         Y                               Y3                      10.251.1.9
-    sleep                                       1
-    ${result} =                                 REST show forwarding dhcp table
-    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
-    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Equal                             ${dhcpip}                       10.251.1.9
-    Should Be Equal                             ${routerip}                     10.252.3.1
-    BASH add tag                                h1-rack0                        bond0                   1001
-    BASH add tag                                h2-rack1                        bond0                   2002
-    BASH ifup intf                              h1-rack0                        bond0.1001
-    BASH ifup intf                              h2-rack1                        bond0.2002
-    BASH ifconfig ip address                    h1-rack0                        10.251.1.9/24           bond0.1001
-    BASH start service                          h1-rack0                        isc-dhcp-server
-    ${value} =                                  BASH check service status       h1-rack0                        isc-dhcp-server    
-    sleep                                       1
-    BASH add route                              h1-rack0                        10.252.0.0/16           10.251.1.1
-    sleep                                       1
-    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0.2002
-    Should Be True                              ${value}
-    sleep                                       1
-    ${ipAddr} =                                 BASH renew dhcpv4 address       h2-rack1                bond0.2002
-    Should Not Be Empty                         ${ipAddr}
-    sleep                                       1
-    BASH ping                                   h1-rack0                        ${ipAddr}               count=10
-    ${value} =                                  BASH verify arp                 h1-rack0                10.251.1.1
-    Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h2-rack1                10.252.3.1
-    Should Be True                              ${value}    
-    ${mac1} =                                   BASH get intf mac               h1-rack0                      bond0.1001
-    ${result} =                                 REST show endpoints mac         ${mac1}
-    Should Be True                              ${result}                       
-    ${mac2} =                                   BASH get intf mac               h2-rack1                      bond0.2002
-    ${result} =                                 REST show endpoints mac         ${mac2}
-    Should Be True                              ${result}                       
-    ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
-    Should Be True                              ${loss} == 0    
-    ${value} =                                  REST verify cluster election take leader
-    Should Be True                              ${value}
-    sleep                                       10
-    ${value} =                                  BASH release dhcpv4 address     h2-rack1                bond0.2002
-    Should Be True                              ${value}
-    sleep                                       1
-    ${ipAddr} =                                 BASH renew dhcpv4 address       h2-rack1                bond0.2002
-    Should Not Be Empty                         ${ipAddr}
-    sleep                                       1
-    ${loss} =                                   BASH ping                       h1-rack0                      ${ipAddr}           count=10
-    Should Be True                              ${loss} == 0    
-    
 initialize host
     BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete tag                             h2                              bond0.1002              soft_error=${true}
@@ -3570,7 +3462,13 @@ setup topology
     REST add static routes                          External                    10.251.0.0/16       {"tenant": "system"}
     REST add static routes                          External                    10.252.0.0/16       {"tenant": "system"}
     REST add static routes                          External                    10.253.0.0/16       {"tenant": "system"}
-
+    CLI arista enable disable interface        s11                             port-channel 1           disable=${False}    
+    CLI arista enable disable interface        s11                             port-channel 2           disable=${False}    
+    CLI arista enable disable interface        s11                             port-channel 3           disable=${False}    
+    CLI arista enable disable interface        s11                             port-channel 4           disable=${False}    
+    CLI arista enable disable interface        s11                             port-channel 5           disable=${False}    
+    CLI arista enable disable interface        s11                             ethernet 1               disable=${False}    
+    CLI arista enable disable interface        s11                             ethernet 2               disable=${False}   
   	
 teardown topology
 	delete traffic

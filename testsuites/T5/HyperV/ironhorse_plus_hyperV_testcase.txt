@@ -7,7 +7,7 @@ Force Tags      IronHorse-plus
 
 * Test Cases
 TC001 Configure lacp on 10gig nic teaming on hyperV host
-    manual passed
+    manual untested
     [Tags]              feature         manual          hyperV
     
 TC002 Flap single 10gig nic teaming member and verify VM traffic switch to second member
@@ -35,15 +35,15 @@ TC007 Flap active member and verify VM traffic switch to second member
     [Tags]              feature         manual          hyperV
 
 TC008 Verify SCVMM is able to manage hyperV host through fabric
-    manual passed
+    manual untested
     [Tags]              feature         manual          hyperV
 
 TC009 Verify SCVMM is able to spawn VM through fabric
-    manual passed
+    manual untested
     [Tags]              feature         manual          hyperV
     
 TC010 Spawn VM across two hyperV host in the same segment
-    manual passed
+    manual untested
     [Tags]              feature         manual          hyperV
 
 TC011 Spawn VM across two hyperV host across segment same tenant
@@ -69,79 +69,6 @@ TC015 Verify VM is able to obtain dhcp assigned address through fabric without d
 TC016 Verify VM is able to obtain dhcp assigned address through fabric dhcp relay
     manual untested
     [Tags]              feature         manual          hyperV
-
-TC017 Configure lacp on 40gig nic teaming on hyper-V host
-    manual passed
-    [Tags]              feature         manual          hyperV
-    
-TC018 Flap single 40gig nic teaming member and verify VM traffic switch to second member
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC019 Reboot hyperV host and verify 40gig lacp nic teaming works after reboot
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-TC020 L2 performance testing using iperf between two Ubuntu VM in a 10gig hyper-V host
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC021 L2 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host in the same rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC022 L2 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host across rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-TC023 L3 performance testing using iperf between two Ubuntu VM in a 10gig hyper-V host
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC024 L3 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host in the same rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC025 L3 performance testing using iperf between two Ubuntu VM across two 10gig hyper-V host across rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-TC026 L2 performance testing using iperf between two Ubuntu VM in a 40gig hyper-V host
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC027 L2 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host in the same rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC028 L2 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host across rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-TC029 L3 performance testing using iperf between two Ubuntu VM in a 40gig hyper-V host
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC030 L3 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host in the same rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC031 L3 performance testing using iperf between two Ubuntu VM across two 40gig hyper-V host across rack
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-
-
-     
-TC040 NVGRE through fabric
-    manual untested
-    [Tags]              feature         manual          hyperV
-
-TC041 using Windows server as gateway for VM
-    manual untested
-    [Tags]              feature         manual          hyperV
-    
-
 
 
 TC050 Verify Controller HA failover does not impact VM creation or VM traffic
@@ -198,6 +125,11 @@ TC065 Change VM from one network to another and verify endpoint is updated corre
     manual untested
     [Tags]              feature         manual          hyperV
     
+TC066 Reboot SCVMM Server
+    manual untested
+    [Tags]              feature         manual          hyperV
+    
+
     
 T5 base suite setup
     sleep                                       1
