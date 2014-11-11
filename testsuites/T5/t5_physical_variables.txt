@@ -1,12 +1,15 @@
+* Setting 
+Library  keywords/BsnCommon.py
+
 * Variables
-${spine0_dpid}	 00:00:70:72:cf:a3:c4:e0
-${spine1_dpid}	 00:00:70:72:cf:bd:45:6a
-${leaf0a_dpid}	 00:00:70:72:cf:b7:6e:84
-${leaf0b_dpid}	 00:00:70:72:cf:b5:eb:66
-${leaf1a_dpid}	 00:00:70:72:cf:b7:6c:c8
-${leaf1b_dpid}	 00:00:70:72:cf:b6:00:36
-${leaf2a_dpid}	 00:00:70:72:cf:bd:da:b6
-${leaf2b_dpid}	 00:00:70:72:cf:b5:ef:bc
+${spine0_dpid}	 get_switch_mac_topo  s7
+${spine1_dpid}	 get_switch_mac_topo  s8
+${leaf0a_dpid}	 get_switch_mac_topo  s1
+${leaf0b_dpid}	 get_switch_mac_topo  s2
+${leaf1a_dpid}	 get_switch_mac_topo  s3
+${leaf1b_dpid}	 get_switch_mac_topo  s4
+${leaf2a_dpid}	 get_switch_mac_topo  s5
+${leaf2b_dpid}	 get_switch_mac_topo  s6
 ${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39
 ${leaf0a_spine1_intf0}	ethernet52
