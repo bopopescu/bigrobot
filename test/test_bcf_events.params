@@ -11,8 +11,8 @@ global:
   vflapnum:              100
   big_config_sleep:      300
 
-  loop:                    1  #  5
-  repeat:                  6  # 60
+  loop:                    5   #  5
+  repeat:                  20  # 60
 
   spine_list:
     #[
