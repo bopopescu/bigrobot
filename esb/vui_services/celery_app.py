@@ -4,8 +4,6 @@ from kombu import Exchange, Queue
 import autobot.helpers as helpers
 
 
-helpers.load_config(helpers.bigrobot_configs_path() + '/bsn.yaml')
-
 queue_name = 'vui_services'
 broker = helpers.bigrobot_esb_broker()
 app = Celery(queue_name, broker=broker, backend=broker,

@@ -62,7 +62,7 @@ verify floating IP connectivity between VNS and external router
 
 
 Use traceroute to verify traffic paths
-    [Tags]  feature  openstack  IronHorse-Plus  manual
+    [Tags]  feature  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Use test packet path and check correctness of output
     [Tags]  feature  openstack  IronHorse-Plus  manual
@@ -82,7 +82,7 @@ Cinder: Volume create/Delete for block storage management
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 Number of volumes to create??
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Cinder: Volume Attach/Detach of block storage to the server
     [Tags]  solution  openstack  IronHorse-Plus  manual
@@ -91,7 +91,7 @@ Cinder: Create/Delete Snapshots
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 Number of snapshots to create
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Cinder: Create a new Volume from Snapshot
     [Tags]  solution  openstack  IronHorse-Plus  manual
@@ -100,28 +100,84 @@ Ceph Storage sets
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 Use seperate storage VLAN to provide a storage traffic going through the fabric (Most common used NFS,iSCSi traffic)
-    [Tags]  solution  openstack  IronHorse-Plus  manual 
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
     manual untested
 Test to provide any Qos settings for storage traffic
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
     manual untested
 
 Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
-    [Tags]  scaling  openstack  IronHorse-Plus  manual   
+    [Tags]  scaling  openstack  IronHorse-Plus  manual   skipped
     manual untested
 Measure Openstack Scaling limit (Topology: Single Nova controller)
-    [Tags]  scaling  openstack  IronHorse-Plus  manual
+    [Tags]  scaling  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
-L2 Performance(between 2 VM using iperf) with 10gig interface
-    [Tags]  performance  openstack  IronHorse-Plus  manual
+Configure lacp on 40gig nic teaming on compute host
     manual untested
-
-L2 Performance(between 2 VM using iperf) with 40gig interface
-    [Tags]  performance  openstack  IronHorse-Plus  manual
-    manual untested
+    [Tags]              feature         manual          openstack
     
-Upgrade Iron Horse Image to a Iron Horse Official Release image.
+Flap single 40gig nic teaming member and verify VM traffic switch to second member
+    manual untested
+    [Tags]              feature         manual          openstack
+
+Reboot openstack host and verify 40gig lacp nic teaming works after reboot
+    manual untested
+    [Tags]              feature         manual          openstack
+    
+L2 performance testing using iperf between two Ubuntu VM in a 10gig openstack host
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L2 performance testing using iperf between two Ubuntu VM across two 10gig openstack host in the same rack
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L2 performance testing using iperf between two Ubuntu VM across two 10gig host across rack
+    manual untested
+    [Tags]              feature         manual          openstack
+    
+L3 performance testing using iperf between two Ubuntu VM in a 10gig openstack host
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L3 performance testing using iperf between two Ubuntu VM across two 10gig openstack host in the same rack
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L3 performance testing using iperf between two Ubuntu VM across two 10gig openstack host across rack
+    manual untested
+    [Tags]              feature         manual          openstack
+    
+L2 performance testing using iperf between two Ubuntu VM in a 40gig openstack host
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L2 performance testing using iperf between two Ubuntu VM across two 40gig openstack host in the same rack
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L2 performance testing using iperf between two Ubuntu VM across two 40gig openstack host across rack
+    manual untested
+    [Tags]              feature         manual          openstack
+    
+L3 performance testing using iperf between two Ubuntu VM in a 40gig openstack host
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L3 performance testing using iperf between two Ubuntu VM across two 40gig openstack host in the same rack
+    manual untested
+    [Tags]              feature         manual          openstack
+
+L3 performance testing using iperf between two Ubuntu VM across two 40gig openstack host across rack
+    manual untested
+    [Tags]              feature         manual          openstack
+    
+
+
+    
+Upgrade Iron Horse Image to a Iron Horse Plus
+ Official Release image.
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 
@@ -157,50 +213,54 @@ Flap the link between Service Rack Leaf switch and router
 
 
 Flap all the links on nova-controller
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Flap all the links on compute node
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Flap all the links on storage server
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Flap all the links between Leaf and spine switches
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Flap all the links on spine switches (Distribution failure)
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Multiple link flaps at different traffic rates
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
-Leaf Connection to server - move/add/remove link
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+40Gig Leaf Connection to server - move/add/remove link
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
     manual untested
 Connection to Spine - move/add/remove link
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
 service leaf Connection to server - move/add/remove link
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 service leaf Connection to Spine - move/add/remove link
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
 All Spine reboot
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
+    
 Process failure (OFAD) all leaf
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
     manual untested
-Reboot
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+Reboot single 40Gig Leaf Switch 
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
     manual untested
+Reboot both 40Gig Leaf Switch in a rack 
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
+    manual untested    
 Process failure (OFAD) all spine
-    [Tags]  solution  openstack  IronHorse-Plus  manual
-    manual pased
+    [Tags]  solution  openstack  IronHorse-Plus  manual  
+    manual untested
 
 
 OVS - Nova Controller start/stop process
@@ -210,6 +270,7 @@ OVS - Nova Controller start/stop process
 OVS - Compute node start/stop process
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
+    
 OVS - Storage if any process starts
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
@@ -218,20 +279,20 @@ Multiple failure: All servers fail and recover
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 Multiple failure: All Leafs in Service Rack fail
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Multiple failure: All Leafs in Compute Rack fail
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Multiple failure: All Spine switches fail
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Multiple failure: reboot whole P domain
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
 Host reboot
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Nova controller reboot
     [Tags]  solution  openstack  IronHorse-Plus  manual
@@ -240,17 +301,17 @@ Nova compute node reboot
     [Tags]  solution  openstack  IronHorse-Plus  manual
     manual untested
 Storage reboot
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
 Add/Delete new leaf
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Add/delete new spine
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Add/delete new Router
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 add/delete compute nodes
     [Tags]  solution  openstack  IronHorse-Plus  manual
@@ -258,47 +319,45 @@ add/delete compute nodes
 
 
 Flap mgmt. link on nova controller
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 flap mgmt link of compute node
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 flap mgmt link on the compute rack
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 flap mgmt link on the service rack 
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Reboot one of the mgmt switch 
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Reboot second mgmt switch
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Flap one of the controller mgmt connectivity
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 
 Hardware replacement
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Replace a Leaf switch
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Replace a Spine switch
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Scenario of replacing external router (With the same IP and different MAC)
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Replacing server with same host name and IP
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
 Test work flow of VM migration
-    [Tags]  solution  openstack  IronHorse-Plus  manual
+    [Tags]  solution  openstack  IronHorse-Plus  manual  skipped
     manual untested
-
-
 
 
 Add service between Data and App VNS and verify the traffic load balance

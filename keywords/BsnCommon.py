@@ -553,7 +553,7 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -572,7 +572,7 @@ class BsnCommon(object):
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):

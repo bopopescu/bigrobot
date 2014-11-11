@@ -130,15 +130,3 @@ TC29 Verify service insertion using third party guest VM appliances running on E
 TC30 Controller failover and fabric intergrity while running ESXi workloads
  	manual untested
     [Tags]              feature         manual          vmware	
-
-
-
-
-
-
-
-
-
-
-
-

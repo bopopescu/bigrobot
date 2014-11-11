@@ -544,169 +544,41 @@ class  T5Switch(object):
     
     
     def rest_get_switch_interface_stats (self, switch, intf, stat="txstat"):
-        ''' Function to clear the switch interface counter. 
-            input - switch, interface 
-            output - none
-        '''
-        t = test.Test()
-        fabric = T5.T5()
-        c = t.controller('master')
-        dpid = fabric.rest_get_dpid(switch)
+            ''' Function to clear the switch interface counter. 
+                input - switch, interface 
+                output - none
+            '''
+            t = test.Test()
+            fabric = T5.T5()
+            c = t.controller('master')
+            dpid = fabric.rest_get_dpid(switch)
             
-        helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
-        url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+            helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
+            url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
             
-        try:
-            c.rest.get(url)
-            data = c.rest.content()
-            helpers.log("The output data is %s" % data[0])
-            intf1 = data[0]["interface"][0]["name"]
-            txstat1 = data[0]["interface"][0]["counter"]["tx-unicast-packet"]
-            rxstat1 = data[0]["interface"][0]["counter"]["rx-unicast-packet"]
-            helpers.log("The output intf %s, tx %d , rx %d" % (intf1, txstat1, rxstat1))
-            helpers.log("The return asked is %s" % stat)
-            if ("txstat" in stat):
-                return  txstat1
-            if ("rxstat" in stat):
-                return  rxstat1
-            else:
-                helpers.log("Could not get either txstat or rxstat.\n")
-                return  False
+            try:
+                c.rest.get(url)
+                data = c.rest.content()
+                helpers.log("The output data is %s" % data[0])
+                intf1 = data[0]["interface"][0]["name"]
+                txstat1 = data[0]["interface"][0]["counter"]["tx-unicast-packet"]
+                rxstat1 = data[0]["interface"][0]["counter"]["rx-unicast-packet"]
+                helpers.log("The output intf %s, tx %d , rx %d" % (intf1, txstat1, rxstat1))
+                helpers.log("The return asked is %s" % stat)
+                if ("txstat" in stat):
+                    return  txstat1
+                if ("rxstat" in stat):
+                    return  rxstat1
+                else:
+                    helpers.log("Could not get either txstat or rxstat.\n")
+                    return  False
             
-        except:
-            helpers.log("Could not get the rest output.see log for errors\n")
-            return  False    
+            except:
+                helpers.log("Could not get the rest output.see log for errors\n")
+                return  False    
         
-    def cli_t5_switch_add_dhcp_ip(self, node):
-        '''
-        Objective:
-        - Configure static IP address configuration on switch.
-
-        Inputs:
-        | console_ip | IP Address of Console Server |
-        | console_port | Console Port Number |
-        | ip_address | IP Address of Switch |
-        | subnet | Switch subnet in /18 /24 format |
-        | gateway | IP address of default gateway |
-
-        Return Value:
-        - True on configuration success
-        - False on configuration failure
-        '''
-        try:
-            t = test.Test()
-            user = "admin"
-            password = "adminadmin"
-            tn = t.dev_console(node)
-            tn.read_until("login: ", 3)
-            tn.write(user + "\r\n")
-            tn.read_until("Password: ", 3)
-            tn.write(password + "\r\n")
-            tn.read_until('')
-            tn.write("enable \r\n")
-            tn.write("conf t \r\n")
-            tn.write("interface ma1 ip-address dhcp \r\n")
-            helpers.sleep(10)
-            tn.read_until(">")
-            tn.write("exit \r\n")
-            tn.write("exit \r\n")
-            tn.close()
-            return True
-        except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
-            return False
-
-    def cli_t5_switch_delete_dhcp_ip(self, node):
-        '''
-        Objective:
-         - Delete DHCP IP address configuration on switch.
-
-        Inputs:
-        | console_ip | IP Address of Console Server |
-        | console_port | Console Port Number |
-        | ip_address | IP Address of Switch |
-        | subnet | Switch subnet in /18 /24 format |
-        | gateway | IP address of default gateway |
-
-        Return Value:
-        - True on configuration success
-        - False on configuration failure
-        '''
-        try:
-            t = test.Test()
-            user = "admin"
-            password = "adminadmin"
-            tn = t.dev_console(node)
-            tn.read_until("login: ", 3)
-            tn.write(user + "\r\n")
-            tn.read_until("Password: ", 3)
-            tn.write(password + "\r\n")
-            tn.read_until('')
-            tn.write("\r\n" + "no interface ma1 ip-address dhcp \r\n")
-            tn.write("exit" + "\r\n")
-            tn.write("exit" + "\r\n")
-            tn.close()
-            return True
-        except:
-            helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
-            return False
-
-           
-    def cli_t5_switch_verify_password_change(self, node, user, current_password, version_string):
-        '''
-            Objective: Return version of switch software
-
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-
-            Return Value:
-            - Output on configuration success
-            - False on configuration failure
-        '''
-        t = test.Test()
-        tn = t.dev_console(node)
-        tn.close()
-#        if version_string in  output:
-#            return True
-#        else:
-        t.cli_t5_switch_change_user_password(node, user, current_password, "adminadmin")
-        return False
-
-    def cli_t5_switch_change_user_password(self, node, user, current_password, new_password):
-        '''
-            Objective: Change the username and password for a given user
-
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | username | Username for which password has to be changed |
-            | current_password | Current Password |
-            | new_password | Desired password |
-
-            Return Value:
-            - True on configuration success
-            - False on configuration failure
-        '''
-        try:
-            t = test.Test()
-            tn = t.dev_console(node)
-            helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
-            tn.read_until("login:", 10)
-            tn.write(str(user) + "\r\n")
-            tn.read_until("Password: ", 10)
-            tn.write(str(current_password) + "\r\n")
-            tn.read_until('')
-            tn.write("\r\n" + "enable \r\n")
-            tn.write("\r\n" + "configure \r\n")
-            tn.write("\r\n" + "username " + str(user) + " password " + str(new_password) + "\r\n")
-            tn.write("exit" + "\r\n")
-            tn.write("logout" + "\r\n")
-            tn.close()
-            return True
-        except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
-            return False
-
-    def verify_port_hashing_stats (self, totalcntr, numlinks=2, switch=None, intfList= [], tolerance=1000):
+             
+    def verify_port_hashing_stats (self, switch=None, intfList= [], numlinks=2, tolerance=1000, totalcntr):
             ''' Function to verify that the port counters are distributed through the links. 
                 input - totalcntr ( total number of packets), numlinks ( number of links) 
                 output - none
