@@ -1,12 +1,34 @@
+* Setting 
+Library  keywords/BsnCommon.py
+
 * Variables
-${spine0_dpid}	 00:00:70:72:cf:a3:c4:e0
-${spine1_dpid}	 00:00:70:72:cf:bd:45:6a
-${leaf0a_dpid}	 00:00:70:72:cf:b7:6e:84
-${leaf0b_dpid}	 00:00:70:72:cf:b5:eb:66
-${leaf1a_dpid}	 00:00:70:72:cf:b7:6c:c8
-${leaf1b_dpid}	 00:00:70:72:cf:b6:00:36
-${leaf2a_dpid}	 00:00:70:72:cf:bd:da:b6
-${leaf2b_dpid}	 00:00:70:72:cf:b5:ef:bc
+${spine0_dpid}=	 
+${spine1_dpid}=	 
+${leaf0a_dpid}=	 
+${leaf0b_dpid}=	 
+${leaf1a_dpid}=	
+${leaf1b_dpid}=	 
+${leaf2a_dpid}=	 
+${leaf2b_dpid}=	 
+*Keywords
+Set switch dpid variables
+	${spine0_dpid}=	 get_switch_mac_topo  s7
+	Set Suite Variable    ${spine0_dpid}
+	${spine1_dpid}=	 get_switch_mac_topo  s8
+	Set Suite Variable    ${spine1_dpid}
+	${leaf0a_dpid}=	 get_switch_mac_topo  s1
+	Set Suite Variable    ${leaf0a_dpid}
+	${leaf0b_dpid}=	 get_switch_mac_topo  s2
+	Set Suite Variable    ${leaf0b_dpid}
+	${leaf1a_dpid}=	 get_switch_mac_topo  s3
+	Set Suite Variable    ${leaf1a_dpid}
+	${leaf1b_dpid}=	 get_switch_mac_topo  s4
+	Set Suite Variable    ${leaf1b_dpid}
+	${leaf2a_dpid}=	 get_switch_mac_topo  s5
+	Set Suite Variable    ${leaf2a_dpid}
+	${leaf2b_dpid}=	 get_switch_mac_topo  s6
+	Set Suite Variable    ${leaf2b_dpid}
+*Variables
 ${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39
 ${leaf0a_spine1_intf0}	ethernet52

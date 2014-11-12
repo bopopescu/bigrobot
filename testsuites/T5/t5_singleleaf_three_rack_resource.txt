@@ -16,6 +16,7 @@ add fabric switch
   rest add switch  leaf2
   rest add dpid  leaf2  00:00:70:72:cf:b6:01:f2
   rest add fabric role  leaf2  leaf
+  BuiltIn.Sleep  155
   
 delete fabric switch  
   rest delete fabric switch  spine0 

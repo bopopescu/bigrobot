@@ -13,7 +13,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/T5.py
 Library  keywords/Mininet.py
 Resource  testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
-Resource  testsuites/T5/t5_physical_variables.txt
+#Resource  testsuites/T5/t5_physical_variables.txt
 
 
 * Test Case   
@@ -28,12 +28,14 @@ add Three Rack Dual Leaf Topology
 Verify the Fabric feature Role Spine0
 	[Tags]  Fabric  feature  IronHorse
    sleep  125
+   ${spine0_dpid}=  get_switch_mac_topo  s7
    verify fabric switch role  ${spine0_dpid}  spine  
 
 delete/add the Fabric role spine0
 	[Tags]  Fabric  feature  IronHorse 
   REST delete fabric role  spine0
   sleep  125
+  ${spine0_dpid}=  get_switch_mac_topo  s7
   verify fabric switch role  ${spine0_dpid}  undefined
   rest verify fabric link
   REST add fabric role  spine0  spine   
@@ -46,6 +48,7 @@ delete/add Fabric role leaf in dual leaf setup
    rest delete leaf group  leaf0-a  
    REST delete fabric role  leaf0-a  
    sleep  125 
+   ${leaf0a_dpid}=  get_switch_mac_topo  s1
    verify fabric switch role  ${leaf0a_dpid}  undefined
    rest verify fabric link   
    REST add fabric role  leaf0-a  leaf
