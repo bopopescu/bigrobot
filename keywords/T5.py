@@ -2790,18 +2790,6 @@ class T5(object):
             helpers.test_failure("No Matched queue counters found")
             return False
 
-    def get_queue_with_traffic(self, node, port, threshold):
-        '''
-        '''
-        helpers.test_log("Entering ==> get_queue_with_traffic:  node - %s  port - %s  threshold - %d" % (node, port, int(threshold)))
-        info = self.cli_get_qos_port_stat(node, port)
-        traffic_queue = []
-        for queue in info:
-            helpers.test_log("INFO:  queue  - %s  outPkts - %s   " % (queue, info[queue]['outPkts']))
-            if int(info[queue]['outPkts']) >= int(threshold):
-                traffic_queue.append(queue)
-        return traffic_queue
-
     def cli_get_links_nodes_list(self, node1, node2):
         '''
         '''
