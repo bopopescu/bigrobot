@@ -4,6 +4,9 @@
 controller_user: admin
 controller_password: adminadmin
 
+controller_recovery_user: recovery
+controller_recovery_password: recovery
+
 switch_user: admin
 switch_password: adminadmin
 
