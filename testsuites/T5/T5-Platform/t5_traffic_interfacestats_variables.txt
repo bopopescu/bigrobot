@@ -36,8 +36,8 @@ ${ratetolerance}=   20
 ${countertolerance}=  100
 
 ${numlinks}=  2
-${leaf0a_spine0_intf1}=   ethernet52
-${spine0_leaf0a_intf1}=   ethernet15
+${leaf0a_spine0_intf1}=   ethernet50
+${spine0_leaf0a_intf1}=   ethernet21
 ${leaf1a_spine0_intf1}=   ethernet49
 ${spine0_leaf1a_intf1}=   ethernet27
 
