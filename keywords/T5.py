@@ -2823,15 +2823,6 @@ class T5(object):
         helpers.log("***Exiting with info: %s  \n" % info)
         return info
 
-
-    def cli_qos_clear_stat(self, node, port='0'):
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_clear_stat ' + port + '"'
-        s.enable(string)
-
-        return True
-
     def get_queue_with_traffic(self, node, port, threshold):
         '''
         '''
