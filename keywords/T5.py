@@ -2790,39 +2790,6 @@ class T5(object):
             helpers.test_failure("No Matched queue counters found")
             return False
 
-
-
-    def cli_get_qos_port_stat(self, node, port='0'):
-        '''
-        get the packet
-        BCM_port, Q_type, Q_ID, GID, OutPkts, OutBytes, DroppedPkts, DroppedBytes, SharedCNT, MinCNTof_port=0
-
-        '''
-
-        t = test.Test()
-        s = t.switch(node)
-        string = 'debug ofad "qos_port_stat ' + port + '"'
-        content = s.enable(string)['content']
-        info = {}
-        temp = helpers.strip_cli_output(content, to_list=True)
-        helpers.log("***temp is: %s  \n" % temp)
-
-        for line in temp:
-#            helpers.log("***line is: %s  \n" % line)
-            line = line.lstrip()
-            match = re.match(r'\d+, ([A-Z]+), (\d+), \d+, op:(\d+),', line)
-            if match:
-#                helpers.log("INFO: queue type is: %s, number is: %s, outPkts is: %s" %
-#                    (match.group(1), match.group(2), match.group(3)))
-                ID = match.group(1) + '_' + match.group(2)
-                if match.group(3) == 0:
-                    continue
-                info[ID] = {}
-                info[ID]['outPkts'] = match.group(3)
-
-        helpers.log("***Exiting with info: %s  \n" % info)
-        return info
-
     def get_queue_with_traffic(self, node, port, threshold):
         '''
         '''
