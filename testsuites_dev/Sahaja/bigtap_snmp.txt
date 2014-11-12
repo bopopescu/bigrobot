@@ -2,8 +2,8 @@
 Documentation  BigTap SNMP Test Suite Release:Blackbird Feature:SNMP
 Suite Setup  snmp suite setup
 Suite Teardown   snmp suite teardown
-Test Setup   base test setup
-Test Teardown   base test teardown
+Test Setup   snmp test setup
+Test Teardown   snmp test teardown
 Force Tags   BigTap  SNMP
 Library  keywords/BsnCommon.py
 Library  keywords_dev/Sahaja/BigTapUtilities.py
@@ -15,328 +15,328 @@ ${version_string}  Big Tap Controller 4.1.0
     
 * Test Case
 TC1: Configure and Verify Configuration  
-    start syslog monitor
+    
     verify config
-    stop syslog monitor
+    
     [Tags]  verify  
 
 TC2: Verify SNMP OID sysContact on Master  
-    start syslog monitor
+    
     ${snmp_key}=  snmp get  master  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    stop syslog monitor
+    
     [Tags]  sysContact  master  
 
 TC3: Verify SNMP OID sysContact on Slave 
-    start syslog monitor 
+     
     ${snmp_key}=  snmp get  slave  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    stop syslog monitor
+    
     [Tags]  sysContact  slave
     
 TC4: Verify SNMP OID sysLocation on Master
-    start syslog monitor   
+       
     ${snmp_key}=  snmp get  master  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    stop syslog monitor
+    
     [Tags]  sysLocation  master  
     
 TC5: Verify SNMP OID sysLocation on Slave 
-    start syslog monitor 
+     
     ${snmp_key}=  snmp get  slave  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    stop syslog monitor
+    
     [Tags]  sysLocation  slave  
     
 TC6: Verify SNMP OID sysDescr on Master  
-    start syslog monitor
+    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}    
-    stop syslog monitor
+    
     [Tags]  sysDescr  master
     
 TC7: Verify SNMP OID sysDescr on Slave
-    start syslog monitor  
+      
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string} 
-    stop syslog monitor   
+       
     [Tags]  sysDescr  slave  
       
 TC8: Verify SNMP OID ifDescr on Master  
-    start syslog monitor
+    
     ${snmp_key}=  snmp get  master  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  ifDescr  master
       
 TC9: Verify SNMP OID ifDescr on Slave
-	start syslog monitor  
+	  
     ${snmp_key}=  snmp get  slave  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  ifDescr  slave    
    
 TC10: Verify SNMP OID ifType on Master 
-	start syslog monitor 
+	 
     ${snmp_key}=  snmp get  master  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    stop syslog monitor
+    
     [Tags]  ifType  master
    
 TC11: Verify SNMP OID ifType on Slave  
-	start syslog monitor
+	
     ${snmp_key}=  snmp get  slave  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    stop syslog monitor
+    
     [Tags]  ifType  master    
 
 TC12: Verify SNMP OID ifOperStatus on Master 
-	start syslog monitor 
+	 
     ${snmp_key}=  snmp get  master  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    stop syslog monitor
+    
     [Tags]  ifOperStatus  master  
 
 TC13: Verify SNMP OID ifOperStatus on Slave 
-	start syslog monitor 
+	 
     ${snmp_key}=  snmp get  slave  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    stop syslog monitor
+    
     [Tags]  ifOperStatus  slave  
     
 TC14: Verify SNMP OID ifAdminStatus on Master  
-	start syslog monitor 
+	 
     ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up 
-    stop syslog monitor    
+        
     [Tags]  ifAdminStatus  master 
     
 TC15: Verify SNMP OID ifAdminStatus on Slave 
-	start syslog monitor 
+	 
     ${snmp_key}=  snmp get  slave  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up  
-    stop syslog monitor   
+       
     [Tags]  ifAdminStatus  slave     
 
 TC16: Verify snmpgetnext works as expected on Master
-	start syslog monitor
+	
     ${snmp_key}=  snmp getnext  master  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpgetnext  master
      
 TC17: Verify snmpgetnext works as expected on Slave
-	start syslog monitor
+	
     ${snmp_key}=  snmp getnext  slave  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpgetnext  slave           
     
 TC18: Verify snmpbulkget works as expected on Master
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpbulkget  master
 
 TC19: Verify snmpbulkget works as expected on Slave
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  slave  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpbulkget  slave     
 
 TC20: Verify snmpbulkwalk works as expected on Master
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpbulkwalk  master   
 
 TC21: Verify snmpbulkwalk works as expected on Slave
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  slave  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    stop syslog monitor
+    
     [Tags]  snmpbulkwalk  slave  
 
 TC22: Restart process SNMP on Master controller and verify snmpget
-	start syslog monitor
+	
     restart process on controller  snmpd  master
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    stop syslog monitor
+    
     [Tags]  restart  
  
 TC23: Restart process SNMP on Slave controller and verify snmpget
-	start syslog monitor
+	
     restart process on controller  snmpd  slave
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string} 
-    stop syslog monitor 
+     
     [Tags]  restart 
     
 TC24: Change community from public to bigswitch and verify snmp walk
-	start syslog monitor
+	
     rest add snmp keyword  community  bigswitch
     ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}
     rest add snmp keyword  community  public      
     sleep  5 
-    stop syslog monitor
+    
     [Tags]  bigtap  snmp  
 
 TC25: HW Appliance: Verify cpuload (UCD-SNMP-MIB::laLoadInt.1)
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  laLoadInt.1
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 180  0  1
     Should be equal as integers  ${snmp_value}  ${0} 
-    stop syslog monitor            
+                
     [Tags]  hw  snmp
  
 TC26: HW Appliance: Verify Total Free Memory (UCD-SNMP-MIB::memTotalFree.0)
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  memTotalFree.0
     ${snmp_keyvalue}=  Split String From Right  ${snmp_key}
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue[3]}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 50000  0  1
     Should be equal as integers  ${snmp_value}  ${0}  
-    stop syslog monitor           
+               
     [Tags]  hw  snmp
 
  
 TC27: HW Appliance: Verify CPU Temperature
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.1001
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 90  0  1
     Should be equal as integers  ${snmp_value}  ${0}  
-    stop syslog monitor           
+               
     [Tags]  hw  snmp
  
 TC28: HW Appliance: Verify Ambient Temperature
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.2001
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 47  0  1
     Should be equal as integers  ${snmp_value}  ${0}
-    stop syslog monitor        
+            
     [Tags]  hw  snmp
  
 TC29: HW Appliance: Verify Power Supply 
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.3001
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 462  0  1
     Should be equal as integers  ${snmp_value}  ${0} 
-    stop syslog monitor          
+              
     [Tags]  hw  snmp  jira-BSC-6090
  
 TC30: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4011
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}
-    stop syslog monitor           
+               
     [Tags]  hw  snmp        
  
 TC31: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4012
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}    
-    stop syslog monitor       
+           
     [Tags]  hw  snmp    
  
 TC32: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4021
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}    
-    stop syslog monitor       
+           
     [Tags]  hw  snmp    
  
 TC33: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4022
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}   
-    stop syslog monitor        
+            
     [Tags]  hw  snmp    
  
 TC34: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4031
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}  
-    stop syslog monitor         
+             
     [Tags]  hw  snmp    
  
 TC35: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4032
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}    
-    stop syslog monitor       
+           
     [Tags]  hw  snmp    
  
 TC36: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4041
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0} 
-    stop syslog monitor          
+              
     [Tags]  hw  snmp    
  
 TC37: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4042
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}
-    stop syslog monitor           
+               
     [Tags]  hw  snmp    
  
 TC38: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4051
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}   
-    stop syslog monitor        
+            
     [Tags]  hw  snmp    
  
 TC39: HW Appliance: Verify Fan Speed
-	start syslog monitor
+	
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4052
     ${snmp_keyvalue}=  Fetch from right  ${snmp_key}  :
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}   
-    stop syslog monitor        
+            
     [Tags]  hw  snmp            
     
                             
@@ -352,6 +352,13 @@ snmp suite setup
     rest add firewall rule  protocol=udp  proto_port=161
     rest add firewall rule  protocol=udp  proto_port=162    
     Sleep  10        
+
+snmp test setup
+	start syslog monitor
+
+snmp test teardown
+	stop syslog monitor
+
 
 verify config
     ${snmp_output}=  rest show snmp
