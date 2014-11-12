@@ -71,6 +71,7 @@ restart ofad to verify the fabric link
 	rest verify fabric link common  13
 	BuiltIn.Sleep  45
 	rest verify fabric link common
+	reconnect_switch_ips  s3
 	bash execute command  leaf1-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  12
