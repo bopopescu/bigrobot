@@ -541,9 +541,8 @@ class  T5Switch(object):
         except:
             helpers.test_failure("Could not execute command in thermal env. Please check log for errors")
             return False   
-    
-    
-    def rest_get_switch_interface_stats (self, switch, intf, stat="txstat"):
+
+    def rest_get_switch_interface_stats(self, switch, intf, stat="txstat"):
             ''' Function to clear the switch interface counter. 
                 input - switch, interface 
                 output - none
@@ -576,9 +575,8 @@ class  T5Switch(object):
             except:
                 helpers.log("Could not get the rest output.see log for errors\n")
                 return  False    
-        
              
-    def verify_port_hashing_stats (self, switch=None, intfList= [], numlinks=2, tolerance=1000, totalcntr):
+    def verify_port_hashing_stats (self, switch=None, intfList= [], numlinks=2, tolerance=1000, totalcntr=0):
             ''' Function to verify that the port counters are distributed through the links. 
                 input - totalcntr ( total number of packets), numlinks ( number of links) 
                 output - none
