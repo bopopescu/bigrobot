@@ -383,6 +383,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     rest add fabric role  leaf2-a  leaf
     rest add leaf group  leaf2-a  rack2
     BuiltIn.Sleep  200
+    reconnect switch ips
     cli add controller  leaf2-a  c1
     cli add controller  leaf2-a  c2
     BuiltIn.Sleep  200
@@ -432,6 +433,7 @@ T5 test setup
 	base test setup
 	add fabric switch
 	BuiltIn.Sleep  55
+	Set switch dpid variables
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
