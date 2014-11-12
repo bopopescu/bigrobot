@@ -3,22 +3,14 @@ Documentation     T5  Traffic L2 Porthashing Test suite- Iron Horse
 Suite Setup       T5 traffic port hashing test setup
 Suite Teardown    T5 traffic port hashing test teardown
 Test Teardown     traffic teardown
-#Force Tags        T5  IronHorse
-...             
-...            
-...                        
+Resource        testsuites/T5/T5-Platform/t5_traffic_L2porthashing_variables.txt
 Library         keywords/BsnCommon.py
 Library         keywords/SwitchLight.py
-Library         keywords/AppController.py
+#Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Switch.py
-#Library        keywords_dev/kranti/ironhorse/T5SwitchTraffic.py       
-Library         String
-Resource        testsuites/T5/T5-Platform/t5_traffic_L2porthashing_variables.txt
-#Resource        testsuites_dev/kranti/ironhorse/t5_traffic_interfacestats_variables.txt
-
 
 *Test Case 
 
