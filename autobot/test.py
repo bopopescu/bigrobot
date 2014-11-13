@@ -4,8 +4,6 @@ import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
 import autobot.utils as br_utils
 import re
-import telnetlib
-import time
 import uuid
 
 
