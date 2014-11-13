@@ -188,67 +188,23 @@ class BsnCommon(object):
     def bcf_controller_postmortem(self, node, server, server_devconf,
                                   user, password, dest_path, test_descr=None):
         """
-        Executes the equivalence of
-        https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
-        Save the show commands and logs (e.g., /var/log/floodlight/*) to the
-        archiver.
+            Generates Support Bundle and SCPs out to File server
         """
         helpers.log("Collecting postmortem information for BCF controller '%s'"
                     % node)
-        output_dir = helpers.bigrobot_log_path_exec_instance()
-        # show_cmd_file is the log file on the BigRobot terminal (where
-        # test suite is running)
-        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
-                         '/show_cmd_out.txt')
-        d = os.path.dirname(show_cmd_file)
-        if not os.path.exists(d):
-            os.makedirs(d)
-        fh = open(show_cmd_file, 'w')
 
-        cmdlist = [
-                   'debug cli',
-                   'show running-config details',
-                   'show controller',
-                   'show controller details',
-                   'show switch all details',
-                   'show switch all interface',
-                   'show switch all interface properties',
-                   'show lag',
-                   'show link',
-                   'show port-group',
-                   'show fabric warning',
-                   'show fabric error',
-                   'show tenant',
-                   'show segment',
-                   'show endpoint',
-                   'show attachment-points',
-                   'show logical-router',
-                   'show logical-router interface segment',
-                   'show logical-router interface tenant',
-                   'show port group',
-                   'show forwarding',
-                   'show forwarding internal',
-                   'show vft',
-                   'show debug events',
-                   'show debug counters all',
-                   'no debug cli'
-#                   'show debug events details', Disabling due to BSC-5570
-                   ]
-        for cmd in cmdlist:
-            content = self.config(node, cmd)['content']
-            fh.write(content)
-            fh.write('\n')
-        helpers.log("Successfully run all debug commands. Saved to %s."
-                    % show_cmd_file)
-        fh.close()
-
-        helpers.scp_put(server, show_cmd_file, dest_path, user, password)
-
+        import keywords.T5Support as T5Support
+        support = T5Support.T5Support()
+        helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
+        support.delete_support_bundles()
+        result = support.generate_support(node)
+        helpers.log("Support File : %s" % str(result))
+        support_file = support.get_support_bundle_fs_path(node)
         Host().bash_scp(node,
-                        source='/var/log/floodlight/*',
+                        source=support_file,
                         dest='%s@%s:%s' % (user, server, dest_path),
                         password=password, timeout=60)
-        helpers.log("Successfully copied all debug logs on '%s' to '%s:%s'"
+        helpers.log("Successfully copied Support Files '%s' to '%s:%s'"
                     % (node, server, dest_path))
 
         # Make sure that all log files are readable. Also compress them to
@@ -1998,7 +1954,11 @@ class BsnCommon(object):
         Return the Mac secified in Topo file against give switch node
         '''
         t = test.Test()
-        return '00:00:' + t.params(node, 'mac')
+        if node in t.params():
+            return '00:00:' + t.params(node, 'mac')
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
 
     def get_next_mac(self, *args, **kwargs):
         """
@@ -2100,13 +2060,16 @@ class BsnCommon(object):
     def bigrobot_test_ztn(self, new_value=False):
         return helpers.bigrobot_test_ztn(new_value)
 
-    def reconnect_switch_ips(self):
+    def reconnect_switch_ips(self, node=None):
         """
         Reconnects the Switches IP by getting them from consoles
         """
         t = test.Test()
         helpers.bigrobot_no_auto_reload("True")
-        params = t.topology_params_nodes()
-        for key in params:
-            t.setup_ztn_phase2(key)
+        if node is None:
+            params = t.topology_params_nodes()
+            for key in params:
+                t.setup_ztn_phase2(key)
+        else:
+            t.setup_ztn_phase2(node)
         return True

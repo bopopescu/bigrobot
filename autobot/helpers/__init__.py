@@ -614,7 +614,7 @@ def bigrobot_test_teardown(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
 
 
-def bigrobot_test_postmortem(new_val=None, default='True'):
+def bigrobot_test_postmortem(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'False' to bypass Test case postmortem.
@@ -885,8 +885,8 @@ def _bigrobot_config_load(config_file):
     return config_dict
 
 
-def bigrobot_config_bsn():
-    return _bigrobot_config_load('/bsn.yaml')
+def bigrobot_config_common():
+    return _bigrobot_config_load('/common.yaml')
 
 
 def bigrobot_config_test_catalog():
@@ -1656,7 +1656,7 @@ def _createSSHClient(server, user, password, port=22):
 
 
 def scp_put(server, local_file, remote_path,
-            user='admin', password='adminadmin', recursive=True):
+            user=None, password=None, recursive=True):
     """
     Example:
         helpers.scp_put(c.ip(),
@@ -1664,6 +1664,12 @@ def scp_put(server, local_file, remote_path,
                         remote_path='/tmp/12345/1234')
     Limitations: Does not support wildcards.
     """
+
+    if not user:
+        error_exit("Need to specify user name")
+    if not password:
+        error_exit("Need to specify user password")
+
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
@@ -1685,6 +1691,11 @@ def scp_get(server, remote_file, local_path,
 
     Limitations: Does not support wildcards.
     """
+    if not user:
+        error_exit("Need to specify user name")
+    if not password:
+        error_exit("Need to specify user password")
+
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
