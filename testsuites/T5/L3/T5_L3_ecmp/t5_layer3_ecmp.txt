@@ -83,14 +83,6 @@ Add and delete more specific route for L3 inter tenant traffic to external host
 Add and delete config changes
     Add and delete config changes
     [Tags]                       smoke                          sanity              run30
-    
-Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
-    Controller HA failover with L3 intra tenant across rack tagged with dhcp-relay
-    [Tags]                                                 sanity              run100
-    
-Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
-    Controller HA failover with L3 inter tenant across rack tagged with dhcp-relay
-    [Tags]                                                 sanity              run101
 
 Verify ecmp forwarding after controller upgrade     
     manual passed
@@ -969,9 +961,9 @@ Add and delete all members in nexthop group
 
 L3 inter tenant add nexthop member to 16 nexthop group
     REST add interface to vns                       X                               X1                      leaf0-a         ethernet33          -1
-    REST add static routes                          system                          10.99.255.0/24          {"tenant": "External"}
+    REST add static routes                          system                          10.99.255.0/24          {"tenant": "External"}              
     sleep                                           5
-    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0               leaf0-a
     Should Not Be Empty                             ${result}
     ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
@@ -1159,7 +1151,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.5.1
     Should Not Be True                              ${result}
     sleep                                           1
-    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0               leaf0-a
     Should Not Be Empty                             ${result}
     ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
@@ -1169,7 +1161,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     REST delete nexthopGroup ip                     External                                ecmp-A16                                10.99.28.1
     REST delete nexthopGroup ip                     External                                ecmp-A16                                10.98.28.1
     sleep                                           1
-    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0               leaf0-a
     Should Not Be Empty                             ${result}
     ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
@@ -1378,7 +1370,7 @@ L3 inter tenant add nexthop member to 16 nexthop group
     ${result} =                                     REST add nexthopGroup ip                External                                ecmp-A16                    10.99.5.1
     Should Be True                                  ${result}
     sleep                                           5
-    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0
+    ${result} =                                     REST get l3 cidr route info             10.99.255.0             255.255.255.0               leaf0-a
     Should Not Be Empty                             ${result}
     ${ecmpIndex} =                                  Set Variable                            ${result['ecmp-index']}
     Should Not Be True                              ${ecmpIndex} == 0
