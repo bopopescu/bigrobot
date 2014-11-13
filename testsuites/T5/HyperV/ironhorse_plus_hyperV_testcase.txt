@@ -78,25 +78,36 @@ TC018 Configure NVGRE gateway service for VM ?
     manual untested
     [Tags]              feature         manual          hyperV
 
-
-
-TC020 Restart ofad on a single leaf switch
+TC019 Configure 40gig nic teaming on hyperV host
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC021 Restart ofad on both leaf switch
+TC020 Flap single 40gig interface on hyperV host
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC022 Restart ofad on both spine switch
+
+TC030 Restart ofad on a single leaf switch
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC023 Flap all members in a lacp portgroup
+TC031 Restart ofad on both leaf switch
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC024 Flap leaf to spine port
+TC032 Restart ofad on both spine switch
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC033 Flap all members in a lacp portgroup
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC034 Flap leaf to spine port
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC035 Restart ofad on 40gig leaf switch
     manual untested
     [Tags]              feature         manual          hyperV
 
