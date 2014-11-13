@@ -1063,14 +1063,14 @@ class BigTapCommon(object):
         except:
             return False
         show_version_url = "/rest/v1/system/version"
-        vf = open("ver.txt", "wb")
+        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
         c.rest.get(show_version_url)
         ver_data = c.rest.content()
         helpers.test_log("Version string got is: %s" % (ver_data))
         if ver_data:
             ver = re.search('(.+?)\(.+\)', ver_data[0]["controller"])
             if ver:
-                vf.write("export version=%s" % (ver.group(1)))
+                vf.write("export version=%s build = %s" % (ver.group(1), ver.group(2)))
             else:
                 helpers.test_failure("Did not match the version format, got %s" % (ver))
                 return False

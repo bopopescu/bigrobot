@@ -354,6 +354,7 @@ snmp suite setup
     Sleep  10        
 
 snmp test setup
+	write version to file
 	start syslog monitor
 
 snmp test teardown
