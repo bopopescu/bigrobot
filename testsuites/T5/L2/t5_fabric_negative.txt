@@ -65,12 +65,13 @@ verify static endpoints with port-group
 restart ofad to verify the fabric link
 	[Tags]  L2  IronHorse
 	rest verify fabric link common
-	reconnect_switch_ips
+	reconnect_switch_ips  s5
 	bash execute command  leaf2-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  13
 	BuiltIn.Sleep  45
 	rest verify fabric link common
+	reconnect_switch_ips  s3
 	bash execute command  leaf1-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  12
@@ -367,7 +368,7 @@ verifying flow reconsilation when new switch is connected to the fabric
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
     BuiltIn.Sleep  3
-	reconnect switch ips
+	reconnect switch ips  s5
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
@@ -383,7 +384,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     rest add fabric role  leaf2-a  leaf
     rest add leaf group  leaf2-a  rack2
     BuiltIn.Sleep  200
-    reconnect switch ips
+    reconnect switch ips  s5
     cli add controller  leaf2-a  c1
     cli add controller  leaf2-a  c2
     BuiltIn.Sleep  200

@@ -614,7 +614,7 @@ def bigrobot_test_teardown(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
 
 
-def bigrobot_test_postmortem(new_val=None, default='True'):
+def bigrobot_test_postmortem(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'False' to bypass Test case postmortem.
