@@ -40,8 +40,6 @@ TC1:Verify no errors are reported in CLI/Syslog while enabling offset based matc
     Should be true   ${return_value}       
     [Tags]  feature
 
-#02_Verify CLI command "BigTap offset-match ?" does not contain any erroneous strings
-
 TC2:With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
 	${verify_policy1}=  rest delete policy  admin-view  ${bigtap_policy_name}
@@ -57,25 +55,12 @@ TC2:With offset matching enabled, verify basic BigTap policy with "match any" co
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  2 
     sleep  5
-    ${ethType}=  rest return switch flow  s1  0  eth-type
+    ${ethType}=  rest return switch flow  s1  0  eth-type  flow_id=${1}
     Should be equal as integers  ${ethType}  34525    
-    ${ipproto}=  rest return switch flow  s1  1  ip-proto
-    Should be equal as integers  ${ipproto}  17 
-    ${dstport}=  rest return switch flow  s1  2  port
-    Should be equal as integers  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s1  4  udf1
-    Should be equal as integers  ${udf}  100
-    sleep  5
-    ${ethType}=  rest return switch flow  s2  0  eth-type
+    sleep  2
+    ${ethType}=  rest return switch flow  s2  0  eth-type  flow_id=${1}
     Should be equal as integers  ${ethType}  34525    
-    ${ipproto}=  rest return switch flow  s2  1  ip-proto
-    Should be equal as integers  ${ipproto}  17 
-    ${dstport}=  rest return switch flow  s2  2  port
-    Should be equal as integers  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s2  4  udf1
-    Should be equal as integers  ${udf}  100
-    sleep  5
-    [Tags]  feature   
+    [Tags]  feature  runthis
 
 TC3:Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
 	   
@@ -554,7 +539,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  20
     Should be true  ${in_range}
     
 verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -562,7 +547,7 @@ verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_fra
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  20
     Should not be true  ${in_range}
 
 offset test teardown

@@ -1,0 +1,136 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+# Determine BigRobot path(s) based on this executable (which resides in
+# the bin/ directory.
+bigrobot_path = os.path.dirname(__file__) + '/..'
+exscript_path = bigrobot_path + '/vendors/exscript/src'
+
+sys.path.insert(0, bigrobot_path)
+sys.path.insert(1, exscript_path)
+
+import autobot.helpers as helpers
+
+
+def get_command_dict():
+    """
+    Extract command names from functions which end with '_command' and place
+    them in a dictionary. E.g.,
+        test_command()
+    """
+    commands = {}
+    for x in globals():
+        if not x.endswith("_command"):
+            continue
+        name, func = x[:-8], globals()[x]
+        commands[name] = func
+    return commands
+
+
+def usage():
+    """
+    Usage information.
+    """
+    print("\nUsage: helpers [command] [options]\n")
+
+    # Print the commands
+    cmd_list = []
+    for cmd, func in sorted(get_command_dict().items()):
+        if cmd.endswith("_hidden"):
+            # Don't display hidden commands
+            continue
+        if func.__doc__:
+            cmd_list.append("  %s - %s" % (cmd, func.__doc__))
+        else:
+            cmd_list.append("  %s" % cmd)
+
+    print("Commands:\n%s" % "\n".join(cmd_list))
+
+
+def create_uuid_command(*args):
+    """Run helpers.create_uuid() - Create a UUID based on the host ID and current time"""
+    print helpers.create_uuid()
+
+
+def ds_command(*args):
+    """Run helpers.ds() - Return the current datestamp (20130926)"""
+    print helpers.ds()
+
+
+def ts_command(*args):
+    """Run helpers.ts() - Return the current timestamp in UTC time (20130926_155749)"""
+    print helpers.ts()
+
+
+def ts_local_command(*args):
+    """Run helpers.ts_local() - Return the current timestamp in local time (20130926_155749)"""
+    print helpers.ts_local()
+
+
+def ts_long_command(*args):
+    """Run helpers.ts_long() - Return the current timestamp in UTC time (2013-09-26T15:57:49.123Z)"""
+    print helpers.ts_long()
+
+
+def ts_long_local_command(*args):
+    """Run helpers.ts_long_local() - Return the current timestamp in local time (2013-09-26T15:57:49.123)"""
+    print helpers.ts_long_local()
+
+
+def ts_logger_command(*args):
+    """Run helpers.ts_logger() - Robot Framework logger format (20140429 15:01:51.039)"""
+    print helpers.ts_logger()
+
+
+def time_now_command(*args):
+    """Run helpers.time_now()"""
+    print helpers.time_now()
+
+
+def week_num_command(*args):
+    """Run helpers.week_num()"""
+    print helpers.week_num()
+
+
+def year_command(*args):
+    """Run helpers.year()"""
+    print helpers.year()
+
+
+def month_command(*args):
+    """Run helpers.month()"""
+    print helpers.month()
+
+
+def day_command(*args):
+    """Run helpers.day()"""
+    print helpers.day()
+
+
+def main(args):
+    """
+    Execute a helpers function and return the output. If no additional
+    argument is specified, print the usage guide.
+    """
+    if not args or args[0] in ['help', '-h', '--help']:
+        usage()
+        sys.exit(1)
+
+    cmd = args[0]
+    cmd_dict = get_command_dict()
+    if cmd not in cmd_dict:
+        hidden_cmd = cmd + "_hidden"
+        if hidden_cmd not in cmd_dict:
+            sys.stderr.write("Unknown command: %s\n" % cmd)
+            sys.exit(1)
+        else:
+            cmd = hidden_cmd
+
+    cmd_dict[cmd](args[1:])
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
+

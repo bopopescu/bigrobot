@@ -39,7 +39,6 @@ TC04 inter tenant L3 tagged traffic with dynamic endpoints across rack
 TC05 Add and delete default route on tenant
     Add and delete default route on tenant router
     [Tags]      feature         testpath
-   
 
 TC06 Add and delete more specific route on tenant over existing static route
     Add and delete more specific route on tenant over existing static route
@@ -106,15 +105,15 @@ TC21 inter tenant dhcp relay in headless mode
     [Tags]          manual          solution            dhcp-relay  
 
 TC22 Verify L3 inter tenant forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 
 
 TC23 Verify inter tenant ecmp forwarding after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature                 
 
 TC24 Verify inter tenant dhcp-relay functionality after controller upgrade
-    manual failed
+    manual passed
     [Tags]          manual          feature    
 
 TC25 Add and delete nexthop group
@@ -180,6 +179,13 @@ TC39 Restart ofad on spine switch
 TC40 Controller HA failover via CLI
     Controller HA failover via CLI
     [Tags]          feature         HA 
+    
+TC41 Traffic forwarding with other tenant mac
+    Traffic forwarding with other tenant mac
+    [Tags]          feature          
+    
+
+    
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
     BASH ifup intf                              h1                              bond0
@@ -270,47 +276,7 @@ L3 inter tenant across rack untagged with dynamic endpoints
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h4                              10.251.0.0/16           10.252.1.1
     
-L3 inter tenant traffic with jumbo frame
-    BASH ifup intf                              h1                              bond0
-    BASH ifup intf                              h2                              bond0
-    BASH ifup intf                              h3                              bond0
-    BASH ifup intf                              h4                              bond0       
-    BASH ifup intf                              h5                              bond0
-    BASH ifup intf                              h6                              bond0           
-    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
-    REST add portgroup to vns                   Y                               Y1                      ${leaf1_pc2}            -1
-    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
-    REST add interface to vns                   Y                               Y1                      ${leaf1_a}              ${ixia3}                -1  
-    BASH add ip address                         h5                              10.251.1.11/24          bond0   
-    BASH add ip address                         h4                              10.252.1.11/24          bond0
-    BASH add route                              h5                              10.252.0.0/16           10.251.1.1
-    BASH add route                              h4                              10.251.0.0/16           10.252.1.1
-    sleep                                       5   
-    BASH ping                                   h5                              10.251.1.1              count=10
-    BASH ping                                   h4                              10.252.1.1              count=10
-    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
-    Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h4                      10.252.1.1
-    Should Be True                              ${value}    
-    ${mac1} =                                   BASH get intf mac               h5                      bond0
-    ${result} =                                 REST show endpoints mac         ${mac1}
-    Should Be True                              ${result}                       
-    ${mac2} =                                   BASH get intf mac               h4                      bond0
-    ${result} =                                 REST show endpoints mac         ${mac2}
-    Should Be True                              ${result}                       
-    REST show endpoints 
-    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0    
-    ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000             frame_size=9216             frame_cnt=100000
-    ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1                       
-    start traffic                               ${stream1}
-    sleep  10
-    stop traffic                                ${stream1}
-    verify results                              transmitted_frames              received_valid_frames       ${stream1}              stream1
-    BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
-    BASH delete route                           h4                              10.251.0.0/16           10.252.1.1
-    
-        
+
 L3 inter tenant same rack tagged with dynamic endpoints
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0
@@ -411,63 +377,7 @@ L3 inter tenant across rack tagged with dynamic endpoints
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
     
 
-Verify inter tenant L3 traffic is getting drop with null next hop
-    BASH ifup intf                              h1                              bond0
-    BASH ifup intf                              h2                              bond0
-    BASH ifup intf                              h3                              bond0
-    BASH ifup intf                              h4                              bond0
-    BASH ifup intf                              h5                              bond0
-    BASH ifup intf                              h6                              bond0   
-    REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
-    REST add portgroup to vns                   Y                               Y1                      ${leaf1_pc1}            1003
-    BASH add tag                                h1                              bond0                   1001
-    BASH add tag                                h3                              bond0                   1003
-    BASH ifup intf                              h1                              bond0.1001
-    BASH ifup intf                              h3                              bond0.1003
-    BASH add ip address                         h1                              10.251.1.11/24          bond0.1001
-    BASH add ip address                         h3                              10.252.1.11/24          bond0.1003
-    BASH add route                              h1                              10.252.0.0/16           10.251.1.1
-    BASH add route                              h3                              10.251.0.0/16           10.252.1.1
-    sleep                                       5   
-    BASH ping                                   h1                              10.252.1.11             count=3
-    ${value} =                                  BASH verify arp                 h1                      10.251.1.1
-    Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.1.1
-    Should Be True                              ${value}        
-    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
-    ${result} =                                 REST show endpoints mac         ${mac1}
-    Should Be True                              ${result}                       
-    ${mac2} =                                   BASH get intf mac               h3                      bond0.1003
-    ${result} =                                 REST show endpoints mac         ${mac2}
-    Should Be True                              ${result}                       
-    REST show endpoints     
-    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0  
-    rest clear testpath   
-    ${returnVal}=  rest configure testpath controller view   src-ip=10.251.1.11  dst-ip=10.252.1.11
-    Should Be True  ${returnVal}           
-    ${returnVal}=  rest configure testpath fabric_view  test-name=Test-NullNextHop  src-ip=10.251.1.11  dst-ip=10.252.1.11
-    Should Be True  ${returnVal}
-    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
-    Should Be True  ${returnVal}
-    REST add static routes                      X                               10.252.0.0/16  
-    REST show l3 cidr table         
-    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 100   
-    ${returnVal}=  rest verify testpath error code  dropped by route  src-ip=10.251.1.11  dst-ip=10.252.1.11
-    Should Be True  ${returnVal}       
-    REST delete static routes                   X                               10.252.0.0/16   
-    REST add static routes                      X                               0.0.0.0/0               {"tenant": "system"}
-    REST show l3 cidr table         
-    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} == 0   
-    # For this test test path is still active. So just probing the previous test
-    ${returnVal}=  rest verify testpath fabric view  Test-NullNextHop  HostPing  leaf  spine  leaf  host=h1  ip=10.252.1.11
-    Should Be True  ${returnVal}
-    BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
-    BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
 
-    
 
 Add and delete default route on tenant router
     BASH ifup intf                              h1                              bond0
@@ -1226,9 +1136,9 @@ initialize host
     sleep                                           1
     BASH run command                                h6                                ifup eth3
     sleep                                           1
-    BASH run command                                h6                                ifup p1p1
+    BASH run command                                h6                                ifup eth2
     sleep                                           1
-    BASH run command                                h6                                ifup p1p2
+    BASH run command                                h6                                ifup eth3
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
@@ -1250,6 +1160,12 @@ initialize host
     BASH stop service                           h1                                isc-dhcp-server
     BASH stop service                           h2                                isc-dhcp-server
     BASH stop service                           h3                                isc-dhcp-server
+    BASH kill process                           h1                              dhclient
+    BASH kill process                           h2                              dhclient
+    BASH kill process                           h3                              dhclient
+    BASH kill process                           h4                              dhclient
+    BASH kill process                           h5                              dhclient
+    BASH kill process                           h6                              dhclient    
 #    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
 #    BASH delete tag                             h2                              bond0.1002              soft_error=${true}
 #    BASH delete tag                             h3                              bond0.1003              soft_error=${true}
@@ -1271,9 +1187,9 @@ initialize host
     # BASH init intf                              h5                              eth1
     # BASH init intf                              h5                              eth2
     # BASH init intf                              h5                              eth3
-    # BASH init intf                              h6                              em2
-    # BASH init intf                              h6                              p1p1
-    # BASH init intf                              h6                              p1p2
+    # BASH init intf                              h6                              eth1
+    # BASH init intf                              h6                              eth2
+    # BASH init intf                              h6                              eth3
     # BASH init intf                              h1                              bond0
     # BASH init intf                              h2                              bond0
     # BASH init intf                              h3                              bond0

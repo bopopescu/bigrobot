@@ -1,0 +1,685 @@
+* Setting
+Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
+Documentation    T5 Test Suite
+Suite Setup      fabric infra suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       IronHorse   T5
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+* Variable
+${short}  1
+${medium}  3
+${long}   10
+${verylong}     120 
+
+
+
+* Test Cases
+
+###### Policy at tenant interface ############
+#---------------------------------------------
+
+T1 With default QoS verify .1p mappings to queues
+	[Tags]  feature  qos
+	reconnect switch ips
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+ 	
+ 	
+T2 With default QoS verify queue weights
+	[Tags]  feature  qos
+	reconnect switch ips
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+
+T3 With QoS enabled verify .1p mappings and queue weights
+	[Tags]  feature  qos
+	reconnect switch ips
+	${result}=  cli enable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  yes
+ 	\   Should be True  ${result}
+
+T4 With QoS disabled verify .1p mappings and queue weights
+	[Tags]  feature  qos
+	reconnect switch ips
+	${result}=  cli disable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  no
+ 	\   Should be True  ${result}
+
+
+T5 With default QoS leaf to leaf traffic with priority 0 traffic
+	[Tags]  feature
+	reconnect switch ips
+	${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  5
+    stop traffic  ${stream_01}
+    ${tx_after}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats
+    ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
+    Should be true  ${in_range}
+    delete traffic
+    
+T6 With default QoS leaf to leaf traffic with priority 2 traffic
+	[Tags]  feature 
+    reconnect switch ips
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_01}
+    sleep  5
+    stop traffic  ${stream_01}
+    ${tx_after}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats
+    ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
+    Should be true  ${in_range}
+    delete traffic
+    
+T7 With default QoS leaf to leaf traffic with priority 4 traffic
+	[Tags]  feature
+    reconnect switch ips
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_01}
+    sleep  5
+    stop traffic  ${stream_01}
+    ${tx_after}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats
+    ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
+    Should be true  ${in_range}
+    delete traffic
+    
+T8 With default QoS leaf to leaf traffic with priority 6 traffic
+	[Tags]  feature 
+	reconnect switch ips
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_01}
+    sleep  5
+    stop traffic  ${stream_01}
+    ${tx_after}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats
+    ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
+    Should be true  ${in_range}
+    delete traffic
+    
+
+T9 With default QoS leaf to leaf/spine traffic with .1p priority 0/2/4/6 and queue mapping traffic
+	[Tags]  feature 
+	reconnect switch ips
+    
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04}
+    ${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_0_1  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_0}
+    Should be true  ${in_range}
+    ${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_2_3  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_2}
+    Should be true  ${in_range}
+    ${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_4_5  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_4}
+    Should be true  ${in_range}
+    ${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_6_7  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_6}
+    Should be true  ${in_range}
+
+    delete traffic
+    
+ 
+ 
+T10 With default QoS leaf to leaf/spine traffic with .1p priority 0/2/4/6 and queue weights traffic
+	[Tags]  feature
+	reconnect switch ips
+    
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    #pause  FREEZEEEEE!
+    #${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value_01}=  verify dict key  ${traffic_summary}  queue_0_1  received_frame_rate
+    #${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value_02}=  verify dict key  ${traffic_summary}  queue_2_3  received_frame_rate
+    #${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value_03}=  verify dict key  ${traffic_summary}  queue_4_5  received_frame_rate
+    #${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value_04}=  verify dict key  ${traffic_summary}  queue_6_7  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_01}  ${rx_value_02}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_04}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_02}
+    Should be true  ${in_range}
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04
+    delete traffic
+    
+ 
+T11 With default QoS leaf to leaf/spine traffic with different frame sizes and with .1p priority 0/2/4/6 and queue weights traffic
+	[Tags]  feature
+	reconnect switch ips
+    
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  line_rate=100  frame_size=128
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  line_rate=100  frame_size=256
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  line_rate=100  frame_size=512
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  line_rate=100  frame_size=1024
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    #pause  FREEZEEEEE!
+    #${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value_01}=  verify dict key  ${traffic_summary}  queue_0_1  received_frame_rate
+    #${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value_02}=  verify dict key  ${traffic_summary}  queue_2_3  received_frame_rate
+    #${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value_03}=  verify dict key  ${traffic_summary}  queue_4_5  received_frame_rate
+    #${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value_04}=  verify dict key  ${traffic_summary}  queue_6_7  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_01}  ${rx_value_02}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_04}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_02}
+    Should be true  ${in_range}
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04
+    delete traffic
+    
+ 
+T12 With default QoS leaf to leaf/spine traffic with different cell sizes and with .1p priority 0/2/4/6 and queue weights traffic
+	[Tags]  feature
+	reconnect switch ips
+    
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  line_rate=100  frame_size=206
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  line_rate=100  frame_size=207
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  line_rate=100  frame_size=208
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  line_rate=100  frame_size=210
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    #pause  FREEZEEEEE!
+    #${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value_01}=  verify dict key  ${traffic_summary}  queue_0_1  received_frame_rate
+    #${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value_02}=  verify dict key  ${traffic_summary}  queue_2_3  received_frame_rate
+    #${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value_03}=  verify dict key  ${traffic_summary}  queue_4_5  received_frame_rate
+    #${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value_04}=  verify dict key  ${traffic_summary}  queue_6_7  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_01}  ${rx_value_02}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_04}
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${rx_value_03}  ${rx_value_02}
+    Should be true  ${in_range}
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04
+    delete traffic
+    
+T13 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and queue mapping traffic
+	[Tags]  feature 
+	reconnect switch ips
+	${result}=  cli enable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  yes
+ 	\   Should be True  ${result}
+
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    #pause   FREEZEE!
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04}
+    ${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_0_1  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_0}
+    Should be true  ${in_range}
+    ${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_2_3  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_2}
+    Should be true  ${in_range}
+    ${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_4_5  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_4}
+    Should be true  ${in_range}
+    ${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value}=  verify dict key  ${traffic_summary}  queue_6_7  received_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_6}
+    Should be true  ${in_range}
+
+    delete traffic
+    
+
+T14 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and queue weights traffic
+	[Tags]  feature  ixia
+	reconnect switch ips
+	${result}=  cli enable qos
+	Should be True  ${result}
+	${switches}=  get_all_switch_nodes  
+ 	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+ 	\   ${result}=  cli get verify priority queue mapping  ${switch}
+ 	\   Should be True  ${result}
+ 	\   ${result}=  cli get verify queue weights  ${switch}  yes
+ 	\   Should be True  ${result}
+
+    ${stream_01}=             L3 add  name=queue_0_1  flow=c->a  src_ip=10.251.1.3  src_gw=10.251.1.1  vlan_id=100  vlan_priority=0  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia3_mac}  dst_mac=${ixia1_mac}
+#    pause   FREEZEE!
+    ${stream_02}=             L3 add  name=queue_2_3  flow=b->a  src_ip=10.251.1.4  src_gw=10.251.1.1  vlan_id=100  vlan_priority=2  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia2_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_03}=             L3 add  name=queue_4_5  flow=d->a  src_ip=10.251.1.5  src_gw=10.251.1.1  vlan_id=100  vlan_priority=4  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    ${stream_04}=             L3 add  name=queue_6_7  flow=f->a  src_ip=10.251.1.6  src_gw=10.251.1.1  vlan_id=100  vlan_priority=6  line_rate=100  frame_size=1500
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia7_mac}  dst_mac=${ixia1_mac}  src_mac_new=Yes  dst_mac_new=Yes
+    
+    
+    clear stats
+    sleep  2
+    ${tx_before_0}=  get hw queue counters  s1  17  0
+    start traffic  ${stream_01}
+    sleep  2
+    ${tx_before_2}=  get hw queue counters  s1  17  1
+    start traffic  ${stream_02}
+    sleep  2
+    ${tx_before_4}=  get hw queue counters  s1  17  2
+    start traffic  ${stream_03}
+    sleep  2
+    ${tx_before_6}=  get hw queue counters  s1  17  3
+    start traffic  ${stream_04}
+    sleep  5
+    #pause  FREEZEEEEE!
+    #${tx_after_0}=  get hw queue counters  s1  17  0
+    ${traffic_summary}=  fetch port stats  stream=${stream_01}
+    ${rx_value_01}=  verify dict key  ${traffic_summary}  queue_0_1  received_frame_rate
+    #${tx_after_2}=  get hw queue counters  s1  17  1
+    ${traffic_summary}=  fetch port stats  stream=${stream_02}
+    ${rx_value_02}=  verify dict key  ${traffic_summary}  queue_2_3  received_frame_rate
+    #${tx_after_4}=  get hw queue counters  s1  17  2
+    ${traffic_summary}=  fetch port stats  stream=${stream_03}
+    ${rx_value_03}=  verify dict key  ${traffic_summary}  queue_4_5  received_frame_rate
+    #${tx_after_6}=  get hw queue counters  s1  17  3
+    ${traffic_summary}=  fetch port stats  stream=${stream_04}
+    ${rx_value_04}=  verify dict key  ${traffic_summary}  queue_6_7  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_01}  ${rx_value_02}
+    stop traffic  ${stream_01}
+    stop traffic  ${stream_02}
+    stop traffic  ${stream_03}
+    stop traffic  ${stream_04}
+    ${compare}=  Evaluate  2*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_02}  15
+    Should be true  ${in_range}
+    ${compare}=  Evaluate  3*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_03}  15
+    Should be true  ${in_range}
+    ${compare}=  Evaluate  4*${rx_value_01}
+    ${in_range}=  ixia verify traffic rate  ${compare}  ${rx_value_04}  15
+    Should be true  ${in_range}
+    
+    delete traffic
+    
+    
+
+	
+* Keywords
+
+fabric infra suite setup
+ 	base suite setup 
+	set fabric switches 	
+	rest_delete_portgroup_all 
+	rest_delete_tenant_all
+	cli disable qos
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+	test setup topology  
+ 	 
+  
+set fabric switches  
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+	rest add switch               ${node}
+	rest add dpid                 ${node}          ${dpid}  
+	rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+	rest add switch               ${node}
+	rest add dpid                 ${node}         ${dpid} 
+	rest add fabric role          ${node}         leaf
+	rest_add_leaf_group           ${node}         ${leafg} 
+ 
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}	
+
+verify results   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should be true  ${in_range}
+   
+verify results false   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should not be true  ${in_range}
+   
+verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
+    Should be true  ${in_range}
+    
+verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
+    Should not be true  ${in_range}
+
+
+test setup topology
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add tenant									system
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Z							Z1
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Z							Z1
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add interface to vns						X							X1				leaf0-a					${ixia1}	100
+	REST add interface to vns						X							X1				leaf0-a					${ixia3}	100
+	REST add interface to vns						X							X1				leaf0-b					${ixia2}	100
+	REST add interface to vns						X							X1				leaf1-a					${ixia4}	100
+	REST add interface to vns						X							X1				leaf2-a					${ixia7}	100
+	
+	REST add tenant routers intf to system			X
+	REST add tenant routers intf to system			Y
+	REST add tenant routers intf to system			Z
+	REST add system intf to tenant routers 			X
+	REST add system intf to tenant routers 			Y
+	REST add system intf to tenant routers 			Z
+
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
+	
+
+test teardown topology
+	#delete fabric switch
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Z							Z1
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	REST delete tenant routers intf to system		X
+	REST delete tenant routers intf to system		Y
+	REST delete tenant routers intf to system		Z
+	T5 base suite teardown
+
+
+#verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+#    Sleep  5
+#    ${report}=  fetch port stats  stream=${stream}  
+#    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+#    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+#    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+#    Should be true  ${in_range}	
+  	
+
+test teardown
+  delete traffic

@@ -5,6 +5,8 @@ if [ ! -x ../bin/gobot ]; then
     exit 1
 fi
 
+type mongoimport > /dev/null 2>&1 || { echo >&2 "Mongo client is not installed. Aborting."; exit 1; }
+
 collection=test_suites
 json_files=$*
 

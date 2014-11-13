@@ -46,7 +46,7 @@ s1:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 20        
-    mac: 70:72:CF:AB:3A:98
+    mac: 70:72:CF:B7:6E:3A
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0
@@ -61,7 +61,7 @@ s2:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 19    
-    mac: 70:72:CF:AB:39:98   
+    mac: 70:72:CF:B6:01:F2  
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack0       
@@ -84,16 +84,20 @@ s3:
     user: admin
     password: adminadmin
 
-#s6:
-#    console:
-#        ip: cs-120
-#        port: 7006
-#    set_session_ssh: false
-#    set_init_ping: false
-#    leaf-group: rack1        
-#    alias: leaf1-b
-#    user: admin
-#    password: adminadmin
+s4:
+    console:
+        ip: cs-120
+        port: 7006
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 17      
+    mac: 70:72:CF:AB:39:98      
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack1        
+    alias: leaf1-b
+    user: admin
+    password: adminadmin
   
 s5:
     console:
@@ -125,20 +129,66 @@ s6:
     user: admin
     password: adminadmin
         
-s4:
+s9:
     console:
         ip: cs-120
         port: 7019
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 3
-    mac: 70:72:CF:A9:BA:72
+    mac: 70:72:CF:BC:C4:7A
     set_session_ssh: false
     set_init_ping: false
     leaf-group: rack3
     alias: leaf3-a
     user: admin
     password: adminadmin
+   
+s11:
+  ip: 10.8.24.5
+  console_ip: 10.1.8.96
+  console_port: 7023
+  alias: arista-1
+  user: admin
+  password: bsn
+  
+s12:
+  ip: 10.8.24.6
+  console_ip: 10.1.8.96
+  console_port: 7024
+  alias: arista-2
+  user: admin
+  password: bsn
+
+s13:
+    console:
+        ip: cs-120
+        port: 7011
+    pdu:
+        ip: pdu-120-a.bigswitch.com
+        port: 9
+    mac: 70:72:CF:AE:AE:96
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack4
+    alias: leaf4-a
+    user: admin
+    password: adminadmin
+       
+s14:
+    console:
+        ip: cs-120
+        port: 7012
+    pdu:
+        ip: pdu-120-b.bigswitch.com
+        port: 2
+    mac: 70:72:CF:C8:FB:AF
+    set_session_ssh: false
+    set_init_ping: false
+    leaf-group: rack4
+    alias: leaf4-b
+    user: admin
+    password: adminadmin 
     
 h1:
    ip: 10.8.24.31
@@ -153,55 +203,64 @@ h2:
    password: bsn
 
 h3:
-   ip: 10.8.24.34
+   ip: 10.8.24.33
    alias: h1-rack1
    user: root
    password: bsn
-
+     
 h4:
-   ip: 10.8.24.35
+   ip: 10.8.24.34
    alias: h2-rack1
    user: root
    password: bsn
-     
+   
 h5:
-   ip: 10.8.24.37
+   ip: 10.8.24.35
    alias: h1-rack2
    user: root
    password: bsn
-  
+     
 h6:
-   ip: 10.8.24.38
+   ip: 10.8.24.36
    alias: h2-rack2
    user: root
    password: bsn
-  
+    
+
+h10:
+   ip: 10.8.24.40
+   alias: h4-rack2
+   user: root
+   password: bsn
+    
+
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.5
   tcl_server_ip: 10.8.24.22
   ports:
-    d:
+    a:
       name: 12/17
-### Connected to Arista1 port 33 --- arbitrary assigned, d is supposed to be connected to leaf1b
+### Connected to Arista1 port 33
 #    b:
 #      name: 12/18
-    a:
+    c:
       name: 12/19
 ### Connected to Leaf0-a port 33      
-    b:
+    d:
       name: 12/20
 ### Connected to Leaf0-b port 33      
-    c:
+    e:
       name: 12/21
 ### Connected to Leaf1-a port 33      
-    g:
+    f:
       name: 12/22
 ### Connected to Arista2 port 33      
-    e:
+    g:
       name: 12/23
 ### Connected to Leaf2-a port 33      
-    f:
+    h:
       name: 12/24
 ### Connected to Leaf2-b port 33      
       
+    

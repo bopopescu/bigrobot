@@ -1,3 +1,4 @@
+import getpass
 from pymongo import MongoClient
 import autobot.helpers as helpers
 
@@ -12,10 +13,47 @@ class TestCatalog(object):
         self._connected = False
         self.connect()
 
+
+    # Config file access
+
     def configs(self):
         if not self._configs:
             self._configs = helpers.bigrobot_config_test_catalog()
         return self._configs
+
+    def test_types(self):
+        return self.configs()['test_types']
+
+    def features(self, release):
+        return self.configs()['features'][release]
+
+#    def aggregated_build(self, build_name):
+#        """
+#        Returns a list of actual builds in an aggregated build.
+#        """
+#        config = self.configs()
+#        if 'aggregated_builds' not in config:
+#            return {}
+#        if build_name not in config['aggregated_builds']:
+#            return {}
+#        return config['aggregated_builds'][build_name]
+
+    def aggregated_build(self, build_name):
+        """
+        Returns a list of actual builds in an aggregated build. Data is
+        retrieved from the aggregated_build collection.
+        """
+        query = {"name": build_name}
+        cursor = self.aggregated_builds_collection().find(query)
+        count = cursor.count()
+
+        if count >= 1:
+            return cursor[0]['build_names']
+        else:
+            return []
+
+
+    # DB access
 
     def connect(self):
         server = self.configs()['db_server']
@@ -39,22 +77,99 @@ class TestCatalog(object):
     def test_cases_archive_collection(self):
         return self.db()['test_cases_archive']
 
-    def test_types(self):
-        return self.configs()['test_types']
+    def builds_collection(self):
+        return self.db()['builds']
 
-    def features(self, release):
-        return self.configs()['features'][release]
+    def aggregated_builds_collection(self):
+        return self.db()['aggregated_builds']
 
-    def aggregated_build(self, build_name):
+    def test_suite_author_mapping(self, build_name):
+        query = {"build_name": build_name}
+        cursor = self.test_suites_collection().find(query)
+        test_suite_author_map = {}
+        for tc in cursor:
+            test_suite_author_map[helpers.utf8(tc["product_suite"])] = helpers.utf8(tc["author"])
+        return test_suite_author_map
+
+    # DB query/update
+
+    def find_and_add_aggregated_build(self, build_name,
+                                      aggregated_build_name=None,
+                                      quiet=True):
         """
-        Returns a list of actual builds in an aggregated build.
+        Check whether 'build_name' is found in aggregated_builds collection.
+        - If found, return the document.
+        - If not found, create a new aggregated build document indexed by
+          current year and week. Then return the document.
         """
-        config = self.configs()
-        if 'aggregated_builds' not in config:
-            return {}
-        if build_name not in config['aggregated_builds']:
-            return {}
-        return config['aggregated_builds'][build_name]
+        week_num = helpers.week_num()
+        year = helpers.year()
+        if not aggregated_build_name:
+            aggregated_build_name = ("bvs master aggregated %s wk%s"
+                                     % (year, week_num))
+            query = {"build_names": {"$all": [build_name]}}
+        else:
+            query = {"build_names": {"$all": [build_name]},
+                     "name": aggregated_build_name}
+        cursor = self.aggregated_builds_collection().find(query)
+        count = cursor.count()
+        if count >= 1:
+            # Found aggregated build which contains the build_name.
+            if not quiet: print "Found aggregated build with '%s'." % build_name
+            if count > 1:
+                print "WARNING: Did not expect multiple results."
+            return cursor[0]
+
+        query = {"name": aggregated_build_name}
+        cursor = self.aggregated_builds_collection().find(query)
+        ts = helpers.ts_long_local()
+
+        if cursor.count() >= 1:
+            # Aggregated build for year/week exists. Add build_name to list.
+            if not quiet: print "Build '%s' not found. Found aggregated build '%s'." % (build_name, aggregated_build_name)
+            doc = cursor[0]
+            doc["build_names"].append(build_name)
+            doc["updatetime"] = ts
+            _ = self.upsert_doc('aggregated_builds', doc, query)
+            return doc
+        else:
+            # Aggregated build for year/week does not exist. Create it.
+            if not quiet: print "Not found aggregated build '%s'. Creating." % aggregated_build_name
+            doc = {"name": aggregated_build_name,
+                   "week_num": week_num,
+                   "year": year,
+                   "build_names": [build_name],
+                   "createtime": ts,
+                   "updatetime": ts,
+                   }
+            _ = self.insert_doc('aggregated_builds', doc)
+            return doc
+
+    def find_and_add_build_name(self, build_name, quiet=True):
+        """
+        Check whether 'build_name' is found in builds collection.
+        - If found, return the document.
+        - If not found, create a new build document, and return it.
+        """
+        query = {"build_name": build_name}
+        cursor = self.builds_collection().find(query)
+        count = cursor.count()
+        if count >= 1:
+            # Found build which contains the build_name.
+            if not quiet: print "Found build with '%s'." % build_name
+            if count > 1:
+                print "WARNING: Did not expect multiple results."
+            return cursor[0]
+        else:
+            # Build does not exist. Create it.
+            if not quiet: print "Not found build '%s'. Creating." % build_name
+            ts = helpers.ts_long_local()
+            doc = {"build_name": build_name,
+                   "createtime": ts,
+                   "created_by": getpass.getuser()
+                   }
+            _ = self.insert_doc('builds', doc)
+            return doc
 
     def find_test_suites(self, query):
         return self.test_suites_collection().find(query)

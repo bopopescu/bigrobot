@@ -4,8 +4,6 @@ import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
 import autobot.utils as br_utils
 import re
-import telnetlib
-import time
 import uuid
 
 
@@ -37,6 +35,7 @@ class Test(object):
             self._current_controller_master = None
             self._current_controller_slave = None
             self._settings = {}
+            self._checkpoint = 0
 
             # ESB environment:
             # Per convention, the consumer will pass the params data to the
@@ -92,7 +91,7 @@ class Test(object):
             #
             self._node_static_aliases = {}
 
-            self._bsn_config = helpers.bigrobot_config_bsn()
+            self._bsn_config = helpers.bigrobot_config_common()
             helpers.log("Loaded config file %s" % self._bsn_config['this_file'])
 
             # self._is_ci = helpers.bigrobot_continuous_integration()
@@ -104,6 +103,8 @@ class Test(object):
             mininet_id = 1
             params_dict = {}
 
+            # If env BIGROBOT_TESTBED is defined then we are dealing with a
+            # dynamic topology.
             self._testbed_type = helpers.bigrobot_testbed()
             if self._testbed_type:
                 helpers.info("BIGROBOT_TESTBED: %s" % self._testbed_type)
@@ -147,6 +148,10 @@ class Test(object):
 
                 elif (self._testbed_type.lower() == "static" or
                       self._testbed_type.lower() == "libvirt"):
+                    # !!! FIXME: Static and libvirt have become virtually
+                    #            identical. They both rely on the env var
+                    #            BIGROBOT_PARAMS_INPUT. Consider removing or
+                    #            repurposing BIGROBOT_TESTBED in the future.
 
                     # Static nodes and libvirt nodes are similarly defined.
                     static_nodes = helpers.bigrobot_params_input()
@@ -170,9 +175,11 @@ class Test(object):
                 else:
                     helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
 
+                # For Mininet, clean up logical name. Change 'mn' to 'mn1'.
                 if 'mn' in params_dict:
                     params_dict['mn1'] = params_dict['mn']
                     del params_dict['mn']
+
                 yaml_str = helpers.to_yaml(params_dict)
 
                 # This file contain a list of nodes:
@@ -186,7 +193,7 @@ class Test(object):
                 helpers.file_write_once(self._params_file, yaml_str)
                 helpers.bigrobot_params(new_val=self._params_file)
 
-            self._topology_params = self.load_topology()
+            self._topology_params = self.load_params()
             if self._topology_params:
                 self._has_a_topo_file = True
 
@@ -204,8 +211,18 @@ class Test(object):
             else:
                 if helpers.file_exists(helpers.bigrobot_additional_params()):
                     self.merge_params_attributes(helpers.bigrobot_additional_params())
-            self.init_alias_lookup_table()
 
+            # Load merge global parameters if file exists.
+            if (helpers.bigrobot_additional_params() and
+                helpers.file_exists(helpers.bigrobot_global_params())):
+                self.merge_params_attributes(helpers.bigrobot_global_params())
+
+            if 'global' not in self._topology_params:
+                # Initialize the global space (equivalent to a node) if one
+                # doesn't exist.
+                self._topology_params['global'] = {}
+
+            self.init_alias_lookup_table()
             self._topology = {}
 
         def merge_params_attributes(self, params_file):
@@ -218,7 +235,14 @@ class Test(object):
             if helpers.file_not_exists(params_file):
                 helpers.environment_failure("Params file '%s' does not exist"
                                             % params_file)
-            self._params = self.load_topology(topo_file=params_file)
+            self._params = self.load_params(params_file=params_file)
+
+            # We only merge in the attributes for a node if that node is
+            # defined in the test suite topo file. But we need to give
+            # specially treatment to 'global' which is not a node. Merge
+            # all global attributes.
+            if 'global' in self._params and 'global' not in self._topology_params:
+                self._topology_params['global'] = self._params['global']
 
             for n in self._topology_params:
                 # if n not in self._params:
@@ -243,17 +267,24 @@ class Test(object):
                     self._topology_params[n][key] = self._params[n][key]
             return True
 
-        def load_topology(self, topo_file=None):
-            if not topo_file:
-                topo_file = helpers.bigrobot_topology()
-            if helpers.file_not_exists(topo_file):
-                helpers.debug("Topology file not specified (%s)" % topo_file)
-                topo = {}
+        def load_params(self, params_file=None):
+            if not params_file:
+                params_file = helpers.bigrobot_topology()
+
+            if re.match(r'.*\.topo$', params_file):
+                _type = 'topology'
             else:
-                topo = helpers.load_config(topo_file)
-                helpers.debug("Loaded topology file %s\n%s"
-                              % (topo_file, helpers.prettify(topo)))
-            return topo
+                _type = 'params'
+
+            if helpers.file_not_exists(params_file):
+                helpers.debug("%s file not specified (%s)"
+                              % (_type.capitalize(), params_file))
+                params = {}
+            else:
+                params = helpers.load_config(params_file)
+                helpers.debug("Loaded %s file %s\n%s"
+                              % (_type, params_file, helpers.prettify(params)))
+            return params
 
         def init_alias_lookup_table(self):
             for node in self._topology_params:
@@ -263,20 +294,19 @@ class Test(object):
                     self._node_static_aliases[alias] = node
 
                     # BSN QA convention is to name the aliases as:
-                    #   common - for settings which may be common to all nodes
-                    #            or which are not node specific
+                    #   global - for global parameters which may be used to
+                    #            manipulate test conditions (user defined)
                     #   spine0, spine1, etc.
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
                     #   h1-rack1 - for hosts
                     #   h1-vm1-rack1 - for virtual hosts
-                    r = r'^(common|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
-                                     " common")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
@@ -315,6 +345,12 @@ class Test(object):
             helpers.test_error("Attribute '%s' is not defined in %s" %
                                (key, self._bsn_config['this_file']))
 
+    def checkpoint(self, msg):
+        self._checkpoint += 1
+        helpers.log(":::: CHECKPOINT %04d - %s%s"
+                    % (self._checkpoint, msg, br_utils.end_of_output_marker()),
+                    level=3)
+
     def controller_user(self):
         return self.bsn_config('controller_user')
 
@@ -338,6 +374,12 @@ class Test(object):
 
     def switch_password(self):
         return self.bsn_config('switch_password')
+
+    def pdu_user(self):
+        return self.bsn_config('pdu_user')
+
+    def pdu_password(self):
+        return self.bsn_config('pdu_password')
 
     def alias(self, name, ignore_error=False):
         """
@@ -363,13 +405,16 @@ class Test(object):
             return self._settings.get(name, None)
         return self._settings  # return entire settings dictionary
 
-    def topology_params(self, node=None, key=None, default=None, new_val=None):
+    def topology_params(self, node=None, key=None, new_val=None, default=None):
         """
         Usage:
         - t.params('c1')  # return attributes for c1
           t.params(node='c1', key='ip')
           t.params(node='tg1', key='type', default='ixia')
                             # if type is not defined, return 'ixia' for type
+          t.params('global', 'my_image')
+                            # BigRobot convention is to use 'global' to hold
+                            # common key/values which are not node-specific.
         - If no argument is specified, return the entire topology dictionary.
             {   'c1': {
                     'ip': '10.192.5.116'
@@ -402,7 +447,7 @@ class Test(object):
                     if default:
                         self._topology_params[node][key] = default
                         return default
-                    helpers.log("Node %s does not have attribute %s defined" % (node, key))
+                    helpers.log("Node '%s' does not have attribute '%s' defined" % (node, key))
                     if key == "console_ip":
                         helpers.log("console_ip key is not defined check another sub level")
                         if "console" in self._topology_params[node]:
@@ -425,14 +470,21 @@ class Test(object):
     # Alias
     params = topology_params
 
+    def params_global(self, key=None, new_val=None, default=None):
+        """
+        Getter/setter for global parameters.
+        """
+        return self.topology_params(node='global', key=key, new_val=new_val,
+                                    default=default)
+
     def topology_params_nodes(self, **kwargs):
         """
         Returns the list of node params only. Ignore other params which are
         not nodes.
         """
         params = dict(self.topology_params(**kwargs))
-        if 'common' in params:
-            del params['common']
+        if 'global' in params:
+            del params['global']
         return params
 
     # Alias
@@ -644,7 +696,7 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller', quiet=0):
+                   device_type='controller', protocol='ssh', quiet=0):
         t = self
         if not node:
             node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
@@ -672,7 +724,14 @@ class Test(object):
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.HostNode(node, ip, user, password, t)
+            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol)
+        elif device_type == 'pdu':
+            helpers.log("Initializing host '%s'" % node)
+            if not user:
+                user = self.pdu_user()
+            if not password:
+                password = self.pdu_password()
+            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol)
         else:
             # !!! FIXME: Need to support other device types (see the list of
             #            devices in node_connect().
@@ -710,7 +769,7 @@ class Test(object):
         # Check for user name and password. Here is the order of preference:
         # 1) prefer user/password provided in method arguments
         # 2) else prefer user/password provided in topo file
-        # 3) else prefer user/password provided in config/bsn.yaml
+        # 3) else prefer user/password provided in config/common.yaml
 
         authen = t.topology_params_authen(node)
 
@@ -971,24 +1030,16 @@ class Test(object):
             action = "olReboot"
         else:
             helpers.test_error("Invalid PDU option '%s'" % action)
-        pdu_ip = self.params(node, 'pdu')['ip']
-        pdu_port = self.params(node, 'pdu')['port']
-        tn = telnetlib.Telnet(pdu_ip)
-        tn.set_debuglevel(10)
-        tn.read_until("User Name : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until("Password  : ", 10)
-        tn.write(str('apc').encode('ascii') + "\r\n".encode('ascii'))
-        tn.read_until(">", 10)
-        tn.write(str('about').encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
+        t = self
+        pdu = t.params(node, key='pdu')
+        pdu_port = pdu['port']
+        helpers.log("pdu: %s" % pdu)
+        p = t.node_spawn(ip=pdu["ip"], user="apc", password="apc", device_type='pdu', protocol='telnet')
+        p.cli('about')
+        p.cli('olStatus %s' % pdu_port)
         reboot_cmd = '%s %s' % (action, str(pdu_port))
-        tn.write(str(reboot_cmd).encode('ascii') + "\r\n".encode('ascii'))
-        time.sleep(4)
-        output = tn.read_very_eager()
-        helpers.log(output)
+        p.cli(str(reboot_cmd).encode('ascii'))
+        p.close()
 
     def power_cycle(self, node, minutes=5):
         self._pdu_mgt(node, 'reboot')
@@ -1015,7 +1066,7 @@ class Test(object):
             # helpers.log("Test object initialization skipped.")
             return
 
-        helpers.debug("Test object initialization begins.")
+        self.checkpoint("Test object initialization begins.")
         if self._init_in_progress:  # pylint: disable=E0203
             return
 
@@ -1040,9 +1091,17 @@ class Test(object):
                     % (helpers.ulimit(),
                        br_utils.end_of_output_marker()))
         helpers.log("Staging User ID:\n%s%s"
-                    % (helpers.id(),
+                    % (helpers.user_id(),
                        br_utils.end_of_output_marker()))
-        helpers.log("BUILD_NAME: '%s'" % os.environ.get('BUILD_NAME', None))
+
+        jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
+        for i in range(0, len(jenkins_env)):
+            if i == 0:
+                helpers.log("Jenkins environment:")
+            if i + 1 == len(jenkins_env):
+                helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
+            else:
+                helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
@@ -1123,12 +1182,14 @@ class Test(object):
 
     def controller_cli_show_version(self, name):
         n = self.topology(name)
-        n.cli('show version')
+        if n.devconf():
+            n.cli('show version')
 
     def controller_cli_show_running_config(self, name):
         n = self.topology(name)
-        n.enable('show running-config', quiet=True)
-        return n.cli_content()
+        if n.devconf():
+            n.enable('show running-config', quiet=True)
+            return n.cli_content()
 
     def controller_get_node_ids(self, config):
         lines = config.split('\n')
@@ -1150,79 +1211,135 @@ class Test(object):
         n.config('exit')
         n.config('exit')
 
-    def setup_controller_idle_timeout(self, name):
+    def _sudo_with_error_code(self, name, cmd):
+        n = self.topology(name)
+        cmd_output = n.sudo(cmd)['content']
+        content = n.bash('echo $?')['content']
+        error_code = helpers.strip_cli_output(content, to_list=True)[0]
+        return (cmd_output, int(error_code))
+
+    def _file_exists(self, name, filename):
+        (_, error_code) = self._sudo_with_error_code(name, 'ls -la %s' % filename)
+        return error_code
+
+    def _setup_controller_idle_timeout(self, name):
+        self.checkpoint("Checking idle timeout on '%s'" % name)
+        n = self.topology(name)
+        source_file = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200/application.py"
+
+        if self._file_exists(name, source_file) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_file))
+        (_, error_code) = self._sudo_with_error_code(name,
+                                'grep -e "BigRobot mod" %s' % source_file)
+        if error_code == 0:
+            helpers.log("'%s' - BigRobot idle timeout modifications have already been applied."
+                        % name)
+            return False
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^command.cli.interactive_read_timeout" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
+                                        % (source_file, name))
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+               % source_file)
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_file, name))
+
+        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s'
+               % source_file)
+        return True
+
+    def _setup_controller_reauth_timeout(self, name):
+        if helpers.bigrobot_reconfig_reauth().lower() == "false":
+            helpers.log("Env BIGROBOT_RECONFIG_REAUTH is False. Bypass reauth reconfig.")
+            return False
+
+        self.checkpoint("Checking reauth timeout on '%s'" % name)
+        n = self.topology(name)
+        source_file = "/etc/default/floodlight"
+
+        if self._file_exists(name, source_file) != 0:
+            helpers.environment_failure("'%s' - Source file does not exist: %s"
+                                        % (name, source_file))
+        (_, error_code) = self._sudo_with_error_code(name,
+                                'grep -e "BigRobot mod" %s' % source_file)
+        if error_code == 0:
+            helpers.log("'%s' - BigRobot reauth timeout modifications have already been applied."
+                        % name)
+            return False
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            % source_file)
+        if error_code == 0:
+            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with BigRobot mod."
+                                        % (source_file, name))
+
+        helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
+        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (BigRobot mod)\' | sudo tee -a %s'
+               % source_file)
+
+        (_, error_code) = self._sudo_with_error_code(
+                            name,
+                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            % source_file)
+        if error_code != 0:
+            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+                                        % (source_file, name))
+
+        self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")
+        n.sudo("initctl stop floodlight")
+        helpers.sleep(0.5)
+        n.sudo("initctl start floodlight")
+        sleep_time = helpers.bigrobot_reconfig_reauth_sleep_timer()
+        helpers.log("Sleeping for %s seconds while floodlight settles." % sleep_time)
+        helpers.sleep(sleep_time)
+        return True
+
+    def cli_add_controller_idle_and_reauth_timeout(self, name,
+                                                   reconfig_idle=True,
+                                                   reconfig_reauth=True):
         """
         When logging into the BCF controller for the first time, modify the
-        idle timeout setting in Floodlight's application.py. Then
-        touch /var/log/.touched_by_bigrobot so BigRobot doesn't try to modify
-        it again in the future. Finally reconnect so changes can take effect.
+        idle timeout setting in Floodlight's application.py. Then reconnect
+        so changes can take effect.
         """
-        bigrobot_file = "/var/log/.touched_by_bigrobot"
-        source_dir = "/usr/share/floodlight/cli-package/com.bigswitch.floodlight/floodlight-bcf/desc/version200"
-        source_file = "application.py"
-        source_dir_file = source_dir + '/' + source_file
-
         n = self.topology(name)
+        if not n.devconf():
+            return False
+
         platform = n.platform()
         if not helpers.is_bcf(platform):
             return True
-        helpers.log("Checking idle timeout on '%s'" % name)
 
-        # Did we previously make modifications to the system?
-        n.sudo('ls -la %s' % bigrobot_file)['content']
-        content = n.sudo('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) == 0:
-            # Controller has already been touched by BigRobot
-            content = n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)['content']
-            output = helpers.strip_cli_output(content, to_list=True)[0]
-            if re.match(r'.*BigRobot mod.*', output):
-                helpers.log("'%s' - BigRobot modifications have already been applied."
-                            % name)
-                return True
-            else:
-                helpers.log("'%s' - BigRobot modifications not found - possibly because system was upgraded."
-                            % name)
+        status1 = status2 = False
 
-        helpers.log("'%s' - Modifying source file: %s" % (name, source_dir_file))
+        if reconfig_idle:
+            status1 = self._setup_controller_idle_timeout(name)
+        else:
+            helpers.log("reconfig_idle=%s" % reconfig_idle)
+        if reconfig_reauth:
+            status2 = self._setup_controller_reauth_timeout(name)
+        else:
+            helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
-        n.sudo('ls -la %s' % source_dir_file)['content']
-        content = n.sudo('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("'%s' - Source file does not exist: %s"
-                                        % (name, source_dir_file))
-
-        n.bash('grep "command.cli.interactive_read_timeout( 10 \* 60 )" %s'
-               % source_dir_file)['content']
-        content = n.bash('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
-                                        % (source_dir_file, name))
-
-        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
-               % (source_dir_file))
-
-        n.bash('grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
-               % source_dir_file)['content']
-        content = n.bash('echo $?')['content']
-        output = helpers.strip_cli_output(content, to_list=True)[0]
-        if int(output) != 0:
-            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
-                                        % (source_dir_file, name))
-
-        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s' % source_dir_file)
-        n.sudo('touch %s' % bigrobot_file)
-
-        # Disable Bash Command Line Editing (default is Emacs mode). But this
-        # will affect all future sessions (including interactive sessions)
-        # to the box, not just for BigRobot sessions. So disable for now.
-        # n.bash('echo "set +o emacs" >> ~/.bashrc')
-        # n.bash('echo "if [ -f ~/.bashrc ]; then source ~/.bashrc; fi" > ~/.bash_profile')
-
-        self.node_reconnect(name)
-
+        if status1 or status2:
+            # Reconnect to device if updates were made to idle/reauth
+            # properties.
+            self.node_reconnect(name)
         return True
 
     def setup_controller_firewall_allow_rest_access(self, name):
@@ -1262,7 +1379,6 @@ class Test(object):
 
         helpers.log("Setting up controllers - before clean-config")
 
-        self.controller_cli_show_version(name)
         self.setup_controller_firewall_allow_rest_access(name)
         self.setup_controller_http_session_cookie(name)
 
@@ -1351,40 +1467,33 @@ class Test(object):
             helpers.log("Adding leaf group for leaf %s" % name)
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
-        helpers.sleep(10)
+        helpers.log("Waiting 30 secs for the switche to get connected to Controller..")
+        helpers.sleep(55)
         if helpers.bigrobot_ztn_reload().lower() != "true":
             helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):
             return True
         helpers.log("ZTN setup - found switch '%s' console info" % name)
-        if re.match(r'.*spine.*', self.params(name, 'alias')):
-            helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
-            con = self.dev_console(name, modeless=True)
-            con.send('admin')
-            helpers.sleep(2)
-            con.send('adminadmin')
-            helpers.sleep(2)
-            con.send('enable;conf;no snmp-server enable')
-            con = self.dev_console(name)
-        else:
-            helpers.log("Initializaing leafs normally..")
-            con = self.dev_console(name)
+#         if re.match(r'.*spine.*', self.params(name, 'alias')):
+#             helpers.log("Initializing spine with modeless state due to JIRA PAN-845")
+#             con = self.dev_console(name, modeless=True)
+#             con.send('admin')
+#             helpers.sleep(2)
+#             con.send('adminadmin')
+#             helpers.sleep(2)
+#             con.send('enable;conf;no snmp-server enable')
+#             con = self.dev_console(name)
+#         else:
+        helpers.log("Initializaing switches normally..")
+        con = self.dev_console(name)
+        helpers.log("Reload the switch for ZTN..")
+        con.bash("")
+        con.send('reboot')
+        con.send('')
         if not helpers.is_switchlight(con.platform()):
             helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
             return True
-
-        helpers.log("Reload the switch for ZTN..")
-        con.bash("")
-        con.bash('rm -rf /mnt/flash/boot-config')
-        con.bash('echo NETDEV=ma1 >> /mnt/flash/boot-config')
-        con.bash('echo NETAUTO=dhcp >> /mnt/flash/boot-config')
-        con.bash('echo BOOTMODE=ztn >> /mnt/flash/boot-config')
-        con.bash('echo ZTNSERVERS=%s,%s >> /mnt/flash/boot-config' % (str(c1_ip), str(c2_ip)))
-        helpers.log("Disabling switch config auto-reloads...")
-        con.bash('touch /mnt/flash/local.d/no-auto-reload')
-        con.send('reboot')
-        con.send('')
         if helpers.bigrobot_ztn_installer().lower() != "true":
             helpers.log("Finish sending Reboot on switch : %s" % name)
             return
@@ -1392,7 +1501,6 @@ class Test(object):
             con.expect("Hit any key to stop autoboot")
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
-
         con.send("")
         con.expect([r'\=\>'], timeout=30)
         con.send("setenv onie_boot_reason install")
@@ -1424,6 +1532,13 @@ class Test(object):
         helpers.log("Re-Login in console of switch after reboot...")
         helpers.log("Initializaing leafs and Spines normally..")
         con = self.dev_console(name)
+
+        if helpers.bigrobot_no_auto_reload().lower() == 'true':
+            helpers.log("Disabling switch config auto-reloads...")
+            con.bash('touch /mnt/flash/local.d/no-auto-reload')
+        else:
+            helpers.log("Skipping to disable auto-reloads , which disallows switch SSH Handles")
+
         helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
         con.config("username admin secret adminadmin")
         con.config("ssh enable")
@@ -1453,17 +1568,36 @@ class Test(object):
         if self._setup_in_progress:  # pylint: disable=E0203
             return
 
-        helpers.debug("Test object setup begins.")
+        self.checkpoint("Test object setup begins.")
         self._setup_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         master = self.controller("master")
         standby = self.controller("slave")
+
+        # CAUTION: The following section may not execute properly if the device
+        # is connected via console, or if the device is in firstboot state. So
+        # be sure to check if devconf handle exists before running any kind of
+        # REST/CLI command.
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.controller_cli_show_version(key)
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.cli_add_controller_idle_and_reauth_timeout(key)
+
+#         if helpers.bigrobot_no_auto_reload().lower() == 'true':
+#             helpers.log("Reconnecting switch consoles and updating switch IP's....")
+#             helpers.log("Please make sure switches are not in ZTN MODE ..before using BIGROBOT_NO_AUTO_RELOAD env")
+#             for key in params:
+#                 self.setup_ztn_phase2(key)
+#         else:
+#             helpers.log("Skipping Switch ssh handle updates, Cannot execute ssh commands")
+        # Don't run the following section if test setup is disabled.
         if helpers.bigrobot_test_setup().lower() != 'false':
-            for key in params:
-                if helpers.is_controller(key):
-                    self.setup_controller_idle_timeout(key)
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
@@ -1494,9 +1628,6 @@ class Test(object):
                 else:
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
-                helpers.log("Reconnecting switch consoles and updating switch IP's....")
-                for key in params:
-                    self.setup_ztn_phase2(key)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
                 master.rest.get(url1)
                 data = master.rest.content()
@@ -1506,6 +1637,10 @@ class Test(object):
                         helpers.test_failure("Fabric manager status is incorrect")
                         helpers.exit_robot_immediately("Switches didn't come please check Controllers...")
                 helpers.log("Fabric manager status is correct")
+                if helpers.bigrobot_no_auto_reload().lower() == 'true':
+                    helpers.log("Reconnecting switch consoles and updating switch IP's....")
+                    for key in params:
+                        self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
                 master.config("show switch")
@@ -1519,10 +1654,10 @@ class Test(object):
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
-                helpers.log("ZTN knob is True ..loading Just ztn-base config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN with these controllers!")
+                helpers.log("Env BIGROBOT_TEST_ZTN is True. Loading ZTN-based config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN on these controllers!")
                 master = self.controller("master")
                 master.enable("show switch")
-                master.enable("copy snapshot://ztn-base-config running-config ")
+#                 master.enable("copy snapshot://ztn-base-config running-config ")
                 master.config("show logging level")
                 master.enable("show running-config")
                 master.enable("show switch")
@@ -1535,25 +1670,34 @@ class Test(object):
                 master.enable("show switch")
 
         if helpers.bigrobot_ha_logging().lower() == "true":
-            helpers.log("Enabling HA Debug logging for Dev to debug HA failures....")
+            helpers.log("Env BIGROBOT_HA_LOGGING is True. Enabling HA Debug logging for Dev to debug HA failures....")
             master.config("logging level org.projectfloodlight.ha debug")
             master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
             master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
             master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
             master.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
-        helpers.debug("Test object setup ends.%s"
-                      % br_utils.end_of_output_marker())
+        self.checkpoint("Test object setup ends.")
 
     def teardown_switch(self, name):
         """
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        n = self.topology(name)
+        if helpers.bigrobot_no_auto_reload().lower() == 'true' and helpers.bigrobot_test_ztn().lower() == 'true':
+            con = self.dev_console(name)
+            helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+            con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
+
+        if helpers.is_bcf(n.platform()):
+            helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
+            return
+
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
             return
-        n = self.topology(name)
 
         if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
@@ -1578,13 +1722,18 @@ class Test(object):
                 n.config(cmd)
 
     def teardown(self):
-        helpers.debug("Test object teardown begins.")
+        self.checkpoint("Test object teardown begins.")
         params = self.topology_params_nodes()
-        for key in params:
-            if helpers.is_controller(key):
-                pass
-            elif helpers.is_switch(key):
-                self.teardown_switch(key)
+
+        if helpers.bigrobot_test_teardown().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    pass
+                elif helpers.is_switch(key):
+                    self.teardown_switch(key)
+        else:
+            helpers.debug("Env BIGROBOT_TEST_TEARDOWN is False. Skipping device teardown.")
+
         helpers.debug("Test object teardown ends.%s"
                       % br_utils.end_of_output_marker())
 
@@ -1595,7 +1744,7 @@ class Test(object):
                         " clean-config")
             return True
 
-        helpers.log("Running clean-config on devices in topology")
+        self.checkpoint("Running clean-config on devices in topology")
         if (helpers.is_controller(name) and helpers.is_t5(n.platform())
             and self.is_master_controller(name)):
 
@@ -1612,13 +1761,13 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        if helpers.bigrobot_test_ztn().lower() == 'true':
-            helpers.log("ZTN knob is True just loding the ztn-base-config")
-            helpers.log("Loading ztn-base-config ...")
-            c.config("copy snapshot://ztn-base-config running-config")
-        else:
-            helpers.log("Loading firstboot-config ...")
-            c.config("copy snapshot://firstboot-config running-config")
+#         if helpers.bigrobot_test_ztn().lower() == 'true':
+#             helpers.log("ZTN knob is True just loding the ztn-base-config")
+#             helpers.log("Loading ztn-base-config ...")
+#             c.config("copy snapshot://ztn-base-config running-config")
+#         else:
+        helpers.log("Loading firstboot-config ...")
+        c.config("copy snapshot://firstboot-config running-config")
         c.config("show running-config")
 
         return True

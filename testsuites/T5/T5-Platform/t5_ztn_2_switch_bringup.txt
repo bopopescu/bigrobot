@@ -1,0 +1,276 @@
+*** Settings ***
+Documentation       Testing ZTN
+...              The purpose of this test suite is to check managing switches with ZTN. Small testbed will be used.
+...
+...              *Test topology*: pair of controllers, one spine switch, two leaf switches (Accton).
+...
+...              For tests which check correct installation of flows on the switches, simple forwarding configuration
+...              and small traffic rate will be used.
+...              Larger testbeds will be tested inherently in other testsuites.
+...
+...              In this Test Suite the following terms will be used:
+...
+...              * stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+...
+...              * provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+...
+...              * suspended switch - switch connected to fabric but not configured on the controller,
+...                or running wrong version of Swith Light, or with incorrect running-config
+...
+...              * ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
+...
+...              * ZTN configuration, which includes:
+...
+...                - configuration mirrored from controller's configuration to switches (NTP, Logging, SNMP)
+...
+...                - controllers' IP addresses
+...
+...                  - per-switch hostname (as switch name on the controller)
+...
+...                  - per-switch interface configuration (as assigned by DHCP server when switch booted)
+...
+...              * ZTN configuration change:
+...
+...                - any controller Cli change that affects the switch startup-config
+...
+...              * Switch mode change:
+...
+...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
+
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
+Test Setup		Test Setup
+Test Teardown	Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
+Library  		keywords/BsnCommon.py
+Library		keywords/T5Platform.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		String
+Resource		t5_ztn_resource.txt
+
+
+*** Test Cases ***
+### Switch bring-up
+# Bring up out-of-the-box switch
+T2.1.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s1_alias} reboot factory-default
+	Sleep  10
+	Cli Run  master  switch ${s1_alias}; no fabric-role spine
+	Sleep  100
+	Telnet Wait For Switch To Reload  s1
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Connection State  True  ${s1_alias}
+	Verify Switch Fabric Connection State  suspended  ${s1_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s1_alias}
+
+T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s2_alias} reboot factory-default
+	Sleep  10
+	Cli Run  master  switch ${s2_alias}; no leaf-group rack0; no fabric-role leaf
+	Cli Run  master  shutdown
+	Sleep  600
+	Telnet Wait For Switch To Reload  s2
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Connection State  True  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
+
+T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s5_alias} reboot factory-default
+	Sleep  100
+	Telnet Wait For Switch To Reload  s5
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch In Provisioned Mode  ${s5_alias}
+
+T2.1.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s1_alias} reboot factory-default
+	Sleep  10
+	Cli Run  master  switch ${s1_alias}; shutdown
+	Sleep  100
+	Telnet Wait For Switch To Reload  s1
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Connection State  True  ${s1_alias}
+	Verify Switch Fabric Connection State  suspended  ${s1_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
+
+T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s3_alias} reboot factory-default
+	Sleep  600
+	Telnet Wait For Switch To Reload  s3
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch In Provisioned Mode  ${s3_alias}
+
+T2.1.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s4_alias} reboot factory-default
+	Sleep  10
+	Cli Run  master  switch ${s4_alias}; shutdown
+	Sleep  600
+	Telnet Wait For Switch To Reload  s4
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Connection State  True  ${s4_alias}
+	Verify Switch Fabric Connection State  suspended  ${s4_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s4_alias}
+
+T2.1.7. Verify that unconfigured switch does not receive image
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s1_alias} factory-default
+	Sleep  10
+	Cli Run  master  no switch ${s1_alias}
+	Sleep  100
+	Telnet Verify ONIE Discovery Failed  s1
+	Telnet Verify ONIE Discovery Failed  s1
+
+# Reboot active switch
+T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+	Sleep  100
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s2_alias}
+	Cli Run  master  switch ${s2_alias}
+	Cli Run  master  mac ${s2_mac}
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Wait For Switch To Reload  s2
+	Sleep  30
+	Verify Switch Connection State  True  ${s2_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
+
+
+T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s3_alias}
+	Cli Run  master  switch ${s3_alias}
+	Cli Run  master  mac ${s3_mac}
+	Cli Run  master  shutdown
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
+	Telnet Wait For Switch To Reload  s3
+	Sleep  30
+	Verify Switch Connection State  True  ${s3_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Fabric Connection State  suspended  ${s3_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s3_alias}
+
+
+T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s1_alias}
+	Cli Run  master  switch ${s1_alias}
+	Cli Run  master  mac ${s1_mac}
+	Cli Run  master  fabric-role spine
+	Sleep  30
+	Verify Switch Connection State  False  ${s1_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
+	Telnet Wait For Switch To Reload  s1
+	Sleep  30
+	Verify Switch Connection State  True  ${s1_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Fabric Connection State  connected  ${s1_alias}
+
+T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s5_alias}
+	Cli Run  master  switch ${s5_alias}
+	Cli Run  master  mac ${s5_mac}
+	Cli Run  master  fabric-role spine
+	Cli Run  master  shutdown
+	Sleep  30
+	Verify Switch Connection State  False  ${s5_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s5_alias}
+	Telnet Wait For Switch To Reload  s5
+	Sleep  30
+	Verify Switch Connection State  True  ${s5_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Fabric Connection State  suspended  ${s5_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s5_alias}
+
+T2.2.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s2_alias}
+	Cli Run  master  switch ${s2_alias}
+	Cli Run  master  mac ${s2_mac}
+	Cli Run  master  fabric-role leaf
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Wait For Switch To Reload  s2
+	Sleep  30
+	Verify Switch Connection State  True  ${s2_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
+
+
+T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
+	Cli Run  master  enable; config
+	Cli Run  master  no switch ${s4_alias}
+	Cli Run  master  switch ${s4_alias}
+	Cli Run  master  mac ${s4_mac}
+	Cli Run  master  fabric-role leaf
+	Cli Run  master  shutdown
+	Sleep  30
+	Verify Switch Connection State  False  ${s4_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s4_alias}
+	Telnet Wait For Switch To Reload  s4
+	Sleep  30
+	Verify Switch Connection State  True  ${s4_alias}
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Cli Run  master  show run
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Fabric Connection State  suspended  ${s4_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s4_alias}
+
+
+T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not receive SWI image
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${s2_alias}
+	Cli Run  master  no mac ${s2_mac}
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Verify ZTN Discovery Failed  s2
+
+T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not receive Installer image
+	Cli Run  master  enable; config
+	Cli Run  master  system reinstall switch ${s3_alias} factory-default
+	Cli Run  master  switch ${s3_alias}
+	Cli Run  master  no mac ${s3_mac}
+	Sleep  600
+	Verify Switch Connection State  False  ${s3_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
+	Telnet Verify ONIE Discovery Failed  s3
+	Verify Switch Connection State  False  ${s3_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
+	Telnet Verify ONIE Discovery Failed  s3
+

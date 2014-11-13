@@ -1,0 +1,171 @@
+* Settings
+Documentation     T5  Traffic L2 Porthashing Test suite- Iron Horse
+Suite Setup       T5 traffic port hashing test setup
+Suite Teardown    T5 traffic port hashing test teardown
+Test Teardown     traffic teardown
+Resource        testsuites/T5/T5-Platform/t5_traffic_L2porthashing_variables.txt
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+#Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Switch.py
+
+*Test Case 
+
+Setup the configuration for the port hashing traffic test
+    [Tags]  T5  L2  porthashing  setup  skipped  
+    T5 traffic porthashing test setup 
+
+Verify the link status using Bi directional L2 Traffic flow from a<->b 
+    [Tags]    feature  switch  porthashing    
+    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=100000  frame_size=64 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic       
+
+Two different src mac and two different dst mac Uni directional L2 Traffic port hashing   
+    [Tags]    feature  switch  porthashing  test1  
+    ${learnStream1}=   L2 add  name=a_b_learnflow1  flow=a<->b  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  
+	
+	${learnStream2}=   L2 add  name=a_b_learnflow2  flow=a<->b  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  
+	
+    ixia.start traffic 
+    sleep  2 
+    ixia.stop traffic 
+    sleep  1 
+    ixia.delete traffic
+    ixia.clear stats
+    sleep  2
+    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b   
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ${stream2}=   L2 add  name=a_b_flow2  flow=a->b  
+    ...				    src_mac=${src_mac3}  dst_mac=${dst_mac3}
+    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    
+    rest clear fabric interface stats 
+    start traffic   
+    sleep          10
+    ${report}=     fetch port stats
+    verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic    
+    sleep   10
+    ixia.stop traffic
+    sleep   5 
+    verify total interface counters  ${switch1_name}  ${leaf0a_ixia}  rxstat
+    ${report}=     fetch port stats
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    
+
+Same src mac to two different dst mac Uni directional L2 Traffic port hashing  
+    [Tags]    feature  switch  porthashing  test2  
+    ${learnStream1}=   L2 add  name=a_b_learnflow1  flow=a<->b  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  
+	
+	${learnStream2}=   L2 add  name=a_b_learnflow2  flow=a<->b  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  
+	
+    ixia.start traffic 
+    sleep  2 
+    ixia.stop traffic 
+    sleep  1 
+    ixia.delete traffic
+    ixia.clear stats
+    sleep  2
+    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b   
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ${stream2}=   L2 add  name=a_b_flow2  flow=a->b  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac3}
+    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    
+    rest clear fabric interface stats 
+    start traffic   
+    sleep          10
+    ${report}=     fetch port stats
+    verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic    
+    sleep   10
+    ixia.stop traffic
+    sleep   5 
+    verify total interface counters  ${switch1_name}  ${leaf0a_ixia}  rxstat  
+    
+    
+*Keywords 
+
+T5 traffic porthashing test setup
+   base suite setup
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns1}
+   rest add vns  ${tenant}  ${vns2}  
+   rest add router intf  ${tenant}  ${vns1}
+   sleep  2
+   rest add router intf  ${tenant}  ${vns2} 
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+   sleep  2 
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${leaf0a_ixia}  ${vlan} 
+   sleep  2   
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch3_name}  ${leaf1a_ixia}  ${vlan}
+   sleep  2
+   
+
+T5 traffic porthashing test teardown
+   rest delete tenant  ${tenant}  
+   base suite teardown
+   sleep  5   
+   
+traffic teardown
+    delete traffic  
+   
+verify rate traffic  [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range}
+
+verify ixia counters traffic  [Arguments]  ${transmitted_frames}  ${received_valid_frames}  ${tolerance} 
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance}
+    Should be true  ${in_range}
+      
+verify interface counters  [Arguments]  ${switch}  ${intf}  ${stat}  ${ixiatx}  ${tolerance}       
+    Sleep  2
+    ${intfstat}=  rest get switch interface stats  ${switch}  ${intf}  ${stat}
+    ${in_range}=  ixia verify traffic rate  ${ixiatx}  ${intfstat}  ${tolerance}      
+    Should be true  ${in_range}
+
+verify total interface counters  [Arguments]  ${switch}  ${intf}  ${stat}    
+    ${report}=     fetch port stats
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${intfstat1}=  rest get switch interface stats  ${switch1_name}  ${leaf0a_ixia}  rxstat
+    ${intfstat2}=  rest get switch interface stats  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat
+    ${intfstat3}=  rest get switch interface stats  ${switch1_name}  ${leaf0a_spine0_intf2}  txstat
+         
+verify hash interface counters  [Arguments]  ${switch}  ${intf}  ${stat}    
+    ${report}=     fetch port stats
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${expIntfCntr}=  ${ixiatx} / ${numlinks}
+    ${intfstat1}=  rest get switch interface stats  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat    
+
+
+
+
+

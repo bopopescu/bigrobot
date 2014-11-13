@@ -1,0 +1,64 @@
+*** Settings ***
+Documentation    Support Test Cases
+Force Tags       T5 
+Suite Setup     T5 support suite setup
+Library		 OperatingSystem
+Library	 	 String
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library			 keywords/SwitchLight.py
+Library	         Collections.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		keywords_dev/arun/support.py
+
+*** Test Cases ***
+TC01 Check New Flood light Partitions for Diagnostics
+	${result}=  check partitions for diagnostics  c1
+	Should be True  ${result}
+	[Tags]  support
+	
+TC02 Generate Support file and check they are created on diagnostics partitions
+	${result}=  check support file location
+	Log  ${result}
+	[Tags]  support
+
+TC03 Check Suport bundle for controllers
+	${support_bundle_name}=  get support bundle name
+	${result}=  check controller folders  /tmp/${support_bundle_name}  c1
+	Should be True  ${result}
+	[Tags]  support
+	
+TC04 Check switch interface hardware counters in support
+	${support_bundle_name}=  get support bundle name
+	${result}=  check switch hardware counters  /tmp/${support_bundle_name}  c1
+	Should be True  ${result}
+	[Tags]  support
+TC05 Check Controller cli show command output are logged
+	${support_bundle_name}=  get support bundle name
+	${result}=  check_controller_cli_cmds  /tmp/${support_bundle_name}  c1
+	Should be True  ${result}
+	[Tags]  support  run
+	
+TC06 Check show dump core are seen after creating core dumps
+	manual passed
+	
+TC07 Check Sizes of core dumps
+    manual passed
+TC08 Check Endpoints from the Support logs with 4k static endpoints configured
+	manual passed
+TC09 Check Show segments from Support logs with 4k+ segments configured
+	manual passed
+* Keywords
+T5 support suite setup
+	delete support bundles
+	${result}=  Generate support  c1
+	Log  ${result}
+	${path}=  get support bundle fs path
+	${support_bundle_name}=  get support bundle name
+	${c1_ip}=  get node ip  c1
+	scp get  ${c1_ip}  ${path}  /tmp/.  recovery  bsn
+	run_cmd  cmd=tar -xvf /tmp/${support_bundle_name} -C /tmp

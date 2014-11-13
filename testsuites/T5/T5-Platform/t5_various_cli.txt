@@ -205,21 +205,12 @@ T14 a\n in banner
 	...  Banner : a\r
 	[Tags]  banner  BSC-5366
 
-T15 'from mode ...' in login mode
-	Cli Run  master  enable
-	Cli Run  master  exit
-	Sleep  5
-	Cli Run and Verify Output  master
-	...  ? enable
-	...  from mode
-	...  flag=False
-	Cli Run  master  enable
-	Cli Run  master  exit
-	Cli Run and Verify Output  master
-	...  ? enable
-	...  show
-	Cli Run  master  enable
-	[Tags]  BSC-5020
+T15 no tacacs server timeout
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  no tacacs server timeout 5
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  no tacacs server timeout
+	[Tags]  BSC-6651  AAA
 
 T16 Switch commands in config-switch-if submode
 	Cli Run and Verify Output  master
@@ -517,12 +508,157 @@ T34 Rebooting dummy switch
 #	...  10
 #	Cli Run  master  enable;config;set length 0
 
+T36 Tenant names
+	Verify Regular Name  tenant
+T37 Segment names
+	Cli Run  master  tenant test
+	Verify Regular Name  segment
+T38 User names
+	Verify Regular Name  user
+T39 Port-group names
+	Verify Regular Name  port-group
+T40 Switch names
+	Verify Regular Name  switch
+T41 Endpoint names
+	Cli Run  master  tenant test; segment test
+	Verify Regular Name  endpoint
+T42 Policy-list names
+	Cli Run  master  tenant test; logical-router
+	Verify Regular Name  policy-list
+T43 Next-hop-group names
+	Cli Run  master  tenant test; logical-router
+	Verify Regular Name  next-hop-group
+
+T44 no tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run  master  tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201 timeout 10 key
+    Cli Run  master  no tacacs server host 10.2.3.201 timeout 10 key secret
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201
+    Cli Run  master  no tacacs server host 10.2.3.201
+    Cli Run and Verify Output  master
+    ...  show running-config tacacs
+    ...  tacacs server host 10.2.3.201
+    ...  flag=False
+    [Tags]  AAA  BSC-6596
+
+T45 snmp-server switch trap fan-status
+    Run Keyword and Expect Error
+    ...  *Error: Invalid argument: range: expected [10..100000]*
+    ...  Cli Run  master  snmp-server switch trap fan-status 1
+    Run Keyword and Expect Error
+    ...  *Error: Invalid argument: range: expected [10..100000]*
+    ...  Cli Run  master  snmp-server switch trap fan-status 100000000
+    [Tags]  SNMP  ZTN  BSC-6530
+
+T46 system reboot switch 22:22:22:22:22:22
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: reboot only supported using IP Address for disconnected switches*
+    ...  Cli Run  master  system reboot switch 22:22:22:22:22:22
+    [Tags]  ZTN  BSC-6304
+
+T47 copy running-config foo
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: dest foo not supported*
+    ...  Cli Run  master  copy running-config foo
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: source foo not supported *
+    ...  Cli Run  master  copy foo running-config
+    [Tags]  running-config  BSC-6229
+
+T48 show switch foo inventory
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: unsupported action: "show" for unknown/unmanaged switch: "foo"*
+    ...  Cli Run  master  show switch foo inventory
+    [Tags]  ZTN  PAN-1189
+
+T49 no logging enable switch-remote
+    Cli Run  master  logging switch-remote
+    Cli Run and Verify Output  master
+    ...  show running-config logging
+    ...  logging switch-remote
+    Cli Run  master  no logging switch-remote
+    Cli Run and Verify Output  master
+    ...  show running-config logging
+    ...  logging switch-remote
+    ...  flag=False
+    [Tags]  ZTN  BSC-6089  logging
+
+T50 route 0.0.0.0/32 next-hop null
+    Cli Run  master  tenant test; logical-router
+    Cli Run  master  route 0.0.0.0/32 next-hop null
+    Cli Run and Verify Output  master
+    ...  show running-config tenant
+    ...  route 0.0.0.0/32 next-hop null
+    [Tags]  BVS-2036
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
     ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
+
+Verify Name
+	[Arguments]  ${name}  ${character}
+	Cli Run  master  ${name} 'abc${character}ttt'
+	Cli Run and Verify Output
+	...  master
+	...  show run ${name}
+	...  abc${character}ttt
+
+Verify Name Negative
+	[Arguments]  ${name}  ${character}
+	Run Keyword and Expect Error  *  Cli Run  master  ${name} 'abc${character}ttt'
+
+
+Verify Regular Name
+	[Arguments]  ${name}
+    Verify Name  ${name}  -
+    Verify Name  ${name}  _
+    Verify Name  ${name}  .
+    Verify Name  ${name}  1
+    Verify Name  ${name}  2
+    Verify Name  ${name}  3
+    Verify Name  ${name}  4
+    Verify Name  ${name}  5
+    Verify Name  ${name}  6
+    Verify Name  ${name}  7
+    Verify Name  ${name}  8
+    Verify Name  ${name}  9
+    Verify Name  ${name}  0
+    Verify Name Negative  ${name}  ~
+    Verify Name Negative  ${name}  !
+    Verify Name Negative  ${name}  @
+    Verify Name Negative  ${name}  \#
+    Verify Name Negative  ${name}  $
+    Verify Name Negative  ${name}  %
+    Verify Name Negative  ${name}  ^
+    Verify Name Negative  ${name}  &
+    Verify Name Negative  ${name}  *
+    Verify Name Negative  ${name}  (
+    Verify Name Negative  ${name}  )
+    Verify Name Negative  ${name}  +
+    Verify Name Negative  ${name}  `
+    Verify Name Negative  ${name}  =
+    Verify Name Negative  ${name}  [
+    Verify Name Negative  ${name}  ]
+    Verify Name Negative  ${name}  \\
+    Verify Name Negative  ${name}  ;
+    Verify Name Negative  ${name}  '
+    Verify Name Negative  ${name}  ,
+    Verify Name Negative  ${name}  /
+    Verify Name Negative  ${name}  <
+    Verify Name Negative  ${name}  >
+    Verify Name Negative  ${name}  ?
+    Verify Name Negative  ${name}  :
+    Verify Name Negative  ${name}  "
+    Verify Name Negative  ${name}  {
+    Verify Name Negative  ${name}  }
+    Verify Name Negative  ${name}  |
 
 Various Suite Setup
 	Base Suite Setup

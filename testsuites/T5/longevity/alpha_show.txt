@@ -4,7 +4,7 @@ Suite Setup      T5 longevity suite setup
 Suite Teardown   T5 longevity suite teardown
 Test Setup       base test setup 
 Test Teardown    base test teardown 
-Force Tags       IronHorse   T5
+Force Tags       IronHorse   T5   longevity
 Library		keywords/BsnCommon.py
 Library		keywords/Controller.py
 Library		keywords/Mininet.py

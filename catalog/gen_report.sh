@@ -4,25 +4,17 @@
 #  To specify the build info, you can modify the "build" variable below or
 #  set the env BUILD_NAME.
 
-#build="bvs master aggregated 2014 wk32"
-build="bvs master #beta2_17"
-#build="bvs master ironhorse beta2 aggregated"
-
-
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
     exit 1
 fi
 
-if [ "$BUILD_NAME"x != x ]; then
-    build=$BUILD_NAME
-fi
 
 usage() {
     if [ $# -ne 0 ]; then
         echo `basename $0`: ERROR: $* 1>&2
     fi
-    echo usage: `basename $0` '[-summary] [-detailed] [-all] [-no-scp] [-out <file>]' 1>&2
+    echo "Usage: BUILD_NAME=\"bvs master #<id>\" `basename $0` [-summary] [-detailed] [-all] [-no-scp] [-out <file>]"
     echo ''
     echo '  -summary  : provide summary report'
     echo '  -detailed : provide detailed report'
@@ -50,8 +42,12 @@ scp_to_web() {
 }
 
 
-no_scp=0
+if [ "$BUILD_NAME"x = x ]; then
+    usage
+fi
 
+build=$BUILD_NAME
+no_scp=0
 ts=`date "+%Y-%m-%d_%H%M%S"`
 release=IronHorse
 build_str=`echo $build | sed -e 's/#//' -e 's/ /_/g'`
@@ -90,7 +86,8 @@ if [ "$summary"x != x ]; then
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites | tee -a $output
     echo ""
-    scp_to_web $no_scp $output $output_summary_no_timestamp
+    gzip -9 $output
+    scp_to_web $no_scp ${output}.gz ${output_summary_no_timestamp}.gz
 fi
 
 if [ "$detailed"x != x ]; then
@@ -101,6 +98,7 @@ if [ "$detailed"x != x ]; then
     echo ""
     ./db_collect_stats.py --release $release --build "$build" --show-suites --show-untested --show-manual | tee -a $output
     echo ""
-    scp_to_web $no_scp $output $output_detailed_no_timestamp
+    gzip -9 $output
+    scp_to_web $no_scp ${output}.gz ${output_detailed_no_timestamp}.gz
 fi
 

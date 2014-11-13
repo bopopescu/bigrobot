@@ -28,7 +28,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface tenant add/remove permit policy src-ip to dest-ip 
-	[Tags]  feature  run
+	[Tags]  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -1084,9 +1084,9 @@ T35 Interface tenant add/remove permit policy src-ip-port to dest-vns
     ${report}=             fetch port stats  stream=${stream}
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 T36 Interface tenant add/remove deny policy src-ip-port to dest-vns
-	[Tags]  smoke  feature
+	[Tags]  smoke  feature  
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
@@ -1094,7 +1094,7 @@ T36 Interface tenant add/remove deny policy src-ip-port to dest-vns
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
-    clear stats
+    clear stats  
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -2948,9 +2948,8 @@ T5 base suite setup
   
 T5 base suite teardown
 	delete fabric switch
-	base suite teardown  
-
-
+	base suite teardown
+	
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  5
     ${report}=  fetch port stats  stream=${stream}  
@@ -3003,4 +3002,5 @@ delete fabric switch
 
 
 test teardown
+  base test teardown
   delete traffic

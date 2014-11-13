@@ -12,13 +12,13 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+${switch1_alias}                          app-ras5710-1  #Alias for switch 1
 
 ### Ixia Ports
 ${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-1-5        #Alias for filter interface on switch 1
 ${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-1-6        #Alias for delivery interface on switch 1
 
 ### BigTap Policy Configuration
 ${policy_name_1}                          policy_tcp_flags       #Policy Name that will use the tunnel interface
@@ -40,7 +40,7 @@ Verify all positive combinations of TCP flags
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
@@ -57,13 +57,13 @@ Verify all positive combinations of TCP6 flags
     \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     \    Should be true  ${verify_policy1}  
     \    ${flags}=  convert integer to tcpflag  ${INDEX}
-    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  ethertype=86dd  
     \    ...     src_mac=00:03:03:04:05:06  dst_mac=00:03:03:04:05:07  no_arp=True
     \    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
     \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
     \    clear stats    
     \    start traffic  ${stream}
-    \    sleep  10
+    \    sleep  5
     \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
     \    stop traffic  ${stream}
     \    delete traffic
@@ -95,7 +95,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should be true  ${in_range}
 
 flag test teardown 

@@ -47,11 +47,18 @@ Suite Setup
 	@{spineList}=  Create List  ${s1_dpid}  ${s5_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
-	#Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
 	Sleep  150
 	Cli Run  master  enable; config
 	Randomize ZTN Configuration
 	Cli Run  master  show switch
+
+	#Telnet Reinstall Switchlight  s1
+	#Telnet Reinstall Switchlight  s2
+	#Telnet Reinstall Switchlight  s3
+	#Telnet Reinstall Switchlight  s4
+	#Telnet Reinstall Switchlight  s5
+	#Sleep  200
 
 	${status}=  Rest Get Switch Connection State  master  ${s1_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
@@ -63,7 +70,7 @@ Suite Setup
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
 	${status}=  Rest Get Switch Connection State  master  ${s5_alias}
 	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	Sleep  120
+	Sleep  200
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -217,17 +224,20 @@ Randomize ZTN Configuration
 	${host_random}  Generate Random IP
 	Cli Run  master  snmp-server host ${host_random}
 	Cli Run  master  snmp-server enable traps
-	Cli Run  master  snmp-server switch trap fan-status
-	Cli Run  master  snmp-server switch trap psu-status
+	Cli Run  master  snmp-server switch trap auth-fail
 	Cli Run  master  snmp-server switch trap cpu-load 80
 	Cli Run  master  snmp-server switch trap fm-flow-table-util 80
 	Cli Run  master  snmp-server switch trap l2-flow-table-util 80
 	Cli Run  master  snmp-server switch trap mem-free 8080
-	${threshold_random}  Generate Random Threshold
-	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random}
-	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random}
-	Cli Run  master  snmp-server switch trap mem-free ${threshold_random}${threshold_random}
+	${threshold_random_1}  Generate Random Threshold
+	${threshold_random_2}  Generate Random Threshold
+	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random_1}
+	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random_1}
+	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random_1}
+	Cli Run  master  snmp-server switch trap mem-free ${threshold_random_1}${threshold_random_2}
+	Cli Run  master  snmp-server switch trap fan-status ${threshold_random_1}${threshold_random_2}
+	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}${threshold_random_2}
+	Cli Run  master  snmp-server switch trap link-status ${threshold_random_1}${threshold_random_2}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
 	${timezone_random}  Generate Random GMT Timezone

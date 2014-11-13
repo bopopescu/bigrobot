@@ -302,12 +302,28 @@ Test ++++++Maximum limit of started keywords exceeded++++++
     Do A
 
 Test run_cmd keyword
+    [Tags]           skipped
     ${out}=         run_cmd   cmd=ls -la /etc   shell=${true}
     log             Output: ${out}
     ${out}=         run_cmd   cmd=grepp vui /etc/hosts   shell=${true}
     log             Output: ${out}
     ${out}=         run_cmd   cmd=grep vui /etc/hosts   shell=${true}
     log             Output: status=${out[0]} output='${out[1]}' error_code=${out[2]}
+
+Test BigRobot params argument
+    [Documentation]  This is line 1 of test case description
+    ...
+    ...              This is line 2 of test case description
+    ...
+    ...              This is line 3 of test case description
+    ...
+    ...              This is line 4 of test case description - link: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#test-data-syntax
+    ...
+    ...              This is line 5 of test case description - image <img src="http://oxpedia.org/wiki/images/thumb/c/c6/Ad.jpg/800px-Ad.jpg" alt="arch diagram">
+    #[Tags]           skipped
+    #${val}=         params    common.my_image
+    #print           Value = ${val}
+    test common params
 
 
 * Keywords

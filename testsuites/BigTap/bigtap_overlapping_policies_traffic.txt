@@ -440,7 +440,7 @@ TC020: Add a service to both policies and verify overlap policy is created. Brin
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  feature  service  
+    [Tags]  feature  service  skipped  
 
 TC021: Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
     rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
@@ -461,7 +461,7 @@ TC021: Add a service to both policies and verify overlap policy is created. Brin
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  feature  service  
+    [Tags]  feature  service  skipped  
 
 TC022: Verify overlap is not created when component policies have different protocols 
     rest delete policy match  admin-view  ${policy_name_1}  1

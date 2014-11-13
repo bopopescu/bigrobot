@@ -43,9 +43,9 @@ s7:
   user: admin
   password: arastra
 
-## APP-AC5610-2 (NON-TUNNEL OPENFLOW SWITCH)
+## APP-AC5610-1 (NON-TUNNEL OPENFLOW SWITCH)
 s8:
-  ip: 10.9.19.11
+  ip: 10.9.19.2
   
     
 tg1:
@@ -76,7 +76,7 @@ tg1:
       name: 2/10
 ## APP-AC5610-2 (NON-TUNNEL OPENFLOW SWITCH)      
     h:
-      name: 1/7        
+      name: 1/1        
     i:
-      name: 1/8
+      name: 1/2
       

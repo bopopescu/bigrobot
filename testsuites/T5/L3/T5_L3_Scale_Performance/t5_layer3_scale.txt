@@ -49,16 +49,16 @@ Delete and add config with 1k tenant with 4k segment in default vlan-mapping mod
     [Tags]              manual          scaling           
 
 Add and delete 10k cidr routes in spine switches
-    manual failed
-	[Tags]				manual          scaling	        BVS-2376
+    manual passed
+	[Tags]				manual          scaling	        
 	
 Add and delete 10k cidr routes in leaf switches
-    manual failed
-    [Tags]              manual          scaling         BVS-2376   
+    manual passed
+    [Tags]              manual          scaling            
     
 Add and delete 1k nexthop group
-    manual failed
-	[Tags]				manual 			scaling	       PAN-1251		
+    manual passed
+	[Tags]				manual 			scaling	      	
 
 Add more than 1k tenant
     manual passed

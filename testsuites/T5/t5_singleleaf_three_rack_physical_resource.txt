@@ -1,21 +1,29 @@
-* Keywords
+* Setting 
+Library  keywords/BsnCommon.py
 
+* Keywords
 add fabric switch
   rest add switch  spine0
-  rest add dpid  spine0  00:00:70:72:cf:a8:07:50
+  ${spine0_dpid}=  get_switch_mac_topo  s7 
+  rest add dpid  spine0  ${spine0_dpid}
   rest add fabric role  spine0  spine
   rest add switch  spine1
-  rest add dpid  spine1  00:00:70:72:cf:a8:09:50
+  ${spine1_dpid}=  get_switch_mac_topo  s8
+  rest add dpid  spine1  ${spine1_dpid}
   rest add fabric role  spine1  spine
   rest add switch  leaf0-a
-  rest add dpid  leaf0-a  00:00:70:72:cf:b5:ff:0e
+  ${leaf0a_dpid}=  get_switch_mac_topo  s1
+  rest add dpid  leaf0-a  ${leaf0a_dpid}
   rest add fabric role  leaf0-a  leaf
   rest add switch  leaf1-a
-  rest add dpid  leaf1-a  00:00:70:72:cf:bc:c7:5e
+  ${leaf1a_dpid}=  get_switch_mac_topo  s3
+  rest add dpid  leaf1-a  ${leaf1a_dpid}
   rest add fabric role  leaf1-a  leaf
   rest add switch  leaf2-a
-  rest add dpid  leaf2-a  00:00:70:72:cf:b6:01:f2
+  ${leaf2a_dpid}=  get_switch_mac_topo  s5 
+  rest add dpid  leaf2-a  ${leaf2a_dpid}
   rest add fabric role  leaf2-a  leaf
+  BuiltIn.Sleep  155
   
 delete fabric switch  
   rest delete fabric switch  spine0 

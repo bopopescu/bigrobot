@@ -10,7 +10,7 @@ class T5Parallel(object):
     def __init__(self):
         pass
 
-    def task_finish_check_parallel(self, results, result_dict,timer=60, timeout=1200):
+    def task_finish_check_parallel(self, results, result_dict,timer=60, timeout=1500):
         '''
         task_finish_check_parallel
         Input:  
@@ -40,11 +40,10 @@ class T5Parallel(object):
                     
             if iteration >= int(timeout)/int(timer):
 #                helpers.test_failure("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)
-                helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)   
-                flag = False
-                break
+                helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)                   
+                return False
             
-        helpers.log("*** Parallel tasks completed or exceed the timeout")
+        helpers.log("*** Parallel tasks completed ")
 
         #
         # Check task output
@@ -158,7 +157,7 @@ class T5Parallel(object):
         if finish == 'yes':
             result= self.task_finish_check_parallel(results, result_dict, timer=30, timeout=900)
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel,  all node done  \n")
-            return result
+            return { 'results': result}
         elif finish == 'one':
             result= self.task_one_finish_check_parallel(results, result_dict, timer=30, timeout=900)
             return { 'results': results, 'result_dict': result_dict }          
@@ -189,7 +188,9 @@ class T5Parallel(object):
                     helpers.log("****** %d.READY     - task_id(%s)['%s']"
                                 % (iteration, res.task_id, action))
                     helpers.log("USR INFO: on job is ready")                               
-                   
+                              
+                    helpers.log_task_output(task_id)
+
                     return True
                 else:
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"

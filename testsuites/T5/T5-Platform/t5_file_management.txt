@@ -252,7 +252,9 @@ T5.1 Copy running config to file, copy RC from file to other file, verify
 T5.2 Copy running config to file, copy RC from file to scp://, verify
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp}
+	Sleep  5
 	Compare  running-config  ${scp}
+	Sleep  5
 	Compare Slave  running-config  ${scp}
 	[Tags]  SCP  HA
 
@@ -263,14 +265,19 @@ T5.3 Copy running config to snapshot://, copy RC from snapshot:// to file, verif
 T5.4 Copy running config to snapshot://, copy RC from snapshot:// to scp://, verify
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp}
+	Sleep  5
 	Compare  ${config}  ${scp}
+	Sleep  5
 	Compare  running-config  ${scp}
+	Sleep  5
 	Compare Slave  running-config  ${scp}
 	[Tags]  BSC-4955  SCP  HA
 
 T5.5 Copy running config to scp://, copy RC from scp:// to file, verify
 	Cli Copy  running-config  ${scp}
+	Sleep  5
 	Cli Copy  ${scp}  ${file}
+	Sleep  5
 	Compare  running-config  ${file}
 	[Tags]  SCP
 
@@ -374,7 +381,7 @@ T5.9.2 Verify: copy scp://<running-config> file
 
 T5.9.3 Verify: copy scp://<running-config> snapshot://
 	Cli Copy  running-config  ${scp RC}
-	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp RC}  ${config}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid snapshot file*  Cli Copy  ${scp RC}  ${config}
 	[Tags]  SCP
 
 T5.9.4 Verify: copy scp://<file> running-config
@@ -394,7 +401,7 @@ T5.9.5 Verify: copy scp://<file> file
 T5.9.6 Verify: copy scp://<file> snapshot://
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp file}
-	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp file}  ${config}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid snapshot file*  Cli Copy  ${scp file}  ${config}
 	[Tags]  SCP
 
 T5.9.7 Verify: copy scp://<snapshot://> running-config

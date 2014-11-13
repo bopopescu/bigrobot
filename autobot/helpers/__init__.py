@@ -21,7 +21,6 @@ import shutil
 import curses.ascii as ascii
 import xml.dom.minidom
 import smtplib
-import robot
 from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
@@ -30,9 +29,9 @@ import autobot.utils as br_utils
 
 # All below are modules in the helpers package. So we can control and manage
 # name conflicts. Therefore it's assumed safe to do 'import *'.
-from log import *
-from gobot import *
-from exec_timer import *
+from log import *  # pylint: disable=W0401, W0403
+from gobot import *  # pylint: disable=W0401, W0403
+from exec_timer import *  # pylint: disable=W0401, W0403
 
 # Convenience helper function any_match() and first_match() imported from
 # Exscript. More info at
@@ -63,12 +62,24 @@ def bigrobot_env_variables():
 
 
 def bigrobot_module_dependencies():
-    robot_framework_version = robot.version.VERSION
     import Exscript
-    exscript_version = Exscript.version.__version__
+    import Crypto
+    import pexpect
+    import httplib2
+
     s = "BigRobot version        %s\n" % get_version()
-    s += "Robot Framework version %s\n" % robot_framework_version
-    s += "Exscript version        %s\n" % exscript_version
+
+    try:
+        import robot
+        s += "Robot Framework version %s\n" % robot.version.VERSION
+    except:
+        pass
+
+    s += "Exscript version        %s\n" % Exscript.version.__version__
+    s += "Paramiko version        %s\n" % paramiko.__version__
+    s += "Crypto version          %s\n" % Crypto.__version__
+    s += "Pexpect version         %s\n" % pexpect.__version__
+    s += "Httplib2 version        %s\n" % httplib2.__version__
     pversion = sys.version_info
     s += "Python version          %s.%s.%s" % (pversion.major,
                                                pversion.minor,
@@ -473,6 +484,13 @@ def bigrobot_listener_log(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_LISTENER_LOG', new_val, default)
 
 
+def bigrobot_global_params(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_GLOBAL_PARAMS', new_val, default)
+
+
 def bigrobot_additional_params(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -547,7 +565,8 @@ def bigrobot_esb_broker(new_val=None,
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
-    Set to 'True' if test is run under smoketest/regression environment.
+    Set to 'True' if test is run under smoketest/regression environment
+    (i.e., Jenkins).
     """
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
@@ -571,6 +590,14 @@ def bigrobot_params(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
+def bigrobot_nose_setup(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to enable testing using the Nose test framework.
+    """
+    return _env_get_and_set('BIGROBOT_NOSE_SETUP', new_val, default)
+
+
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -579,7 +606,15 @@ def bigrobot_test_setup(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
 
 
-def bigrobot_test_postmortem(new_val=None, default='True'):
+def bigrobot_test_teardown(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test teardown.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_TEARDOWN', new_val, default)
+
+
+def bigrobot_test_postmortem(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     Set to 'False' to bypass Test case postmortem.
@@ -603,6 +638,12 @@ def bigrobot_test_ztn(new_val=None, default='False'):
     """
     return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
 
+def bigrobot_no_auto_reload(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using ssh Switch handles.
+    """
+    return _env_get_and_set('BIGROBOT_NO_AUTO_RELOAD', new_val, default)
 
 def bigrobot_ztn_reload(new_val=None, default='False'):
     """
@@ -728,6 +769,28 @@ def bigrobot_syslog_level(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
 
 
+def bigrobot_reconfig_reauth(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Reconfiguration of reauth timeout. If True then reconfigure reauth timeout
+    to be longer than the 2 hour default, but in the process it has to restart
+    floodlight. In some test scenarios, user may want to disable that by
+    setting this value to 'False'.
+    """
+    return _env_get_and_set('BIGROBOT_RECONFIG_REAUTH',
+                            new_val, default)
+
+
+def bigrobot_reconfig_reauth_sleep_timer(new_val=None, default=30):  # 30 seconds
+    """
+    Category: Get/set environment variables for BigRobot.
+    After reconfiguring reauth timeout which requires re-starting floodlight,
+    sleep for a few seconds while floodlight settles down.
+    """
+    return _env_get_and_set('BIGROBOT_RECONFIG_REAUTH_SLEEP_TIMER',
+                            new_val, default)
+
+
 def bigrobot_monitor_reauth_timer(new_val=None, default=300):  # 5 minutes
     """
     Category: Get/set environment variables for BigRobot.
@@ -822,8 +885,8 @@ def _bigrobot_config_load(config_file):
     return config_dict
 
 
-def bigrobot_config_bsn():
-    return _bigrobot_config_load('/bsn.yaml')
+def bigrobot_config_common():
+    return _bigrobot_config_load('/common.yaml')
 
 
 def bigrobot_config_test_catalog():
@@ -836,6 +899,16 @@ def bigrobot_config_qa_authors():
 
 def bigrobot_config_rest_services():
     return _bigrobot_config_load('/rest_services.yaml')
+
+
+def print_bigrobot_env(minimum=False):
+    for env in sorted(bigrobot_env_list()):
+        if minimum and env not in ['BIGROBOT_PATH', 'BIGROBOT_LOG_PATH',
+                                   'BIGROBOT_SUITE', 'BIGROBOT_TOPOLOGY',
+                                   'BIGROBOT_LOG_PATH_EXEC_INSTANCE']:
+            continue
+        print("%s=%s" % (env, os.environ[env]))
+    print("")
 
 
 def load_config(yaml_file):
@@ -1068,7 +1141,7 @@ def to_json(python_data, is_raw=False):
 
 def unicode_to_ascii(u):
     """
-    COnvert a Unicode string to an ASCII string.
+    Convert a Unicode string to an ASCII string.
     """
     return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
 
@@ -1287,6 +1360,13 @@ def file_not_empty(f):
         return True
     else:
         return False
+
+
+def file_rename(old_name, new_name):
+    """
+    Rename a file from old_name to new_name.
+    """
+    os.rename(old_name, new_name)
 
 
 def file_remove(filename):
@@ -1576,7 +1656,7 @@ def _createSSHClient(server, user, password, port=22):
 
 
 def scp_put(server, local_file, remote_path,
-            user='admin', password='adminadmin', recursive=True):
+            user=None, password=None, recursive=True):
     """
     Example:
         helpers.scp_put(c.ip(),
@@ -1584,6 +1664,12 @@ def scp_put(server, local_file, remote_path,
                         remote_path='/tmp/12345/1234')
     Limitations: Does not support wildcards.
     """
+
+    if not user:
+        error_exit("Need to specify user name")
+    if not password:
+        error_exit("Need to specify user password")
+
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
@@ -1605,6 +1691,11 @@ def scp_get(server, remote_file, local_path,
 
     Limitations: Does not support wildcards.
     """
+    if not user:
+        error_exit("Need to specify user name")
+    if not password:
+        error_exit("Need to specify user password")
+
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
@@ -1627,7 +1718,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         failure: (False, "...error message...")
     """
     if not quiet:
-        print("Executing '%s'" % cmd)
+        log("Executing '%s'" % cmd)
 
     if shell:
         # In general, should avoid shell mode. The command output will go
@@ -1656,12 +1747,12 @@ def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
     identical, resulting in more consistent behavior. Need to gradually phase
     out the old run_cmd usage.
 
-    Returns tuple (Boolean, String, Integer)
-        success: (<status_flag>,  "...success message...", <errorcode>)
-        failure: (<status_flag>, "...error message...", <errorcode>)
+    Returns tuple (Boolean, String, String, Integer)
+        success: (True,  "command_output", "error_msg", <errorcode>)
+        failure: (False, "command_output', "error_msg", <errorcode>)
     """
     if not quiet:
-        print("Executing '%s'" % cmd)
+        log("Executing '%s'" % cmd)
     if shell:
         # In general, should avoid shell mode due to security reasons.
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -1673,16 +1764,17 @@ def run_cmd2(cmd, ignore_stderr=False, cwd=None, shell=True, quiet=False):
                              stderr=subprocess.PIPE, cwd=cwd)
     out, err = p.communicate()
     error_code = p.returncode
-    if err and not ignore_stderr:
-        return (False, err, error_code)
-    return (True, out, error_code)
+    status = True
+    if error_code and not ignore_stderr:
+        status = False
+    return (status, out, err, error_code)
 
 
-def id():
+def user_id():
     """
     Dump output from 'id'.
     """
-    _, output, _ = run_cmd2('id', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('id', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1690,7 +1782,7 @@ def uname():
     """
     Dump output from 'uname -a'.
     """
-    _, output, _ = run_cmd2('uname -a', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('uname -a', shell=False, quiet=True)
     return output.strip()
 
 
@@ -1700,7 +1792,7 @@ def ulimit():
     Note: On Mac OS X, ulimit is in /usr/bin. On Linux (Ubuntu), it's a
     built-in shell command. So let's execute it using shell mode.
     """
-    _, output, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
+    _, output, _, _ = run_cmd2('ulimit -a', shell=True, quiet=True)
     return output.strip()
 
 
@@ -1708,7 +1800,7 @@ def uptime():
     """
     Dump output from 'uptime'.
     """
-    _, output, _ = run_cmd2('uptime', shell=False, quiet=True)
+    _, output, _, _ = run_cmd2('uptime', shell=False, quiet=True)
     return output.strip()
 
 
@@ -2048,8 +2140,8 @@ def params_dot_notation_to_dict(params):
     """
     new_dict = {}
     for param in params:
-        keys = param.split('.')
-        keys[-1], value = keys[-1].split('=')
+        keys = param.split('.', 1)
+        keys[-1], value = keys[-1].split('=', 1)
         ref = new_dict
         key_counter = 1
         for key in keys:

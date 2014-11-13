@@ -4,7 +4,7 @@ Suite Setup      T5 longevity suite setup
 Suite Teardown   T5 longevity suite teardown
 Test Setup       T5 base test setup 
 Test Teardown    T5 base test teardown 
-Force Tags       IronHorse   T5
+Force Tags       IronHorse   T5   longevity
 Library		keywords/BsnCommon.py
 Library		keywords/Controller.py
 Library		keywords/Mininet.py
@@ -33,7 +33,7 @@ ${Vflapnum}     100
 ${bigconfigsleep}  300 
 
 
-${loop}        10
+${loop}        5
 ${repeat}      60
 
 
@@ -47,6 +47,16 @@ ${spine2}      dt-spine2
  
 * Test Case
  
+	    
+T23 controller node event failover        
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node failover: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+        
+	[Tags] 	longevity    traffic     event     
+ 
+
  
 
 T21 spine switch node down/up event 	 
@@ -61,8 +71,8 @@ T21 spine switch node down/up event
 
 T22 leaf switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
-    \	switch node down/up event      ${lea1-a} 
+    \	Log To Console   \n******* switch switch node down/up event: ${i}********   
+    \	switch node down/up event      ${leaf1-a} 
     \   sleep  ${inevent}
     \	switch node down/up event      ${leaf1-b} 
     \   sleep  ${inevent}
@@ -73,16 +83,6 @@ T22 leaf switch node down/up event
     
          
 	[Tags] 	longevity   traffic    event   skipped    
-
-	    
-T23 controller node event failover        
-     : FOR    ${i}    IN RANGE    0    ${loop}
-    \	Log To Console   \n******* controller node failover: ${i}*******    
-    \	controller node event HA failover     ${inevent}
-    \   sleep   ${inevent}
-        
-	[Tags] 	longevity    traffic     event    skipped
- 
 
 
 
@@ -97,6 +97,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
 	\  sleep  ${linkflap}  	
+	
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
@@ -105,6 +106,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}   ${leaf1-b} 
 	\  sleep  ${linkflap}  	
+	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-a} 
@@ -112,7 +114,8 @@ T27 data Link down/up event between leaf and spine
 	\  data Link down/up event between nodes  ${leaf2-b}    ${spine1} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine1}    ${leaf2-b} 	
-	\  sleep  ${linkflap}  	
+	\  sleep  ${linkflap}
+	  	
 	\  data Link down/up event between nodes  ${leaf2-a}    ${spine2} 
 	\  sleep  ${linkflap}  	
 	\  data Link down/up event between nodes  ${spine2}    ${leaf2-a} 
@@ -123,7 +126,7 @@ T27 data Link down/up event between leaf and spine
 	\  sleep  ${inevent}  
  
  
-	[Tags] 	longevity     traffic     event    
+	[Tags] 	longevity     traffic     event     
 
 T28 data Link down/up event between leafs 
     : FOR    ${i}    IN RANGE    0    ${loop}
@@ -154,7 +157,7 @@ T25 big configuration changes (around 500 vns change)
   	\  vns configuration add/remove         ${Vflapnum}               
  	\  sleep  ${bigconfigsleep}  
   	
-	[Tags] 	longevity     traffic    event      
+	[Tags] 	longevity     traffic    event     
 
 
 
@@ -172,6 +175,7 @@ T51 continues Event
 	\  Run Keyword if    ${random}==3   T28 data Link down/up event between leafs 
 	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
 	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
+#	\  Run Keyword if    ${random}==6   T23 controller node event failover
   	\  sleep  ${betweenevent}
    
 	[Tags] 	longevity    traffic     
@@ -183,11 +187,13 @@ T51 continues Event
 
 * Keywords
 
-Cli show commands for debug
-	cli  master   show running-config switch
-	cli  master   show switch 		
-	cli  master   show link	
-	
+Cli show commands for debug     
+	cli     master   show ver           timeout=60
+	enable  master   show running-config switch   timeout=60
+	enable  master   show switch 		 timeout=60
+	enable  master   show link	         timeout=60
+	cli     master   show ver            timeout=60	
+	cli     slave   show ver           timeout=60	
 
 switch node down/up event   [Arguments]    ${node}
 	log  reload switch
@@ -211,7 +217,7 @@ controller node event HA failover    [Arguments]    ${during}=30
     cli_cluster_take_leader
     sleep  ${during}   
 	Cli show commands for debug
-    clear stats in controller switch	  
+ 	  
 
 controller node event reboot master    [Arguments]    ${during}=30
     Log To Console   ================ Rebooting controller ===============
@@ -233,9 +239,9 @@ data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
 	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
  	: FOR    ${int}   IN   @{list}   
 	\   disable links between nodes      ${node1}   ${int}
-	\   sleep   120
+	\   sleep   60
 	\   enable links between nodes      ${node1}   ${int} 
- 	\   sleep   120 
+ 	\   sleep   60 
  
 
 disable links between nodes    [Arguments]   ${node1}   ${int} 

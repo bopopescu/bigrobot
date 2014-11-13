@@ -19,9 +19,10 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 * Test Case 
 	
 add/delete subnet to a tenant router
-	[Tags]   openstack    
+	[Tags]   openstack     
 	openstack add net  t5test  app
 	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	sleep  3
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
 	openstack add router  t5test  t5test-r1
@@ -29,24 +30,27 @@ add/delete subnet to a tenant router
     openstack verify router  t5test-r1 
     openstack source  keystonerc_t5test
 	openstack add subnet to router  t5test-r1  app 
-	sleep  50
+	sleep  10
 	openstack verify router interface  app
 	openstack delete subnet to router  t5test-r1  app
-	sleep  30
+	sleep  10
 	${result}=  openstack verify router interface  app
 	Should not be True  ${result}
 	
 add/delete multiple subnet to a tenant router
-	[Tags]  openstack  
+	[Tags]  openstack    
 	openstack add net  t5test  app
-	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	openstack add subnet  t5test  app  app  30.0.0.0/24
+	sleep  2 
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
 	openstack add net  t5test  web
 	openstack add subnet  t5test  web  web  30.0.1.0/24
+	sleep  2
 	openstack verify vns  t5test  web
 	openstack add net  t5test  db
 	openstack add subnet  t5test  db  db  30.0.2.0/24
+	sleep  2
 	openstack verify vns  t5test  db
 	openstack add router  t5test  t5test-r1
 	sleep  5
@@ -55,39 +59,40 @@ add/delete multiple subnet to a tenant router
 	openstack add subnet to router  t5test-r1  app  
 	openstack add subnet to router  t5test-r1  web  
 	openstack add subnet to router  t5test-r1  db 
-	sleep  50
+	sleep  20
 	openstack verify router interface  app
 	openstack verify router interface  web 
 	openstack verify router interface  db
 	openstack delete subnet to router  t5test-r1  app
-	sleep  20
+	sleep  10
 	${result}=  openstack verify router interface  app
 	Should not be True  ${result}
     openstack verify router interface  web 	
 	openstack delete subnet to router  t5test-r1  web
-	sleep  20
+	sleep  10
 	${result}=  openstack verify router interface  web
 	Should not be True  ${result}
 	openstack delete subnet to router  t5test-r1  db
-	sleep  20
+	sleep  10
 	${result}=  openstack verify router interface  db
 	Should not be True  ${result}
 
 checking multiple subnet with same IP range to tenant router
-	[Tags]  openstack 
+	[Tags]  openstack   
 	openstack add net  t5test  app
 	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	sleep  3
 	openstack verify tenant  t5test
 	openstack verify vns  t5test  app
 	openstack add net  t5test  web
 	openstack add subnet  t5test  web  web  30.0.0.0/24
+	sleep  3
 	openstack verify vns  t5test  web
-	sleep  5
     openstack add router  t5test  t5test-r1
     openstack verify router  t5test-r1
     openstack source  keystonerc_t5test
 	openstack add subnet to router  t5test-r1  app  
-	sleep  40
+	sleep  10
 	openstack verify router interface  app
 	${result}=  openstack add subnet to router  t5test-r1  web
 	Should be True  ${result}
@@ -97,16 +102,16 @@ checking multiple subnet with same IP range to tenant router
 	Should not be True  ${result}    
 			
 add/delete gateway to tenant router
-	[Tags]  openstack    
+	[Tags]  openstack     
 	openstack add net external  ext-net
 	openstack add subnet external  ext-net  ext-net  40.0.0.1  40.0.0.0/24
 	openstack add router  t5test  t5test-r1
 	openstack source  keystonerc_t5test
 	openstack add router gw  t5test-r1  ext-net
-	sleep  30
+	sleep  10
 	openstack verify external router interface  t5test-r1 
 	openstack delete router gw  t5test-r1
-	sleep  20
+	sleep  10
 	openstack verify external router interface  t5test-r1
 		
 * keywords

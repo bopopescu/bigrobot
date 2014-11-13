@@ -57,7 +57,7 @@ ${ixia3}                        ethernet18
 #leaf0a
 ${ixia4}                        ethernet17 
 #leaf1a
-${ixia7}                        ethernet18 
+${ixia7}                        ethernet17 
 #leaf1a
 ${ixia6}                        ethernet17 
 #leaf1b
@@ -85,4 +85,4 @@ ${tenant2_polname}	x4-to-x1
 ${next-hop-grp}		nhgrp
 ${next-hop-ip}		10.251.3.2
 ${next-hop-gw}		10.251.3.1
-${in_range}			10
+${in_range}			30

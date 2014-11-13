@@ -26,6 +26,8 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        self._raw_stream = None
+        self._raw_stream_id = 1
         # Connect to IXIA Chassis and IXIA TCL Server
         self._handle = self.ix_connect()
         if clear_ownership:
@@ -178,10 +180,32 @@ class Ixia(object):
         helpers.log("### Done adding two device groups")
         return mac_devices
 
+    def get_eth_device_and_ip_device(self, mac, topo_name):
+        handle = self._handle
+        topos = handle.getList(handle.getRoot(), 'topology')
+        print("Topos found: %s" % topos)
+        for topo in topos:
+            ixia_topo_name = handle.getAttribute(topo, '-name')
+            helpers.debug("ixia_topo name found: %s" % ixia_topo_name)
+            if topo_name == ixia_topo_name:
+                dev_group = handle.getList(topo, 'deviceGroup')
+                helpers.debug("ixia_device group found: %s" % dev_group)
+                for device in dev_group:
+                    eth_devices = handle.getList(device, 'ethernet')
+                    helpers.debug("ixia eth_Devices found: %s" % eth_devices)
+                    for eth_device in eth_devices:
+                        ixia_mac = handle.getAttribute(eth_device, '-mac')
+                        ixia_mac_value = handle.getAttribute(ixia_mac + '/singleValue' , '-value')
+                        helpers.debug("ixia_mac_value found : %s" % ixia_mac_value)
+                        ixia_ip_devices = handle.getList(eth_device, 'ipv4')
+                        helpers.debug("ixia_ip_devices: %s" % ixia_ip_devices)
+                        if ixia_mac_value == mac:
+                            return eth_device, ixia_ip_devices[0]
+        return None, None
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None, p_priority=None):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -198,18 +222,26 @@ class Ixia(object):
         gw_ips = [src_gw_ip, dst_gw_ip]
         gw_steps = [s_gw_step, d_gw_step]
         gw_macs = [src_gw_mac, dst_gw_mac]
+        prefixs = [src_gw_prefix, dst_gw_prefix]
 
         topo_names = []
+        mac_devices = []  # as this are added to ixia need to remap as per ixia API's
+        ip_devices = []
+        ixia_refs = {}  # Dictionary to hold the Ixia References
+        topo_devices = []
+        eth_devices = []
 
         for topo in topology:
             if len(self._handle.getList(topo, 'deviceGroup')) > 0:
                 helpers.log('Ixia Device Group already created for this Topology so no need to created again')
             else:
+                helpers.log("First Stop Protocols on all topos before adding new Topo for Ixia port")
+                self._handle.execute('stop', topo)
+                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+                helpers.log('Sleeps 3 sec for Hosts to be Stopped')
                 self._handle.add(topo, 'deviceGroup')
 
         self._handle.commit()
-        topo_devices = []
-        eth_devices = []
 
         for topo in topology:
             dev_grp = self._handle.getList(topo, 'deviceGroup')
@@ -218,38 +250,66 @@ class Ixia(object):
             self._handle.setMultiAttribute(enabled_ref, '-clearOverlays', False, '-pattern', 'singleValue')
             topo_devices.append(topo_device)
             self._is_device_created = True
-        for (topo_device, multi, topo) in zip(topo_devices, mac_mults, topology):
+
+        # return if the mac_devices and ip_devices are already created with same mac
+#         if len(mac_devices) != 0:
+#             helpers.log("Returning ALready Created ETH_DEVICE AND IP_DEVCIES: %s %s" % (mac_devices, ip_devices))
+#             return mac_devices, ip_devices
+
+        for (topo_device, multi, topo, mac) in zip(topo_devices, mac_mults, topology, macs):
             helpers.log('### topo device : %s' % str(topo_device))
             topo_name = self._handle.getAttribute(topo, '-name')
             topo_names.append(topo_name)
             self._handle.setAttribute(topo_device, '-multiplier', multi)
+            (ixia_eth_device, ixia_ip_device) = self.get_eth_device_and_ip_device(mac, topo_name)
+            if ixia_eth_device is not None:
+                helpers.log("Using ALREADY CREATED IXIA ETH DEVICE AND IP DEVICE SKIPPING CREATING AGAIN FROM SAME MAC...")
+                eth_devices.append(ixia_eth_device)
+                continue
+            helpers.log("Adding NEW ETHERNET DEVICE for MAC: %s" % mac)
             eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
-#         if vlan_id is not None:
-#             for eth_device in eth_devices:
-#                 helpers.log("Setting Vlan True in Ixia Ethernet Device")
-#                 self._handle.setMultiAttribute(eth_device, '-useVlans', True)
-#                 self._handle.setMultiAttribute(eth_device + '/vlan:1', 'name', "VLAN\ 1")
-#                 self._handle.commit()
-#                 ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
-#                 self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
-#                 self._handle.commit()
-#                 ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
-#                 self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
-#                 self._handle.commit()
+        if p_priority is not None:
+            for eth_device in eth_devices:
+                helpers.log("Setting Vlan True in Ixia Ethernet Device")
+                self._handle.setMultiAttribute(eth_device, '-useVlans', True)
+                self._handle.setMultiAttribute(eth_device + '/vlan:1', '-name')  # Vlan name removed
+                self._handle.commit()
+                tpid = self._handle.getAttribute(eth_device + '/vlan:1', '-tpid')  # get tpid
+                self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue')  #
+                eth_type = self._handle.add(tpid, 'singleValue')  #
+                self._handle.setMultiAttribute(eth_type, '-value', 'ethertype8100')  #
+                prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority')  #
+                self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue')  #
+                vlan_1p = self._handle.add(prio, 'singleValue')  #
+                self._handle.setMultiAttribute(vlan_1p, '-value', p_priority)  # need to add 1p_priority as an argument
+                self._handle.commit()
+                ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
+                self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
+                self._handle.commit()
+                ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
+                self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
+
         self._handle.commit()
-        mac_devices = []  # as this are added to ixia need to remap as per ixia API's
-        ip_devices = []
-        ixia_refs = {}  # Dictionary to hold the Ixia References
+
         for eth_device in eth_devices:
             mac_devices.append(self._handle.remapIds(eth_device)[0])
-        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_steps, gw_ips, gw_macs):
+        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, prefix, topo_name) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_steps, gw_ips, gw_macs, prefixs, topo_names):
             ip_name = handle.getAttribute(mac_device, '-name')
 #             ip_name = ip_name + 'IPv4\ 1'
             helpers.log('Values:')
             helpers.log('\nMac Device:%s\nMac_Multi:%s\nMac_Step:%s\nMac:%s\nIP_Steps:%s\nIP:%s\nGW_STEP:%s\nGW_IP:%s\nGW_MAC:%s\nVLAN:%s' %
                         (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac, vlan_id))
             helpers.log ('Device: NAME : ' + str(ip_name))
-            ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
+            (ixia_eth_device, ixia_ip_device) = self.get_eth_device_and_ip_device(mac, topo_name)
+            if ixia_eth_device is not None:
+                helpers.log("USING ALREADY CREATED IXIA ETH DEVICE AND IP DEVICE SKIPPING CREATING AGAIN FROM SAME MAC...")
+                ip_device = ixia_ip_device
+                ip_device_ixia = handle.remapIds(ip_device)[0]
+                ip_devices.append(ip_device_ixia)
+                continue
+            else:
+                helpers.log("ADDING NEW IP_DEVICE  for MAC: %s" % mac)
+                ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
             ip_device_ixia = handle.remapIds(ip_device)[0]
             handle.commit()
             ip_devices.append(ip_device_ixia)
@@ -265,8 +325,6 @@ class Ixia(object):
                 ixia_refs['gatewayIp'] = handle.getAttribute(ip_device_ixia, '-gatewayIp')
                 ixia_refs['gatewayIp_singleValue'] = handle.add(ixia_refs['gatewayIp'], 'singleValue')
                 handle.setMultiAttribute(ixia_refs['gatewayIp_singleValue'], '-value', gw_ip)
-
-
             else:
                 helpers.log('Adding Multipier ...for mac and Ip')
                 helpers.log('Adding Mac: %s with mac_step : %s' % (mac, mac_step))
@@ -280,13 +338,13 @@ class Ixia(object):
                 ixia_refs['gatewayIp_counter'] = handle.add(ixia_refs['gatewayIp'], 'counter')
                 helpers.log('Adding GW_IP : %s with gw_ip_step : %s' % (gw_ip, gw_step))
                 handle.setMultiAttribute(ixia_refs['gatewayIp'] + '/counter', 'direction', 'increment', '-start', gw_ip, '-step', gw_step)
-
             handle.commit()
             # handle.remapIds(ixia_refs['address_counter'])[0]
-
+            if prefix is None:
+                prefix = '24'
             ixia_refs['prefix'] = handle.getAttribute(ip_device_ixia, '-prefix')
             ixia_refs['prefix_singleValue'] = handle.add(ixia_refs['prefix'], 'singleValue')
-            handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', '24')
+            handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', prefix)
             handle.commit()
             handle.remapIds(ixia_refs['prefix'])[0]
 
@@ -310,7 +368,6 @@ class Ixia(object):
                 handle.setMultiAttribute(ixia_refs['manualGatewayMac_singleValue'], '-value', gw_mac)
                 handle.commit()
                 handle.remapIds(ixia_refs['manualGatewayMac_singleValue'])[0]
-
 
         i = 1
         for mac_device in mac_devices:
@@ -341,6 +398,283 @@ class Ixia(object):
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
         handle.commit()
         return trafficStream1
+
+    def ix_setup_traffic_streams_raw(self, frameType, frameSize, frameRate, frameMode, frameCount, flow, name,
+                                     lacp_src_mac=None, lld_tlv_chassis_id=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                      burst_cnt=None, burst_gap=None, dst_cnt=None, src_cnt=None, src_mac_step=None, dst_mac_step=None,
+                                      line_rate=None, crc=None, src_ip=None, dst_ip=None, src_ip_step=None, dst_ip_step=None, src_ip_cnt=None, dst_ip_cnt=None,
+                                      protocol=None, src_port=None, dst_port=None,
+                                      icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None,
+                                      hex_src_mac=None, hex_dst_mac=None,
+                                      synBit=False, urgBit=False, ackBit=False, pshBit=False, rstBit=False, finBit=False, vlan_priority=None):
+        '''
+           Return Traffic stream with quick flow creation similar to IxNetwork
+        '''
+        helpers.log("Adding Raw Type Stream with given Raw stream Parameters..")
+        tcp_layer_id = 3
+        ip_layer_id = str(tcp_layer_id - 1)
+        if self._raw_stream is None:
+            helpers.log("Creating a New RAW_STREAM ITEM..")
+            trafficStream1 = self._handle.add(self._handle.getRoot() + '/traffic', 'trafficItem', '-name',
+                                            name, '-trafficItemType', 'quick', '-enabled', True, '-trafficType', 'raw')
+            trafficStream1 = self._handle.remapIds(trafficStream1)[0]
+            self._raw_stream = trafficStream1
+            self._handle.commit()
+        else:
+            trafficStream1 = self._raw_stream
+            self._raw_stream_id = self._raw_stream_id + 1
+
+        stream_name_id = '/highLevelStream:%s' % str(self._raw_stream_id)
+        helpers.log("Stream_name_id : %s" % stream_name_id)
+        helpers.log("Stream_Name : %s " % trafficStream1)
+        helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_vport))
+        helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
+
+        endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
+                                        '-destinations', dst_vport + '/protocols')
+        self._handle.commit()
+        endpointSet1 = self._handle.remapIds(endpointSet1)[0]
+        self._handle.setMultiAttribute(trafficStream1 + stream_name_id, '-name', name,
+                                           '-txPortId', src_vport)
+        self._handle.commit()
+        self._handle.setAttribute(trafficStream1, '-enabled', True)
+        self._handle.commit()
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-type', frameType)
+        self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameSize', '-fixedSize', frameSize)
+        self._handle.commit()
+
+        if src_mac is not None and dst_mac is not None:
+            helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
+            if dst_cnt is not None:
+                helpers.log("Adding DST_MAC COUNT VALUES..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                          '-stepValue', dst_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_cnt,
+                                          '-startValue', dst_mac)
+            else:
+                helpers.log("Adding Single DST_MAC ..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                          '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+            if src_cnt is not None:
+                helpers.log("Adding SRC_CNT COUNT VALUES..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                          '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
+                                          '-startValue', src_mac)
+            else:
+                helpers.log("Adding Single SRC_MAC..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                          '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+
+        if line_rate is not None:
+            helpers.log('Adding Line Rate Value !')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + 'frameRate', '-rate', line_rate)
+
+        if burst_cnt is not None:
+            helpers.log('Adding BURST COUNT and BURST GAP !!!!')
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-interStreamGap', 0,
+                                           '-burstPacketCount', burst_cnt, '-type', 'custom',
+                                 '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate,
+                                           '-enforceMinimumInterPacketGap', 0)
+        if line_rate is None:
+            helpers.log('Adding Frame Rate !!!!')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/frameRate', '-rate', frameRate)
+        if frameCount is not None:
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl', '-type',
+                                'fixedFrameCount')
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/transmissionControl',
+                                '-frameCount', frameCount)
+        if crc is not None:
+            self._handle.setAttribute(trafficStream1 + stream_name_id, '-crc', 'badCrc')
+        if ethertype is not None:
+            helpers.log('Adding Ethertype %s !!!' % ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-auto', False)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fieldValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-singleValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-countValue', 1)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fixedBits', ethertype)
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-optionalEnabled ', True)
+        if lacp_src_mac is not None:
+            helpers.log("Adding LACP DST MAC for Raw Stream ..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
+                                      '-auto', False, '-fieldValue', '01:80:c2:00:00:02', '-singleValue', '01:80:c2:00:00:02',
+                                      '-optionalEnabled', True, '-countValue', '1')
+            if src_cnt is not None:
+                helpers.log("Adding LACP SRC MAC COUNT with LACP SRC MAC...src_cnt: %s" % src_cnt)
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                                          '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
+                                          '-startValue', lacp_src_mac)
+            else:
+                helpers.log("Adding LACP SRC MAC..")
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                                          '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
+                                          '-optionalEnabled', True, '-countValue', '1')
+        if lld_tlv_chassis_id is not None:
+            helpers.log("Adding LLDP ttlv chassis id in RAW STREAM..")
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-2"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"',
+                                      '-auto', False, '-fieldValue', lld_tlv_chassis_id, '-singleValue', lld_tlv_chassis_id,
+                                      '-optionalEnabled', True, '-countValue', '1')
+        if vlan_id is not None:
+            if vlan_priority is None:
+                helpers.log('Adding Vlan ID: %s !!!' % vlan_id)
+                helpers.log("Changing layer4 id ..")
+                tcp_layer_id = 4
+                ip_layer_id = str(tcp_layer_id - 1)
+                helpers.log("layer4 id : %s" % str(tcp_layer_id))
+                if vlan_cnt == 1:
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-countValue', vlan_cnt, '-fieldValue', vlan_id, '-optionalEnabled', True)
+                else:
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-countValue', vlan_cnt)
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-startValue', vlan_id)
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
+            else:
+                helpers.log('Adding Vlan ID:%s With Priority: %s !!!' % (vlan_id, vlan_priority))
+                helpers.log("Changing layer4 id ..")
+                tcp_layer_id = 4
+                ip_layer_id = str(tcp_layer_id - 1)
+                helpers.log("layer4 id : %s" % str(tcp_layer_id))
+                if vlan_cnt == 1:
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanUserPriority-1"',
+                                              '-countValue', vlan_cnt, '-fieldValue', vlan_priority, '-optionalEnabled', True)
+
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-countValue', vlan_cnt, '-fieldValue', vlan_id, '-optionalEnabled', True)
+                else:
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-countValue', vlan_cnt)
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-startValue', vlan_id)
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                              '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
+
+        helpers.log("Commiting vlan config in IXIA...")
+        helpers.log("ip_type : %s, src_ip: %s" % (ip_type, src_ip))
+        self._handle.commit()
+        if ip_type == "ipv4":
+            helpers.log("Adding IPV4 Address...")
+            if src_ip is not None:
+                helpers.log('Adding src_ip..')
+                if src_ip_cnt <= 1:
+                    helpers.log("Ipv4 id : ipv4-%s" % ip_layer_id)
+                    helpers.log("Adding src_ip to raw_stream with single Value")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                else:
+                    helpers.log("Adding src_ip to raw_stream with multiple Values..")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                              '-stepValue', src_ip_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_ip_cnt,
+                                      '-startValue', src_ip)
+            if dst_ip is not None:
+                helpers.log("Adding Dst ip Got Dst_Cnt: %s..." % dst_ip_cnt)
+                if dst_ip_cnt <= 1:
+                    helpers.log("Adding dst_ip to raw_stream with single value ...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                else:
+                    helpers.log("Adding dst_ip to raw_stream with multiple Values...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                              '-stepValue', dst_ip_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_ip_cnt,
+                                      '-startValue', dst_ip)
+
+        elif ip_type == "ipv6":
+            helpers.log('Adding src_ip and dst_ip ..')
+            helpers.log("Ipv4 id : ipv6-%s" % ip_layer_id)
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+                                      '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                     '-optionalEnabled', 'true', '-auto', 'false')
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+                                      '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                     '-optionalEnabled', 'true', '-auto', 'false')
+        helpers.log("Committing IP Config in IXIA...")
+        self._handle.commit()
+        if protocol is not None:
+            helpers.log('Adding Protocol Field in IP Header ..')
+            if ethertype == '0800':
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.protocol-25"' % ip_layer_id,
+                                              '-countValue', 1, '-fieldValue', protocol,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+            elif ethertype == '86dd':
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.nextHeader-5"' % ip_layer_id,
+                                              '-countValue', 1, '-fieldValue', protocol,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+            if protocol == 'TCP':
+                helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl TCP..!!!' % (src_port, dst_port))
+                helpers.log("Adding tcp id : tcp-%s" % str(tcp_layer_id))
+                helpers.log('SynBit : %s' % str(synBit))
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.srcPort-1"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.dstPort-2"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if synBit:
+                    helpers.log("Adding Sync Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.synBit-14"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', synBit, '-singleValue', synBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if urgBit:
+                    helpers.log("Adding Urgent Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.urgBit-10"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', urgBit, '-singleValue', urgBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if ackBit:
+                    helpers.log("Adding ACK Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.ackBit-11"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', ackBit, '-singleValue', ackBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if pshBit:
+                    helpers.log("Adding PSH Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.pshBit-12"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', pshBit, '-singleValue', pshBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if rstBit:
+                    helpers.log("Adding RST Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.rstBit-13"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', rstBit, '-singleValue', rstBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                if finBit:
+                    helpers.log("Adding FIN Bit with TCP header...")
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.finBit-15"' % str(tcp_layer_id) ,
+                                              '-countValue', 1, '-fieldValue', finBit, '-singleValue', finBit,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+
+            if protocol == 'UDP':
+                helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl UDP..!!!' % (src_port, dst_port))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-%s"/field:"udp.header.srcPort-1"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"udp-%s"/field:"udp.header.dstPort-2"' % str(tcp_layer_id),
+                                              '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+            if protocol == 'ICMP':
+                helpers.log('Adding Message Type: %s and Code Value: %s for Protocl UDP..!!!' % (icmp_type, icmp_code))
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-3"/field:"icmpv2.message.messageType-1"',
+                                              '-countValue', 1, '-singleValue', icmp_type,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
+                                              '-countValue', 1, '-singleValue', icmp_code,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+            if payload:
+                helpers.log('Setting Payload information provided to Raw Traffic Stream...')
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/framePayload',
+                                              '-type', 'custom', '-customPattern', payload,
+                                             '-customRepeat', False, '-auto', 'false')
+        self._handle.commit()
+        return trafficStream1 + stream_name_id
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
@@ -382,7 +716,7 @@ class Ixia(object):
         trafficStream1 = self._handle.remapIds(trafficStream1)[0]
 
         if payload:
-            helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_port))
+            helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_vport))
             endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
                                             '-destinations', dst_vport + '/protocols')
             self._handle.commit()
@@ -956,11 +1290,169 @@ class Ixia(object):
             helpers.log ("Success Creating Ip Devices !!!")
             return ip_devices
 
+    def ix_raw_add(self, **kwargs):
+        '''
+            Helper function to create similar to IxNetwork Quick Streams
+            As per user requests this method needs to be enchanced with Options Available in IxNetwork
+        '''
+        ix_handle = self._handle
+        ix_ports = [port for port in self._port_map_list.values()]
+        ix_tcl_server = self._tcl_server_ip
+        flow = kwargs.get('flow', None)
+        frame_rate = kwargs.get('frame_rate', 100)
+        frame_cnt = kwargs.get('frame_cnt', None)
+        frame_type = kwargs.get('frame_type', 'fixed')
+        frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
+        self._frame_size = kwargs.get('frame_size', 128)
+        name = kwargs.get('name', 'gobot_default')
+
+        lacp = kwargs.get('lacp', False)
+        lldp = kwargs.get('lldp', False)
+        src_mac = kwargs.get('src_mac', None)
+        dst_mac = kwargs.get('dst_mac', None)
+        d_cnt = kwargs.get('dst_mac_cnt', None)
+        s_cnt = kwargs.get('src_mac_cnt', None)
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
+        lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", None)
+        lacp_src_mac = None
+        ethertype = kwargs.get('ethertype', None)
+        vlan_id = kwargs.get('vlan_id', None)
+        vlan_cnt = kwargs.get('vlan_cnt', 1)
+        vlan_step = kwargs.get('vlan_step', 1)
+        vlan_priority = kwargs.get('vlan_priority', None)
+        line_rate = kwargs.get('line_rate', None)
+        protocol = kwargs.get('protocol', None)
+        burst_cnt = kwargs.get('burst_count', None)
+        burst_gap = kwargs.get('burst_gap', None)
+        payload = kwargs.get('payload', None)
+        urgBit = kwargs.get('urgBit', False)
+        ackBit = kwargs.get('ackBit', False)
+        pshBit = kwargs.get('pshBit', False)
+        rstBit = kwargs.get('rstBit', False)
+        finBit = kwargs.get('finBit', False)
+        synBit = kwargs.get('synBit', False)
+        crc = kwargs.get('crc', None)
+        src_port = kwargs.get('src_port', '6001')
+        dst_port = kwargs.get('dst_port', '7001')
+        icmp_type = kwargs.get('icmp_type', '0')
+        icmp_code = kwargs.get('icmp_code', '0')
+
+        ip_type = 'ipv4'
+        if str(ethertype).lower() == '86dd':
+            src_ip = kwargs.get('src_ip', None)
+            dst_ip = kwargs.get('dst_ip', None)
+            src_ip_step = kwargs.get('src_ip_step', '0:0:0:0:0:0:1:0')
+            dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
+            ip_type = 'ipv6'
+            self._frame_size = kwargs.get('frame_size', 140)
+            protocol = kwargs.get('protocol', None)
+        else:
+            src_ip = kwargs.get('src_ip', None)
+            dst_ip = kwargs.get('dst_ip', None)
+            src_ip_step = kwargs.get('src_ip_step', '0.0.0.1')
+            dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
+            self._frame_size = kwargs.get('frame_size', 130)
+            protocol = kwargs.get('protocol', None)
+            src_ip_cnt = kwargs.get("src_ip_cnt", 1)
+            dst_ip_cnt = kwargs.get("dst_ip_cnt", 1)
+
+
+        if lacp:
+            helpers.log("Getting LCAP Parameters..")
+            lacp_src_mac = kwargs.get('lacp_src_mac', '00:00:99:99:88:77')
+            s_cnt = kwargs.get('src_cnt', 1)
+            src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
+
+        if lldp:
+            helpers.log("Getting LLDP Parameters..")
+            src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+            dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+            lld_tlv_chassis_id = kwargs.get("lld_tlv_chassisid", 1)
+
+        if ix_tcl_server is None or ix_ports is None :
+            helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L3_ADD helper method !!')
+        get_version = ix_handle.getVersion()
+
+        self._traffi_apply = False
+        traffic_stream1 = []
+
+        helpers.log("###Current Version of Ixia Chassis : %s " % get_version)
+        ix_handle.setDebug(False)  # Set Debug True to print Ixia Server Interactions
+        # Create vports:
+        if len(self._vports) == 0:
+            vports = self.ix_create_vports()
+            helpers.log('### vports Created : %s' % vports)
+            if self.ix_map_vports_pyhsical_ports():
+                helpers.log('### Successfully mapped vport to physical ixia ports..')
+            else:
+                helpers.log('Unable to connect to Ixia Chassis')
+                return False
+        else:
+            helpers.log('### vports already Created : %s' % self._vports)
+
+
+        helpers.log("Need to create Ixia Quick Flows similar to Raw Streams..")
+        helpers.log("No Hosts are created and No gw arps are resolved, Hence correct dst_mac should be provided for L3 traffic to work..")
+
+        helpers.log("Skipping Creating Topologies ...")
+        match_uni1 = re.match(r'(\w+)->(\w+)', flow)
+        match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
+        match_bi = re.match(r'(\w+)<->(\w+)', flow)
+
+        stream_flow = ''
+        src_ix_port = ''
+        dst_ix_port = ''
+
+        if match_uni1:
+            stream_flow = 'uni-directional'
+            src_ix_port = match_uni1.group(1).lower()
+            dst_ix_port = match_uni1.group(2).lower()
+        elif match_uni2:
+            stream_flow = 'uni-directional'
+            src_ix_port = match_uni2.group(2).lower()
+            dst_ix_port = match_uni2.group(1).lower()
+        elif match_bi:
+            stream_flow = 'bi-directional'
+            src_ix_port = match_bi.group(1).lower()
+            dst_ix_port = match_bi.group(2).lower()
+
+        helpers.log("src ixia port used :%s dst ixia port used :%s" % (src_ix_port, dst_ix_port))
+        src_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', src_ix_port)[0]
+        dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
+        if vlan_priority is None:
+            traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode, frame_cnt, stream_flow, name,
+                                                        lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id, burst_cnt=burst_cnt, burst_gap=burst_gap, crc=crc,
+                                                        dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
+                                                        src_vport=src_vport, dst_vport=dst_vport, protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, src_ip_cnt=src_ip_cnt, dst_ip_cnt=dst_ip_cnt,
+                                                        icmp_type=icmp_type, icmp_code=icmp_code, src_ip_step=src_ip_step, dst_ip_step=dst_ip_step,
+                                                        ethertype=ethertype, ip_type=ip_type, line_rate=line_rate, payload=payload,
+                                                        vlan_id=vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                        hex_src_mac=src_mac, hex_dst_mac=dst_mac, src_port=src_port, dst_port=dst_port,
+                                                        synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+        else:
+            traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode, frame_cnt, stream_flow, name,
+                                                        lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id, burst_cnt=burst_cnt, burst_gap=burst_gap, crc=crc,
+                                                        dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
+                                                        src_vport=src_vport, dst_vport=dst_vport, protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, src_ip_cnt=src_ip_cnt, dst_ip_cnt=dst_ip_cnt,
+                                                        icmp_type=icmp_type, icmp_code=icmp_code, src_ip_step=src_ip_step, dst_ip_step=dst_ip_step,
+                                                        ethertype=ethertype, ip_type=ip_type, line_rate=line_rate, payload=payload,
+                                                        vlan_id=vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step, vlan_priority=vlan_priority,
+                                                        hex_src_mac=src_mac, hex_dst_mac=dst_mac, src_port=src_port, dst_port=dst_port,
+                                                        synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+
+        traffic_stream1.append(traffic_item)
+        self.ix_apply_traffic()
+        return traffic_stream1[0]
+
     def ix_l3_add(self, **kwargs):
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
         src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
         dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        src_mac_new = kwargs.get('src_mac_new', None)
+        dst_mac_new = kwargs.get('dst_mac_new', None)
         d_cnt = kwargs.get('dst_cnt', 1)
         s_cnt = kwargs.get('src_cnt', 1)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
@@ -975,6 +1467,7 @@ class Ixia(object):
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
+        vlan_priority = kwargs.get('vlan_priority', None)
         line_rate = kwargs.get('line_rate', None)
         protocol = kwargs.get('protocol', None)
         burst_count = kwargs.get('burst_count', None)
@@ -986,7 +1479,8 @@ class Ixia(object):
         rstBit = kwargs.get('rstBit', False)
         finBit = kwargs.get('finBit', False)
         synBit = kwargs.get('synBit', False)
-
+        src_gw_prefix = kwargs.get('src_gw_prefix', None)
+        dst_gw_prefix = kwargs.get('dst_gw_prefix', None)
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
 #         if vlan_id is not None:
@@ -1028,8 +1522,8 @@ class Ixia(object):
         flow = kwargs.get('flow', None)
 
         if ix_tcl_server is None or ix_ports is None or src_ip is None or dst_ip is None:
-            helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
-            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
+            helpers.warn('Please Provide Required Args for IXIA_L3_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L3_ADD helper method !!')
         get_version = ix_handle.getVersion()
 
         helpers.log("###Current Version of Ixia Chassis : %s " % get_version)
@@ -1063,8 +1557,8 @@ class Ixia(object):
                 dst_ix_port = match_uni1.group(2).lower()
             elif match_uni2:
                 stream_flow = 'uni-directional'
-                src_ix_port = match_uni1.group(2).lower()
-                dst_ix_port = match_uni1.group(1).lower()
+                src_ix_port = match_uni2.group(2).lower()
+                dst_ix_port = match_uni2.group(1).lower()
             elif match_bi:
                 stream_flow = 'bi-directional'
                 src_ix_port = match_bi.group(1).lower()
@@ -1119,35 +1613,55 @@ class Ixia(object):
                 helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
                 self._arp_check = False
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
-                                                                          dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                          dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type, vlan_id=vlan_id)
+                                                                              dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
+                                                                              dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
+                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
-
-                traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
-                                                           frame_type, self._frame_size, frame_rate, frame_mode,
-                                                           frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
-                                                           protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
-                                                           burst_count=burst_count, burst_gap=burst_gap,
-                                                           src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
-                                                           synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                if vlan_priority is None:
+                    traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
+                                                               frame_type, self._frame_size, frame_rate, frame_mode,
+                                                               frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                               protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                               burst_count=burst_count, burst_gap=burst_gap,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                else:
+                    traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
+                                                               frame_type, self._frame_size, frame_rate, frame_mode,
+                                                               frame_cnt, stream_flow, name, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
+                                                               protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                               burst_count=burst_count, burst_gap=burst_gap,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
 
                 traffic_stream1.append(traffic_stream)
             else:
                 helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
                 self._arp_check = True
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
-                                                                          dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                          dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id)
+                                                                              dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
+                                                                              dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id,
+                                                                              src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
                 self.ix_start_hosts(ip_type=ip_type)
                 self._started_hosts = True
                 helpers.log("IP Devices: %s" % ip_devices)
-                traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+                if vlan_priority is None:
+                    traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                              frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
                                                              vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+                else:
+                    traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+                                                             frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                             vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                             burst_count=burst_count, burst_gap=burst_gap,
+                                                             protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
+                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
+
                 traffic_stream1.append(traffic_item)
 
             helpers.log('### Created Traffic Stream with Ip Devices ...')
@@ -1281,7 +1795,10 @@ class Ixia(object):
                             break
                         time.sleep(1)
                         mac_device1 = self._handle.getList(device1[0], 'ethernet')
-                        ip_device1 = self._handle.getList(mac_device1[0], ip_type)
+                        if len(mac_device1) == 0:
+                            helpers.log("No Mac devices created for port : %s" % port)
+                        else:
+                            ip_device1 = self._handle.getList(mac_device1[0], ip_type)
                         resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
                         helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
                         time.sleep(1)  # Sleep for the gw arp to get Resolved

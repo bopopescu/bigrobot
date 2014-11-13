@@ -8,9 +8,43 @@ Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
-
+Library			keywords/T5ZTN.py
+Library			keywords/T5.py
 
 * Test Case
-Test controller rest session cookie
-    bounce session cookie
-    #[Tags]  skipped
+
+Test PDU consoles
+	[Tags]  skipped
+	power down switch  s7
+	power down switch  s8
+	power up switch  s7
+	power up switch  s8
+	power cycle switch  s7
+	power cycle switch  s8
+	
+Test switch console
+	[Tags]
+	setup switch ssh handle  s1
+	
+	
+Test remove no auto reload
+	[Tags]  run
+	remove_no_auto_reload  s1
+	remove_no_auto_reload  s2
+	remove_no_auto_reload  s3
+	remove_no_auto_reload  s4
+	remove_no_auto_reload  s5
+	remove_no_auto_reload  s6
+	remove_no_auto_reload  s7
+	remove_no_auto_reload  s8
+	
+Test Console Reboot all Switches
+	[Tags]  reboot
+	telnet_reboot_switch  s1
+	telnet_reboot_switch  s2
+	telnet_reboot_switch  s3
+	telnet_reboot_switch  s4
+	telnet_reboot_switch  s5
+	telnet_reboot_switch  s6
+	telnet_reboot_switch  s7
+	telnet_reboot_switch  s8

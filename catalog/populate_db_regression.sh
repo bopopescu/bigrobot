@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 # Search for all the BigRobot test structured log files (output.xml).
 # Parse the log files and populate the test catalog database with the
 # test results.
@@ -29,6 +29,7 @@ if [ $? -eq 0 ]; then
 else
     echo "No baseline data for build '$BUILD_NAME'. Start collecting baseline."
     time ./populate_db_dryrun.sh
+    ./db_chk_and_add_wk_aggregated_build.py
 fi
 
 if [ $# -eq 0 ]; then

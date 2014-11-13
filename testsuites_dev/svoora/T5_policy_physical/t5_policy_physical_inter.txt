@@ -38,6 +38,7 @@ T1 Interface tenant add/remove permit policy src-ip to dest-ip
 	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
+	pause  FREEZZ!
 	sleep				   5
     start traffic  ${stream}
     sleep                  5

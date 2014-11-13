@@ -21,6 +21,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 Setup Three Rack Dual Leaf Topology
 	[Tags]  L2  IronHorse
+	bigrobot test ztn  False
 	base suite setup   
     add fabric switch
     bring up h1 bond0
@@ -29,10 +30,11 @@ Setup Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    BuiltIn.Sleep  10
+    BuiltIn.Sleep  25
     rest verify fabric switch all
-    BuiltIn.Sleep  10
+    BuiltIn.Sleep  25
 	rest verify fabric link common 	
+	Set switch dpid variables
 
 verify static endpoints with port-group
 	[Tags]  L2  IronHorse
@@ -63,15 +65,17 @@ verify static endpoints with port-group
 restart ofad to verify the fabric link
 	[Tags]  L2  IronHorse
 	rest verify fabric link common
+	reconnect_switch_ips  s5
 	bash execute command  leaf2-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  13
-	BuiltIn.Sleep  25
+	BuiltIn.Sleep  45
 	rest verify fabric link common
+	reconnect_switch_ips  s3
 	bash execute command  leaf1-a  service ofad restart
 	BuiltIn.Sleep  2
 	rest verify fabric link common  12
-	BuiltIn.Sleep  35
+	BuiltIn.Sleep  45
 	rest verify fabric link common    
 
 Test to check all the cidr routes are created in spine and leaf switches
@@ -114,7 +118,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  IronHorse
+    [Tags]  L2  IronHorse  run
     bigrobot test ztn  False
     rest add tenant  t1
     rest add vns  t1  v1
@@ -130,7 +134,8 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     BuiltIn.Sleep  120
     rest verify endpoint in system  1000
     rest add switch  leaf0-a
-    rest add dpid  leaf0-a  ${leaf0a_dpid}
+    ${leaf0a_mac_dpid}=  get_switch_mac_topo  s1
+    rest add dpid  leaf0-a  ${leaf0a_mac_dpid}
     rest add fabric role  leaf0-a  leaf
     rest add leaf group  leaf0-a  rack0
     BuiltIn.Sleep  120
@@ -143,8 +148,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify endpoint in system  2000
     stop traffic  ${stream}
-    rest delete tenant  t1  
-    bigrobot test ztn  True             
+    rest delete tenant  t1               
      
 shut/no shut the switch with traffic forward
 	[Tags]  L2  IronHorse     
@@ -215,7 +219,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest add dpid  leaf2-b  ${leaf2b_dpid}
     rest add fabric role  leaf2-b  leaf 
     rest add leaf group  leaf2-b  rack2
-    BuiltIn.Sleep  20
+    BuiltIn.Sleep  200
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
@@ -364,7 +368,7 @@ verifying flow reconsilation when new switch is connected to the fabric
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
     BuiltIn.Sleep  3
-	reconnect switch ips
+	reconnect switch ips  s5
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
@@ -379,10 +383,11 @@ verifying flow reconsilation when new switch is connected to the fabric
     rest add dpid  leaf2-a  ${leaf2a_dpid}
     rest add fabric role  leaf2-a  leaf
     rest add leaf group  leaf2-a  rack2
-    BuiltIn.Sleep  2
+    BuiltIn.Sleep  200
+    reconnect switch ips  s5
     cli add controller  leaf2-a  c1
     cli add controller  leaf2-a  c2
-    BuiltIn.Sleep  2
+    BuiltIn.Sleep  200
     rest verify fabric switch  leaf2-a
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
@@ -422,12 +427,14 @@ T5 test teardown
 	rest delete tenant  internal
 	rest delete tenant  external
 	rest delete tenant  system
-	delete fabric switch
+#	delete fabric switch
 
 T5 test setup
+	bigrobot test ztn  False
 	base test setup
 	add fabric switch
-	BuiltIn.Sleep  15
+	BuiltIn.Sleep  55
+	Set switch dpid variables
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25

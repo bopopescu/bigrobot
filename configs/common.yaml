@@ -1,0 +1,23 @@
+# Attributes required for BigSwitch lab environment.
+#
+
+controller_user: admin
+controller_password: adminadmin
+
+controller_recovery_user: recovery
+controller_recovery_password: recovery
+
+switch_user: admin
+switch_password: adminadmin
+
+mininet_user: mininet
+mininet_password: mininet
+
+host_user: bsn
+host_password: bsn
+
+host_root_user: root
+host_root_password: bsn
+
+pdu_user: apc
+pdu_password: apc

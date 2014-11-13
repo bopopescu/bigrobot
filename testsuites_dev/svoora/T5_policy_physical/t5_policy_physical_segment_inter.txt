@@ -28,7 +28,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
-	[Tags]  feature
+	[Tags]  feature  ixia
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -63,7 +63,85 @@ T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to des
     verify results   c   a
     delete traffic
 
-T2 Interface sement-interface add/remove permit policy src-ip to dest-ip
+T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
+	[Tags]  feature
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+	#${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to tenant
+	[Tags]  feature
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+
+
+
+
+T4 Interface sement-interface add/remove permit policy src-ip to dest-ip
 	[Tags]  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
@@ -93,7 +171,7 @@ T2 Interface sement-interface add/remove permit policy src-ip to dest-ip
 
 
 
-T3 Interface sement-interface add/remove deny policy src-ip to dest-ip
+T5 Interface sement-interface add/remove deny policy src-ip to dest-ip
 	[Tags]  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
@@ -121,8 +199,633 @@ T3 Interface sement-interface add/remove deny policy src-ip to dest-ip
     verify results   c   a
     delete traffic
 
+T6 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to dest-ip-port
+	[Tags]  feature
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to any
+	[Tags]  feature  port
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	#${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
 
 
+T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to tenant
+	[Tags]  feature  port
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop) policy src-ip-port to tenant
+	[Tags]  feature  ha
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    pause  FREZZEE!!
+    cli cluster take leader
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T10 Interface sement-interface add/reboot master controller/remove redirect(next-hop) policy src-ip-port to tenant
+	[Tags]  feature  ha
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    ${returnVal}=  cli verify cluster master reboot
+	Should Be True  ${returnVal}
+	stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T11 Interface sement-interface add/reboot standby controller/remove redirect(next-hop) policy src-ip-port to tenant
+	[Tags]  feature  ha
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    ${returnVal}=  cli verify cluster slave reboot
+	Should Be True  ${returnVal}
+	stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) policy src-ip-port to tenant
+	[Tags]  feature  ha
+	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+	rest add policy							${tenantX}		${tenant2_polname}	
+	rest add nexthop group  ${tenantX}  ${next-hop-grp}
+	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest apply policy on tenant				${tenantX}		${tenant2_polname}
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	#Rebooting leaf0-a
+	cli reboot switch name  node=master  switch=leaf0-a
+    sleep  150
+    #repeating above traffic again
+	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+	L3 start hosts  port_name=b
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+	sleep				   5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+	sleep  2
+	#Removing policy	
+	rest remove policy on tenant				${tenantX}		${tenant2_polname}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+###CLI TESTING###
+
+T13 cli policy config and show/verify
+	[Tags]  cli
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase1:Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${none}=  Set Variable  
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase2:Creating a policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	Log  Deleting a policy ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  
+	should be true  ${result}
+	
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase3:Creating a policy-list with ${policy_rule} and apply to logical-router
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase4:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy-list with ${policy_rule_1}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy ${tenant2_polname}
+	cli delete policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep ${tenant2_polname}|grep -v apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy ${tenant2_polname} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${tenant2_polname}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=flase
+	should be true  ${result}
+	
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase5:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	Log  Deleting a tenant ${tenantX}
+	cli delete tenant  tenant=${tenantX}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${none}  flag=false
+	should be true  ${result}
+	
+
+
+	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_2}=  Set Variable   10 permit proto udp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	${policy_rule_3}=  Set Variable   13 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32
+	${x_temp}=  Set Variable  x_temp
+	Log  Testcase6:Creating a policy-list with ${policy_rule_1}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_1}
+	Log  Creating a policy-list with ${policy_rule_2}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_2}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy-list which did not exist ${policy_rule_3}
+	cli delete policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule_3}
+	${none}=  Set Variable  
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep tcp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_1}
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep udp
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule_2}  
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Deleting a policy which did not exist ${x_temp}
+	cli delete policy   tenant=${tenantX}  policy_list=${x_temp}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list|grep ${tenant2_polname}|grep -v apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}
+	should be true  ${result}
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}  
+	should be true  ${result}
+	Log  Removing policy which did not exist from ${x_temp} from logical-router
+	cli remove policy   tenant=${tenantX}  policy_list=${x_temp}
+	${none}=  Set Variable
+	${config}=  Set Variable   show running-config tenant ${tenantX} logical-router|grep apply
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${tenant2_polname}
+	should be true  ${result}
+
+
+T14 cli policy config walk
+	[Tags]  cliwalk
+	${policy_rule}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
+	Log  Testcase14.1:Walking through policy-list with ${policy_rule}
+	cli create policy list  tenant=${tenantX}  policy_list=${tenant2_polname}   policy_rule=${policy_rule}
+	cli apply policy  tenant=${tenantX}  policy_list=${tenant2_polname}
+	${config}=  Set Variable   show running-config tenant ${tenantX} policy-list
+	${result}=  cli run and verify output    node=master  command=${config}  expected=${policy_rule}  
+	should be true  ${result}
+	#cli walk command  member switch leaf0a interface  54  config_mode=${True}  multiline=port-group rack0pg1
+	${result}=  cli walk command  apply policy-list  2  cmd_argument=${tenant2_polname}  config_mode=${True}..multiline=tenant ${tenantX} logical-router
+	should be true  ${result}
+	Log  Testcase14.2
+	${multiline}=  Set Variable  tenant ${tenantX}; logical-router; policy-list ${tenant2_polname}
+	${result}=  cli walk command  10  2  cmd_argument=deny permit  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.3
+	${result}=  cli walk command  10 permit  6  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.4
+	${result}=  cli walk command  10 permit any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.5
+	${result}=  cli walk command  10 permit any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.6
+	${result}=  cli walk command  10 permit any port 1234   1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.7
+	${result}=  cli walk command  10 permit any port 1234 to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.8
+	${result}=  cli walk command  10 permit any port 1234 to any  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.9
+	${result}=  cli walk command  10 permit any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.10
+	${result}=  cli walk command  10 permit any port 1234 to any next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	#Log  Testcase14.11
+	#${result}=  cli walk command  10 permit any port 1234 to any next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+	Log  Testcase14.12
+	${result}=  cli walk command  10 permit any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.13
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.14
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.15
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	#Log  Testcase14.16
+	#${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant  1  config_mode=${True}  multiline=${multiline}
+	#should be true  ${result}
+	Log  Testcase14.17
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant ${tenantX}  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.18
+	${result}=  cli walk command  10 permit any port 1234 to any port 1234 next-hop tenant ${tenantX} log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.19
+	${result}=  cli walk command  10 permit proto  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.20
+	${result}=  cli walk command  10 permit proto tcp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.21
+	${result}=  cli walk command  10 permit proto tcp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.22
+	${result}=  cli walk command  10 permit proto tcp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.23
+	${result}=  cli walk command  10 permit proto udp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.24
+	${result}=  cli walk command  10 permit proto udp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.25
+	${result}=  cli walk command  10 permit proto udp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.26
+	${result}=  cli walk command  10 permit proto icmp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.27
+	${result}=  cli walk command  10 permit proto icmp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.28
+	${result}=  cli walk command  10 permit proto icmp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.29
+	${result}=  cli walk command  10 permit proto 45  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.30
+	${result}=  cli walk command  10 permit proto 45 any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.31
+	${result}=  cli walk command  10 permit proto 45 any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	
+	Log  Testcase14.3
+	${result}=  cli walk command  10 deny  6  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.4
+	${result}=  cli walk command  10 deny any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.5
+	${result}=  cli walk command  10 deny any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.6
+	${result}=  cli walk command  10 deny any port 1234   1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.7
+	${result}=  cli walk command  10 deny any port 1234 to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.8
+	${result}=  cli walk command  10 deny any port 1234 to any  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.9
+	${result}=  cli walk command  10 deny any port 1234 to any log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.12
+	${result}=  cli walk command  10 deny any port 1234 to any port  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.13
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.14
+	${result}=  cli walk command  10 deny any port 1234 to any port 1234 log  1  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.19
+	${result}=  cli walk command  10 deny proto  4  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.20
+	${result}=  cli walk command  10 deny proto tcp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.21
+	${result}=  cli walk command  10 deny proto tcp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.22
+	${result}=  cli walk command  10 deny proto tcp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.23
+	${result}=  cli walk command  10 deny proto udp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.24
+	${result}=  cli walk command  10 deny proto udp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.25
+	${result}=  cli walk command  10 deny proto udp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.26
+	${result}=  cli walk command  10 deny proto icmp  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.27
+	${result}=  cli walk command  10 deny proto icmp any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.28
+	${result}=  cli walk command  10 deny proto icmp any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.29
+	${result}=  cli walk command  10 deny proto 45  5  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.30
+	${result}=  cli walk command  10 deny proto 45 any  2  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	Log  Testcase14.31
+	${result}=  cli walk command  10 deny proto 45 any to  3  config_mode=${True}  multiline=${multiline}
+	should be true  ${result}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 * Keywords
 verify results   [Arguments]  ${port_1}   ${port_2}  
    ${report}=  fetch port stats
@@ -143,7 +846,7 @@ verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${st
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
     Should be true  ${in_range}
     
 verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
@@ -151,7 +854,7 @@ verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${s
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  15
     Should not be true  ${in_range}
 
 

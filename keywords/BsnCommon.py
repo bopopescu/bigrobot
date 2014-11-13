@@ -28,7 +28,6 @@ from paramiko.ssh_exception import BadHostKeyException, \
                                    SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account
-from robot.libraries.BuiltIn import BuiltIn
 import autobot.utils as br_utils
 from keywords.Host import Host
 
@@ -51,9 +50,12 @@ class BsnCommon(object):
         purposely want it to fail - there may be good reasons for doing that
         also.
         """
-        suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
-        helpers.bigrobot_test_suite_status(suite_status)
-        helpers.log("Test suite status: %s" % suite_status)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            from robot.libraries.BuiltIn import BuiltIn
+            suite_status = BuiltIn().get_variable_value("${SUITE_STATUS}")
+            helpers.bigrobot_test_suite_status(suite_status)
+            helpers.log("Test suite status: %s" % suite_status)
+
         try:
             t = test.Test()
             t.teardown()
@@ -72,18 +74,22 @@ class BsnCommon(object):
         #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
-        test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
-        test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
-        if test_status == 'FAIL':
-            if helpers.bigrobot_test_postmortem().lower() == 'false':
-                helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
-                            " Skipping test postmortem.")
-            else:
-                self.base_test_postmortem(test_descr=test_descr)
+        if helpers.bigrobot_nose_setup().lower() == 'false':
+            # Test postmortem is not supported by Nose framework. As a
+            # workaround, define it explicitly in the test case instead.
+            from robot.libraries.BuiltIn import BuiltIn
+            test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
+            test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
+            if test_status == 'FAIL':
+                if helpers.bigrobot_test_postmortem().lower() == 'false':
+                    helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
+                                " Skipping test postmortem.")
+                else:
+                    self.base_test_postmortem(test_descr=test_descr)
 
-            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
-                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
-                self.pause_on_fail(keyword=test_descr)
+                if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                    helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                    self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -147,7 +153,7 @@ class BsnCommon(object):
         | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
 
         Return Value:
-        - Tuple of (<status_flag>,  "<output>", <errorcode>)
+        - Tuple of (<status_flag>,  "<output>", "<err_str>", <errorcode>)
 
         See helpers.run_cmd2() for more info.
         """
@@ -182,67 +188,23 @@ class BsnCommon(object):
     def bcf_controller_postmortem(self, node, server, server_devconf,
                                   user, password, dest_path, test_descr=None):
         """
-        Executes the equivalence of
-        https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
-        Save the show commands and logs (e.g., /var/log/floodlight/*) to the
-        archiver.
+            Generates Support Bundle and SCPs out to File server
         """
         helpers.log("Collecting postmortem information for BCF controller '%s'"
                     % node)
-        output_dir = helpers.bigrobot_log_path_exec_instance()
-        # show_cmd_file is the log file on the BigRobot terminal (where
-        # test suite is running)
-        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
-                         '/show_cmd_out.txt')
-        d = os.path.dirname(show_cmd_file)
-        if not os.path.exists(d):
-            os.makedirs(d)
-        fh = open(show_cmd_file, 'w')
 
-        cmdlist = [
-#                   'debug cli',
-#                   'show running-config details',
-#                   'show controller',
-#                   'show controller details',
-#                   'show switch all details',
-#                   'show switch all interface',
-#                   'show switch all interface properties',
-#                   'show lag',
-#                   'show link',
-#                   'show port-group',
-#                   'show fabric warning',
-#                   'show fabric error',
-#                   'show tenant',
-#                   'show segment',
-#                   'show endpoint',
-#                   'show attachment-points',
-#                   'show logical-router',
-#                   'show logical-router interface segment',
-#                   'show logical-router interface tenant',
-#                   'show port group',
-#                   'show forwarding',
-#                   'show forwarding internal',
-#                   'show vft',
-#                   'show debug events',
-#                   'show debug counters all',
-                   'no debug cli'
-#                   'show debug events details', Disabling due to BSC-5570
-                   ]
-        for cmd in cmdlist:
-            content = self.config(node, cmd)['content']
-            fh.write(content)
-            fh.write('\n')
-        helpers.log("Successfully run all debug commands. Saved to %s."
-                    % show_cmd_file)
-        fh.close()
-
-        helpers.scp_put(server, show_cmd_file, dest_path, user, password)
-
+        import keywords.T5Support as T5Support
+        support = T5Support.T5Support()
+        helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
+        support.delete_support_bundles()
+        result = support.generate_support(node)
+        helpers.log("Support File : %s" % str(result))
+        support_file = support.get_support_bundle_fs_path(node)
         Host().bash_scp(node,
-                        source='/var/log/floodlight/*',
+                        source=support_file,
                         dest='%s@%s:%s' % (user, server, dest_path),
                         password=password, timeout=60)
-        helpers.log("Successfully copied all debug logs on '%s' to '%s:%s'"
+        helpers.log("Successfully copied Support Files '%s' to '%s:%s'"
                     % (node, server, dest_path))
 
         # Make sure that all log files are readable. Also compress them to
@@ -413,10 +375,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Pass: Transmit:%d, Receive:%d" % (tx, rx))
             return True
         else:
-            helpers.log("Fail: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Fail: Transmit:%d, Receive:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
@@ -462,6 +424,20 @@ class BsnCommon(object):
         """
         t = test.Test()
         return t.params(*args, **kwargs)
+
+    def params_global(self, *args, **kwargs):
+        """
+        Return the value for a 'global' params attributes.
+
+        Inputs:
+        | key  | name of attribute (e.g., 'my_test_knob') |
+        | default | (option) if attribute is undefined, return the value defined by default |
+
+        Return Value:
+        - Value for attribute
+        """
+        t = test.Test()
+        return t.params_global(*args, **kwargs)
 
     def params_nodes(self, *args, **kwargs):
         """
@@ -533,7 +509,7 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -552,7 +528,7 @@ class BsnCommon(object):
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):
@@ -579,7 +555,7 @@ class BsnCommon(object):
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -1852,6 +1828,22 @@ class BsnCommon(object):
             n = t.node(node)
             return n.monitor_reauth(*args, **kwargs)
 
+    def cli_add_controller_idle_and_reauth_timeout(self, node, *args, **kwargs):
+        """
+        Reconfigure the idle timeout and reauth timeout on the controller.
+
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | reconfig_idle | Default is ${true}. Set to $[false} if you don't want to reconfigure idle timeout. |
+        | reconfig_reauth | Default is ${true}. Set to $[false} if you don't want to reconfigure reauth timeout. |
+
+        Return Value:
+        - ${true} on success, else ${false} on failure.
+
+        """
+        t = test.Test()
+        return t.cli_add_controller_idle_and_reauth_timeout(node, *args, **kwargs)
+
     def node_disconnect(self, node):
         """
         Disconnect the devconf session (SSH/Telnet) on the specified node.
@@ -1957,6 +1949,17 @@ class BsnCommon(object):
         helpers.debug("Host nodes used in test suite: %s" % nodes)
         return nodes
 
+    def get_switch_mac_topo(self, node):
+        '''
+        Return the Mac secified in Topo file against give switch node
+        '''
+        t = test.Test()
+        if node in t.params():
+            return '00:00:' + t.params(node, 'mac')
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
+
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
@@ -2057,12 +2060,16 @@ class BsnCommon(object):
     def bigrobot_test_ztn(self, new_value=False):
         return helpers.bigrobot_test_ztn(new_value)
 
-    def reconnect_switch_ips(self):
+    def reconnect_switch_ips(self, node=None):
         """
         Reconnects the Switches IP by getting them from consoles
         """
         t = test.Test()
-        params = t.topology_params_nodes()
-        for key in params:
-            t.setup_ztn_phase2(key)
+        helpers.bigrobot_no_auto_reload("True")
+        if node is None:
+            params = t.topology_params_nodes()
+            for key in params:
+                t.setup_ztn_phase2(key)
+        else:
+            t.setup_ztn_phase2(node)
         return True

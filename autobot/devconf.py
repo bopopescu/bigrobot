@@ -35,7 +35,7 @@ class DevConf(object):
         self._user = user
         self._password = password
         self._port = port
-        self._protocol = protocol
+        self._protocol = protocol if protocol else 'ssh'
         self._console_info = console_info
         self._debug = debug
         self._privatekey = privatekey
@@ -593,9 +593,12 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd(bash_cmd,
                                             mode=self._mode_before_bash,
                                             quiet=5, level=level)
-                super(BsnDevConf, self).cmd("set +o emacs",
-                                            mode=self._mode_before_bash,
-                                            quiet=5, level=level)
+
+                # 2014-09-30 It seems this is causing havoc on console
+                # sessions. Disable for now.
+                # super(BsnDevConf, self).cmd("set +o emacs",
+                #                            mode=self._mode_before_bash,
+                #                            quiet=5, level=level)
 
         self.mode(mode)
         # helpers.log("Current mode is %s" % self.mode(), level=level)
@@ -1036,6 +1039,16 @@ class T6MininetDevConf(MininetDevConf):
         # helpers.log("Closing T6MininetDevConf '%s' (%s)"
         #            % (self.name(), self._host))
         super(T6MininetDevConf, self).close()
+
+
+class PduDevConf(DevConf):
+    def __init__(self, *args, **kwargs):
+        super(PduDevConf, self).__init__(*args, **kwargs)
+
+    def close(self):
+        helpers.log("Closing PduDevConf '%s' (%s)"
+                    % (self.name(), self._host))
+        super(PduDevConf, self).close()
 
 
 class HostDevConf(DevConf):

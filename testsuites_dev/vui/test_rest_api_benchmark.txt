@@ -1,0 +1,60 @@
+* Setting
+Documentation   This suite uses the Apache Bench tool ('ab') which comes with
+...             Apache Web to test the BCF REST API performance. The test
+...             approach is to run benchmark tests while tweaking the parameter
+...             cuncurrent_requests - the number of requests to execute in
+...             parallel.
+...             
+...             Assumptions:
+...             - Tested with a basic configuration - the running configuration
+...               after vm_setup. The topology is a single controller with no
+...               switches in the topology.
+...             - REST API used is a very simple GET request which returns a few
+...               bytes of data.
+...
+...             https://bigswitch.atlassian.net/wiki/display/CORP/Iron+Horse+-+Verified+Scale+and+Performance+Numbers
+
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      IronHorse  performance
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+
+
+* Test Case
+Apache Bench against BCF controller
+    #[Tags]  skipped
+    ${total_requests}=    set variable    4000
+    rest api benchmark    node=c1   concurrent_requests=10   requests=${total_requests}   log_header=${true}
+#   rest api benchmark    node=c1   concurrent_requests=20   requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=30   requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=40   requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=50   requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=60   requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=70   requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=80   requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=90   requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=100  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=110  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=120  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=130  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=140  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=150  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=160  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=170  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=180  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=190  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=200  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=210  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=220  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=230  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=240  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=250  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=260  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=270  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=280  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=290  requests=${total_requests}
+#   rest api benchmark    node=c1   concurrent_requests=300  requests=${total_requests}
+    rest api benchmark    node=c1   concurrent_requests=310  requests=${total_requests}   log_trailer=${true}

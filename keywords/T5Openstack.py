@@ -259,7 +259,7 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 
-		result = os1.bash("neutron net-external-list %s" % (extName))
+		result = os1.bash("neutron subnet-show %s" % (extName))
 		output = result["content"]
 		match = re.search(r'Unable to find subnet with name', output)
 		if match:
@@ -267,12 +267,7 @@ class T5Openstack(object):
 			return ''
 		else:
 			out_dict = helpers.openstack_convert_table_to_dict(output)
-			extId = None
-			for key in out_dict:
-				name = out_dict[key]['name']
-				match = re.search(extName, name)
-				if match:
-					extId = key
+			extId = out_dict["network_id"]["value"]
 			return extId
 	
 	
@@ -560,6 +555,17 @@ class T5Openstack(object):
 		os1.bash("nova keypair-delete %s" % (keypairName))
 		return True
 
+	def openstack_add_secrule_icmp(self, secName):
+		'''Adding security rule to exsisting security group name
+			Input:
+				exsisting security name
+			Return: None
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		os1.bash("nova secgroup-add-rule %s icmp -1 -1 0.0.0.0/0" % (secName))
+		return True
+	
 	def openstack_add_router_gw(self, routerName, extName):
 		'''set tenant router gateway
 			Input:
@@ -863,7 +869,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -872,7 +878,7 @@ S
 			subnet_ip = ipaddr + "/" + str(24)
 			try:
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, netName, subnet_ip))
-				helpers.sleep(1)
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -947,6 +953,7 @@ S
 			netName += str(i)
 			try:
 				os1.bash("neutron net-delete %s " % (netName))
+				helpers.sleep(2)
 			except:
 				output = helpers.exception_info_value()
 				helpers.log("Output: %s" % output)
@@ -1041,6 +1048,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 		
@@ -1059,6 +1067,7 @@ S
 			subnetName += str(i)
 			subnetId = self.openstack_show_subnet(subnetName)
 			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+			helpers.sleep(3)
 			i = i + 1
 		return True
 	
@@ -1155,11 +1164,35 @@ S
 		url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (port_group_name)
 		c.rest.get(url1)
 		data1 = c.rest.content()
-		for i in len(data1[0]["interface"][0]):
-			k, v = data1[0]["interface"][0][i]["switch-name"], data1[0]["interface"][0][i]["interface-name"]
+		helpers.log("length=%d" % len(data1[0]["interface"]))
+		for i in range(0, len(data1[0]["interface"])):
+			k, v = data1[0]["interface"][i]["switch-name"], data1[0]["interface"][i]["interface-name"]
 			portgroup_members[k] = v 
 		return portgroup_members
+	
+	def openstack_verify_multiple_scale(self, tcount, ncount, tname='p'):
+		'''Function to verify total number of segment in each tenant
+			Input: tenantName , count , expected network count
+			Output: verify each tenant with expected network count in each tenant
+	    '''
+		t = test.Test()
+		c = t.controller('master')
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		ncount = int(ncount)
+		i = 1
+		while (i <= tcount):
+			tenant = tname
+			tenant += str(i)
+			tenantId = self.openstack_show_tenant(tenant)
+			url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % (tenantId)
+			c.rest.get(url)
+			data = c.rest.content()
+			if int(data[0]["segment-count"]) != ncount:
+				helpers.test_failure("All Openstack segments are not present in a tenant")
+				return False
+			i = i + 1
+		return True
 				
-		
 		
 		

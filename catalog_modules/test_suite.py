@@ -8,8 +8,7 @@ from catalog_modules.authors import Authors
 
 
 class TestSuite(object):
-    def __init__(self, filename, is_regression=False, is_baseline=False,
-                 add_build_record=True):
+    def __init__(self, filename, is_regression=False, is_baseline=False):
         """
         filename: output.xml file (with path)
         """
@@ -22,7 +21,6 @@ class TestSuite(object):
 
         self._is_regression = is_regression
         self._is_baseline = is_baseline
-        self._add_build_record = add_build_record
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
@@ -153,15 +151,19 @@ class TestSuite(object):
 
     def git_auth(self, filename):
         filename = re.sub(r'.*bigrobot/', '../', filename)
-        (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
+        (status, output, err_out, err_code) = helpers.run_cmd2("./git-auth " + filename, shell=True)
         output = output.strip()
         authors = Authors.get()
         if output in authors:
             return authors[output]
+        elif status == False:
+            helpers.log(
+                    "ERROR: Shell command error (code:'%s', mesg:'%s'). Using 'unknown' author."
+                    % (err_code, err_out))
         else:
             helpers.log(
                     "ERROR: Author '%s' does not exist. Using 'unknown' author." % output)
-            return authors['Unknown']
+        return authors['Unknown']
 
     def check_topo_type(self, suite):
         """
@@ -179,16 +181,6 @@ class TestSuite(object):
         if helpers.file_exists(suite + ".physical.topo"):
             return "physical"
         return "unknown"
-
-    def db_populate_build(self):
-        if self._is_baseline and self._add_build_record:
-            ts = helpers.ts_long_local()
-            self._build = {'build_name': os.environ['BUILD_NAME'],
-                           'starttime': ts,
-                           'starttime_datestamp': ts.split('T')[0],
-                           'created_by': getpass.getuser(),
-                          }
-            self.db_add_if_not_found_build(self._build)
 
     def db_populate_suite(self):
         if self._is_regression:
@@ -343,7 +335,6 @@ class TestSuite(object):
         Populate regression test data into the DB. For baseline data, we defer
         DB update until later for performance reason.
         """
-        self.db_populate_build()
         self.extract_suite_attributes()
         self.extract_test_attributes_and_db_populate()
         if self._is_regression:
