@@ -505,3 +505,9 @@ class Host(object):
         n.bash("ps aux | grep -i %s | grep -v grep" % pname)
         n.bash("for x in `ps aux | grep -i %s | grep -v grep | awk '{print $2}'`; do sudo kill -9 $x; done" % pname)
         
+    def bash_add_static_arp(self, node, ipaddr, hwaddr):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("arp -s %s %s" % (ipaddr, hwaddr))
+        return True
+

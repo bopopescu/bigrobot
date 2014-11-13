@@ -40,6 +40,7 @@ ${leaf1a_dpid}		00:99:00:00:00:02:00:03
 ${leaf1b_dpid}		00:99:00:00:00:02:00:04
 ${leaf2a_dpid}		00:99:00:00:00:02:00:05
 ${leaf2b_dpid}		00:99:00:00:00:02:00:06
+${gwEthaddr}        5c:16:c7:01:00:ff
 
 ${leaf0_pc1}		leaf0-pc1
 ${leaf0_pc2}		leaf0-pc2
