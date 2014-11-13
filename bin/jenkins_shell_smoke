@@ -16,7 +16,7 @@ status=$?
 export BIGROBOT_TESTBED=libvirt
 export BIGROBOT_PARAMS_INPUT="file:$BIGROBOT_PARAMS_INPUT_PRE"
 export BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE=True
-export BIGROBOT_TEST_POSTMORTEM=False
+export BIGROBOT_TEST_POSTMORTEM=True
 
 # Only kickoff smoke tests if vm_setup was successful
 if [ $status -eq 0 ]; then
