@@ -9,8 +9,9 @@ echo
 pwd=`pwd`
 echo $pwd
 qcow_path=$1
+node_name=$2
 export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
-bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path $qcow_path --mininet_build_number 99
+bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $node_name --mininet_vm mininet --qcow_path $qcow_path --mininet_build_number 99
 status=$?
 
 export BIGROBOT_TESTBED=libvirt
