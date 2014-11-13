@@ -112,7 +112,7 @@ class BigTapUtilities(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        c_result = c.sudo('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
+        c_result = c.bash('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
