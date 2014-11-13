@@ -17,7 +17,7 @@ Library		keywords/T5ZTN.py
 TC01 Open Stack Unit Testcases test_bsc_interface
 	[Tags]     smoke
 	${workspace}=  Get Environment Variable  OPENSTACK_SRC
-	${c1_ip}=  get node ip   master
+	${c1_ip}=  get node ip   c2
 #	${out}=  run_cmd  openssl s_client -connect ${c1_ip}:8000 > ${workspace}/temp.txt
 #	${out}=  run_cmd  cat ${workspace}/temp.txt | grep BEGIN -A 17 > ${workspace}/nsapi.pem
 	scp get  ${c1_ip}  /etc/ssl/certs/nsapi.pem  /tmp/nsapi.pem  recovery  bsn
@@ -33,7 +33,7 @@ TC01 Open Stack Unit Testcases test_bsc_interface
 TC02 Open Stack Unit Testcases test_t5_api
 	[Tags]     smoke
         ${workspace}=  Get Environment Variable  OPENSTACK_SRC
-        ${c1_ip}=  get node ip   master
+        ${c1_ip}=  get node ip   c2
 #       ${out}=  run_cmd  openssl s_client -connect ${c1_ip}:8000 > ${workspace}/temp.txt
 #       ${out}=  run_cmd  cat ${workspace}/temp.txt | grep BEGIN -A 17 > ${workspace}/nsapi.pem
         scp get  ${c1_ip}  /etc/ssl/certs/nsapi.pem  /tmp/nsapi.pem  recovery  bsn
