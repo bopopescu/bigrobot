@@ -49,17 +49,35 @@ ${spine2}      dt-spine2
  
 	    
 T23 controller node event failover        
-     : FOR    ${i}    IN RANGE    0    ${loop}
+    [Document]  Description:    Failover for controllers nodes is performed by issuing 'system failover' in standby controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Output:         Previous active controller becomes standby controller, standby controller becomes active controller.
+    ...
+    ...         Requirement:    2 controller nodes
+    ...
+    ...         Pass criteria:  Controller nodes switch roles.
+
+    : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* controller node failover: ${i}*******    
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
 	[Tags] 	longevity    traffic     event     
- 
 
- 
 
 T21 spine switch node down/up event 	 
+    [Document]  Description:    Spine nodes is rebooted by issuing 'system reboot switch SWITCH' in active controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+    ...
+    ...         Output:         spine switch reboots.
+    ...
+    ...         Requirement:    2 or more spines to guarantee at any time at least 1 spine is function
+    ...
+    ...         Pass criteria:  Spine joins the fabric after it comes back
+
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* spine switch node down/up event: ${i}********   
     \	switch node down/up event      ${spine1} 
@@ -69,7 +87,20 @@ T21 spine switch node down/up event
        
 	[Tags] 	longevity   traffic    event      
 
+
 T22 leaf switch node down/up event 	 
+    [Document]  Description:    Leaf switch is rebooted by issuing 'system reboot switch SWITCH' in active controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         leaf switch reboots.
+    ...
+    ...         Requirement:    2 leafs in a rack
+    ...                         Host is connected to leaf switches through port group
+    ...
+    ...         Pass criteria:  Leaf joins the fabric after it comes back
+
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* switch switch node down/up event: ${i}********   
     \	switch node down/up event      ${leaf1-a} 
@@ -87,7 +118,20 @@ T22 leaf switch node down/up event
 
 
 T27 data Link down/up event between leaf and spine
-    : FOR    ${i}    IN RANGE    0    ${loop}
+    [Document]  Description:    Link between spine switch and leaf switch is flapped by calling API to controller
+    ...                         to disable and enable the interface. The flap is executed at both spine side and leaf side.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+    ...                         self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         Links are flapped.
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.         """
+    
+        : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* data Link down/up event between leaf and spine ${i}******* 
 	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 	
 	\  sleep  ${linkflap}  
@@ -129,6 +173,18 @@ T27 data Link down/up event between leaf and spine
 	[Tags] 	longevity     traffic     event     
 
 T28 data Link down/up event between leafs 
+    [Document]  Description:    Link between leaf pair switches is flapped by calling API to controller
+    ...                         to disable and enable the interface. The flap is executed at both sides for each connection.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         leaf switch reboots.
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.
+
     : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* date link down/up ${i}******* 
 	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
@@ -143,6 +199,17 @@ T28 data Link down/up event between leafs
 	[Tags] 	 longevity   traffic   event      
 
 T26 big configuration changes (around 500 tenants)
+    [Document]  Description:    Tenants are created and deleted by calling API to controller
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.TFLAPNUM - the number of tenants to be created and deleted.  self.TFLAPNUM can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Tenants are created and deleted successfully.
+
      : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* big configuration changes tenant ${i}******* 
  	\  tenant configuration add/remove      ${Tflapnum}       3       
@@ -152,6 +219,17 @@ T26 big configuration changes (around 500 tenants)
 
 
 T25 big configuration changes (around 500 vns change)
+    [Document]  Description:    Segments are created and deleted by calling API to controller
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.VFLAPNUM -  the number of segments to be created and deleted.  self.TFLAPNUM can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Segments are created and deleted successfully.
+
      : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* big configuration changes vns ${i}******* 
   	\  vns configuration add/remove         ${Vflapnum}               
@@ -160,10 +238,21 @@ T25 big configuration changes (around 500 vns change)
 	[Tags] 	longevity     traffic    event     
 
 
-
- 	
-	 
 T51 continues Event
+    [Document]  Description:    Combination of all the test cases.
+    ...                         A random number is generated, based on the random number a testcase event is executed.
+    ...                         The testcase event is executed once.
+    ...                         Total of self.REPEAT random numbers are generated. The event runs at the gap of self.BETWEENEVENT seconds
+    ...
+    ...         Input:          self.REPEAT -  the times random number to be generated.  self.TFLAPNUM can be modified by .....
+    ...                         self.BETWEENEVENT - idle timer between events - this can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Segments are created and deleted successfully.
+
    	log  randomize all the event test cases from T23 to T30
     ${loop}=  Set Variable   1	
     : FOR   ${index}    IN RANGE    0    ${repeat}	
@@ -182,8 +271,6 @@ T51 continues Event
 
 
  
-
-	  
 
 * Keywords
 
