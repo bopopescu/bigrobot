@@ -16,7 +16,10 @@ TC1: Delete Configuration
 	rest cleanconfig bigtap user defined offset
     rest cleanconfig bigtap add grp
     rest cleanconfig switch config    
-    rest cleanconfig bigtap policy    
+    rest cleanconfig bigtap policy
+    rest enable feature  full-match
+    rest enable feature  overlap
+    rest enable feature  inport-mask    
     write version to file
     clean switch configuration  s1  port-channel
 	clean switch configuration  s1  snmp-server
