@@ -53,11 +53,9 @@ ${leaf0a_spine0_intf1}=   ethernet50
 ${spine0_leaf0a_intf1}=   ethernet21
 ${leaf1a_spine0_intf1}=   ethernet49
 ${spine0_leaf1a_intf1}=   ethernet27
-${leaf0a_spine0_intf1}=   ethernet52
-${spine0_leaf0a_intf1}=   ethernet21
 ${leaf0a_spine0_intf2}=   ethernet54
 ${spine0_leaf0a_intf2}=   ethernet31
-${intfList}=           ['ethernet52', 'ethernet54']
+${intfList}=           ['ethernet50', 'ethernet54']
 
 
 
