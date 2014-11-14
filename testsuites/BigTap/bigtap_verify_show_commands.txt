@@ -2,8 +2,8 @@
 Documentation  Verify CLI Commands
 Suite Setup  cli suite setup
 Suite Teardown   cli suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
+Test Setup   cli test setup
+Test Teardown  cli test teardown 
 Force Tags   platform Sanity
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
@@ -354,6 +354,13 @@ set version from controller
     ${version}=  split string  ${version_string}
     Set Environment Variable  controller_version  ${version[3]}
     Environment Variable Should Be Set  controller_version    
+
+cli test setup
+    write version to file
+    start syslog monitor
+
+cli test teardown
+    stop syslog monitor
 
 cli suite teardown
     rest delete policy  admin-view  ${policy_name}
