@@ -16,172 +16,172 @@ ${version_string}   2.0.5-SNAPSHOT
     
 * Test Case
 Configure and Verify Configuration on Master 
-    add ntp server  c1  time-c.nist.gov
+    add ntp server  master  time-c.nist.gov
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
     [Tags]  feature
 
 Configure and Verify Configuration on Slave 
-    add ntp server  c1  time-c.nist.gov
+    add ntp server  master  time-c.nist.gov
     Sleep  5
-    ${status}=  verify ntp  c2  time-c.nist.gov
+    ${status}=  verify ntp  slave  time-c.nist.gov
     Should be true  ${status}
     [Tags]  feature    
 
 Delete NTP server and verify
-    add ntp server  c1  time-c.nist.gov
+    add ntp server  master  time-c.nist.gov
     Sleep  5
-    ${status}=  delete ntp server  c1  time-c.nist.gov
+    ${status}=  delete ntp server  master  time-c.nist.gov
     Should be true  ${status}
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should not be true  ${status}
     # Delete inexistent server
-    ${status}=  delete ntp server  c1  foo.foo
+    ${status}=  delete ntp server  master  foo.foo
     Should be true  ${status}
     [Tags]  feature
 
 Verify Time Zone
-    add ntp timezone  c1  America/Los_Angeles
+    add ntp timezone  master  America/Los_Angeles
     Sleep  5
-    ${status}=  verify timezone  c1  PST  #PDT during summer, PST during winter (daylight saving)
+    ${status}=  verify timezone  master  PST  #PDT during summer, PST during winter (daylight saving)
     Should be true  ${status}
     [Tags]  feature
 
 Verify Time Zone can be changed
-    add ntp timezone  c1  America/Los_Angeles
+    add ntp timezone  master  America/Los_Angeles
     Sleep  10
-    ${status}=  verify timezone  c1  PST  
+    ${status}=  verify timezone  master  PST  
     Should be true  ${status}
     Sleep  10
-    add ntp timezone  c1  America/New_York
+    add ntp timezone  master  America/New_York
     Sleep  10    
-    ${status}=  verify timezone  c1  EST  #EDT during summer, EST during winter (daylight saving)
+    ${status}=  verify timezone  master  EST  #EDT during summer, EST during winter (daylight saving)
     Should be true  ${status}
     [Tags]  feature
 
 Verify deleting NTP TimeZone reverts it to UTC
-    add ntp timezone  c1  America/Los_Angeles
+    add ntp timezone  master  America/Los_Angeles
     Sleep  5
-    ${status}=  verify timezone  c1  PST  
+    ${status}=  verify timezone  master  PST  
     Should be true  ${status}
     Sleep  5
-    delete ntp timezone  c1
+    delete ntp timezone  master
     Sleep  10
-    ${status}=  verify timezone  c1  UTC
+    ${status}=  verify timezone  master  UTC
     Should be true  ${status} 
     [Tags]  feature
 
 
 Add multiple NTP servers and verify on Master and Slave
-    add ntp server  c1  time-c.nist.gov
-    add ntp server  c1  time-d.nist.gov
-    add ntp server  c1  nist-time-server.eoni.com
-    add ntp timezone  c1  America/Los_Angeles     
+    add ntp server  master  time-c.nist.gov
+    add ntp server  master  time-d.nist.gov
+    add ntp server  master  nist-time-server.eoni.com
+    add ntp timezone  master  America/Los_Angeles     
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  time-d.nist.gov
+    ${status}=  verify ntp  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-serve
-    #${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  master  nist-time-serve
+    #${status}=  verify ntp  master  nist-time-server.eoni.com
     Should be true  ${status}
-    ${status}=  verify ntp  c2  time-c.nist.gov
+    ${status}=  verify ntp  slave  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  time-d.nist.gov
+    ${status}=  verify ntp  slave  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-serve
-    #${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  slave  nist-time-serve
+    #${status}=  verify ntp  slave  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
-    ${status}=  delete ntp server  c1  time-d.nist.gov
+    ${status}=  delete ntp server  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  delete ntp server  c1  nist-time-server.eoni.com                         
+    ${status}=  delete ntp server  master  nist-time-server.eoni.com                         
     [Tags]  feature  ha
 
 
 With multiple NTP servers, restart process ntp on Master and verify
-    add ntp server  c1  time-c.nist.gov
-    add ntp server  c1  time-d.nist.gov
-    add ntp server  c1  nist-time-server.eoni.com 
+    add ntp server  master  time-c.nist.gov
+    add ntp server  master  time-d.nist.gov
+    add ntp server  master  nist-time-server.eoni.com 
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  time-d.nist.gov
+    ${status}=  verify ntp  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-serve
-    #${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  master  nist-time-serve
+    #${status}=  verify ntp  master  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Master
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  time-d.nist.gov
+    ${status}=  verify ntp  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-serve
-    #${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  master  nist-time-serve
+    #${status}=  verify ntp  master  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
-    ${status}=  delete ntp server  c1  time-d.nist.gov
+    ${status}=  delete ntp server  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  delete ntp server  c1  nist-time-server.eoni.com
+    ${status}=  delete ntp server  master  nist-time-server.eoni.com
     Should be true  ${status}                                
     [Tags]  feature  ha
 
 
 With multiple NTP servers, restart process ntp on Master and verify Slave is unaffected
-    add ntp server  c1  time-c.nist.gov
-    add ntp server  c1  time-d.nist.gov
-    add ntp server  c1  nist-time-server.eoni.com 
+    add ntp server  master  time-c.nist.gov
+    add ntp server  master  time-d.nist.gov
+    add ntp server  master  nist-time-server.eoni.com 
     Sleep  5
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  time-d.nist.gov
+    ${status}=  verify ntp  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-serve
-    #${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  master  nist-time-serve
+    #${status}=  verify ntp  master  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Master
-    ${status}=  verify ntp  c2  time-c.nist.gov
+    ${status}=  verify ntp  slave  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  time-d.nist.gov
+    ${status}=  verify ntp  slave  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-serve
-    #${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  slave  nist-time-serve
+    #${status}=  verify ntp  slave  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
-    ${status}=  delete ntp server  c1  time-d.nist.gov
+    ${status}=  delete ntp server  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  delete ntp server  c1  nist-time-server.eoni.com
+    ${status}=  delete ntp server  master  nist-time-server.eoni.com
     Should be true  ${status}                                
     [Tags]  feature  ha  
 
 
 With multiple NTP servers, restart process ntp on Slave and verify Master is unaffected
-    add ntp server  c1  time-c.nist.gov
-    add ntp server  c1  time-d.nist.gov
-    add ntp server  c1  nist-time-server.eoni.com 
+    add ntp server  master  time-c.nist.gov
+    add ntp server  master  time-d.nist.gov
+    add ntp server  master  nist-time-server.eoni.com 
     Sleep  5
-    ${status}=  verify ntp  c2  time-c.nist.gov
+    ${status}=  verify ntp  slave  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  time-d.nist.gov
+    ${status}=  verify ntp  slave  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c2  nist-time-serve
-    #${status}=  verify ntp  c2  nist-time-server.eoni.com
+    ${status}=  verify ntp  slave  nist-time-serve
+    #${status}=  verify ntp  slave  nist-time-server.eoni.com
     Should be true  ${status}
     restart process on controller  ntp  Slave
-    ${status}=  verify ntp  c1  time-c.nist.gov
+    ${status}=  verify ntp  master  time-c.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  time-d.nist.gov
+    ${status}=  verify ntp  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  verify ntp  c1  nist-time-serve
-    #${status}=  verify ntp  c1  nist-time-server.eoni.com
+    ${status}=  verify ntp  master  nist-time-serve
+    #${status}=  verify ntp  master  nist-time-server.eoni.com
     Should be true  ${status}
     Sleep  5
-    ${status}=  delete ntp server  c1  time-d.nist.gov
+    ${status}=  delete ntp server  master  time-d.nist.gov
     Should be true  ${status}
-    ${status}=  delete ntp server  c1  nist-time-server.eoni.com
+    ${status}=  delete ntp server  master  nist-time-server.eoni.com
     Should be true  ${status}                                
     [Tags]  feature  ha
 
