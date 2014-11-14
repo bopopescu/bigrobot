@@ -1061,3 +1061,29 @@ class AppController(object):
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
+
+
+# ## Added by Sahaja
+    def write_version_to_file(self):
+        '''Touch a file and write the version of the controller to file
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_version_url = "/rest/v1/system/version"
+        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
+        c.rest.get(show_version_url)
+        ver_data = c.rest.content()
+        helpers.test_log("Version string got is: %s" % (ver_data))
+        if ver_data:
+            ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
+            if ver:
+                vf.write("%s %s" % (ver.group(1), ver.group(2)))
+            else:
+                helpers.test_failure("Did not match the version format, got %s" % (ver))
+                return False
+        else:
+            helpers.test_failure("Version string is empty")
+            return False
