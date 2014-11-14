@@ -1,0 +1,46 @@
+*Settings
+Documentation   BigTap Clean Controller and Switches of Configuration
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown  
+Force Tags      BigTap
+Library         keywords/AppController.py
+Library         keywords/BsnCommon.py
+Library         keywords/BigTap.py
+Library         Collections.py
+Library         OperatingSystem.py
+Library         String.py 
+
+    
+* Test Case
+TC1: Delete Configuration   
+	rest cleanconfig bigtap user defined offset
+    rest cleanconfig bigtap add grp
+    rest cleanconfig switch config    
+    rest cleanconfig bigtap policy    
+    write version to file
+    clean switch configuration  s1  port-channel
+	clean switch configuration  s1  snmp-server
+    clean switch configuration  s2  port-channel
+	clean switch configuration  s2  snmp-server
+    clean switch configuration  s3  port-channel
+	clean switch configuration  s3  snmp-server
+    clean switch configuration  s4  port-channel
+	clean switch configuration  s4  snmp-server
+    clean switch configuration  s5  port-channel
+	clean switch configuration  s5  snmp-server
+    clean switch configuration  s6  port-channel
+	clean switch configuration  s6  snmp-server
+    clean switch configuration  s7  port-channel
+	clean switch configuration  s7  snmp-server
+    clean switch configuration  s8  port-channel
+	clean switch configuration  s8  snmp-server
+    clean switch configuration  s9  port-channel
+	clean switch configuration  s9  snmp-server
+    clean switch configuration  s10  port-channel
+	clean switch configuration  s10  snmp-server
+    clean switch configuration  s11  port-channel
+	clean switch configuration  s11  snmp-server
+    clean switch configuration  s12  port-channel
+	clean switch configuration  s12  snmp-server
+    clean switch configuration  s13  port-channel
+	clean switch configuration  s13  snmp-server
