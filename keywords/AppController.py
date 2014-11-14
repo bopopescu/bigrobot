@@ -8,8 +8,8 @@
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
 ###
-###  Last Updated: 02/08/2014
-###
+###  Last Updated: 11/13/2014
+###  Last updated: Sahaja
 ###  WARNING !!!!!!!
 '''
 
@@ -18,6 +18,9 @@ import autobot.test as test
 import subprocess
 import re
 import string
+
+
+syslogMonitorFlag = False  # ## To check if Syslog monitoring is currently enabled
 
 class AppController(object):
 
@@ -948,3 +951,113 @@ class AppController(object):
         if str(replace) == 'blank':
             replace = ''
         return  test_string.replace(str(search), str(replace))
+
+# ## Added by Sahaja
+    def start_syslog_monitor(self):
+        '''
+        Start monitoring the log.
+        Kill the existing tail process if any and start new tail
+        '''
+        global syslogMonitorFlag
+
+        try:
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            c1_pidList = self.get_syslog_monitor_pid('c1')
+            c2_pidList = self.get_syslog_monitor_pid('c2')
+            for c1_pid in c1_pidList:
+                # if (re.match("^d", c1_pid)):
+                    c1.sudo('kill -9 %s' % (c1_pid))
+            for c2_pid in c2_pidList:
+                # if (re.match("^d", c2_pid)):
+                    c2.sudo('kill -9 %s' % (c2_pid))
+
+            # Add rm of the file if file already exist in case of a new test
+            c1.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+
+            syslogMonitorFlag = True
+            return True
+
+        except:
+            helpers.log("Exception occured while starting the syslog monitor")
+            return False
+
+# ## Added by Sahaja
+    def restart_syslog_monitor(self, node):
+        '''
+        Restart the monitoring both the files will start logging again
+        Input: Node, c1, c2, etc
+        '''
+
+        global syslogMonitorFlag
+
+        if(syslogMonitorFlag):
+            t = test.Test()
+            c = t.controller(node)
+            result = c.sudo('ls *_dump.txt')
+            filename = re.split('\n', result['content'])[1:-1]
+            c.sudo("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
+            return True
+        else:
+            return True
+
+# ## Added by Sahaja
+    def stop_syslog_monitor(self):
+        '''
+        Stop the monitoring by killing the pid of tail process
+        Input: None
+        '''
+        global syslogMonitorFlag
+
+        if(syslogMonitorFlag):
+            c1_pidList = self.get_syslog_monitor_pid('c1')
+            c2_pidList = self.get_syslog_monitor_pid('c2')
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            helpers.log("Stopping syslog Monitor on C1")
+            for c1_pid in c1_pidList:
+                c1.sudo('kill -9 %s' % (c1_pid))
+            helpers.log("Stopping syslog Monitor on C2")
+            for c2_pid in c2_pidList:
+                c2.sudo('kill -9 %s' % (c2_pid))
+            syslogMonitorFlag = False
+
+            try:
+                helpers.log("****************    syslog Log From C1    ****************")
+                result = c1.sudo('cat c1_syslog_dump.txt')
+                split = re.split('\n', result['content'])[1:-1]
+                if split:
+                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+
+            except(AttributeError):
+                helpers.log("No Errors From syslog Monitor on C1")
+
+            try:
+                helpers.log("****************    syslog Log From C2    ****************")
+                result = c2.sudo('cat c2_syslog_dump.txt')
+                split = re.split('\n', result['content'])[1:-1]
+                if split:
+                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+            except(AttributeError):
+                helpers.log("No Errors From syslog Monitor on C2")
+
+            return True
+
+        else:
+            helpers.log("syslogMonitorFlag is not set: Returning")
+
+# ## Added by Sahaja
+    def get_syslog_monitor_pid(self, role):
+        '''Get the pid of tail processes
+        Input: c1,c2,etc
+        '''
+        t = test.Test()
+        c = t.controller(role)
+        helpers.log("Verifing for monitor job")
+        c_result = c.bash('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
+        split = re.split('\n', c_result['content'])
+        pidList = split[1:-1]
+        return pidList
