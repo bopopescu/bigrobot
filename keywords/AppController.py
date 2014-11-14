@@ -1061,3 +1061,215 @@ class AppController(object):
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
+
+# ## Added by Sahaja
+    def rest_cleanconfig_switch_config(self):
+        ''' Get all the list of switches configured and delete first the role and then delete the switch
+
+        Input: none
+
+        example show command: "show running-config switch"
+
+        Return value is if the deletion succeeded or not
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_url = '/api/v1/data/controller/applications/bigtap/interface-config?config=true'
+        c.rest.get(show_url)
+        switch_data = c.rest.content()
+        url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]'
+        helpers.test_log("type of switch_data is %s" % (type(switch_data)))
+        if len(switch_data) != 0:
+            for intf in switch_data:
+                helpers.test_log("type of intf is %s" % (type(intf)))
+                if "interface" and "name" and "role" and "switch" in intf.keys():
+                    helpers.test_log("Now will be deleting :: %s %s %s %s" % (intf["switch"], intf["role"], intf["interface"], intf["name"]))
+                    # final_url = url % (intf["interface"], intf["switch"])
+                    c.rest.delete(url % (intf["interface"], intf["switch"]), {'role':intf["role"]})
+        else:
+            helpers.test_log("Switch data is empty no switches configured")
+            return True
+
+        # Make sure there is no config left after deletion of roles
+        c.rest.get(show_url)
+        role_data_after_delete = c.rest.content()
+        if len(role_data_after_delete) == 0:
+            helpers.test_log("All the roles have been deleted for all the switch interfaces")
+        else:
+            helpers.test_failure("Few roles are still left %s" % (role_data_after_delete))
+            return False
+
+        # Delete Switches as roles are deleted
+        switch_url = '/api/v1/data/controller/core/switch?config=true'
+        c.rest.get(switch_url)
+        data = c.rest.content()
+        for switch in data:
+            if "dpid" in switch.keys():
+                helpers.test_log("Going to delete: %s" % (switch["dpid"]))
+                switch_delete_url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (switch["dpid"])
+                c.rest.delete(switch_delete_url)
+        # Make sure all switches have been deleted
+        c.rest.get(switch_url)
+        data = c.rest.content()
+        if len(data) == 0:
+            helpers.test_log("All the switches have been deleted")
+        else:
+            helpers.test_failure("Few switches have not been deleted %s" % (data))
+
+
+# ## Added by Sahaja
+    def rest_cleanconfig_bigtap_add_grp(self):
+        '''Get all the list of address groups and delete them
+
+        Input: None
+
+        show command used: show running-config bigtap address-group
+
+        Output: Return false if any address-groups are left after deletion
+
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        show_url = "/api/v1/data/controller/applications/bigtap/ip-address-set?config=true"
+        try:
+            c.rest.get(show_url)
+            addr_grp_data = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        delete_url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]'
+        if len(addr_grp_data) != 0:
+            for add_grp in addr_grp_data:
+                helpers.test_log("type of add_grp is %s" % (type(add_grp)))
+                if "name" in add_grp.keys():
+                    c.rest.delete(delete_url % (add_grp['name']))
+                else:
+                    helpers.test_failure("There is no name field for %s" % add_grp)
+        else:
+            helpers.test_log("Add-grp data is empty")
+            return True
+
+        # Make sure all the address-groups have been deleted
+        c.rest.get(show_url)
+        delete_addr_grp_data = c.rest.content()
+        if len(delete_addr_grp_data) == 0:
+            helpers.test_log("All the address-groups have been deleted")
+        else:
+            helpers.test_failure("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
+            return False
+
+# ## Added by Sahaja
+    def rest_cleanconfig_bigtap_user_defined_offset(self):
+        '''Get all the user-defined-groups and delete them
+
+        Input: None
+
+        show command used: show running-config bigtap user-defined-group
+
+        Output: Return false if groups are not deleted properly
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        show_url = "/api/v1/data/controller/applications/bigtap/user-defined-offset?config=true"
+        try:
+            c.rest.get(show_url)
+            show_data = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        delete_url = "/api/v1/data/controller/applications/bigtap/user-defined-offset/%s/anchor {}"
+        if len(show_data) != 0:
+            for ugrp in show_data:
+                for grp in ugrp.keys():
+                    helpers.test_log("Deleting the group %s" % (grp))
+                    c.rest.delete(delete_url % (grp))
+        else:
+            helpers.test_log("There are no user-defined offsets to delete")
+            return True
+
+# ## Added by Sahaja
+
+    def rest_cleanconfig_bigtap_policy(self):
+        '''Get all the policy and associated view names and delete them
+
+        Input: None
+
+        show commands used: 'show running-config bigtap policy', 'show bigtap rbac-permission'
+
+        Output: Return false if deletion is not successful
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        delete_url = "/api/v1/data/controller/applications/bigtap/view[name='%s']/policy[name='%s'] {}"
+        show_policy_url = "/api/v1/data/controller/applications/bigtap/view/policy?config=true"
+        show_view_url = "/api/v1/data/controller/applications/bigtap/view?select=policy/name"
+
+        c.rest.get(show_policy_url)
+        policy_data = c.rest.content()
+
+        c.rest.get(show_view_url)
+        view_data = c.rest.content()
+
+        # GET THE POLICY NAMES
+        lis_p = []
+        if len(policy_data) != 0:
+            for pol in policy_data:
+                lis_p.append(pol['name'])
+        else:
+            helpers.test_log("No list of policies to delete")
+            return True
+
+        for pol_n in lis_p:
+            for elem in view_data:
+                for pol in elem['policy']:
+                    if cmp(pol_n, pol['name']) == 0:
+                        helpers.test_log("Will be deleting policy %s with view %s" % (pol_n, elem['name']))
+                        c.rest.delete(delete_url % (elem['name'], pol_n))
+
+        c.rest.get(show_policy_url)
+        delete_policy_data = c.rest.content()
+        if len(delete_policy_data) == 0:
+            helpers.test_log("All the user-defined-groups have been deleted")
+        else:
+            helpers.test_failure("Few policies have not been deleted %s" % (delete_policy_data))
+            return False
+
+# ## Added by Sahaja
+    def write_version_to_file(self):
+        '''Touch a file and write the version of the controller to file
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_version_url = "/rest/v1/system/version"
+        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
+        c.rest.get(show_version_url)
+        ver_data = c.rest.content()
+        helpers.test_log("Version string got is: %s" % (ver_data))
+        if ver_data:
+            ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
+            if ver:
+                vf.write("%s %s" % (ver.group(1), ver.group(2)))
+            else:
+                helpers.test_failure("Did not match the version format, got %s" % (ver))
+                return False
+        else:
+            helpers.test_failure("Version string is empty")
+            return False
