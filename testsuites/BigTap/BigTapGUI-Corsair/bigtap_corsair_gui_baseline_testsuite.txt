@@ -1,7 +1,7 @@
 * Settings
 Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
 ...             	a workflow that is created using keywords from the resource file.
-Force Tags      	GUI Baseline
+Force Tags      	bigtap  blackbird
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
 Library         	keywords/BsnCommon.py
@@ -107,7 +107,7 @@ config suite setup
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-
+	Delete All Big Tap Resources
 
 config suite teardown
 	Close Browser
