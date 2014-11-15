@@ -3,7 +3,7 @@ Documentation   	Test suite with tests to match TCP Flags. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	GUI TCP Flags
+Force Tags      	bigtap  corsair
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
@@ -17,7 +17,7 @@ Library       		String
 TC Set up
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
-	Configure Big Tap Policy					 					policy-tcp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	  	${EMPTY}	
+	Configure Big Tap Policy					 					policy-tcp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	${EMPTY}	  	${EMPTY}	
 
 TC1 Unset FIN														
 	  Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		!FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
@@ -68,8 +68,10 @@ config suite setup
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
- 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+ 	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
 
 config suite teardown
 	Close Browser
