@@ -126,11 +126,15 @@ tacacs test setup
     write version to file
     start syslog monitor
     set version from controller
-    rest add tacacs server  10.2.3.201  secret  300
-    rest add tacacs authentication
-    rest add tacacs authorization
-    rest add user to group  tacacsadmin  admin
-    sleep  3
+    ${result1}=  rest add tacacs server  10.2.3.201  secret  300
+    Should be True  ${result1}
+    ${result2}=  rest add tacacs authentication
+    Should be True  ${result2}
+    ${result3}=  rest add tacacs authorization
+    Should be True  ${result3}
+    ${result4}=  rest add user to group  tacacsadmin  admin
+    Should be True  ${result4}
+    sleep  1
 
 set version from controller
     ${version_string}=  rest show version
@@ -166,12 +170,17 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
     Should Contain  ${content}  ${myversion}
 
 tacacs test teardown
-    cli delete user from group  tacacsadmin  admin
-    rest delete tacacs server  10.2.3.201
-    rest delete tacacs server  10.9.18.3
-    rest delete tacacs server  10.192.97.20       
-    rest delete tacacs authentication
-    rest delete tacacs authorization  
-    sleep  3     
+    ${result1}=  cli delete user from group  tacacsadmin  admin
+    Should be True  ${result1}
+    ${result2}=  rest delete tacacs server  10.2.3.201
+    Should be True  ${result2}
+    ${result3}=  rest delete tacacs server  10.9.18.3
+    Should be True  ${result3}
+    ${result4}=  rest delete tacacs server  10.192.97.20       
+    Should be True  ${result4}
+    ${result5}=  rest delete tacacs authentication
+    Should be True  ${result5}
+    ${result6}=  rest delete tacacs authorization  
+    Should be True  ${result6}    
     stop syslog monitor
     
