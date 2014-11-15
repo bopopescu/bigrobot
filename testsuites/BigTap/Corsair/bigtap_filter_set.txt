@@ -1,0 +1,177 @@
+*Settings
+Documentation          Filter Set Test Suite
+Suite Setup            filter suite setup
+Suite Teardown         filter suite teardown
+Test Setup             base test setup
+Test Teardown           base test teardown 
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+${switch2_alias}                        scale-ac5710-3   #Alias for switch 1
+
+### Ixia Ports
+${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
+${switch2_delivery_intf_1}                ethernet1        #Delivery interface on switch 1
+${switch2_delivery_alias_1}               ixia-4-18        #Alias for delivery interface on switch 1
+
+### BigTap Policy Configuration
+${policy_name_1}                          policy_filter_set_1       #Policy Name that will use the tunnel interface
+${policy_name_2}                          policy_filter_set_2       #Policy Name that will use the tunnel interface
+${filter_set_1}                           ipv4_filter_set
+${filter_set_2}                           ipv6_filter_set
+${filter_set_3}                           mixed_filter_set
+
+*Test Case
+
+Verify filter-set can be created and deleted with one IPv4 match condition
+    ${return_value}=  rest add filter set  ${filter_set_1}  
+    Should be True  ${return_value}
+    ${return_value}=  rest add match to filter set   ${filter_set_1}  1  {"src-tp-port": 1234, "sequence": 1, "dst-tp-port": 80, "ip-proto": 6, "ether-type": 2048}  
+    Should be True  ${return_value}
+    Sleep  5
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['name']}  ${filter_set_1}     
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['dst-tp-port']}  80 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['src-tp-port']}  1234
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ether-type']}  2048         
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ip-proto']}  6
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['sequence']}  1 
+    ${return_value}=  rest delete filter set  ${filter_set_1}  
+    Should be True  ${return_value}
+    Sleep  5            
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Variable should not exist    ${filterset_dictionary[0]['name']}
+    [Tags]  feature
+    
+Verify filter-set can be created and deleted with one IPv6 match condition
+    ${return_value}=  rest add filter set  ${filter_set_2}  
+    Should be True  ${return_value}
+    ${return_value}=  rest add match to filter set   ${filter_set_2}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:0:0:0:0", "dst-ip": "2002::1", "ip-proto": 6, "sequence": 1, "ether-type": 34525, "dst-ip-mask": "ffff:ffff:ffff:ffff:0:0:0:0", "src-ip": "2001::1"}  
+    Should be True  ${return_value}
+    Sleep  5
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['name']}  ${filter_set_2}
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['rule'][0]['src-ip-mask']}  ffff:ffff:ffff:ffff:0:0:0:0
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['rule'][0]['src-ip']}  2001::1
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['rule'][0]['dst-ip-mask']}  ffff:ffff:ffff:ffff:0:0:0:0
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['rule'][0]['dst-ip']}  2002::1    
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ether-type']}  34525         
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ip-proto']}  6
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['sequence']}  1 
+    ${return_value}=  rest delete filter set  ${filter_set_2}  
+    Should be True  ${return_value}
+    Sleep  5
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Variable should not exist    ${filterset_dictionary[0]['name']}
+    [Tags]  feature
+    
+Verify filter-set can be created and deleted with multiple match conditions
+    ${return_value}=  rest add filter set  ${filter_set_1}  
+    Should be True  ${return_value}
+    ${return_value}=  rest add match to filter set   ${filter_set_1}  1  {"dst-tp-port": 80, "ether-type": 2048, "ip-proto": 6, "sequence": 1}  
+    Should be True  ${return_value}
+    ${return_value}=  rest add match to filter set   ${filter_set_1}  2  {"dst-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 2}  
+    Should be True  ${return_value}    
+    Sleep  5
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as strings   ${filterset_dictionary[0]['name']}  ${filter_set_1}     
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['dst-tp-port']}  80 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ether-type']}  2048         
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['ip-proto']}  6
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][0]['sequence']}  1 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][1]['dst-tp-port']}  53 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][1]['ether-type']}  2048         
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][1]['ip-proto']}  17
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Should be equal as integers   ${filterset_dictionary[0]['rule'][1]['sequence']}  2     
+    ${return_value}=  rest delete filter set  ${filter_set_1}  
+    Should be True  ${return_value}     
+    Sleep  5
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-set?config=true reply
+    Variable should not exist    ${filterset_dictionary[0]['name']}
+    [Tags]  feature
+    
+Verify filter-set can be added to a bigtap policy
+    ${return_value}=  rest add filter set  ${filter_set_1}  
+    Should be True  ${return_value}
+    ${return_value}=  rest add match to filter set   ${filter_set_1}  1  {"src-tp-port": 1234, "sequence": 1, "dst-tp-port": 80, "ip-proto": 6, "ether-type": 2048}  
+    Should be True  ${return_value}
+    Sleep  5
+    ${return_value}=  rest add filterset to policy  ${policy_name_1}  ${filter_set_1}  1                         
+    Should be True  ${return_value}
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name=${policy_name_1}]/rule
+    Should be equal as integers   ${filterset_dictionary[0]['src-tp-port']}  1234      
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name=${policy_name_1}]/rule
+    Should be equal as integers   ${filterset_dictionary[0]['sequence']}  1 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name=${policy_name_1}]/rule
+    Should be equal as integers   ${filterset_dictionary[0]['dst-tp-port']}  80 
+    ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name=${policy_name_1}]/rule
+    Should be equal as integers   ${filterset_dictionary[0]['ip-proto']}  6
+    [Tags]  feature  run     
+            
+                                    
+* Keyword
+
+filter suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}    
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${switch1_delivery_intf_1}  delivery    intf_nickname=${switch1_delivery_alias_1}
+    rest add interface role  s2  ${switch2_delivery_intf_1}  delivery    intf_nickname=${switch2_delivery_alias_1}
+    #First verify basic policy works
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch2_delivery_alias_1}  delivery
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}  
+
+filter suite teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}    
+    rest delete interface role  s1  ${switch1_filter_intf_1}       filter 
+    rest delete interface role  s1  ${switch1_delivery_intf_1}       delivery 
+    rest delete interface role  s2  ${switch2_delivery_intf_1}       delivery 
+    rest delete interface  s1  ${switch1_filter_intf_1}        
+    rest delete interface  s1  ${switch1_delivery_intf_1}        
+    rest delete interface  s2  ${switch2_delivery_intf_1}        
+    rest delete switch alias  s1
+    rest delete switch  s1
+    rest delete switch alias  s2
+    rest delete switch  s2
+    base suite teardown 

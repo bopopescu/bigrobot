@@ -1,16 +1,18 @@
 *Settings
-Documentation                       Release: CORSAIR
+Documentation                       Corsair: Big Tap Overlapping Policies
 Suite Setup                         overlap suite setup
 Suite Teardown                      overlap suite teardown
-Test Setup                          base test setup
+Test Setup                          overlap test setup
 Test Teardown                       overlap test teardown 
-Force Tags                          bigtap  overlap
+Force Tags                          bigtap  overlap  corsair  feature
 Library                             keywords/BsnCommon.py
 Library                             keywords/AppController.py
 Library                             keywords/BigTap.py
 Library                             keywords/SwitchLight.py
 Library                             keywords/Ixia.py
 Library                             Collections.py
+Library                             OperatingSystem.py
+Library                             String.py
 
 * Variable
 ## Switch 1
@@ -2128,9 +2130,14 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should be true  ${in_range}
+
+overlap test setup    
+    write version to file
+    start syslog monitor    
     
 overlap test teardown
-    delete traffic    
+    delete traffic
+    stop syslog monitor    
 
 overlap suite teardown
     rest delete policy  admin-view  ${policy_name_1}
