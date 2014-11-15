@@ -1259,7 +1259,8 @@ class AppController(object):
         except:
             return False
         show_version_url = "/rest/v1/system/version"
-        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
+#        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
+        vf = open("/var/tmp/ver.txt", "wb")
         c.rest.get(show_version_url)
         ver_data = c.rest.content()
         helpers.test_log("Version string got is: %s" % (ver_data))

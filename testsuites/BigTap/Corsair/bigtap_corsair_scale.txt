@@ -1,16 +1,19 @@
 *Settings
-Documentation  Corsair Scaling Test Suite
-Suite Setup  corsair suite setup
-Suite Teardown   corsair suite teardown
-Test Setup   corsair test setup
-Test Teardown  corsair test teardown 
-Force Tags   Corsair  BigTap  Scale  tunnelling
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           Corsair Scaling Test Suite
+Suite Setup             corsair suite setup
+Suite Teardown          corsair suite teardown
+Test Setup              corsair test setup
+Test Teardown           corsair test teardown 
+Force Tags              corsair  bigtap  scale  tunnelling
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 keywords/ThirdParty.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 ####### TOPOLOGY
 ##
@@ -238,6 +241,8 @@ extreme tunnel teardown
     extreme save config  s3
 
 corsair test setup
+    write version to file
+    start syslog monitor
     extreme tunnel setup  s3  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask} 
     extreme tunnel setup  s3  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask} 
     rest add policy  admin-view  ${policy_name_1}   forward
@@ -251,6 +256,7 @@ corsair test teardown
     delete traffic
     extreme tunnel teardown
     sleep  10
+    stop syslog monitor
     
 corsair suite teardown
     ${result}=  cli add portchannel  s1  1  49-50  L2
