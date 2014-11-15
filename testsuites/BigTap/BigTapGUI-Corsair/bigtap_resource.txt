@@ -133,7 +133,7 @@ ${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
 
 ### Users Page
 #${USERNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${USERNAME FIELD}				xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
 ${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
 ${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
@@ -263,7 +263,8 @@ ${CONFIGURE GRE TUNNEL POPUP}		xpath=//div[@title='Configure GRE Tunnel']/child:
 ${TUNNEL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${TUNNEL RATE LIMIT CHECKBOX}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rate Limit')]/parent::h2/parent::div/following-sibling::div/child::div/child::div/input
 ${TUNNEL RATE LIMIT FIELD}			xpath=//input[@id='dijit_form_NumberSpinner_0']
-${LIST TYPE KNOB}					xpath=//div[@class='knob_icon']
+${LIST TYPE KNOB RECEIVE}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB TRANSMIT}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
 ${TUNNEL SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source IP')]/parent::h2/parent::div/following-sibling::div/div/div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input		
 ${TUNNEL SOURCE PREFIX FIELD}		xpath=//input[@id='dijit_form_NumberSpinner_1']
 ${TUNNEL GATEWAY IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Gateway IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
@@ -302,7 +303,7 @@ ${BIGTAP POLICY DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-p
 ${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[@class='icon_node plus']
 ${BIGTAP POLICY INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Add Delivery Interfaces']
 #${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Append Selected')]
-${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_19_label']
+${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_20_label']
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX}    				xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/descendant::input
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
@@ -937,19 +938,19 @@ Delete All Big Tap Resources
 
 
 Configure User
-	[Arguments]  ${user}  ${password}  ${conf_password}  ${full_name}  ${group}
-	${random_groupname}  Generate Random Name  Group  5 
-	Run Keyword IF  '${group}'=='__new__'  
-    ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
-    ${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
+	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
+	#${random_groupname}  Generate Random Name  Group  5 
+	#Run Keyword If  '${group}'=='__new__'  
+    #...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
+    #${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
 
     Go To Security Users Page
     Verify Element Visible  ${MAIN PLUS BUTTON}
     Click Element  ${MAIN PLUS BUTTON}   and don't wait
     Verify Element Visible  ${CREATE USER POPUP}
 
-    ${random_username}  Generate Random Name  User  5
-    ${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+    #${random_username}  Generate Random Name  User  5
+    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
 
     Input Text And Verify  ${USERNAME FIELD}  ${username}    
     Input Text And Verify  ${PASSWORD FIELD}  ${password}    
@@ -1251,7 +1252,7 @@ Associate Match Rule
 
 
 Configure Big Tap Policy
-	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${filter-group}  ${delivery-group}
+	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${service}  ${filter-group}  ${delivery-group}
 	${random_rbacname}  Generate Random Name  Rbac  5
     Run Keyword If  '${rbac}'=='__new__'  
     ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
@@ -1295,8 +1296,8 @@ Configure Big Tap Policy
     Run Keyword Unless  '${delivery-group}'=='${EMPTY}'  
     ...		Associate Policy Delivery Group Interface  ${delivery-group}
 
-    #Run Keyword Unless  '${service}'=='${EMPTY}'  
-    #...		Associate Policy Service  ${service}
+    Run Keyword Unless  '${service}'=='${EMPTY}'  
+    ...		Associate Policy Service  ${service}
     
     Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
@@ -1477,7 +1478,7 @@ Associate Policy Delivery Interface
 
 	Click Element  ${delivery_checkbox}  and don't wait
 	Checkbox Should Be Selected  ${delivery_checkbox}
-
+	
 	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}
 	Click Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
 	
@@ -2682,7 +2683,9 @@ Configure Big Tap Tunnels
     Verify Element Visible  ${action_menu}
     Highlight Element   ${action_menu}
     Sleep  1
-    Click Element  ${action_menu}  and don't wait
+    #Click Element  ${action_menu}  and don't wait
+    Mouse Down  ${action_menu}
+    Mouse Up  ${action_menu}
     #Click Element  ${action_menu}  and don't wait
 	Sleep  2
     #Verify Element Visible  ${CREATE TUNNEL MENU ITEM}
@@ -2715,22 +2718,22 @@ Configure Big Tap Tunnels
 	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
 	
     Run Keyword If  '${direction}'=='Receive'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
     
     Run Keyword If  '${direction}'=='Receive'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Transmit
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Not_Transmit
     
     Run Keyword If  '${direction}'=='Transmit'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
     
     Run Keyword If  '${direction}'=='Transmit'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Receive
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Not_Receive
     
     Run Keyword If  '${direction}'=='Bidirectional'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
     
     Run Keyword If  '${direction}'=='Bidirectional'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
     
     Click Element  ${TUNNEL SOURCE IP FIELD}  and don't wait
 	Input Text And Verify  ${TUNNEL SOURCE IP FIELD}  ${src-ip}
