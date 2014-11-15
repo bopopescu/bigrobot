@@ -1,38 +1,37 @@
 *Settings
-Documentation  BigTap VFT  Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   bigtap suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           BigTap VFT Test Suite
+Suite Setup             bigtap suite setup
+Suite Teardown          bigtap suite teardown
+Test Setup              bigtap test setup
+Test Teardown           bigtap test teardown 
+Force Tags              platform  sanity  blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
 
 * Variable
-${switch_alias}  app-rlb9-1
-${policy1}  P1
-${policy2}  P2
-${policy3}  P3
-
-${filter_1}  ethernet1  
-${fnick_1}  F1
-${delivery_1}  ethernet2  
-${dnick_1}  D1
-${filter_2}  ethernet13  
-${fnick_2}  F2
-${delivery_2}  ethernet14  
-${dnick_2}  D2
-${service_pre1}  ethernet47  
-${snick_pre1}  S1PRE
-${service_post1}  ethernet48  
-${snick_post1}  S1POST
-${filter_vft}  ethernet15  
-${fnick_vft}  VFT-F1
-${delivery_vft}  ethernet16 
-${dnick_vft}  VFT-D1
+${switch_alias}         app-rlb9-1
+${policy1}              P1
+${policy2}              P2
+${policy3}              P3
+${filter_1}             ethernet1  
+${fnick_1}              F1
+${delivery_1}           ethernet2  
+${dnick_1}              D1
+${filter_2}             ethernet13  
+${fnick_2}              F2
+${delivery_2}           ethernet14  
+${dnick_2}              D2
+${service_pre1}         ethernet47  
+${snick_pre1}           S1PRE
+${service_post1}        ethernet48  
+${snick_post1}          S1POST
+${filter_vft}           ethernet15  
+${fnick_vft}            VFT-F1
+${delivery_vft}         ethernet16 
+${dnick_vft}            VFT-D1
 
 
 *Test Case
@@ -251,6 +250,13 @@ verify results   [Arguments]  ${tx_port}  ${transmitted_frames}  ${rx_port}  ${r
     ${rx_value}=  verify dict key  ${report}  ${rx_port}  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
     Should be true  ${in_range} 
+
+bigtap test setup
+    write version to file
+    start syslog monitor
+
+bigtap test teardown
+    stop syslog monitor
         
 bigtap suite teardown
     rest delete policy  admin-view  ${policy1}
@@ -267,3 +273,4 @@ bigtap suite teardown
     rest delete service  S1
     rest delete switch alias  s1
     rest delete switch  s1
+    base suite teardown

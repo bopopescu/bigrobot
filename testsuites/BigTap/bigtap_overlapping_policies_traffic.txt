@@ -1,16 +1,18 @@
 *Settings
-Documentation  Release: BLACKBIRD AND CORSAIR
-Suite Setup  overlap suite setup
-Suite Teardown   overlap suite teardown
-Test Setup   overlap test setup
-Test Teardown  overlap test teardown 
-Force Tags   bigtap  overlap
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  Collections.py
+Documentation           Release: BLACKBIRD AND CORSAIR
+Suite Setup             overlap suite setup
+Suite Teardown          overlap suite teardown
+Test Setup              overlap test setup
+Test Teardown           overlap test teardown 
+Force Tags              bigtap  overlap  blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ## Switch 1
@@ -912,6 +914,8 @@ verify protocol matches  [Arguments]  ${match_dictionary}
     \    verify overlapping policies 
     
 overlap test setup
+    write version to file
+    start syslog monitor
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_1}  filter
@@ -928,6 +932,7 @@ overlap test teardown
     rest delete policy  admin-view  ${policy_name_1}
     rest delete policy  admin-view  ${policy_name_2}
     sleep  5     
+    stop syslog monitor
 
 overlap suite teardown
     rest delete policy  admin-view  ${policy_name_1}

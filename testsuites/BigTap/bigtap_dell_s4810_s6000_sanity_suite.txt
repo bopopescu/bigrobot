@@ -1,16 +1,19 @@
 *Settings
-Documentation  Dell-S4810-S6000 Test Suite
-Suite Setup  dell suite setup
-Suite Teardown   dell suite teardown
-Test Setup   traffic test setup
-Test Teardown  traffic teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           Dell-S4810-S6000 Test Suite
+Suite Setup             dell suite setup
+Suite Teardown          dell suite teardown
+Test Setup              traffic test setup
+Test Teardown           traffic teardown 
+Force Tags              platform Sanity
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Library                 keywords/ThirdParty.py
 
 * Variable
 ${policy_name_1}                    policy_dell_traffic_s1s3
@@ -1117,11 +1120,14 @@ dell suite setup
     cli add snmp host      s3   ${snmp_trap_svr_1}   informs   ${snmp_community_1}   162        
 
 traffic test setup
+    write version to file
+    start syslog monitor
     ixia initialize  tg1  init=true
     
 traffic teardown
     delete traffic
     sleep  2
+    stop syslog monitor
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5

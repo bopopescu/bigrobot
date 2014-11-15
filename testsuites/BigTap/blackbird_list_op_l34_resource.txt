@@ -14,13 +14,16 @@ Bigtap list op l3_l4 suite teardown
 	sleep    5
 
 Bigtap list op l3_l4 case setup
+    write version to file
+    start syslog monitor
     bigtap delete all 
     rest disable feature      l3-l4-mode 
     rest disable feature      tracked-host        
     sleep    5
 
 Bigtap list op l3_l4 case teardown
-   sleep  5
+    sleep  5
+    stop syslog monitor
 
 
 Log to file    [Arguments]    ${File}     ${title}    ${sw1}

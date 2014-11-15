@@ -1,17 +1,18 @@
 *Settings
-Documentation  App Tacacs Test Suite Release:Blackbird/Bowmore
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
-Test Setup   tacacs test setup
+Documentation   App Tacacs Test Suite Release:Blackbird/Bowmore
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      tacacs test setup
 Test Teardown   tacacs test teardown
-Force Tags   T5 Platform
-
-Library  keywords/AppController.py
-Library  keywords/BsnCommon.py
-Library  keywords/BigTap.py
-Library  Collections.py
-Library  OperatingSystem.py
-Library  String.py 
+Force Tags      bigtap  blackbird  feature
+Library         keywords/BsnCommon.py
+Library         keywords/AppController.py
+Library         keywords/BigTap.py
+Library         keywords/SwitchLight.py
+Library         keywords/Ixia.py
+Library         Collections.py
+Library         OperatingSystem.py
+Library         String.py
     
 * Test Case
 TC001: Verify Running-Configuration
@@ -122,6 +123,8 @@ TC013: Restart process tacacs_plus on Master and verify users can login
 * Keywords
 
 tacacs test setup
+    write version to file
+    start syslog monitor
     set version from controller
     rest add tacacs server  10.2.3.201  secret  300
     rest add tacacs authentication
@@ -169,3 +172,5 @@ tacacs test teardown
     rest delete tacacs server  10.192.97.20       
     rest delete tacacs authentication
     rest delete tacacs authorization       
+    stop syslog monitor
+    
