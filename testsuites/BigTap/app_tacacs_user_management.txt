@@ -171,6 +171,7 @@ tacacs test teardown
     rest delete tacacs server  10.9.18.3
     rest delete tacacs server  10.192.97.20       
     rest delete tacacs authentication
-    rest delete tacacs authorization       
+    rest delete tacacs authorization  
+    sleep  3     
     stop syslog monitor
     
