@@ -3153,8 +3153,8 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                #
-                cli_input_1 = "group " + str(group_name)
+                t.node_reconnect(node='master')
+                cli_input_1 = str("group ") + str(group_name)
                 c.config(cli_input_1)
                 cli_input_2 = "no associate user " + str(username)
                 c.config(cli_input_2)
