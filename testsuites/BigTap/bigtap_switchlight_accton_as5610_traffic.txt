@@ -1,15 +1,18 @@
 *Settings
-Documentation  Accton-AS5610-BigTap SwitchLight Traffic Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   bigtap suite teardown
-Test Setup   traffic test setup
-Test Teardown  traffic teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           Accton-AS5610-BigTap SwitchLight Traffic Test Suite
+Suite Setup             bigtap suite setup
+Suite Teardown          bigtap suite teardown
+Test Setup              traffic test setup
+Test Teardown           traffic teardown 
+Force Tags              platform  sanity  blackbird  traffic
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${policy_name_1}  policy_as5610_traffic
@@ -509,6 +512,8 @@ bigtap suite setup
     Sleep  5
 
 traffic test setup
+    write version to file
+    start syslog monitor
     ixia initialize  tg1  init=true
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -522,6 +527,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
 traffic teardown
     delete traffic
     sleep  2
+    stop syslog monitor
     
 bigtap suite teardown
     rest delete policy  admin-view  ${policy_name_1}

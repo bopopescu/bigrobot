@@ -1,22 +1,25 @@
 *Settings
-Documentation  Accton-AS4600-BigTap SwitchLight Traffic Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   bigtap suite teardown
-Test Setup   traffic test setup
-Test Teardown  traffic teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation               Accton-AS4600-BigTap SwitchLight Traffic Test Suite
+Suite Setup                 bigtap suite setup
+Suite Teardown              bigtap suite teardown
+Test Setup                  traffic test setup
+Test Teardown               traffic teardown 
+Force Tags                  platform  Sanity  blackbird
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
 
 * Variable
-${policy_name_1}  policy_as4600_traffic
-${filter_1}  ethernet1  
-${filter_nick_1}  ixia-2-1
-${delivery_1}  ethernet2  
-${delivery_nick_1}  ixia-2-2
+${policy_name_1}            policy_as4600_traffic
+${filter_1}                 ethernet1  
+${filter_nick_1}            ixia-2-1
+${delivery_1}               ethernet2  
+${delivery_nick_1}          ixia-2-2
 
 *Test Case
 
@@ -509,6 +512,8 @@ bigtap suite setup
     Sleep  5
 
 traffic test setup
+    write version to file
+    start syslog monitor
     ixia initialize  tg1  init=true
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -522,6 +527,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
 traffic teardown
     delete traffic
     sleep  2
+    stop syslog monitor
     
 bigtap suite teardown
     rest delete policy  admin-view  ${policy_name_1}
