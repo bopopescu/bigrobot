@@ -4,7 +4,7 @@ Suite Setup         portchannel suite setup
 Suite Teardown      portchannel suite teardown
 Test Setup          portchannel test setup
 Test Teardown       portchannel test teardown 
-Force Tags          feature  bigtap  portchannel
+Force Tags          feature  bigtap  portchannel  blackbird
 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
