@@ -11,6 +11,7 @@ Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
 Library                 keywords/SwitchLight.py
 Library                 keywords/Ixia.py
+Library                 keywords/ThirdParty.py
 Library                 Collections.py
 Library                 OperatingSystem.py
 Library                 String.py
