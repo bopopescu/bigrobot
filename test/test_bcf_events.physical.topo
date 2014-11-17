@@ -7,8 +7,12 @@
 
 c1:
   ip: 10.1.6.6
+  user: admin
+  password: adminadmin
 c2:
   ip: 10.1.6.5
+  user: admin
+  password: adminadmin
 
 #s1:
 #  alias: leaf1-a
