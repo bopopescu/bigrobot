@@ -218,27 +218,27 @@ TC29: Verify Description for Thermal Sensor 5 is reported correctly in CLI in SN
 
 TC30: Verify Status for Thermal Sensor 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status
 
 TC31: Verify Status for Thermal Sensor 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status
 
 TC32: Verify Status for Thermal Sensor 3 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status
     
 TC33: Verify Status for Thermal Sensor 4 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status
 
 TC34: Verify Status for Thermal Sensor 5 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status
 
 TC35: Verify temperature reading from thermal sensor 1 is same in CLI and in SNMP walk output        
@@ -659,32 +659,32 @@ TC77: Verify Third Thermal Sensor Description for PSU 2 is reported correctly in
 
 TC78: Verify Status for First Thermal Sensor on PSU 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=6  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status
 
 TC79: Verify Status for Second Thermal Sensor on PSU 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=7  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status
 
 TC80: Verify Status for Third Thermal Sensor on PSU 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=8  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status 
 
 TC81: Verify Status for First Thermal Sensor on PSU 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=9  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status 
 
 TC82: Verify Status for Second Thermal Sensor on PSU 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status 
 
 TC83: Verify Status for Third Thermal Sensor on PSU 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=11  sub_element=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    psu thermal  status 
     
 TC84: Verify Temperature is correctly reported by both CLI and SNMP Walk for the First Thermal Sensor on PSU 1
