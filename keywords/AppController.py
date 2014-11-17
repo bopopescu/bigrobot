@@ -1024,22 +1024,35 @@ class AppController(object):
                 helpers.log("****************    syslog Log From C1    ****************")
                 result = c1.sudo('cat c1_syslog_dump.txt')
                 split = re.split('\n', result['content'])[1:-1]
+            except:
+                helpers.log("Split failed for c1")
+                return False
+
+            else:
                 if split:
                     helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
-            except(AttributeError):
-                helpers.log("No Errors From syslog Monitor on C1")
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C1")
+                    return True
 
             try:
                 helpers.log("****************    syslog Log From C2    ****************")
                 result = c2.sudo('cat c2_syslog_dump.txt')
                 split = re.split('\n', result['content'])[1:-1]
+            except:
+                helpers.log("Split failed for c2")
+                return False
+            else:
                 if split:
                     helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
-            except(AttributeError):
-                helpers.log("No Errors From syslog Monitor on C2")
-            return True
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C2")
+                    return True
         else:
             helpers.log("syslogMonitorFlag is not set: Returning")
+            return False
 
 # ## Added by Sahaja
     def get_syslog_monitor_pid(self, role):
@@ -1266,6 +1279,7 @@ class AppController(object):
             ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
             if ver:
                 vf.write("%s %s" % (ver.group(1), ver.group(2)))
+                return True
             else:
                 helpers.test_log("Did not match the version format, got %s" % (ver))
                 return False
