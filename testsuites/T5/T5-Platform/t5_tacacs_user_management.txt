@@ -20,7 +20,7 @@ ${version}      2.0
     
 * Test Case
 TC001: Verify Running-Configuration
-    Verify Tacacs Configuration  0  10.2.3.201  10
+    Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration 
     config  c1  show tacacs
     cli  c1  show tacacs                  
@@ -40,7 +40,7 @@ TC003: Add user tacacsadmin to group admin and verify access
 TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  10
+    ${result}=  rest add tacacs server  10.9.18.2  secret  5
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.9.18.2    
@@ -48,10 +48,10 @@ TC004: Verify remote authentication with open source tacacs
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  10
+    ${result}=  rest add tacacs server  10.9.18.2  secret  5
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.2.3.201  10
-    Verify Tacacs Configuration  1  10.9.18.2  10
+    Verify Tacacs Configuration  0  10.2.3.201  5
+    Verify Tacacs Configuration  1  10.9.18.2  5
     ${result}=  rest delete tacacs server  10.9.18.2        
     Should be true  ${result}
     [Tags]  feature
@@ -59,12 +59,12 @@ TC005: Verify multiple tacacs servers can be configured
 TC006: Verify second tacacs server is used when the first is unreachable   
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.1.18.2  secret  10 
+    ${result}=  rest add tacacs server  10.1.18.2  secret  5
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201   secret  10
+    ${result}=  rest add tacacs server  10.2.3.201   secret  5
     Should be true  ${result}
-    Verify Tacacs Configuration  0  10.1.18.2  10
-    Verify Tacacs Configuration  1  10.2.3.201   10   
+    Verify Tacacs Configuration  0  10.1.18.2  5
+    Verify Tacacs Configuration  1  10.2.3.201   5
     verify version  tacacsadmin  adminadmin  ${true}
     ${result}=  rest delete tacacs server  10.1.18.2
     Should be true  ${result}
@@ -75,7 +75,7 @@ TC006: Verify second tacacs server is used when the first is unreachable
 TC007: Configure mismatched tacacs secret and verify tacacs user cannot login
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  10
+    ${result}=  rest add tacacs server  10.2.3.201  bsnbsn  5
     Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
@@ -209,11 +209,14 @@ TC019. Verify that remote admin provisioned locally, associated with admin group
 	Sleep  5
 	Cli Run  master  show file  user=remote-admin
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; delete file test-file  user=remote-admin
+	Cli Run  master  enable; config; delete file test-file  user=remote-admin
+    Cli Run and Verify Output
+    ...  master
+    ...  show file
+    ...  None.
+    ...  user=remote-admin
 
 TC020. Verify that user configured locally and associated with admin group can do actions
 	Cli Run  master  user user
@@ -233,11 +236,14 @@ TC020. Verify that user configured locally and associated with admin group can d
 	Sleep  5
 	Cli Run  master  show file  user=user
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; copy running-config file://test-file  user=user
+	Cli Run  master  enable; config; copy running-config file://test-file  user=user
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; delete file test-file  user=user
+	Cli Run  master  enable; config; delete file test-file  user=user
+    Cli Run and Verify Output
+    ...  master
+    ...  show file
+    ...  None.
+    ...  user=user
 
 TC021. Verify that remote-admin not associated with admin group can not do actions
 	Cli Run  master  group admin
@@ -254,7 +260,7 @@ TC021. Verify that remote-admin not associated with admin group can not do actio
 * Keywords
 
 tacacs test setup
-    ${result}=  rest add tacacs server  10.2.3.201  secret  10
+    ${result}=  rest add tacacs server  10.2.3.201  secret  5
     Should be true  ${result}
     ${result}=  rest add tacacs authentication
     Should be true  ${result}
