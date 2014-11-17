@@ -54,7 +54,6 @@ class TestBcfEvents:
     def tc_setup(self):
         BsnCommon().base_test_setup()
 
-
     def tc_teardown(self, tc_failed=False):
         BsnCommon().base_test_teardown()
         if tc_failed:
@@ -89,8 +88,7 @@ class TestBcfEvents:
             helpers.log("spine list: %s" % BsnCommon().params_global('spine_list'))
             helpers.log("leaf list: %s" % BsnCommon().params_global('leaf_list'))
 
-        return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
-                   critical_failure=True)
+        return run(func, critical_failure=True)
 
     def test_01_controller_node_event_failover(self):  # T23
         """
@@ -299,5 +297,5 @@ class TestBcfEvents:
         """
         def func():
             BsnCommon().base_suite_teardown()
-        return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
+        return run(func)
 
