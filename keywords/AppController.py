@@ -1099,7 +1099,7 @@ class AppController(object):
         if len(role_data_after_delete) == 0:
             helpers.test_log("All the roles have been deleted for all the switch interfaces")
         else:
-            helpers.test_failure("Few roles are still left %s" % (role_data_after_delete))
+            helpers.test_log("Few roles are still left %s" % (role_data_after_delete))
             return False
 
         # Delete Switches as roles are deleted
@@ -1116,8 +1116,10 @@ class AppController(object):
         data = c.rest.content()
         if len(data) == 0:
             helpers.test_log("All the switches have been deleted")
+            return True
         else:
-            helpers.test_failure("Few switches have not been deleted %s" % (data))
+            helpers.test_log("Few switches have not been deleted %s" % (data))
+            return False
 
 
 # ## Added by Sahaja
@@ -1151,7 +1153,8 @@ class AppController(object):
                 if "name" in add_grp.keys():
                     c.rest.delete(delete_url % (add_grp['name']))
                 else:
-                    helpers.test_failure("There is no name field for %s" % add_grp)
+                    helpers.test_log("There is no name field for %s" % add_grp)
+                    return False
         else:
             helpers.test_log("Add-grp data is empty")
             return True
@@ -1161,8 +1164,9 @@ class AppController(object):
         delete_addr_grp_data = c.rest.content()
         if len(delete_addr_grp_data) == 0:
             helpers.test_log("All the address-groups have been deleted")
+            return True
         else:
-            helpers.test_failure("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
+            helpers.test_log("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
             return False
 
 # ## Added by Sahaja
@@ -1194,6 +1198,7 @@ class AppController(object):
                 for grp in ugrp.keys():
                     helpers.test_log("Deleting the group %s" % (grp))
                     c.rest.delete(delete_url % (grp))
+                    return True
         else:
             helpers.test_log("There are no user-defined offsets to delete")
             return True
@@ -1245,8 +1250,9 @@ class AppController(object):
         delete_policy_data = c.rest.content()
         if len(delete_policy_data) == 0:
             helpers.test_log("All the user-defined-groups have been deleted")
+            return True
         else:
-            helpers.test_failure("Few policies have not been deleted %s" % (delete_policy_data))
+            helpers.test_log("Few policies have not been deleted %s" % (delete_policy_data))
             return False
 
 # ## Added by Sahaja
@@ -1268,8 +1274,8 @@ class AppController(object):
             if ver:
                 vf.write("%s %s" % (ver.group(1), ver.group(2)))
             else:
-                helpers.test_failure("Did not match the version format, got %s" % (ver))
+                helpers.test_log("Did not match the version format, got %s" % (ver))
                 return False
         else:
-            helpers.test_failure("Version string is empty")
+            helpers.test_log("Version string is empty")
             return False
