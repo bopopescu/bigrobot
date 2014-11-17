@@ -361,11 +361,8 @@ verify config
     Should Contain   ${snmp_output}   enabled
 
 snmp test setup
-    ${result1}=  write version to file
-    Should be true  ${result1}
-    ${result2}=  start syslog monitor
-    Should be true  ${result2}
+    write version to file
+    start syslog monitor
     
 snmp test teardown
-    ${result1}=  stop syslog monitor
-    Should be true  ${result1}       
+    stop syslog monitor     
