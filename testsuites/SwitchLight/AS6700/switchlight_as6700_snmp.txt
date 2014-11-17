@@ -176,19 +176,22 @@ TC27: Verify snmpbulkwalk works as expected
     [Tags]  snmpbulkwalk
 
 TC28: Verify snmptrap is generated on dataport linkflap
+    config  node=s1    cmd=snmp-server trap linkUpDown interval 30
+    sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10
     cli disable interface  s1  ${fortyG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link down on interface 1006"
-    Should contain  ${output}  Operational state: 2  
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras6700
+    Should contain  ${output}  Link down on interface 1006  
     sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10    
     cli enable interface  s1  ${fortyG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link up on interface 1006"
-    Should contain  ${output}  Operational state: 1     
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras6700
+    Should contain  ${output}  Link up on interface 1006     
+    config  node=s1    cmd=no snmp-server trap linkUpDown interval 30
     [Tags]  snmptrap 
 
 TC29: Modify SNMP community and verify SNMP OID sysContact
