@@ -283,7 +283,7 @@ TC42: Verify snmptrap is generated on dataport linkflap
     ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs4810
     Should contain  ${output}  Link up on interface 1002     
     config  node=s1    cmd=no snmp-server trap linkUpDown interval 30      
-    [Tags]  snmptrap  runthis 
+    [Tags]  snmptrap 
 
 TC43: Modify SNMP community and verify SNMP OID sysContact
     cli delete snmp keyword  s1  community  ${snmp_ccommunity_1}
