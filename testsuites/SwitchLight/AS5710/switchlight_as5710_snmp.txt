@@ -2,13 +2,17 @@
 Documentation       Accton 5710: SNMP Sanity Test Suite
 Suite Setup         snmp suite setup
 Suite Teardown      base suite teardown 
-Test Setup          base test setup
-Test Teardown       base test teardown
+Test Setup          snmp test setup
+Test Teardown       snmp test teardown
 Force Tags          SwitchLight  SNMP  as5710 
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
 ${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
@@ -346,6 +350,16 @@ snmp suite setup
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
     Sleep   30             
+
+snmp test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+    
+snmp test teardown
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}  
 
 verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
     ${snmp_key} =     snmp cmd   ${switch}   snmpget    ${snmp_community_1}   ${attribute}  

@@ -1,13 +1,18 @@
 *Settings
-Documentation  BigTap Accton AS6700 Environment Test Suite
-Suite Setup  environment suite setup
-Suite Teardown   base suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags  SwitchLight  switch-platform  BigTap  as6700
-Library  keywords/BsnCommon.py
-Library  keywords/SwitchLight.py
-Library  Collections.py
+Documentation       BigTap: Accton AS6700 Environment Test Suite
+Suite Setup         environment suite setup
+Suite Teardown      base suite teardown
+Test Setup          environment test setup
+Test Teardown       environment test teardown 
+Force Tags          SwitchLight  switch-platform  BigTap  as6700
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
 ${snmp_ccommunity_1}        ro public
@@ -18,8 +23,8 @@ ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6008
 ${snmp_location_2}          CS214-6008   
-${snmp_trap_svr_1}          10.9.18.2
-${snmp_trap_svr_2}          10.9.18.3
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
 
 * Test Case
 TC1: Verify Fan 1 description is reported correctly in CLI and in SNMP Walk Output
@@ -874,4 +879,14 @@ environment suite setup
     cli delete portchannel  s1  1            
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
-    Sleep   30             
+    Sleep   30            
+
+environment test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+    
+environment test teardown
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}     
