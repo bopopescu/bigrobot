@@ -1,14 +1,18 @@
 *Settings
-Documentation  BigTap Inport Masking: Release:Blackbird Feature:Inport Masking
-Suite Setup  inport suite setup
-Suite Teardown   inport suite teardown
-Test Setup   bigtap-inport test setup
-Test Teardown  base test teardown 
-Force Tags  feature  bigtap  inport-mask
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
+Documentation           BigTap Inport Masking: Release:Blackbird Feature:Inport Masking
+Suite Setup             inport suite setup
+Suite Teardown          inport suite teardown
+Test Setup              inportmask test setup
+Test Teardown           inportmask test teardown 
+Force Tags              feature  bigtap  inport-mask  Blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 *Variables
 ### Switch 1:  app-rlb9-1
@@ -644,7 +648,9 @@ inport suite setup
     rest add interface role  s6  ${s6_post_service_intf_1}  service       ${s6_post_service_alias_1}
 
     
-bigtap-inport test setup
+inportmask test setup
+    write version to file
+    start syslog monitor
     REST disable feature  inport-mask
     REST add policy  admin-view  ${policy_name_1}  forward
     REST add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
@@ -657,6 +663,9 @@ bigtap-inport test setup
     REST add service  ${s2_name}  ${s2_pre_service_alias_1}  ${s2_post_service_alias_1}  
     Sleep  3
 
+inportmask test teardown
+    stop syslog monitor
+
 
 Verify Inport Mask
     REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
@@ -668,9 +677,6 @@ Verify Inport Mask
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
     Should Be Equal As Integers  ${switchFlowVal}  1
-
-
-
 
 inport suite teardown
     REST delete policy  admin-view  ${policy_name_1}

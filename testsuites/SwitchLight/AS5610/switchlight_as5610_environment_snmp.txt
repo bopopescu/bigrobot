@@ -1,13 +1,18 @@
 *Settings
-Documentation  BigTap AS5610 Environment Test Suite
-Suite Setup  environment suite setup
-Suite Teardown   base suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags  SwitchLight  switch-platform  BigTap  as5610
-Library  keywords/BsnCommon.py
-Library  keywords/SwitchLight.py
-Library  Collections.py
+Documentation       BigTap AS5610 Environment Test Suite
+Suite Setup         environment suite setup
+Suite Teardown      base suite teardown
+Test Setup          environment test setup
+Test Teardown       environment test teardown 
+Force Tags          SwitchLight  switch-platform  BigTap  as5610
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
 ${snmp_ccommunity_1}        ro public
@@ -18,8 +23,8 @@ ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6002
 ${snmp_location_2}          CS214-6002   
-${snmp_trap_svr_1}          10.9.18.2
-${snmp_trap_svr_2}          10.9.18.3
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
 
 
 
@@ -734,4 +739,11 @@ environment suite setup
     cli delete portchannel  s1  1            
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
-    Sleep   30             
+    Sleep   30        
+
+environment test setup
+    write version to file
+    start syslog monitor
+    
+environment test teardown
+    stop syslog monitor      

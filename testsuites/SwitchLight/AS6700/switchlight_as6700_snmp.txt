@@ -2,16 +2,20 @@
 Documentation       Accton 6700: SNMP Sanity Test Suite
 Suite Setup         snmp suite setup
 Suite Teardown      snmp suite teardown 
-Test Setup          base test setup
-Test Teardown       base test teardown
+Test Setup          snmp test setup
+Test Teardown       snmp test teardown
 Force Tags          SwitchLight  SNMP  as6700 
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.0-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -172,19 +176,22 @@ TC27: Verify snmpbulkwalk works as expected
     [Tags]  snmpbulkwalk
 
 TC28: Verify snmptrap is generated on dataport linkflap
+    config  node=s1    cmd=snmp-server trap linkUpDown interval 30
+    sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10
     cli disable interface  s1  ${fortyG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link down on interface 1006"
-    Should contain  ${output}  Operational state: 2  
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras6700
+    Should contain  ${output}  Link down on interface 1006  
     sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10    
     cli enable interface  s1  ${fortyG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link up on interface 1006"
-    Should contain  ${output}  Operational state: 1     
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras6700
+    Should contain  ${output}  Link up on interface 1006     
+    config  node=s1    cmd=no snmp-server trap linkUpDown interval 30
     [Tags]  snmptrap 
 
 TC29: Modify SNMP community and verify SNMP OID sysContact
@@ -268,6 +275,13 @@ verify config
     Should Contain   ${snmp_output}   ${snmp_contact_1}        
     Should Contain   ${snmp_output}   ${snmp_community_1}        
     Should Contain   ${snmp_output}   enabled
+
+snmp test setup
+    write version to file
+    start syslog monitor
+    
+snmp test teardown
+    stop syslog monitor  
 
 snmp suite teardown
     cli add portchannel  s1  1  ${pc_intf_1}  L2 

@@ -1,15 +1,18 @@
 *Settings
-Documentation  BigTap Rewrite Vlan Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   bigtap suite teardown
-Test Setup   bigtap test setup
-Test Teardown  bigtap test teardown 
-Force Tags   bigtap  feature  vlan-rewrite
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           BigTap Rewrite Vlan Test Suite
+Suite Setup             bigtap suite setup
+Suite Teardown          bigtap suite teardown
+Test Setup              bigtap test setup
+Test Teardown           bigtap test teardown 
+Force Tags              bigtap  feature  vlan-rewrite
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${switch_1_alias}   app-rlb9-2
@@ -869,10 +872,13 @@ verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Should be true  ${in_range} 
 
 bigtap test setup
+    write version to file
+    start syslog monitor
     delete traffic
 
 bigtap test teardown
     delete traffic
+    stop syslog monitor
 
 bigtap suite teardown
     rest delete policy  admin-view   ${policy_name_1}
