@@ -14,9 +14,7 @@ from subprocess import call
 
 return_code = subprocess.call("rm -rf /var/lib/jenkins/jobs/Regress-BigTap-Summary/workspace/robot_logs/*", shell=True)
 
-jobs_to_build = ['http://10.8.0.52:8080/view/SwitchLight/job/bigtap_switchlight_lag_hashing/build?delay=0sec',
-                 'http://10.8.0.52:8080/view/BigTap/job/Bigtap_Clean_config/build?delay=0sec',
-                 'http://10.8.0.52:8080/view/SwitchLight/job/bigtap_switchlight_platform_sanity/build?delay=0sec',
+jobs_to_build = ['http://10.8.0.52:8080/view/SwitchLight/job/bigtap_switchlight_platform_sanity/build?delay=0sec',
                  'http://10.8.0.52:8080/view/BigTap/job/Bigtap_Clean_config/build?delay=0sec',
                  'http://10.8.0.52:8080/view/SwitchLight/job/switchlight_as4600_environment_snmp/build?delay=0sec',
                  'http://10.8.0.52:8080/view/BigTap/job/Bigtap_Clean_config/build?delay=0sec',
