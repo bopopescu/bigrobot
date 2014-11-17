@@ -29,6 +29,7 @@ ${pc_intf_2}                13-14
 ${pc_number}                1
 ${pc_name}                  port-channel1
 
+
 *Test Case
 TC1: Configure and Verify Configuration via CLI   
     verify config
