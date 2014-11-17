@@ -26,7 +26,7 @@ ${snmp_location_1}          CS-214-6012
 ${snmp_location_2}          CS214-6012    
 ${snmp_trap_svr_1}          10.9.18.3
 ${snmp_trap_svr_2}          10.9.18.2
-${tenG_intf}                ethernet15
+${tenG_intf}                ethernet7
 ${fortyG_intf}              ethernet11
 ${pc_intf_1}                11-12
 ${pc_intf_2}                11-12
@@ -179,20 +179,23 @@ TC27: Verify snmpbulkwalk works as expected
     [Tags]  snmpbulkwalk
 
 TC28: Verify snmptrap is generated on dataport linkflap
+    config  node=s1    cmd=snmp-server trap linkUpDown interval 30
+    sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10
     cli disable interface  s1  ${tenG_intf}
-    sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link down on interface 1015"
-    Should contain  ${output}  Operational state: 2  
+    sleep  90
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs6000
+    Should contain  ${output}  Link down on interface 1007  
     sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10    
     cli enable interface  s1  ${tenG_intf}
-    sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link up on interface 1015"
-    Should contain  ${output}  Operational state: 1     
-    [Tags]  snmptrap 
+    sleep  90
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs6000
+    Should contain  ${output}  Link up on interface 1007 
+    config  node=s1    cmd=no snmp-server trap linkUpDown interval 30    
+    [Tags]  snmptrap  runthis 
 
 TC29: Modify SNMP community and verify SNMP OID sysContact
     cli delete snmp keyword  s1  community  ${snmp_ccommunity_1}
