@@ -1698,8 +1698,8 @@ class BsnCommon(object):
             conn = SSH2()
             conn.connect(server)
             conn.login(Account("root", "bsn"))
-            input = "cat /var/log/snmptt/snmptt.log | grep " + str(message)
-            conn.execute(input)
+            userinput = "cat /var/log/snmptt/snmptt.log | grep " + str(message)
+            conn.execute(userinput)
             output = conn.response
         except:
             return False
