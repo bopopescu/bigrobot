@@ -1030,7 +1030,7 @@ class AppController(object):
 
             else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C1")
@@ -1045,7 +1045,7 @@ class AppController(object):
                 return False
             else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C2")
