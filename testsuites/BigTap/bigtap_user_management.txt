@@ -3,7 +3,7 @@ Documentation           BigTap User Management: Release:Blackbird Feature:User M
 Suite Setup             bigtap suite setup
 Suite Teardown          base suite teardown
 Test Setup              bigtap test setup
-Test Teardown           bigtap test teardown 
+Test Teardown           base test teardown 
 Force Tags              platform  sanity  blackbird
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
@@ -194,10 +194,6 @@ bigtap suite setup
 
 bigtap test setup
     write version to file
-    start syslog monitor
-
-bigtap test teardown
-    stop syslog monitor
 
 set version from controller
     ${version_string}=  rest show version
