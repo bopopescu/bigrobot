@@ -1,8 +1,9 @@
+import sys
+import re
 import autobot.helpers as helpers
 import autobot.test as test
 import keywords.Host as Host
-import sys
-import re
+from keywords.BsnCommon import BsnCommon
 
 def testing123():
     pass
@@ -1229,3 +1230,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
     def test_common_params(self):
         t = test.Test()
         helpers.log("**** params:\n%s" % helpers.prettify(t.params()))
+
+    def test_check_version(self):
+        status = BsnCommon().check_version('master', '2.1.0')
+        helpers.log("version check against 2.1.0: %s" % status)
