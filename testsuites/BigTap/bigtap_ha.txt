@@ -259,8 +259,10 @@ ha suite setup
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}      
     
 ha test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be True  ${result1}    
+    ${result2}=  start syslog monitor
+    Should be True  ${result2}    
 
 base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  ${delivery_interface_1}  ${delivery_interface_2}  ${filterNick1}  ${filterNick2}  ${deliveryNick1}  ${deliveryNick2}  
     rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
@@ -323,7 +325,8 @@ delete bigtap configuration
     
 ha test teardown
     delete traffic
-    stop syslog monitor
+    ${result}=  stop syslog monitor
+    Should be True  ${result}
     
 ha suite teardown
     delete bigtap configuration
