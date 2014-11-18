@@ -3,7 +3,7 @@ Documentation   	Test suite to do the Deep Packet Matching. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  corsair
+Force Tags      	bigtap  corsair  gui
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
