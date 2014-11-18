@@ -6,25 +6,21 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.9.18.7
+    ip: 10.9.18.5
 c2:
-    ip: 10.9.18.8    
+    ip: 10.9.18.6    
 
 # Dell S4810 10G Switch
 s1:
-#    ip: 10.9.19.4
-    ip: 10.9.19.89
-
+    ip: 10.9.19.47
 
 # Dell S6000 10G Switch
 s2:
-#    ip: 10.9.19.12     
-    ip: 10.9.19.87           
+    ip: 10.9.19.87     
     
 # Dell S4810 10G Switch
 s3:
-#    ip: 10.9.18.84
-    ip: 10.9.19.47    
+    ip: 10.9.19.89
 
 ## APP-ARISTA-1  
 s4:
@@ -41,13 +37,13 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 1/4
+      name: 1/14
     b:
-      name: 1/3
+      name: 1/13
     c:
-      name: 1/23
+      name: 1/17
     d:
-      name: 1/21
-    e:
-      name: 2/10
+      name: 1/18
+#    e:
+#      name: 2/10
               
