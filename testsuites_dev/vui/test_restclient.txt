@@ -12,5 +12,29 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test RESTclient - show user
-    #[Tags]  skipped
+    [Tags]  skipped
     restclient show user negative
+
+Test REST show version
+    [Tags]  skipped
+    get         c1   /api/v1/data/controller/core/version/appliance
+
+Test check version
+    ${output} =   check version    c1   1.2.3
+    log           output: ${output}
+
+    ${output} =   check version    c1   1.2.3   op===
+    log           output: ${output}
+
+    ${output} =   check version    c1   1.2.3   op=!=
+    log           output: ${output}
+
+    ${output} =   check version    c1   1.2.3   op=>
+    log           output: ${output}
+
+    ${output} =   check version    c1   1.2.3   op=<
+    log           output: ${output}
+
+    ${output} =   check version    c1   1.2.3   op=<=
+    log           output: ${output}
+
