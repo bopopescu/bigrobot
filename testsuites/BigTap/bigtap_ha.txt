@@ -292,8 +292,8 @@ verify config
     Should be true  ${verify_policy12}
     ${switchFlowVal1} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal1}  4
-    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  4
-    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal2}  4  
+    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal1}  4  
     Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  5  
     ${switchFlowVal2} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal2}  4
