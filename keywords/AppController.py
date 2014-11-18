@@ -1030,7 +1030,7 @@ class AppController(object):
 
             else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C1")
@@ -1045,7 +1045,7 @@ class AppController(object):
                 return False
             else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C2")
@@ -1062,7 +1062,7 @@ class AppController(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        c_result = c.bash('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
+        c_result = c.bash('ps ax | grep tail | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
@@ -1286,3 +1286,39 @@ class AppController(object):
         else:
             helpers.test_log("Version string is empty")
             return False
+
+# ## Animesh
+    def return_version_number(self, node="master", user="admin", password="adminadmin", local=True):
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_bigtap(n.platform()):
+            '''
+                BigTap Controller                
+            '''
+            c = t.controller('master')
+            url = '/rest/v1/system/version'
+            if user == "admin":
+                try:
+                    t.node_reconnect(node='master', user=str(user), password=password)
+                    c.rest.get(url)
+                    content = c.rest.content()
+                    output_value = content[0]['controller']
+                except:
+                    return False
+                else:
+                    return output_value
+            else:
+                try:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    output_value = content[0]['controller']
+                    output_string = output_value.split(' ')
+
+                except:
+                    t.node_reconnect(node='master')
+                    return False
+                else:
+                    if local is True:
+                        t.node_reconnect(node='master', user=str(user), password=password)
+                    return output_string[3]

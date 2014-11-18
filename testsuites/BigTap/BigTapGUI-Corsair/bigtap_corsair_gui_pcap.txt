@@ -3,7 +3,7 @@ Documentation   	This test suite covers packet capture and scheduling features f
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  corsair
+Force Tags      	bigtap  corsair  gui
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary

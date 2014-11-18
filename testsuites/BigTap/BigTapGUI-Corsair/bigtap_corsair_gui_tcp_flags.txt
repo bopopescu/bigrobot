@@ -3,12 +3,13 @@ Documentation   	Test suite with tests to match TCP Flags. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  corsair
+Force Tags      	bigtap  corsair  gui
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
+Library				keywords/AppController.py
 
 
 
@@ -72,6 +73,7 @@ config suite setup
  	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
  	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
  	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+ 	write version to file
 
 config suite teardown
 	Close Browser

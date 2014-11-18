@@ -257,10 +257,12 @@ ha suite setup
     rest add switch alias  s3  app-rly2-1
     rest add switch alias  s4  app-rs4810-1    
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}      
-
+    
 ha test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be True  ${result1}    
+    ${result2}=  start syslog monitor
+    Should be True  ${result2}    
 
 base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  ${delivery_interface_1}  ${delivery_interface_2}  ${filterNick1}  ${filterNick2}  ${deliveryNick1}  ${deliveryNick2}  
     rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
@@ -279,7 +281,9 @@ base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  
     rest add policy interface  admin-view  ZP1  ${deliveryNick2}  delivery
     Sleep  30
     
+    
 verify config
+    ${version_string}=  return version number
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ZP1  num_filter_intf=1  num_delivery_intf=1
@@ -287,9 +291,15 @@ verify config
     ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
     ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  4  
+    Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal1}  4
+    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal1}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  5  
     ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal2}  4        
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  5  
     
 verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Sleep  2
@@ -315,7 +325,8 @@ delete bigtap configuration
     
 ha test teardown
     delete traffic
-    stop syslog monitor
+    ${result}=  stop syslog monitor
+    Should be True  ${result}
     
 ha suite teardown
     delete bigtap configuration

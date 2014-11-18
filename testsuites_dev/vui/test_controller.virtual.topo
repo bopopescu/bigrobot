@@ -1,4 +1,4 @@
-common:
+global:
   user_switch_image: /etc/hosts
 c1:
   ip: dummy

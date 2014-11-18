@@ -98,89 +98,117 @@ ${policy_name_1}                    inport_policy
 
 *Test Case
 TC1:Verify # of flows with and without Inport Mask
+    ${version_string}=  return version number
     REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
     REST disable feature  inport-mask
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
     REST enable feature  inport-mask
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
-    [Tags]  bigtap  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    [Tags]  bigtap  inport-mask       
     
 TC2:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2
+    ${version_string}=  return version number
     REST disable feature  inport-mask
     REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
     REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
-    Should Be Equal As Integers  ${switchFlowVal}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5
     ${switchFlowVa13}=  REST show switch flow  s6
-    rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0    
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    
+    #rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0    
     REST enable feature  inport-mask
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=  REST show switch flow  s2
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5
     ${switchFlowVa13}=  REST show switch flow  s6
-    rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
-    [Tags]  bigtap  inport-mask  
+    #rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    [Tags]  bigtap  inport-mask    
         
 TC3:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S5
+    ${version_string}=  return version number
     REST disable feature  inport-mask
     REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
     REST add service to policy      admin-view  ${policy_name_1}  ${s5_name}  1
     REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
-    Should Be Equal As Integers  ${switchFlowVal}  4
-    ${switchFlowVa1l}=  REST show switch flow  s2
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5  
     ${switchFlowVa13}=  REST show switch flow  s6
-    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0    
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0      
     REST enable feature  inport-mask
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
-    Should Be Equal As Integers  ${switchFlowVal}  1
-    ${switchFlowVa1l}=  REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  1 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    ${switchFlowVa1l}=  REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5  
     ${switchFlowVa13}=  REST show switch flow  s6
-    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0
-    [Tags]  bigtap  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    [Tags]  bigtap  inport-mask       
 
 TC4:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S2
+    ${version_string}=  return version number
     REST disable feature  inport-mask 
     REST add service to policy      admin-view  ${policy_name_1}  ${s2_name}  1
     REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
     Sleep  2
-    ${switchFlowVal}=  REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  4
-    ${switchFlowVa1l}=  REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2
-    ${switchFlowVa12} =   REST show switch flow  s5  
+    ${switchFlowVal}=  REST show switch flow  s1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
     REST enable feature  inport-mask
     Sleep  2
     ${switchFlowVal}=   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2
-    ${switchFlowVa12} =   REST show switch flow  s5  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
     [Tags]  bigtap  inport-mask     
     
 TC5:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
@@ -192,25 +220,32 @@ TC5:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interfac
     rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
     Sleep  3
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
-    ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
-    ${switchFlowVa12} =   REST show switch flow  s5   
-    ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+    ${switchFlowVal}=  REST show switch flow  s1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2   
+    ${switchFlowVa12}=  REST show switch flow  s5  
+    ${switchFlowVa13}=  REST show switch flow  s6
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     rest enable feature  inport-mask
     Sleep  2
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2 
     ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
     ${switchFlowVa12} =   REST show switch flow  s5   
     ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     [Tags]  bigtap  inport-mask     
     
 TC6:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2 and service node on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask 
     rest delete service from policy     admin-view  ${policy_name_1}  ${s2_name}  
     rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
@@ -225,24 +260,31 @@ TC6:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interfac
     rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
     Sleep  3
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     rest enable feature  inport-mask
     Sleep  2
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     [Tags]  bigtap  inport-mask   
     
 TC7:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     Sleep  3
@@ -251,26 +293,32 @@ TC7:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
     sleep  3
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  4
-    ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    ${switchFlowVal}=  REST show switch flow  s1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12} =   REST show switch flow  s5  
     ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     rest enable feature  inport-mask
     Sleep  2
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2 
     ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  1
-    ${switchFlowVa12} =   REST show switch flow  s5  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
+    ${switchFlowVa12} =   REST show switch flow  s5   
     ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0  
-
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     [Tags]  bigtap  inport-mask   
     
 TC8:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service node on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     Sleep  3
@@ -280,25 +328,32 @@ TC8:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
     rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
     Sleep  3
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  4  
-    ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2
-    ${switchFlowVa12} =   REST show switch flow  s5  
-    ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+    ${switchFlowVal}=  REST show switch flow  s1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12}=   REST show switch flow  s5  
+    ${switchFlowVa13}=   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0    
     rest enable feature  inport-mask
     Sleep  2
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
-    ${switchFlowVa1l} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVa1l}  2 
-    ${switchFlowVa12} =   REST show switch flow  s5  
-    ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    ${switchFlowVa1l} =   rest show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12} =   rest show switch flow  s5  
+    ${switchFlowVa13} =   rest show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     [Tags]  bigtap  inport-mask   
     
 TC9:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service nodes on S2 and S5
+    ${version_string}=  return version number
     rest disable feature  inport-mask  
     rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
@@ -309,25 +364,32 @@ TC9:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     Sleep  1
     rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
     Sleep  2
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  4
-    ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2
-    ${switchFlowVa12} =   REST show switch flow  s5  
-    ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  2  0    
+    ${switchFlowVal}=  REST show switch flow  s1
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${switchFlowVa1l}=   REST show switch flow  s2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12}=   REST show switch flow  s5  
+    ${switchFlowVa13}=   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0   
     rest enable feature  inport-mask
     Sleep  2
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1
-    ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2  
-    ${switchFlowVa12} =   REST show switch flow  s5   
-    ${switchFlowVa13} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  2  0
-    [Tags]  bigtap  inport-mask   
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    ${switchFlowVa1l} =   rest show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    ${switchFlowVa12} =   rest show switch flow  s5  
+    ${switchFlowVa13} =   rest show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0  
+    [Tags]  bigtap  inport-mask
     
 TC10:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
@@ -337,28 +399,37 @@ TC10:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1
-    ${switchFlowVal1} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal1}  1 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
-    ${switchFlowVal1} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
-    ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
     [Tags]  bigtap  inport-mask  T6098    
     
 TC11:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2 and S5
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
@@ -369,28 +440,37 @@ TC11:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     rest add service to policy      admin-view  ${policy_name_1}  ${s2_name}   1
     Sleep  2         
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
     [Tags]  bigtap  inport-mask    
     
 TC12:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
@@ -401,32 +481,43 @@ TC12:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery 
     Sleep  2      
     ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal3}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
     ${switchFlowVal4} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal4}  1  
-    ${switchFlowVal3} =   REST show switch flow  s5  
-    ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    ${switchFlowVal5} =   REST show switch flow  s5  
+    ${switchFlowVal6} =   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
     rest enable feature  inport-mask     
     Sleep  2     
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
-    ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
-    ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
-    ${switchFlowVal5} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal5}  1  
-    ${switchFlowVal3} =   REST show switch flow  s5  
-    ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0 
+    ${switchFlowVal1} =   REST show switch flow  s1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    ${switchFlowVal2} =   REST show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    ${switchFlowVal3} =   REST show switch flow  s3  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    ${switchFlowVal4} =   REST show switch flow  s4  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    ${switchFlowVal5} =   REST show switch flow  s5  
+    ${switchFlowVal6} =   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
     [Tags]  bigtap  inport-mask  T6101    
         
 TC13:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
@@ -437,33 +528,44 @@ TC13:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery 
     rest add service to policy  admin-view  ${policy_name_1}  ${s5_name}   1
     Sleep  2     
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
-    ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
-    ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
-    ${switchFlowVal5} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal5}  1  
-    ${switchFlowVal3} =   REST show switch flow  s5  
-    ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    ${switchFlowVal1} =   REST show switch flow  s1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    ${switchFlowVal2} =   REST show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    ${switchFlowVal3} =   REST show switch flow  s3  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    ${switchFlowVal4} =   REST show switch flow  s4  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    ${switchFlowVal5} =   REST show switch flow  s5  
+    ${switchFlowVal6} =   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  4  0   
     rest enable feature  inport-mask     
     Sleep  2     
-    ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
-    ${switchFlowVal1} =   REST show switch flow  s2 
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
-    ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
-    ${switchFlowVal5} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal5}  1  
-    ${switchFlowVal3} =   REST show switch flow  s5  
-    ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0   
+    ${switchFlowVal1} =   REST show switch flow  s1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    ${switchFlowVal2} =   REST show switch flow  s2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    ${switchFlowVal3} =   REST show switch flow  s3  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    ${switchFlowVal4} =   REST show switch flow  s4  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    ${switchFlowVal5} =   REST show switch flow  s5  
+    ${switchFlowVal6} =   REST show switch flow  s6  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
     [Tags]  bigtap  inport-mask  T6102 
     
 TC14:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
@@ -473,28 +575,37 @@ TC14:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1   
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6 
-    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0      
-    [Tags]  bigtap  inport-mask  T6103  runthis  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    [Tags]  bigtap  inport-mask  T6103  
     
 TC15:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
@@ -505,28 +616,37 @@ TC15:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2    
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
-    [Tags]  bigtap  inport-mask  T6104  runthis  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    [Tags]  bigtap  inport-mask  T6104   
     
 TC16:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
@@ -539,32 +659,43 @@ TC16:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     #rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal21} =   rest show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal21}  1      
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal21}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal21}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal21} =   rest show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal21}  1     
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal21}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal21}  2      
     ${switchFlowVal22} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal22}  1   
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal22}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal22}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0   
-    [Tags]  bigtap  inport-mask  T6105  runthis  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    [Tags]  bigtap  inport-mask   
         
 TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery interfaces on S2 and S3
+    ${version_string}=  return version number
     rest disable feature  inport-mask     
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
     rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
@@ -577,30 +708,40 @@ TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery 
     rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_2}  delivery 
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2 
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal5} =   rest show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal5}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal5}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal5} =   rest show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal5}  1  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal5}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0     
-    [Tags]  bigtap  inport-mask  T6106  
+    Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
+    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    [Tags]  bigtap  inport-mask  
     
 * Keywords
 
