@@ -149,8 +149,8 @@ class BsnCommon(object):
         Execute a command and return its execution status, output, and error
         code.
 
-        Inputs:
-        | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
+        Examples:
+        | ${output} = | run_cmd | cmd=ls -la /etc | shell=${true} |
 
         Return Value:
         - Tuple of (<status_flag>,  "<output>", "<err_str>", <errorcode>)
@@ -482,7 +482,74 @@ class BsnCommon(object):
         else:
             return False
 
-    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True):
+    def check_version(self, node, version_str, op=">="):
+        """
+        Compare the node's version string with the specified version_str.
+        Supported operations are:
+        - node_version_str == version_str
+        - node_version_str != version_str
+        - node_version_str >  version_str  (default)
+        - node_version_str >= version_str
+        - node_version_str <  version_str
+        - node_version_str <= version_str
+
+        Inputs:
+        | node | logical device name (e.g., 'c1', 'c2', 'master', 'slave', 's1', etc.) |
+        | version_str | the version string to match against (e.g., '2.1.0') |
+        | op | version comparison operator. Default is '>='. Also accepts '==', '!=', '>', '<', '<='. |
+
+        Examples:
+        | check_version | node=c1 | version_str=2.0.0 |       | node version must equal or be greater than 2.0.0 (default) |
+        | check_version | node=c1 | version_str=2.0.0 | op=== | node version must match 2.0.0 (==) |
+
+        Return Value:
+        - True if version comparison matches
+        - False if version comparison fails
+        """
+        def _sanitize_version_str(s):
+            """
+            Strip cruds in version string to reveal only the version number: x.y.z
+            """
+            match = re.match(r'^(\d+\.\d+\.\d+).*', s)
+            if match:
+                return match.group(1)
+            else:
+                helpers.test_error("Unrecognized version string: '%s'" % s)
+
+        def _version_tuple(s):
+            return tuple(map(int, (s.split("."))))
+
+        node_version_str = self.rest_show_version(node, reconnect=False)
+        node_version_str = _sanitize_version_str(node_version_str)
+        version_str = _sanitize_version_str(version_str)
+
+        if op == '==':
+            status = _version_tuple(node_version_str) == _version_tuple(version_str)
+        elif op == '!=':
+            status = _version_tuple(node_version_str) != _version_tuple(version_str)
+        elif op == '>':
+            status = _version_tuple(node_version_str) > _version_tuple(version_str)
+        elif op == '>=':
+            status = _version_tuple(node_version_str) >= _version_tuple(version_str)
+        elif op == '<':
+            status = _version_tuple(node_version_str) < _version_tuple(version_str)
+        elif op == '<=':
+            status = _version_tuple(node_version_str) <= _version_tuple(version_str)
+        else:
+            helpers.test_error("Unsupported version comparison operator: '%s'" % op)
+
+        helpers.log("%s %s %s: %s" % (node_version_str, op, version_str, status))
+        return status
+
+    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
+        """
+        The scope of this function is a bit more than simply 'show version'. It's also used
+        to test accounting/authorization (hence the inclusion of node_reconnect). At some
+        future time, we should consider splitting this into 2 separate functions - one to perform
+        strictly 'show version' and another to do 'show version' via a different
+        account/authorization.
+        !!! FIXME: Basically, this function is trying to do too much.
+        """
         t = test.Test()
         n = t.node(node)
         if helpers.is_switch(n.platform()):
@@ -509,7 +576,8 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        if reconnect:
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -551,11 +619,12 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller()
+                c = t.controller('master')
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        if reconnect:
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
