@@ -3026,6 +3026,7 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 # Get the hashed value of password
+                t.node_reconnect(node='master')
                 helpers.log("Password is %s" % json.dumps(password))
                 url1 = '/api/v1/data/controller/core/aaa/hash-password[password=%s]' % json.dumps(password)
                 c.rest.get(url1)
