@@ -22,8 +22,8 @@ ${version}      2.0
 TC001: Verify Running-Configuration
     Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration 
-    config  c1  show tacacs
-    cli  c1  show tacacs                  
+    config  master  show tacacs
+    cli  master  show tacacs                  
     [Tags]  feature
 
 TC002: Verify tacacs server key is not shown in clear text 
