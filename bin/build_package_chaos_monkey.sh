@@ -37,7 +37,7 @@ EOF
 }
 
 build() {
-    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors,modules}
+    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors}
     
     create_version_file ${dest_p}/version.txt
     create_dummy_common_config ${dest_p}/configs/common.yaml
@@ -51,8 +51,9 @@ build() {
     (cd ../vendors; cp -rp __init__.py exscript* ${dest_p}/vendors)
     
     # IXIA libraries
-    (cd ../modules; cp -rp * ${dest_p}/modules)
-    (cd ../vendors; cp -rp Ixia ${dest_p}/vendors)
+    #mkdir -p /tmp/autobot/modules
+    #(cd ../modules; cp -rp * ${dest_p}/modules)
+    #(cd ../vendors; cp -rp Ixia ${dest_p}/vendors)
                 
     package_base_name=`basename $dest_p`
     dest_package=autobot-${version}
