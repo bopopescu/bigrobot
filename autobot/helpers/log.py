@@ -8,9 +8,10 @@ import getpass
 import logging
 import gobot
 from pytz import timezone
-
-if gobot.is_gobot():
+try:
     from robot.api import logger as robot_logger
+except:
+    pass
 
 
 class Log(object):
