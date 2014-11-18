@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
@@ -37,18 +37,27 @@ EOF
 }
 
 build() {
-    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors}
+    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors,modules}
     
     create_version_file ${dest_p}/version.txt
     create_dummy_common_config ${dest_p}/configs/common.yaml
     (cd ../autobot; cp -rp helpers __init__.py bsn_restclient.py devconf.py \
                            ha_wrappers.py node.py nose_support.py restclient.py \
-                           setup_env.py test.py utils.py version.py ${dest_p}/autobot \
+                           setup_env.py test.py utils.py version.py \
+                           monitor.py ${dest_p}/autobot \
                   )
-    (cd ../keywords; cp BsnCommon.py T5Torture.py ${dest_p}/keywords)
-    (cd ../keywords; cp BsnCommon.py T5Torture.py ${dest_p}/keywords)
+    (cd ../keywords; cp __init__.py BsnCommon.py Host.py T5Torture.py ${dest_p}/keywords)
     (cd ../test; rm -f *.pyc; cp * ${dest_p}/test) 
     (cd ../vendors; cp -rp __init__.py exscript* ${dest_p}/vendors)
+    
+    # IXIA libraries
+    (cd ../modules; cp -rp * ${dest_p}/modules)
+    (cd ../vendors; cp -rp Ixia ${dest_p}/vendors)
+                
+    package_base_name=`basename $dest_p`
+    dest_package=autobot-${version}
+    (cd $dest_p; cd ..; tar zcvf ${dest_package}.tgz $package_base_name)
+    echo "Created package ${dest_package}.tgz"
 }
 
 cleanup() {
