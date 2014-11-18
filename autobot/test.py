@@ -854,10 +854,17 @@ class Test(object):
                                             " 'ixia', 'bigtap-ixia')"
                                             % node)
             platform = self.topology_params_nodes()[node]['platform']
+            if platform.lower() in ['ixia', 'bigtap-ixia']:
+                try:
+                    # IXIA support is not available in some packages. So
+                    # load it only if it is truly required.
+                    import autobot.node_ixia as node_ixia
+                except:
+                    helpers.environment_failure("Unable to import node_ixia")
             if platform.lower() == 'ixia':
-                n = a_node.IxiaNode(node, t)
+                n = node_ixia.IxiaNode(node, t)
             elif platform.lower() == 'bigtap-ixia':
-                n = a_node.BigTapIxiaNode(node, t)
+                n = node_ixia.BigTapIxiaNode(node, t)
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)
