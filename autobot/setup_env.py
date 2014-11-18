@@ -198,15 +198,19 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_reconfig_reauth()
 
 
-def big_setup(is_gobot='True'):
-    test_and_install_package()
+def big_setup(is_gobot='True', auto_package_install=True):
+    if auto_package_install:
+        test_and_install_package()
     set_environment()
     test_autobot_import()
     bigrobot_env_init(is_gobot=is_gobot)
 
 
 def standalone_environment_setup():
+    """
+    This is intended for Nose environment (standalone).
+    """
     helpers.bigrobot_nose_setup("True")
-    big_setup(is_gobot='False')
+    big_setup(is_gobot='False', auto_package_install=False)
     os.environ["AUTOBOT_LOG"] = helpers.bigrobot_log_path_exec_instance() + "/debug.log"
     print()
