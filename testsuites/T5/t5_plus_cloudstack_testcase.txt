@@ -157,5 +157,56 @@ Replacing server workflow with same host name and IP
 
 
 
+#### test cases for Xenserver as hyperviser
+T2.1 cloudstack deployment with Xenserver enviorment
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	manual passed 
+	
+T2.2 create a zone deployment
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	manual passed
+	
+T2.3 create a VPC 
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	log  tenant is not created until vm is created
+	manual passed
+	 
+T2.4 create a 3 networks (app/web/db) in VPC
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
+	
+T2.5 create a VM in each network and verify the endpoint in BCF
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	log  total 6 endpoints are created, 3 are the gateway, 3 are vms	
+	manual passed
+	 
+T2.6 verify sync operation between cloudstack management and BCF controller
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	log  delete cloudstack created tenant from controller, the tenant is recreated
+	manual passed
+	
+T2.7 Verify floating IP assignment to each VM
+	[Tags]  feature  cloudstack  IronHorse  manual 
+	log  the new public ip is shown at cloudstack for that vm
+	log  the public ip is leared in endpoint.
+	 
+	manual passed
+	
+T2.8 migrate a VM to different host workflow
+	[Tags]  feature  cloudstack  IronHorse  manual-untested
+	manual untested
+T2.9 delete a VM 
+	[Tags]  feature  cloudstack  IronHorse  manual-untested
+	manual untested 
+T2.10 delete network in a VPC
+	[Tags]  feature  cloudstack  IronHorse  manual-untested
+	manual untested 
+T2.11 delete VPC
+	[Tags]  feature  cloudstack  IronHorse  manual-untested
+	manual untested 
+T2.12 check the VM connectivity between VPC 
+	[Tags]  feature  cloudstack  IronHorse  manual-untested
+	manual untested 
+	 
 
 	
