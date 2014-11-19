@@ -112,6 +112,23 @@ TC035 Restart ofad on 40gig leaf switch
     [Tags]              feature         manual          hyperV
 
 
+TC040 Measure L2 traffic forwarding between two VM in 10gig using iperf
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC041 Measure L2 traffic forwarding between two VM in 40gig host using iperf
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC042 Measure L3 traffic forwarding between two VM in 10gig using iperf
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+TC043 Measure L3 traffic forwarding between two VM in 40gig host using iperf
+    manual untested
+    [Tags]              feature         manual          hyperV
+
+
 
 TC050 Verify Controller HA failover does not impact VM creation or VM traffic
     manual untested
@@ -171,7 +188,7 @@ TC063 Spawn VM in controller headless mode
     manual untested
     [Tags]              feature         manual          hyperV
     
-TC064 Verify spawn VM in headless mode will be able to forward traffic after controller is online
+TC064 Verify spawn VM in headless mode will be able to forward traffic even when controller is offline
     manual untested
     [Tags]              feature         manual          hyperV
  
