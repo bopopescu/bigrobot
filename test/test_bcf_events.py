@@ -231,7 +231,10 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes tenant %s*******" % i)
-                T5Torture().tenant_configuration_add_remove(self.tflapnum, 3)
+                T5Torture().tenant_configuration_add_remove(
+                        self.tflapnum, 3,
+                        sw_dut=BsnCommon().params_global('switch_dut'),
+                        sw_intf_dut=BsnCommon().params_global('switch_interface_dut'))
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -248,7 +251,10 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes vns %s*******" % i)
-                T5Torture().vns_configuration_add_remove(self.vflapnum)
+                T5Torture().vns_configuration_add_remove(
+                        self.vflapnum,
+                        sw_dut=BsnCommon().params_global('switch_dut'),
+                        sw_intf_dut=BsnCommon().params_global('switch_interface_dut'))
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
