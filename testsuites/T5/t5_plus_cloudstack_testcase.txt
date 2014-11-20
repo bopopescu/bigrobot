@@ -27,9 +27,6 @@ Test cloudstack deployment KVM host
 cloudstack deployment with esx vmware enviorment
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed 
-cloudstack deployment with Xenserver enviorment
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
 create a zone deployment
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed 
@@ -123,9 +120,6 @@ verify fabric setting global mode
 Test deployment script for KVM
 	[Tags]  scaling  cloudstack  IronHorse  manual	
 	manual passed 
-Test deployment script for Xenserver
-	[Tags]  scaling  cloudstack  IronHorse  manual-untested
-	manual untested 
 
 Performance(between 2 VM using iperf)
 	[Tags]  performance  cloudstack  IronHorse  manual-untested
@@ -144,16 +138,16 @@ restart cloudstack management service
 	manual passed 
 
 restart mysql database service 
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed
 
 Upgrade cloudstack package without restarting mysql database
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
 	manual untested 
 
 Replacing server workflow with same host name and IP
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 	
 Leaf link down for the hosts with VM running on it
 	[Tags]  solution  cloudstack  IronHorse  manual
