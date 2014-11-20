@@ -49,11 +49,12 @@ global:
   # leaf list order in events is randomlized when it is set to true    
   randomize_leaf_list:     true
 
-  # switch is used during configuration changes
+  # Switch to use for configuration changes (VNS configuration add/remove).
   switch_dut:              dt-leaf1a
 
-  # interface is used during configuration changes  
-  switch_interface_dut:    ethernet3
+  # Switch interface to use for configuration changes. This needs to be an up
+  # but idle interface.
+  switch_interface_dut:    ethernet44
 
   # testcase to be skipped
   skip_tests:
