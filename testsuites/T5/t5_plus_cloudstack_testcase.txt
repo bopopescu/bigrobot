@@ -22,29 +22,29 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 	
 
 Test cloudstack deployment KVM host
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 cloudstack deployment with esx vmware enviorment
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 cloudstack deployment with Xenserver enviorment
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested 
 create a zone deployment
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 create a VPC 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 create a 3 networks (app/web/db) in VPC
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 create a VM in each network and verify the endpoint in BCF
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 verify sync operation between cloudstack management and BCF controller
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 Verify floating IP assignment to each VM
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested 
@@ -52,60 +52,60 @@ migrate a VM to different host workflow
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested
 delete a VM 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 delete network in a VPC
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 delete VPC
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 check the VM connectivity between VPC 
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested 
 
 check the VM connectivity within VPC 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 adding a new pod workflow 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 adding a new hypervisor cluster to exisiting pod/zone
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 verify adding both (active and standby BCF controller) in cloudstack
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 Verify the VPC/network creation after BCF controller failover
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
 adding Manual membership rule to cloudstack tenants
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested 
 router workflow test in cloudstack
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed
 external connectivity workflow test in cloudstack 
 	[Tags]  feature  cloudstack  IronHorse  manual-untested
 	manual untested 
 Test adding cluster into exsisting zone with the new server addition
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 Delete and readd BCF controllers from the cloudstack management
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
 	manual untested 
 Upgrade cloudstack packagae workflow with BCF controllers present
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 Verify sync operation using BCF CLI deleting a tenant
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 Verify sync opearation using BCF CLI deleting a network
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 verify sync operation using BCF CLI deleting a endpoint
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 Upgrade BCF controller to check SSL ceritificate preserve 
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
 	manual untested 
@@ -121,8 +121,8 @@ verify fabric setting global mode
 	manual untested 
 
 Test deployment script for KVM
-	[Tags]  scaling  cloudstack  IronHorse  manual-untested	
-	manual untested 
+	[Tags]  scaling  cloudstack  IronHorse  manual	
+	manual passed 
 Test deployment script for Xenserver
 	[Tags]  scaling  cloudstack  IronHorse  manual-untested
 	manual untested 
@@ -136,12 +136,12 @@ reboot cloudstack management server
 	manual untested 
 
 reboot cloudstack KVM host node
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed
 
 restart cloudstack management service 
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 
 restart mysql database service 
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
@@ -154,8 +154,14 @@ Upgrade cloudstack package without restarting mysql database
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
 	manual untested 
+	
+Leaf link down for the hosts with VM running on it
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed
 
-
+Leaf reboot for the dual connected hosts with VM running on it
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed
 
 #### test cases for Xenserver as hyperviser
 T2.1 cloudstack deployment with Xenserver enviorment
