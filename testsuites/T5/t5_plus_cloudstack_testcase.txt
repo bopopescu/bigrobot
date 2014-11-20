@@ -83,8 +83,8 @@ router workflow test in cloudstack
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed
 external connectivity workflow test in cloudstack 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual	
+	manual passed
 Test adding cluster into exsisting zone with the new server addition
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed 
@@ -107,8 +107,8 @@ Upgrade BCF controller to check SSL ceritificate preserve
 	[Tags]  solution  cloudstack  IronHorse  manual-untested
 	manual untested 
 seperate storage VLAN workflow while deploying cloudstack
-	[Tags]  solution  cloudstack  IronHorse  manual-untested 
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual	 
+	manual passed
 identify service insertion workflow for cloudstack
 	[Tags]  solution  cloudstack  IronHorse  manual-untested 
 	manual untested 
