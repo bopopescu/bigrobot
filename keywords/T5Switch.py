@@ -31,7 +31,7 @@ class  T5Switch(object):
                 c.rest.get(url)
                 data = c.rest.content()
                 helpers.log("The data is %s" % data)
-                tmpdata = data[0]["response"]
+                tmpdata = data[0]["report"]
                 helpers.log("The tmpdata is %s" % tmpdata)
                 data1 = string.split(str(tmpdata), '\n')
                 helpers.log("The data1 is %s" % data1)
@@ -137,7 +137,7 @@ class  T5Switch(object):
                 c.rest.get(url)
                 data = c.rest.content()
                 helpers.log("The data is %s" % data)
-                tmpdata = data[0]["response"]
+                tmpdata = data[0]["report"]
                 helpers.log("The tmpdata is %s" % tmpdata)
                 data1 = string.split(str(tmpdata), '\n')
                 helpers.log("The data1 is %s" % data1)
