@@ -2951,6 +2951,19 @@ class T5(object):
         dpid = data[0]["dpid"]
         return dpid
 
+    def rest_get_mac(self, switch):
+        '''
+        Function to get mac from switch name
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        dpid = data[0]["dpid"]
+        return dpid[6:]
+
     def rest_get_fabric_interface_stats(self, switch, intf):
         ''' Function to return a switch fabric interface stats
         Input: switch and interface
