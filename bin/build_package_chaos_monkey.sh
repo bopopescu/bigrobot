@@ -6,6 +6,10 @@
 # It is required that you change the version string before rolling a new
 # tarball for production.
 #
+# History
+# 2014-11-20 Released v1.0.0. This is the first release.
+# 2014-11-21 Released v1.0.1. Clean up source tree (remove .pyc) before packaging.
+#                             Remove pexpect dependency.
 
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
@@ -14,7 +18,7 @@ fi
 
 
 dest_p=/tmp/autobot
-version=1.0.0
+version=1.0.1
 build=0
 clean_build=0
 cleanup=0
@@ -59,6 +63,7 @@ build() {
     
     create_version_file ${dest_p}/version.txt
     create_dummy_common_config ${dest_p}/configs/common.yaml
+    (cd ..; make)
     (cd ../autobot; cp -rp helpers __init__.py bsn_restclient.py devconf.py \
                            ha_wrappers.py node.py nose_support.py restclient.py \
                            setup_env.py test.py utils.py version.py \
