@@ -262,7 +262,7 @@ TC003: SNMP: Verify ifInDiscards are reported correctly
     Should Be Equal As Strings  ${passOrfail}  PASS
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp  
+    [Tags]  bigtap  ha  stats  snmp   
 
 * Keywords
 
