@@ -10,6 +10,7 @@
 # 2014-11-20 Released v1.0.0. This is the first release.
 # 2014-11-21 Released v1.0.1. Clean up source tree (remove .pyc) before packaging.
 #                             Remove pexpect dependency.
+#                             Removed 'physical' in topo file name.
 
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
