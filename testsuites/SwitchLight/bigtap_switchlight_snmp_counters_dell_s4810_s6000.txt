@@ -252,6 +252,7 @@ TC003: SNMP: Verify ifInDiscards are reported correctly
     ${snmp_pre_value1}=        return snmp value  ${match_pre_value1}  1
     sleep  4
     start traffic     
+    pause
     sleep  30
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate  1000    
     stop traffic      
@@ -262,7 +263,7 @@ TC003: SNMP: Verify ifInDiscards are reported correctly
     Should Be Equal As Strings  ${passOrfail}  PASS
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp  
+    [Tags]  bigtap  ha  stats  snmp  runthis  
 
 * Keywords
 
