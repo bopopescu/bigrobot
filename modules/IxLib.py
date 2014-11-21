@@ -2064,6 +2064,7 @@ class Ixia(object):
         self._topology = {}
         helpers.log('Succes Removing Topologies Created !!!')
         time.sleep(3)
+        self._raw_stream = None
         return True
 
 
