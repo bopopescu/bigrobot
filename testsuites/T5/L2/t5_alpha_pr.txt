@@ -107,7 +107,6 @@ T5 suite setup
     sleep  10
     
 T5 suite teardown
-	clean configuration
     base suite teardown
 	
 		
