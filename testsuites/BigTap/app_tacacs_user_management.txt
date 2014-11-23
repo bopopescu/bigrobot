@@ -123,8 +123,10 @@ TC013: Restart process tacacs_plus on Master and verify users can login
 * Keywords
 
 tacacs test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     set version from controller
     ${result1}=  rest add tacacs server  10.2.3.201  secret  300
     Should be True  ${result1}
@@ -182,5 +184,6 @@ tacacs test teardown
     Should be True  ${result5}
     ${result6}=  rest delete tacacs authorization  
     Should be True  ${result6}    
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     

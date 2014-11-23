@@ -427,8 +427,10 @@ iptos suite setup
     sleep  5
 
 iptos test setup        
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias}  filter
@@ -438,7 +440,8 @@ iptos test setup
 iptos test teardown
     rest delete policy  admin-view  ${policy_name_1}
     sleep  5
-    stop syslog monitor    
+    ${result1}=  stop syslog monitor    
+    Should be true  ${result1}
 
 iptos suite teardown
     rest delete interface role  s1  ${switch_filter_intf}  filter 

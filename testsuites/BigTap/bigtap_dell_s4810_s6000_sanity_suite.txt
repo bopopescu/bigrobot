@@ -3,7 +3,7 @@ Documentation           Dell-S4810-S6000 Test Suite
 Suite Setup             dell suite setup
 Suite Teardown          dell suite teardown
 Test Setup              traffic test setup
-Test Teardown           traffic teardown 
+Test Teardown           traffic test teardown 
 Force Tags              platform Sanity
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
@@ -25,16 +25,16 @@ ${filter_nick_s1_1}                 ixia-1-14
 ${filter_s1_1_snmp_oid}             1.3.6.1.2.1.2.2.1.11.1001  
 ${delivery_s1_1}                    ethernet2  
 ${delivery_nick_s1_1}               ixia-1-13
-${delivery_s1_1_snmp_oid}           1.3.6.1.2.1.2.2.1.11.1002  
+${delivery_s1_1_snmp_oid}           1.3.6.1.2.1.2.2.1.17.1002  
 ${pre_service_s1}                   ethernet47
 ${pre_service_nick_s1}              pre-service-s1
 ${post_service_s1}                  ethernet48
 ${post_service_nick_s1}             post-service-s1
 ${service_name_1}                   service-s1
 ${core_interface_s1s2_1}            ethernet49
-${core_s1_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1051
+${core_s1_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1049
 ${core_interface_s1s2_2}            ethernet50
-${core_s1_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1052
+${core_s1_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.17.1050
 ${pc_members_s1s2}                  49,50
 ${pc_number_s1s2}                   1
 ${pc_name_s1s2}                     port-channel1
@@ -74,9 +74,9 @@ ${post_service_s3}                  ethernet48
 ${post_service_nick_s3}             post-service-s3
 ${service_name_3}                   service-s3
 ${core_interface_s3s2_1}            ethernet51
-${core_s3_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1049
+${core_s3_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1051
 ${core_interface_s3s2_2}            ethernet52
-${core_s3_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1050
+${core_s3_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1052
 ${pc_members_s3s2}                  51,52
 ${pc_number_s3s2}                   2
 
@@ -1034,7 +1034,7 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp   
+    [Tags]  bigtap  ha  stats  snmp 
 
 * Keywords
 
@@ -1042,11 +1042,11 @@ dell suite setup
     base suite setup
     rest add switch alias  s1  ${s1_alias}
     rest add switch alias  s2  ${s2_alias}
-    rest add switch alias  s3  ${s3_alias}    
+    rest add switch alias  s3  ${s3_alias}
     ${disable_crc_check}=  rest disable feature  crc
     Should be true  ${disable_crc_check} 
     ${disable_feature}=  rest disable feature  inport-mask
-    Should be true  ${disable_feature}               
+    Should be true  ${disable_feature}
     ${output_1}=    rest add interface role  s1  ${filter_s1_1}         filter      ${filter_nick_s1_1}
     Should be true  ${output_1}     
     ${output_2}=    rest add interface role  s1  ${delivery_s1_1}       delivery    ${delivery_nick_s1_1}
@@ -1121,14 +1121,17 @@ dell suite setup
     cli add snmp host      s3   ${snmp_trap_svr_1}   informs   ${snmp_community_1}   162        
 
 traffic test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     ixia initialize  tg1  init=true
     
-traffic teardown
+traffic test teardown
     delete traffic
     sleep  2
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -1165,7 +1168,7 @@ verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}
     
 dell suite teardown
     ${teardown_1}=      rest delete policy  admin-view  ${policy_name_1}
-    Should be true      ${teardown_1}  
+    Should be true      ${teardown_1} 
     ${teardown_2}=      rest delete policy  admin-view  ${policy_name_2}
     Should be true      ${teardown_2}
     ${teardown_20}=     rest delete service  ${service_name_1}
@@ -1173,15 +1176,15 @@ dell suite teardown
     ${teardown_21}=     rest delete service  ${service_name_2}
     Should be true      ${teardown_21}
     ${teardown_22}=     rest delete service  ${service_name_3}
-    Should be true      ${teardown_22}            
+    Should be true      ${teardown_22}
     ${teardown_3}=      rest delete interface role  s1  ${filter_s1_1}      filter      ${filter_nick_s1_1}
     Should be true      ${teardown_3}
     ${teardown_4}=      rest delete interface role  s1  ${delivery_s1_1}    delivery    ${delivery_nick_s1_1}
-    Should be true      ${teardown_4}     
+    Should be true      ${teardown_4}
     ${teardown_5}=      rest delete interface role  s1  ${pre_service_s1}   service     ${pre_service_nick_s1}
     Should be true      ${teardown_5}
     ${teardown_6}=      rest delete interface role  s1  ${post_service_s1}  service     ${post_service_nick_s1}
-    Should be true      ${teardown_6}     
+    Should be true      ${teardown_6}
     
     ${teardown_7}=      rest delete interface role  s2  ${pre_service_s2}   service     ${pre_service_nick_s2}
     Should be true      ${teardown_7}
@@ -1204,13 +1207,13 @@ dell suite teardown
     ${teardown_15}=     rest delete interface  s3  ${filter_s3_1}
     Should be true      ${teardown_15}
     ${teardown_16}=     rest delete interface  s3  ${delivery_s3_1}
-    Should be true      ${teardown_16}    
+    Should be true      ${teardown_16}
     ${teardown_17}=     rest delete switch  s1
-    Should be true      ${teardown_17}    
+    Should be true      ${teardown_17} 
     ${teardown_18}=     rest delete switch  s2
-    Should be true      ${teardown_18}        
+    Should be true      ${teardown_18}
     ${teardown_19}=     rest delete switch  s3
-    Should be true      ${teardown_19}        
+    Should be true      ${teardown_19}
     ${enable_crc_check}=  rest enable feature  crc
     Should be true  ${enable_crc_check}  
     rest delete switch alias  s1

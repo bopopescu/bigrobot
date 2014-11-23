@@ -790,8 +790,10 @@ inport suite setup
 
     
 inportmask test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     REST disable feature  inport-mask
     REST add policy  admin-view  ${policy_name_1}  forward
     REST add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
@@ -805,7 +807,8 @@ inportmask test setup
     Sleep  3
 
 inportmask test teardown
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 
 Verify Inport Mask

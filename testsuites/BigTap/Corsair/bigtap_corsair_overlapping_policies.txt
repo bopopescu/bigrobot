@@ -2132,12 +2132,15 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     Should be true  ${in_range}
 
 overlap test setup    
-    write version to file
-    start syslog monitor    
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor    
+    Should be true  ${result1}
     
 overlap test teardown
     delete traffic
-    stop syslog monitor    
+    ${result1}=  stop syslog monitor    
+    Should be true  ${result1}
 
 overlap suite teardown
     rest delete policy  admin-view  ${policy_name_1}

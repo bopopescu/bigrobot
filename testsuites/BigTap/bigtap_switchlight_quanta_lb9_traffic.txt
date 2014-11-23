@@ -512,8 +512,10 @@ bigtap suite setup
     Sleep  5
 
 traffic test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     ixia initialize  tg1  init=true
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -527,7 +529,8 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
 traffic teardown
     delete traffic
     sleep  2
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
 bigtap suite teardown
     rest delete policy  admin-view  ${policy_name_1}

@@ -1742,8 +1742,10 @@ change interface role to  [Arguments]  ${new_role}   ${interface_name}   ${inter
     Should be True      ${return_value}
 
 statistics test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     cli clear interface statistics  s1
     cli clear interface statistics  s2
     cli clear interface statistics  s3
@@ -1759,7 +1761,8 @@ statistics test teardown
     cli clear interface statistics  s3
     cli clear interface statistics  s4
     cli clear interface statistics  s5
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
     
 statistics suite teardown
