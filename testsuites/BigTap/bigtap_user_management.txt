@@ -225,7 +225,8 @@ bigtap suite setup
     rest add match to rbac  chkpassword-view  match_name='allow-all'       
 
 bigtap test setup
-    write version to file
+    ${result1}=  write version to file
+    Should be true  ${result1}
 
 set version from controller
     ${version_string}=  rest show version

@@ -252,11 +252,14 @@ verify results   [Arguments]  ${tx_port}  ${transmitted_frames}  ${rx_port}  ${r
     Should be true  ${in_range} 
 
 bigtap test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
 
 bigtap test teardown
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
         
 bigtap suite teardown
     rest delete policy  admin-view  ${policy1}

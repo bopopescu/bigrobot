@@ -914,8 +914,10 @@ verify protocol matches  [Arguments]  ${match_dictionary}
     \    verify overlapping policies 
     
 overlap test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_1}  filter
@@ -932,7 +934,8 @@ overlap test teardown
     rest delete policy  admin-view  ${policy_name_1}
     rest delete policy  admin-view  ${policy_name_2}
     sleep  5     
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 overlap suite teardown
     rest delete policy  admin-view  ${policy_name_1}
