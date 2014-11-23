@@ -1338,11 +1338,14 @@ corsair suite setup
     Sleep  5
 
 corsair test setup
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     
 corsair test teardown
-    stop syslog monitor 
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
  
 tunnel teardown
     ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
