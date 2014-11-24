@@ -694,7 +694,7 @@ TC28:Verify that changing match-mode no affect on tunnel based policy. .
     stop traffic  ${stream} 
     sleep  2    
     verify results  a  d  transmitted_frames  received_data_integrity_frames            
-    ${set_l3l4}=  rest enable feature  l3-l4-match  
+    ${set_l3l4}=  rest enable feature  l3-l4-mode  
     Should be true  ${set_l3l4}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1

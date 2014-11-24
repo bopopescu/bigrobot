@@ -592,7 +592,7 @@ TC028: Disable tracked hosts knob and verify overlapping policies are not affect
     verify results  a  d  transmitted_frames  received_valid_frames    
     [Tags]  negative         
 
-TC029: Verify overlapping policies work in l3-l4-match mode.
+TC029: Verify overlapping policies work in l3-l4-mode mode.
     rest delete policy match  admin-view  ${policy_name_1}  1
     rest delete policy match  admin-view  ${policy_name_2}  1    
     sleep  10
@@ -600,7 +600,7 @@ TC029: Verify overlapping policies work in l3-l4-match mode.
     rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
     sleep  10
     verify overlapping policies
-    ${thost_enabled}=  rest enable feature  l3-l4-match
+    ${thost_enabled}=  rest enable feature  l3-l4-mode
     Should be true  ${thost_enabled} 
     Sleep  10
     verify overlapping policies
