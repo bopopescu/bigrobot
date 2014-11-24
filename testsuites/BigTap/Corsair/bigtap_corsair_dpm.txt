@@ -536,8 +536,10 @@ offset suite setup
     sleep  30
 
 offset test setup
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
 
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -557,7 +559,8 @@ verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_fra
 
 offset test teardown
 	delete traffic
-	stop syslog monitor
+	${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 offset suite teardown
 	REST delete policy  admin-view  ${bigtap_policy_name}

@@ -1004,11 +1004,14 @@ verify traffic rate across tunnels
     verify results  g  f  transmitted_frame_rate  received_valid_frame_rate        
 
 corsair test setup
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     
 corsair test teardown
-    stop syslog monitor    
+    ${result1}=  stop syslog monitor    
+    Should be true  ${result1}
     
 corsair suite setup
     base suite setup

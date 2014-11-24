@@ -872,13 +872,16 @@ verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Should be true  ${in_range} 
 
 bigtap test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     delete traffic
 
 bigtap test teardown
     delete traffic
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 bigtap suite teardown
     rest delete policy  admin-view   ${policy_name_1}

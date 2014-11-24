@@ -22,7 +22,8 @@ TC1: Delete Configuration
     rest enable feature  full-match
     rest enable feature  overlap
     rest enable feature  inport-mask    
-    write version to file
+    ${result1}=  write version to file
+    Should be true  ${result1}
     clean switch configuration  s1  port-channel
 	clean switch configuration  s1  snmp-server
     clean switch configuration  s2  port-channel
