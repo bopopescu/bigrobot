@@ -17,6 +17,9 @@ s2:
 
 s3:
   ip: 10.9.19.89
+  
+s4:
+  ip: 10.9.19.85
 
 tg1:
   platform: 'ixia'
@@ -34,3 +37,7 @@ tg1:
       name: 1/17
     d:
       name: 1/18
+    e:
+      name: 1/19
+    f:
+      name: 1/20
