@@ -1,10 +1,10 @@
 *Settings
-Documentation           Corsair: Breakout Cable Sanity
+Documentation           Corsair Plus: Breakout Cable Sanity
 Suite Setup             breakout suite setup
 Suite Teardown          breakout suite teardown
 Test Setup              breakout test setup
 Test Teardown           breakout test teardown 
-Force Tags              corsair  feature  bigtap  4.1.1
+Force Tags              corsair  feature  bigtap  4.1.1  4.5.0
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -20,6 +20,10 @@ ${policy_name_2}                    ZP1
 ${policy_overlap_1}                 _ZP1_o_P1
 ${policy_name_3}                    R1
 ${policy_name_4}                    ZR1
+${policy_name_5}                    SAME-BREAKOUT
+${policy_name_6}                    Q1
+${policy_name_7}                    ZQ1
+${policy_overlap_2}                 _ZQ1_o_Q1
 
 ${s1_alias}                         app-s4810-4
 ${filter_s1_1}                      ethernet1
@@ -87,6 +91,13 @@ ${tunnel_sw2_mask_delivery}         255.255.255.0            #Tunnel Subnet Mask
 ${tunnel_sw2_alias}                 s6000_breakout_tunnel    #Tunnel Name when used as filter interface
 ${tunnel_sw2_loopback_delivery}     ethernet17               #Tunnel Loopback Interface
 
+${brekout_s2s4_master}              ethernet16
+${brekout_s2s4_1}                   ethernet16/1
+${brekout_s2s4_2}                   ethernet16/2
+${brekout_s2s4_3}                   ethernet16/3
+${brekout_s2s4_4}                   ethernet16/4
+
+
 ${s3_alias}                         app-s4810-1
 ${delivery_s3_1}                    ethernet1
 ${delivery_nick_s3_1}               ixia-1-17
@@ -107,6 +118,19 @@ ${breakout_filter_s3_1}             ethernet7
 ${breakout_filter_nick_s3_1}        breakout-s3-D1
 ${breakout_filter_s3_2}             ethernet8
 ${breakout_filter_nick_s3_2}        breakout-s3-D2
+${brekout_s3s2_5}                   ethernet9
+${brekout_s3s2_6}                   ethernet10
+
+${s4_alias}                         app-ac5710-1
+${filter_s4_1}                      ethernet1
+${filter_nick_s4_1}                 ixia-1-19
+${filter_s4_2}                      ethernet2
+${filter_nick_s4_2}                 ixia-1-20
+${non_breakout_s4s2_2}              ethernet53
+${brekout_s4s2_1}                   ethernet7
+${brekout_s4s2_2}                   ethernet8
+
+
 
 * Test Case
 TC001: Verify L2 traffic: frame size 64 bytes
@@ -696,10 +720,293 @@ TC029: Verify breakout-ports can be configured as a delivery interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s3  ${breakout_filter_s3_2}  filter   ${breakout_filter_nick_s3_2}
     Should be true      ${teardown_6}
-    
     [Tags]  feature  delivery  
 
-TC030: Verify Transmit-Only Tunnel across Dell S6000 breakout port
+TC030: Verify same breakout cable can be connected to multiple switches
+    cli disable interface  s2  ${brekout_s2s3_1}
+    cli disable interface  s2  ${brekout_s2s3_2}
+    cli disable interface  s2  ${brekout_s2s3_3}
+    cli disable interface  s2  ${brekout_s2s3_4}
+    ${output_1}=    rest add policy  admin-view  ${policy_name_5}  forward
+    Should be true  ${output_1}
+    ${output_2}=    rest add policy match  admin-view  ${policy_name_5}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=    rest add policy interface  admin-view  ${policy_name_5}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_3}    
+    ${output_4}=    rest add policy interface  admin-view  ${policy_name_5}  ${delivery_nick_s3_1}  delivery
+    Should be true  ${output_4}
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  no_arp=True  name=e_c_flow
+    clear stats
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    start traffic
+    sleep  10
+    verify results  e  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    ${rx_switch_value_1}=  cli return interface counter brief   s4  ${filter_s4_1}    rx
+    ${tx_s4_breakout_1}=  cli return interface counter brief   s4  ${brekout_s4s2_1}    tx
+    ${tx_s4_breakout_2}=  cli return interface counter brief   s4  ${brekout_s4s2_2}    tx
+    ${in_range_1}=  ixia verify traffic rate  ${tx_s4_breakout_1}  ${rx_switch_value_1}  50
+    ${in_range_2}=  ixia verify traffic rate  ${tx_s4_breakout_2}  ${rx_switch_value_1}  50
+    Run Keyword If  ${tx_s4_breakout_1} > 500  Should be true  ${in_range_1}
+    Run Keyword If  ${tx_s4_breakout_2} > 500  Should be true  ${in_range_2}
+    ${rx_s2_breakout_1}=  cli return interface counter brief   s2  ${brekout_s2s4_1}    rx
+    ${rx_s2_breakout_2}=  cli return interface counter brief   s2  ${brekout_s2s4_2}    rx
+    ${in_range_5}=  ixia verify traffic rate  ${rx_s2_breakout_1}  ${rx_switch_value_1}  50
+    ${in_range_6}=  ixia verify traffic rate  ${rx_s2_breakout_2}  ${rx_switch_value_1}  50
+    Run Keyword If  ${rx_s2_breakout_1} > 500  Should be true  ${in_range_5}
+    Run Keyword If  ${rx_s2_breakout_2} > 500  Should be true  ${in_range_6}
+    ${tx_s2_breakout_1}=  cli return interface counter brief   s2  ${brekout_s2s4_3}    tx
+    ${tx_s2_breakout_2}=  cli return interface counter brief   s2  ${brekout_s2s4_4}    tx
+    ${in_range_9}=  ixia verify traffic rate   ${tx_s2_breakout_1}  ${rx_switch_value_1}  50
+    ${in_range_10}=  ixia verify traffic rate  ${tx_s2_breakout_2}  ${rx_switch_value_1}  50
+    Run Keyword If  ${tx_s2_breakout_1} > 500  Should be true  ${in_range_9}
+    Run Keyword If  ${tx_s2_breakout_2} > 500  Should be true  ${in_range_10}
+    #Check interface stats on switch S3
+    ${rx_s3_breakout_1}=  cli return interface counter brief   s3  ${brekout_s3s2_5}    rx
+    ${rx_s3_breakout_2}=  cli return interface counter brief   s3  ${brekout_s3s2_6}    rx
+    ${in_range_13}=  ixia verify traffic rate  ${rx_s3_breakout_1}  ${rx_switch_value_1}  50
+    ${in_range_14}=  ixia verify traffic rate  ${rx_s3_breakout_2}  ${rx_switch_value_1}  50
+    Run Keyword If  ${rx_s3_breakout_1} > 500  Should be true  ${in_range_13}
+    Run Keyword If  ${rx_s3_breakout_2} > 500  Should be true  ${in_range_14}
+    ${tx_switch_value_1}=  cli return interface counter brief   s3  ${delivery_s3_1}    tx
+    ${in_range_17}=  ixia verify traffic rate  ${tx_switch_value_1}  ${rx_switch_value_1}  50    
+    Should be true  ${in_range_17}
+    cli enable interface  s2  ${brekout_s2s3_1}
+    cli enable interface  s2  ${brekout_s2s3_2}
+    cli enable interface  s2  ${brekout_s2s3_3}
+    cli enable interface  s2  ${brekout_s2s3_4}
+    ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
+    Should be true  ${teardown_2B}
+    [Tags]  feature
+
+TC031: Verify breakout interface hardware-address on controller matches what is reported by switch
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+
+    ${mac_address_1}=   cli show interface macaddress  s2  ${brekout_s2s4_1}
+    ${cntrl_return_mac1}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_1}  hardware-address
+    Should be equal as strings  ${mac_address_1}  ${cntrl_return_mac1}
+
+    ${mac_address_2}=   cli show interface macaddress  s2  ${brekout_s2s4_2}
+    ${cntrl_return_mac2}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_2}  hardware-address
+    Should be equal as strings  ${mac_address_2}  ${cntrl_return_mac2}
+
+    ${mac_address_3}=   cli show interface macaddress  s2  ${brekout_s2s4_3}
+    ${cntrl_return_mac3}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_3}  hardware-address
+    Should be equal as strings  ${mac_address_3}  ${cntrl_return_mac3}
+
+    ${mac_address_4}=   cli show interface macaddress  s2  ${brekout_s2s4_4}
+    ${cntrl_return_mac4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  hardware-address
+    Should be equal as strings  ${mac_address_4}  ${cntrl_return_mac4}
+    [Tags]  cli  feature  
+
+TC032: Verify breakout interface name on controller matches what is reported on switch
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+
+    ${cntrl_return_name1}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_1}  name
+    Should be equal as strings  ${brekout_s2s4_1}  ${cntrl_return_name1}
+
+    ${cntrl_return_name2}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_2}  name
+    Should be equal as strings  ${brekout_s2s4_2}  ${cntrl_return_name2}
+
+    ${cntrl_return_name3}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_3}  name
+    Should be equal as strings  ${brekout_s2s4_3}  ${cntrl_return_name3}
+
+    ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  name
+    Should be equal as strings  ${brekout_s2s4_4}  ${cntrl_return_name4}
+    [Tags]  cli  feature   
+
+TC033: Verify breakout interface state on controller is reported correctly
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+
+    ${cntrl_return_name1}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_1}  runtime-state
+    Should be equal as strings  ${cntrl_return_name1}  up
+
+    ${cntrl_return_name2}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_2}  runtime-state
+    Should be equal as strings  ${cntrl_return_name2}  up
+
+    ${cntrl_return_name3}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_3}  runtime-state
+    Should be equal as strings  ${cntrl_return_name3}  up
+
+    ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  runtime-state
+    Should be equal as strings  ${cntrl_return_name4}  up
+    [Tags]  cli  feature   
+    
+TC034: Verify breakout interface statistics on controller matches what is reported on switch
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    cli disable interface  s2  ${brekout_s2s3_1}
+    cli disable interface  s2  ${brekout_s2s3_2}
+    cli disable interface  s2  ${brekout_s2s3_3}
+    cli disable interface  s2  ${brekout_s2s3_4}
+    ${output_1}=    rest add policy  admin-view  ${policy_name_5}  forward
+    Should be true  ${output_1}
+    ${output_2}=    rest add policy match  admin-view  ${policy_name_5}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=    rest add policy interface  admin-view  ${policy_name_5}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_3}    
+    ${output_4}=    rest add policy interface  admin-view  ${policy_name_5}  ${delivery_nick_s3_1}  delivery
+    Should be true  ${output_4}
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  frame_cnt=100000  no_arp=True  name=e_c_flow
+    clear stats
+    cli clear interface statistics  s2    
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    start traffic
+    sleep  10
+    verify results  e  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    ${rx_s2_switch_1}=  cli return interface counter brief  s2  ${brekout_s2s4_1}  rx
+    ${rx_s2_cntrl_1}=   rest return switch interface stats  ${switch_dpid_s2}  ${brekout_s2s4_1}  receive-packets
+    Should be equal as integers  ${rx_s2_switch_1}  ${rx_s2_cntrl_1}
+    
+    ${rx_s2_switch_2}=  cli return interface counter brief  s2  ${brekout_s2s4_2}  rx
+    ${rx_s2_cntrl_2}=   rest return switch interface stats  ${switch_dpid_s2}  ${brekout_s2s4_2}  receive-packets
+    Should be equal as integers  ${rx_s2_switch_2}  ${rx_s2_cntrl_2}
+        
+    ${tx_s2_switch_1}=  cli return interface counter brief  s2  ${brekout_s2s4_3}  tx
+    ${tx_s2_cntrl_1}=   rest return switch interface stats  ${switch_dpid_s2}  ${brekout_s2s4_3}  transmit-packets
+    Should be equal as integers  ${tx_s2_switch_1}  ${tx_s2_cntrl_1}
+    
+    ${tx_s2_switch_2}=  cli return interface counter brief  s2  ${brekout_s2s4_4}  tx
+    ${tx_s2_cntrl_2}=   rest return switch interface stats  ${switch_dpid_s2}  ${brekout_s2s4_4}  transmit-packets
+    Should be equal as integers  ${tx_s2_switch_2}  ${tx_s2_cntrl_2}
+    
+    cli enable interface  s2  ${brekout_s2s3_1}
+    cli enable interface  s2  ${brekout_s2s3_2}
+    cli enable interface  s2  ${brekout_s2s3_3}
+    cli enable interface  s2  ${brekout_s2s3_4}
+    ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
+    Should be true  ${teardown_2B}    
+    [Tags]  cli  feature   
+
+TC035: Verify overlapping policies when same breakout cable is connected to multiple switches
+    ${disable_feature}=  rest disable feature  inport-mask
+    Should be true  ${disable_feature}
+    cli disable interface  s2  ${brekout_s2s3_1}
+    cli disable interface  s2  ${brekout_s2s3_2}
+    cli disable interface  s2  ${brekout_s2s3_3}
+    cli disable interface  s2  ${brekout_s2s3_4}
+    ${teardown_1}=      rest delete policy  admin-view  ${policy_name_1}
+    Should be true      ${teardown_1} 
+    ${teardown_2}=      rest delete policy  admin-view  ${policy_name_2}
+    Should be true      ${teardown_2}
+    ${teardown_1A}=     rest delete policy  admin-view  ${policy_name_3}
+    Should be true      ${teardown_1A} 
+    ${teardown_2A}=     rest delete policy  admin-view  ${policy_name_4}
+    Should be true      ${teardown_2A}    
+    ${teardown_2B}=     rest delete policy  admin-view  ${policy_name_5}
+    Should be true      ${teardown_2B}
+    ${output_1}=    rest add policy  admin-view  ${policy_name_6}  forward
+    Should be true  ${output_1}
+    ${output_2}=    rest add policy match  admin-view  ${policy_name_6}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=    rest add policy interface  admin-view  ${policy_name_6}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_3}    
+    ${output_4}=    rest add policy interface  admin-view  ${policy_name_6}  ${delivery_nick_s3_1}  delivery
+    Should be true  ${output_4}
+    ${output_5}=    rest add policy  admin-view  ${policy_name_7}  forward
+    Should be true  ${output_5}
+    ${output_6}=    rest add policy match  admin-view  ${policy_name_7}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_6}
+    ${output_7}=    rest add policy interface  admin-view  ${policy_name_7}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_7}    
+    ${output_8}=    rest add policy interface  admin-view  ${policy_name_7}  ${delivery_nick_s3_2}  delivery
+    Should be true  ${output_8}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_6}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_7}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_2}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    
+    ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  no_arp=True  name=e_c_flow
+    clear stats
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    start traffic
+    sleep  10
+    verify results  e  c  transmitted_frame_rate  received_valid_frame_rate
+    verify results  e  d  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic
+    cli enable interface  s2  ${brekout_s2s3_1}
+    cli enable interface  s2  ${brekout_s2s3_2}
+    cli enable interface  s2  ${brekout_s2s3_3}
+    cli enable interface  s2  ${brekout_s2s3_4}
+    ${teardown_44A}=  rest delete policy  admin-view  ${policy_name_6}
+    Should be true  ${teardown_44A}
+    ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
+    Should be true  ${teardown_44B}
+    [Tags]  cli  feature
+
+TC036: Enable inport-masking and verify overlapping policies when same breakout cable is connected to multiple switches
+    ${enable_feature}=  rest enable feature  inport-mask
+    Should be true  ${enable_feature}
+    sleep  2
+    cli disable interface  s2  ${brekout_s2s3_1}
+    cli disable interface  s2  ${brekout_s2s3_2}
+    cli disable interface  s2  ${brekout_s2s3_3}
+    cli disable interface  s2  ${brekout_s2s3_4}
+    ${teardown_1}=      rest delete policy  admin-view  ${policy_name_1}
+    Should be true      ${teardown_1} 
+    ${teardown_2}=      rest delete policy  admin-view  ${policy_name_2}
+    Should be true      ${teardown_2}
+    ${teardown_1A}=     rest delete policy  admin-view  ${policy_name_3}
+    Should be true      ${teardown_1A} 
+    ${teardown_2A}=     rest delete policy  admin-view  ${policy_name_4}
+    Should be true      ${teardown_2A}    
+    ${teardown_2B}=     rest delete policy  admin-view  ${policy_name_5}
+    Should be true      ${teardown_2B}
+    ${output_1}=    rest add policy  admin-view  ${policy_name_6}  forward
+    Should be true  ${output_1}
+    ${output_2}=    rest add policy match  admin-view  ${policy_name_6}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=    rest add policy interface  admin-view  ${policy_name_6}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_3}    
+    ${output_4}=    rest add policy interface  admin-view  ${policy_name_6}  ${delivery_nick_s3_1}  delivery
+    Should be true  ${output_4}
+    ${output_5}=    rest add policy  admin-view  ${policy_name_7}  forward
+    Should be true  ${output_5}
+    ${output_6}=    rest add policy match  admin-view  ${policy_name_7}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_6}
+    ${output_7}=    rest add policy interface  admin-view  ${policy_name_7}  ${filter_nick_s4_1}  filter
+    Should be true  ${output_7}    
+    ${output_8}=    rest add policy interface  admin-view  ${policy_name_7}  ${delivery_nick_s3_2}  delivery
+    Should be true  ${output_8}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_6}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_7}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_2}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    
+    ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  no_arp=True  name=e_c_flow
+    clear stats
+    cli clear interface statistics  s3
+    cli clear interface statistics  s4
+    start traffic
+    sleep  10
+    verify results  e  c  transmitted_frame_rate  received_valid_frame_rate
+    verify results  e  d  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic
+    cli enable interface  s2  ${brekout_s2s3_1}
+    cli enable interface  s2  ${brekout_s2s3_2}
+    cli enable interface  s2  ${brekout_s2s3_3}
+    cli enable interface  s2  ${brekout_s2s3_4}
+    ${teardown_44A}=  rest delete policy  admin-view  ${policy_name_6}
+    Should be true  ${teardown_44A}
+    ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
+    Should be true  ${teardown_44B}
+    [Tags]  cli  feature
+
+
+TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     rest enable feature  tunneling
     rest enable feature  crc
     bash  s1  ofad-ctl crc enable
@@ -719,7 +1026,7 @@ TC030: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     rest disable feature  crc
     [Tags]  tunnel  tx
 
-TC031: Verify Receive-Only Tunnel across Dell S6000
+TC038: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
     rest enable feature  crc
     bash  s1  ofad-ctl crc enable
@@ -739,7 +1046,7 @@ TC031: Verify Receive-Only Tunnel across Dell S6000
     rest disable feature  crc
     [Tags]  tunnel  rx    
 
-TC032: Verify Bidirectional Tunnel across Dell S6000
+TC039: Verify Bidirectional Tunnel across Dell S6000
     rest enable feature  tunneling
     rest enable feature  crc
     bash  s1  ofad-ctl crc enable
@@ -759,7 +1066,7 @@ TC032: Verify Bidirectional Tunnel across Dell S6000
     rest disable feature  crc
     [Tags]  tunnel  bidir
 
-TC033: Flap breakout configuration on switch and verify 
+TC040: Flap breakout configuration on switch and verify 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -796,7 +1103,7 @@ TC033: Flap breakout configuration on switch and verify
     stop traffic
     [Tags]  ha
  
-TC034: Flap breakout interface once and verify interface shows as up
+TC041: Flap breakout interface once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -843,7 +1150,7 @@ TC034: Flap breakout interface once and verify interface shows as up
     verify interface stats
     [Tags]  ha  
 
-TC035: Flap breakout interface on remote side once and verify interface shows as up
+TC042: Flap breakout interface on remote side once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -889,9 +1196,8 @@ TC035: Flap breakout interface on remote side once and verify interface shows as
     sleep  10
     verify interface stats
     [Tags]  ha  
-    
 
-TC036: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
+TC043: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md1}
     Should be true  ${pc_add_result_1}
     ${pc_add_result_2}=  cli add portchannel  s2  ${breakout_port_channel_s2s1_num}  ${breakout_port_channel_s2s1_intf}  ${breakout_port_channel_s2s1_md1}
@@ -925,7 +1231,7 @@ TC036: Verify ports in breakout mode can be configured as port-channel interface
     Sleep  5
     [Tags]  ha
 
-TC037: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
+TC044: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md2}
     Should be true  ${pc_add_result_1}
     ${pc_add_result_2}=  cli add portchannel  s2  ${breakout_port_channel_s2s1_num}  ${breakout_port_channel_s2s1_intf}  ${breakout_port_channel_s2s1_md2}
@@ -959,7 +1265,7 @@ TC037: Verify ports in breakout mode can be configured as port-channel interface
     Sleep  5
     [Tags]  ha
 
-TC038: Reboot switch and verify breakout configuration is retained.
+TC045: Reboot switch and verify breakout configuration is retained.
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -987,29 +1293,35 @@ TC038: Reboot switch and verify breakout configuration is retained.
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  runthis
-    
-    
+    [Tags]  ha 
+
+
+
 * Keyword
 breakout suite setup
     base suite setup
     rest add switch alias  s1  ${s1_alias}
     rest add switch alias  s2  ${s2_alias}
     rest add switch alias  s3  ${s3_alias}
+    rest add switch alias  s4  ${s4_alias}    
     ${disable_crc_check}=  rest disable feature  crc
     Should be true  ${disable_crc_check} 
     ${disable_feature}=  rest disable feature  inport-mask
     Should be true  ${disable_feature}
+    ${enable_feature}=  rest enable feature  overlap
+    Should be true  ${enable_feature}
     ### Disable non-breakout links between s1 and s2 and s2 and s3
     cli disable interface  s1  ${non_breakout_s1s2_1}
     cli disable interface  s1  ${non_breakout_s1s2_2}
     cli disable interface  s3  ${non_breakout_s3s2_1}
     cli disable interface  s3  ${non_breakout_s3s2_2}
+    cli disable interface  s4  ${non_breakout_s4s2_2}
     ### Disable non-breakout links between s1 and s2 and s2 and s3    
     ### Configure interfaces in breakout mode
     config  s2  interface ${brekout_s2s1_master} breakout
     config  s2  interface ${brekout_s2s3_master} breakout
     config  s2  interface ${brekout_s2tunnel_master} breakout
+    config  s2  interface ${brekout_s2s4_master} breakout    
     ### Configure interfaces in breakout mode
 
     ${output_1}=    rest add interface role  s1  ${filter_s1_1}         filter      ${filter_nick_s1_1}
@@ -1034,6 +1346,11 @@ breakout suite setup
     Should be true  ${output_9}     
     ${output_10}=   rest add interface role  s3  ${post_service_s3}     service     intf_nickname=${post_service_nick_s3}
     Should be true  ${output_10}
+    
+    ${output_10A}=    rest add interface role  s4  ${filter_s4_1}         filter      ${filter_nick_s4_1}
+    Should be true  ${output_10A}     
+    ${output_10B}=    rest add interface role  s4  ${filter_s4_2}         filter      ${filter_nick_s4_2}
+    Should be true  ${output_10B}
 
     ${output_11}=   rest add service    ${service_name_1}     ${pre_service_nick_s1}     ${post_service_nick_s1}
     Should be true  ${output_11}    
@@ -1155,6 +1472,12 @@ breakout suite teardown
     Should be true      ${teardown_1A} 
     ${teardown_2A}=     rest delete policy  admin-view  ${policy_name_4}
     Should be true      ${teardown_2A}    
+    ${teardown_2B}=     rest delete policy  admin-view  ${policy_name_5}
+    Should be true      ${teardown_2B}        
+    ${teardown_2C}=     rest delete policy  admin-view  ${policy_name_6}
+    Should be true      ${teardown_2C}    
+    ${teardown_2D}=     rest delete policy  admin-view  ${policy_name_7}
+    Should be true      ${teardown_2D}            
     ${teardown_20}=     rest delete service  ${service_name_1}
     Should be true      ${teardown_20}
     ${teardown_21}=     rest delete service  ${service_name_2}
@@ -1165,6 +1488,10 @@ breakout suite teardown
     Should be true      ${teardown_3}
     ${teardown_4}=      rest delete interface role  s1  ${filter_s1_2}      filter      ${filter_nick_s1_2}
     Should be true      ${teardown_4}
+    ${teardown_4A}=      rest delete interface role  s4  ${filter_s4_1}      filter      ${filter_nick_s4_1}
+    Should be true      ${teardown_4A}
+    ${teardown_4B}=      rest delete interface role  s4  ${filter_s4_2}      filter      ${filter_nick_s4_2}
+    Should be true      ${teardown_4B}
     ${teardown_5}=      rest delete interface role  s1  ${pre_service_s1}   service     ${pre_service_nick_s1}
     Should be true      ${teardown_5}
     ${teardown_6}=      rest delete interface role  s1  ${post_service_s1}  service     ${post_service_nick_s1}
@@ -1186,32 +1513,41 @@ breakout suite teardown
 
     ${teardown_13}=     rest delete interface  s1  ${filter_s1_1}
     Should be true      ${teardown_13}
-    ${teardown_14}=     rest delete interface  s1  ${delivery_s3_1}
+    ${teardown_14}=     rest delete interface  s1  ${filter_s1_2}
     Should be true      ${teardown_14}
-    ${teardown_15}=     rest delete interface  s3  ${filter_s1_2}
+    ${teardown_15}=     rest delete interface  s3  ${delivery_s3_1}
     Should be true      ${teardown_15}
     ${teardown_16}=     rest delete interface  s3  ${delivery_s3_2}
     Should be true      ${teardown_16}
+    ${teardown_16A}=     rest delete interface  s4  ${filter_s4_1}
+    Should be true      ${teardown_15}
+    ${teardown_16B}=     rest delete interface  s4  ${filter_s4_2}
+    Should be true      ${teardown_16}    
     ${teardown_17}=     rest delete switch  s1
     Should be true      ${teardown_17} 
     ${teardown_18}=     rest delete switch  s2
     Should be true      ${teardown_18}
     ${teardown_19}=     rest delete switch  s3
     Should be true      ${teardown_19}
+    ${teardown_20}=     rest delete switch  s4
+    Should be true      ${teardown_20}    
     ### Enable the disabled non-breakout links between s1 and s2 and s2 and s3
     cli enable interface  s1  ${non_breakout_s1s2_1}
     cli enable interface  s1  ${non_breakout_s1s2_2}
     cli enable interface  s3  ${non_breakout_s3s2_1}
     cli enable interface  s3  ${non_breakout_s3s2_2}
+    cli enable interface  s4  ${non_breakout_s4s2_2}    
     ### Configure interfaces in breakout mode
     config  s2  no interface ${brekout_s2s1_master} breakout
     config  s2  no interface ${brekout_s2s3_master} breakout
     config  s2  no interface ${brekout_s2tunnel_master} breakout
+    config  s2  no interface ${brekout_s2s4_master} breakout    
     ### Configure interfaces in breakout mode    
     ### Enable the disabled non-breakout links between s1 and s2 and s2 and s3        
     ${enable_crc_check}=  rest enable feature  crc
     Should be true  ${enable_crc_check}  
     rest delete switch alias  s1
     rest delete switch alias  s2
-    rest delete switch alias  s3    
+    rest delete switch alias  s3
+    rest delete switch alias  s4 
     base suite teardown  

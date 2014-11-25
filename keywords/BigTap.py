@@ -3837,6 +3837,11 @@ class BigTap(object):
 
     def rest_return_switch_interface_stats(self, switch_dpid, switch_interface, stat_info):
         '''
+            This function returns the specific value after executing command "show switch <dpid> interface <interface_name> details"
+            Arguments:
+            | switch_dpid | DPID of the switch |
+            | switch_interface | Name of the interface|
+            | stat_info | Specific index for which value has to be returned|
         '''
         try:
             t = test.Test()
@@ -3848,7 +3853,10 @@ class BigTap(object):
             helpers.log("URL is %s" % url)
             c.rest.get(url)
             content = c.rest.content()
-            return content[0]['stats']['interface'][0][str(stat_info)]
+            if content[0]['stats']['interface'][0][str(stat_info)]:
+                return content[0]['stats']['interface'][0][str(stat_info)]
+            else:
+                return False
 
     def rest_return_info_of_core_interface_carrying_flow(self, switch_dpid, policy_name, interface_direction=None, stat_info='interface'):
         '''
@@ -3866,3 +3874,26 @@ class BigTap(object):
                 if content[i]['switch'] == str(switch_dpid) and content[i]['direction'] == str(interface_direction):
                     return content[i][str(stat_info)]
             return False
+
+    def rest_return_switch_interface_details(self, switch_dpid, switch_interface, return_index):
+        '''
+            This function returns the specific value after executing command "show switch <dpid> interface <interface_name> details"
+            Arguments:
+            | switch_dpid | DPID of the switch |
+            | switch_interface | Name of the interface|
+            | return_index | Specific index for which value has to be returned|
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (str(switch_interface), str(switch_dpid), str(switch_interface))
+            c.rest.get(url)
+            content = c.rest.content()
+            if content[0]['interface'][0][str(return_index)]:
+                return content[0]['interface'][0][str(return_index)]
+            else:
+                return False
+
