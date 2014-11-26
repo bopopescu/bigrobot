@@ -271,8 +271,10 @@ ha suite setup
     verify config
 
 ha test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
 
 verify config
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
@@ -283,7 +285,8 @@ verify config
     Should be true  ${verify_policy12}
 
 ha test teardown
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
 ha suite teardown
     rest delete policy  admin-view  P1

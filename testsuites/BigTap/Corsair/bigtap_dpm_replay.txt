@@ -623,8 +623,10 @@ corsair suite setup
     sleep  5
 
 corsair test setup        
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias}  filter
@@ -642,7 +644,8 @@ corsair test teardown
     ${set_udf_3}=  rest add bigtap udf  3  l4-start  24    
     Should be true  ${set_udf_3}            
     sleep  5
-    stop syslog monitor 
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
 
 corsair suite teardown
     rest delete interface role  s1  ${switch_filter_intf}  filter 

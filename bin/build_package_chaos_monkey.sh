@@ -1,4 +1,16 @@
-#!/bin/sh -x
+#!/bin/sh
+# This script is used to create a tarball of all the source/configs required
+# by the Autobot framework (for "Chaos Monkey" Opp9 support). By default, the
+# package will be saved to /tmp/autobot-x.y.z.tgz.
+#
+# It is required that you change the version string before rolling a new
+# tarball for production.
+#
+# History
+# 2014-11-20 Released v1.0.0. This is the first release.
+# 2014-11-21 Released v1.0.1. Clean up source tree (remove .pyc) before packaging.
+#                             Remove pexpect dependency.
+#                             Removed 'physical' in topo file name.
 
 if [ ! -x ../bin/gobot ]; then
     echo "Error: This script must be executed in the bigrobot/catalog/ directory."
@@ -6,17 +18,28 @@ if [ ! -x ../bin/gobot ]; then
 fi
 
 
+dest_p=/tmp/autobot
+version=1.0.1
 build=0
 clean_build=0
 cleanup=0
-dest_p=/tmp/autobot
-version=1.0.0
+
+package_basename=`basename $dest_p`
+package_dirname=`dirname $dest_p`
+dest_tarball=autobot-${version}.tgz
+
 
 usage() {
     if [ $# -ne 0 ]; then
         echo `basename $0`: ERROR: $* 1>&2
     fi
-    echo "Usage: `basename $0` [-build] [-cleanup]"
+    echo "Usage: `basename $0` [-build] [-cleanup] [-clean_build]"
+    echo ''
+    echo '  -build       : build the tarball while leaving previous build artifacts'
+    echo '                 intact (overwrite if needed)'
+    echo '  -cleanup     : clean up build artifacts' 
+    echo '  -clean_build : clean build artifacts first, then build' 
+    echo ''
     exit 1
 }
 
@@ -37,10 +60,11 @@ EOF
 }
 
 build() {
-    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors,modules}
+    mkdir -p /tmp/autobot/{autobot,configs,keywords,test,vendors}
     
     create_version_file ${dest_p}/version.txt
     create_dummy_common_config ${dest_p}/configs/common.yaml
+    (cd ..; make)
     (cd ../autobot; cp -rp helpers __init__.py bsn_restclient.py devconf.py \
                            ha_wrappers.py node.py nose_support.py restclient.py \
                            setup_env.py test.py utils.py version.py \
@@ -51,17 +75,16 @@ build() {
     (cd ../vendors; cp -rp __init__.py exscript* ${dest_p}/vendors)
     
     # IXIA libraries
-    (cd ../modules; cp -rp * ${dest_p}/modules)
-    (cd ../vendors; cp -rp Ixia ${dest_p}/vendors)
+    #mkdir -p /tmp/autobot/modules
+    #(cd ../modules; cp -rp * ${dest_p}/modules)
+    #(cd ../vendors; cp -rp Ixia ${dest_p}/vendors)
                 
-    package_base_name=`basename $dest_p`
-    dest_package=autobot-${version}
-    (cd $dest_p; cd ..; tar zcvf ${dest_package}.tgz $package_base_name)
-    echo "Created package ${dest_package}.tgz"
+    (cd $dest_p; cd ..; tar zcvf ${dest_tarball} $package_basename)
+    echo "Created tarball ${package_dirname}/${dest_tarball}"
 }
 
 cleanup() {
-    rm -rf $dest_p
+    rm -rf $dest_p $dest_tarball
 }
 
 

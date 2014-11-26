@@ -1070,11 +1070,14 @@ delete interface group testcase configuration  [Arguments]  ${interface_group_na
     Should be true  ${return_value_1}    
                
 interface test setup
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     
 interface test teardown
-    stop syslog monitor 
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
     
 interface suite teardown
     rest delete policy  admin-view  ${policy_name}

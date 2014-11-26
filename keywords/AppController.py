@@ -1286,3 +1286,40 @@ class AppController(object):
         else:
             helpers.test_log("Version string is empty")
             return False
+
+# ## Animesh
+    def return_version_number(self, node="master", user="admin", password="adminadmin", local=True):
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_bigtap(n.platform()):
+            '''
+                BigTap Controller                
+            '''
+            c = t.controller('master')
+            url = '/rest/v1/system/version'
+            if user == "admin":
+                try:
+                    t.node_reconnect(node='master', user=str(user), password=password)
+                    c.rest.get(url)
+                    content = c.rest.content()
+                    output_value = content[0]['controller']
+                except:
+                    return False
+                else:
+                    return output_value
+            else:
+                try:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    output_value = content[0]['controller']
+                    output_string = output_value.split(' ')
+
+                except:
+                    t.node_reconnect(node='master')
+                    return False
+                else:
+                    if local is True:
+                        t.node_reconnect(node='master', user=str(user), password=password)
+                    return output_string[3]
+

@@ -4,6 +4,9 @@ import autobot.helpers as helpers
 
 
 class Ixia(object):
+    '''
+        The Main IXIA TCL API IXIA Keywords that leverage from modules/Ixlib.py
+    '''
     def __init__(self):
         pass
 

@@ -7,7 +7,7 @@ import subprocess
 import autobot.helpers as helpers
 
 
-def test_and_install_package():
+def test_and_install_packages():
     """
     Test importing 3rd party modules required by BigRbot. If import fails,
     then attempt to install the package.
@@ -200,7 +200,7 @@ def bigrobot_env_init(is_gobot='True'):
 
 def big_setup(is_gobot='True', auto_package_install=True):
     if auto_package_install:
-        test_and_install_package()
+        test_and_install_packages()
     set_environment()
     test_autobot_import()
     bigrobot_env_init(is_gobot=is_gobot)
