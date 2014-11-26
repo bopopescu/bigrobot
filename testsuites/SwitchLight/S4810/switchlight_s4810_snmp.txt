@@ -178,7 +178,7 @@ TC29: Verify SNMP OID ifSpeed of PortChannel across 40G Interface
 TC30: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1061  80000
+    verify snmp attribute  s1  ifHighSpeed.1061  120000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  40G  Lag
