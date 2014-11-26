@@ -1031,10 +1031,10 @@ class AppController(object):
             else:
                 if split:
                     helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C1")
-                    return True
 
             try:
                 helpers.log("****************    syslog Log From C2    ****************")
@@ -1046,12 +1046,15 @@ class AppController(object):
             else:
                 if split:
                     helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C2")
+                    helpers.sleep(2)
                     return True
         else:
             helpers.log("syslogMonitorFlag is not set: Returning")
+            helpers.sleep(2)
             return False
 
 # ## Added by Sahaja
@@ -1293,7 +1296,7 @@ class AppController(object):
         n = t.node(node)
         if helpers.is_bigtap(n.platform()):
             '''
-                BigTap Controller                
+                BigTap Controller
             '''
             c = t.controller('master')
             url = '/rest/v1/system/version'
