@@ -973,8 +973,8 @@ class AppController(object):
                 # if (re.match("^d", c2_pid)):
                 c2.sudo('kill -9 %s' % (c2_pid))
             # Add rm of the file if file already exist in case of a new test
-            c1.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
-            c2.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+            c1.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
             syslogMonitorFlag = True
             return True
         except:
@@ -993,7 +993,7 @@ class AppController(object):
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
             filename = re.split('\n', result['content'])[1:-1]
-            c.sudo("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
+            c.bash("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
             return True
         else:
             return True
@@ -1062,7 +1062,7 @@ class AppController(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        c_result = c.bash('ps ax | grep tail | awk \'{print $1}\'')
+        c_result = c.bash('ps ax | pgrep tail | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
