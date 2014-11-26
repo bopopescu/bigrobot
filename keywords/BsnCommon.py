@@ -1664,6 +1664,7 @@ class BsnCommon(object):
                 url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), node.ip(), str(snmpOID))
             else:
                 url = "/usr/bin/%s -v2c -c %s %s " % (str(snmp_cmd), str(snmpCommunity), node.ip())
+            helpers.log("Executing SNMP_CMD: %s" % url)
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             return out
