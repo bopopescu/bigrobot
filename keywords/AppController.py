@@ -992,7 +992,7 @@ class AppController(object):
             t = test.Test()
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
-            filename = re.split('\n', result['content'])[1:-1]
+            filename = re.split('\n', result['content'])[2:-1]
             c.bash("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
             return True
         else:
@@ -1023,7 +1023,7 @@ class AppController(object):
             try:
                 helpers.log("****************    syslog Log From C1    ****************")
                 result = c1.sudo('cat c1_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
             except:
                 helpers.log("Split failed for c1")
                 return False
@@ -1039,7 +1039,7 @@ class AppController(object):
             try:
                 helpers.log("****************    syslog Log From C2    ****************")
                 result = c2.sudo('cat c2_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
             except:
                 helpers.log("Split failed for c2")
                 return False
