@@ -432,7 +432,8 @@ class SwitchLight(object):
         try:
             t = test.Test()
             switch = t.switch(node)
-            url = "/sbin/ping -c 3 %s" % (switch.ip())
+            # url = "/sbin/ping -c 3 %s" % (switch.ip())
+            url = "ping -c 3 %s" % (switch.ip())
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
