@@ -15,7 +15,7 @@ Library             OperatingSystem.py
 Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -255,7 +255,7 @@ TC33: Restart process SNMPD and verify SNMP Stats
     ${snmp_key}=  snmp cmd  s1  snmpget  ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1} 
     [Tags]  process-restart
-                                    
+                                        
 * Keywords  
 snmp suite setup
     base suite setup        
