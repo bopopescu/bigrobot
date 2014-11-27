@@ -414,6 +414,7 @@ verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}
     Should Contain   ${snmp_key}   ${expected_value}
  
 ha test teardown
+	base test teardown
     delete traffic
     
 t5 suite teardown
