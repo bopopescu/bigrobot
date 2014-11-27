@@ -162,7 +162,7 @@ class T5Support(object):
                 node.rest.delete(delete_url, {})
                 helpers.log("Success Deleting Support Bundle: %s" % data[i]['name'])
         helpers.log("Checking again to check all the support bundles are deleted..")
-        data = self.get_support_bundles()
+        data = self.get_support_bundles(node_name)
         helpers.prettify(data)
         if len(data) == 0:
             helpers.log("No Support Bundles on controller %s" % node_name)
