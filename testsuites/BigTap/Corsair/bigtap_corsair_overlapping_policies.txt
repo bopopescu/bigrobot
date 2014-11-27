@@ -1733,10 +1733,11 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     disconnect switch from fabric  s4
     disconnect switch from fabric  s5
     disconnect switch from fabric  s6    
+    sleep  60    
     ${result}=  rest add interface role  s3  ${switch3_delivery_intf_2}  delivery  ${switch3_delivery_alias_2}
     Should be true  ${result}
     cli disable interface  s3  ${s3s1_core_link_1}
-    sleep  10
+    sleep  60
     ${config_state}=  rest add policy  admin-view  ${policy_name_1}   forward
     Should be true  ${config_state}
     ${config_state}=  rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
@@ -1754,7 +1755,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should be true  ${config_state}
     ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch3_delivery_alias_2}  delivery
     Should be true  ${config_state}
-    Sleep  20
+    Sleep  60
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1763,7 +1764,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should be true  ${verify_policy12}
     sleep  10
     cli disable interface  s3  ${s3s1_core_link_2}
-    sleep  20
+    sleep  60
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1772,7 +1773,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should not be true  ${verify_policy12}
     sleep  3
     cli enable interface  s3  ${s3s1_core_link_1}
-    sleep  45
+    sleep  60
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1781,7 +1782,7 @@ TC063: Configure overlapping policy with S1F1, S3D1 and S3D2. Shutdown one core 
     Should be true  ${verify_policy12}
     sleep  5
     cli enable interface  s3  ${s3s1_core_link_2}
-    sleep  45
+    sleep  60
     reconnect switch to fabric  s2
     reconnect switch to fabric  s4
     reconnect switch to fabric  s5
@@ -1794,7 +1795,8 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     disconnect switch from fabric  s2
     disconnect switch from fabric  s4
     disconnect switch from fabric  s5
-    disconnect switch from fabric  s6    
+    disconnect switch from fabric  s6
+    sleep  60
     ${result}=  rest add interface role  s1  ${switch1_filter_intf_2}  filter  ${switch1_filter_alias_2}
     Should be true  ${result}
     ${result}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter  ${switch1_filter_alias_3}
@@ -1804,7 +1806,7 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     ${result}=  rest add interface role  s3  ${switch3_delivery_intf_2}  delivery  ${switch3_delivery_alias_2}
     Should be true  ${result}    
     cli disable interface  s3  ${s3s1_core_link_1}
-    sleep  10
+    sleep  60
     ${config_state}=  rest add policy  admin-view  ${policy_name_1}   forward
     Should be true  ${config_state}
     ${config_state}=  rest add policy match  admin-view  ${policy_name_1}   1   {"any-traffic": true, "sequence": 1}
@@ -1834,7 +1836,7 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     Should be true  ${config_state}    
     ${config_state}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch3_delivery_alias_1}  delivery 
     Should be true  ${config_state}    
-    Sleep  20
+    Sleep  60
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=4  num_delivery_intf=2
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=3
@@ -1843,7 +1845,7 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     Should be true  ${verify_policy12}
     sleep  10
     cli enable interface  s3  ${s3s1_core_link_1}
-    sleep  45    
+    sleep  60
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=4  num_delivery_intf=2
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=3
