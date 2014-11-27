@@ -346,7 +346,7 @@ t5 suite setup
     base suite setup
     rest add snmp keyword  community  public
     rest add snmp keyword  contact  Big Switch Networks
-    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  location  mountainview
     rest add snmp keyword  trap-enabled  True
     rest add snmp host  10.9.18.2  162    
     rest add firewall rule  service=snmp     
@@ -398,6 +398,7 @@ verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}
     Should Contain   ${snmp_key}   ${expected_value}
  
 ha test teardown
+	base test teardown
     delete traffic
     
 t5 suite teardown
