@@ -150,7 +150,7 @@ class T5Support(object):
     def delete_support_bundles(self, node_name="master"):
         t = test.Test()
         node = t.controller(node_name)
-        data = self.get_support_bundles()
+        data = self.get_support_bundles(node_name)
         helpers.prettify(data)
         if len(data) == 0:
             helpers.log("No Support Bundles on controller %s" % node_name)
