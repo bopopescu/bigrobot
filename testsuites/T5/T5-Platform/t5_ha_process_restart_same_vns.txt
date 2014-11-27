@@ -344,22 +344,42 @@ Controller HA: Restart Process Floodlight on Slave Controller:
 
 t5 suite setup
     base suite setup
-    add fabric switch
-    reconnect_switch_ips
-    cli add snmp keyword   s1   community   ro public       
-    cli add snmp keyword   s1   location   mountainview       
-    cli add snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
-    cli add snmp host   s1   10.192.66.230   traps   public   161   
-    cli add snmp host   s1   10.192.66.230   informs   public   161
-    cli enable snmp   s1           
-    add ntp server  s1  time-c.nist.gov
-    verify ntp  s1  time-c.nist.gov    
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.9.18.2  162    
+    rest add firewall rule  service=snmp     
+    
+    rest add switch  ${switch1_name}
+    ${switch1_dpid}=  get_switch_mac_topo  s1
+    rest add dpid  ${switch1_name}  ${switch1_dpid}
+    rest add fabric role  ${switch1_name}  leaf      
 
+    rest add switch  ${switch2_name}
+    ${switch2_dpid}=  get_switch_mac_topo  s2
+    rest add dpid  ${switch2_name}  ${switch2_dpid}
+    rest add fabric role  ${switch2_name}  leaf      
+
+    rest add switch  ${switch3_name}
+    ${switch3_dpid}=  get_switch_mac_topo  s7
+    rest add dpid  ${switch3_name}  ${switch3_dpid}
+    rest add fabric role  ${switch3_name}  spine
+
+    rest add switch  ${switch4_name}
+    ${switch4_dpid}=  get_switch_mac_topo  s8
+    rest add dpid  ${switch4_name}  ${switch4_dpid}
+    rest add fabric role  ${switch4_name}  spine    
+	sleep  155
+	rest_verify_fabric_switch_all
+	reconnect_switch_ips
     rest add tenant  ${tenant_1}   
     rest add vns  ${tenant_1}  ${vns_1} 
     rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
     rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch2_name}  ${interface_2}   -1    
     sleep  10
+    add ntp server  s1  time-c.nist.gov
+    verify ntp  s1  time-c.nist.gov
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
     Sleep  5
@@ -374,7 +394,6 @@ verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}
     Should Contain   ${snmp_key}   ${expected_value}
  
 ha test teardown
-	base test teardown
     delete traffic
     
 t5 suite teardown
