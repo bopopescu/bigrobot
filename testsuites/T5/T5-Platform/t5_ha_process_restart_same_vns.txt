@@ -344,6 +344,8 @@ Controller HA: Restart Process Floodlight on Slave Controller:
 
 t5 suite setup
     base suite setup
+    add fabric switch
+    reconnect_switch_ips
     cli add snmp keyword   s1   community   ro public       
     cli add snmp keyword   s1   location   mountainview       
     cli add snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
@@ -351,26 +353,7 @@ t5 suite setup
     cli add snmp host   s1   10.192.66.230   informs   public   161
     cli enable snmp   s1           
     add ntp server  s1  time-c.nist.gov
-    verify ntp  s1  time-c.nist.gov
-    rest add switch  ${switch1_name}
-    ${switch1_dpid}=  rest return switch dpid from ip  s1
-    rest add dpid  ${switch1_name}  ${switch1_dpid}
-    rest add fabric role  ${switch1_name}  leaf      
-
-    rest add switch  ${switch2_name}
-    ${switch2_dpid}=  rest return switch dpid from ip  s2
-    rest add dpid  ${switch2_name}  ${switch2_dpid}
-    rest add fabric role  ${switch2_name}  leaf      
-
-    rest add switch  ${switch3_name}
-    ${switch3_dpid}=  rest return switch dpid from ip  s7
-    rest add dpid  ${switch3_name}  ${switch3_dpid}
-    rest add fabric role  ${switch3_name}  spine
-
-    rest add switch  ${switch4_name}
-    ${switch4_dpid}=  rest return switch dpid from ip  s8
-    rest add dpid  ${switch4_name}  ${switch4_dpid}
-    rest add fabric role  ${switch4_name}  spine    
+    verify ntp  s1  time-c.nist.gov    
 
     rest add tenant  ${tenant_1}   
     rest add vns  ${tenant_1}  ${vns_1} 
