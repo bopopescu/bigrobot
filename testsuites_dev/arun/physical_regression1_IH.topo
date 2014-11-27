@@ -27,6 +27,11 @@ s1:
     ip: 10.1.8.46
     port: 7001
     protocol: telnet
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 15
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -39,6 +44,11 @@ s2:
   console:
     ip: 10.1.8.46
     port: 7002
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 17
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -51,6 +61,11 @@ s3:
   console:
     ip: 10.1.8.46
     port: 7003
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 18
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -63,6 +78,11 @@ s4:
   console:
     ip: 10.1.8.46
     port: 7004
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 19
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -75,6 +95,11 @@ s5:
   console:
     ip: 10.1.8.46
     port: 7005
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 20
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s6:
@@ -87,6 +112,11 @@ s6:
   console:
     ip: 10.1.8.46
     port: 7006
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 21
+    user: apc
+    password: apc
   set_session_ssh: false
   set_init_ping: false
 s7:
