@@ -689,7 +689,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -699,7 +699,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  tx
+    [Tags]  bigtap  tunnel  tx  runthis
 
 TC32: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -716,7 +716,7 @@ TC32: Verify Receive-Only Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -743,7 +743,7 @@ TC33: Verify Bidirectional Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -1154,11 +1154,11 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
     Should Be True  ${ret_value_1}
 
 lag setup  [Arguments]  ${mode}
-    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}   ${pc_members_s1s2}  ${mode}
+    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}  ${pc_members_s1s2}  ${mode}
     Should be true  ${pc_status_s1s2}
-    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}   ${pc_members_s2s1}  ${mode}
+    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}  ${pc_members_s2s1}  ${mode}
     Should be true  ${pc_status_s2s1}
-    sleep  5
+    sleep  30
 
 verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
     ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
