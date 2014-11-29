@@ -943,7 +943,7 @@ TC50: Restart process OFAD on switch S3
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
     stop traffic
-    [Tags]  bigtap  ha  ofad  skipped
+    [Tags]  bigtap  ha  ofad
 
 TC51: Verify interface statistics on switch
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -966,14 +966,14 @@ TC51: Verify interface statistics on switch
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${tx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s3_2}    tx
     ${in_range_2}=         ixia verify traffic rate  ${rx_switch_value_2}   ${tx_switch_value_2}     rangev=10
-    Should be true  ${in_range_2}            
+    Should be true  ${in_range_2}
     ${rx_switch_value_3}=  cli return interface counter brief     s3      ${core_interface_s3s2_2}    rx
     ${tx_switch_value_3}=  cli return interface counter brief     s3      ${delivery_s3_1}            tx        
     ${in_range_3}=         ixia verify traffic rate  ${rx_switch_value_3}   ${tx_switch_value_3}     rangev=10
     Should be true  ${in_range_3} 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats
+    [Tags]  bigtap  ha  stats  runthis
 
 
 TC52: SNMP: Verify interface statistics and match with SNMP
@@ -992,7 +992,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     clear stats
     cli clear interface statistics  s1
     cli clear interface statistics  s2
-    cli clear interface statistics  s3                
+    cli clear interface statistics  s3
+    sleep  30
     start traffic     
     sleep  10
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
@@ -1008,7 +1009,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     ${snmp_value2}=        return snmp value  ${match_value2}  1
     ${in_range_2}=         ixia verify traffic rate  ${tx_switch_value_1}   ${snmp_value2}     rangev=100
     Should be true  ${in_range_2}    
-            
+
+    ${rx_switch_value_0}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${match_value3}=       snmp cmd   s2   snmpget    public   ${core_s2_s1_2_snmp_oid}
     ${snmp_value3}=        return snmp value  ${match_value3}  1
@@ -1034,7 +1036,7 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp 
+    [Tags]  bigtap  ha  stats  snmp  runthis
 
 * Keywords
 
