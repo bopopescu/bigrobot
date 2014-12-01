@@ -1699,6 +1699,7 @@ class T5(object):
         data = c.rest.content()
         list_spine = []
         for i in range(0, len(data)):
+            helpers.log("Data: %s" % data[i])
             if "fabric-role" in data[i]:
                 if data[i]["fabric-role"] == "spine":
                     list_spine.append(data[i]["name"])
