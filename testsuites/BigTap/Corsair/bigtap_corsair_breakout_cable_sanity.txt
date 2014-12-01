@@ -639,7 +639,7 @@ TC028: Verify breakout-ports can be configured as a filter interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s2  ${breakout_filter_s2_2}  filter   ${breakout_filter_nick_s2_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  filter
+    [Tags]  feature  filter  runthis
     
 TC029: Verify breakout-ports can be configured as a delivery interface
     ${output_1}=    rest add interface role  s2  ${breakout_delivery_s2_1}  delivery    ${breakout_delivery_s2_nick_1}
@@ -711,7 +711,9 @@ TC029: Verify breakout-ports can be configured as a delivery interface
     verify results  a  d  transmitted_frame_rate  received_frame_rate            
     stop traffic  ${stream_l3_s4810}
     cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_2}    
+    cli enable interface  s1  ${brekout_s1s2_2}
+    cli enable interface  s3  ${brekout_s3s2_1}
+    cli enable interface  s3  ${brekout_s3s2_2}    
     ${teardown_3}=      rest delete interface role  s2  ${breakout_delivery_s2_1}    delivery    ${breakout_delivery_s2_nick_1}
     Should be true      ${teardown_3}
     ${teardown_4}=     rest delete interface role  s2  ${breakout_delivery_s2_2}    delivery    ${breakout_delivery_s2_nick_2}
@@ -720,7 +722,7 @@ TC029: Verify breakout-ports can be configured as a delivery interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s3  ${breakout_filter_s3_2}  filter   ${breakout_filter_nick_s3_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  delivery  
+    [Tags]  feature  delivery  runthis
 
 TC030: Verify same breakout cable can be connected to multiple switches
     cli disable interface  s2  ${brekout_s2s3_1}
@@ -735,7 +737,10 @@ TC030: Verify same breakout cable can be connected to multiple switches
     Should be true  ${output_3}    
     ${output_4}=    rest add policy interface  admin-view  ${policy_name_5}  ${delivery_nick_s3_1}  delivery
     Should be true  ${output_4}
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    ${output_5}=    rest update policy priority  admin-view  ${policy_name_5}  policy_priority=200
+    Should be true  ${output_5}    
+    sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_5}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  no_arp=True  name=e_c_flow
     clear stats
@@ -780,11 +785,10 @@ TC030: Verify same breakout cable can be connected to multiple switches
     cli enable interface  s2  ${brekout_s2s3_4}
     ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
     Should be true  ${teardown_2B}
-    [Tags]  feature
+    [Tags]  feature  runthis
 
 TC031: Verify breakout interface hardware-address on controller matches what is reported by switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
-
     ${mac_address_1}=   cli show interface macaddress  s2  ${brekout_s2s4_1}
     ${cntrl_return_mac1}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_1}  hardware-address
     Should be equal as strings  ${mac_address_1}  ${cntrl_return_mac1}
@@ -816,7 +820,7 @@ TC032: Verify breakout interface name on controller matches what is reported on 
 
     ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  name
     Should be equal as strings  ${brekout_s2s4_4}  ${cntrl_return_name4}
-    [Tags]  cli  feature   
+    [Tags]  cli  feature  
 
 TC033: Verify breakout interface state on controller is reported correctly
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -832,7 +836,7 @@ TC033: Verify breakout interface state on controller is reported correctly
 
     ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  runtime-state
     Should be equal as strings  ${cntrl_return_name4}  up
-    [Tags]  cli  feature   
+    [Tags]  cli  feature  
     
 TC034: Verify breakout interface statistics on controller matches what is reported on switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -848,7 +852,7 @@ TC034: Verify breakout interface statistics on controller matches what is report
     Should be true  ${output_3}    
     ${output_4}=    rest add policy interface  admin-view  ${policy_name_5}  ${delivery_nick_s3_1}  delivery
     Should be true  ${output_4}
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_5}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=e->c  frame_rate=10000  frame_size=64  frame_cnt=100000  no_arp=True  name=e_c_flow
     clear stats
@@ -882,7 +886,7 @@ TC034: Verify breakout interface statistics on controller matches what is report
     cli enable interface  s2  ${brekout_s2s3_4}
     ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
     Should be true  ${teardown_2B}    
-    [Tags]  cli  feature   
+    [Tags]  cli  feature  
 
 TC035: Verify overlapping policies when same breakout cable is connected to multiple switches
     ${disable_feature}=  rest disable feature  inport-mask
@@ -942,7 +946,7 @@ TC035: Verify overlapping policies when same breakout cable is connected to mult
     Should be true  ${teardown_44A}
     ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
     Should be true  ${teardown_44B}
-    [Tags]  cli  feature
+    [Tags]  cli  feature  
 
 TC036: Enable inport-masking and verify overlapping policies when same breakout cable is connected to multiple switches
     ${enable_feature}=  rest enable feature  inport-mask
@@ -1003,8 +1007,7 @@ TC036: Enable inport-masking and verify overlapping policies when same breakout 
     Should be true  ${teardown_44A}
     ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
     Should be true  ${teardown_44B}
-    [Tags]  cli  feature
-
+    [Tags]  cli  feature  
 
 TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     rest enable feature  tunneling
@@ -1024,7 +1027,7 @@ TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     Should be true  ${verify_del_tun_sw2}
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  tx
+    [Tags]  tunnel  tx  runthis
 
 TC038: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1044,7 +1047,7 @@ TC038: Verify Receive-Only Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  rx    
+    [Tags]  tunnel  rx  runthis
 
 TC039: Verify Bidirectional Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1064,147 +1067,16 @@ TC039: Verify Bidirectional Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  bidir
+    [Tags]  tunnel  bidir  runthis
 
-TC040: Flap breakout configuration on switch and verify 
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    sleep  10
-    verify interface stats
-    config  s2  no interface ${brekout_s2s1_master} breakout
-    config  s2  no interface ${brekout_s2s3_master} breakout
-    sleep  5
-    config  s2  interface ${brekout_s2s1_master} breakout
-    config  s2  interface ${brekout_s2s3_master} breakout
-    sleep  20
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    [Tags]  ha
- 
-TC041: Flap breakout interface once and verify interface shows as up
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    sleep  10
-    verify interface stats
-    cli disable interface  s2  ${brekout_s2s1_1}
-    cli disable interface  s2  ${brekout_s2s1_2}
-    cli disable interface  s2  ${brekout_s2s1_3}
-    cli disable interface  s2  ${brekout_s2s1_4}
-    sleep  20
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should not be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should not be true  ${verify_policy2}
-    cli enable interface  s2  ${brekout_s2s1_1}
-    cli enable interface  s2  ${brekout_s2s1_2}
-    cli enable interface  s2  ${brekout_s2s1_3}
-    cli enable interface  s2  ${brekout_s2s1_4}
-    sleep  20
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    sleep  10
-    verify interface stats
-    [Tags]  ha  
-
-TC042: Flap breakout interface on remote side once and verify interface shows as up
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    sleep  10
-    verify interface stats
-    cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
-    sleep  20
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should not be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should not be true  ${verify_policy2}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    sleep  20
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2}
-    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
-    clear stats
-    cli clear interface statistics  s1
-    cli clear interface statistics  s2
-    cli clear interface statistics  s3     
-    start traffic
-    sleep  10
-    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
-    stop traffic
-    sleep  10
-    verify interface stats
-    [Tags]  ha  
-
-TC043: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
+TC040: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md1}
     Should be true  ${pc_add_result_1}
     ${pc_add_result_2}=  cli add portchannel  s2  ${breakout_port_channel_s2s1_num}  ${breakout_port_channel_s2s1_intf}  ${breakout_port_channel_s2s1_md1}
     Should be true  ${pc_add_result_2}
     ${teardown_2}=  rest delete policy  admin-view  ${policy_name_2}
     Should be true  ${teardown_2}
-    sleep  20
+    sleep  40
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
@@ -1229,16 +1101,16 @@ TC043: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha
+    [Tags]  ha  runthis
 
-TC044: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
+TC041: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md2}
     Should be true  ${pc_add_result_1}
     ${pc_add_result_2}=  cli add portchannel  s2  ${breakout_port_channel_s2s1_num}  ${breakout_port_channel_s2s1_intf}  ${breakout_port_channel_s2s1_md2}
     Should be true  ${pc_add_result_2}
     ${teardown_2}=  rest delete policy  admin-view  ${policy_name_2}
     Should be true  ${teardown_2}
-    sleep  20
+    sleep  45
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
@@ -1263,9 +1135,9 @@ TC044: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha
+    [Tags]  ha  runthis
 
-TC045: Reboot switch and verify breakout configuration is retained.
+TC042: Reboot switch and verify breakout configuration is retained.
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1294,6 +1166,138 @@ TC045: Reboot switch and verify breakout configuration is retained.
     sleep  10
     verify interface stats
     [Tags]  ha 
+
+TC043: Flap breakout configuration on switch and verify 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    verify interface stats
+    config  s2  no interface ${brekout_s2s1_master} breakout
+    config  s2  no interface ${brekout_s2s3_master} breakout
+    sleep  45
+    config  s2  interface ${brekout_s2s1_master} breakout
+    config  s2  interface ${brekout_s2s3_master} breakout
+    sleep  45
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    [Tags]  ha  runthis
+    
+TC044: Flap breakout interface once and verify interface shows as up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    verify interface stats
+    cli disable interface  s2  ${brekout_s2s1_1}
+    cli disable interface  s2  ${brekout_s2s1_2}
+    cli disable interface  s2  ${brekout_s2s1_3}
+    cli disable interface  s2  ${brekout_s2s1_4}
+    sleep  45
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy2}
+    cli enable interface  s2  ${brekout_s2s1_1}
+    cli enable interface  s2  ${brekout_s2s1_2}
+    cli enable interface  s2  ${brekout_s2s1_3}
+    cli enable interface  s2  ${brekout_s2s1_4}
+    sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    verify interface stats
+    [Tags]  ha  runthis
+
+TC045: Flap breakout interface on remote side once and verify interface shows as up
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    verify interface stats
+    cli disable interface  s1  ${brekout_s1s2_1}
+    cli disable interface  s1  ${brekout_s1s2_1}
+    cli disable interface  s1  ${brekout_s1s2_1}
+    cli disable interface  s1  ${brekout_s1s2_1}
+    sleep  45
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy2}
+    cli enable interface  s1  ${brekout_s1s2_1}
+    cli enable interface  s1  ${brekout_s1s2_1}
+    cli enable interface  s1  ${brekout_s1s2_1}
+    cli enable interface  s1  ${brekout_s1s2_1}
+    sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream_1}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  no_arp=True  name=a_d_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3     
+    start traffic
+    sleep  10
+    verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic
+    sleep  10
+    verify interface stats
+    [Tags]  ha  runthis
+
 
 
 
@@ -1348,7 +1352,7 @@ breakout suite setup
     Should be true  ${output_10}
     
     ${output_10A}=    rest add interface role  s4  ${filter_s4_1}         filter      ${filter_nick_s4_1}
-    Should be true  ${output_10A}     
+    Should be true  ${output_10A}
     ${output_10B}=    rest add interface role  s4  ${filter_s4_2}         filter      ${filter_nick_s4_2}
     Should be true  ${output_10B}
 
@@ -1358,22 +1362,29 @@ breakout suite setup
     Should be true  ${output_12}
     ${output_13}=   rest add service    ${service_name_3}     ${pre_service_nick_s3}     ${post_service_nick_s3}
     Should be true  ${output_13}
-        
     Sleep  5
+
+breakout test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
+    ixia initialize  tg1  init=true
+    sleep  5
     ${output_14}=   rest add policy  admin-view  ${policy_name_1}  forward
     Should be true  ${output_14}
     ${output_15}=   rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     Should be true  ${output_15}
     ${output_16}=   rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_s1_1}  filter
-    Should be true  ${output_16}    
+    Should be true  ${output_16}
     ${output_17}=   rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_s3_1}  delivery
-    Should be true  ${output_17}    
+    Should be true  ${output_17}
     ${output_18}=    rest add service to policy  admin-view  ${policy_name_1}  ${service_name_1}  1
     Should be true  ${output_18}
     ${output_19}=    rest add service to policy  admin-view  ${policy_name_1}  ${service_name_2}  2
-    Should be true  ${output_19}    
+    Should be true  ${output_19}
     ${output_20}=    rest add service to policy  admin-view  ${policy_name_1}  ${service_name_3}  3
-    Should be true  ${output_20}    
+    Should be true  ${output_20}
         
     ${output_21}=    rest add policy  admin-view  ${policy_name_2}  forward
     Should be true  ${output_21}
@@ -1383,15 +1394,8 @@ breakout suite setup
     Should be true  ${output_23}    
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
-    Sleep  5
+    Sleep  45
 
-breakout test setup
-    ${result}=  write version to file
-    Should be true  ${result}
-    ${result1}=  start syslog monitor
-    Should be true  ${result1}
-    ixia initialize  tg1  init=true
-    
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
     ${report}=  fetch port stats

@@ -1302,6 +1302,8 @@ class BigTap(object):
             else:
                 return True
 
+
+
     def rest_add_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
         '''
             Objective:
