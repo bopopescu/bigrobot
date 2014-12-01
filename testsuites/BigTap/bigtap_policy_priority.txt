@@ -416,7 +416,55 @@ TC013: Verify policy with service and priority
     Should be equal as integers  ${verify_priority}  200
     [Tags]  feature
 
-TC014: Execute HA Failover and verify priority
+TC014: Verify priority value less than 10 is not allowed
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=5
+    Should not be True  ${priority_2}
+    [Tags]  negative  
+
+TC015: Verify priority value greater than 1023 is not allowed
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=2000
+    Should not be True  ${priority_2}
+    [Tags]  negative  
+
+TC016: Verify priority value of 10 is allowed
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=10
+    Should be True  ${priority_2}
+    [Tags]  negative  
+
+TC017: Verify priority value of 1023 is allowed
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=1023
+    Should be True  ${priority_2}
+    [Tags]  negative  
+    
+TC018: Execute HA Failover and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
     Should be True  ${priority_1}
     ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
@@ -460,7 +508,7 @@ TC014: Execute HA Failover and verify priority
     Should be equal as integers  ${verify_priority_3}  200
     [Tags]  ha
     
-TC015: Reboot switch and verify priority
+TC019: Reboot switch and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
     Should be True  ${priority_1}
     ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
