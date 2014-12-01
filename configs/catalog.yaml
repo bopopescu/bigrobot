@@ -2,7 +2,8 @@
 #
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
-database: test_catalog_201410
+#database: test_catalog_201410
+database: test_catalog_201412
 products:
   - BigChain
   - BigTap
