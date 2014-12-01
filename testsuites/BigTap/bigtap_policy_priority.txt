@@ -1,0 +1,600 @@
+*Settings
+Documentation           BigTap Priority Test Suite
+Suite Setup             priority suite setup
+Suite Teardown          priority suite teardown
+Test Setup              priority test setup
+Test Teardown           priority test teardown 
+Force Tags              BigTap  ToS  Blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Library                 keywords/ThirdParty.py
+
+############################ TOPOLOGY #################################
+##                                                                   ##
+##   ixia-->s1(app-rlb9-1)-->ixia                                    ##
+##                                                                   ##
+######################### TOPOLOGY ####################################
+
+* Variable
+${switch_alias}                              app-rlb9-1     #Alias for switch 1
+${switch_filter_intf_1}                      ethernet1      #filter interface on switch app-s4810-2
+${switch_filter_alias_1}                     ixia-2-3       #Alias for filter interface on switch app-s4810-2
+${switch_delivery_intf_1}                    ethernet2      #Delivery interface on switch app-s4810-2
+${switch_delivery_alias_1}                   ixia-2-4       #Alias for delivery interface on switch app-s4810-2
+${switch_filter_intf_2}                      ethernet13     #filter interface on switch app-s4810-2
+${switch_filter_alias_2}                     dummy-f1       #Alias for filter interface on switch app-s4810-2
+${switch_delivery_intf_2}                    ethernet14     #Delivery interface on switch app-s4810-2
+${switch_delivery_alias_2}                   dummy-d1       #Alias for delivery interface on switch app-s4810-2
+${switch_filter_intf_3}                      ethernet15     #filter interface on switch app-s4810-2
+${switch_filter_alias_3}                     dummy-f2       #Alias for filter interface on switch app-s4810-2
+${switch_delivery_intf_3}                    ethernet16     #Delivery interface on switch app-s4810-2
+${switch_delivery_alias_3}                   dummy-d2       #Alias for delivery interface on switch app-s4810-2
+${switch_delivery_intf_4}                    ethernet4      #Delivery interface on switch app-s4810-2
+${switch_delivery_alias_4}                   linux-d1       #Alias for delivery interface on switch app-s4810-2
+${pre_service_s1}                            ethernet47
+${pre_service_nick_s1}                       pre-service-s1
+${post_service_s1}                           ethernet48
+${post_service_nick_s1}                      post-service-s1
+${service_name_1}                            service-s1
+${policy_name_1}                             P1
+${policy_name_2}                             ZP1
+${policy_overlap_1}                          _ZP1_o_P1
+${policy_name_3}                             Q1
+${policy_name_4}                             ZQ1
+${policy_overlap_2}                          _ZQ1_o_Q1
+${policy_name_5}                             R1
+${policy_name_6}                             ZR1
+${policy_overlap_3}                          _ZR1_o_R1
+
+
+*Test Case
+
+TC001:Verify Configuration
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    [Tags]  basic
+    
+TC002:Change policy priority and verify policy
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    [Tags]  feature
+
+TC003: Add a second policy at same priority and verify overlapping policy is created
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    [Tags]  feature
+
+TC004: Add a second policy at different priority and verify overlapping policy is not created
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=110
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  110
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    [Tags]  negative
+
+TC005: Deactivate and activate policy and verify priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${deactivate}=  rest add policy action  admin-view  ${policy_name_1}  inactive
+    Should be true  ${deactivate}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy1}
+    sleep  5
+    ${activate}=  rest add policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${activate}
+    sleep  5
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    [Tags]  negative
+
+TC006: Change policy action to rate-measure and verify priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${ratemeasure}=  rest add policy action  admin-view  ${policy_name_1}  rate-measure
+    Should be true  ${ratemeasure}
+    sleep  5
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    sleep  5
+    ${activate}=  rest add policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${activate}
+    sleep  5
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy3}
+    ${verify_priority_3}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    [Tags]  feature
+
+TC007: Verify overlapping policies at different priorities
+    # Same Filter interface across priorities
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    #####  Q1 and ZQ1
+    ${output_5}=  rest add policy  admin-view  ${policy_name_3}   forward
+    Should be true  ${output_5}
+    ${output_6}=  rest add policy match  admin-view  ${policy_name_3}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_6}
+    ${output_7}=  rest add policy interface  admin-view  ${policy_name_3}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_7}
+    ${output_8}=  rest add policy interface  admin-view  ${policy_name_3}   ${switch_delivery_alias_2}  delivery
+    Should be true  ${output_8}
+    ${priority_3}=  rest update policy priority  admin-view  ${policy_name_3}  policy_priority=300
+    Should be True  ${priority_3}
+    ${output_9}=  rest add policy  admin-view  ${policy_name_4}   forward
+    Should be true  ${output_9}
+    ${output_10}=  rest add policy match  admin-view  ${policy_name_4}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_10}
+    ${output_11}=  rest add policy interface  admin-view  ${policy_name_4}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_11}
+    ${output_12}=  rest add policy interface  admin-view  ${policy_name_4}   ${switch_delivery_alias_3}  delivery
+    Should be true  ${output_12}
+    ${priority_4}=  rest update policy priority  admin-view  ${policy_name_4}  policy_priority=300
+    Should be True  ${priority_4}
+    #####
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_policy4}=  rest verify bigtap policy  ${policy_name_3}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy4}
+    ${verify_policy5}=  rest verify bigtap policy  ${policy_name_4}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy5}
+    ${verify_policy6}=  rest verify bigtap policy  ${policy_overlap_2}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy6}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200    
+    ${verify_priority_4}=  rest verify policy key  ${policy_name_3}  info  0  priority
+    Should be equal as integers  ${verify_priority_4}  300
+    ${verify_priority_5}=  rest verify policy key  ${policy_name_4}  info  0  priority
+    Should be equal as integers  ${verify_priority_5}  300
+    ${verify_priority_6}=  rest verify policy key  ${policy_overlap_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_6}  300
+    [Tags]  feature
+
+
+TC008: Verify overlapping policies at different priorities
+    # Different Filter interface across priorities
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    #####  Q1 and ZQ1
+    ${output_5}=  rest add policy  admin-view  ${policy_name_3}   forward
+    Should be true  ${output_5}
+    ${output_6}=  rest add policy match  admin-view  ${policy_name_3}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_6}
+    ${output_7}=  rest add policy interface  admin-view  ${policy_name_3}   ${switch_filter_alias_2}  filter
+    Should be true  ${output_7}
+    ${output_8}=  rest add policy interface  admin-view  ${policy_name_3}   ${switch_delivery_alias_2}  delivery
+    Should be true  ${output_8}
+    ${priority_3}=  rest update policy priority  admin-view  ${policy_name_3}  policy_priority=300
+    Should be True  ${priority_3}
+    ${output_9}=  rest add policy  admin-view  ${policy_name_4}   forward
+    Should be true  ${output_9}
+    ${output_10}=  rest add policy match  admin-view  ${policy_name_4}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_10}
+    ${output_11}=  rest add policy interface  admin-view  ${policy_name_4}   ${switch_filter_alias_2}  filter
+    Should be true  ${output_11}
+    ${output_12}=  rest add policy interface  admin-view  ${policy_name_4}   ${switch_delivery_alias_3}  delivery
+    Should be true  ${output_12}
+    ${priority_4}=  rest update policy priority  admin-view  ${policy_name_4}  policy_priority=300
+    Should be True  ${priority_4}
+    #####
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_policy4}=  rest verify bigtap policy  ${policy_name_3}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy4}
+    ${verify_policy5}=  rest verify bigtap policy  ${policy_name_4}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy5}
+    ${verify_policy6}=  rest verify bigtap policy  ${policy_overlap_2}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy6}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    ${verify_priority_4}=  rest verify policy key  ${policy_name_3}  info  0  priority
+    Should be equal as integers  ${verify_priority_4}  300
+    ${verify_priority_5}=  rest verify policy key  ${policy_name_4}  info  0  priority
+    Should be equal as integers  ${verify_priority_5}  300
+    ${verify_priority_6}=  rest verify policy key  ${policy_overlap_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_6}  300
+    [Tags]  feature
+
+TC009: Verify policies with common delivery interface but different filter interfaces at different priorities
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_2}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_1}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=300
+    Should be True  ${priority_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  300
+    [Tags]  feature
+
+TC010: Verify policies with common delivery interface but different filter interfaces at same priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_2}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_1}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    [Tags]  feature
+
+TC011: Verify policies with common filter and delivery interfaces at different priorities
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${output_0}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_1}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=300
+    Should be True  ${priority_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  300
+    [Tags]  feature
+
+TC012: Verify policies with no common filter and delivery interfaces at different priorities
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${output_0}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_2}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_2}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=300
+    Should be True  ${priority_2}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  300
+    [Tags]  feature
+    
+TC013: Verify policy with service and priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    sleep  3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    ${output_1}=  rest add service to policy  admin-view  ${policy_name_1}  ${service_name_1}  1
+    Should be true  ${output_1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority}  200
+    [Tags]  feature
+
+TC014: Execute HA Failover and verify priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    ### HA Failover
+    rest execute ha failover
+    sleep  90
+    #### Verify policies and priorities
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    [Tags]  ha
+    
+TC015: Reboot switch and verify priority
+    ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
+    Should be True  ${priority_1}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${priority_2}=  rest update policy priority  admin-view  ${policy_name_2}  policy_priority=200
+    Should be True  ${priority_2}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    ### Reboot Switch
+    ${result}=  cli restart switch  s1  save_config=yes
+    Should be True  ${result}
+    #### Verify policies and priorities
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy3}
+    ${verify_priority_1}=  rest verify policy key  ${policy_name_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_1}  200
+    ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
+    Should be equal as integers  ${verify_priority_2}  200
+    ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
+    Should be equal as integers  ${verify_priority_3}  200
+    [Tags]  ha
+
+* Keyword
+priority suite setup
+    base suite setup
+    ${output_1}=  rest enable feature  full-match
+    Should be true  ${output_1}
+    ${output_2}=  rest add switch alias  s1  ${switch_alias}
+    Should be true  ${output_2}
+    ${output_3}=  rest add interface role  s1  ${switch_filter_intf_1}      filter        intf_nickname=${switch_filter_alias_1}
+    Should be true  ${output_3}
+    ${output_4}=  rest add interface role  s1  ${switch_delivery_intf_1}    delivery      intf_nickname=${switch_delivery_alias_1}
+    Should be true  ${output_4}
+    ${output_5}=  rest add interface role  s1  ${switch_filter_intf_2}      filter        intf_nickname=${switch_filter_alias_2}
+    Should be true  ${output_5}
+    ${output_6}=  rest add interface role  s1  ${switch_delivery_intf_2}    delivery      intf_nickname=${switch_delivery_alias_2}
+    Should be true  ${output_6}
+    ${output_7}=  rest add interface role  s1  ${switch_filter_intf_3}      filter        intf_nickname=${switch_filter_alias_3}
+    Should be true  ${output_7}
+    ${output_8}=  rest add interface role  s1  ${switch_delivery_intf_3}    delivery      intf_nickname=${switch_delivery_alias_3}
+    Should be true  ${output_8}
+    ${output_9}=  rest add interface role  s1  ${switch_delivery_intf_4}    delivery      intf_nickname=${switch_delivery_alias_4}
+    Should be true  ${output_9}
+    ${output_10}=    rest add interface role  s1  ${pre_service_s1}      service     intf_nickname=${pre_service_nick_s1}
+    Should be true  ${output_10}     
+    ${output_11}=    rest add interface role  s1  ${post_service_s1}     service     intf_nickname=${post_service_nick_s1}
+    Should be true  ${output_11}
+    ${output_12}=   rest add service    ${service_name_1}     ${pre_service_nick_s1}     ${post_service_nick_s1}
+    Should be true  ${output_12}
+    sleep  5
+
+priority test setup        
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_1}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_1}  delivery
+    Should be true  ${output_4}
+    Sleep  5
+    
+priority test teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    rest delete policy  admin-view  ${policy_name_3}
+    rest delete policy  admin-view  ${policy_name_4}
+    sleep  5
+    ${result1}=  stop syslog monitor    
+    Should be true  ${result1}
+
+priority suite teardown
+    ${output_1}=  rest delete interface role  s1  ${switch_filter_intf_1}  filter
+    Should be true  ${output_1}
+    ${output_2}=  rest delete interface role  s1  ${switch_delivery_intf_1}   delivery
+    Should be true  ${output_2}
+    ${output_3}=  rest delete interface  s1  ${switch_filter_intf_1}
+    Should be true  ${output_3}
+    ${output_4}=  rest delete interface  s1  ${switch_delivery_intf_1}
+    Should be true  ${output_4}
+    ${output_5}=  rest delete interface role  s1  ${switch_filter_intf_2}  filter
+    Should be true  ${output_5}
+    ${output_6}=  rest delete interface role  s1  ${switch_delivery_intf_2}   delivery
+    Should be true  ${output_6}
+    ${output_7}=  rest delete interface  s1  ${switch_filter_intf_2}
+    Should be true  ${output_7}
+    ${output_8}=  rest delete interface  s1  ${switch_delivery_intf_2}
+    Should be true  ${output_8}
+    ${output_9}=  rest delete interface role  s1  ${switch_filter_intf_3}  filter
+    Should be true  ${output_9}
+    ${output_10}=  rest delete interface role  s1  ${switch_delivery_intf_3}   delivery
+    Should be true  ${output_10}
+    ${output_11}=  rest delete interface  s1  ${switch_filter_intf_3}
+    Should be true  ${output_11}
+    ${output_12}=  rest delete interface  s1  ${switch_delivery_intf_3}
+    Should be true  ${output_12}
+    ${output_13}=  rest delete interface role  s1  ${switch_delivery_intf_4}   delivery
+    Should be true  ${output_13}
+    ${output_14}=  rest delete interface  s1  ${switch_delivery_intf_4}
+    Should be true  ${output_14}
+    ${output_15}=     rest delete service  ${service_name_1}
+    Should be true  ${output_15}
+    ${output_16}=   rest delete interface role  s1  ${pre_service_s1}   service     ${pre_service_nick_s1}
+    Should be true  ${output_16}
+    ${output_17}=   rest delete interface role  s1  ${post_service_s1}  service     ${post_service_nick_s1}
+    Should be true  ${output_17}
+    ${output_18}=  rest delete interface  s1  ${pre_service_s1}
+    Should be true  ${output_18}
+    ${output_19}=  rest delete interface  s1  ${post_service_s1}
+    Should be true  ${output_19}
+    rest delete switch alias  s1
+    base suite teardown
