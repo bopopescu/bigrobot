@@ -1699,7 +1699,7 @@ class T5(object):
         data = c.rest.content()
         list_spine = []
         for i in range(0, len(data)):
-            if "fabric-role" in data[i]:
+            if "fabric-role" in data[i]:  # check for the key "fabric-role" first in the data node as it is removed recently if fabric-role is not configured
                 if data[i]["fabric-role"] == "spine":
                     list_spine.append(data[i]["name"])
 
