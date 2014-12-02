@@ -14,7 +14,7 @@ usage() {
     if [ $# -ne 0 ]; then
         echo `basename $0`: ERROR: $* 1>&2
     fi
-    echo "Usage: BUILD_NAME=\"bvs master #<id>\" `basename $0` [-summary] [-detailed] [-all] [-no-scp] [-out <file>]"
+    echo "Usage: RELEASE_NAME=\"<release>\" BUILD_NAME=\"bvs master #<id>\" `basename $0` [-summary] [-detailed] [-all] [-no-scp] [-out <file>]"
     echo ''
     echo '  -summary  : provide summary report'
     echo '  -detailed : provide detailed report'
@@ -42,14 +42,14 @@ scp_to_web() {
 }
 
 
-if [ "$BUILD_NAME"x = x ]; then
+if [ "$RELEASE_NAME"x = x -o "$BUILD_NAME"x = x ]; then
     usage
 fi
 
+release=$RELEASE_NAME
 build=$BUILD_NAME
 no_scp=0
 ts=`date "+%Y-%m-%d_%H%M%S"`
-release=IronHorse
 build_str=`echo $build | sed -e 's/#//' -e 's/ /_/g'`
 output_summary=raw_data.db_collect_stats.py.${ts}.${build_str}.summary.txt
 output_summary_no_timestamp=regression_report.${build_str}.summary.txt

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 """
+Note: Must pass in BUILD_NAME environment since it is indirectly required by
+      TestSuite module.
 """
 
 import os
