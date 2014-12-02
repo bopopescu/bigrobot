@@ -67,7 +67,7 @@ T5 Monitor session source tcp string
 T6 Monitor session destination interface numerical only
 	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
-	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
+	...  *Invalid argument: Invalid Interface, e.g. ethernet1, ethernet1/1: 3; Invalid characters in interface*
 	...  Cli Run  master  destination switch test interface 3
 	[Tags]  MonitorSession  BSC-5017
 

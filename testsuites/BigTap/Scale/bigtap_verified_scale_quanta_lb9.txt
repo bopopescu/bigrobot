@@ -50,8 +50,8 @@ TC1: IPv4 Scaling test with 2020 policies in full-match mode
     sleep  100    
     [Tags]  ipv4  policy-scale  full-match
 
-TC2: IPv4 Scaling test with 4040 policies in l3-l4-match mode
-    ${thost_enabled}=  rest enable feature  l3-l4-match
+TC2: IPv4 Scaling test with 4040 policies in l3-l4-mode mode
+    ${thost_enabled}=  rest enable feature  l3-l4-mode
     Should be true  ${thost_enabled}    
     : FOR    ${INDEX}    IN RANGE    1    4041
     \    Log    ${INDEX}
@@ -76,7 +76,7 @@ TC2: IPv4 Scaling test with 4040 policies in l3-l4-match mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv4  policy-scale  l3-l4-match
+    [Tags]  ipv4  policy-scale  l3-l4-mode
 
 TC3: IPv4 Scaling test with 2020 policies in l3-l4-offset-match mode
     ${thost_enabled}=  rest enable feature  l3-l4-offset-match
@@ -150,8 +150,8 @@ TC5: IPv6 Scaling test with 1919 policies in full-match mode
     sleep  100    
     [Tags]  ipv6  policy-scale  full-match
 
-TC6: IPv6 Scaling test with 1919 policies in l3-l4-match mode
-    ${thost_enabled}=  rest enable feature  l3-l4-match
+TC6: IPv6 Scaling test with 1919 policies in l3-l4-mode mode
+    ${thost_enabled}=  rest enable feature  l3-l4-mode
     Should be true  ${thost_enabled}    
     : FOR    ${INDEX}    IN RANGE    1    1920
     \    Log    ${INDEX}
@@ -176,7 +176,7 @@ TC6: IPv6 Scaling test with 1919 policies in l3-l4-match mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv6  policy-scale  l3-l4-match
+    [Tags]  ipv6  policy-scale  l3-l4-mode
 
 TC7: IPv6 Scaling test with 1 policy and 1919 match conditions in full-match mode
     ${thost_enabled}=  rest enable feature  full-match

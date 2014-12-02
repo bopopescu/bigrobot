@@ -15,7 +15,7 @@ Library             OperatingSystem.py
 Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -178,7 +178,7 @@ TC29: Verify SNMP OID ifSpeed of PortChannel across 40G Interface
 TC30: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1061  80000
+    verify snmp attribute  s1  ifHighSpeed.1061  120000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  40G  Lag
@@ -283,7 +283,7 @@ TC42: Verify snmptrap is generated on dataport linkflap
     ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs4810
     Should contain  ${output}  Link up on interface 1002     
     config  node=s1    cmd=no snmp-server trap linkUpDown interval 30      
-    [Tags]  snmptrap  runthis 
+    [Tags]  snmptrap 
 
 TC43: Modify SNMP community and verify SNMP OID sysContact
     cli delete snmp keyword  s1  community  ${snmp_ccommunity_1}

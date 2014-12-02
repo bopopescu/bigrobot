@@ -663,10 +663,10 @@ Verify subnet mask on vns router ip
     ${result} =                                 REST show endpoints mac         ${mac1}
     Should Be True                              ${result}                       
     ${mac2} =                                   BASH get intf mac               h6                      bond0
+    BASH ping                                   h6                              10.251.2.212            count=10
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
-    BASH ping                                   h6                              10.251.2.212            count=10
     ${loss} =                                   BASH ping                       h6                      10.251.2.212            count=10
     Should Be True                              ${loss} == 0
     REST add vns ip                             X                               X1                      10.251.1.254            25

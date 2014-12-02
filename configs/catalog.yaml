@@ -2,7 +2,8 @@
 #
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
-database: test_catalog_201410
+#database: test_catalog_201410
+database: test_catalog_201412
 products:
   - BigChain
   - BigTap
@@ -23,7 +24,7 @@ features:
       rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
       singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
       filemanagement, running-config, initialconfig, virtualip, openstack,
-      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, ironhorse-plus,
     ]
 
 # For "milestone" builds under qualification (e.g., B1, B2, R1, etc), there may

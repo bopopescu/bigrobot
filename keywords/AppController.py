@@ -973,8 +973,8 @@ class AppController(object):
                 # if (re.match("^d", c2_pid)):
                 c2.sudo('kill -9 %s' % (c2_pid))
             # Add rm of the file if file already exist in case of a new test
-            c1.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
-            c2.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+            c1.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
             syslogMonitorFlag = True
             return True
         except:
@@ -992,8 +992,8 @@ class AppController(object):
             t = test.Test()
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
-            filename = re.split('\n', result['content'])[1:-1]
-            c.sudo("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
+            filename = re.split('\n', result['content'])[2:-1]
+            c.bash("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
             return True
         else:
             return True
@@ -1023,23 +1023,39 @@ class AppController(object):
             try:
                 helpers.log("****************    syslog Log From C1    ****************")
                 result = c1.sudo('cat c1_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
+            except:
+                helpers.log("Split failed for c1")
+                return False
+
+            else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
-            except(AttributeError):
-                helpers.log("No Errors From syslog Monitor on C1")
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C1")
 
             try:
                 helpers.log("****************    syslog Log From C2    ****************")
                 result = c2.sudo('cat c2_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
+            except:
+                helpers.log("Split failed for c2")
+                return False
+            else:
                 if split:
-                    helpers.warn("syslog Errors Were Detected At: %s " % helpers.ts_long_local())
-            except(AttributeError):
-                helpers.log("No Errors From syslog Monitor on C2")
-            return True
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C2")
+                    helpers.sleep(2)
+                    return True
         else:
             helpers.log("syslogMonitorFlag is not set: Returning")
+            helpers.sleep(2)
+            return False
 
 # ## Added by Sahaja
     def get_syslog_monitor_pid(self, role):
@@ -1049,7 +1065,7 @@ class AppController(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        c_result = c.bash('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
+        c_result = c.bash('ps ax | pgrep tail | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
@@ -1091,7 +1107,7 @@ class AppController(object):
         if len(role_data_after_delete) == 0:
             helpers.test_log("All the roles have been deleted for all the switch interfaces")
         else:
-            helpers.test_failure("Few roles are still left %s" % (role_data_after_delete))
+            helpers.test_log("Few roles are still left %s" % (role_data_after_delete))
             return False
 
         # Delete Switches as roles are deleted
@@ -1108,8 +1124,10 @@ class AppController(object):
         data = c.rest.content()
         if len(data) == 0:
             helpers.test_log("All the switches have been deleted")
+            return True
         else:
-            helpers.test_failure("Few switches have not been deleted %s" % (data))
+            helpers.test_log("Few switches have not been deleted %s" % (data))
+            return False
 
 
 # ## Added by Sahaja
@@ -1143,7 +1161,8 @@ class AppController(object):
                 if "name" in add_grp.keys():
                     c.rest.delete(delete_url % (add_grp['name']))
                 else:
-                    helpers.test_failure("There is no name field for %s" % add_grp)
+                    helpers.test_log("There is no name field for %s" % add_grp)
+                    return False
         else:
             helpers.test_log("Add-grp data is empty")
             return True
@@ -1153,8 +1172,9 @@ class AppController(object):
         delete_addr_grp_data = c.rest.content()
         if len(delete_addr_grp_data) == 0:
             helpers.test_log("All the address-groups have been deleted")
+            return True
         else:
-            helpers.test_failure("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
+            helpers.test_log("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
             return False
 
 # ## Added by Sahaja
@@ -1186,6 +1206,7 @@ class AppController(object):
                 for grp in ugrp.keys():
                     helpers.test_log("Deleting the group %s" % (grp))
                     c.rest.delete(delete_url % (grp))
+                    return True
         else:
             helpers.test_log("There are no user-defined offsets to delete")
             return True
@@ -1237,8 +1258,9 @@ class AppController(object):
         delete_policy_data = c.rest.content()
         if len(delete_policy_data) == 0:
             helpers.test_log("All the user-defined-groups have been deleted")
+            return True
         else:
-            helpers.test_failure("Few policies have not been deleted %s" % (delete_policy_data))
+            helpers.test_log("Few policies have not been deleted %s" % (delete_policy_data))
             return False
 
 # ## Added by Sahaja
@@ -1260,9 +1282,47 @@ class AppController(object):
             ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
             if ver:
                 vf.write("%s %s" % (ver.group(1), ver.group(2)))
+                return True
             else:
-                helpers.test_failure("Did not match the version format, got %s" % (ver))
+                helpers.test_log("Did not match the version format, got %s" % (ver))
                 return False
         else:
-            helpers.test_failure("Version string is empty")
+            helpers.test_log("Version string is empty")
             return False
+
+# ## Animesh
+    def return_version_number(self, node="master", user="admin", password="adminadmin", local=True):
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_bigtap(n.platform()):
+            '''
+                BigTap Controller
+            '''
+            c = t.controller('master')
+            url = '/rest/v1/system/version'
+            if user == "admin":
+                try:
+                    t.node_reconnect(node='master', user=str(user), password=password)
+                    c.rest.get(url)
+                    content = c.rest.content()
+                    output_value = content[0]['controller']
+                except:
+                    return False
+                else:
+                    return output_value
+            else:
+                try:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    output_value = content[0]['controller']
+                    output_string = output_value.split(' ')
+
+                except:
+                    t.node_reconnect(node='master')
+                    return False
+                else:
+                    if local is True:
+                        t.node_reconnect(node='master', user=str(user), password=password)
+                    return output_string[3]
+

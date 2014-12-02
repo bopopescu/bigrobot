@@ -746,4 +746,5 @@ environment test setup
     start syslog monitor
     
 environment test teardown
-    stop syslog monitor      
+    stop syslog monitor
+    sleep  2

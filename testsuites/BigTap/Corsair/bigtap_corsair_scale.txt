@@ -241,8 +241,10 @@ extreme tunnel teardown
     extreme save config  s3
 
 corsair test setup
-    write version to file
-    start syslog monitor
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     extreme tunnel setup  s3  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask} 
     extreme tunnel setup  s3  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask} 
     rest add policy  admin-view  ${policy_name_1}   forward
@@ -256,7 +258,8 @@ corsair test teardown
     delete traffic
     extreme tunnel teardown
     sleep  10
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
 corsair suite teardown
     ${result}=  cli add portchannel  s1  1  49-50  L2
