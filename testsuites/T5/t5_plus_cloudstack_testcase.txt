@@ -42,12 +42,18 @@ create a VM in each network and verify the endpoint in BCF
 verify sync operation between cloudstack management and BCF controller
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed 
-Verify floating IP assignment to each VM
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
-migrate a VM to different host workflow
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested
+Verify floating IP assignment to each VM KVM
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
+Verify floating IP assignment to each VM in vmware 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
+migrate a VM to different host workflow vmware
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed
+migrate a VM to different host workflow KVM
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed	
 delete a VM 
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed 
@@ -58,8 +64,8 @@ delete VPC
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed
 check the VM connectivity between VPC 
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 
 check the VM connectivity within VPC 
 	[Tags]  feature  cloudstack  IronHorse  manual
@@ -77,8 +83,8 @@ Verify the VPC/network creation after BCF controller failover
 	[Tags]  feature  cloudstack  IronHorse  manual
 	manual passed
 adding Manual membership rule to cloudstack tenants
-	[Tags]  feature  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  feature  cloudstack  IronHorse  manual
+	manual passed 
 router workflow test in cloudstack
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed
@@ -89,8 +95,8 @@ Test adding cluster into exsisting zone with the new server addition
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed 
 Delete and readd BCF controllers from the cloudstack management
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual	
+	manual passed 
 Upgrade cloudstack packagae workflow with BCF controllers present
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed 
@@ -104,8 +110,8 @@ verify sync operation using BCF CLI deleting a endpoint
 	[Tags]  solution  cloudstack  IronHorse  manual
 	manual passed 
 Upgrade BCF controller to check SSL ceritificate preserve 
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 seperate storage VLAN workflow while deploying cloudstack
 	[Tags]  solution  cloudstack  IronHorse  manual	 
 	manual passed
@@ -122,12 +128,12 @@ Test deployment script for KVM
 	manual passed 
 
 Performance(between 2 VM using iperf)
-	[Tags]  performance  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  performance  cloudstack  IronHorse  manual
+	manual passed 
 
 reboot cloudstack management server
-	[Tags]  solution  cloudstack  IronHorse  manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack  IronHorse  manual
+	manual passed 
 
 reboot cloudstack KVM host node
 	[Tags]  solution  cloudstack  IronHorse  manual
