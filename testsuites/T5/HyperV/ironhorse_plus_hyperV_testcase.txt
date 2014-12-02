@@ -7,15 +7,15 @@ Force Tags      IronHorse-plus
 
 * Test Cases
 TC001 Configure lacp nic teaming on hyperV host
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 TC002 Flap single nic teaming member and verify VM traffic switch to second member
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC003 Reboot hyperV host and verify lacp nic teaming works after reboot
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 TC004 Configure static nic teaming on hyperV host
@@ -26,7 +26,7 @@ TC005 Flap single static nic teaming member and verify VM traffic switch to seco
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC006 Configure switch independent all active adapter nic teaming on hyperV host
+TC006 Configure switch independent adapter nic teaming on hyperV host
     manual untested
     [Tags]              feature         manual          hyperV
     
@@ -35,64 +35,67 @@ TC007 Flap active member and verify VM traffic switch to second member
     [Tags]              feature         manual          hyperV
 
 TC008 Verify SCVMM is able to manage hyperV host through fabric
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC009 Verify SCVMM is able to spawn VM through fabric
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 TC010 Spawn VM across two hyperV host in the same segment with vlan based logical network
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC011 Spawn VM across two hyperV host across segment same tenant with vlan based logical network
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC012 Spawn VM across two hyperV host across tenant with vlan based logical network
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC013 Spawn two VM in the same host different segment with vlan based logical network
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC014 Spawn two VM in the same host different tenant with vlan based logical network
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC015 Verify VM is able to obtain dhcp assigned address through fabric without dhcp relay
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC016 Verify VM is able to obtain dhcp assigned address through fabric dhcp relay
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC017 Configure file sharing between host and VM ???
     manual untested
     [Tags]              feature         manual          hyperV
 
-TC018 Configure NVGRE gateway service for VM ?
+TC018 Configure NVGRE gateway service for VM 
     manual untested
     [Tags]              feature         manual          hyperV
 
 TC019 Configure 40gig nic teaming on hyperV host
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC020 Flap single 40gig interface on hyperV host
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
+TC021 Move VM from one set of ports to another on the same host and verify endpoint is updated
+    manual passed   
+    [Tags]              feature         manual          hyperV
 
 TC030 Restart ofad on a single leaf switch
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC031 Restart ofad on both leaf switch
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC032 Restart ofad on both spine switch
@@ -100,7 +103,7 @@ TC032 Restart ofad on both spine switch
     [Tags]              feature         manual          hyperV
 
 TC033 Flap all members in a lacp portgroup
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC034 Flap leaf to spine port
@@ -108,12 +111,12 @@ TC034 Flap leaf to spine port
     [Tags]              feature         manual          hyperV
 
 TC035 Restart ofad on 40gig leaf switch
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 
 TC040 Measure L2 traffic forwarding between two VM in 10gig using iperf
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC041 Measure L2 traffic forwarding between two VM in 40gig host using iperf
@@ -131,19 +134,19 @@ TC043 Measure L3 traffic forwarding between two VM in 40gig host using iperf
 
 
 TC050 Verify Controller HA failover does not impact VM creation or VM traffic
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC051 Verify master controller reboot does not impact VM creation or VM traffic
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC052 Verify standby controller reboot does not impact VM creation or VM traffic
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 TC053 Verify master controller powercycle does not impact VM creation or VM traffic
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC054 Verify standby controller powercycle does not impact VM creation or VM traffic
@@ -159,21 +162,21 @@ TC056 Verify leaf switch reboot does not impact VM traffic
     [Tags]              feature         manual          hyperV
 
 TC057 Reboot all switches
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC058 Upgrade Controller 
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC059 Reboot both controller
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 
 
 TC060 VM Live Migration to another host
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
 
 TC061 Clone VM to another host same network
@@ -185,19 +188,19 @@ TC062 Clone VM to another host different network
     [Tags]              feature         manual          hyperV
     
 TC063 Spawn VM in controller headless mode
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
-TC064 Verify spawn VM in headless mode will be able to forward traffic even when controller is offline
-    manual untested
+TC064 Verify spawn VM in headless mode will be able to forward traffic even when controller is offline in NVGRE mode
+    manual passed
     [Tags]              feature         manual          hyperV
  
 TC065 Change VM from one network to another and verify endpoint is updated correctly
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 TC066 Reboot SCVMM Server
-    manual untested
+    manual passed
     [Tags]              feature         manual          hyperV
     
 
