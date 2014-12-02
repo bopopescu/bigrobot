@@ -47,7 +47,7 @@ ${sleepBefore}=   5
 ###
 ###
 
-Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+TC01 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -62,9 +62,9 @@ Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  switch-platform  L2  traffic  feature  test1   
+    [Tags]  switch-platform  L2  traffic  feature    
 
-Uni-Directional L2 Traffic flow=a->c traffic linerate 10% pktsize 64
+TC02 Uni-Directional L2 Traffic flow=a->c traffic linerate 10% pktsize 64
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -81,7 +81,7 @@ Uni-Directional L2 Traffic flow=a->c traffic linerate 10% pktsize 64
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
     [Tags]  switch-platform  L2  traffic  feature         
 
-Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 256 
+TC03 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 256 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:05  dst_mac=00:11:01:00:00:06  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -98,7 +98,7 @@ Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 256
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
     [Tags]  switch-platform  L2  traffic  feature   
 
-Uni-Directional L2 Traffic flow=a->c traffic linerate 25% pktsize 256
+TC04 Uni-Directional L2 Traffic flow=a->c traffic linerate 25% pktsize 256
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -115,7 +115,7 @@ Uni-Directional L2 Traffic flow=a->c traffic linerate 25% pktsize 256
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
     [Tags]  switch-platform  L2  traffic  feature       
 
-Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 512 
+TC05 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -132,7 +132,7 @@ Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 512
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
     [Tags]  switch-platform  L2  traffic  feature
 
-Uni-Directional L2 Traffic flow=a->c traffic linerate 50% pktsize 512
+TC06 Uni-Directional L2 Traffic flow=a->c traffic linerate 50% pktsize 512
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
     start traffic  ${stream}
     sleep          5
@@ -149,7 +149,7 @@ Uni-Directional L2 Traffic flow=a->c traffic linerate 50% pktsize 512
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
     [Tags]  switch-platform  L2  traffic  feature
 
-Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1024
+TC07 Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1024
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:02:01  dst_mac=00:11:01:00:02:02  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_bidir_flow
     start traffic  ${stream}
     sleep          5
@@ -163,7 +163,7 @@ Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1024
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  feature
 
-Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
+TC08 Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
     start traffic  ${stream}
     sleep          5    
@@ -177,7 +177,7 @@ Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  feature  
 
-Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
+TC09 Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
     start traffic  ${stream}
     sleep          5
@@ -191,7 +191,7 @@ Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  feature  
 
-Bi-Directional L2 Traffic flow=a<->c traffic linerate 100% pktsize 1518
+TC10 Bi-Directional L2 Traffic flow=a<->c traffic linerate 100% pktsize 1518
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
     start traffic  ${stream}
     sleep          5
@@ -205,7 +205,7 @@ Bi-Directional L2 Traffic flow=a<->c traffic linerate 100% pktsize 1518
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  feature  
 
-Uni-Directional L2 Traffic jumbo flow=a->c traffic linerate 10% pktsize 9150
+TC11 Uni-Directional L2 Traffic jumbo flow=a->c traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:01:0e  dst_mac=00:11:01:00:01:0f  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_jumbo_flow
     start traffic  ${stream}
     sleep          5
@@ -219,7 +219,7 @@ Uni-Directional L2 Traffic jumbo flow=a->c traffic linerate 10% pktsize 9150
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature    
 
-Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 10% pktsize 9150
+TC12 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
     start traffic  ${stream}
     sleep          5
@@ -233,7 +233,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 10% pktsize 9150
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
-Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 25% pktsize 9150
+TC13 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 25% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=25  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
     start traffic  ${stream}
     sleep          5
@@ -247,7 +247,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 25% pktsize 9150
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
-Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 50% pktsize 9150
+TC14 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 50% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
     start traffic  ${stream}
     sleep          5
@@ -261,7 +261,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 50% pktsize 9150
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
-Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 100% pktsize 9150
+TC15 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 100% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=100  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
     start traffic  ${stream}
     sleep          5
@@ -275,7 +275,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 100% pktsize 9150
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
-leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
     clear stats
     #clear interface counters on controller
@@ -295,7 +295,7 @@ leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic 
     stop traffic   ${stream}          
     [Tags]  switch-platform  L2  traffic  linkflap  feature          
 
-spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
     clear stats
     #clear interface counters on controller
@@ -315,7 +315,7 @@ spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic 
     stop traffic   ${stream}          
     [Tags]  switch-platform  L2  traffic  linkflap  feature    
 
-leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
+TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_bidir_flow
     clear stats
     #clear interface counters on controller
@@ -335,7 +335,7 @@ leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic 
     stop traffic   ${stream}          
     [Tags]  switch-platform  L2  traffic  linkflap  feature    
     
-spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518 
+TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
     clear stats
     #clear interface counters on controller
