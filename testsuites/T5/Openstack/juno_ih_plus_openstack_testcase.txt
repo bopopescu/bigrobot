@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       IronHorse-Plus
+Force Tags       REMOVED FROM IRONHORSE PLUS
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Platform.py
