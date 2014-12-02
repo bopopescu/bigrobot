@@ -1699,8 +1699,9 @@ class T5(object):
         data = c.rest.content()
         list_spine = []
         for i in range(0, len(data)):
-            if data[i]["fabric-role"] == "spine":
-                list_spine.append(data[i]["name"])
+            if "fabric-role" in data[i]:  # check for the key "fabric-role" first in the data node as it is removed recently if fabric-role is not configured
+                if data[i]["fabric-role"] == "spine":
+                    list_spine.append(data[i]["name"])
 
         helpers.log("Total Spine in the topology: %d" % len(list_spine))
         return list_spine
