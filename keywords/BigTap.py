@@ -3026,6 +3026,7 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 # Get the hashed value of password
+                t.node_reconnect(node='master')
                 helpers.log("Password is %s" % json.dumps(password))
                 url1 = '/api/v1/data/controller/core/aaa/hash-password[password=%s]' % json.dumps(password)
                 c.rest.get(url1)
@@ -3153,8 +3154,8 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                #
-                cli_input_1 = "group " + str(group_name)
+                t.node_reconnect(node='master')
+                cli_input_1 = str("group ") + str(group_name)
                 c.config(cli_input_1)
                 cli_input_2 = "no associate user " + str(username)
                 c.config(cli_input_2)

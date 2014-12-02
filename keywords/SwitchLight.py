@@ -2236,3 +2236,41 @@ class SwitchLight(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.switch_cli_exec_walk(node, string, file_name, padding)
 
+#### Added by Sahaja
+    def clean_switch_configuration(self, node, word):
+        '''Delete specified configuration on the switch
+
+        Input: Switch name
+
+        Output: Return False if deletion is not successful
+        '''
+
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cmd = "show running-config %s" % (word)
+            s1.cli(cmd)
+
+        except:
+            helpers.test_log("Could not issue show command")
+            return False
+
+            # show_po = s1.cli_content()
+        content = string.split(s1.cli_content(), '\n')
+        show_po = filter(lambda x: re.search(r'^{}'.format(word), x), content)
+        helpers.test_log("List of %s is %s" % (word, show_po))
+        if len(show_po) != 0:
+            for po in show_po:
+                del_cmd = "no " + po
+                s1.config(del_cmd)
+            s1.cli(cmd)
+            del_content = string.split(s1.cli_content(), '\n')
+            op_del = filter(lambda x: re.search(r'^{}'.format(word), x), del_content)
+            if len(op_del) == 0:
+                helpers.test_log("Deletion succeeded")
+                return True
+            else:
+                helpers.test_failure("Deletion not successful few %s are left %s" % (word, op_del))
+        else:
+            helpers.test_log("There are no %s to be deleted" % (word))
+            return True

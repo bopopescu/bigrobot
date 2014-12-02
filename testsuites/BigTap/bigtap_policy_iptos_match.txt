@@ -1,16 +1,19 @@
 *Settings
-Documentation  BigTap IP ToS Match Test Suite
-Suite Setup  iptos suite setup
-Suite Teardown   iptos suite teardown
-Test Setup   iptos test setup
-Test Teardown  iptos test teardown 
-Force Tags   BigTap  ToS
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           BigTap IP ToS Match Test Suite
+Suite Setup             iptos suite setup
+Suite Teardown          iptos suite teardown
+Test Setup              iptos test setup
+Test Teardown           iptos test teardown 
+Force Tags              BigTap  ToS  Blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Library                 keywords/ThirdParty.py
 
 ############################ TOPOLOGY #################################
 ##                                                                   ##
@@ -424,6 +427,8 @@ iptos suite setup
     sleep  5
 
 iptos test setup        
+    write version to file
+    start syslog monitor
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias}  filter
@@ -433,6 +438,7 @@ iptos test setup
 iptos test teardown
     rest delete policy  admin-view  ${policy_name_1}
     sleep  5
+    stop syslog monitor    
 
 iptos suite teardown
     rest delete interface role  s1  ${switch_filter_intf}  filter 

@@ -6,9 +6,14 @@ Test Setup      Bigtap list op l3_l4 case setup
 Test Teardown   Bigtap list op l3_l4 case teardown
 Force Tags      BigTap
 #Library         keywords_dev/mingtao/Common.py
-Library         keywords/BigTap.py 
-Library         keywords/BsnCommon.py  
-Library         OperatingSystem
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 Resource	testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 

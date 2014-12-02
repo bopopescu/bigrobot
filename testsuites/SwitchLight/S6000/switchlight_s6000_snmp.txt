@@ -2,16 +2,20 @@
 Documentation       Dell S6000: SNMP Sanity Test Suite
 Suite Setup         snmp suite setup
 Suite Teardown      base suite teardown 
-Test Setup          base test setup
-Test Teardown       base test teardown
-Force Tags          SwitchLight  SNMP  s4810 
+Test Setup          snmp test setup
+Test Teardown       snmp test teardown
+Force Tags          SwitchLight  SNMP  Dell  s4810 
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.0-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -22,10 +26,10 @@ ${snmp_location_1}          CS-214-6012
 ${snmp_location_2}          CS214-6012    
 ${snmp_trap_svr_1}          10.9.18.3
 ${snmp_trap_svr_2}          10.9.18.2
-${tenG_intf}                ethernet15
-${fortyG_intf}              ethernet9
-${pc_intf_1}                9-10
-${pc_intf_2}                9-10
+${tenG_intf}                ethernet7
+${fortyG_intf}              ethernet11
+${pc_intf_1}                11-12
+${pc_intf_2}                11-12
 ${pc_number}                1
 ${pc_name}                  port-channel1
 
@@ -71,33 +75,33 @@ TC10: Verify SNMP OID ifMtu of ma1
     [Tags]  common  
         
 TC11: Verify SNMP OID ifDescr of 40Gig Data Port  
-    verify snmp attribute  s1  ifDescr.1009  ${fortyG_intf}
+    verify snmp attribute  s1  ifDescr.1011  ${fortyG_intf}
     [Tags]  40G
         
 TC12: Verify SNMP OID ifType of 40Gig Data Port  
-    verify snmp attribute  s1  ifType.1009  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1011  ethernetCsmacd
     [Tags]  40G    
     
 TC13: Verify SNMP OID ifAdminStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifAdminStatus.1009  up
+    verify snmp attribute  s1  ifAdminStatus.1011  up
     [Tags]  40G    
     
 TC14: Verify SNMP OID ifOperStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1009  up
+    verify snmp attribute  s1  ifOperStatus.1011  up
     [Tags]  40G    
     
 TC15: Verify SNMP OID ifSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1009  4294967295
+    verify snmp attribute  s1  ifSpeed.1011  4294967295
     [Tags]  40G    
     
 TC16: Verify SNMP OID ifHighSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1009  40000
+    verify snmp attribute  s1  ifHighSpeed.1011  40000
     [Tags]  40G    
 
 TC17: Verify SNMP OID ifPhysAddress of 40Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${fortyG_intf} 
     ${my_mac_address}=  strip character from string  ${mac_address1}  ${0}  blank   
-    verify snmp attribute  s1  ifPhysAddress.1009  ${my_mac_address}
+    verify snmp attribute  s1  ifPhysAddress.1011  ${my_mac_address}
     [Tags]  40G
 
 TC18: Verify SNMP OID ifDescr of PortChannel across 40G Interface
@@ -175,19 +179,22 @@ TC27: Verify snmpbulkwalk works as expected
     [Tags]  snmpbulkwalk
 
 TC28: Verify snmptrap is generated on dataport linkflap
+    config  node=s1    cmd=snmp-server trap linkUpDown interval 30
+    sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10
     cli disable interface  s1  ${tenG_intf}
-    sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link down on interface 1015"
-    Should contain  ${output}  Operational state: 2  
+    sleep  90
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs6000
+    Should contain  ${output}  Link down on interface 1007  
     sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10    
     cli enable interface  s1  ${tenG_intf}
-    sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link up on interface 1015"
-    Should contain  ${output}  Operational state: 1     
+    sleep  90
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rs6000
+    Should contain  ${output}  Link up on interface 1007 
+    config  node=s1    cmd=no snmp-server trap linkUpDown interval 30    
     [Tags]  snmptrap 
 
 TC29: Modify SNMP community and verify SNMP OID sysContact
@@ -273,4 +280,10 @@ verify config
     Should Contain   ${snmp_output}   ${snmp_contact_1}        
     Should Contain   ${snmp_output}   ${snmp_community_1}        
     Should Contain   ${snmp_output}   enabled
-
+    
+snmp test setup
+    write version to file
+    start syslog monitor
+    
+snmp test teardown
+    stop syslog monitor  

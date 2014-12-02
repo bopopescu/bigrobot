@@ -12,5 +12,6 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test RESTclient - show user
-    #[Tags]  skipped
+    [Tags]  skipped
     restclient show user negative
+

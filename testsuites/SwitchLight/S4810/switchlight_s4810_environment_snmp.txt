@@ -1,13 +1,18 @@
 *Settings
-Documentation  BigTap Dell S4810 Environment Test Suite
-Suite Setup  environment suite setup
-Suite Teardown   base suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags  SwitchLight  switch-platform  BigTap  s4810
-Library  keywords/BsnCommon.py
-Library  keywords/SwitchLight.py
-Library  Collections.py
+Documentation       BigTap Dell S4810 Environment Test Suite
+Suite Setup         environment suite setup
+Suite Teardown      base suite teardown
+Test Setup          environment test setup
+Test Teardown       environment test teardown 
+Force Tags          SwitchLight  switch-platform  BigTap  s4810
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
 ${snmp_ccommunity_1}        ro public
@@ -216,22 +221,22 @@ TC28: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SN
     
 TC29: Verify Status for Thermal Sensor 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status    
 
 TC30: Verify Status for Thermal Sensor 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status    
 
 TC31: Verify Status for Thermal Sensor 3 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status    
     
 TC32: Verify Status for Thermal Sensor 4 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Status
-    Should be equal as strings  ${thermal_value}  Good    
+    Should be equal as strings  ${thermal_value}  Sensor Functional    
     [Tags]    thermal  status    
 
 TC33: Verify temperature reading from thermal sensor 1 is same in CLI and in SNMP walk output        
@@ -398,4 +403,11 @@ environment suite setup
     cli delete portchannel  s1  1            
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
-    Sleep   30             
+    Sleep   30       
+    
+environment test setup
+    write version to file
+    start syslog monitor
+    
+environment test teardown
+    stop syslog monitor          

@@ -1,16 +1,19 @@
 *Settings
-Documentation  Corsair Tunnelling Test Suite
-Suite Setup  corsair suite setup
-Suite Teardown   corsair suite teardown
-#Test Setup   base test setup
-#Test Teardown  base test teardown 
-Force Tags   Corsair  BigTap  Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           Corsair Tunnelling Test Suite
+Suite Setup             corsair suite setup
+Suite Teardown          corsair suite teardown
+Test Setup              corsair test setup
+Test Teardown           corsair test teardown 
+Force Tags              corsair  bigtap  ha  tunnelling
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 keywords/ThirdParty.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 ####### TOPOLOGY
 ##
@@ -1000,6 +1003,12 @@ verify traffic rate across tunnels
     verify results  e  h  transmitted_frame_rate  received_valid_frame_rate        
     verify results  g  f  transmitted_frame_rate  received_valid_frame_rate        
 
+corsair test setup
+    write version to file
+    start syslog monitor
+    
+corsair test teardown
+    stop syslog monitor    
     
 corsair suite setup
     base suite setup

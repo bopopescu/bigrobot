@@ -854,10 +854,17 @@ class Test(object):
                                             " 'ixia', 'bigtap-ixia')"
                                             % node)
             platform = self.topology_params_nodes()[node]['platform']
+            if platform.lower() in ['ixia', 'bigtap-ixia']:
+                try:
+                    # IXIA support is not available in some packages. So
+                    # load it only if it is truly required.
+                    import autobot.node_ixia as node_ixia
+                except:
+                    helpers.environment_failure("Unable to import node_ixia")
             if platform.lower() == 'ixia':
-                n = a_node.IxiaNode(node, t)
+                n = node_ixia.IxiaNode(node, t)
             elif platform.lower() == 'bigtap-ixia':
-                n = a_node.BigTapIxiaNode(node, t)
+                n = node_ixia.BigTapIxiaNode(node, t)
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)
@@ -900,21 +907,26 @@ class Test(object):
     def node_reconnect(self, node, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
-        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
-        # don't do it using REST since we've probably lost the connection.
         if helpers.is_controller(node):
-            if node == 'master':
-                if self._current_controller_master:
-                    node_name = self._current_controller_master
-                else:
-                    helpers.environment_failure("Unable to resolve actual name"
-                                                " of master controller.")
-            elif node == 'slave':
-                if self._current_controller_slave:
-                    node_name = self._current_controller_slave
-                else:
-                    helpers.environment_failure("Unable to resolve actual name"
-                                                " of slave controller.")
+            if node in ['master', 'slave']:
+                try:
+                    c = self.controller(node, resolve_mastership=True)
+                    node_name = c.name()
+                except:
+                    # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
+                    # don't do it using REST since we've probably lost the connection.
+                    if node == 'master':
+                        if self._current_controller_master:
+                            node_name = self._current_controller_master
+                        else:
+                            helpers.environment_failure("Unable to resolve actual name"
+                                                        " of master controller.")
+                    elif node == 'slave':
+                        if self._current_controller_slave:
+                            node_name = self._current_controller_slave
+                        else:
+                            helpers.environment_failure("Unable to resolve actual name"
+                                                        " of slave controller.")
             else:
                 node_name = node
 
