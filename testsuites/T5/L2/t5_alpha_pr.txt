@@ -92,6 +92,7 @@ T5 test teardown
 	rest delete tenant  internal
 
 T5 test setup
+    add fabric switch
 	base test setup
 	sleep  5	
 
