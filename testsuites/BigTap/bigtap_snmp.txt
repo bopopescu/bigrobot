@@ -266,9 +266,7 @@ TC39: HW Appliance: Verify Fan Speed
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
     [Tags]  hw  snmp            
-    
-                            
-          
+                                      
 * Keywords
 snmp suite setup
     base suite setup
@@ -284,11 +282,14 @@ snmp suite setup
     Sleep  10        
 
 snmp test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
 
 snmp test teardown
-    stop syslog monitor
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 verify config
     ${snmp_output}=  rest show snmp

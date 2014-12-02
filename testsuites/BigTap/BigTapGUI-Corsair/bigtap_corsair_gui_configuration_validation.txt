@@ -126,7 +126,7 @@ T3.3 Another Filter Interface group with previous filter interface and name filt
  	Configure Big Tap Interface Group from Big Tap Menu			filter				filter-group2		ixia-2-9
 	[Tags]  corsair
 T3.4 Another Delivery Interface group with previous delivery interface				
- 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery group2		ixia-2-15	
+ 	Configure Big Tap Interface Group from Big Tap Menu			delivery			delivery:group2		ixia-2-15	
 	[Tags]  corsair
 T3.5 Delete filter interface from Filter Interface group					
  	Delete Big Tap Interface from Interface Group				filter				filter-group		ixia-2-9

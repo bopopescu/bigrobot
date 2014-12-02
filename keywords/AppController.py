@@ -973,8 +973,8 @@ class AppController(object):
                 # if (re.match("^d", c2_pid)):
                 c2.sudo('kill -9 %s' % (c2_pid))
             # Add rm of the file if file already exist in case of a new test
-            c1.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
-            c2.sudo("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+            c1.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
             syslogMonitorFlag = True
             return True
         except:
@@ -992,8 +992,8 @@ class AppController(object):
             t = test.Test()
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
-            filename = re.split('\n', result['content'])[1:-1]
-            c.sudo("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
+            filename = re.split('\n', result['content'])[2:-1]
+            c.bash("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
             return True
         else:
             return True
@@ -1023,7 +1023,7 @@ class AppController(object):
             try:
                 helpers.log("****************    syslog Log From C1    ****************")
                 result = c1.sudo('cat c1_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
             except:
                 helpers.log("Split failed for c1")
                 return False
@@ -1031,27 +1031,30 @@ class AppController(object):
             else:
                 if split:
                     helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C1")
-                    return True
 
             try:
                 helpers.log("****************    syslog Log From C2    ****************")
                 result = c2.sudo('cat c2_syslog_dump.txt')
-                split = re.split('\n', result['content'])[1:-1]
+                split = re.split('\n', result['content'])[2:-1]
             except:
                 helpers.log("Split failed for c2")
                 return False
             else:
                 if split:
                     helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
                     return False
                 else:
                     helpers.log("No Errors From syslog Monitor on C2")
+                    helpers.sleep(2)
                     return True
         else:
             helpers.log("syslogMonitorFlag is not set: Returning")
+            helpers.sleep(2)
             return False
 
 # ## Added by Sahaja
@@ -1062,7 +1065,7 @@ class AppController(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        c_result = c.bash('ps ax | grep tail | awk \'{print $1}\'')
+        c_result = c.bash('ps ax | pgrep tail | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
         return pidList
@@ -1293,7 +1296,7 @@ class AppController(object):
         n = t.node(node)
         if helpers.is_bigtap(n.platform()):
             '''
-                BigTap Controller                
+                BigTap Controller
             '''
             c = t.controller('master')
             url = '/rest/v1/system/version'
@@ -1322,3 +1325,4 @@ class AppController(object):
                     if local is True:
                         t.node_reconnect(node='master', user=str(user), password=password)
                     return output_string[3]
+

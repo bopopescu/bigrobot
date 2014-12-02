@@ -196,7 +196,7 @@ class BsnCommon(object):
         import keywords.T5Support as T5Support
         support = T5Support.T5Support()
         helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
-        support.delete_support_bundles()
+        support.delete_support_bundles(node)
         result = support.generate_support(node)
         helpers.log("Support File : %s" % str(result))
         support_file = support.get_support_bundle_fs_path(node)
@@ -1664,6 +1664,7 @@ class BsnCommon(object):
                 url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), node.ip(), str(snmpOID))
             else:
                 url = "/usr/bin/%s -v2c -c %s %s " % (str(snmp_cmd), str(snmpCommunity), node.ip())
+            helpers.log("Executing SNMP_CMD: %s" % url)
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             return out

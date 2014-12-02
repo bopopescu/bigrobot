@@ -280,8 +280,10 @@ bigtap suite setup
     rest add switch alias  s1  app-ras6700-1    
 
 bigtap test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
 
 setup interfaces  [Arguments]  ${filter_name}  ${delivery_name}  
     rest add interface role  s1  ethernet13    filter        ${filter_name}  
@@ -301,7 +303,8 @@ bigtap test teardown
     rest delete interface  s1  ethernet1          
     rest delete interface  s1  ethernet2
     Sleep  2 
-    stop syslog monitor       
+    ${result1}=  stop syslog monitor       
+    Should be true  ${result1}
 
 bigtap suite teardown
     rest delete switch alias  s1

@@ -15,7 +15,7 @@ Library             OperatingSystem.py
 Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.1-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -178,7 +178,7 @@ TC29: Verify SNMP OID ifSpeed of PortChannel across 40G Interface
 TC30: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1061  80000
+    verify snmp attribute  s1  ifHighSpeed.1061  120000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  40G  Lag

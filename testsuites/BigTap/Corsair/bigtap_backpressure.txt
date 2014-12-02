@@ -1,0 +1,168 @@
+*Settings
+Documentation           BigTap Back Pressure Test Suite
+Suite Setup             backpressure suite setup
+Suite Teardown          backpressure suite teardown
+Test Setup              backpressure test setup
+Test Teardown           backpressure test teardown 
+Force Tags              BigTap  backpressure  Corsair
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Library                 keywords/ThirdParty.py
+## Testcase Description: https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=60850185
+
+* Variable
+${switch_alias}                              app-rlb9-1     #Alias for switch 1
+${switch_filter_intf_1}                      ethernet1      #10G filter interface on switch app-as5710-6
+${switch_filter_alias_1}                     ixia-1-15      #Alias for filter interface on switch app-as5710-6
+${switch_delivery_intf_1}                    ethernet2      #10G Delivery interface on switch app-as5710-6
+${switch_delivery_alias_1}                   ixia-1-16      #Alias for delivery interface on switch app-as5710-6
+${switch_delivery_intf_2}                    ethernet3      #10G Delivery interface on switch app-as5710-6
+${switch_delivery_alias_2}                   ixia-1-9       #Alias for delivery interface on switch app-as5710-6
+${switch_delivery_intf_3}                    ethernet6      #1G Delivery interface on switch app-as5710-6
+${switch_delivery_alias_3}                   ixia-3-2       #Alias for delivery interface on switch app-as5710-6
+
+${policy_name_1}                             P1
+${policy_name_2}                             ZP1
+${policy_overlap_1}                          _ZP1_o_P1
+${policy_name_3}                             Q1
+${policy_name_4}                             ZQ1
+${policy_overlap_2}                          _ZQ1_o_Q1
+${policy_name_5}                             R1
+${policy_name_6}                             ZR1
+${policy_overlap_3}                          _ZR1_o_R1
+
+*Test Case
+
+TC001: Verify Configuration
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    [Tags]  basic
+
+TC002: Verify if filter traffic is more than 1G then drop is seen only on 1G interface
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    ${report}=  fetch port stats
+    ${tx_10g_1}=  verify dict key  ${report}  a  transmitted_frame_rate
+    ${rx_10g_1}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${rx_10g_2}=  verify dict key  ${report}  d  received_valid_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${tx_10g_1}  ${rx_10g_1}  500
+    ${rx10g_conv}=  Evaluate  ${rx_10g_2}*10
+    ${in_range}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
+    Should be true  ${in_range}
+    stop traffic  ${stream} 
+    [Tags]  feature
+
+TC003: With two policies, verify if filter traffic is more than 1G then drop is seen only on 1G interface
+    ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${output_0}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip": "100.1.1.2", "sequence": 1, "dst-ip-mask": "255.255.255.255", "ether-type": 2048}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch_delivery_alias_2}  delivery
+    Should be true  ${output_4}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy3}=  rest verify bigtap policy  ${policy_overlap_1}  num_filter_intf=1  num_delivery_intf=3
+    Should be true  ${verify_policy3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:01:02:03:04:05  dst_mac=00:06:07:08:09:10  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    ${report}=  fetch port stats
+    ${tx_10g_1}=  verify dict key  ${report}  a  transmitted_frame_rate
+    ${rx_10g_1}=  verify dict key  ${report}  b  received_valid_frame_rate
+    ${rx_10g_2}=  verify dict key  ${report}  c  received_valid_frame_rate    
+    ${rx_1g_1}=  verify dict key  ${report}  d  received_valid_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${tx_10g_1}  ${rx_10g_1}  500
+    ${in_range}=  ixia verify traffic rate  ${tx_10g_1}  ${rx_10g_2}  500    
+    ${rx10g_conv}=  Evaluate  ${rx_1g_1}*10
+    ${in_range}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
+    Should be true  ${in_range}
+    stop traffic  ${stream} 
+    [Tags]  feature
+
+* Keyword
+backpressure suite setup
+    base suite setup
+    ${output_1}=  rest enable feature  full-match
+    Should be true  ${output_1}
+    ${output_2}=  rest add switch alias  s1  ${switch_alias}
+    Should be true  ${output_2}
+    ${output_3}=  rest add interface role  s1  ${switch_filter_intf_1}      filter        intf_nickname=${switch_filter_alias_1}
+    Should be true  ${output_3}
+    ${output_4}=  rest add interface role  s1  ${switch_delivery_intf_1}    delivery      intf_nickname=${switch_delivery_alias_1}
+    Should be true  ${output_4}
+    ${output_4}=  rest add interface role  s1  ${switch_delivery_intf_2}    delivery      intf_nickname=${switch_delivery_alias_2}
+    Should be true  ${output_4}
+    ${output_4}=  rest add interface role  s1  ${switch_delivery_intf_3}    delivery      intf_nickname=${switch_delivery_alias_3}
+    Should be true  ${output_4}
+    sleep  5
+
+backpressure test setup        
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_1}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias_1}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_1}  delivery
+    Should be true  ${output_4}
+    ${output_5}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_3}  delivery
+    Should be true  ${output_5}    
+    Sleep  5
+    delete traffic
+    
+backpressure test teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    rest delete policy  admin-view  ${policy_name_3}
+    rest delete policy  admin-view  ${policy_name_4}
+    sleep  5
+    ${result1}=  stop syslog monitor    
+    Should be true  ${result1}
+    delete traffic
+    
+
+backpressure suite teardown
+    ${output_1}=  rest delete interface role  s1  ${switch_filter_intf_1}  filter
+    Should be true  ${output_1}
+    ${output_2}=  rest delete interface role  s1  ${switch_delivery_intf_1}   delivery
+    Should be true  ${output_2}
+    ${output_3}=  rest delete interface  s1  ${switch_filter_intf_1}
+    Should be true  ${output_3}
+    ${output_4}=  rest delete interface  s1  ${switch_delivery_intf_2}
+    Should be true  ${output_4}
+    ${output_5}=  rest delete interface role  s1  ${switch_delivery_intf_2}  delivery
+    Should be true  ${output_5}
+    ${output_6}=  rest delete interface role  s1  ${switch_delivery_intf_3}   delivery
+    Should be true  ${output_6}
+    ${output_7}=  rest delete interface  s1  ${switch_delivery_intf_2}
+    Should be true  ${output_7}
+    ${output_8}=  rest delete interface  s1  ${switch_delivery_intf_3}
+    Should be true  ${output_8}
+    rest delete switch alias  s1
+    base suite teardown
