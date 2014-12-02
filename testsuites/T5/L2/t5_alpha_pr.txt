@@ -94,7 +94,7 @@ T5 test teardown
 T5 test setup
     add fabric switch
 	base test setup
-	sleep  155  #need to reduce the time once the 1g SFP link detectino is fast after switch initialization	
+	sleep  155  #need to reduce the time once the 1g SFP link detectino is fast after switch initialization	in regression testbeds
 
 T5 suite setup
 	base suite setup  
