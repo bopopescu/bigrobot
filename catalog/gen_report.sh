@@ -51,10 +51,12 @@ build=$BUILD_NAME
 no_scp=0
 ts=`date "+%Y-%m-%d_%H%M%S"`
 build_str=`echo $build | sed -e 's/#//' -e 's/ /_/g'`
-output_summary=raw_data.db_collect_stats.py.${ts}.${build_str}.summary.txt
-output_summary_no_timestamp=regression_report.${build_str}.summary.txt
-output_detailed=raw_data.db_collect_stats.py.${ts}.${build_str}.detailed.txt
-output_detailed_no_timestamp=regression_report.${build_str}.detailed.txt
+release_str=$RELEASE_NAME
+
+output_summary=raw_data.db_collect_stats.py.${ts}.${build_str}.${release_str}.summary.txt
+output_summary_no_timestamp=regression_report.${build_str}.${release_str}.summary.txt
+output_detailed=raw_data.db_collect_stats.py.${ts}.${build_str}.${release_str}.detailed.txt
+output_detailed_no_timestamp=regression_report.${build_str}.${release_str}.detailed.txt
 
 while :
 do

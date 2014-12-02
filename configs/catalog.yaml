@@ -18,15 +18,46 @@ test_types:
   - longevity
   - negative
   - robustness
+
+# Every release should define a set of features which we can get additional
+# details for.
 features:
+  #
+  # Big Tap Releases
+  blackbird:
+    [
+    ]
+  corsair:
+    [
+    ]
+
+  # Big Cloud Fabric Releases
   ironhorse:
     [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
       rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
       singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
       filemanagement, running-config, initialconfig, virtualip, openstack,
-      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, ironhorse-plus,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, 
+    ]
+  ironhorse-plus:
+    [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
+      rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
+      singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
+      filemanagement, running-config, initialconfig, virtualip, openstack,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui,
+    ]
+  jackfrost:
+    [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
+      rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
+      singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
+      filemanagement, running-config, initialconfig, virtualip, openstack,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, 
     ]
 
+#
+# !!! FIXME: Aggregated builds are no longer defined in this YAML file.
+#            Remove this at some point...
+#
 # For "milestone" builds under qualification (e.g., B1, B2, R1, etc), there may
 # be multiple builds which need to be aggregated. The data structure below
 # specifies which builds are part of an aggregated build.
