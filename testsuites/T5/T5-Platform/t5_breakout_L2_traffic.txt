@@ -188,7 +188,7 @@ TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from 
     stop traffic
 
 TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  test2    
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -214,7 +214,7 @@ TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 
     
 
 TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic    
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -232,7 +232,7 @@ TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 line
     stop traffic
     
 TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic    
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518
@@ -252,7 +252,7 @@ TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 lin
     stop traffic   
 
 TC16 Verify the L2 traffic after breakout three interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic    
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
