@@ -27,12 +27,12 @@ Resource        testsuites/T5/T5-Platform/t5_breakout_L2_variables.txt
 ###
 
 Setup the configuration for the interface stats traffic test
-    [Tags]  T5  L2  breakout  setup    
+    [Tags]  T5  L2  breakout  setup  skipped    
     T5 breakout test setup 
 
-TC01 Verify the traffic flow using Bi directional L2 Traffic flow from a<->c
+TC01 Verify the L2 traffic framesize 64 framerate 10K Bi directional flow from a<->c
     [Tags]    feature  L2  breakout  traffic    
-    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c  
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 frame_rate=${framerate}  frame_size=64 
     
@@ -43,6 +43,149 @@ TC01 Verify the traffic flow using Bi directional L2 Traffic flow from a<->c
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic       
 
+TC02 Verify the L2 traffic framesize 256 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=256 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC03 Verify the L2 traffic framesize 512 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=512 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC04 Verify the L2 traffic framesize 1024 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=1024 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC05 Verify the L2 traffic framesize 1518 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC06 Verify the L2 traffic framesize 9216 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=9216 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC07 Verify the L2 traffic framesize 64 linerate 10% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=10  frame_size=64 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC08 Verify the L2 traffic framesize 256 linerate 50% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=50  frame_size=256 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC09 Verify the L2 traffic framesize 512 linerate 75% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=75  frame_size=512 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC10 Verify the L2 traffic framesize 1024 linerate 90% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=90  frame_size=1024 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+    
+TC11 Verify the L2 traffic framesize 1518 linerate 100% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=100  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic    
+
+    
+TC12 Verify the L2 traffic framesize 9216 linerate 100% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=100  frame_size=9216 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
 
 * Keywords
       
