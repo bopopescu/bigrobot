@@ -161,7 +161,7 @@ TC10 Verify the L2 traffic framesize 1024 linerate 90% Bi directional flow from 
     stop traffic
     
 TC11 Verify the L2 traffic framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  test1      
+    [Tags]    feature  L2  breakout  traffic        
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -175,7 +175,7 @@ TC11 Verify the L2 traffic framesize 1518 linerate 99% Bi directional flow from 
 
     
 TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    [Tags]    feature  L2  breakout  traffic  jumboframe      
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=9216 
@@ -186,6 +186,59 @@ TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic
+
+TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+    
+TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   
+
+TC16 Verify the L2 traffic after breakout three interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+
 
 * Keywords
       
