@@ -53,18 +53,18 @@ T1 Scale config applying line by line (copy file to running-config)
     Log    Copy scale config file to running config
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual failed
 	
 T2 Scale config applying snapshot (copy file to snapshot)
     Log    Copy Scale Config snapshot file to Master Controller
     Log    Copy scale config file to snapshot
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 
 
 T3 During (T1 or T2) reboot all switches
@@ -74,9 +74,9 @@ T3 During (T1 or T2) reboot all switches
     Log    Reboot all switches, repeat for few times
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 	
 T4 During (T1 or T2) Simulate split-brain
@@ -102,9 +102,9 @@ T6 Verify L2 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2 
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 
 T7 Verify L3 Traffic Convergence with scale configuration first time
@@ -113,9 +113,9 @@ T7 Verify L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L3
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-    #Manual passed
+    Manual failed
      
 T8 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Build scale configuration with Scale Config
@@ -123,9 +123,9 @@ T8 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2/L3 mixed
-    manual untested
+    #manual untested
 	[Tags] 	sanity    Manual   scaling
-    #Manual passed
+    Manual failed
     
 T9 Verify L2 traffic drop time after deleting the scale config
     Log    Repeat T1
@@ -169,9 +169,9 @@ T13 Controller HA fail-over via CLI
     Log    Perform controller fail-over
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 T14 Controller HA fail-over via CLI, during split-brain
     Log    Repeat T3
@@ -198,9 +198,9 @@ T16 Controller master reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 T17 Controller master reboot during spilt-brain
     Log    Repeat T9
@@ -229,9 +229,9 @@ T19 Controller slave reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	    
 T20 Controller slave reboot during split-brain
     Log    Repeat T9
@@ -350,9 +350,9 @@ T30 Verify L2 learning rate
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 T31 Verify traffic loss/convergence after removing static endpoints
    Log   Repeat T3
@@ -370,9 +370,9 @@ T32 Verify image upgrade of controller
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   #Manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual failed
 	
 	
 T33 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
@@ -423,9 +423,9 @@ T37 Verify snmp polling (get/getnext/getbulk)
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 T38 Verify controller stability when switch sends line rate traffic to controller (For VFT)
    Log   Repeat T3
@@ -455,9 +455,9 @@ T40 Verify policy changes
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 
 T41 Controller continuous reboot (active)
