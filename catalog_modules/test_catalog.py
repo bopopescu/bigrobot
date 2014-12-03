@@ -25,11 +25,13 @@ class TestCatalog(object):
     def test_types(self):
         return self.configs()['test_types']
 
+    # !!! FIXME: configs/catalog.yaml: naming fubar...
+    #            products and products_release_map should be combined.
     def products(self):
         """
         Returns a list of defined products.
         """
-        return self.configs()['products'].keys()
+        return self.configs()['product_release_map'].keys()
 
     def features(self, release):
         """
@@ -42,7 +44,7 @@ class TestCatalog(object):
         Returns a list of releases for a product or empty list for no match.
         """
         if product in self.products():
-            return self.configs()['products'][product]
+            return self.configs()['product_release_map'][product]
         return []
 
     def get_product_for_build_name(self, build_name):
