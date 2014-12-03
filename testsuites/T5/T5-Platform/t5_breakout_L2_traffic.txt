@@ -160,11 +160,11 @@ TC10 Verify the L2 traffic framesize 1024 linerate 90% Bi directional flow from 
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic
     
-TC11 Verify the L2 traffic framesize 1518 linerate 100% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic      
+TC11 Verify the L2 traffic framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  test1      
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 line_rate=100  frame_size=1518 
+    ...                 line_rate=99  frame_size=1518 
     
     clear stats
     start traffic  
@@ -174,11 +174,11 @@ TC11 Verify the L2 traffic framesize 1518 linerate 100% Bi directional flow from
     stop traffic    
 
     
-TC12 Verify the L2 traffic framesize 9216 linerate 100% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe    
+TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 line_rate=100  frame_size=9216 
+    ...                 line_rate=99  frame_size=9216 
     
     clear stats
     start traffic  
