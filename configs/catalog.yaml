@@ -21,7 +21,7 @@ test_types:
   - robustness
 
 # Dictionary of products and the releases for each product as an ordered list.
-products:
+product_release_map:
   bcf:
     [ ironhorse,       # 2.0.0
       ironhorse-plus,  # 2.1.0
