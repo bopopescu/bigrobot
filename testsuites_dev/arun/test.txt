@@ -1,6 +1,6 @@
 * Setting
 Documentation   This suite is my sandbox for experimentation.
-Suite Setup     base suite setup
+Suite Setup     T5 base suite setup
 Suite Teardown  base suite teardown
 Test Setup      base test setup
 Test Teardown   base test teardown
@@ -10,6 +10,7 @@ Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 Library			keywords/T5ZTN.py
 Library			keywords/T5.py
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 * Test Case
 
@@ -48,3 +49,12 @@ Test Console Reboot all Switches
 	telnet_reboot_switch  s6
 	telnet_reboot_switch  s7
 	telnet_reboot_switch  s8
+
+Test Base Post Moterm
+	[Tags]  support
+	base test postmortem  Test Support
+	
+* Keywords	
+T5 base suite setup
+    base suite setup
+    add fabric switch

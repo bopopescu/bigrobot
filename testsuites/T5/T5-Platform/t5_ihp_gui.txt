@@ -1,0 +1,453 @@
+*** Settings ***
+Documentation       T5 IH+ GUI Test Plan
+
+...		The purpose of this test plan is to point out and test most important actions that users can perform with GUI. For the time being these tests will be executed manually
+...
+...		Each configuration change in GUI can be done in many ways (different ordering of intermediate configuration steps). The main focus will be to make sure that each configuration action (e.g. configuring a segment under given tenant) can be done in the most straightforward way. Not all permutations will be tested.
+...
+...		Configuration changes will be tested on a small-scale setup - HA cluster with 5 switches. For tests that verify presentation of information in tables and on graphs, scale testbed will be used.
+...
+...		During testing, Virtual IP will be used most of the time, logged in as user admin. Targeted test cases might be executed using IP addresses of Active, Standby controllers, logging in with other user accounts.
+
+Library  	keywords/BsnCommon.py
+Library		String
+Force Tags      T5  GUI  Feature  IronHorse-Plus
+
+*** Test Cases ***
+# Logical router state
+T1.1. Verify correct presentation of Logical router state
+    Manual Passed
+    [Tags]  manual
+T1.2. Verify correct presentation of data in “VRF ID” and “Default route” columns (hidden by default)
+    Manual Passed
+    [Tags]  manual
+
+#Interface shutdown
+T2.1. Shut down an active interface and verify correct state (physical, logical)
+    Manual Passed
+    [Tags]  manual
+T2.2. Start up a disabled active interface and verify correct state (physical, logical)
+    Manual Passed
+    [Tags]  manual
+T2.3. Shut down an inactive interface and verify correct state (physical, logical)
+    Manual Passed
+    [Tags]  manual
+T2.4. Start up a disabled inactive interface and verify correct state (physical, logical)
+    Manual Passed
+    [Tags]  manual
+T2.5. Try shutting down an interface that had just been shut down via CLI
+    Manual Passed
+    [Tags]  manual
+T2.6. Try starting up an interface that had just been started up via CLI
+    Manual Passed
+    [Tags]  manual
+T2.7. Try shutting down a dummy interface on a dummy switch
+    Manual Failed
+    [Tags]  manual  BVS-2604
+T2.8. Try shutting down a dummy interface on a physical switch
+    Manual Failed
+    [Tags]  manual  BVS-2604
+T2.9. Try shutting down a dummy interface that had just been removed via CLI
+    Manual Failed
+    [Tags]  manual  BVS-2604
+T2.10. Try shutting down an interface on a disconnected physical switch
+    Manual Failed
+    [Tags]  manual  BVS-2604
+
+#Policy log output
+T3.1. Verify correctness of “show policy log” output - all logs
+    Manual Passed
+    [Tags]  manual
+T3.2. Verify correctness of “show policy log” output - specific tenant (in expanded row)
+    Manual Passed
+    [Tags]  manual
+T3.3. Verify correctness of “show policy log” output - specific tenant (in leaf page)
+    Manual Passed
+    [Tags]  manual
+
+#Test path
+T4.1. Manual input of endpoints
+    Manual Untested
+    [Tags]  manual-untested
+T4.2. Input one of existing endpoints and verify
+    Manual Untested
+    [Tags]  manual-untested
+T4.3. External IP addresses (e.g. for google.com) as destination endpoint
+    Manual Untested
+    [Tags]  manual-untested
+T4.4. Input one of existing endpoints with modified IP address
+    Manual Untested
+    [Tags]  manual-untested
+T4.5. Input invalid MAC address / IP address and verify address validation
+    Manual Untested
+    [Tags]  manual-untested
+T4.6. Loading existing fabric tests - done passively when user enters the same endpoints as in previously-ran test
+    Manual Untested
+    [Tags]  manual-untested
+
+#AAA configuration (accounting, authentication)
+#T5.1. AAA Accounting
+T5.1.1 Set Accounting to local
+    Manual Passed
+    [Tags]  manual
+T5.1.2. Set Accounting to remote
+    Manual Passed
+    [Tags]  manual
+T5.1.3. Set Accounting to both local and remote
+    Manual Passed
+    [Tags]  manual
+T5.1.4. Edit Accounting configuration
+    Manual Passed
+    [Tags]  manual
+T5.1.5. Disable Accounting configuration
+    Manual Passed
+    [Tags]  manual
+#T5.2. AAA Authentication
+T5.2.1. Set Authentication to local
+    Manual Passed
+    [Tags]  manual
+T5.2.2. Set Authentication to remote
+    Manual Passed
+    [Tags]  manual
+T5.2.3. Set Authentication to local then remote
+    Manual Passed
+    [Tags]  manual
+T5.2.4. Set Authentication to remote then local
+    Manual Passed
+    [Tags]  manual
+T5.2.5. Edit Authentication configuration
+    Manual Passed
+    [Tags]  manual
+T5.2.6. Disable Authentication configuration (set back to default)
+    Manual Passed
+    [Tags]  manual
+T5.2.7. Try doing changes just after they had been done in CLI, verify correct behavior
+    Manual Passed
+    [Tags]  manual
+
+#Blocked endpoints
+T6.1. Verify correct presentation of blocked endpoints
+    Manual Untested
+    [Tags]  manual-untested
+T6.2. Verify clearing blocked endpoints
+    Manual Untested
+    [Tags]  manual-untested
+T6.3. Try clearing an endpoint after it has been already cleared in CLI
+    Manual Untested
+    [Tags]  manual-untested
+
+#Reboot, reload, and shutdown controller nodes
+T7.1. Issue reload command to the local controller and verify power cycling of the VM
+    Manual Passed
+    [Tags]  manual
+T7.2. Issue reboot command to the local controller and verify power cycling of the HW host
+    Manual Passed
+    [Tags]  manual
+T7.3. Issue shutdown command to the local controller and verify powering down of the HW host
+    Manual Passed
+    [Tags]  manual
+T7.4. Issue reload command to the remote controller and verify power cycling of the VM
+    Manual Passed
+    [Tags]  manual
+T7.5. Issue reboot command to the remote controller and verify power cycling of the HW host
+    Manual Passed
+    [Tags]  manual
+T7.6. Issue shutdown command to the remote controller and verify powering down of the HW host
+    Manual Passed
+    [Tags]  manual
+T7.7. Issue reload command to the remote controller while it is disconnected and verify proper error message
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
+T7.8. Issue reboot command to the remote controller while it is disconnected and verify proper error message
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
+T7.9. Issue shutdown command to the remote controller while it is disconnected and verify proper error message
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
+T7.10. Verify behavior of the commands in split brain scenario
+    Manual Passed
+    [Tags]  manual
+
+#Remove controller node from cluster
+T8.1. Remove Active controller from the cluster
+    Manual Passed
+    [Tags]  manual
+T8.2. Remove Standby controller from the cluster
+    Manual Passed
+    [Tags]  manual
+T8.3. Issue Remove command to the remote controller while it is disconnected and verify proper error message
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
+T8.4. Verify behavior when remove-node command had just been executed in CLI
+    Manual Passed
+    [Tags]  manual
+T8.5. Verify behavior of the command in split brain scenario
+    Manual Passed
+    [Tags]  manual
+
+#VLAN Mapping
+#T9.1. Global - member-vlan value
+T9.1.1 Verify that Segment table (expanded row in Tenants page, or Segment leaf page) has "Member VLAN” columns
+    Manual Untested
+    [Tags]  manual-untested
+T9.1.2. Verify that on the tenant leaf page, a new property/button is exposed just under the description to present the existing member VLAN value and expose ways for the user to clear or modify the value
+    Manual Untested
+    [Tags]  manual-untested
+#T9.2. Default - switch-port or port-group value
+T9.2.1. Verify that Segment table (expanded row in Tenants page, or Segment leaf page) has "Port Group Membership Rules" and "Switch Port Membership Rules” columns
+    Manual Untested
+    [Tags]  manual-untested
+T9.2.2. Verify that on the tenant leaf page, the existing "Port Group Membership" and "Switch Port Membership" sections should appear
+    Manual Untested
+    [Tags]  manual-untested
+
+#Implement multiple "show switch <keyword>" variants (tentative)
+T10.1. show switch all 
+#<cr>            Show fabric information for selected switch
+#agent-counters  Show counters for various agents on the Switch
+#connections     Show switch connections
+#details         Show fabric information for selected switch
+#endpoint        Show endpoint information
+#interface       Show fabric interface information
+#inventory       Show inventory of all switches
+#switch-view     Show switch details from switch perspective
+#zerotouch       Show switch zerotouch
+    Manual Untested
+    [Tags]  manual-untested
+
+T10.2. show switch foo
+#<cr>            Show fabric information for selected switch
+#agent-counters  Show counters for various agents on the Switch
+#config-audit    Audit switch config
+#connections     Show switch connections
+#cpu-load        Show switch cpu load
+#details         Show fabric information for selected switch
+#endpoint        Show endpoint information
+#environment     Show switch environment
+#images          Show images cached on the switch
+#interface       Show fabric interface information
+#inventory       Show switch inventory
+#manifest        Show switch manifest
+#memory-use      Show switch memory use
+#running-config  Show switch startup-config
+#switch-view     Show switch details from switch perspective
+#version         Show switch version
+#zerotouch       Show Zerotouch state
+    Manual Untested
+    [Tags]  manual-untested
+
+#Expose toggle for logging to remote servers
+T11.1. Enable logging to remote servers and verify controller logs there
+    Manual Passed
+    [Tags]  manual
+T11.2. Disable logging to remote servers and verify controller stops logging there
+    Manual Passed
+    [Tags]  manual
+T11.3. Check behavior when intended change (enable, disable) is done first in CLI, then in GUI
+    Manual Untested
+    [Tags]  manual-untested
+
+#Reboot all switches
+T12.1. Verify correct power cycling when all configured switches are connected to the controller
+    Manual Passed
+    [Tags]  manual
+T12.2. Verify correct power cycling when not all configured switches are connected to the controller
+    Manual Passed
+    [Tags]  manual
+T12.3. Send reboot request while all switches are already rebooting
+    Manual Untested
+    [Tags]  manual-untested
+T12.4. Send reboot request while some switches are already rebooting
+    Manual Untested
+    [Tags]  manual-untested
+T12.5. Send reboot request after deleting all switches configuration via CLI
+    Manual Untested
+    [Tags]  manual-untested
+T12.6. Verify button presence/action when there are no switches connected to the controller
+    Manual Untested
+    [Tags]  manual-untested
+
+#Tenant visualization (tentative)
+T13.1. Verify visualization
+    Manual Untested
+    [Tags]  manual-untested
+T13.2. Verify visualization (blank space) when no tenants are configured
+    Manual Untested
+    [Tags]  manual-untested
+
+#Alerts
+T14.1. Verify alert boxes appear after adding/modifying/deleting entry on a given page
+    Manual Passed
+    [Tags]  manual
+T14.2. Verify that alert box disappears after 30 seconds
+    Manual Passed
+    [Tags]  manual
+T14.3. Verify that alert box can be dismissed with ‘X’ button
+    Manual Passed
+    [Tags]  manual
+T14.4. If alert box contains a link to leaf page, verify validity of the link
+    Manual Untested
+    [Tags]  manual-untested
+
+
+
+
+
+###Revisit late additions to IH release:
+#Fabric Settings
+#T20.1. Orchestration Mapping
+T20.1.1. Change from default to global
+    Manual Passed
+    [Tags]  manual
+T20.1.2. Change from global to default
+    Manual Passed
+    [Tags]  manual
+T20.1.3. Verify that this setting may not be changed if non-system tenants are configured
+    Manual Passed
+    [Tags]  manual
+T20.1.4. Check behavior when intended change is done first in CLI, then in GUI
+    Manual Untested
+    [Tags]  manual-untested
+T20.1.5. Check behavior when user configures non-system tenant in CLI just before making the orchestration mapping change in GUI
+    Manual Untested
+    [Tags]  manual-untested
+#T20.2. VLAN Mapping
+T20.2.1. Change from default to global
+    Manual Passed
+    [Tags]  manual
+T20.2.2. Change from global to default
+    Manual Passed
+    [Tags]  manual
+#T20.2.3. Verify that this setting may not be changed if any segment has:
+T20.2.3.1. VLAN members,
+    Manual Passed
+    [Tags]  manual
+T20.2.3.2. port group membership rules
+    Manual Passed
+    [Tags]  manual
+T20.2.3.3. or switch port membership rules configured
+    Manual Passed
+    [Tags]  manual
+T20.2.4. Check behavior when intended change is done first in CLI, then in GUI
+    Manual Untested
+    [Tags]  manual-untested
+T20.2.5. Check behavior when user configures VLAN/port group/switch rules in CLI just before making the VLAN change in GUI
+    Manual Untested
+    [Tags]  manual-untested
+#T20.3. QoS
+T20.3.1. Enable QoS
+    Manual Passed
+    [Tags]  manual
+T20.3.2. Disable QoS
+    Manual Passed
+    [Tags]  manual
+T20.3.3. Check behavior when intended change is done first in CLI, then in GUI
+    Manual Untested
+    [Tags]  manual-untested
+#T20.4. Endpoint Flap Protection
+T20.4.1. Enable EFP
+    Manual Passed
+    [Tags]  manual
+T20.4.2. Disable EFP
+    Manual Passed
+    [Tags]  manual
+T20.4.3. Check behavior when intended change is done first in CLI, then in GUI
+    Manual Untested
+    [Tags]  manual-untested
+
+#Clock
+T21.1. Add NTP server
+    Manual Passed
+    [Tags]  manual
+T21.2. Delete NTP server
+    Manual Passed
+    [Tags]  manual
+T21.3. Sync to given NTP server
+    Manual Passed
+    [Tags]  manual
+T21.4. Sync Controller Time
+    Manual Passed
+    [Tags]  manual
+T21.5. Change time zone
+    Manual Passed
+    [Tags]  manual
+T21.6. Check behavior when syncing to invalid NTP server
+    Manual Passed
+    [Tags]  manual
+T21.7. Verify that it’s impossible to delete last NTP server
+    Manual Passed
+    [Tags]  manual
+T21.8. Delete last-but-one NTP server in CLI, then try deleting the final one in GUI - verify proper error message
+    Manual Untested
+    [Tags]  manual-untested
+
+#SNMP
+T22.1. Add/modify/delete SNMP server contact
+    Manual Passed
+    [Tags]  manual
+T22.2. Add/modify/delete SNMP server location
+    Manual Passed
+    [Tags]  manual
+T22.3. Add/modify/delete SNMP server community
+    Manual Passed
+    [Tags]  manual
+T22.4. Add/modify/delete SNMP server trap hosts
+    Manual Passed
+    [Tags]  manual
+T22.5. Enable/disable SNMP server traps
+    Manual Passed
+    [Tags]  manual
+T22.6. Add/modify/delete switch PSU trap
+    Manual Passed
+    [Tags]  manual
+T22.7. Add/modify/delete switch Fan trap
+    Manual Passed
+    [Tags]  manual
+T22.8. Add/modify/delete switch Link trap
+    Manual Passed
+    [Tags]  manual
+T22.9. Enable/disable switch authentication trap
+    Manual Passed
+    [Tags]  manual
+T22.10. Add/modify/delete switch CPU trap
+    Manual Passed
+    [Tags]  manual
+T22.11. Add/modify/delete switch MEM trap
+    Manual Passed
+    [Tags]  manual
+T22.12. Add/modify/delete switch L2 trap
+    Manual Passed
+    [Tags]  manual
+T22.13. Add/modify/delete switch TCAM trap
+    Manual Passed
+    [Tags]  manual
+
+#TACACS
+T23.1. Add/modify/delete TACACS server default timeout
+    Manual Passed
+    [Tags]  manual
+T23.2. Add/modify/delete TACACS server default secret
+    Manual Passed
+    [Tags]  manual
+T23.3. Add/modify/delete TACACS server host
+    Manual Passed
+    [Tags]  manual
+
+#Test Path
+T24.1. Fabric View
+    Manual Passed
+    [Tags]  manual
+T24.2. Controller View
+    Manual Passed
+    [Tags]  manual
+
+
+
+
+
+
+

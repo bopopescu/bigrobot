@@ -689,7 +689,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -699,7 +699,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  tx
+    [Tags]  bigtap  tunnel  tx  runthis
 
 TC32: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -716,7 +716,7 @@ TC32: Verify Receive-Only Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -743,7 +743,7 @@ TC33: Verify Bidirectional Tunnel across Dell S6000
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
@@ -943,7 +943,7 @@ TC50: Restart process OFAD on switch S3
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
     stop traffic
-    [Tags]  bigtap  ha  ofad  skipped
+    [Tags]  bigtap  ha  ofad
 
 TC51: Verify interface statistics on switch
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -966,14 +966,14 @@ TC51: Verify interface statistics on switch
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${tx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s3_2}    tx
     ${in_range_2}=         ixia verify traffic rate  ${rx_switch_value_2}   ${tx_switch_value_2}     rangev=10
-    Should be true  ${in_range_2}            
+    Should be true  ${in_range_2}
     ${rx_switch_value_3}=  cli return interface counter brief     s3      ${core_interface_s3s2_2}    rx
     ${tx_switch_value_3}=  cli return interface counter brief     s3      ${delivery_s3_1}            tx        
     ${in_range_3}=         ixia verify traffic rate  ${rx_switch_value_3}   ${tx_switch_value_3}     rangev=10
     Should be true  ${in_range_3} 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats
+    [Tags]  bigtap  ha  stats  runthis
 
 
 TC52: SNMP: Verify interface statistics and match with SNMP
@@ -992,7 +992,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     clear stats
     cli clear interface statistics  s1
     cli clear interface statistics  s2
-    cli clear interface statistics  s3                
+    cli clear interface statistics  s3
+    sleep  30
     start traffic     
     sleep  10
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
@@ -1008,7 +1009,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     ${snmp_value2}=        return snmp value  ${match_value2}  1
     ${in_range_2}=         ixia verify traffic rate  ${tx_switch_value_1}   ${snmp_value2}     rangev=100
     Should be true  ${in_range_2}    
-            
+
+    ${rx_switch_value_0}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${match_value3}=       snmp cmd   s2   snmpget    public   ${core_s2_s1_2_snmp_oid}
     ${snmp_value3}=        return snmp value  ${match_value3}  1
@@ -1034,7 +1036,7 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp 
+    [Tags]  bigtap  ha  stats  snmp  runthis
 
 * Keywords
 
@@ -1154,11 +1156,11 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
     Should Be True  ${ret_value_1}
 
 lag setup  [Arguments]  ${mode}
-    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}   ${pc_members_s1s2}  ${mode}
+    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}  ${pc_members_s1s2}  ${mode}
     Should be true  ${pc_status_s1s2}
-    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}   ${pc_members_s2s1}  ${mode}
+    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}  ${pc_members_s2s1}  ${mode}
     Should be true  ${pc_status_s2s1}
-    sleep  5
+    sleep  30
 
 verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
     ${inft_state}=  cli show interface state  ${switch}  ${interface_name}

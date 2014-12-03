@@ -29,6 +29,7 @@ add Three Rack Dual Leaf Topology
     bring up h6 bond0
     sleep  10
     rest verify fabric switch all
+    Set switch dpid variables
    
 Verify Fabric Lag formation from leaf node 
 	[Tags]	 Fabric  feature  IronHorse    
@@ -56,7 +57,7 @@ Verify Fabric Lag from spine after adding back spine node
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  Fabric  feature  IronHorse  	
+	[Tags]  Fabric  feature  IronHorse	
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b

@@ -5,7 +5,23 @@ if [ ! -x ../bin/gobot ]; then
     exit 1
 fi
 
-RELEASE='ironhorse'
+
+usage() {
+    echo "Usage: `basename $0`"
+    echo ""
+    echo "If RELEASE_NAME env is provided then print additional stats for the release."
+    echo "Examples of release name: 'ironhorse', 'ironhorse-plus', 'jackfrost', 'blackbird', 'corsair', etc."
+    echo ""
+
+    exit 1
+}
+
+
+#if [ "$RELEASE_NAME"x = x ]; then
+#    usage
+#fi
+
+release=$RELEASE_NAME
 config="../configs/catalog.yaml"
 
 phase1=1    # Find all test suites in product areas, report totals
@@ -62,8 +78,11 @@ if [ $phase2 -eq 1 ]; then
 fi
 
 if [ $phase3 -eq 1 ]; then
-    subject2 "Total IronHorse test cases"
-    grep -i $RELEASE raw_data.test_cases_*.json | wc -l
+    
+    if [ "$release"x != x ]; then
+        subject2 "Total $release test cases"
+        grep -i $release raw_data.test_cases_*.json | wc -l
+    fi
 
     subject2 "Total manual test cases"
     grep -i manual raw_data.test_cases_*.json | wc -l

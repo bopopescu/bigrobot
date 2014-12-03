@@ -1,0 +1,360 @@
+* Settings
+Documentation     Breakout Cable- T5 IronHorsePlus  
+Suite Setup       T5 breakout test setup
+Suite Teardown    T5 breakout test teardown
+Test Setup        base test setup
+Test Teardown     atest teardown
+Force Tags        T5  IronHorsePlus
+...             
+...            
+...                        
+   
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Switch.py     
+Resource        testsuites/T5/T5-Platform/t5_breakout_L2_variables.txt
+
+
+*Test Case
+
+###
+### Section I : Traffic Test Verification
+###
+###
+
+Setup the configuration for the interface stats traffic test
+    [Tags]  T5  L2  breakout  setup  skipped    
+    T5 breakout test setup 
+
+TC01 Verify the L2 traffic framesize 64 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=64 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic       
+
+TC02 Verify the L2 traffic framesize 256 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=256 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC03 Verify the L2 traffic framesize 512 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=512 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC04 Verify the L2 traffic framesize 1024 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=1024 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC05 Verify the L2 traffic framesize 1518 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC06 Verify the L2 traffic framesize 9216 framerate 10K Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 frame_rate=${framerate}  frame_size=9216 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC07 Verify the L2 traffic framesize 64 linerate 10% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=10  frame_size=64 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC08 Verify the L2 traffic framesize 256 linerate 50% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=50  frame_size=256 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC09 Verify the L2 traffic framesize 512 linerate 75% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=75  frame_size=512 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC10 Verify the L2 traffic framesize 1024 linerate 90% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=90  frame_size=1024 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+    
+TC11 Verify the L2 traffic framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic        
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic    
+
+    
+TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  jumboframe      
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=9216 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic
+
+TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf4}
+    sleep  20
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf4}
+    sleep  20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    stop traffic
+    
+
+TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    stop traffic
+    
+TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    stop traffic   
+
+TC16 Verify the L2 traffic after breakout three interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
+    [Tags]    feature  L2  breakout  traffic  intfshutnoshut    
+    ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
+    ...                 line_rate=99  frame_size=1518 
+    
+    clear stats
+    start traffic  
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    stop traffic
+
+
+* Keywords
+      
+T5 breakout test setup
+   base test setup
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan}    
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_2}  ${vlan} 
+
+                 
+T5 breakout test teardown
+   rest delete tenant  ${tenant}  
+   base test teardown
+   sleep  5   
+
+atest teardown
+    delete traffic
+
+verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range} 
+
+verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+    
+verify rx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf rxcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}    
+    Should be true  ${in_range} 
+    
+verify tx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf txcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}     
+    Should be true  ${in_range}
+
+clear interface counters on controller  
+    ${result}=  rest clear fabric interface stats  
+    Should be true  ${result} 
+
+clear interface counters on switch  [Arguments]  ${switch} 
+    ${result}=  cli clear interface statistics  $switch
+    Should be true  ${result}     
+
+disable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest disable fabric interface   ${switch}  ${intf}
+    Should be true  ${result} 
+    
+enable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest enable fabric interface   ${switch}  ${intf}
+    Should be true  ${result}  
+      
+add interface to vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+        
+delete interface from vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+    
