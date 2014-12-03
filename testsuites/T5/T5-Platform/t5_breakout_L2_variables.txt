@@ -1,0 +1,26 @@
+*Variables
+
+${j}    1
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf1-a
+${switch7_name}=  spine0
+${tenant}=        testTenant 
+${vns}=           v1
+${vlan}=          -1
+${intf_1}=        ethernet24
+${intf_2}=        ethernet24
+
+${leaf1_spine0_intf1}=  ethernet49
+${spine0_leaf1_intf1}=  ethernet21
+${leaf2_spine0_intf1}=  ethernet49
+${spine0_leaf2_intf1}=  ethernet25
+
+## Ixia 
+${src_mac1}=   00:11:01:00:00:01
+${dst_mac1}=   00:11:01:00:00:02
+${framerate}=  10000
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5

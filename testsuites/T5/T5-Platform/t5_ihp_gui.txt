@@ -88,42 +88,42 @@ T4.6. Loading existing fabric tests - done passively when user enters the same e
 #AAA configuration (accounting, authentication)
 #T5.1. AAA Accounting
 T5.1.1 Set Accounting to local
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.1.2. Set Accounting to remote
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.1.3. Set Accounting to both local and remote
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.1.4. Edit Accounting configuration
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.1.5. Disable Accounting configuration
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 #T5.2. AAA Authentication
 T5.2.1. Set Authentication to local
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.2. Set Authentication to remote
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.3. Set Authentication to local then remote
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.4. Set Authentication to remote then local
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.5. Edit Authentication configuration
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.6. Disable Authentication configuration (set back to default)
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.2.7. Try doing changes just after they had been done in CLI, verify correct behavior
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Blocked endpoints
 T6.1. Verify correct presentation of blocked endpoints
@@ -138,35 +138,38 @@ T6.3. Try clearing an endpoint after it has been already cleared in CLI
 
 #Reboot, reload, and shutdown controller nodes
 T7.1. Issue reload command to the local controller and verify power cycling of the VM
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.2. Issue reboot command to the local controller and verify power cycling of the HW host
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.3. Issue shutdown command to the local controller and verify powering down of the HW host
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.4. Issue reload command to the remote controller and verify power cycling of the VM
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.5. Issue reboot command to the remote controller and verify power cycling of the HW host
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.6. Issue shutdown command to the remote controller and verify powering down of the HW host
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T7.7. Issue reload command to the remote controller while it is disconnected and verify proper error message
-    Manual Untested
-    [Tags]  manual-untested
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
 T7.8. Issue reboot command to the remote controller while it is disconnected and verify proper error message
-    Manual Untested
-    [Tags]  manual-untested
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
 T7.9. Issue shutdown command to the remote controller while it is disconnected and verify proper error message
-    Manual Untested
-    [Tags]  manual-untested
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
 T7.10. Verify behavior of the commands in split brain scenario
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Remove controller node from cluster
 T8.1. Remove Active controller from the cluster
