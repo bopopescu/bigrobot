@@ -10,10 +10,15 @@ ${vlan}=          -1
 ${intf_1}=        ethernet24
 ${intf_2}=        ethernet24
 
-${leaf1_spine0_intf1}=  ethernet49
-${spine0_leaf1_intf1}=  ethernet21
-${leaf2_spine0_intf1}=  ethernet49
-${spine0_leaf2_intf1}=  ethernet25
+${spine0_leaf0a_intf1}=  ethernet1/1 
+${spine0_leaf0a_intf2}=  ethernet1/2
+${spine0_leaf0a_intf3}=  ethernet1/3
+${spine0_leaf0a_intf4}=  ethernet1/4
+${leaf0a_spine0_intf1}=  ethernet1
+${leaf0a_spine0_intf1}=  ethernet2
+${leaf0a_spine0_intf1}=  ethernet3
+${leaf0a_spine0_intf1}=  ethernet4
+
 
 ## Ixia 
 ${src_mac1}=   00:11:01:00:00:01
