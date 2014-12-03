@@ -1,4 +1,5 @@
 *.pyc
+.metadata
 .project
 .pydevproject
 debug.log
