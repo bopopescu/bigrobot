@@ -188,7 +188,7 @@ TC12 Verify the L2 traffic framesize 9216 linerate 99% Bi directional flow from 
     stop traffic
 
 TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    [Tags]    feature  L2  breakout  traffic  test2    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -197,11 +197,24 @@ TC13 Verify the L2 traffic after breakout all interfaces shut no shut framesize 
     start traffic  
     sleep          10
     ${report}=     fetch port stats
-    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf4}
+    sleep  20
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf4}
+    sleep  20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
     stop traffic
+    
 
 TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    [Tags]    feature  L2  breakout  traffic    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -211,10 +224,15 @@ TC14 Verify the L2 traffic after breakout one interface shut framesize 1518 line
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
     stop traffic
     
 TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    [Tags]    feature  L2  breakout  traffic    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518
@@ -224,10 +242,17 @@ TC15 Verify the L2 traffic after breakout two interfaces shut framesize 1518 lin
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
     stop traffic   
 
 TC16 Verify the L2 traffic after breakout three interfaces shut framesize 1518 linerate 99% Bi directional flow from a<->c
-    [Tags]    feature  L2  breakout  traffic  jumboframe  test1    
+    [Tags]    feature  L2  breakout  traffic    
     ${stream1}=   L2 add  name=a_c_bidir_flow1  flow=a<->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 line_rate=99  frame_size=1518 
@@ -237,6 +262,15 @@ TC16 Verify the L2 traffic after breakout three interfaces shut framesize 1518 l
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    disable switch interface from controller  spine0  ${spine0_leaf0a_intf3}
+    sleep   20 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance} 
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf1}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
+    enable switch interface from controller  spine0  ${spine0_leaf0a_intf2}
     stop traffic
 
 
