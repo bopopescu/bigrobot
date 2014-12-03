@@ -302,11 +302,13 @@ class Test(object):
                     #   arista-1 - for Arista switches
                     #   h1-rack1 - for hosts
                     #   h1-vm1-rack1 - for virtual hosts
-                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    #   ixia<n> - for IXIA traffic generator (tg<n> node)
+                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+|ixia\d*)$'
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
+                                     " ixia{n}")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
