@@ -173,20 +173,21 @@ T7.10. Verify behavior of the commands in split brain scenario
 
 #Remove controller node from cluster
 T8.1. Remove Active controller from the cluster
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T8.2. Remove Standby controller from the cluster
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T8.3. Issue Remove command to the remote controller while it is disconnected and verify proper error message
-    Manual Untested
-    [Tags]  manual-untested
+    # no error message but behavior is correct
+    Manual Passed
+    [Tags]  manual
 T8.4. Verify behavior when remove-node command had just been executed in CLI
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T8.5. Verify behavior of the command in split brain scenario
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #VLAN Mapping
 #T9.1. Global - member-vlan value
