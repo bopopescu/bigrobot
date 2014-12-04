@@ -55,6 +55,8 @@ s2:
     port: 3
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -73,6 +75,9 @@ s3:
     port: 4
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet52
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -91,6 +96,9 @@ s4:
     port: 5
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -144,6 +152,9 @@ s7:
     port: 7
     user: apc
     password: apc
+  interfaces:
+  	leaf0a_int0: ethernet1
+  	leaf1a_int0: ethernet9
   set_session_ssh: false
   set_init_ping: false
 s8:
