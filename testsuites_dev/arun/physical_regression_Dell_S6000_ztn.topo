@@ -29,7 +29,7 @@ s1:
 s2:
   alias: leaf0-a
   leaf-group: rack0
-  mac: 90:b1:1c:f4:c0:1
+  mac: 90:b1:1c:f4:c0:01
   user: admin
   password: adminadmin
   console:
