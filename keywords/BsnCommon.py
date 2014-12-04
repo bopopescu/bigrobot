@@ -2085,7 +2085,7 @@ class BsnCommon(object):
             if int_key in interfaces:
                 return interfaces[int_key]
             else:
-                helpers.log("Not Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
+                helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
