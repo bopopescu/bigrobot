@@ -749,9 +749,9 @@ class Test(object):
         #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
         #  Hosts: h1, h2, h3
         #  OpenStack servers: os1, os2
-        #  Traffic generators: tg1, tg2
+        #  Traffic generators: tg1, tg2, ixia1
         #
-        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+)$', node)
+        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+|ixia\d*)$', node)
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)

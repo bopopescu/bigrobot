@@ -23,15 +23,13 @@ test_types:
 # Dictionary of products and the releases for each product as an ordered list.
 product_release_map:
   bcf:
-    [ ironhorse,       # 2.0.0
-      ironhorse-plus,  # 2.1.0
-      #jackfrost,       # 3.0.0
-    ]
+    - ironhorse        # 2.0.0
+    - ironhorse-plus,  # 2.1.0
+    #- jackfrost        # 3.0.0
   bigtap:
-    [ augusta,         # 2.0.0
-      blackbird,       # 3.0.0
-      corsair,         # 4.0.0
-    ]
+    - augusta          # 2.0.0
+    - blackbird        # 3.0.0
+    - corsair          # 4.0.0
   
 # Every release should define a set of features which we can get additional
 # details for.
