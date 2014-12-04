@@ -707,6 +707,8 @@ Master node controller reboot with multiple vns/interface stats
 T5 Functional Suite Setup
    base suite setup
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
    rest delete fabric switch  spine0
          
 T5 Functional Suite Teardown
