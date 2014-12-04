@@ -79,6 +79,7 @@ s3:
   interfaces:
     ixia1_int0: ethernet24
     spine1_int0: ethernet52
+    leaf1b_int0: ethernet40
   set_session_ssh: false
   set_init_ping: false
 s4:
