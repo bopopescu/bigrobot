@@ -153,8 +153,8 @@ s7:
     user: apc
     password: apc
   interfaces:
-  	leaf0a_int0: ethernet1
-  	leaf1a_int0: ethernet9
+    leaf0a_int0: ethernet1
+    leaf1a_int0: ethernet9
   set_session_ssh: false
   set_init_ping: false
 s8:
