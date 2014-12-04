@@ -71,12 +71,8 @@ T2.3. Deleting banner
     ...  ${command}
     ...  ${diff}
 
-T3. Deleting logging remote
-	${command}=  Set Variable  logging remote
-	${diff}=  Create List  logging remote
-	Delete single running config line and verify
-	...  ${command}
-	...  ${diff}
+T3. #placeholder
+    [Tags]  skipped
 
 T4.1. Deleting logging remote server
     Cli Run  master  logging remote 2.2.2.2; logging remote 3.3.3.3 33
