@@ -37,6 +37,7 @@ s1:
     spine0_int0: ethernet49
     leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
+    spine1_int0: ethernet52
   set_session_ssh: false
   set_init_ping: false
 s2:
