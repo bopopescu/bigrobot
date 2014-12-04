@@ -24,7 +24,7 @@ test_types:
 product_release_map:
   bcf:
     - ironhorse        # 2.0.0
-    - ironhorse-plus,  # 2.1.0
+    - ironhorse-plus   # 2.1.0
     #- jackfrost        # 3.0.0
   bigtap:
     - augusta          # 2.0.0
