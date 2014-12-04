@@ -2072,6 +2072,23 @@ class BsnCommon(object):
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
 
+    def get_switch_int_topo(self, node, int_key):
+        '''
+        Return the Interface name defined in Topo for the swtich with key int_key like below:
+        s1:
+            interfaces:
+                int_key: ethernet24
+        '''
+        t = test.Test()
+        if node in t.params():
+            interfaces = t.params(node, 'interfaces')
+            if int_key in interfaces:
+                return interfaces[int_key]
+            else:
+                helpers.log("Not Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang

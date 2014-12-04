@@ -1,15 +1,6 @@
 * Setting 
 Library  keywords/BsnCommon.py
-
-* Variables
-${spine0_dpid}=	 
-${spine1_dpid}=	 
-${leaf0a_dpid}=	 
-${leaf0b_dpid}=	 
-${leaf1a_dpid}=	
-${leaf1b_dpid}=	 
-${leaf2a_dpid}=	 
-${leaf2b_dpid}=	 
+ 
 *Keywords
 Set switch dpid variables
 	${spine0_dpid}=	 get_switch_mac_topo  s7
@@ -28,6 +19,12 @@ Set switch dpid variables
 	Set Suite Variable    ${leaf2a_dpid}
 	${leaf2b_dpid}=	 get_switch_mac_topo  s6
 	Set Suite Variable    ${leaf2b_dpid}
+	
+Set swith int variables
+	${leaf0a_spine0_intf0}=  get_switch_int_topo  s1  spine0_int0
+	${leaf0a_leaf0b_intf0}=  get_switch_int_topo  s1  leaf0b_int0
+	${leaf0a_spine1_intf0}=  get_switch_int_topo  s1  spine1_int0
+	${leaf0a_ixia_intf}=  get_switch_int_topo  s1  ixia1_int0
 *Variables
 ${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39
