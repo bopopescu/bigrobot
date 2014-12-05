@@ -72,32 +72,33 @@ Set swith int variables
 	${leaf2b_spine1_intf0}=  get_switch_int_topo  s6  spine1_int0
 	Set Suite Variable		${leaf2b_spine1_intf0}
 	
-	${spine1_leaf0a_intf0}=  get_switch_int_topo  s7  leaf0a_int0
-	Set Suite Variable		${spine1_leaf0a_intf0}
-	${spine1_leaf1a_intf0}=  get_switch_int_topo  s7  leaf1a_int0
-	Set Suite Variable		${spine1_leaf1a_intf0}
-	${spine1_leaf0b_intf0}=  get_switch_int_topo  s7  leaf0b_int0
-	Set Suite Variable		${spine1_leaf0b_intf0}
-	${spine1_leaf1b_intf0}=  get_switch_int_topo  s7  leaf1b_int0
-	Set Suite Variable		${spine1_leaf1b_intf0}
-	${spine1_leaf2a_intf0}=  get_switch_int_topo  s7  leaf2a_int0
-	Set Suite Variable		${spine1_leaf2a_intf0}
-	${spine1_leaf2b_intf0}=  get_switch_int_topo  s7  leaf2b_int0
-	Set Suite Variable		${spine1_leaf2b_intf0}
-	
-	${spine0_leaf0a_intf0}=  get_switch_int_topo  s8  leaf0a_int0
+	${spine0_leaf0a_intf0}=  get_switch_int_topo  s7  leaf0a_int0
 	Set Suite Variable		${spine0_leaf0a_intf0}
-	${spine0_leaf0b_intf0}=  get_switch_int_topo  s8  leaf0b_int0
+	${spine0_leaf0b_intf0}=  get_switch_int_topo  s7  leaf0b_int0
 	Set Suite Variable		${spine0_leaf0b_intf0}
-	${spine0_leaf1a_intf0}=   get_switch_int_topo  s8  leaf1a_int0
+	${spine0_leaf1a_intf0}=   get_switch_int_topo  s7  leaf1a_int0
 	Set Suite Variable		${spine0_leaf1a_intf0}
-	${spine0_leaf1b_intf0}=   get_switch_int_topo  s8  leaf1b_int0
+	${spine0_leaf1b_intf0}=   get_switch_int_topo  s7  leaf1b_int0
 	Set Suite Variable		${spine0_leaf1b_intf0}
-	${spine0_leaf2a_intf0}=   get_switch_int_topo  s8  leaf2a_int0
+	${spine0_leaf2a_intf0}=   get_switch_int_topo  s7  leaf2a_int0
 	Set Suite Variable		${spine0_leaf2a_intf0}
-	${spine0_leaf2b_intf0}=   get_switch_int_topo  s8  leaf2b_int0
+	${spine0_leaf2b_intf0}=   get_switch_int_topo  s7  leaf2b_int0
 	Set Suite Variable		${spine0_leaf2b_intf0}
 	
+	${spine1_leaf0a_intf0}=  get_switch_int_topo  s8  leaf0a_int0
+	Set Suite Variable		${spine1_leaf0a_intf0}
+	${spine1_leaf1a_intf0}=  get_switch_int_topo  s8  leaf1a_int0
+	Set Suite Variable		${spine1_leaf1a_intf0}
+	${spine1_leaf0b_intf0}=  get_switch_int_topo  s8  leaf0b_int0
+	Set Suite Variable		${spine1_leaf0b_intf0}
+	${spine1_leaf1b_intf0}=  get_switch_int_topo  s8  leaf1b_int0
+	Set Suite Variable		${spine1_leaf1b_intf0}
+	${spine1_leaf2a_intf0}=  get_switch_int_topo  s8  leaf2a_int0
+	Set Suite Variable		${spine1_leaf2a_intf0}
+	${spine1_leaf2b_intf0}=  get_switch_int_topo  s8  leaf2b_int0
+	Set Suite Variable		${spine1_leaf2b_intf0}
+	
+
 	
 	
 *Variables
