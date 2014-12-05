@@ -369,7 +369,8 @@ t5 suite setup
     rest add dpid  ${switch2_name}  ${switch2_dpid}
     rest add fabric role  ${switch2_name}  leaf
     rest add leaf group  ${switch2_name}  rack0      
-
+	sleep  100
+	
     rest add switch  ${switch3_name}
     ${switch3_dpid}=  get_switch_mac_topo  s7
     rest add dpid  ${switch3_name}  ${switch3_dpid}
@@ -379,7 +380,7 @@ t5 suite setup
     ${switch4_dpid}=  get_switch_mac_topo  s8
     rest add dpid  ${switch4_name}  ${switch4_dpid}
     rest add fabric role  ${switch4_name}  spine    
-	sleep  155
+	sleep  255
 	rest_verify_fabric_switch_all
 	reconnect_switch_ips  s1
 	reconnect_switch_ips  s2
