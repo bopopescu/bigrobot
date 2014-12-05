@@ -120,8 +120,8 @@ identify service insertion workflow for cloudstack
 	manual untested 
 	
 verify fabric setting global mode
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Test deployment script for KVM
 	[Tags]  scaling  cloudstack    manual	

@@ -425,6 +425,48 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def interfaces(self, node, if_name=None, soft_error=False):
+        """
+        Return the interface on node which is connected to a peer device. The
+        convention is to define an interface bundle in the topo file which
+        contains the key/value pairs for all the peer connections. The key is
+        the alias for the peer and the value is the actual interface on the
+        node. Multiple interfaces to the same peer can be specified using the
+        format '<alias>_<n>' where <n> is an integer.
+
+        Example topology definition:
+
+           s1:
+             interfaces:
+               ixia_1: ethernet2
+               ixia_2: ethernet3
+               s2: ethernet3
+
+        Example usage:
+
+           ${ixia_if} =    interfaces   node=s1   if_name=ixia_1
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | if_name  | name of interface in node, e.g., 'ixia_1' |
+        | soft_error | Default (False) is to generate an exception on error (e.g., can't find interface). If True, then return (False) and user will perform their own error handling. |
+
+        Return Value:
+        - If if_name is not specified, return the whole interfaces dictionary
+        - If if_name is specified, return the actual interface name
+        """
+        node_bundle = self.params(node)
+        if 'interfaces' not in node_bundle:
+            return helpers.test_error("Node '%s' does not have an interfaces bundle defined"
+                                      % node, soft_error=soft_error)
+        interfaces = node_bundle['interfaces']
+        if if_name == None:
+            return interfaces
+        if if_name not in interfaces:
+            return helpers.test_error("Node '%s' does not have the interface '%s' defined"
+                                      % (node, if_name), soft_error=soft_error)
+        return interfaces[if_name]
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.

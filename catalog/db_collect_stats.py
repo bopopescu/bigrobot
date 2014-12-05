@@ -137,8 +137,8 @@ Display test execution stats collected for a specific build.
     parser = argparse.ArgumentParser(prog='db_collect_stats',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
-    parser.add_argument('--release', required=True,
-                        help=("Product release, e.g., 'IronHorse'"))
+    parser.add_argument('--release',
+                        help=("Product release, e.g., 'ironhorse', 'ironhorse-plus', 'jackfrost', etc."))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
@@ -163,6 +163,16 @@ Display test execution stats collected for a specific build.
                            " variable BUILD_NAME")
     else:
         os.environ['BUILD_NAME'] = _args.build
+
+    # _args.release <=> env RELEASE_NAME
+    if not _args.release and 'RELEASE_NAME' in os.environ:
+        _args.release = os.environ['RELEASE_NAME']
+    elif not _args.release:
+        helpers.error_exit("Must specify --release option or set environment"
+                           " variable RELEASE_NAME")
+    else:
+        os.environ['RELEASE_NAME'] = _args.release
+    _args.release = _args.release.lower()
 
     return _args
 

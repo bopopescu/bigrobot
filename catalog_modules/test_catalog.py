@@ -1,4 +1,5 @@
 import getpass
+import re
 from pymongo import MongoClient
 import autobot.helpers as helpers
 
@@ -24,19 +25,50 @@ class TestCatalog(object):
     def test_types(self):
         return self.configs()['test_types']
 
+    # !!! FIXME: configs/catalog.yaml: naming fubar...
+    #            products and products_release_map should be combined.
+    def products(self):
+        """
+        Returns a list of defined products.
+        """
+        return self.configs()['product_release_map'].keys()
+
     def features(self, release):
+        """
+        Returns a list of features for a release.
+        """
         return self.configs()['features'][release]
 
-#    def aggregated_build(self, build_name):
-#        """
-#        Returns a list of actual builds in an aggregated build.
-#        """
-#        config = self.configs()
-#        if 'aggregated_builds' not in config:
-#            return {}
-#        if build_name not in config['aggregated_builds']:
-#            return {}
-#        return config['aggregated_builds'][build_name]
+    def releases(self, product):
+        """
+        Returns a list of releases for a product or empty list for no match.
+        """
+        if product in self.products():
+            return self.configs()['product_release_map'][product]
+        return []
+
+    def get_product_for_build_name(self, build_name):
+        """
+        Returns the product which matches a build name or None for no match.
+        E.g.,
+        - build_name='ihplus_bcf-104' matches 'bcf' product.
+        - build_name='corsair_bigtap-99' matches 'bigtap' product.
+        """
+        for product in self.products():
+            if re.search(product, build_name, re.I):
+                return product
+        return None
+
+    def get_releases_for_build_name(self, build_name):
+        """
+        Returns a list of releases which match a build name or empty list
+        for no match.
+        E.g.,
+        - build_name='ihplus_bcf-104' matches ['ironhorse', 'ironhorse-plus', ...]
+        - build_name='corsair_bigtap-99' matches ['blackbird', 'corsair', ...]
+        """
+        product = self.get_product_for_build_name(build_name)
+        return self.releases(product)
 
     def aggregated_build(self, build_name):
         """

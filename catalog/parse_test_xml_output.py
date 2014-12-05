@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 """
+Note: Must pass in BUILD_NAME environment since it is indirectly required by
+      TestSuite module.
 """
 
 import os
@@ -104,7 +106,7 @@ class TestCollection(object):
 
 def prog_args():
     descr = """\
-Parse the Robot output.xml files to generate the collections for the
+Parse the Robot output.xml files and generate/populate the collections for the
 Test Catalog (MongoDB) database.
 """
     parser = argparse.ArgumentParser(prog='parse_test_xml_output',
