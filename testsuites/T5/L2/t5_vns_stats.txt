@@ -23,7 +23,7 @@ add Single Leaf Three Rack setup
    [Tags]  L2  feature  IronHorse  run 
    bigrobot test ztn  False
    add fabric switch  
-   sleep  125  
+   sleep  155  
    rest verify fabric switch all
    rest verify fabric link
    rest verify fabric link common  6
@@ -344,8 +344,8 @@ verify interface rx/tx rates same rack
     sleep  125
 
 verify interface rx/tx broadcast packet stats different rack
-	[Tags]  L2  feature  IronHorse   
-
+	[Tags]  L2  feature  IronHorse  run   
+	ixia initialize  tg1  init=True
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -358,13 +358,13 @@ verify interface rx/tx broadcast packet stats different rack
     clear stats
     rest clear fabric interface stats 
     rest clear vns stats  v1
-    sleep  210
+    sleep  60
     rest clear fabric interface stats 
     rest clear vns stats  v1
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  210
+    sleep  120
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v1  10000
     rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
@@ -706,6 +706,8 @@ Master node controller reboot with multiple vns/interface stats
 * Keywords 
 T5 Functional Suite Setup
    base suite setup
+   Set swith int variables
+   Set switch dpid variables
    add fabric switch
    rest delete fabric switch  spine0
          
