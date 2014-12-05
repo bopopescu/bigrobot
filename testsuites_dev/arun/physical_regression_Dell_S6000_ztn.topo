@@ -13,7 +13,7 @@ c2:
   monitor_reauth: false
 
 s1:
-  alias: spine0
+  alias: reg-d-spine0
   fabric-role: spine
   mac: ec:f4:bb:fb:d7:81
   user: admin
@@ -27,7 +27,7 @@ s1:
   set_session_ssh: false
   set_init_ping: false
 s2:
-  alias: leaf0-a
+  alias: reg-d-leaf0-a
   leaf-group: rack0
   mac: 90:B1:1C:F4:C0:12
   user: admin
@@ -42,7 +42,7 @@ s2:
   set_session_ssh: false
   set_init_ping: false
 s3:
-  alias: leaf0-b
+  alias: reg-d-leaf0-b
   leaf-group: rack0
   mac: ec:f4:bb:fb:d1:f6
   user: admin
@@ -56,7 +56,7 @@ s3:
   set_session_ssh: false
   set_init_ping: false
 s4:
-  alias: leaf1-a
+  alias: reg-d-leaf1-a
   leaf-group: rack1
   mac: ec:f4:bb:fb:de:41
   user: admin
@@ -70,7 +70,7 @@ s4:
   set_session_ssh: false
   set_init_ping: false
 s5:
-  alias: spine1
+  alias: reg-d-spine1
   fabric-role: spine
   mac: 90:b1:1c:f4:b8:02
   user: admin
