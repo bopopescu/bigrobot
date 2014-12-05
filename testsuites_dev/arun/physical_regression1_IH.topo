@@ -32,6 +32,11 @@ s1:
     port: 15
     user: apc
     password: apc
+  interfaces:
+    spine0_int0: ethernet49
+    leaf0b_int0: ethernet37
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -49,6 +54,10 @@ s2:
     port: 17
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -66,6 +75,12 @@ s3:
     port: 18
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet53
+    leaf1b_int0: ethernet40
+    leaf1b_int1: ethernet39
+    spine0_int0: ethernet49
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -83,6 +98,10 @@ s4:
     port: 19
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -100,6 +119,11 @@ s5:
     port: 20
     user: apc
     password: apc
+  interfaces:
+    leaf2b_int0: ethernet39
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s6:
@@ -117,6 +141,10 @@ s6:
     port: 21
     user: apc
     password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s7:
@@ -132,6 +160,13 @@ s7:
   pdu:
     ip: pdu-314-b.bigswitch.com
     port: 19
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf1a_int0: ethernet9
+    leaf0b_int0: ethernet22
+    leaf1b_int0: ethernet26
+    leaf2a_int0: ethernet31
+    leaf2b_int0: ethernet32
   set_session_ssh: false
   set_init_ping: false
 s8:
@@ -147,6 +182,13 @@ s8:
   pdu:
     ip: pdu-314-b.bigswitch.com
     port: 20
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf0b_int0: ethernet2
+    leaf1a_int0: ethernet9
+    leaf1b_int0: ethernet10
+    leaf2a_int0: ethernet16
+    leaf2b_int0: ethernet15
   set_session_ssh: false
   set_init_ping: false
   

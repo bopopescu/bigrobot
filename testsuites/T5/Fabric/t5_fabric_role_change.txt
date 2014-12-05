@@ -22,6 +22,8 @@ add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse
    bigrobot test ztn  False
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
    sleep  125
    rest verify fabric switch all
 
