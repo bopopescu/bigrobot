@@ -344,7 +344,7 @@ verify interface rx/tx rates same rack
     sleep  125
 
 verify interface rx/tx broadcast packet stats different rack
-	[Tags]  L2  feature  IronHorse   
+	[Tags]  L2  feature  IronHorse  run   
 
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -358,13 +358,13 @@ verify interface rx/tx broadcast packet stats different rack
     clear stats
     rest clear fabric interface stats 
     rest clear vns stats  v1
-    sleep  210
+    sleep  60
     rest clear fabric interface stats 
     rest clear vns stats  v1
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  210
+    sleep  120
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v1  10000
     rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
