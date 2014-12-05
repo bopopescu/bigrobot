@@ -43,43 +43,43 @@ Library         keywords/T5Switch.py
 TC01 Verify breakout cable detection after breakout configuration show inventory on spine/Dell S6000 for 40 G port - Breakout capable port 
     [Tags]  feature  T5  breakout     
     Log     Step 1 - verify 40G port identifies the cable after configuration
-    Log     Step 2 - show inventory  output for spine 
+    Log     Step 2 - show inventory output for spine 
     Manual Passed
 
 TC02 Verify breakout cable detection after breakout configuration show interface on spine/Dell S6000 for 40 G port - Breakout capable port
     [Tags]  feature  T5  breakout     
     Log     Step 1 - verify 40G port identifies the cable 
-    Log     Step 2 - show inventory  output for spine 
+    Log     Step 2 - show inventory output for spine 
     Manual Passed
 
 TC03 Verify Breakout non capable port when cable inserted show inventory 
     [Tags]  feature  T5  breakout-negative     
     Log     Step 1 - verify 40G port does not identify the cable 
-    Log     Step 2 - show inventory  output for spine NONE/UNK
+    Log     Step 2 - show inventory output for spine NONE/UNK
     Manual Passed 
 
 TC04 Verify Breakout non capable port when cable inserted show interface 
     [Tags]  feature  T5  breakout-negative     
     Log     Step 1 - verify 40G port does not identify the cable 
-    Log     Step 2 - show inventory  output for spine NONE/UNK
+    Log     Step 2 - show inventory output for spine NONE/UNK
     Manual Passed  
       
 TC05 Verify Breakout non capable port when configured breakout cable inserted show inventory 
     [Tags]  feature  T5  breakout-negative     
     Log     Step 1 - verify 40G port does not identify the cable 
-    Log     Step 2 - show inventory  output for spine NONE/UNK
+    Log     Step 2 - show inventory output for spine NONE/UNK
     Manual untested 
 
 TC06 Verify Breakout non capable port when breakout configured cable inserted show interface 
     [Tags]  feature  T5  breakout-negative     
     Log     Step 1 - verify 40G port does not identify the cable 
-    Log     Step 2 - show inventory  output for spine NONE/UNK
+    Log     Step 2 - show inventory output for spine NONE/UNK
     Manual untested  
 
 TC07 Verify breakout cable detection show interface - links 1,3,4 - 2,3,4 - 1,4 - 2,3 etc 
     [Tags]  feature  T5     
     Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
-    Log     Step 2 - show  interface output
+    Log     Step 2 - show interface output
     Manual untested
 
 TC08 Verify breakout cable detection on leaf for 10G ports - normal interface 
@@ -456,12 +456,12 @@ TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress
 
 TC75 Verify ACL configuration for breakout cable - Ingress  
     [Tags]  feature  T5  
-    Log     Step 1 - Verify ACL configuration for breakout cable - Ingress, permit deny          
+    Log     Step 1 - Verify ACL configuration for breakout cable - Ingress permit deny          
     Manual untested   
 
 TC76 Verify ACL configuration for breakout cable - Egress  
     [Tags]  feature  T5  
-    Log     Step 1 - Verify ACL configuration for breakout cable - Egress  permit deny       
+    Log     Step 1 - Verify ACL configuration for breakout cable Egress permit deny       
     Manual untested 
  
 TC77 verify the server host side LACP 
