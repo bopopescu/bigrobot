@@ -345,7 +345,7 @@ verify interface rx/tx rates same rack
 
 verify interface rx/tx broadcast packet stats different rack
 	[Tags]  L2  feature  IronHorse  run   
-
+	ixia initialize  tg1  init=True
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1

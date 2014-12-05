@@ -29,47 +29,78 @@ Set swith int variables
 	Set Suite Variable		${leaf0a_spine1_intf0}
 	${leaf0a_ixia_intf}=  get_switch_int_topo  s1  ixia1_int0
 	Set Suite Variable		${leaf0a_ixia_intf}
-	${leaf1a_ixia_intf}=  get_switch_int_topo  s3  ixia1_int0
-	Set Suite Variable		${leaf1a_ixia_intf}
-	${leaf1b_ixia_intf}=  get_switch_int_topo  s4  ixia1_int0
-	Set Suite Variable		${leaf1b_ixia_intf}
-	${leaf1a_leaf1b_intf0}=  get_switch_int_topo  s3  leaf1b_int0
-	Set Suite Variable		${leaf1a_leaf1b_intf0}
+	
 	${leaf0b_ixia_intf}=  get_switch_int_topo  s2  ixia1_int0
 	Set Suite Variable		${leaf0b_ixia_intf}
+	${leaf0b_spine0_intf0}=  get_switch_int_topo  s2  spine0_int0
+	Set Suite Variable		${leaf0b_spine0_intf0}
+	${leaf0b_spine1_intf0}=  get_switch_int_topo  s2  spine1_int0  	
+	Set Suite Variable		${leaf0b_spine1_intf0}
+	
+	
+	${leaf1a_ixia_intf}=  get_switch_int_topo  s3  ixia1_int0
+	Set Suite Variable		${leaf1a_ixia_intf}
+	${leaf1a_spine1_intf0}=  get_switch_int_topo  s3  spine1_int0
+	Set Suite Variable		${leaf1a_spine1_intf0}
+	${leaf1a_leaf1b_intf1}=  get_switch_int_topo  s3  leaf1b_int1
+	Set Suite Variable		${leaf1a_leaf1b_intf1}
+	${leaf1a_leaf1b_intf0}=  get_switch_int_topo  s3  leaf1b_int0
+	Set Suite Variable		${leaf1a_leaf1b_intf0}
+	${leaf1a_spine0_intf0}=  get_switch_int_topo  s3  spine0_int0
+	Set Suite Variable		${leaf1a_spine0_intf0}
+			
+	${leaf1b_ixia_intf}=  get_switch_int_topo  s4  ixia1_int0
+	Set Suite Variable		${leaf1b_ixia_intf}
+	${leaf1b_spine0_intf0}=  get_switch_int_topo  s4  spine0_int0
+	Set Suite Variable		${leaf1b_spine0_intf0}
+	${leaf1b_spine1_intf0}=  get_switch_int_topo  s4  spine1_int0
+	Set Suite Variable		${leaf1b_spine1_intf0}
+
+	${leaf2a_leaf2b_intf0}=  get_switch_int_topo  s5  leaf2b_int0
+	Set Suite Variable		${leaf2a_leaf2b_intf0}
+	${leaf2a_ixia_intf}=     get_switch_int_topo  s5  ixia1_int0
+	Set Suite Variable		${leaf2a_ixia_intf}
+	${leaf2a_spine0_intf0}=  get_switch_int_topo  s5  spine0_int0
+	Set Suite Variable		${leaf2a_spine0_intf0}
+	${leaf2a_spine1_intf0}=  get_switch_int_topo  s5  spine1_int0
+	Set Suite Variable		${leaf2a_spine1_intf0}
+	
+	${leaf2b_ixia_intf}=     get_switch_int_topo  s6  ixia1_int0
+	Set Suite Variable		${leaf2b_ixia_intf}
+	${leaf2b_spine0_intf0}=  get_switch_int_topo  s6  spine0_int0
+	Set Suite Variable		${leaf2b_spine0_intf0}
+	${leaf2b_spine1_intf0}=  get_switch_int_topo  s6  spine1_int0
+	Set Suite Variable		${leaf2b_spine1_intf0}
+	
 	${spine1_leaf0a_intf0}=  get_switch_int_topo  s7  leaf0a_int0
 	Set Suite Variable		${spine1_leaf0a_intf0}
 	${spine1_leaf1a_intf0}=  get_switch_int_topo  s7  leaf1a_int0
 	Set Suite Variable		${spine1_leaf1a_intf0}
-	${leaf1a_spine1_intf0}=  get_switch_int_topo  s3  spine1_int0
-	Set Suite Variable		${leaf1a_spine1_intf0}
+	${spine1_leaf0b_intf0}=  get_switch_int_topo  s7  leaf0b_int0
+	Set Suite Variable		${spine1_leaf0b_intf0}
+	${spine1_leaf1b_intf0}=  get_switch_int_topo  s7  leaf1b_int0
+	Set Suite Variable		${spine1_leaf1b_intf0}
+	${spine1_leaf2a_intf0}=  get_switch_int_topo  s7  leaf2a_int0
+	Set Suite Variable		${spine1_leaf2a_intf0}
+	${spine1_leaf2b_intf0}=  get_switch_int_topo  s7  leaf2b_int0
+	Set Suite Variable		${spine1_leaf2b_intf0}
+	
+	${spine0_leaf0a_intf0}=  get_switch_int_topo  s8  leaf0a_int0
+	Set Suite Variable		${spine0_leaf0a_intf0}
+	${spine0_leaf0b_intf0}=  get_switch_int_topo  s8  leaf0b_int0
+	Set Suite Variable		${spine0_leaf0b_intf0}
+	${spine0_leaf1a_intf0}=   get_switch_int_topo  s8  leaf1a_int0
+	Set Suite Variable		${spine0_leaf1a_intf0}
+	${spine0_leaf1b_intf0}=   get_switch_int_topo  s8  leaf1b_int0
+	Set Suite Variable		${spine0_leaf1b_intf0}
+	${spine0_leaf2a_intf0}=   get_switch_int_topo  s8  leaf2a_int0
+	Set Suite Variable		${spine0_leaf2a_intf0}
+	${spine0_leaf2b_intf0}=   get_switch_int_topo  s8  leaf2b_int0
+	Set Suite Variable		${spine0_leaf2b_intf0}
 	
 	
 	
 *Variables
-${leaf1a_leaf1b_intf1}	ethernet40
-${leaf2a_leaf2b_intf0}  ethernet39
-${leaf2a_ixia_intf}		ethernet24
-${leaf2b_ixia_intf}		ethernet24
-${leaf2a_spine0_intf0}	ethernet49
-${leaf2a_spine1_intf0}	ethernet52
-${spine1_leaf0b_intf0}  ethernet2
-${spine1_leaf1b_intf0}  ethernet10
-${spine1_leaf2a_intf0}  ethernet15
-${spine1_leaf2b_intf0}  ethernet16
-${spine0_leaf0a_intf0}  ethernet21
-${spine0_leaf0b_intf0}  ethernet22
-${spine0_leaf1a_intf0}  ethernet25
-${spine0_leaf1b_intf0}  ethernet26
-${spine0_leaf2a_intf0}  ethernet31
-${spine0_leaf2b_intf0}  ethernet32
-${leaf1a_spine0_intf0}  ethernet49
-${leaf1b_spine0_intf0}  ethernet49
-${leaf1b_spine1_intf0}  ethernet52
-${leaf2a_spine0_intf0}  ethernet49
-${leaf2a_spine1_intf0}  ethernet52
-${leaf2b_spine0_intf0}  ethernet49
-${leaf2b_spine1_intf0}  ethernet52
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31
@@ -97,8 +128,7 @@ ${h6_tag_ip}	  192.168.4.24
 ${h1_tag_mac}  90:e2:ba:4e:bc:98
 ${h2_tag_mac}  90:e2:ba:4f:80:b1
 ${h3_tag_mac}  00:10:18:f0:eb:e0
-${leaf0b_spine0_intf0}	ethernet49
-${leaf0b_spine1_intf0}	ethernet52
+
 ${h3_single_ip}  192.168.1.10
 ${h4_single_ip}  192.168.1.11
 ${h2_single_ip}  192.168.1.21
