@@ -165,7 +165,7 @@ class T5ZTN(object):
             output = c.cli_content()
             output = helpers.strip_cli_output(output)
             installer_manifest = ast.literal_eval(output)
-            installer_release = installer_manifest['release']
+            installer_release = installer_manifest['sha1']
             return installer_release
         if image == 'swi':
             c.bash("unzip -p /usr/share/floodlight/zerotouch/switchlight*%s*swi"
@@ -173,7 +173,7 @@ class T5ZTN(object):
             output = c.cli_content()
             output = helpers.strip_cli_output(output)
             swi_manifest = ast.literal_eval(output)
-            swi_release = swi_manifest['release']
+            swi_release = swi_manifest['sha1']
             return swi_release
 
     def telnet_get_switch_switchlight_version(self, image, hostname,
@@ -1002,11 +1002,24 @@ class T5ZTN(object):
         s.cli('enable')
         s.cli('config')
         switch_type = "unknown"
+        switch_platform = "unknown"
         version = s.cli("show version")['content']
         if "AS6700-32X" in version:
             switch_type = "spine"
         elif "AS5710-54X" in version:
             switch_type = "leaf"
+        if "Accton" in version:
+            switch_platform = "powerpc"
+        elif "DELL" in version:
+            switch_platform = "x86"
+
+        if switch_platform == "x86":
+            fan_lines.append("snmp-server trap Fan 8 status good")
+            fan_lines.append("snmp-server trap Fan 8 status failed")
+            fan_lines.append("snmp-server trap Fan 8 status missing")
+        # helpers.log(fan_lines)
+
+
         running_config = s.cli("show running-config")['content']
         running_config = helpers.str_to_list(running_config)
         if len(running_config) < 5:

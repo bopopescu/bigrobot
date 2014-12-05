@@ -20,7 +20,7 @@ TC02 Configure vSwitch with 1G uplinks on a ESXi host & verify basic traffic for
     [Tags]              feature         manual          vmware	
     
 TC03 Flap Single uplink member port and veriy traffic failover
-	manual untested
+	manual passed
     [Tags]              feature         manual          vmware	
     
 TC04 Configure dvSwitch with 10G uplinks, enable LACP and verify LACP negotiation
@@ -32,7 +32,7 @@ TC05 Configure dvSwitch with 1G uplinks, enable LACP and verify LACP negotiation
     [Tags]              feature         manual          vmware	
     
 TC06 Flap Single uplink member port from LACP lag and veriy traffic failover
-	manual untested
+	manual passed
     [Tags]              feature         manual          vmware	
     
 TC07 Verify LACP lag formation after rebooting an ESX host
@@ -140,7 +140,7 @@ TC32 Verify guest VM can obtain a dhcp address through the fabric with DHCP rela
     [Tags]              feature         manual          vmware	
  
 TC33 DRS cluster with automatic setting
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC34 Enable HA in the ESXi cluster level
