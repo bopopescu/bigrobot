@@ -17,14 +17,9 @@ usage() {
 }
 
 
-#if [ "$RELEASE_NAME"x = x ]; then
-#    usage
-#fi
-
 release=$RELEASE_NAME
-config="../configs/catalog.yaml"
 
-phase1=1    # Find all test suites in product areas, report totals
+phase1=1    # Find all test suites in test areas, report totals
 phase2=1    # Dry-run to generate output.xml, and generate JSON files
 phase2a=1   #   Step a: Dry-run to generate output.xml
 phase2b=1   #   Step b: Generate JSON files
@@ -57,8 +52,17 @@ if [ $phase2 -eq 1 ]; then
 
     subject "Running all the test suites in dry-run mode"
 
-    for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
-        file=raw_data.dump_suites_by_areas.sh.${product}.suite_files
+    # Production test suites are located in test area folders under
+    # bigrobot/testsuites/. E.g.,
+    #    SwitchLight
+    #    BigWire
+    #    BigTap
+    #    SwitchLight
+    #    BigChain
+    #    T5
+
+    for test_area in `cd ../testsuites; find . ! -path . -type d -maxdepth 1 | xargs -I {} basename {}`; do
+        file=raw_data.dump_suites_by_areas.sh.${test_area}.suite_files
         dryrun_out=${file}.dryrun
         xml_logs=${file}.dryrun.output_xml.log
 
@@ -72,8 +76,8 @@ if [ $phase2 -eq 1 ]; then
         time ./parse_test_xml_output.py \
                 --input=$xml_logs \
                 --is-baseline \
-                --output-suites=raw_data.test_suites_${product}.json \
-                --output-testcases=raw_data.test_cases_${product}.json
+                --output-suites=raw_data.test_suites_${test_area}.json \
+                --output-testcases=raw_data.test_cases_${test_area}.json
     done
 fi
 

@@ -4,13 +4,6 @@ db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
 database: test_catalog_201412
 
-products:
-  - BigChain
-  - BigTap
-  - BigWire
-  - SwitchLight
-  - T5
-
 test_types:
   - feature
   - scaling
@@ -20,19 +13,48 @@ test_types:
   - negative
   - robustness
 
+# Note: releases field is an ordered list to reflect precedence, e.g.,
+#       ironhorse comes before ironhorse-plus which comes before jackfrost.
+products:
+  bcf:
+    releases:
+      - ironhorse:
+          version:   2.0.0
+          software_image_map: [ih ironhorse]
+      - ironhorse-plus:
+          version:   2.1.0
+          software_image_map: [ihp ihplus ironhorse-plus]
+      - jackfrost:
+          version:   3.0.0
+          software_image_map: [jf jackfrost]
+
+  bigtap:
+    releases:
+      - augusta:
+          version:   2.0.0
+          software_image_map: [augusta]
+      - blackbird:
+          version:   3.0.0
+          software_image_map: [blackbird]
+      - corsair-41:
+          version:   4.x.x
+          software_image_map: [corsair41]
+      - corsair-42:
+          version:   4.x.x
+          software_image_map: [corsair42]
+
 # Dictionary of products and the releases for each product as an ordered list.
 product_release_map:
   bcf:
     - ironhorse        # 2.0.0
     - ironhorse-plus   # 2.1.0
-    #- jackfrost        # 3.0.0
+    - jackfrost        # 3.0.0
   bigtap:
     - augusta          # 2.0.0
     - blackbird        # 3.0.0
     - corsair          # 4.0.0
-  
-# Every release should define a set of features which we can get additional
-# details for.
+
+# Every release should define a set of interesting features.
 features:
 
   # Big Tap Releases
@@ -65,3 +87,4 @@ features:
       filemanagement, running-config, initialconfig, virtualip, openstack,
       dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, 
     ]
+
