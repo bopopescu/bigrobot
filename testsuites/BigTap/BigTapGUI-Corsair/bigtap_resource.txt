@@ -36,7 +36,8 @@ ${RBAC TITLE}				Big Tap Security - RBAC Permissions
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
-${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_4']
+#${PROCEED DELTE BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${PROCEED DELTE BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 
@@ -253,7 +254,7 @@ ${FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeF
 ${DELIVERY INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
 ${SERVICE INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
 ${INTERFACE NAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${SUBMIT INTERFACE NAME BUTTON}			xpath=//span[@class='dijit dijitReset dijitInline submit_button dijitButton']/descendant::span[@id='dijit_form_Button_4_label']
+${SUBMIT INTERFACE NAME BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 
 #### Controller Interfaces Tunnel Page
@@ -370,7 +371,7 @@ ${BIG TAP INTERFACES CONFIGURE BUTTON}					xpath=//div[@class='step_text' and co
 ${BIG TAP INTERFACES FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeFilter']/descendant::input
 ${BIG TAP INTERFACES DELIVERY INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
 ${BIG TAP INTERFACES SERVICE INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
-${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
+${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${BIG TAP INTERFACES NAME FIELD}						xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${BIG TAP INTERFACES EDIT MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
 ${BIG TAP MATCH EDIT MENU ITEM}							xpath=//td[contains(@id, 'dijit_MenuItem_11') and contains(text(), 'Edit')]
