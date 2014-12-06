@@ -215,8 +215,15 @@ class SwitchLight(object):
             s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
             s1.enable(cli_input)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
             lines = string.split(s1.cli_content(), '\n')
+            lines.pop(0)
+            lines.pop()
             return_array = {}
+            sent_found = 0
             for i in lines:
                 p = i.lstrip(" ")
                 value = re.sub(' +', ' ', p)
@@ -226,10 +233,24 @@ class SwitchLight(object):
                 elif "Sent" in value:
                     return_array["sent_bytes"] = int(re.split(' ', value)[1])
                     return_array["sent_packets"] = int(re.split(' ', value)[3])
+                    sent_found = 1
+                elif "discard" in value and sent_found == 0:
+                    my_value = re.split(' ', value)
+                    return_array["received_discard_packets"] = int(my_value[2])
+                    return_array["received_pause_packets"] = int(my_value[4])
+                elif "discard" in value and sent_found == 1:
+                    my_value = re.split(' ', value)
+                    return_array["sent_discard_packets"] = int(my_value[0])
+                    return_array["sent_pause_packets"] = int(my_value[2])
+                elif "error" in value and sent_found == 0:
+                    my_value = re.split(' ', value)
+                    return_array["received_error_packets"] = int(my_value[0])
+                    return_array["received_crc_packets"] = int(my_value[2])
+                    return_array["received_alignment_packets"] = int(my_value[4])
+                elif "error" in value and sent_found == 1:
+                    my_value = re.split(' ', value)
+                    return_array["sent_error_packets"] = int(my_value[0])
             return return_array
-        except:
-            helpers.test_log("Could not execute command. Please check log for errors")
-            return False
 
     def cli_show_all_interfaces(self, node, intf_count=52):
         '''
