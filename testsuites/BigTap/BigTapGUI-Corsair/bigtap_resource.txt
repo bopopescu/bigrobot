@@ -87,22 +87,22 @@ ${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOve
 ${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB TUNNELING}							xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@class='knob_icon']
-${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Enabling Policy Overlap']/span[1]
-${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Disabling Policy Overlap']/span[1]
-${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//div[@title='Confirm Enabling Inport Mask']/span[1]
-${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//div[@title='Confirm Disabling Inport Mask']/span[1]
-${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Enabling CRC Check']/span[1]
-${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Disabling CRC Check']/span[1]
-${CONFIRM ENABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Enabling Tunneling']/span[1]
-${CONFIRM DISABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Disabling Tunneling']/span[1]
-${ENABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Enabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE INPORT MASK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE INPORT MASK SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
+${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]
+${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]
+${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]
+${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]
+${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation?')]
+${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation?')]
+${CONFIRM ENABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]
+${CONFIRM DISABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]
+${ENABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE INPORT MASK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE INPORT MASK SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 
 
 
@@ -240,7 +240,7 @@ ${GTP PROTOCOL TYPE FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/d
 ${CONFIGURE SWITCH ALIAS POPUP}			xpath=//div[@title='Configure Switch Alias']
 ${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
 ${SWITCH ALIAS FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${SUBMIT SWITCH ALIAS BUTTON}			xpath=//span[@id='dijit_form_Button_4']
+${SUBMIT SWITCH ALIAS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 
 
@@ -430,10 +430,11 @@ ${BIGTAP ADD FILTER INTERFACE POPUP}			xpath=//div[@title='Add Filter Interfaces
 ${BIGTAP ADD DELIVERY INTERFACE POPUP}			xpath=//div[@title='Add Delivery Interfaces']/child::span[@data-dojo-attach-point='titleNode']	
 ${FILTER CHECKBOX}								xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
 ${DELIVERY CHECKBOX}							xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
-${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//span[@id='dijit_form_Button_9_label']
-${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//span[@id='dijit_form_Button_9_label']
-${INTERFACE SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_4']
+${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${INTERFACE SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
+${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  		xpath=//div[@class='knob_icon lock']
 #xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
 ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
@@ -2383,7 +2384,7 @@ Delete Big Tap Interface from Interface Group
     ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
     
     Run Keyword If  '${role}'=='delivery'
-    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
+    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  target=Delivery
     Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
