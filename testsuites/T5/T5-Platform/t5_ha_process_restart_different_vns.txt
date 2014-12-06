@@ -388,13 +388,13 @@ t5 suite setup
 	reconnect_switch_ips  s7
 	reconnect_switch_ips  s8
 	#Once the ZTN startup config support adding use SSH and user name below switch config can be removed
-	cli add snmp keyword   s1   community   public       
-    cli add snmp keyword   s1   location   mountainview       
-    cli add snmp keyword   s1   contact    Big Switch Networks    
-    cli add snmp host   s1   10.9.18.3   traps   public   162   
-    cli add snmp host   s1   10.9.18.3   informs   public   162
-    cli enable trap keyword  s1  snmp-server trap linkUpDown interval 1
-    cli enable snmp   s1
+	#cli add snmp keyword   s1   community   public       
+    #cli add snmp keyword   s1   location   mountainview       
+    #cli add snmp keyword   s1   contact    Big Switch Networks    
+    #cli add snmp host   s1   10.9.18.3   traps   public   162   
+    #cli add snmp host   s1   10.9.18.3   informs   public   162
+    #cli enable trap keyword  s1  snmp-server trap linkUpDown interval 1
+    #cli enable snmp   s1
     
     ${return_value_1}=  rest add tenant  ${tenant_1}
     Should be true  ${return_value_1}       
