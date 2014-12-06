@@ -294,8 +294,12 @@ TC007: Trident2: Verify no pause frames are sent across switches
 * Keyword
 backpressure suite setup
     base suite setup
-    ${output_1}=  rest enable feature  full-match
-    Should be true  ${output_1}
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}
+    ${full_match_enabled}=  rest enable feature  full-match
+    Should be true  ${full_match_enabled}
+    ${inport_disabled}=  rest disable feature  inport-mask
+    Should be true  ${inport_disabled}
     ${output_2a}=  rest add switch alias  s1  ${switch_alias_1}
     Should be true  ${output_2a}
     ${output_2b}=  rest add switch alias  s2  ${switch_alias_2}
@@ -352,10 +356,18 @@ backpressure suite teardown
     Should be true  ${output_1}
     ${output_2}=  rest delete interface role  s1  ${switch_delivery_intf_1}   delivery
     Should be true  ${output_2}
+    ${output_2A}=  rest delete interface role  s1  ${switch_core_as_delivery_intf_1}   delivery
+    Should be true  ${output_2A}
+    ${output_2B}=  rest delete interface role  s3  ${switch_delivery_intf_4}   delivery
+    Should be true  ${output_2B}
     ${output_3}=  rest delete interface  s1  ${switch_filter_intf_1}
     Should be true  ${output_3}
     ${output_3A}=  rest delete interface  s1  ${switch_filter_intf_2}
-    Should be true  ${output_3A}    
+    Should be true  ${output_3A}
+    ${output_3B}=  rest delete interface  s1  ${switch_core_as_delivery_intf_1}
+    Should be true  ${output_3B}
+    ${output_3C}=  rest delete interface  s3  ${switch_delivery_intf_4}
+    Should be true  ${output_3C}
     ${output_4}=  rest delete interface  s1  ${switch_delivery_intf_1}
     Should be true  ${output_4}
     ${output_5}=  rest delete interface role  s1  ${switch_delivery_intf_2}  delivery
@@ -369,4 +381,7 @@ backpressure suite teardown
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch alias  s3
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
     base suite teardown
