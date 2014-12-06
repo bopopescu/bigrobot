@@ -381,12 +381,12 @@ t5 suite setup
     rest add fabric role  ${switch4_name}  spine    
 	sleep  255
 	rest_verify_fabric_switch_all
-	reconnect_switch_ips  s1
+    add ntp server  master  time-c.nist.gov
+    verify ntp  master  time-c.nist.gov
+    reconnect_switch_ips  s1
 	reconnect_switch_ips  s2
 	reconnect_switch_ips  s7
 	reconnect_switch_ips  s8
-    add ntp server  s1  time-c.nist.gov
-    verify ntp  s1  time-c.nist.gov
     
     ${return_value_1}=  rest add tenant  ${tenant_1}
     Should be true  ${return_value_1}       
