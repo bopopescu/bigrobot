@@ -320,10 +320,11 @@ T5 test setup
 	base test setup
 
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
 	rest delete tenant  t2
-	base test teardown
+
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10
