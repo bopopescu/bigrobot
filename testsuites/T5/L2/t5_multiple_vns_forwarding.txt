@@ -384,13 +384,15 @@ Verify forwarding vlan table with deleting tenants and vns
 T5 Functional Suite Setup
    base suite setup
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
    bring up h1 bond0
    bring up h2 bond0
    bring up h3 bond0
    bring up h4 bond0
    bring up h5 bond0
    bring up h6 bond0
-   sleep  5
+   sleep  55
    
 T5 Functional Suite Teardown
    delete fabric switch 
