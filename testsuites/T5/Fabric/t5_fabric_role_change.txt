@@ -13,7 +13,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/T5.py
 Library  keywords/Mininet.py
 Resource  testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
-#Resource  testsuites/T5/t5_physical_variables.txt
+Resource  testsuites/T5/t5_physical_variables.txt
 
 
 * Test Case   
