@@ -919,7 +919,6 @@ OF packet capture details
 
 * Keywords 
 T0 Setup
-	[Tags]  feature  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	#bash execute command  leaf0-a  ofad-ctl autoneg 25
