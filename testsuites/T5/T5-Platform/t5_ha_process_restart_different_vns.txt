@@ -369,7 +369,7 @@ t5 suite setup
     rest add dpid  ${switch2_name}  ${switch2_dpid}
     rest add fabric role  ${switch2_name}  leaf
     rest add leaf group  ${switch2_name}  rack0      
-
+	
     rest add switch  ${switch3_name}
     ${switch3_dpid}=  get_switch_mac_topo  s7
     rest add dpid  ${switch3_name}  ${switch3_dpid}
@@ -379,14 +379,22 @@ t5 suite setup
     ${switch4_dpid}=  get_switch_mac_topo  s8
     rest add dpid  ${switch4_name}  ${switch4_dpid}
     rest add fabric role  ${switch4_name}  spine    
-	sleep  155
+	sleep  255
 	rest_verify_fabric_switch_all
-	reconnect_switch_ips  s1
+    add ntp server  master  time-c.nist.gov
+    verify ntp  master  time-c.nist.gov
+    reconnect_switch_ips  s1
 	reconnect_switch_ips  s2
 	reconnect_switch_ips  s7
 	reconnect_switch_ips  s8
-    add ntp server  s1  time-c.nist.gov
-    verify ntp  s1  time-c.nist.gov
+	#Once the ZTN startup config support adding use SSH and user name below switch config can be removed
+	cli add snmp keyword   s1   community   public       
+    cli add snmp keyword   s1   location   mountainview       
+    cli add snmp keyword   s1   contact    Big Switch Networks    
+    cli add snmp host   s1   10.9.18.3   traps   public   162   
+    cli add snmp host   s1   10.9.18.3   informs   public   162
+    cli enable trap keyword  s1  snmp-server trap linkUpDown interval 1
+    cli enable snmp   s1
     
     ${return_value_1}=  rest add tenant  ${tenant_1}
     Should be true  ${return_value_1}       

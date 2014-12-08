@@ -28,7 +28,9 @@ add Dual Leaf Three Rack setup
    [Tags]  L2  scaling  IronHorse  run
    base suite setup
    add fabric switch
-   sleep  5
+   Set swith int variables
+   Set switch dpid variables
+   sleep  50
    rest verify fabric switch all
    rest verify fabric link
    reconnect switch ips

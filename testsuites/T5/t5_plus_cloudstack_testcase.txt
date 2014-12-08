@@ -148,8 +148,8 @@ restart mysql database service
 	manual passed
 
 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack    manual
@@ -272,8 +272,11 @@ T2.22 Delete and readd BCF controllers from the cloudstack management
 	manual passed 
 	
 T2.23 Upgrade cloudstack package workflow with BCF controllers present
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  stop cloudstack servive:sudo service cloudstack-management stop
+	log  download package and install package
+	log  sudo service cloudstack-management restart
+	manual passed 
 	
 T2.24 Verify sync operation using BCF CLI deleting a tenant
 	[Tags]  solution  cloudstack    manual  Xenserver
@@ -296,8 +299,8 @@ T2.27 Upgrade BCF controller to check SSL ceritificate preserve
 	manual passed
 	
 T2.28 seperate storage VLAN workflow while deploying cloudstack
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack  manual  Xenserver
+	manual passed 
 	
 T2.29 identify service insertion workflow for cloudstack 
 	[Tags]  solution  cloudstack    manual-untested  Xenserver
@@ -308,33 +311,41 @@ T2.30 verify fabric setting global mode
 	manual untested 
 	
 T2.32 Test deployment script for Xenserver
-	[Tags]  scaling  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  scaling  cloudstack   manual  Xenserver
+	manual passed 
 
 T2.33 Performance(between 2 VM using iperf)
 	[Tags]  performance  cloudstack    manual-untested  Xenserver
 	manual untested 
 
 T2.34 reboot cloudstack management server
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  Reboot management node, it comes back fine
+	manual passed 
 
 T2.35 reboot cloudstack Xenserver host node
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	manual passed 
 
 T2.36 restart cloudstack management service 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack    manual  Xenserver
+	log  service cloudstack-management restart	
+	manual passed 
 
 T2.37 restart mysql database service 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  service mysql restart 
+	log  All the icon are freshing,  see error: Unable to acquire DB connection for global lock system
+	log  Has to restart: service cloudstack-management restart
+	manual passed 
 
 T2.38 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack  manual-untested  Xenserver
+	log  stop cloudstack servive:sudo service cloudstack-management stop
+	log  download package and install package
+	log  sudo service cloudstack-management restart
+	manual passed 
 
 T2.39 Replacing server workflow with same host name and IP
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
+	[Tags]  solution  cloudstack   manual-untested  Xenserver
 	manual untested 	
