@@ -7,7 +7,7 @@ Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
 Force Tags       IronHorse-plus
-
+Library          keywords/BsnCommon.py
 
 * Test Case 
 
@@ -167,4 +167,10 @@ TC39 Controller failover and fabric intergrity while running ESXi workloads
  	manual passed
     [Tags]              feature         manual          vmware	
     
-
+* Keywords    
+T5 base suite setup
+    sleep                                       1
+    
+T5 base suite teardown
+    sleep                                       1
+ 
