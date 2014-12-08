@@ -373,6 +373,8 @@ Verify Duplicate ARP broadcast on Edge Port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
@@ -397,6 +399,8 @@ Verify Duplicate Multicast packets on edge port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
