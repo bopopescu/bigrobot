@@ -220,7 +220,7 @@ TC066 Reboot SCVMM Server
     [Tags]              feature         manual          hyperV
     
 
-    
+* Keywords    
 T5 base suite setup
     sleep                                       1
     
