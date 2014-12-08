@@ -1,5 +1,5 @@
 *Settings
-Documentation  Scale Limits for Accton AS5610
+Documentation  Scale Limits for Accton AS5710
 Suite Setup  scale suite setup
 Suite Teardown   scale suite teardown
 Test Setup   base test setup
@@ -13,12 +13,12 @@ Library  keywords/Ixia.py
 
 * Variable
 #### AS5610
-${switch1_alias}                        app-ras5610-1       #Alias for AS5610 switch
+${switch1_alias}                        app-ras5710-1       #Alias for AS5710 switch
 ${filter_intf_1}                        ethernet1
 ${filter_alias_1}                       ixia-1-1
 ${delivery_intf_1}                      ethernet2
 ${delivery_alias_1}                     ixia-1-2
-${policy_ras5610}                       policy-ras5610
+${policy_ras5610}                       policy-ras5710
 
 *Test Case
 TC1: Verify policies
