@@ -148,8 +148,8 @@ restart mysql database service
 	manual passed
 
 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack    manual
