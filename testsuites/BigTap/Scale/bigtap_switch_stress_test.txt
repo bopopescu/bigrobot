@@ -1,5 +1,5 @@
 *Settings
-Documentation  Scale Limits for Accton AS5710
+Documentation  CLI test under load conditions on Accton AS5710
 Suite Setup  scale suite setup
 Suite Teardown   scale suite teardown
 Test Setup   base test setup
@@ -22,173 +22,173 @@ ${policy_ras5610}                       policy-ras5710
 
 *Test Case
 TC1: Verify policies
-    : FOR    ${INDEX}    IN RANGE    1    1000
-    \    ${NINDEX}=  Convert to string  ${INDEX}  
-    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}         
+    : FOR  ${INDEX}  IN RANGE  1  2040
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
     \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
     \    Should be true  ${verify_policy}
-    [Tags]  ipv4  policy-scale  full-match
+    [Tags]  ipv4  policy-scale  l3l4-match
 
 TC2: Execute command show inventory on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show inventory
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC3: Execute command show interface on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC4: Execute command show interfaces ma1 on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ma1
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC5: Execute command show interfaces ma1 detail on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ma1 detail
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC6: Execute command show interfaces negotiate on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface negotiate
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC7: Execute command show interfaces ethernet1 on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ethernet1
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC8: Execute command show interfaces ethernet1 detail on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ethernet1 detail
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC9: Execute command show startup-config on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show startup-config
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC10: Execute command show running-config on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show running-config
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC11: Execute command show ntp on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show ntp
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC12: Execute command show version on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show version
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC13: Execute command show users on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show users
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC14: Execute command show forwarding crc status on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding crc status
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC15: Execute command show forwarding l2cache status on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding l2cache status
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC16: Execute command show forwarding pause status on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding pause status
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC17: Execute command show forwarding pimu status on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding pause status
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC18: Execute command show environment on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show environment
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC19: Execute command show datapath on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show datapath
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC20: Execute command show controller on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC21: Execute command show controller history on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller history
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC22: Execute command show controller statistics on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller statistics
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC23: Execute command show controller statistics detail on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller statistics detail
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC24: Execute command show flowtable on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC25: Execute command show flowtable detail on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable detail
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC26: Execute command show flowtable summary on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable summary
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC27: Execute command show boot on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller boot
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 TC28: Execute command copy tech-support flash2 on switch
-    : FOR    ${INDEX}    IN RANGE    1    50
+    : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  copy tech-support flash2
-    \    sleep  5
+    \    sleep  2
     [Tags]  show
     
 * Keyword
@@ -197,8 +197,8 @@ scale suite setup
     base suite setup
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled}
-    ${full_match_enabled}=  rest enable feature  full-match
-    Should be true  ${full_match_enabled}
+    ${l3l4_match_enabled}=  rest enable feature  l3-l4-mode
+    Should be true  ${l3l4_match_enabled}
     ${inport_disabled}=  rest disable feature  inport-mask
     Should be true  ${inport_disabled}
     rest add switch alias  s1  ${switch1_alias}
@@ -210,7 +210,7 @@ scale suite setup
     Should be true  ${thost_enabled} 
     ${thost_enabled}=  rest enable feature  full-match
     Should be true  ${thost_enabled}    
-    : FOR    ${INDEX}    IN RANGE    1    1000
+    : FOR  ${INDEX}    IN RANGE    1    2040
     \    Log    ${INDEX}
     \    ${NINDEX}=  Convert to string  ${INDEX}
     \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
@@ -222,17 +222,19 @@ scale suite setup
     sleep  360
     
 scale suite teardown
-    : FOR    ${INDEX}    IN RANGE    1    1000
+    : FOR  ${INDEX}  IN RANGE  1  2040
     \    Log    ${INDEX}
     \    ${NINDEX}=  Convert to string  ${INDEX}
     \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
-    \    Log    ${mypolicy}      
+    \    Log    ${mypolicy}
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100
-    rest delete interface role  s1  ${filter_intf_1}       filter 
-    rest delete interface role  s1  ${delivery_intf_1}       delivery 
-    rest delete interface  s1  ${filter_intf_1}        
-    rest delete interface  s1  ${delivery_intf_1}        
+    ${full_match_enabled}=  rest enable feature  full-match
+    Should be true  ${full_match_enabled}
+    rest delete interface role  s1  ${filter_intf_1}  filter 
+    rest delete interface role  s1  ${delivery_intf_1}  delivery 
+    rest delete interface  s1  ${filter_intf_1}
+    rest delete interface  s1  ${delivery_intf_1}
     rest delete switch alias  s1
-    rest delete switch  s1        
+    rest delete switch  s1
     base suite teardown
