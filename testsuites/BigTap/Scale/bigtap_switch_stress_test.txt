@@ -22,7 +22,7 @@ ${policy_ras5610}                       policy-ras5710
 
 *Test Case
 TC1: Verify policies
-    : FOR    ${INDEX}    IN RANGE    1    1020
+    : FOR    ${INDEX}    IN RANGE    1    1000
     \    ${NINDEX}=  Convert to string  ${INDEX}  
     \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}         
     \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
