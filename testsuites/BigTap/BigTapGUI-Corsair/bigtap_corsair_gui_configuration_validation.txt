@@ -113,7 +113,7 @@ T2 Teardown
 # 															ID	 				Switch							Role			Name				Interface Name
 T3 Test set up:
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1e:f3:95			filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-2-15
 	Configure Big Tap Interface from Big Tap Menu			ethernet2			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-4-8	
 	
 T3.1 Filter Interface group with 1 filter interface and name filter-group		

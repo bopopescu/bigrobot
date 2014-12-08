@@ -2390,9 +2390,9 @@ Delete Big Tap Interface from Interface Group
     Run Keyword If  '${role}'=='delivery'
     ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
     
-    Run Keyword If  '${role}'=='delivery'
-    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  target=Delivery
-    Sleep  1
+    #Run Keyword If  '${role}'=='delivery'
+    #...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  target=Delivery
+    #Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Delete Delivery Interface from Group   ${if-name}
