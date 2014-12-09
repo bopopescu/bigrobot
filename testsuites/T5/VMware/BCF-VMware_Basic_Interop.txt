@@ -96,7 +96,7 @@ TC21 vMotion a VM between two ESXi hosts
     [Tags]              feature         manual          vmware	
     
 TC22 vMotion a VM between two ESXi hosts using multiple VMKernel interfaces
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC23 Remove and add VMKernel interfaces and veriy vMotion connectivity
@@ -132,7 +132,7 @@ TC30 L3 traffic performance within a VM between different vNICs belong to a same
     [Tags]              feature         manual          vmware	
  
 TC31 Verify guest VM can obtain a dhcp address through the fabric without DHCP relay
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC32 Verify guest VM can obtain a dhcp address through the fabric with DHCP relay
