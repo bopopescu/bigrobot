@@ -497,6 +497,7 @@ class T5ZTN(object):
             s.send("ifconfig ma1 down")
             helpers.sleep(10)
             s.send("ifconfig ma1 up")
+            helpers.sleep(10)
             s.send("exit")
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
