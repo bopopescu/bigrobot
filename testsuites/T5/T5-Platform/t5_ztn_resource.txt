@@ -107,7 +107,8 @@ Test Setup
 	Run Keyword and Ignore Error  Cli Run  master  show zerotouch devices
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
-	Wait Until All Switches Connected
+	${status}=  Wait Until All Switches Connected
+	Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
 Test Teardown
 	Run Keyword and Ignore Error  Sleep  15
@@ -117,8 +118,7 @@ Test Teardown
 	Run Keyword and Ignore Error  Cli  c2  reauth admin adminadmin
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
-	#Run Keyword and Ignore Error  Sleep  30
-    Run Keyword If Test Failed  Run Keyword and Ignore Error  Power Cycle Disconnected Switches
+	Run Keyword and Ignore Error  Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -419,6 +419,13 @@ Power Cycle Single Switch
     Sleep  10
     Power Up Switch  ${switch_id}
 
+Power Cycle Single Switch and Reinstall Switchlight
+    [Arguments]  ${switch_id}
+    Power Down Switch  ${switch_id}
+    Sleep  10
+    Power Up Switch  ${switch_id}
+    Telnet Reinstall Switch  ${switch_id}
+
 Power Cycle Disconnected Switches
     ${status}=  Verify Switch Connection State  True  ${s1_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s1
@@ -430,4 +437,17 @@ Power Cycle Disconnected Switches
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s4
     ${status}=  Verify Switch Connection State  True  ${s5_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s5
+    Wait Until All Switches Connected
+
+Power Cycle Disconnected Switches and Reinstall Switchlight
+    ${status}=  Verify Switch Connection State  True  ${s1_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s1
+    ${status}=  Verify Switch Connection State  True  ${s2_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s2
+    ${status}=  Verify Switch Connection State  True  ${s3_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s3
+    ${status}=  Verify Switch Connection State  True  ${s4_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s4
+    ${status}=  Verify Switch Connection State  True  ${s5_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s5
     Wait Until All Switches Connected
