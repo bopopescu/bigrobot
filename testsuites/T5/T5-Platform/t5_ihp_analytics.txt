@@ -5,8 +5,22 @@ Documentation       T5 IH+ Analytics
 ...
 
 Library  	keywords/BsnCommon.py
+Library     keywords/Analytics.py
+Library     keywords/T5Platform.py
+Library     keywords/T5Utilities.py
+Library     keywords/T5Parallel.py
+Library     keywords/T5ZTN.py
+Library     OperatingSystem
+Library     keywords/Host.py
 Library		String
+Resource    t5_upgrade_ztn_resource.txt
 Force Tags      T5  Feature  IronHorse-Plus  Analytics
+
+*** Variable ***
+${image_latest}      bsn@10.2.3.100:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-upgrade-bcf-2.0.0-master01-SNAPSHOT.pkg
+${h2ip}     8.8.8.8
+${h1ip}     10.2.3.100
+${medium}  10
 
 *** Test Cases ***
 #Logging in logging out
@@ -29,31 +43,46 @@ T1.6. Log out from the regular GUI, verify that user is no longer able to view A
     Manual Passed
     [Tags]  manual
 T1.7. Clear user session, verify that user is no longer able to view Analytics
-    Manual Untested
-    [Tags]  manual-untested
+    # Session gets reestablished and user is still able to view Analytics
+    Manual Passed
+    [Tags]  manual
 T1.8. Delete user account, verify that user is no longer able to view Analytics
-    Manual Untested
-    [Tags]  manual-untested
+    # As long as user session is active, they are able to view Analytics
+    Manual Passed
+    [Tags]  manual
 T1.9. Disassociate user from admin group, verify that user is no longer able to view Analytics
-    Manual Untested
-    [Tags]  manual-untested
+    # As long as user session is active, they are able to view Analytics
+    Manual Passed
+    [Tags]  manual
 T1.10. Failover should not interrupt Analytics session
-    Manual Untested
-    [Tags]  manual-untested
+    # If user connected via VIP then session will be terminated
+    Manual Passed
+    [Tags]  manual
 T1.11. Verify that user is notified about session expiration and necessity to reauth
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BSC-6818
 
 #Viewing logs
-T2.1. Verify that all logs available in files on the controller are available in the Analytics tool
-    Manual Untested
-    [Tags]  manual-untested
+T2.1.1. Verify that all logs available in files on the controller are available in the Analytics tool on Master controller
+    ${status}=  Verify Logs Numbers  master
+    Should Be True  ${status}
+T2.1.2. Verify that all logs available in files on the controller are available in the Analytics tool on Slave controller
+    ${status}=  Verify Logs Numbers  slave
+    Should Be True  ${status}
 T2.2. Verify that all logs from before controller graceful failover are visible in the Analytics
-    Manual Untested
-    [Tags]  manual-untested
+    ${status}=  Rest Verify Cluster Election Take Leader
+    Should Be True  ${status}
+    ${status_master}=  Verify Logs Numbers  master
+    ${status_slave}=  Verify Logs Numbers  slave
+    Should Be True  ${status_master}
+    Should Be True  ${status_slave}
 T2.3. Verify that all logs from before controller graceful reload are visible in the Analytics
-    Manual Untested
-    [Tags]  manual-untested
+    ${status}=  Cluster Node Reload
+    Should Be True  ${status}
+    ${status_master}=  Verify Logs Numbers  master
+    ${status_slave}=  Verify Logs Numbers  slave
+    Should Be True  ${status_master}
+    Should Be True  ${status_slave}
 T2.4. Verify that all logs from before controller graceful reboot are visible in the Analytics
     Manual Untested
     [Tags]  manual-untested
@@ -61,23 +90,39 @@ T2.5. Verify that all logs from before controller graceful power-cycle are visib
     Manual Untested
     [Tags]  manual-untested
 T2.6. Check that pre-upgrade logs are still available after the upgrade
+    ${status}=  Verify Dual nodes upgrade  ${image_latest}
+    Should Be True  ${status}
+    ${status_master}=  Verify Logs Numbers  master
+    ${status_slave}=  Verify Logs Numbers  slave
+    Should Be True  ${status_master}
+    Should Be True  ${status_slave}
+    [Tags]  skipped
+T2.7. Check that all relevant upgrade logs are available in the Analytics tool
     Manual Passed
     [Tags]  manual
-T2.7. Check that all relevant upgrade logs are available in the Analytics tool
-    Manual Untested
-    [Tags]  manual-untested
 T2.8. Stop elastic search service for some time, restart it, verify that the logs created during the period it was down are eventually pulled into the Analytics Tool
-    Manual Untested
-    [Tags]  manual-untested (minutes, hours)
+    Bash  master  sudo service elasticsearch stop
+    Bash  slave  sudo service elasticsearch stop
+    ${status}=  Rest Verify Cluster Election Take Leader
+    Should Be True  ${status}
+    ${status}=  Rest Verify Cluster Election Take Leader
+    Should Be True  ${status}
+    Bash  master  sudo service elasticsearch start
+    Bash  slave  sudo service elasticsearch start
+    Sleep  100
+    ${status_master}=  Verify Logs Numbers  master
+    ${status_slave}=  Verify Logs Numbers  slave
+    Should Be True  ${status_master}
+    Should Be True  ${status_slave}
 T2.9. Insert incomplete/corrupted logs into the log file and verify that this does not disrupt the Analytics Tool
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T2.10. Insert a number of duplicated logs into the log file and verify that this does not disrupt the Analytics Tool (check in CLI as well)
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T2.11. Delete log file - verify that this does not disrupt the Analytics Tool
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Parsing logs
 #T3.1. Ensure that information from message fields are parsed out correctly, e.g.:
@@ -123,13 +168,11 @@ T4.5. increase memory limit to 50% - expect no noticeable performance upgrade
 T4.6. increase CPU limit to 50% - expect no noticeable performance upgrade
     Manual Untested
     [Tags]  manual-untested
-T4.7. controller VM with small resources (min. requirement is 16GB and 8 vCPUs)
+#T4.7. controller VM with small resources (min. requirement is 16GB and 8 vCPUs)
+T4.7.1. decrease available memory to 4GB and CPUs to 4 - expect noticeable performance downgrade
     Manual Untested
     [Tags]  manual-untested
-T4.8. decrease available memory to 4GB and CPUs to 4 - expect noticeable performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
-T4.9. decrease available memory to 2GB and CPUs to 1 - expect blocking performance downgrade
+T4.7.2. decrease available memory to 2GB and CPUs to 1 - expect blocking performance downgrade
     Manual Untested
     [Tags]  manual-untested
 
@@ -145,8 +188,8 @@ T5.3. Focus on loading large amounts of logs (change paging to e.g. 200 pages x 
     [Tags]  manual-untested
 
 T6.1. Floodlight support bundle generation - should not be impacted by Analytics tool
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 T7.1. Verify that after controller cluster upgrade Log Analytics are accessible on both controllers
     Manual Passed
@@ -196,14 +239,14 @@ T10.1. Sorting logs
 
 #Filtering logs
 T11.1. Select time range older than oldest log
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T11.2. Select time range in the future
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T11.3. Select date in invalid format
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Saving and loading dashboards
 T12.. Check if works under normal conditions
@@ -213,20 +256,20 @@ T12.1. Preserved after upgrade
     Manual Untested
     [Tags]  manual-untested
 T12.2. Preserved after failover
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T12.3. Preserved after reload
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T12.4. Preserved after reboot
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T12.5. Preserved after power-cycle
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T12.6. Test access to files saved by different user
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Sharing dashboards
 T13.1. Check if saved link works
@@ -236,28 +279,28 @@ T13.2. Check if saved link works after upgrade
     Manual Untested
     [Tags]  manual-untested
 T13.3. Check if saved link works after failover
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T13.4. Check if saved link works after controller reload
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T13.5. Check if saved link works after controller reboot
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T13.6. Check if saved link works after controller power-cycle
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Refreshing
 T14.1. Set refreshing period to 0
-    Manual Untested
-    [Tags]  manual-untested
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
 T14.2. Check if there’s any max value for refreshing period, try to exceed it
-    Manual Untested
-    [Tags]  manual-untested
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
 T14.3. Input invalid (e.g. 4r) refreshing period
-    Manual Untested
-    [Tags]  manual-untested
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
 
 T15.1. Adding filters to match the value (from expanded entry row)
     Manual Passed
