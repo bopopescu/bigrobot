@@ -14,7 +14,7 @@ Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py     
 Library         String
-
+Resource		 testsuites/T5/t5_physical_variables.txt
 *Variables
 
 ${j}    1
@@ -26,11 +26,6 @@ ${vns}=           v1
 ${vlan}=          -1
 ${intf_1}=        ethernet24
 ${intf_2}=        ethernet24
-
-${leaf1_spine0_intf1}=  ethernet49
-${spine0_leaf1_intf1}=  ethernet21
-${leaf2_spine0_intf1}=  ethernet49
-${spine0_leaf2_intf1}=  ethernet25
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -286,9 +281,9 @@ TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch1_name}  ${leaf1_spine0_intf1}
+    disable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch1_name}  ${leaf1_spine0_intf1}
+    enable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
@@ -306,9 +301,9 @@ TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1_intf1}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1_intf1}
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
@@ -326,9 +321,9 @@ TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch3_name}  ${leaf2_spine0_intf1}
+    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch3_name}  ${leaf2_spine0_intf1}
+    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
@@ -346,9 +341,9 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch7_name}  ${spine0_leaf2_intf1}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch7_name}  ${spine0_leaf2_intf1}
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
@@ -374,6 +369,8 @@ T5 switch platform test setup
    #${swDpid7}=  rest return switch dpid from ip  s7
    #rest add dpid  ${switch7_name}   ${swDpid7}
    #rest add fabric role  ${switch7_name}  spine 
+   Set swith int variables
+   Set switch dpid variables
    rest add tenant  ${tenant}
    rest add vns  ${tenant}  ${vns}
    rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan}    
