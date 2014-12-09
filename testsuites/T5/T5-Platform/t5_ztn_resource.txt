@@ -8,7 +8,6 @@
 *** Keywords ***
 Suite Setup
 	Base Suite Setup
-	Run Keyword and Ignore Error  Power Cycle All Switches
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 	${tmp}  params  node=c1  key=ip
@@ -44,34 +43,40 @@ Suite Setup
 	set suite variable  ${s4_dpid}  00:00:${s4_mac}
 	set suite variable  ${s5_dpid}  00:00:${s5_mac}
 
+    Randomize ZTN Configuration
+
 	@{spineList}=  Create List  ${s1_dpid}  ${s5_dpid}
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
-	Sleep  150
-	Cli Run  master  enable; config
-	Randomize ZTN Configuration
-	Cli Run  master  show switch
+
+	Sleep  60
+
+	Wait Until All Switches Connected
 
     Cli Run  master  system reinstall switch ${s1_alias}
     Cli Run  master  system reinstall switch ${s2_alias}
     Cli Run  master  system reinstall switch ${s3_alias}
     Cli Run  master  system reinstall switch ${s4_alias}
     Cli Run  master  system reinstall switch ${s5_alias}
-    Cli Reboot Switch  master  all
-	Sleep  300
 
-	${status}=  Rest Get Switch Connection State  master  ${s1_alias}
-	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
-	${status}=  Rest Get Switch Connection State  master  ${s2_alias}
-	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
-	${status}=  Rest Get Switch Connection State  master  ${s3_alias}
-	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
-	${status}=  Rest Get Switch Connection State  master  ${s4_alias}
-	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
-	${status}=  Rest Get Switch Connection State  master  ${s5_alias}
-	Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	Sleep  200
+    Run Keyword and Ignore Error  Power Cycle All Switches
+	Sleep  60
+
+	Cli Run  master  enable; config
+	Cli Run  master  show switch
+
+	#${status}=  Rest Get Switch Connection State  master  ${s1_alias}
+	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
+	#${status}=  Rest Get Switch Connection State  master  ${s2_alias}
+	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
+	#${status}=  Rest Get Switch Connection State  master  ${s3_alias}
+	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
+	#${status}=  Rest Get Switch Connection State  master  ${s4_alias}
+	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
+	#${status}=  Rest Get Switch Connection State  master  ${s5_alias}
+	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
+	#Sleep  200
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -238,7 +243,7 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random_1}
 	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random_1}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random_1}${threshold_random_2}
-	Cli Run  master  snmp-server switch trap fan-status ${threshold_random_1}${threshold_random_2}
+	Cli Run  master  snmp-server switch trap fan-status 1${threshold_random_1}${threshold_random_2}
 	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}${threshold_random_2}
 	Cli Run  master  snmp-server switch trap link-status ${threshold_random_1}${threshold_random_2}
 	${host_random}  Generate Random IP
@@ -406,7 +411,7 @@ Power Up All Switches
 	Sleep  5
 
 Wait Until All Switches Connected
-    Wait Until Keyword Succeeds  5 min  10 s  Verify All Switches Connected
+    Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
 
 Power Cycle Single Switch
     [Arguments]  ${switch_id}

@@ -104,7 +104,7 @@ T1.6. Test switch reboot
 T1.7. Reboot all switches from CLI
 	${status}=  Cli Reboot Switch  master  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
 	Sleep  120
 	Verify All Switches Running Config
