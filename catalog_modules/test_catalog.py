@@ -25,26 +25,26 @@ class TestCatalog(object):
     def test_types(self):
         return self.configs()['test_types']
 
-    # !!! FIXME: configs/catalog.yaml: naming fubar...
-    #            products and products_release_map should be combined.
-    def products(self):
-        """
-        Returns a list of defined products.
-        """
-        return self.configs()['product_release_map'].keys()
-
     def features(self, release):
         """
         Returns a list of features for a release.
         """
         return self.configs()['features'][release]
 
+    def products(self):
+        """
+        Returns a list of defined products.
+        """
+        return self.configs()['products'].keys()
+
     def releases(self, product):
         """
         Returns a list of releases for a product or empty list for no match.
         """
         if product in self.products():
-            return self.configs()['product_release_map'][product]
+            releases_list = self.configs()['products'][product]['releases']
+            releases = helpers.list_flatten([rel.keys() for rel in releases_list])
+            return releases
         return []
 
     def get_product_for_build_name(self, build_name):
@@ -59,16 +59,49 @@ class TestCatalog(object):
                 return product
         return None
 
+    def get_base_release_for_build_name(self, build_name, product):
+        """
+        'product' is the product name as defined in configs/catalog.yaml
+        (e.g., 'bcf', 'bigtap', etc).
+
+        Returns the release name in the build_name string. See the BUILD_NAME
+        convention wiki guide at:
+        https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=58327098
+        """
+        match = re.match(r'^(\w+)_.*$', build_name)
+        base_release = None
+        if match:
+            image_release = match.group(1)
+            releases_list = self.configs()['products'][product]['releases']
+            for release in releases_list:
+                r = release.keys()[0]
+                if image_release in release[r]['software_image_map']:
+                    base_release = r
+                    print "**** base_release: %s" % base_release
+                    break
+        return base_release
+
     def get_releases_for_build_name(self, build_name):
         """
         Returns a list of releases which match a build name or empty list
         for no match.
         E.g.,
-        - build_name='ihplus_bcf-104' matches ['ironhorse', 'ironhorse-plus', ...]
-        - build_name='corsair_bigtap-99' matches ['blackbird', 'corsair', ...]
+        - build_name='ihplus_bcf-104' matches
+            ['ironhorse', 'ironhorse-plus']
+        - build_name='corsair400_bigtap-99' matches
+            ['augusta', 'blackbird', 'corsair-4.0.0']
         """
         product = self.get_product_for_build_name(build_name)
-        return self.releases(product)
+        base_release = self.get_base_release_for_build_name(build_name, product)
+        releases = self.releases(product)
+
+        # Only matches releases up to the base release. For example, if the
+        # base release is IronHorse-Plus, only matches IronHorse and
+        # IronHorse-Plus but not JackFrost.
+        if base_release in releases:
+            return releases[ : releases.index(base_release) + 1 ]
+        else:
+            return releases
 
     def aggregated_build(self, build_name):
         """

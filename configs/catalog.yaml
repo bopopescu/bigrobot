@@ -19,29 +19,61 @@ products:
   bcf:
     releases:
       - ironhorse:
-          version:   2.0.0
-          software_image_map: [ih ironhorse]
+          version:
+                   - 2.0.0
+                   - 2.0.2         # patch1
+          software_image_map:
+                   - ih
+                   - ironhorse
       - ironhorse-plus:
-          version:   2.1.0
-          software_image_map: [ihp ihplus ironhorse-plus]
+          version:
+                   - 2.5.0
+          software_image_map:
+                   - ihp
+                   - ihplus
+                   - ironhorse-plus
       - jackfrost:
-          version:   3.0.0
-          software_image_map: [jf jackfrost]
+          version:
+                   - 3.0.0
+          software_image_map:
+                   - jf
+                   - jackfrost
 
   bigtap:
     releases:
       - augusta:
-          version:   2.0.0
-          software_image_map: [augusta]
+          version:
+                   - 2.0.0
+          software_image_map:
+                   - augusta
       - blackbird:
-          version:   3.0.0
-          software_image_map: [blackbird]
-      - corsair-41:
-          version:   4.x.x
-          software_image_map: [corsair41]
-      - corsair-42:
-          version:   4.x.x
-          software_image_map: [corsair42]
+          version:
+                   - 3.0.0
+          software_image_map:
+                   - blackbird
+      - corsair-400:
+          version:
+                   - 4.0.0
+                   - 4.0.1         # shellshock patch
+                   - 4.0.2         # poodle patch
+                   - 4.1.0         # various bug fixes
+          software_image_map:
+                   - corsair400
+      - corsair-411:
+          version:
+                   - 4.1.1         # new platforms, buffer mgt
+          software_image_map:
+                   - corsair411
+      - corsair-450:
+          version:
+                   - 4.5.0
+          software_image_map:
+                   - corsair450
+      - dragon:
+          version:
+                   - 5.0.0
+          software_image_map:
+                   - dragon
 
 # Dictionary of products and the releases for each product as an ordered list.
 product_release_map:
