@@ -174,21 +174,21 @@ TC19 Verify the same segment member port breakout interface configuration
 
 TC20 Verify the different segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify interface configuration for the different segment interface using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
     Manual untested
 
 TC21 Verify the different segment member port with Vlan breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify interface configuration for the different segment interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
     Manual untested
 
 TC22 Verify the different tenant segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify interface configuration for the different tenant interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
     Manual untested
@@ -228,7 +228,7 @@ TC27 Verify the the breakout interfaces configuration delete in segment and and 
 
 TC28 Verify bpdu guard protection when breakout interface is connected with Arista switch 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify when STP is enabled on thirdparty vendor 
     Log     Step 2 - Verify when bpdu comes to the breakout interface the interface is shutdown with bpdu error message  
     Manual untested
@@ -305,13 +305,13 @@ TC39 Verify jumbo frame same segment L2 traffic bidirectional
 
 TC40 Verify same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify bidirectional same segment L2 traffic        
     Manual untested
     
 TC41 Verify jumbo frame same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual 
+    [Tags]  manual-untested
     Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
     Manual untested   
 
@@ -353,13 +353,13 @@ TC47 Verify interface stats outgoing jumbo frame same segment L2 traffic with vl
   
 TC48 Verify interface stats drops with traffic   
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify interface stats Verify interface stats drops with traffic          
     Manual untested
 
 TC49 Verify interface stats errors with traffic   
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify interface stats Verify interface stats errors with traffic          
     Manual untested
   
@@ -384,13 +384,13 @@ TC52 Remove the breakout cable and plugged in back on the different interfaces -
  
 TC53 Insert first Breakout cable -Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
     Manual untested
      
 TC54 Insert first 40G DAC cable -Remove the DAC cable and insert the breakout cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
     Manual untested   
 
@@ -408,46 +408,46 @@ TC56 Breakout cable plugged-in reboot the switch and change the cable to regular
 
 TC57 Breakout cable plugged-in failover the controller with traffic  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in failover the controller with traffic         
     Manual untested
  
 TC58 Controller Failover- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in failover the controller         
     Manual untested
 
 TC59 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in reboot active controller         
     Manual untested
     
 TC60 Controller Failover- Breakout cable plugged-in taken out and later plugged in non-breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
     Manual untested
 
 TC61 Controller Failover- Non-Breakout cable pluggedin taken out and plugged in breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
     Manual untested  
      
 TC62 Active Controller reboot- Non-Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Non-Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to breakout cable             
     Manual untested
 
 TC63 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to non breakout cable             
     Manual untested
@@ -475,7 +475,7 @@ TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to n
 
 TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - while upgrade change from non-breakout cable to breakout cable  
     Log     Step 2 - Verify configuration and traffic after upgrade             
     Manual untested
@@ -488,7 +488,7 @@ TC68 Breakout cable plugged-in upgrade the controller - supported software packa
 
 TC69 Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
     Manual untested 
      
@@ -496,13 +496,13 @@ TC69 Breakout cable plugged-in upgrade the controller - from not-supported softw
 
 TC70 Breakout cable plugged-in between two racks 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in between two racks         
     Manual untested 
 
 TC71 Breakout cable plugged-in loopback on leaf  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Breakout cable plugged-in loopback on leaf         
     Manual untested 
 
@@ -511,37 +511,37 @@ TC71 Breakout cable plugged-in loopback on leaf
 
 TC72 Verify SPAN configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify SPAN configuration for breakout cable - Ingress         
     Manual untested   
 
 TC73 Verify SPAN configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify SPAN configuration for breakout cable - Egress         
     Manual untested 
 
 TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify SPAN traffic statistics for breakout cable - Ingree, Egress         
     Manual untested   
 
 TC75 Verify ACL configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify ACL configuration for breakout cable - Ingress permit deny          
     Manual untested   
 
 TC76 Verify ACL configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - Verify ACL configuration for breakout cable Egress permit deny       
     Manual untested 
  
 TC77 verify the server host side LACP 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - verify the server host side LACP     
     Manual untested 
     
@@ -553,13 +553,13 @@ TC78 verify the server host side static Lag
  
 TC79 verify the server host side LLDP 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - verify the server host side LLDP     
     Manual untested
 
 TC80 verify the server host side STP 
     [Tags]  feature  T5
-    [Tags]  manual  
+    [Tags]  manual-untested
     Log     Step 1 - verify the server host side STP     
     Manual untested
 
