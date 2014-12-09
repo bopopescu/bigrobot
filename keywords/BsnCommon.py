@@ -580,7 +580,11 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported version comparison operator: '%s'" % op)
 
-        helpers.log("%s %s %s: %s" % (node_version_str, op, version_str, status))
+        s = "Version check %s %s %s: %s" % (node_version_str, op, version_str, status)
+        if status == False:
+            helpers.warn(s, level=3)
+        else:
+            helpers.log(s, level=3)
         return status
 
     def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):

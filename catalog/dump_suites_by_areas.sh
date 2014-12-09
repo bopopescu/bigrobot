@@ -3,8 +3,8 @@
 #   $ cd .../bigrobot/catalog
 #   $ ./dump_suites_by_areas.sh
 # Description:
-#   Create data files containing the suite names for all the products defined
-#   in the catalog.yaml config.
+#   Create data files containing the suite names for all the test areas under
+#   bigrobot/testsuites/.
 # Assumptions:
 #   - This script can only be executed inside the bigrobot/catalog/ directory.
 
@@ -14,21 +14,20 @@ if [ ! -x ../bin/gobot ]; then
 fi
 
 testsuite_path=`pwd | sed 's/catalog$//'`testsuites
-config="../configs/catalog.yaml"
 output=raw_data.dump_suites_by_areas.sh
 
 rm -f ${output}.*
 
-for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
-    echo "Total text files for ${product}:"
+for test_area in `cd ../testsuites; find . ! -path . -type d -maxdepth 1 | xargs -I {} basename {}`; do
+    echo "Total text files for ${test_area}:"
 
-    files=${output}.$product
+    files=${output}.$test_area
     suite_files=${files}.suite_files
     resource_files=${files}.resource_files
 
-    find ${testsuite_path}/${product} -name "*.txt" | wc -l
+    find ${testsuite_path}/${test_area} -name "*.txt" | wc -l
 
-    for suite in `find ${testsuite_path}/${product} -name "*.txt"`; do
+    for suite in `find ${testsuite_path}/${test_area} -name "*.txt"`; do
         grep -i -e '^*' $suite | grep -i -e 'testcase' -e 'test case' > /dev/null
         if [ $? -eq 0 ]; then
             echo $suite >> $suite_files
