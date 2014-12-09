@@ -148,8 +148,8 @@ restart mysql database service
 	manual passed
 
 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual
-	manual passed 
+	[Tags]  solution  cloudstack    manual-untested
+	manual untested 
 
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack    manual
@@ -248,8 +248,10 @@ T2.17 Verify the VPC/network creation after BCF controller failover
 	manual passed
 	 
 T2.18 adding Manual membership rule to cloudstack tenants
-	[Tags]  feature  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  feature  cloudstack  manual  Xenserver
+	log  add a member to a cloudstack tenant
+	log  the manual rule not removed by sync
+	manual passed 
 	
 T2.19 router workflow test in cloudstack
 	[Tags]  solution  cloudstack    manual  Xenserver  skipped
@@ -303,11 +305,11 @@ T2.28 seperate storage VLAN workflow while deploying cloudstack
 	manual passed 
 	
 T2.29 identify service insertion workflow for cloudstack 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
+	[Tags]  solution  cloudstack    manual-untested  Xenserver  skipped
 	manual untested 
 	
 T2.30 verify fabric setting global mode
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
+	[Tags]  solution  cloudstack    manual-untested  Xenserver  skipped
 	manual untested 
 	
 T2.32 Test deployment script for Xenserver
@@ -315,8 +317,9 @@ T2.32 Test deployment script for Xenserver
 	manual passed 
 
 T2.33 Performance(between 2 VM using iperf)
-	[Tags]  performance  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  performance  cloudstack    manual  Xenserver
+	log  0.0-10.0 sec 250 MBytes 210 Mbits/sec
+	manual passed
 
 T2.34 reboot cloudstack management server
 	[Tags]  solution  cloudstack   manual  Xenserver
@@ -340,12 +343,15 @@ T2.37 restart mysql database service
 	manual passed 
 
 T2.38 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack  manual-untested  Xenserver
+	[Tags]  solution  cloudstack  manual  Xenserver
 	log  stop cloudstack servive:sudo service cloudstack-management stop
 	log  download package and install package
 	log  sudo service cloudstack-management restart
 	manual passed 
 
 T2.39 Replacing server workflow with same host name and IP
-	[Tags]  solution  cloudstack   manual-untested  Xenserver
-	manual untested 	
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  vm move 
+	log  host remove
+	log  host add
+	manual passed 	
