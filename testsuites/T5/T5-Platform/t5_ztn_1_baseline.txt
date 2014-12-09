@@ -111,9 +111,9 @@ T1.7. Reboot all switches from CLI
 	Verify All Switches In Provisioned Mode
 	${status}=  Cli Reboot Switch  slave  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
-	Sleep  120
+	Wait Until All Switches Connected
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
 
