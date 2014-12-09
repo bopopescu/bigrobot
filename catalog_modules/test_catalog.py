@@ -67,17 +67,20 @@ class TestCatalog(object):
         Returns the release name in the build_name string. See the BUILD_NAME
         convention wiki guide at:
         https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=58327098
+
+        Sample BUILD_NAME:
+            AS5710-54X_ihplus_bcf-132
+                       ^^^^^^ image release name
         """
-        match = re.match(r'^(\w+)_.*$', build_name)
+        match = re.match(r'^([\w-]+)_(\w+)_.*$', build_name)
         base_release = None
         if match:
-            image_release = match.group(1)
+            image_release = match.group(2)
             releases_list = self.configs()['products'][product]['releases']
             for release in releases_list:
                 r = release.keys()[0]
                 if image_release in release[r]['software_image_map']:
                     base_release = r
-                    print "**** base_release: %s" % base_release
                     break
         return base_release
 

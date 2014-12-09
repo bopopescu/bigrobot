@@ -79,6 +79,10 @@ build_str=`echo $build | sed -e 's/#//' -e 's/ /_/g'`
 
 if [ "$RELEASE_NAME"x = x ]; then
     releases=`./db_get_releases_for_build_name.py`
+    if [ "$releases"x = x ]; then
+        echo "No release information found in BUILD_NAME string '$build'."
+        exit 1
+    fi
 else
     releases=$RELEASE_NAME
 fi
