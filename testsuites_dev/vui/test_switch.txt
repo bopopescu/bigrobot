@@ -40,4 +40,15 @@ Test debug bash
     bash     s1   ls -la
 
 Test get node alias
-   ${alias}=   get node alias   s1
+   #[Tags]  skipped
+   ${alias}=       get node alias   s1
+
+   ${if_bundle1}=  params   s1   key=interfaces
+   log             Interface bundle: ${if_bundle1}
+
+   ${if_bundle2}=  interfaces   s1
+   log             Another interface bundle: ${if_bundle2}
+
+   ${ixia_if}=     interfaces   s1  ixia_1
+   log             IXIA interface: ${ixia_if}
+

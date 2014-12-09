@@ -36,6 +36,11 @@ Documentation   This suite is my sandbox for experimentation.
 ...              * Switch mode change:
 ...
 ...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
+Metadata        testing 1 2 3   another test xyz
+Metadata        See more details at   http://robotframework.org/
+Metadata        More info   for more info    about *Robot Framework*    see http://robotframework.org/
+Metadata        An image    [https://docs.python.org/2/_static/py.png|Python icon]
+
 Force Tags      Vui
 Suite Setup     my base suite setup
 Suite Teardown  my base suite teardown
@@ -311,15 +316,17 @@ Test run_cmd keyword
     log             Output: status=${out[0]} output='${out[1]}' error_code=${out[2]}
 
 Test BigRobot params argument
-    [Documentation]  This is line 1 of test case description
+    [Documentation]  This is line 1 of test case description\n
     ...
-    ...              This is line 2 of test case description
+    ...              This is line 2 of test case description\n
     ...
     ...              This is line 3 of test case description
     ...
     ...              This is line 4 of test case description - link: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#test-data-syntax
     ...
     ...              This is line 5 of test case description - image <img src="http://oxpedia.org/wiki/images/thumb/c/c6/Ad.jpg/800px-Ad.jpg" alt="arch diagram">
+    ...
+    ...              An image    [https://docs.python.org/2/_static/py.png|Python icon]
     #[Tags]           skipped
     #${val}=         params    common.my_image
     #print           Value = ${val}

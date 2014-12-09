@@ -4,6 +4,7 @@
 '''
 import autobot.helpers as helpers
 import time, re
+import sys
 from vendors.Ixia import IxNetwork
 import modules.IxBigtapLib as IxBigtapLib
 
@@ -1736,6 +1737,7 @@ class Ixia(object):
             except:
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
+                    helpers.log("Unexpected error: %s" % sys.exc_info()[0])
                     return False
                 else:
                     helpers.log("Got IXIA exception while Applying traffic ...")
@@ -1761,6 +1763,7 @@ class Ixia(object):
                 self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
             except:
                 helpers.log("Got Exception while trying to apply traffic..")
+                helpers.log("Unexpected error: %s" % sys.exc_info()[0])
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
                     return False

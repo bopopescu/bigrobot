@@ -99,6 +99,8 @@ T5 test setup
 T5 suite setup
 	base suite setup  
     add fabric switch
+    Set swith int variables
+    Set switch dpid variables
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0

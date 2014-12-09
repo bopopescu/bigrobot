@@ -21,6 +21,8 @@ Setup Three Rack Dual Leaf Topology
 	bigrobot test ztn  False
 	base suite setup    
     add fabric switch
+    Set swith int variables
+    Set switch dpid variables
     sleep  155
     rest verify fabric switch all
     rest verify fabric link common

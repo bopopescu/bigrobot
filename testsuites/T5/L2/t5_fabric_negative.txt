@@ -431,6 +431,8 @@ T5 test teardown
 
 T5 test setup
 	bigrobot test ztn  False
+    Set swith int variables
+    Set switch dpid variables 
 	base test setup
 	add fabric switch
 	BuiltIn.Sleep  55

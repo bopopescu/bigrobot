@@ -109,11 +109,11 @@ T2.15 Delete regular name-service-2
 T2 Teardown
  	Delete All Big Tap Resources
 # 
-### Configure Big Tap Interface Group from Controller Menu 
+### Configure Big Tap Interface Group from Big Tap Menu
 # 															ID	 				Switch							Role			Name				Interface Name
 T3 Test set up:
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1e:f3:95			filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-2-15
 	Configure Big Tap Interface from Big Tap Menu			ethernet2			00:00:5c:16:c7:1c:16:f2 		delivery		ixia-4-8	
 	
 T3.1 Filter Interface group with 1 filter interface and name filter-group		
@@ -198,7 +198,7 @@ T7.7 Switch with empty alias
 						
 T8.1 Enable L3-L4 Offset Match	 				
  	Set Switching Mode											L3-L4 Offset Match		
- 	[Tags]  corsair									
+ 	[Tags]  corsair								
 T8.2 Enable L3-L4 Match	 	
  	Set Switching Mode											L3-L4 Match			
 	[Tags]  corsair

@@ -244,7 +244,6 @@ Randomize ZTN Configuration
 	#Cli Run  master  ntp time-zone ${timezone_random}
 	${host_random}  Generate Random IP
 	${hostname_random}  Generate Random Name  hostname.tmk.  5
-	Cli Run  master  logging remote
 	Cli Run  master  logging remote 10.192.66.100
 	Cli Run  master  logging remote ${hostname_random}
 
@@ -301,13 +300,13 @@ Verify Switch SWI Version
 	[Arguments]  ${switch_alias}
 	${swi_version_bundle}=  Bash Get Switchlight Version  swi
 	${swi_version_switch}=  Telnet Get Switch Switchlight Version  swi  ${switch_alias}
-	Should Be Equal As Strings  ${swi_version_bundle}  ${swi_version_switch}
+	Should Contain  ${swi_version_switch}  ${swi_version_bundle}
 
 Verify Switch Installer Version
 	[Arguments]  ${switch_alias}
 	${installer_version_bundle}=  Bash Get Switchlight Version  installer
 	${installer_version_switch}=  Telnet Get Switch Switchlight Version  installer  ${switch_alias}
-	Should Be Equal As Strings  ${installer_version_bundle}  ${installer_version_switch}
+	Should Contain  ${installer_version_switch}  ${installer_version_bundle}
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader

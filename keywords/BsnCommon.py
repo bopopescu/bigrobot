@@ -425,6 +425,48 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def interfaces(self, node, if_name=None, soft_error=False):
+        """
+        Return the interface on node which is connected to a peer device. The
+        convention is to define an interface bundle in the topo file which
+        contains the key/value pairs for all the peer connections. The key is
+        the alias for the peer and the value is the actual interface on the
+        node. Multiple interfaces to the same peer can be specified using the
+        format '<alias>_<n>' where <n> is an integer.
+
+        Example topology definition:
+
+           s1:
+             interfaces:
+               ixia_1: ethernet2
+               ixia_2: ethernet3
+               s2: ethernet3
+
+        Example usage:
+
+           ${ixia_if} =    interfaces   node=s1   if_name=ixia_1
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | if_name  | name of interface in node, e.g., 'ixia_1' |
+        | soft_error | Default (False) is to generate an exception on error (e.g., can't find interface). If True, then return (False) and user will perform their own error handling. |
+
+        Return Value:
+        - If if_name is not specified, return the whole interfaces dictionary
+        - If if_name is specified, return the actual interface name
+        """
+        node_bundle = self.params(node)
+        if 'interfaces' not in node_bundle:
+            return helpers.test_error("Node '%s' does not have an interfaces bundle defined"
+                                      % node, soft_error=soft_error)
+        interfaces = node_bundle['interfaces']
+        if if_name == None:
+            return interfaces
+        if if_name not in interfaces:
+            return helpers.test_error("Node '%s' does not have the interface '%s' defined"
+                                      % (node, if_name), soft_error=soft_error)
+        return interfaces[if_name]
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
@@ -538,7 +580,11 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported version comparison operator: '%s'" % op)
 
-        helpers.log("%s %s %s: %s" % (node_version_str, op, version_str, status))
+        s = "Version check %s %s %s: %s" % (node_version_str, op, version_str, status)
+        if status == False:
+            helpers.warn(s, level=3)
+        else:
+            helpers.log(s, level=3)
         return status
 
     def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
@@ -2030,6 +2076,25 @@ class BsnCommon(object):
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
 
+    def get_switch_int_topo(self, node, int_key):
+        '''
+        Return the Interface name defined in Topo for the swtich with key int_key like below:
+        s1:
+            interfaces:
+                int_key: ethernet24
+        '''
+        t = test.Test()
+        if node in t.params():
+            interfaces = t.params(node, 'interfaces')
+            if int_key in interfaces:
+                return interfaces[int_key]
+            else:
+                helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
+                helpers.log("Exiting ..to resolve above issue..")
+                helpers.exit_robot_immediately("Please fix above issue")
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
