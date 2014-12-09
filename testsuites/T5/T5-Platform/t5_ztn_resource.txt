@@ -49,6 +49,9 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
+
+	Sleep  60
+
 	Wait Until All Switches Connected
 
     Cli Run  master  system reinstall switch ${s1_alias}
