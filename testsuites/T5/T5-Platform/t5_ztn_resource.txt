@@ -53,11 +53,12 @@ Suite Setup
 	Randomize ZTN Configuration
 	Cli Run  master  show switch
 
-	Telnet Reinstall Switchlight  s1
-	Telnet Reinstall Switchlight  s2
-	Telnet Reinstall Switchlight  s3
-	Telnet Reinstall Switchlight  s4
-	Telnet Reinstall Switchlight  s5
+    Cli Run  master  system reinstall switch ${s1_alias}
+    Cli Run  master  system reinstall switch ${s2_alias}
+    Cli Run  master  system reinstall switch ${s3_alias}
+    Cli Run  master  system reinstall switch ${s4_alias}
+    Cli Run  master  system reinstall switch ${s5_alias}
+    Cli Reboot Switch  master  all
 	Sleep  300
 
 	${status}=  Rest Get Switch Connection State  master  ${s1_alias}
