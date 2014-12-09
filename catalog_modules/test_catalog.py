@@ -47,6 +47,25 @@ class TestCatalog(object):
             return releases
         return []
 
+    def match_build_name(self, build_name):
+        """
+        See the BUILD_NAME convention wiki guide at:
+        https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=58327098
+
+        Sample BUILD_NAME:
+            ihplus_bcf-132_AS5710-54X
+            ^      ^       ^
+            |      |       |
+            |      |       +-- platform name
+            |      +---------- product name (including image tag)
+            +----------------- image release name
+
+        Returns regex object on match.
+           match.group(1) == image release name
+           match.group(2) == product name
+        """
+        return re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+).*', build_name)
+
     def get_product_for_build_name(self, build_name):
         """
         Returns the product which matches a build name or None for no match.
@@ -55,8 +74,10 @@ class TestCatalog(object):
         - build_name='corsair_bigtap-99' matches 'bigtap' product.
         """
         for product in self.products():
-            if re.search(product, build_name, re.I):
-                return product
+            match = self.match_build_name(build_name)
+            if match:
+                if re.search(product, match.group(2), re.I):
+                    return product
         return None
 
     def get_base_release_for_build_name(self, build_name, product):
@@ -64,18 +85,12 @@ class TestCatalog(object):
         'product' is the product name as defined in configs/catalog.yaml
         (e.g., 'bcf', 'bigtap', etc).
 
-        Returns the release name in the build_name string. See the BUILD_NAME
-        convention wiki guide at:
-        https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=58327098
-
-        Sample BUILD_NAME:
-            AS5710-54X_ihplus_bcf-132
-                       ^^^^^^ image release name
+        Returns the release name in the build_name string.
         """
-        match = re.match(r'^([\w-]+)_(\w+)_.*$', build_name)
+        match = self.match_build_name(build_name)
         base_release = None
         if match:
-            image_release = match.group(2)
+            image_release = match.group(1)
             releases_list = self.configs()['products'][product]['releases']
             for release in releases_list:
                 r = release.keys()[0]
