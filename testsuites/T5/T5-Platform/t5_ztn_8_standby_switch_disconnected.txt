@@ -121,7 +121,7 @@ T5.4.1. Disconnect, change config, reconnect, reload
 	Set All Switches Mode Standby
 	Randomize ZTN Configuration
 	Telnet Set All MA1 State  up
-	Sleep  30
+	Sleep  100
 	Cli Run  master  show switch all
 	Cli Run  master  show zerotouch devices
 	Cli Run  master  show run
