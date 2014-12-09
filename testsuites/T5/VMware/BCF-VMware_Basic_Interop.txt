@@ -137,7 +137,7 @@ TC31 Verify guest VM can obtain a dhcp address through the fabric without DHCP r
  
 TC32 Verify guest VM can obtain a dhcp address through the fabric with DHCP relay
  	manual untested
-    [Tags]              feature         manual          vmware	
+    [Tags]              feature         manual-untested          vmware	
  
 TC33 DRS cluster with automatic setting
  	manual passed
@@ -149,7 +149,7 @@ TC34 Enable HA in the ESXi cluster level
  
 TC35 Enable port mirroring on a dvSwitch and couple it with fabric span
  	manual untested
-    [Tags]              feature         manual          vmware	
+    [Tags]              feature         manual-untested          vmware	
 
 TC36 ESXi as compute nodes in a Openstack cluster through Fuel-vCenter Integration
  	manual passed
