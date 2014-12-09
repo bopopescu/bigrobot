@@ -52,7 +52,8 @@ Suite Setup
 
 	Sleep  60
 
-	Wait Until All Switches Connected
+    ${status}=  Wait Until All Switches Connected
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
     Cli Run  master  system reinstall switch ${s1_alias}
     Cli Run  master  system reinstall switch ${s2_alias}
