@@ -296,10 +296,10 @@ class T5ZTN(object):
         s.send("\n")
         options = s.expect([r'=> ', r'[\r\n].*login: $',
                             r'Installer Mode Enabled', s.get_prompt()],
-                            timeout=120)
+                            timeout=200)
         if options[0] == 0:  # Uboot prompt
             s.send('boot')
-            s.expect(r'[\r\n].*login: $', timeout=120)
+            s.expect(r'[\r\n].*login: $', timeout=200)
         elif options[0] == 2:
             s.send('reboot')
             s.expect(r'[\r\n].*login: $', timeout=200)
