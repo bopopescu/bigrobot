@@ -2,7 +2,7 @@
 Documentation     Breakout Cable Test suite - Switch Light platforms
 #Suite Setup      Breakout cable test setup
 #Suite Teardown   Breakout cable test teardown
-Test Teardown     traffic teardown
+#Test Teardown     traffic teardown
 Force Tags        corsair-450 ironhorse-plus
 ...             
 ...            
