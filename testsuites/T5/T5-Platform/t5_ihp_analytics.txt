@@ -249,12 +249,12 @@ T11.3. Select date in invalid format
     [Tags]  manual
 
 #Saving and loading dashboards
-T12.. Check if works under normal conditions
+T12. Check if works under normal conditions
     Manual Passed
     [Tags]  manual
 T12.1. Preserved after upgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T12.2. Preserved after failover
     Manual Passed
     [Tags]  manual
@@ -276,8 +276,8 @@ T13.1. Check if saved link works
     Manual Passed
     [Tags]  manual
 T13.2. Check if saved link works after upgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T13.3. Check if saved link works after failover
     Manual Passed
     [Tags]  manual
