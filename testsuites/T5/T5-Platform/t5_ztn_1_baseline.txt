@@ -161,6 +161,20 @@ T1.10. Verify switches Switchlight SWI version
 	Verify Switch SWI Version  ${s4_alias}
 	Verify Switch SWI Version  ${s5_alias}
 T1.11. Verify switches Switchlight Installer version
+    Cli Run  master  system reinstall switch ${s1_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s2_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s3_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s4_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s5_alias}
+    Sleep  5
+
+    Run Keyword and Ignore Error  Power Cycle All Switches
+    Sleep  60
+
 	Verify Switch Installer Version  ${s1_alias}
 	Verify Switch Installer Version  ${s2_alias}
 	Verify Switch Installer Version  ${s3_alias}

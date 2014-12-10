@@ -55,35 +55,6 @@ Suite Setup
     ${status}=  Wait Until All Switches Connected And Return Status
     Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
-    Cli Run  master  system reinstall switch ${s1_alias}
-    Sleep  5
-    Cli Run  master  system reinstall switch ${s2_alias}
-    Sleep  5
-    Cli Run  master  system reinstall switch ${s3_alias}
-    Sleep  5
-    Cli Run  master  system reinstall switch ${s4_alias}
-    Sleep  5
-    Cli Run  master  system reinstall switch ${s5_alias}
-    Sleep  5
-
-    Run Keyword and Ignore Error  Power Cycle All Switches
-	Sleep  60
-
-	Cli Run  master  enable; config
-	Cli Run  master  show switch
-
-	#${status}=  Rest Get Switch Connection State  master  ${s1_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
-	#${status}=  Rest Get Switch Connection State  master  ${s2_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
-	#${status}=  Rest Get Switch Connection State  master  ${s3_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
-	#${status}=  Rest Get Switch Connection State  master  ${s4_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
-	#${status}=  Rest Get Switch Connection State  master  ${s5_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	#Sleep  200
-
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
 	${tmp}=  Rest Get Switch Ip Address  master  ${s2_alias}
@@ -447,7 +418,8 @@ Power Cycle Disconnected Switches
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s4
     ${status}=  Rest Get Switch Connection State  master  ${s5_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s5
-    Wait Until All Switches Connected
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
 
 Power Cycle Disconnected Switches and Reinstall Switchlight
     ${status}=  Rest Get Switch Connection State  master  ${s1_alias}
