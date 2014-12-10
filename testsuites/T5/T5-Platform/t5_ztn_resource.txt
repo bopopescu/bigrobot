@@ -56,10 +56,15 @@ Suite Setup
     Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
     Cli Run  master  system reinstall switch ${s1_alias}
+    Sleep  5
     Cli Run  master  system reinstall switch ${s2_alias}
+    Sleep  5
     Cli Run  master  system reinstall switch ${s3_alias}
+    Sleep  5
     Cli Run  master  system reinstall switch ${s4_alias}
+    Sleep  5
     Cli Run  master  system reinstall switch ${s5_alias}
+    Sleep  5
 
     Run Keyword and Ignore Error  Power Cycle All Switches
 	Sleep  60
