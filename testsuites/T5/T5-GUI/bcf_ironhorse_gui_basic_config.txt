@@ -175,7 +175,6 @@ config suite setup
 	
 config suite teardown
 	Clear Switch Config				switch-lEAf.3
-	Clear Switch Config				switch-LEAF.1
 	Clear Switch Config				switch-1
 	Clear Switch Config				switch.2-leaf
 	Clear Switch Config				switch.spine
