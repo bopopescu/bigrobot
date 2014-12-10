@@ -1,15 +1,18 @@
 *Settings
-Documentation  Dell-S4810-BigTap SwitchLight Traffic Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   bigtap suite teardown
-Test Setup   traffic test setup
-Test Teardown  traffic teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           Dell-S4810-BigTap SwitchLight Traffic Test Suite
+Suite Setup             bigtap suite setup
+Suite Teardown          bigtap suite teardown
+Test Setup              traffic test setup
+Test Teardown           traffic teardown 
+Force Tags              platform  sanity  blackbird  traffic
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${policy_name_1}  policy_s4810_traffic
@@ -509,6 +512,10 @@ bigtap suite setup
     Sleep  5
 
 traffic test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     ixia initialize  tg1  init=true
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -516,12 +523,14 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  200
     Should be true  ${in_range}
     
 traffic teardown
     delete traffic
     sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
 bigtap suite teardown
     rest delete policy  admin-view  ${policy_name_1}

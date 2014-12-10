@@ -4,13 +4,15 @@ Suite Setup                             statistics suite setup
 Suite Teardown                          statistics suite teardown
 Test Setup                              statistics test setup
 Test Teardown                           statistics test teardown 
-Force Tags                              BigTap  SwitchLight  Statistics
-Library                                 keywords/BsnCommon.py
-Library                                 keywords/AppController.py
-Library                                 keywords/BigTap.py
-Library                                 keywords/SwitchLight.py
-Library                                 keywords/Ixia.py
-Library                                 Collections.py
+Force Tags                              BigTap  SwitchLight  Statistics  blackbird
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
 
 * Variables
 #### Switch 1: app-ras4600-1
@@ -1740,6 +1742,10 @@ change interface role to  [Arguments]  ${new_role}   ${interface_name}   ${inter
     Should be True      ${return_value}
 
 statistics test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     cli clear interface statistics  s1
     cli clear interface statistics  s2
     cli clear interface statistics  s3
@@ -1755,6 +1761,8 @@ statistics test teardown
     cli clear interface statistics  s3
     cli clear interface statistics  s4
     cli clear interface statistics  s5
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
     
 statistics suite teardown

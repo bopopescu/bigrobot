@@ -1,16 +1,19 @@
 *Settings
-Documentation  Corsair Deep Packet Matching Test Suite
-Suite Setup  corsair suite setup
-Suite Teardown   corsair suite teardown
-Test Setup   corsair test setup
-Test Teardown  corsair test teardown 
-Force Tags   Corsair  BigTap  DPM
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation       Corsair Deep Packet Matching Test Suite
+Suite Setup         corsair suite setup
+Suite Teardown      corsair suite teardown
+Test Setup          corsair test setup
+Test Teardown       corsair test teardown 
+Force Tags          corsair  bigtap  DPM
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             keywords/ThirdParty.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 ############################ TOPOLOGY #################################
 ##                                                                   ##
@@ -620,12 +623,16 @@ corsair suite setup
     sleep  5
 
 corsair test setup        
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     rest add policy  admin-view  ${policy_name_1}   forward
     rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias}  filter
     rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias}  delivery 
-    Sleep  5  
-    
+    Sleep  5
+       
 corsair test teardown
     REST delete policy  admin-view  ${policy_name_1}
     ${set_udf_0}=  rest add bigtap udf  0  l4-start  8    
@@ -637,7 +644,8 @@ corsair test teardown
     ${set_udf_3}=  rest add bigtap udf  3  l4-start  24    
     Should be true  ${set_udf_3}            
     sleep  5
-
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
 
 corsair suite teardown
     rest delete interface role  s1  ${switch_filter_intf}  filter 

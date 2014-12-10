@@ -1,15 +1,18 @@
 *Settings
-Documentation  Interface Groups Test Suite
-Suite Setup  interface suite setup
-Suite Teardown   interface suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   Corsair  AugustaP2  BigTap  
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           Interface Groups Test Suite
+Suite Setup             interface suite setup
+Suite Teardown          interface suite teardown
+Test Setup              interface test setup
+Test Teardown           interface test teardown 
+Force Tags              corsair  feature  bigtap  
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${switch1_alias}                          app-ras5710-1   #Alias for switch 1
@@ -1066,6 +1069,15 @@ delete interface group testcase configuration  [Arguments]  ${interface_group_na
     ${return_value_1}=  rest delete interface group  ${interface_group_name}  ${interface_role}
     Should be true  ${return_value_1}    
                
+interface test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
+    
+interface test teardown
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
     
 interface suite teardown
     rest delete policy  admin-view  ${policy_name}

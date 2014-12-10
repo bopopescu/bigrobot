@@ -224,7 +224,7 @@ class KVMOperations(object):
             else:
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
             helpers.summary_log("Success SCP'ing latest Jenkins build !!")
-        helpers.summary_log("Using Jenkins BCF Build #%s" % latest_build_number)
+        helpers.summary_log("Using Jenkins Build #%s (image name: '%s')" % (latest_build_number, file_name))
         helpers.log("Setting BUILD_NUM Env...")
         helpers.set_env("BUILD_NUM", str(latest_build_number))
         helpers.log("env BUILD_NUM: %s" % helpers.get_env("BUILD_NUM"))
@@ -299,7 +299,7 @@ class KVMOperations(object):
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
-            vm_ram = kwargs.get("vm_ram", "8192")
+            vm_ram = kwargs.get("vm_ram", "2048")
             build_number = kwargs.get("build_number", None)
             if ip == 'None':
                 ip = None
@@ -505,7 +505,7 @@ class KVMOperations(object):
         kvm_handle = kwargs.get("kvm_handle", None)
         kvm_host = kwargs.get("kvm_host", None)
         network_interface = kwargs.get("network_interface", None)
-        vm_ram = kwargs.get("vm_ram", "8192")
+        vm_ram = kwargs.get("vm_ram", "2048")
 
         vm_creation = False
 

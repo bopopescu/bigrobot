@@ -54,7 +54,6 @@ class TestBcfEvents:
     def tc_setup(self):
         BsnCommon().base_test_setup()
 
-
     def tc_teardown(self, tc_failed=False):
         BsnCommon().base_test_teardown()
         if tc_failed:
@@ -89,13 +88,12 @@ class TestBcfEvents:
             helpers.log("spine list: %s" % BsnCommon().params_global('spine_list'))
             helpers.log("leaf list: %s" % BsnCommon().params_global('leaf_list'))
 
-        return run(func, setup=self.tc_setup, teardown=self.tc_teardown,
-                   critical_failure=True)
+        return run(func, critical_failure=True)
 
     def test_01_controller_node_event_failover(self):  # T23
         """
         Test case:      test_01_controller_node_event_failover
-        Description:    Failover for controllers nodes is performed by issuing 'system failover' in standby controller.
+        Description:    Failover for controller node is performed by issuing 'system failover' in standby controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Output:         Previous active controller becomes standby controller, standby controller becomes active controller.
         Requirement:    2 controller nodes
@@ -134,7 +132,7 @@ class TestBcfEvents:
         Description:    Spine nodes is rebooted by issuing 'system reboot switch SWITCH' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
-        Output:         spine switch reboots.
+        Output:         spine switches reboot.
         Requirement:    2 or more spines to guarantee at any time at least 1 spine is function
         Pass criteria:  Spine joins the fabric after it comes back
         """
@@ -152,7 +150,7 @@ class TestBcfEvents:
         Test case:      test_04_leaf_switch_node_down_up_event
         Description:    Leaf switch is rebooted by issuing 'system reboot switch SWITCH' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
-        Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+        Input:          self.LEAF_LIST- leafs in the list is rebooted one by one.  LEAF_LIST can be modified by .....
         Output:         leaf switch reboots.
         Requirement:    2 leafs in a rack
                         Host is connected to leaf switches through port group
@@ -173,7 +171,7 @@ class TestBcfEvents:
         Description:    Link between spine switch and leaf switch is flapped by calling API to controller
                         to disable and enable the interface. The flap is executed at both spine side and leaf side.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
-        Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+                        self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
                         self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
         Output:         Links are flapped.
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
@@ -233,7 +231,10 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes tenant %s*******" % i)
-                T5Torture().tenant_configuration_add_remove(self.tflapnum, 3)
+                T5Torture().tenant_configuration_add_remove(
+                        self.tflapnum, 3,
+                        sw_dut=BsnCommon().params_global('switch_dut'),
+                        sw_intf_dut=BsnCommon().params_global('switch_interface_dut'))
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
@@ -250,22 +251,24 @@ class TestBcfEvents:
         def func():
             for i in range(0, self.loop):
                 log_to_console("\n******* big configuration changes vns %s*******" % i)
-                T5Torture().vns_configuration_add_remove(self.vflapnum)
+                T5Torture().vns_configuration_add_remove(
+                        self.vflapnum,
+                        sw_dut=BsnCommon().params_global('switch_dut'),
+                        sw_intf_dut=BsnCommon().params_global('switch_interface_dut'))
                 sleep(self.big_config_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
     def test_09_continues_event(self):  # T51
         """
         Test case:      test_09_continues_event
-        Description:    Combination of all the test cases.
-                        A random number is generated, based on the random number a testcase event is executed.
-                        The testcase event is executed once.
+        Description:    This test executes a combination of all the test cases.
+                        A random number is generated and based on the random number, a testcase event is executed.
                         Total of self.REPEAT random numbers are generated. The event runs at the gap of self.BETWEENEVENT seconds
         Input:          self.REPEAT -  the times random number to be generated.  self.TFLAPNUM can be modified by .....
                         self.BETWEENEVENT - idle timer between events - this can be modified by .....
         Output:         None
         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
-        Pass criteria:  Segments are created and deleted successfully.
+        Pass criteria:  Multiple success behaviors (depending on which test cases are executed).
         """
         def func():
             helpers.log("randomize execution of all the event test cases")  # from T23 to T30
@@ -300,5 +303,5 @@ class TestBcfEvents:
         """
         def func():
             BsnCommon().base_suite_teardown()
-        return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
+        return run(func)
 

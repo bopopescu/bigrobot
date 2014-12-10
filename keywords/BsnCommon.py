@@ -149,8 +149,8 @@ class BsnCommon(object):
         Execute a command and return its execution status, output, and error
         code.
 
-        Inputs:
-        | ${output} | run_cmd | cmd=ls -la /etc | shell=${true} |
+        Examples:
+        | ${output} = | run_cmd | cmd=ls -la /etc | shell=${true} |
 
         Return Value:
         - Tuple of (<status_flag>,  "<output>", "<err_str>", <errorcode>)
@@ -196,7 +196,7 @@ class BsnCommon(object):
         import keywords.T5Support as T5Support
         support = T5Support.T5Support()
         helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
-        support.delete_support_bundles()
+        support.delete_support_bundles(node)
         result = support.generate_support(node)
         helpers.log("Support File : %s" % str(result))
         support_file = support.get_support_bundle_fs_path(node)
@@ -425,6 +425,48 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def interfaces(self, node, if_name=None, soft_error=False):
+        """
+        Return the interface on node which is connected to a peer device. The
+        convention is to define an interface bundle in the topo file which
+        contains the key/value pairs for all the peer connections. The key is
+        the alias for the peer and the value is the actual interface on the
+        node. Multiple interfaces to the same peer can be specified using the
+        format '<alias>_<n>' where <n> is an integer.
+
+        Example topology definition:
+
+           s1:
+             interfaces:
+               ixia_1: ethernet2
+               ixia_2: ethernet3
+               s2: ethernet3
+
+        Example usage:
+
+           ${ixia_if} =    interfaces   node=s1   if_name=ixia_1
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | if_name  | name of interface in node, e.g., 'ixia_1' |
+        | soft_error | Default (False) is to generate an exception on error (e.g., can't find interface). If True, then return (False) and user will perform their own error handling. |
+
+        Return Value:
+        - If if_name is not specified, return the whole interfaces dictionary
+        - If if_name is specified, return the actual interface name
+        """
+        node_bundle = self.params(node)
+        if 'interfaces' not in node_bundle:
+            return helpers.test_error("Node '%s' does not have an interfaces bundle defined"
+                                      % node, soft_error=soft_error)
+        interfaces = node_bundle['interfaces']
+        if if_name == None:
+            return interfaces
+        if if_name not in interfaces:
+            return helpers.test_error("Node '%s' does not have the interface '%s' defined"
+                                      % (node, if_name), soft_error=soft_error)
+        return interfaces[if_name]
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
@@ -482,7 +524,78 @@ class BsnCommon(object):
         else:
             return False
 
-    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True):
+    def check_version(self, node, version_str, op=">="):
+        """
+        Compare the node's version string with the specified version_str.
+        Supported operations are:
+        - node_version_str == version_str
+        - node_version_str != version_str
+        - node_version_str >  version_str  (default)
+        - node_version_str >= version_str
+        - node_version_str <  version_str
+        - node_version_str <= version_str
+
+        Inputs:
+        | node | logical device name (e.g., 'c1', 'c2', 'master', 'slave', 's1', etc.) |
+        | version_str | the version string to match against (e.g., '2.1.0') |
+        | op | version comparison operator. Default is '>='. Also accepts '==', '!=', '>', '<', '<='. |
+
+        Examples:
+        | check_version | node=c1 | version_str=2.0.0 |       | node version must equal or be greater than 2.0.0 (default) |
+        | check_version | node=c1 | version_str=2.0.0 | op=== | node version must match 2.0.0 (==) |
+
+        Return Value:
+        - True if version comparison matches
+        - False if version comparison fails
+        """
+        def _sanitize_version_str(s):
+            """
+            Strip cruds in version string to reveal only the version number: x.y.z
+            """
+            match = re.match(r'^(\d+\.\d+\.\d+).*', s)
+            if match:
+                return match.group(1)
+            else:
+                helpers.test_error("Unrecognized version string: '%s'" % s)
+
+        def _version_tuple(s):
+            return tuple(map(int, (s.split("."))))
+
+        node_version_str = self.rest_show_version(node, reconnect=False)
+        node_version_str = _sanitize_version_str(node_version_str)
+        version_str = _sanitize_version_str(version_str)
+
+        if op == '==':
+            status = _version_tuple(node_version_str) == _version_tuple(version_str)
+        elif op == '!=':
+            status = _version_tuple(node_version_str) != _version_tuple(version_str)
+        elif op == '>':
+            status = _version_tuple(node_version_str) > _version_tuple(version_str)
+        elif op == '>=':
+            status = _version_tuple(node_version_str) >= _version_tuple(version_str)
+        elif op == '<':
+            status = _version_tuple(node_version_str) < _version_tuple(version_str)
+        elif op == '<=':
+            status = _version_tuple(node_version_str) <= _version_tuple(version_str)
+        else:
+            helpers.test_error("Unsupported version comparison operator: '%s'" % op)
+
+        s = "Version check %s %s %s: %s" % (node_version_str, op, version_str, status)
+        if status == False:
+            helpers.warn(s, level=3)
+        else:
+            helpers.log(s, level=3)
+        return status
+
+    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
+        """
+        The scope of this function is a bit more than simply 'show version'. It's also used
+        to test accounting/authorization (hence the inclusion of node_reconnect). At some
+        future time, we should consider splitting this into 2 separate functions - one to perform
+        strictly 'show version' and another to do 'show version' via a different
+        account/authorization.
+        !!! FIXME: Basically, this function is trying to do too much.
+        """
         t = test.Test()
         n = t.node(node)
         if helpers.is_switch(n.platform()):
@@ -509,7 +622,8 @@ class BsnCommon(object):
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        if reconnect:
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -551,11 +665,12 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller()
+                c = t.controller('master')
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        if reconnect:
+                            t.node_reconnect(node='master', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -1595,6 +1710,7 @@ class BsnCommon(object):
                 url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), node.ip(), str(snmpOID))
             else:
                 url = "/usr/bin/%s -v2c -c %s %s " % (str(snmp_cmd), str(snmpCommunity), node.ip())
+            helpers.log("Executing SNMP_CMD: %s" % url)
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             return out
@@ -1698,8 +1814,8 @@ class BsnCommon(object):
             conn = SSH2()
             conn.connect(server)
             conn.login(Account("root", "bsn"))
-            input = "cat /var/log/snmptt/snmptt.log | grep " + str(message)
-            conn.execute(input)
+            userinput = "cat /var/log/snmptt/snmptt.log | grep " + str(message)
+            conn.execute(userinput)
             output = conn.response
         except:
             return False
@@ -1960,6 +2076,25 @@ class BsnCommon(object):
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
 
+    def get_switch_int_topo(self, node, int_key):
+        '''
+        Return the Interface name defined in Topo for the swtich with key int_key like below:
+        s1:
+            interfaces:
+                int_key: ethernet24
+        '''
+        t = test.Test()
+        if node in t.params():
+            interfaces = t.params(node, 'interfaces')
+            if int_key in interfaces:
+                return interfaces[int_key]
+            else:
+                helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
+                helpers.log("Exiting ..to resolve above issue..")
+                helpers.exit_robot_immediately("Please fix above issue")
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang

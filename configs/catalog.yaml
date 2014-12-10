@@ -1,14 +1,9 @@
-# $ mongo qa-mongodb:27017/test_catalog3
+# $ mongo qa-mongodb:27017/test_catalog_201412
 #
 db_server: qa-mongodb.qa.bigswitch.com
 db_port: 27017
-database: test_catalog_201410
-products:
-  - BigChain
-  - BigTap
-  - BigWire
-  - SwitchLight
-  - T5
+database: test_catalog_201412
+
 test_types:
   - feature
   - scaling
@@ -17,177 +12,111 @@ test_types:
   - longevity
   - negative
   - robustness
+
+# Note: releases field is an ordered list to reflect precedence, e.g.,
+#       ironhorse comes before ironhorse-plus which comes before jackfrost.
+products:
+  bcf:
+    releases:
+      - ironhorse:
+          version:
+                   - 2.0.0
+                   - 2.0.2         # patch1
+          software_image_map:
+                   - ih
+                   - ironhorse
+      - ironhorse-plus:
+          version:
+                   - 2.5.0
+          software_image_map:
+                   - ihp
+                   - ihplus
+                   - ironhorse-plus
+      - jackfrost:
+          version:
+                   - 3.0.0
+          software_image_map:
+                   - jf
+                   - jackfrost
+
+  bigtap:
+    releases:
+      - augusta:
+          version:
+                   - 2.0.0
+          software_image_map:
+                   - augusta
+      - blackbird:
+          version:
+                   - 3.0.0
+          software_image_map:
+                   - blackbird
+      - corsair-400:
+          version:
+                   - 4.0.0
+                   - 4.0.1         # shellshock patch
+                   - 4.0.2         # poodle patch
+                   - 4.1.0         # various bug fixes
+          software_image_map:
+                   - corsair400
+      - corsair-411:
+          version:
+                   - 4.1.1         # new platforms, buffer mgt
+          software_image_map:
+                   - corsair411
+      - corsair-450:
+          version:
+                   - 4.5.0
+          software_image_map:
+                   - corsair450
+      - dragon:
+          version:
+                   - 5.0.0
+          software_image_map:
+                   - dragon
+
+# Dictionary of products and the releases for each product as an ordered list.
+product_release_map:
+  bcf:
+    - ironhorse        # 2.0.0
+    - ironhorse-plus   # 2.1.0
+    - jackfrost        # 3.0.0
+  bigtap:
+    - augusta          # 2.0.0
+    - blackbird        # 3.0.0
+    - corsair          # 4.0.0
+
+# Every release should define a set of interesting features.
 features:
+
+  # Big Tap Releases
+  blackbird:
+    [
+    ]
+  corsair:
+    [
+    ]
+
+  # Big Cloud Fabric Releases
   ironhorse:
     [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
       rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
       singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
       filemanagement, running-config, initialconfig, virtualip, openstack,
-      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, 
+    ]
+  ironhorse-plus:
+    [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
+      rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
+      singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
+      filemanagement, running-config, initialconfig, virtualip, openstack,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui,
+    ]
+  jackfrost:
+    [ ha, span, testpath, pod, l2, l3, snmp, ntp, traffic, logging, rsyslog,
+      rsyslogd, install, initialconfig, rebootswitch, firstboot, upgrade,
+      singlenode, bpdu_guard, fabric, fabric_qos, qos, ztn, file management,
+      filemanagement, running-config, initialconfig, virtualip, openstack,
+      dhcp, dhcp-relay, ecmp, policy, policy-vlanrewrite, gui, 
     ]
 
-# For "milestone" builds under qualification (e.g., B1, B2, R1, etc), there may
-# be multiple builds which need to be aggregated. The data structure below
-# specifies which builds are part of an aggregated build.
-aggregated_builds:
-  'bvs master aggregated 2014 wk39':          # week of 2014-09-22
-    [ 
-      'bvs master #3403',
-      'bvs master #3404',
-      'bvs master #3406',
-      'bvs master #3407',
-      'bvs master #3410',
-      'bvs master #3412',
-      'bvs master #3418',
-      'bvs master #3422',
-      'bvs master #3423',
-      'bvs master #3424',
-      'bvs master #3426',
-      'bvs master #3427',
-      'bvs master #3428',
-      'bvs master #3431',
-      'bvs master #3434',
-    ] 
-  'bvs master aggregated 2014 wk38':          # week of 2014-09-15
-    [ 
-      'bvs master #3312',
-      'bvs master #3317',
-      'bvs master #3318',
-      'bvs master #3321',
-      'bvs master #3322',
-      'bvs master #3324',
-      'bvs master #3325',
-      'bvs master #3328',
-      'bvs master #3329',
-      'bvs master #3339',
-      'bvs master #3340',
-      'bvs master #3344',
-      'bvs master #3345',
-      'bvs master #3347',
-      'bvs master #3351',
-      'bvs master #3352',
-      'bvs master #3354',
-      'bvs master #3356',
-      'bvs master #3358',
-      'bvs master #3360',
-      'bvs master #3362',
-      'bvs master #3364',
-      'bvs master #3365',
-      'bvs master #3368',
-      'bvs master #3370',
-      'bvs master #3371',
-      'bvs master #3372',
-      'bvs master #3374',
-      'bvs master #3375',
-      'bvs master #3378',
-      'bvs master #3380',
-      'bvs master #3381',
-      'bvs master #3382',
-      'bvs master #3386',
-      'bvs master #3387',
-      'bvs master #3388',
-      'bvs master #3391',
-      'bvs master #3393',
-      'bvs master #3394',
-      'bvs master #3396',
-      'bvs master #3397',
-      'bvs master #3399',
-      'bvs master #3400',
-      'bvs master #3401',
-    ] 
-  'bvs master aggregated 2014 wk37':          # week of 2014-09-08
-    [ 
-      'bvs master #3242',
-      'bvs master #3243',
-      'bvs master #3244',
-      'bvs master #3245',
-      'bvs master #3250',
-      'bvs master #3258',
-      'bvs master #3265',
-      'bvs master #3266',
-      'bvs master #3271',
-      'bvs master #3272',
-      'bvs master #3274',
-      'bvs master #3278',
-      'bvs master #3280',
-      'bvs master #3284',
-      'bvs master #3287',
-      'bvs master #3292',
-      'bvs master #3296',
-    ] 
-  'bvs master aggregated 2014 wk36':          # week of 2014-09-01
-    [ 
-      'bvs master #3183',
-      'bvs master #3184',
-      'bvs master #3185',
-      'bvs master #3206',
-      'bvs master #3217',
-      'bvs master #3240',
-      'bvs master #3241',
-    ] 
-  'bvs master aggregated 2014 wk35':          # week of 2014-08-25
-    [ 
-      'bvs master #3115',
-      'bvs master #3120',
-      'bvs master #3140',
-      'bvs master #3146',
-      'bvs master #3151',
-      'bvs master #3157',
-      'bvs master #3163',
-      'bvs master #3168',
-    ]
-  'bvs master aggregated 2014 wk34':          # week of 2014-08-18
-    [ 
-      'bvs master #3028',
-      'bvs master #3065',
-      'bvs master #3070',
-      'bvs master #3072',
-      'bvs master #3073',
-      'bvs master #3091',
-    ]
-  'bvs master aggregated 2014 wk33':          # week of 2014-08-11
-    [ 
-      'bvs master #2963',
-      'bvs master #2975',
-    ]
-  'bvs master ironhorse beta2 aggregated 2':  # 2014-08-09 IronHorse Beta 2
-    [ 
-      'bvs master #beta2_20',                 # to pick up good ZTN results
-      'bvs master #beta2_31',
-      'bvs master #beta2_36',
-    ] 
-  'bvs master ironhorse beta2 aggregated':    # 2014-08 IronHorse Beta 2
-                                              # too many issues, thrown out
-    [ 
-      'bvs master #beta2_14',
-      'bvs master #beta2_15',
-      'bvs master #beta2_17',
-      'bvs master #beta2_20',                 # to pick up good ZTN results
-      'bvs master #beta2_31',
-    ] 
-  'bvs master aggregated 2014 wk32':          # week of 2014-08-04
-    [ 
-      'bvs master #2806',
-      'bvs master #2821',
-      'bvs master #2837',
-    ]
-  'bvs master aggregated 2014 wk31':          # week of 2014-07-28
-    [ 
-      'bvs master #2685',
-      'bvs master #2710',
-    ]
-  'bvs master #beta1-vui':
-    [ 
-      'bvs master #2.0.0-beta1-SNAPSHOT',
-      'bvs master #beta1-22',
-      'bvs master #beta1-27',
-      'bvs master #beta1-31',
-    ]
-  'bvs master ironhorse beta1 aggregated':    # 2014-06 IronHorse Beta 1
-    [ 
-      'bvs master #2.0.0-beta1-SNAPSHOT',
-      'bvs master #beta1-22',
-      'bvs master #beta1-27',
-      'bvs master #beta1-31',
-      'bvs master #2502',
-    ]

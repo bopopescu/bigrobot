@@ -67,7 +67,7 @@ T5 Monitor session source tcp string
 T6 Monitor session destination interface numerical only
 	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
-	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
+	...  *Invalid argument: Invalid Interface, e.g. ethernet1, ethernet1/1: 3; Invalid characters in interface*
 	...  Cli Run  master  destination switch test interface 3
 	[Tags]  MonitorSession  BSC-5017
 
@@ -378,14 +378,14 @@ T20.2 TACACS Default timeout
 	[Tags]  BSC-5088  AAA  TACACS  skipped
 
 T21 Escaping special characters in quoted strings
-	Cli Run  master  snmp-server contact "tests\\n \\r \\n '''"
+	Cli Run  master  snmp-server contact tests\\n_\\r_\\n_
 	Cli Run and Verify Output  master
 	...  show run snmp
-	...  snmp-server contact "tests\\n \\r \\n '''"
-	Cli Run  master  snmp-server location 'Location \\n \\r \\n """"'
+	...  snmp-server contact tests\\n_\\r_\\n_
+	Cli Run  master  snmp-server location Location_\\n_\\r_\\n_
 	Cli Run and Verify Output  master
 	...  show run snmp
-	...  snmp-server location 'Location \\n \\r \\n """"'
+	...  snmp-server location Location_\\n_\\r_\\n_
 	[Tags]  BSC-5011
 
 T22 Localhost helptext
@@ -408,10 +408,10 @@ T24 Chinese characters in commands
 	[Tags]  banner  BSC-5366  BSC-5102
 
 T25 Polish characters in commands
-	Cli Run  master  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	Cli Run  master  snmp-server location Ko\\0xc5\\0x9bciuszki_34,_\\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba
 	Cli Run and Verify Output  master
 	...  show running-config snmp
-	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	...  snmp-server location Ko\\0xc5\\0x9bciuszki_34,_\\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba
 	[Tags]  snmp  SpecialCharacters
 
 T26 Route and Router help texts
@@ -518,7 +518,8 @@ T38 User names
 T39 Port-group names
 	Verify Regular Name  port-group
 T40 Switch names
-	Verify Regular Name  switch
+    Verify Name  switch  -
+    Verify Name  switch  .
 T41 Endpoint names
 	Cli Run  master  tenant test; segment test
 	Verify Regular Name  endpoint

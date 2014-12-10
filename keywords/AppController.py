@@ -8,8 +8,8 @@
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
 ###
-###  Last Updated: 02/08/2014
-###
+###  Last Updated: 11/13/2014
+###  Last updated: Sahaja
 ###  WARNING !!!!!!!
 '''
 
@@ -18,6 +18,9 @@ import autobot.test as test
 import subprocess
 import re
 import string
+
+
+syslogMonitorFlag = False  # ## To check if Syslog monitoring is currently enabled
 
 class AppController(object):
 
@@ -948,3 +951,378 @@ class AppController(object):
         if str(replace) == 'blank':
             replace = ''
         return  test_string.replace(str(search), str(replace))
+
+# ## Added by Sahaja
+    def start_syslog_monitor(self):
+        '''
+        Start monitoring the log.
+        Kill the existing tail process if any and start new tail
+        '''
+        global syslogMonitorFlag
+
+        try:
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            c1_pidList = self.get_syslog_monitor_pid('c1')
+            c2_pidList = self.get_syslog_monitor_pid('c2')
+            for c1_pid in c1_pidList:
+                # if (re.match("^d", c1_pid)):
+                c1.sudo('kill -9 %s' % (c1_pid))
+            for c2_pid in c2_pidList:
+                # if (re.match("^d", c2_pid)):
+                c2.sudo('kill -9 %s' % (c2_pid))
+            # Add rm of the file if file already exist in case of a new test
+            c1.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+            syslogMonitorFlag = True
+            return True
+        except:
+            helpers.log("Exception occured while starting the syslog monitor")
+            return False
+
+# ## Added by Sahaja
+    def restart_syslog_monitor(self, node):
+        '''
+        Restart the monitoring both the files will start logging again
+        Input: Node, c1, c2, etc
+        '''
+        global syslogMonitorFlag
+        if(syslogMonitorFlag):
+            t = test.Test()
+            c = t.controller(node)
+            result = c.sudo('ls *_dump.txt')
+            filename = re.split('\n', result['content'])[2:-1]
+            c.bash("tail -f /var/log/syslog/syslog.log | grep --line-buffered '#011' >> %s &" % filename[0].strip('\r'))
+            return True
+        else:
+            return True
+
+# ## Added by Sahaja
+    def stop_syslog_monitor(self):
+        '''
+        Stop the monitoring by killing the pid of tail process
+        Input: None
+        '''
+        global syslogMonitorFlag
+        if(syslogMonitorFlag):
+            c1_pidList = self.get_syslog_monitor_pid('c1')
+            c2_pidList = self.get_syslog_monitor_pid('c2')
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            helpers.log("Stopping syslog Monitor on C1")
+            for c1_pid in c1_pidList:
+                helpers.log("PID on C1 is %s: " % (c1_pid))
+                c1.sudo('kill -9 %s' % (c1_pid))
+            helpers.log("Stopping syslog Monitor on C2")
+            for c2_pid in c2_pidList:
+                helpers.log("PID on C2 is %s: " % (c2_pid))
+                c2.sudo('kill -9 %s' % (c2_pid))
+            syslogMonitorFlag = False
+            try:
+                helpers.log("****************    syslog Log From C1    ****************")
+                result = c1.sudo('cat c1_syslog_dump.txt')
+                split = re.split('\n', result['content'])[2:-1]
+            except:
+                helpers.log("Split failed for c1")
+                return False
+
+            else:
+                if split:
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C1")
+
+            try:
+                helpers.log("****************    syslog Log From C2    ****************")
+                result = c2.sudo('cat c2_syslog_dump.txt')
+                split = re.split('\n', result['content'])[2:-1]
+            except:
+                helpers.log("Split failed for c2")
+                return False
+            else:
+                if split:
+                    helpers.warn("syslog Errors Were Detected %s At: %s " % (split, helpers.ts_long_local()))
+                    helpers.sleep(2)
+                    return False
+                else:
+                    helpers.log("No Errors From syslog Monitor on C2")
+                    helpers.sleep(2)
+                    return True
+        else:
+            helpers.log("syslogMonitorFlag is not set: Returning")
+            helpers.sleep(2)
+            return False
+
+# ## Added by Sahaja
+    def get_syslog_monitor_pid(self, role):
+        '''Get the pid of tail processes
+        Input: c1,c2,etc
+        '''
+        t = test.Test()
+        c = t.controller(role)
+        helpers.log("Verifing for monitor job")
+        c_result = c.bash('ps ax | pgrep tail | awk \'{print $1}\'')
+        split = re.split('\n', c_result['content'])
+        pidList = split[1:-1]
+        return pidList
+
+# ## Added by Sahaja
+    def rest_cleanconfig_switch_config(self):
+        ''' Get all the list of switches configured and delete first the role and then delete the switch
+
+        Input: none
+
+        example show command: "show running-config switch"
+
+        Return value is if the deletion succeeded or not
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_url = '/api/v1/data/controller/applications/bigtap/interface-config?config=true'
+        c.rest.get(show_url)
+        switch_data = c.rest.content()
+        url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]'
+        helpers.test_log("type of switch_data is %s" % (type(switch_data)))
+        if len(switch_data) != 0:
+            for intf in switch_data:
+                helpers.test_log("type of intf is %s" % (type(intf)))
+                if "interface" and "name" and "role" and "switch" in intf.keys():
+                    helpers.test_log("Now will be deleting :: %s %s %s %s" % (intf["switch"], intf["role"], intf["interface"], intf["name"]))
+                    # final_url = url % (intf["interface"], intf["switch"])
+                    c.rest.delete(url % (intf["interface"], intf["switch"]), {'role':intf["role"]})
+        else:
+            helpers.test_log("Switch data is empty no switches configured")
+            return True
+
+        # Make sure there is no config left after deletion of roles
+        c.rest.get(show_url)
+        role_data_after_delete = c.rest.content()
+        if len(role_data_after_delete) == 0:
+            helpers.test_log("All the roles have been deleted for all the switch interfaces")
+        else:
+            helpers.test_log("Few roles are still left %s" % (role_data_after_delete))
+            return False
+
+        # Delete Switches as roles are deleted
+        switch_url = '/api/v1/data/controller/core/switch?config=true'
+        c.rest.get(switch_url)
+        data = c.rest.content()
+        for switch in data:
+            if "dpid" in switch.keys():
+                helpers.test_log("Going to delete: %s" % (switch["dpid"]))
+                switch_delete_url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (switch["dpid"])
+                c.rest.delete(switch_delete_url)
+        # Make sure all switches have been deleted
+        c.rest.get(switch_url)
+        data = c.rest.content()
+        if len(data) == 0:
+            helpers.test_log("All the switches have been deleted")
+            return True
+        else:
+            helpers.test_log("Few switches have not been deleted %s" % (data))
+            return False
+
+
+# ## Added by Sahaja
+    def rest_cleanconfig_bigtap_add_grp(self):
+        '''Get all the list of address groups and delete them
+
+        Input: None
+
+        show command used: show running-config bigtap address-group
+
+        Output: Return false if any address-groups are left after deletion
+
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        show_url = "/api/v1/data/controller/applications/bigtap/ip-address-set?config=true"
+        try:
+            c.rest.get(show_url)
+            addr_grp_data = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        delete_url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]'
+        if len(addr_grp_data) != 0:
+            for add_grp in addr_grp_data:
+                helpers.test_log("type of add_grp is %s" % (type(add_grp)))
+                if "name" in add_grp.keys():
+                    c.rest.delete(delete_url % (add_grp['name']))
+                else:
+                    helpers.test_log("There is no name field for %s" % add_grp)
+                    return False
+        else:
+            helpers.test_log("Add-grp data is empty")
+            return True
+
+        # Make sure all the address-groups have been deleted
+        c.rest.get(show_url)
+        delete_addr_grp_data = c.rest.content()
+        if len(delete_addr_grp_data) == 0:
+            helpers.test_log("All the address-groups have been deleted")
+            return True
+        else:
+            helpers.test_log("Few address-groups have not been deleted %s" % (delete_addr_grp_data))
+            return False
+
+# ## Added by Sahaja
+    def rest_cleanconfig_bigtap_user_defined_offset(self):
+        '''Get all the user-defined-groups and delete them
+
+        Input: None
+
+        show command used: show running-config bigtap user-defined-group
+
+        Output: Return false if groups are not deleted properly
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        show_url = "/api/v1/data/controller/applications/bigtap/user-defined-offset?config=true"
+        try:
+            c.rest.get(show_url)
+            show_data = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        delete_url = "/api/v1/data/controller/applications/bigtap/user-defined-offset/%s/anchor {}"
+        if len(show_data) != 0:
+            for ugrp in show_data:
+                for grp in ugrp.keys():
+                    helpers.test_log("Deleting the group %s" % (grp))
+                    c.rest.delete(delete_url % (grp))
+                    return True
+        else:
+            helpers.test_log("There are no user-defined offsets to delete")
+            return True
+
+# ## Added by Sahaja
+
+    def rest_cleanconfig_bigtap_policy(self):
+        '''Get all the policy and associated view names and delete them
+
+        Input: None
+
+        show commands used: 'show running-config bigtap policy', 'show bigtap rbac-permission'
+
+        Output: Return false if deletion is not successful
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+
+        delete_url = "/api/v1/data/controller/applications/bigtap/view[name='%s']/policy[name='%s'] {}"
+        show_policy_url = "/api/v1/data/controller/applications/bigtap/view/policy?config=true"
+        show_view_url = "/api/v1/data/controller/applications/bigtap/view?select=policy/name"
+
+        c.rest.get(show_policy_url)
+        policy_data = c.rest.content()
+
+        c.rest.get(show_view_url)
+        view_data = c.rest.content()
+
+        # GET THE POLICY NAMES
+        lis_p = []
+        if len(policy_data) != 0:
+            for pol in policy_data:
+                lis_p.append(pol['name'])
+        else:
+            helpers.test_log("No list of policies to delete")
+            return True
+
+        for pol_n in lis_p:
+            for elem in view_data:
+                for pol in elem['policy']:
+                    if cmp(pol_n, pol['name']) == 0:
+                        helpers.test_log("Will be deleting policy %s with view %s" % (pol_n, elem['name']))
+                        c.rest.delete(delete_url % (elem['name'], pol_n))
+
+        c.rest.get(show_policy_url)
+        delete_policy_data = c.rest.content()
+        if len(delete_policy_data) == 0:
+            helpers.test_log("All the user-defined-groups have been deleted")
+            return True
+        else:
+            helpers.test_log("Few policies have not been deleted %s" % (delete_policy_data))
+            return False
+
+# ## Added by Sahaja
+    def write_version_to_file(self):
+        '''Touch a file and write the version of the controller to file
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+        except:
+            return False
+        show_version_url = "/rest/v1/system/version"
+#        vf = open("/var/lib/libvirt/bigtap_regressions/ver.txt", "wb")
+        vf = open("/var/tmp/ver.txt", "wb")
+        c.rest.get(show_version_url)
+        ver_data = c.rest.content()
+        helpers.test_log("Version string got is: %s" % (ver_data))
+        if ver_data:
+            ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
+            if ver:
+                vf.write("%s %s" % (ver.group(1), ver.group(2)))
+                return True
+            else:
+                helpers.test_log("Did not match the version format, got %s" % (ver))
+                return False
+        else:
+            helpers.test_log("Version string is empty")
+            return False
+
+# ## Animesh
+    def return_version_number(self, node="master", user="admin", password="adminadmin", local=True):
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_bigtap(n.platform()):
+            '''
+                BigTap Controller
+            '''
+            c = t.controller('master')
+            url = '/rest/v1/system/version'
+            if user == "admin":
+                try:
+                    t.node_reconnect(node='master', user=str(user), password=password)
+                    c.rest.get(url)
+                    content = c.rest.content()
+                    output_value = content[0]['controller']
+                except:
+                    return False
+                else:
+                    return output_value
+            else:
+                try:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    output_value = content[0]['controller']
+                    output_string = output_value.split(' ')
+
+                except:
+                    t.node_reconnect(node='master')
+                    return False
+                else:
+                    if local is True:
+                        t.node_reconnect(node='master', user=str(user), password=password)
+                    return output_string[3]
+

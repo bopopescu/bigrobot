@@ -1447,7 +1447,7 @@ class T5Torture(object):
         BsnCommon().enable("master", "clear switch all interface all counters")
         self.cli_show_commands_for_debug()
 
-    def tenant_configuration_add_remove(self, tnumber, vnumber, sleep_timer=1):
+    def tenant_configuration_add_remove(self, tnumber, vnumber, sw_dut, sw_intf_dut, sleep_timer=1):
         log_to_console("================tenant configuration changes: %s==============="
                        % tnumber)
         self.clear_stats_in_controller_switch()
@@ -1463,8 +1463,8 @@ class T5Torture(object):
         for i in range(0, tnumber):
             self.rest_add_interface_to_all_vns(
                     tenant="FLAP%s" % i,
-                    switch=BsnCommon().params_global('switch_dut'),
-                    intf=BsnCommon().params_global('switch_interface_dut'),
+                    switch=sw_dut,
+                    intf=sw_intf_dut,
                     vlan=vlan)
             BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
             vlan = vlan + vnumber
@@ -1479,7 +1479,7 @@ class T5Torture(object):
             BsnCommon().config("master", "no tenant FLAP%s" % i)
         BsnCommon().cli("master", "show running-config tenant", timeout=120)
 
-    def vns_configuration_add_remove(self, vnumber, sleep_timer=1):
+    def vns_configuration_add_remove(self, vnumber, sw_dut, sw_intf_dut, sleep_timer=1):
         log_to_console("================vns configuration changes: %s==============="
                        % vnumber)
         BsnCommon().enable("master",
@@ -1491,8 +1491,8 @@ class T5Torture(object):
                 vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
         self.rest_add_interface_to_all_vns(
                 tenant="FLAP0",
-                switch=BsnCommon().params_global('switch_dut'),
-                intf=BsnCommon().params_global('switch_interface_dut'),
+                switch=sw_dut,
+                intf=sw_intf_dut,
                 vlan=vlan)
         helpers.sleep(sleep_timer)
         BsnCommon().cli("master",

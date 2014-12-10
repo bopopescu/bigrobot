@@ -1,15 +1,18 @@
 *Settings
-Documentation  TCP Flag Test Suite
-Suite Setup  flag suite setup
-Suite Teardown   flag suite teardown
-Test Setup   flag test setup
-Test Teardown  flag test teardown 
-Force Tags   Corsair  AugustaP2  BigTap  
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           Corsair: TCP Flag Test Suite
+Suite Setup             flag suite setup
+Suite Teardown          flag suite teardown
+Test Setup              flag test setup
+Test Teardown           flag test teardown 
+Force Tags              corsair  feature  bigtap  
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${switch1_alias}                          app-ras5710-1  #Alias for switch 1
@@ -84,6 +87,10 @@ flag suite setup
 
 
 flag test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
     rest add policy  admin-view  ${policy_name_1}  forward
     rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
@@ -100,6 +107,8 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
 
 flag test teardown 
     rest delete policy  admin-view  ${policy_name_1}
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
     
 flag suite teardown
     rest delete interface role  s1  ${switch1_filter_intf_1}       filter 

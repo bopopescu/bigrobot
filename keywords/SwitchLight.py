@@ -30,6 +30,74 @@ class SwitchLight(object):
 #######################################################################
 # All Common Switch Show Commands Go Here:
 #######################################################################
+    def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
+        '''
+            Objective:
+            - Return interface counter from o/p of show interface
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 |
+            | intf_counter | State, Speed, RX or TX field |
+
+            Return Value:
+            - Interface State of interface.
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show interface"
+            switch.enable(cli_input)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
+            content = string.split(switch.cli_content(), '\n')
+            helpers.log("Output of show is %s" % content)
+            flag_intf_found = False
+            for i in range(0, len(content)):
+                if(str(intf_name) in content[i]):
+                    helpers.log("Interface %s found in show interfaces output" % str(intf_name))
+                    flag_intf_found = True
+                    temp_intf_string = ' '.join(content[i].split())
+                    intf_array = temp_intf_string.split()
+                    helpers.log("This is intf_array %s" % intf_array)
+                    if (("state" in intf_counter) or ("State" in intf_counter) or ("STATE" in intf_counter) or ("Status" in intf_counter) or ("STATUS" in intf_counter)):
+                        if ((str('*') in intf_array[0]) or (str('U') in intf_array[0])):
+                            return 'up'
+                        else:
+                            return 'down'
+                    elif (("speed" in intf_counter) or ("Speed" in intf_counter) or ("SPEED" in intf_counter)):
+                        if ('1G' in intf_array[2]):
+                            return '1G'
+                        elif ('10G' in intf_array[2]):
+                            return '10G'
+                        elif  ('40G' in intf_array[2]):
+                            return '40G'
+                        else:
+                            return False
+                    elif (("rx" in intf_counter) or ("Rx" in intf_counter) or ("RX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[2])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[3])
+                            else:
+                                return int(intf_array[2])
+                    elif (("tx" in intf_counter) or ("Tx" in intf_counter) or ("TX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[3])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[4])
+                            else:
+                                return int(intf_array[3])
+                    else:
+                        helpers.log("No such field %s exists in output of show interfaces" % str(intf_counter))
+                        return False
+            if not flag_intf_found:
+                helpers.log("Interface %s was not found in show interfaces output" % str(intf_name))
+                return False
 
     def cli_show_switch_dpid(self, node):
         '''
@@ -96,75 +164,6 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
-        '''
-            Objective:
-            - Return interface counter from o/p of show interface
-
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | intf_name | Interface Name eg. ethernet1 or portchannel1 |
-            | intf_counter | State, Speed, RX or TX field |
-
-            Return Value:
-            - Interface State of interface.
-        '''
-        try:
-            t = test.Test()
-            switch = t.switch(node)
-            cli_input = "show interface"
-            switch.enable(cli_input)
-        except:
-            helpers.test_log("Could not execute command. Please check log for errors")
-            return False
-        else:
-            content = string.split(switch.cli_content(), '\n')
-            flag_intf_found = False
-            for i in range(0, len(content)):
-                if(str(intf_name) in content[i]):
-                    helpers.log("Interface %s found in show interfaces output" % str(intf_name))
-                    flag_intf_found = True
-                    temp_intf_string = ' '.join(content[i].split())
-                    intf_array = temp_intf_string.split()
-                    helpers.log("This is intf_array %s" % intf_array)
-                    if (("state" in intf_counter) or ("State" in intf_counter) or ("STATE" in intf_counter)):
-                        if (str('*') in intf_array[0]):
-                            return 'up'
-                        else:
-                            return 'down'
-                    elif (("speed" in intf_counter) or ("Speed" in intf_counter) or ("SPEED" in intf_counter)):
-                        if ('1G' in intf_array[2]):
-                            return '1G'
-                        elif ('10G' in intf_array[2]):
-                            return '10G'
-                        elif  ('40G' in intf_array[2]):
-                            return '40G'
-                        else:
-                            return False
-                    elif (("rx" in intf_counter) or ("Rx" in intf_counter) or ("RX" in intf_counter)):
-                        if ('port-channel' in temp_intf_string):
-                            return int(intf_array[2])
-                        else:
-                            if (len(intf_array) > 4):
-                                return int(intf_array[3])
-                            else:
-                                return int(intf_array[2])
-                    elif (("tx" in intf_counter) or ("Tx" in intf_counter) or ("TX" in intf_counter)):
-                        if ('port-channel' in temp_intf_string):
-                            return int(intf_array[3])
-                        else:
-                            if (len(intf_array) > 4):
-                                return int(intf_array[4])
-                            else:
-                                return int(intf_array[3])
-                    else:
-                        helpers.log("No such field %s exists in output of show interfaces" % str(intf_counter))
-                        return False
-            if not flag_intf_found:
-                helpers.log("Interface %s was not found in show interfaces output" % str(intf_name))
-                return False
-
-
     def cli_show_interface_state(self, node, intf_name, admin_down=False):
         '''
             Objective:
@@ -216,8 +215,15 @@ class SwitchLight(object):
             s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
             s1.enable(cli_input)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
             lines = string.split(s1.cli_content(), '\n')
+            lines.pop(0)
+            lines.pop()
             return_array = {}
+            sent_found = 0
             for i in lines:
                 p = i.lstrip(" ")
                 value = re.sub(' +', ' ', p)
@@ -227,10 +233,24 @@ class SwitchLight(object):
                 elif "Sent" in value:
                     return_array["sent_bytes"] = int(re.split(' ', value)[1])
                     return_array["sent_packets"] = int(re.split(' ', value)[3])
+                    sent_found = 1
+                elif "discard" in value and sent_found == 0:
+                    my_value = re.split(' ', value)
+                    return_array["received_discard_packets"] = int(my_value[2])
+                    return_array["received_pause_packets"] = int(my_value[4])
+                elif "discard" in value and sent_found == 1:
+                    my_value = re.split(' ', value)
+                    return_array["sent_discard_packets"] = int(my_value[0])
+                    return_array["sent_pause_packets"] = int(my_value[2])
+                elif "error" in value and sent_found == 0:
+                    my_value = re.split(' ', value)
+                    return_array["received_error_packets"] = int(my_value[0])
+                    return_array["received_crc_packets"] = int(my_value[2])
+                    return_array["received_alignment_packets"] = int(my_value[4])
+                elif "error" in value and sent_found == 1:
+                    my_value = re.split(' ', value)
+                    return_array["sent_error_packets"] = int(my_value[0])
             return return_array
-        except:
-            helpers.test_log("Could not execute command. Please check log for errors")
-            return False
 
     def cli_show_all_interfaces(self, node, intf_count=52):
         '''
@@ -432,7 +452,8 @@ class SwitchLight(object):
         try:
             t = test.Test()
             switch = t.switch(node)
-            url = "/sbin/ping -c 3 %s" % (switch.ip())
+            # url = "/sbin/ping -c 3 %s" % (switch.ip())
+            url = "ping -c 3 %s" % (switch.ip())
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
@@ -2236,3 +2257,41 @@ class SwitchLight(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.switch_cli_exec_walk(node, string, file_name, padding)
 
+#### Added by Sahaja
+    def clean_switch_configuration(self, node, word):
+        '''Delete specified configuration on the switch
+
+        Input: Switch name
+
+        Output: Return False if deletion is not successful
+        '''
+
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cmd = "show running-config %s" % (word)
+            s1.cli(cmd)
+
+        except:
+            helpers.test_log("Could not issue show command")
+            return False
+
+            # show_po = s1.cli_content()
+        content = string.split(s1.cli_content(), '\n')
+        show_po = filter(lambda x: re.search(r'^{}'.format(word), x), content)
+        helpers.test_log("List of %s is %s" % (word, show_po))
+        if len(show_po) != 0:
+            for po in show_po:
+                del_cmd = "no " + po
+                s1.config(del_cmd)
+            s1.cli(cmd)
+            del_content = string.split(s1.cli_content(), '\n')
+            op_del = filter(lambda x: re.search(r'^{}'.format(word), x), del_content)
+            if len(op_del) == 0:
+                helpers.test_log("Deletion succeeded")
+                return True
+            else:
+                helpers.test_failure("Deletion not successful few %s are left %s" % (word, op_del))
+        else:
+            helpers.test_log("There are no %s to be deleted" % (word))
+            return True

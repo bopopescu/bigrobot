@@ -1699,8 +1699,9 @@ class T5(object):
         data = c.rest.content()
         list_spine = []
         for i in range(0, len(data)):
-            if data[i]["fabric-role"] == "spine":
-                list_spine.append(data[i]["name"])
+            if "fabric-role" in data[i]:  # check for the key "fabric-role" first in the data node as it is removed recently if fabric-role is not configured
+                if data[i]["fabric-role"] == "spine":
+                    list_spine.append(data[i]["name"])
 
         helpers.log("Total Spine in the topology: %d" % len(list_spine))
         return list_spine
@@ -2950,6 +2951,19 @@ class T5(object):
         data = c.rest.content()
         dpid = data[0]["dpid"]
         return dpid
+
+    def rest_get_mac(self, switch):
+        '''
+        Function to get mac from switch name
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        dpid = data[0]["dpid"]
+        return dpid[6:]
 
     def rest_get_fabric_interface_stats(self, switch, intf):
         ''' Function to return a switch fabric interface stats

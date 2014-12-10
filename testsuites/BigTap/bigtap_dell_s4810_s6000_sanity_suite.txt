@@ -1,69 +1,73 @@
 *Settings
-Documentation  Dell-S4810-S6000 Test Suite
-Suite Setup  dell suite setup
-Suite Teardown   dell suite teardown
-Test Setup   traffic test setup
-Test Teardown  traffic teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           Dell-S4810-S6000 Test Suite
+Suite Setup             dell suite setup
+Suite Teardown          dell suite teardown
+Test Setup              traffic test setup
+Test Teardown           traffic test teardown 
+Force Tags              platform Sanity
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Library                 keywords/ThirdParty.py
 
 * Variable
 ${policy_name_1}                    policy_dell_traffic_s1s3
 ${policy_name_2}                    policy_dell_traffic_s3s1
 
-${s1_alias}                         app-rs4810-1
+${s1_alias}                         app-s4810-4
 ${filter_s1_1}                      ethernet1  
-${filter_nick_s1_1}                 ixia-1-4
+${filter_nick_s1_1}                 ixia-1-14
 ${filter_s1_1_snmp_oid}             1.3.6.1.2.1.2.2.1.11.1001  
 ${delivery_s1_1}                    ethernet2  
-${delivery_nick_s1_1}               ixia-1-3
-${delivery_s1_1_snmp_oid}           1.3.6.1.2.1.2.2.1.11.1002  
+${delivery_nick_s1_1}               ixia-1-13
+${delivery_s1_1_snmp_oid}           1.3.6.1.2.1.2.2.1.17.1002  
 ${pre_service_s1}                   ethernet47
 ${pre_service_nick_s1}              pre-service-s1
 ${post_service_s1}                  ethernet48
 ${post_service_nick_s1}             post-service-s1
 ${service_name_1}                   service-s1
-${core_interface_s1s2_1}            ethernet51
-${core_s1_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1051
-${core_interface_s1s2_2}            ethernet52
-${core_s1_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1052
-${pc_members_s1s2}                  51,52
+${core_interface_s1s2_1}            ethernet49
+${core_s1_s2_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1049
+${core_interface_s1s2_2}            ethernet50
+${core_s1_s2_2_snmp_oid}            1.3.6.1.2.1.2.2.1.17.1050
+${pc_members_s1s2}                  49,50
 ${pc_number_s1s2}                   1
 ${pc_name_s1s2}                     port-channel1
-${pc_s1s2_members}                  ethernet51 ethernet52
+${pc_s1s2_members}                  ethernet49 ethernet50
 
-${s2_alias}                         app-rs6000-1
+
+${s2_alias}                         app-s6000-1
 ${pre_service_s2}                   ethernet11
 ${pre_service_nick_s2}              pre-service-s2
 ${post_service_s2}                  ethernet12
 ${post_service_nick_s2}             post-service-s2
 ${service_name_2}                   service-s2
-${core_interface_s2s1_1}            ethernet32
-${core_s2_s1_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1032
-${core_interface_s2s1_2}            ethernet24
-${core_s2_s1_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1024
-${core_interface_s2s3_1}            ethernet10
-${core_s2_s3_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1010
-${core_interface_s2s3_2}            ethernet9
-${core_s2_s3_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1009
-${pc_members_s2s1}                  24,32
+${core_interface_s2s1_1}            ethernet3
+${core_s2_s1_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1003
+${core_interface_s2s1_2}            ethernet4
+${core_s2_s1_2_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1004
+${core_interface_s2s3_1}            ethernet29
+${core_s2_s3_1_snmp_oid}            1.3.6.1.2.1.2.2.1.11.1029
+${core_interface_s2s3_2}            ethernet30
+${core_s2_s3_2_snmp_oid}            1.3.6.1.2.1.2.2.1.17.1030
+${pc_members_s2s1}                  3,4
 ${pc_number_s2s1}                   1
 ${pc_name_s2s1}                     port-channel1
-${pc_s2s1_members}                  ethernet24 ethernet32
-${pc_members_s2s3}                  9,10
+${pc_s2s1_members}                  ethernet3 ethernet4
+${pc_members_s2s3}                  29,30
 ${pc_number_s2s3}                   2
 
 ${s3_alias}                         app-s4810-1
 ${filter_s3_1}                      ethernet1  
-${filter_nick_s3_1}                 ixia-1-23
+${filter_nick_s3_1}                 ixia-1-17
 ${delivery_s3_1}                    ethernet2  
-${delivery_nick_s3_1}               ixia-1-21
-${delivery_s3_1_snmp_oid}           1.3.6.1.2.1.2.2.1.11.1002  
+${delivery_nick_s3_1}               ixia-1-18
+${delivery_s3_1_snmp_oid}           1.3.6.1.2.1.2.2.1.17.1002  
 ${pre_service_s3}                   ethernet47
 ${pre_service_nick_s3}              pre-service-s3
 ${post_service_s3}                  ethernet48
@@ -87,13 +91,13 @@ ${ixia_arista_ip_address}           192.168.110.2
 ${ixia_fabric_ip_address}           192.168.130.4
 
 ${tunnel_sw2_name_delivery}            tunnel1                 #Tunnel Name
-${tunnel_sw2_parent_intf_delivery}     ethernet26              #Tunnel Parent Interface
+${tunnel_sw2_parent_intf_delivery}     ethernet10              #Tunnel Parent Interface
 ${tunnel_sw2_sip_delivery}             192.168.120.1           #Tunnel Source IP
 ${tunnel_sw2_dip_delivery}             192.168.120.2           #Tunnel Destination IP
 ${tunnel_sw2_gip_delivery}             192.168.120.2           #Tunnel Gateway IP
 ${tunnel_sw2_mask_delivery}            255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw2_alias}                    s6000_tunnel            #Tunnel Name when used as filter interface
-${tunnel_sw2_loopback_delivery}        ethernet4               #Tunnel Loopback Interface
+${tunnel_sw2_loopback_delivery}        ethernet17              #Tunnel Loopback Interface
 
 ${snmp_ccommunity_1}                ro public
 ${snmp_community_1}                 public
@@ -678,24 +682,24 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     bash  s3  ofad-ctl crc enable
     sleep  5    
     #Configuration on Arista
-    cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista add mtu interface    s4  ${arista_s600_port}  9212
-    sleep  5
+    #cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista add mtu interface    s4  ${arista_s600_port}  9212
+    #sleep  5
     ### Tunnel as delivery interface
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista delete mtu interface  s4  ${arista_s600_port}  9212
-    sleep  5    
-    [Tags]  bigtap  tunnel  tx
+    #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
+    #sleep  5    
+    [Tags]  bigtap  tunnel  tx  runthis
 
 TC32: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -705,23 +709,23 @@ TC32: Verify Receive-Only Tunnel across Dell S6000
     bash  s3  ofad-ctl crc enable
     sleep  5    
     #Configuration on Arista
-    cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista add mtu interface    s4  ${arista_s600_port}  9212
-    sleep  5
+    #cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista add mtu interface    s4  ${arista_s600_port}  9212
+    #sleep  5
     ### Tunnel as filter interface
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=rx  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista delete mtu interface  s4  ${arista_s600_port}  9212
-    sleep  5    
+    #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
+    #sleep  5    
     [Tags]  bigtap  tunnel  rx   
 
 TC33: Verify Bidirectional Tunnel across Dell S6000
@@ -732,23 +736,23 @@ TC33: Verify Bidirectional Tunnel across Dell S6000
     bash  s3  ofad-ctl crc enable
     sleep  5    
     #Configuration on Arista
-    cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista add mtu interface    s4  ${arista_s600_port}  9212
-    sleep  5
+    #cli arista add ip address       s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista add mtu interface    s4  ${arista_s600_port}  9212
+    #sleep  5
     ### Tunnel as filter interface
     ${verify_add_tun_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_delivery}  loopback=${tunnel_sw2_loopback_delivery}  pinterface=${tunnel_sw2_parent_intf_delivery}  tdirection=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}
     Should be true  ${verify_add_tun_delivery}
     sleep  20
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name_delivery}  tunnel_number=224  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_delivery}  tunnel_direction=bidir  sip=${tunnel_sw2_sip_delivery}  dip=${tunnel_sw2_dip_delivery}  mask=${tunnel_sw2_mask_delivery}  gip=${tunnel_sw2_gip_delivery}      
     Should be true  ${verify_tun_sw2}
     ## Delete Tunnel
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_delivery}  
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
-    cli arista delete mtu interface  s4  ${arista_s600_port}  9212
-    sleep  5    
+    #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
+    #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
+    #sleep  5    
     [Tags]  bigtap  tunnel  bidir
 
 TC34: Verify ntp configuration on Dell S4810
@@ -930,7 +934,7 @@ TC50: Restart process OFAD on switch S3
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
     bash restart process  s3  ofad
-    Sleep  90
+    Sleep  120
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -962,14 +966,14 @@ TC51: Verify interface statistics on switch
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${tx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s3_2}    tx
     ${in_range_2}=         ixia verify traffic rate  ${rx_switch_value_2}   ${tx_switch_value_2}     rangev=10
-    Should be true  ${in_range_2}            
+    Should be true  ${in_range_2}
     ${rx_switch_value_3}=  cli return interface counter brief     s3      ${core_interface_s3s2_2}    rx
     ${tx_switch_value_3}=  cli return interface counter brief     s3      ${delivery_s3_1}            tx        
     ${in_range_3}=         ixia verify traffic rate  ${rx_switch_value_3}   ${tx_switch_value_3}     rangev=10
     Should be true  ${in_range_3} 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats
+    [Tags]  bigtap  ha  stats  runthis
 
 
 TC52: SNMP: Verify interface statistics and match with SNMP
@@ -988,7 +992,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     clear stats
     cli clear interface statistics  s1
     cli clear interface statistics  s2
-    cli clear interface statistics  s3                
+    cli clear interface statistics  s3
+    sleep  30
     start traffic     
     sleep  10
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
@@ -1004,7 +1009,8 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     ${snmp_value2}=        return snmp value  ${match_value2}  1
     ${in_range_2}=         ixia verify traffic rate  ${tx_switch_value_1}   ${snmp_value2}     rangev=100
     Should be true  ${in_range_2}    
-            
+
+    ${rx_switch_value_0}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${rx_switch_value_2}=  cli return interface counter brief     s2      ${core_interface_s2s1_2}    rx
     ${match_value3}=       snmp cmd   s2   snmpget    public   ${core_s2_s1_2_snmp_oid}
     ${snmp_value3}=        return snmp value  ${match_value3}  1
@@ -1030,7 +1036,7 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp   
+    [Tags]  bigtap  ha  stats  snmp  runthis
 
 * Keywords
 
@@ -1038,11 +1044,11 @@ dell suite setup
     base suite setup
     rest add switch alias  s1  ${s1_alias}
     rest add switch alias  s2  ${s2_alias}
-    rest add switch alias  s3  ${s3_alias}    
+    rest add switch alias  s3  ${s3_alias}
     ${disable_crc_check}=  rest disable feature  crc
     Should be true  ${disable_crc_check} 
     ${disable_feature}=  rest disable feature  inport-mask
-    Should be true  ${disable_feature}               
+    Should be true  ${disable_feature}
     ${output_1}=    rest add interface role  s1  ${filter_s1_1}         filter      ${filter_nick_s1_1}
     Should be true  ${output_1}     
     ${output_2}=    rest add interface role  s1  ${delivery_s1_1}       delivery    ${delivery_nick_s1_1}
@@ -1117,11 +1123,17 @@ dell suite setup
     cli add snmp host      s3   ${snmp_trap_svr_1}   informs   ${snmp_community_1}   162        
 
 traffic test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     ixia initialize  tg1  init=true
     
-traffic teardown
+traffic test teardown
     delete traffic
     sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
         
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -1144,11 +1156,11 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
     Should Be True  ${ret_value_1}
 
 lag setup  [Arguments]  ${mode}
-    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}   ${pc_members_s1s2}  ${mode}
+    ${pc_status_s1s2}=  cli add portchannel  s1  ${pc_number_s1s2}  ${pc_members_s1s2}  ${mode}
     Should be true  ${pc_status_s1s2}
-    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}   ${pc_members_s2s1}  ${mode}
+    ${pc_status_s2s1}=  cli add portchannel  s2  ${pc_number_s2s1}  ${pc_members_s2s1}  ${mode}
     Should be true  ${pc_status_s2s1}
-    sleep  5
+    sleep  30
 
 verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
     ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
@@ -1158,7 +1170,7 @@ verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}
     
 dell suite teardown
     ${teardown_1}=      rest delete policy  admin-view  ${policy_name_1}
-    Should be true      ${teardown_1}  
+    Should be true      ${teardown_1} 
     ${teardown_2}=      rest delete policy  admin-view  ${policy_name_2}
     Should be true      ${teardown_2}
     ${teardown_20}=     rest delete service  ${service_name_1}
@@ -1166,15 +1178,15 @@ dell suite teardown
     ${teardown_21}=     rest delete service  ${service_name_2}
     Should be true      ${teardown_21}
     ${teardown_22}=     rest delete service  ${service_name_3}
-    Should be true      ${teardown_22}            
+    Should be true      ${teardown_22}
     ${teardown_3}=      rest delete interface role  s1  ${filter_s1_1}      filter      ${filter_nick_s1_1}
     Should be true      ${teardown_3}
     ${teardown_4}=      rest delete interface role  s1  ${delivery_s1_1}    delivery    ${delivery_nick_s1_1}
-    Should be true      ${teardown_4}     
+    Should be true      ${teardown_4}
     ${teardown_5}=      rest delete interface role  s1  ${pre_service_s1}   service     ${pre_service_nick_s1}
     Should be true      ${teardown_5}
     ${teardown_6}=      rest delete interface role  s1  ${post_service_s1}  service     ${post_service_nick_s1}
-    Should be true      ${teardown_6}     
+    Should be true      ${teardown_6}
     
     ${teardown_7}=      rest delete interface role  s2  ${pre_service_s2}   service     ${pre_service_nick_s2}
     Should be true      ${teardown_7}
@@ -1197,13 +1209,13 @@ dell suite teardown
     ${teardown_15}=     rest delete interface  s3  ${filter_s3_1}
     Should be true      ${teardown_15}
     ${teardown_16}=     rest delete interface  s3  ${delivery_s3_1}
-    Should be true      ${teardown_16}    
+    Should be true      ${teardown_16}
     ${teardown_17}=     rest delete switch  s1
-    Should be true      ${teardown_17}    
+    Should be true      ${teardown_17} 
     ${teardown_18}=     rest delete switch  s2
-    Should be true      ${teardown_18}        
+    Should be true      ${teardown_18}
     ${teardown_19}=     rest delete switch  s3
-    Should be true      ${teardown_19}        
+    Should be true      ${teardown_19}
     ${enable_crc_check}=  rest enable feature  crc
     Should be true  ${enable_crc_check}  
     rest delete switch alias  s1

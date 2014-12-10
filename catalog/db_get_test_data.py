@@ -25,9 +25,9 @@ def prog_args():
     descr = """
 Display test data for a specific build. Example:
 
-% BUILD_NAME="bvs master #3271" ./db_get_test_data.py \\
-                                        --tags manual-untested \\
-                                        --no-show-header
+% RELEASE_NAME="<release>" BUILD_NAME="bvs master #3271" \\
+        ./db_get_test_data.py --tags manual-untested \\
+                              --no-show-header
 """
     parser = argparse.ArgumentParser(
                         prog='db_get_test_data',
@@ -36,8 +36,8 @@ Display test data for a specific build. Example:
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
-    parser.add_argument('--release', required=False, default='IronHorse',
-                        help=("Product release, e.g., 'IronHorse'"))
+    parser.add_argument('--release',
+                        help=("Product release, e.g., 'ironhorse', 'ironhorse-plus', 'jackfrost', etc."))
     parser.add_argument('--tags', metavar=('tag1', 'tag2'), nargs='*',
                         help='Test case tags to include, e.g., manual-untested, scaling, ztn, etc.')
     parser.add_argument('--no-show-header', action='store_true', default=False,
@@ -52,7 +52,17 @@ Display test data for a specific build. Example:
                            " variable BUILD_NAME")
     else:
         os.environ['BUILD_NAME'] = _args.build
+
+    # _args.release <=> env RELEASE_NAME
+    if not _args.release and 'RELEASE_NAME' in os.environ:
+        _args.release = os.environ['RELEASE_NAME']
+    elif not _args.release:
+        helpers.error_exit("Must specify --release option or set environment"
+                           " variable RELEASE_NAME")
+    else:
+        os.environ['RELEASE_NAME'] = _args.release
     _args.release = _args.release.lower()
+
     return _args
 
 

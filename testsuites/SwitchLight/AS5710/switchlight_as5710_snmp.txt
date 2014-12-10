@@ -2,16 +2,20 @@
 Documentation       Accton 5710: SNMP Sanity Test Suite
 Suite Setup         snmp suite setup
 Suite Teardown      base suite teardown 
-Test Setup          base test setup
-Test Teardown       base test teardown
+Test Setup          snmp test setup
+Test Teardown       snmp test teardown
 Force Tags          SwitchLight  SNMP  as5710 
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
 Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.0-beta1
+${switchlight_version}      Switch Light OS SWL-BT-4.1.1
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -20,8 +24,8 @@ ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6007
 ${snmp_location_2}          CS214-6007    
-${snmp_trap_svr_1}          10.9.18.2
-${snmp_trap_svr_2}          10.9.18.3
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
 ${tenG_intf}                ethernet2
 ${fortyG_intf}              ethernet49
 ${pc_intf_1}                49
@@ -260,19 +264,22 @@ TC41: Verify snmpbulkwalk works as expected
     [Tags]  snmpbulkwalk
 
 TC42: Verify snmptrap is generated on dataport linkflap
+    config  node=s1    cmd=snmp-server trap linkUpDown interval 30
+    sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10
     cli disable interface  s1  ${tenG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link down on interface 1002"
-    Should contain  ${output}  Operational state: 2  
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras5710
+    Should contain  ${output}  Link down on interface 1002
     sleep  10
     clear snmpttlog  ${snmp_trap_svr_1}
     sleep  10    
     cli enable interface  s1  ${tenG_intf}
     sleep  60
-    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  "Link up on interface 1002"
-    Should contain  ${output}  Operational state: 1     
+    ${output}=  return snmptrap output  ${snmp_trap_svr_1}  ras5710
+    Should contain  ${output}  Link up on interface 1002
+    config  node=s1    cmd=no snmp-server trap linkUpDown interval 30 
     [Tags]  snmptrap 
 
 TC43: Modify SNMP community and verify SNMP OID sysContact
@@ -346,6 +353,13 @@ snmp suite setup
     cli delete portchannel  s1  2            
     cli enable snmp   s1              
     Sleep   30             
+
+snmp test setup
+    write version to file
+    start syslog monitor
+    
+snmp test teardown
+    stop syslog monitor 
 
 verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
     ${snmp_key} =     snmp cmd   ${switch}   snmpget    ${snmp_community_1}   ${attribute}  

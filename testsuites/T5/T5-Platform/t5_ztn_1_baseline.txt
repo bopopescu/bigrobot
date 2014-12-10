@@ -104,16 +104,16 @@ T1.6. Test switch reboot
 T1.7. Reboot all switches from CLI
 	${status}=  Cli Reboot Switch  master  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
 	Sleep  120
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
 	${status}=  Cli Reboot Switch  slave  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
-	Sleep  120
+	Wait Until All Switches Connected
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
 
@@ -161,6 +161,20 @@ T1.10. Verify switches Switchlight SWI version
 	Verify Switch SWI Version  ${s4_alias}
 	Verify Switch SWI Version  ${s5_alias}
 T1.11. Verify switches Switchlight Installer version
+    Cli Run  master  system reinstall switch ${s1_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s2_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s3_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s4_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s5_alias}
+    Sleep  5
+
+    Run Keyword and Ignore Error  Power Cycle All Switches
+    Sleep  60
+
 	Verify Switch Installer Version  ${s1_alias}
 	Verify Switch Installer Version  ${s2_alias}
 	Verify Switch Installer Version  ${s3_alias}
@@ -181,25 +195,25 @@ T1.14. Power cycle switches
 	[Tags]  skipped
 
 T1.15. Connected, three failovers
-	Sleep  100
+	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
 	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
-	Sleep  100
+	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
 	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
-	Sleep  100
+	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 	Failover
 	Cli Copy  snapshot://startup-config  running-config
 	Randomize ZTN Configuration
-	Sleep  100
+	Sleep  30
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
 
@@ -261,13 +275,13 @@ T0.3. BSC-5568
 T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} version
 	...  Load average
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} connections
 	...  2014
@@ -298,13 +312,13 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} version
 	...  Load average
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} connections
 	...  2014
@@ -335,13 +349,13 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} version
 	...  Load average
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} connections
 	...  2014
@@ -372,13 +386,13 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} version
 	...  Load average
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} connections
 	...  2014
@@ -409,13 +423,13 @@ T0.4. Show remote on Active
 
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} version
 	...  Load average
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} connections
 	...  2014
@@ -447,13 +461,13 @@ T0.4. Show remote on Active
 T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} version
 	...  Load average
 	#Cli Run and Verify Output  slave
 	#...  show switch ${s1_alias} inventory
-	#...  40GBASE-CR4
+	#...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} connections
 	...  2014
@@ -484,13 +498,13 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} version
 	...  Load average
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} connections
 	...  2014
@@ -521,13 +535,13 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} version
 	...  Load average
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} connections
 	...  2014
@@ -558,13 +572,13 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} version
 	...  Load average
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} connections
 	...  2014
@@ -595,13 +609,13 @@ T0.5. Show remote on Standby
 
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} environment
-	...  Chassis Thermal Sensor
+	...  Status: Sensor Functional
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} version
 	...  Load average
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} inventory
-	...  40GBASE-CR4
+	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} connections
 	...  2014

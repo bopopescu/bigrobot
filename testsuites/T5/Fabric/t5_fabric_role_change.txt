@@ -13,7 +13,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/T5.py
 Library  keywords/Mininet.py
 Resource  testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
-#Resource  testsuites/T5/t5_physical_variables.txt
+Resource  testsuites/T5/t5_physical_variables.txt
 
 
 * Test Case   
@@ -22,6 +22,8 @@ add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse
    bigrobot test ztn  False
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
    sleep  125
    rest verify fabric switch all
 

@@ -21,6 +21,8 @@ add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse  
 	base suite setup  
     add fabric switch
+    Set swith int variables
+    Set switch dpid variables
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0
@@ -29,6 +31,7 @@ add Three Rack Dual Leaf Topology
     bring up h6 bond0
     sleep  10
     rest verify fabric switch all
+    Set switch dpid variables
    
 Verify Fabric Lag formation from leaf node 
 	[Tags]	 Fabric  feature  IronHorse    
@@ -56,7 +59,7 @@ Verify Fabric Lag from spine after adding back spine node
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  Fabric  feature  IronHorse  	
+	[Tags]  Fabric  feature  IronHorse	
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b
@@ -370,6 +373,8 @@ Verify Duplicate ARP broadcast on Edge Port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
@@ -394,6 +399,8 @@ Verify Duplicate Multicast packets on edge port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}

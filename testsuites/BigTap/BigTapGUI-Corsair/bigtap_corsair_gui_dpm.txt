@@ -3,7 +3,7 @@ Documentation   	Test suite to do the Deep Packet Matching. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	GUI DPM
+Force Tags      	bigtap  corsair  gui
 Library         	keywords/BsnCommon.py
 #Library         	keywords_dev/tomasz/BigTap.py
 Library        		SeleniumLibrary
@@ -19,7 +19,7 @@ TC Set up
 		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
 		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
 		Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 		delivery		ixia-4-8
-		Configure Big Tap Policy					 					policy-gtp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	
+		Configure Big Tap Policy					 					policy-gtp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	${EMPTY}	
 TC1 Policy with offset match on GTP' v1 (Protocol UDP)
 		Associate DPM Rule									 			policy-gtp	IPv4 - 0x800 (2048)		UDP (17)     Offset: 8		20000000	e0000000  	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	3386		${EMPTY}
 
@@ -114,7 +114,7 @@ TC Set up 2
 		Configure Big Tap User Defined Offsets							udf1					L4 Start			40
 		Configure Big Tap User Defined Offsets							udf2					L4 Start			44
 		Configure Big Tap User Defined Offsets							udf3					L4 Start			48
-		Configure Big Tap Policy					 					policy-gtp2				admin-view		Forward		IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}
+		Configure Big Tap Policy					 					policy-gtp2				admin-view		Forward		IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	${EMPTY}
 		
 TC29 Offset match on GTP-U inner src-ip
 		Associate DPM Rule									 			policy-gtp2		IPv4 - 0x800 (2048)		UDP (17)     Offset: 36		1010101		ffffffff	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	2152		${EMPTY}
@@ -156,9 +156,10 @@ config suite setup
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
 	Set Switching Mode		L3-L4 Offset Match
-	Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
- 	Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
- 	
+	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+ 	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
 config suite teardown
 	Close Browser
     Stop Selenium Server

@@ -92,12 +92,15 @@ T5 test teardown
 	rest delete tenant  internal
 
 T5 test setup
+    add fabric switch
 	base test setup
-	sleep  5	
+	sleep  155  #need to reduce the time once the 1g SFP link detectino is fast after switch initialization	in regression testbeds
 
 T5 suite setup
 	base suite setup  
     add fabric switch
+    Set swith int variables
+    Set switch dpid variables
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0

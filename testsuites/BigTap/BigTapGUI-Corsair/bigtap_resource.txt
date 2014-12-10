@@ -36,7 +36,8 @@ ${RBAC TITLE}				Big Tap Security - RBAC Permissions
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
-${PROCEED DELTE BUTTON}			xpath=//span[@id='dijit_form_Button_4']
+#${PROCEED DELTE BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${PROCEED DELTE BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 
@@ -86,22 +87,22 @@ ${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOve
 ${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB TUNNELING}							xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@class='knob_icon']
-${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Enabling Policy Overlap']/span[1]
-${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//div[@title='Confirm Disabling Policy Overlap']/span[1]
-${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//div[@title='Confirm Enabling Inport Mask']/span[1]
-${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//div[@title='Confirm Disabling Inport Mask']/span[1]
-${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Enabling CRC Check']/span[1]
-${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//div[@title='Confirm Disabling CRC Check']/span[1]
-${CONFIRM ENABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Enabling Tunneling']/span[1]
-${CONFIRM DISABLE TUNNELING POPUP}					xpath=//div[@title='Confirm Disabling Tunneling']/span[1]
-${ENABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Enabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE INPORT MASK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
-${ENABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Enabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE POLICY OVERLAP SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Policy Overlap']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE INPORT MASK SUBMIT BUTTON}						xpath=//div[@title='Confirm Disabling Inport Mask']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE CRC CHECK SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling CRC Check']/following-sibling::div/descendant::span[(text()='Proceed')]
-${DISABLE TUNNELING SUBMIT BUTTON}							xpath=//div[@title='Confirm Disabling Tunneling']/following-sibling::div/descendant::span[(text()='Proceed')]
+${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]
+${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]
+${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]
+${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]
+${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation?')]
+${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation?')]
+${CONFIRM ENABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]
+${CONFIRM DISABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]
+${ENABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE INPORT MASK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE INPORT MASK SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 
 
 
@@ -116,7 +117,7 @@ ${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
 ${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
 ${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE NAME}				xpath=//div[@class='input_error']
-${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+#${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
 ${ERROR BACKEND}				xpath=//div[@class='errors']
 ${INFO BUTTON}					xpath=//div[@class='step_text' and contains(text(), '1. Info')]
 ${USERS BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Users')]
@@ -133,14 +134,15 @@ ${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
 
 ### Users Page
 #${USERNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${USERNAME FIELD}				xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
 ${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
 ${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
 ${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
 ${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
-${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+#${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+${SAVE BUTTON}					xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${ERROR BACKEND}				xpath=//div[@class='errors']
 ${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Groups')]
 ${GROUP ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
@@ -183,7 +185,7 @@ ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-att
 ${RBAC MATCHES NODE}											xpath=//div[@data-dojo-attach-point='matchNode']
 ${RBAC MATCHES PLUS BUTTON}										xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE MATCHES POPUP}   								xpath=//div[@title='Configure Subnet Match Rule']
-${RBAC APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_9_label']
+${RBAC APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_11_label']
 ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  				  	xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}   			 	xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC ETHERTYPE DROPDOWN BUTTON}								xpath=//div[@id='widget_dijit_form_FilteringSelect_1']/descendant::div
@@ -239,7 +241,7 @@ ${GTP PROTOCOL TYPE FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/d
 ${CONFIGURE SWITCH ALIAS POPUP}			xpath=//div[@title='Configure Switch Alias']
 ${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
 ${SWITCH ALIAS FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${SUBMIT SWITCH ALIAS BUTTON}			xpath=//span[@id='dijit_form_Button_4']
+${SUBMIT SWITCH ALIAS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 
 
@@ -253,7 +255,7 @@ ${FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeF
 ${DELIVERY INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
 ${SERVICE INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
 ${INTERFACE NAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${SUBMIT INTERFACE NAME BUTTON}			xpath=//span[@class='dijit dijitReset dijitInline submit_button dijitButton']/descendant::span[@id='dijit_form_Button_4_label']
+${SUBMIT INTERFACE NAME BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 
 #### Controller Interfaces Tunnel Page
@@ -263,7 +265,8 @@ ${CONFIGURE GRE TUNNEL POPUP}		xpath=//div[@title='Configure GRE Tunnel']/child:
 ${TUNNEL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${TUNNEL RATE LIMIT CHECKBOX}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rate Limit')]/parent::h2/parent::div/following-sibling::div/child::div/child::div/input
 ${TUNNEL RATE LIMIT FIELD}			xpath=//input[@id='dijit_form_NumberSpinner_0']
-${LIST TYPE KNOB}					xpath=//div[@class='knob_icon']
+${LIST TYPE KNOB RECEIVE}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB TRANSMIT}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
 ${TUNNEL SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source IP')]/parent::h2/parent::div/following-sibling::div/div/div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input		
 ${TUNNEL SOURCE PREFIX FIELD}		xpath=//input[@id='dijit_form_NumberSpinner_1']
 ${TUNNEL GATEWAY IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Gateway IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
@@ -292,7 +295,7 @@ ${BIGTAP POLICY FILTER INTERFACES NODE}									xpath=//div[@data-dojo-attach-po
 ${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='filterTableNode']/descendant::div[@class='icon_node plus']
 #${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
 ${BIGTAP POLICY INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Add Filter Interfaces']
-#${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_14_label']
+#${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_17_label']
 ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}   			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Append Selected')]
 ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX}    				xpath=//div[@data-dojo-attach-point='filterNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/descendant::input
 ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
@@ -302,7 +305,7 @@ ${BIGTAP POLICY DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-p
 ${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[@class='icon_node plus']
 ${BIGTAP POLICY INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Add Delivery Interfaces']
 #${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Append Selected')]
-${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_19_label']
+${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_24_label']
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX}    				xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/descendant::input
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
@@ -369,14 +372,14 @@ ${BIG TAP INTERFACES CONFIGURE BUTTON}					xpath=//div[@class='step_text' and co
 ${BIG TAP INTERFACES FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeFilter']/descendant::input
 ${BIG TAP INTERFACES DELIVERY INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
 ${BIG TAP INTERFACES SERVICE INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
-${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
+${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${BIG TAP INTERFACES NAME FIELD}						xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${BIG TAP INTERFACES EDIT MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
 ${BIG TAP MATCH EDIT MENU ITEM}							xpath=//td[contains(@id, 'dijit_MenuItem_11') and contains(text(), 'Edit')]
 ${BIG TAP INTERFACES DELETE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${BIG TAP INTERFACES EDIT POPUP}						xpath=//div[@title='Edit Interface']
 ${BIG TAP INTERFACES CONFIRM POPUP}						xpath=//div[@title='Confirm']
-
+${SUMMARY BUTTON}										xpath=//div[@class='step_text' and contains(text(), '6. Summary')]
 ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}		xpath=//div[@data-dojo-attach-point='offsetMatchNode']/descendant::div[@class='icon_node plus']
 
 ${BIG TAP CONFIGURE OFFSET MATCH POPUP}  	xpath=//div[@title='Configure Offset Match']/child::span[1]
@@ -428,10 +431,11 @@ ${BIGTAP ADD FILTER INTERFACE POPUP}			xpath=//div[@title='Add Filter Interfaces
 ${BIGTAP ADD DELIVERY INTERFACE POPUP}			xpath=//div[@title='Add Delivery Interfaces']/child::span[@data-dojo-attach-point='titleNode']	
 ${FILTER CHECKBOX}								xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
 ${DELIVERY CHECKBOX}							xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
-${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//span[@id='dijit_form_Button_9_label']
-${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//span[@id='dijit_form_Button_9_label']
-${INTERFACE SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_4']
+${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${INTERFACE SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
+${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  		xpath=//div[@class='knob_icon lock']
 #xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
 ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
@@ -756,7 +760,7 @@ Generate Action Menu Xpath
 
 Generate Action Menu Xpath Policy
 	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
     
 Generate Overlapping Policy Xpath  
@@ -937,19 +941,19 @@ Delete All Big Tap Resources
 
 
 Configure User
-	[Arguments]  ${user}  ${password}  ${conf_password}  ${full_name}  ${group}
-	${random_groupname}  Generate Random Name  Group  5 
-	Run Keyword IF  '${group}'=='__new__'  
-    ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
-    ${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
+	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
+	#${random_groupname}  Generate Random Name  Group  5 
+	#Run Keyword If  '${group}'=='__new__'  
+    #...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
+    #${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
 
     Go To Security Users Page
     Verify Element Visible  ${MAIN PLUS BUTTON}
     Click Element  ${MAIN PLUS BUTTON}   and don't wait
     Verify Element Visible  ${CREATE USER POPUP}
 
-    ${random_username}  Generate Random Name  User  5
-    ${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+    #${random_username}  Generate Random Name  User  5
+    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
 
     Input Text And Verify  ${USERNAME FIELD}  ${username}    
     Input Text And Verify  ${PASSWORD FIELD}  ${password}    
@@ -1201,6 +1205,8 @@ Match All Rule
     ...		${BIGTAP POLICY ETHERTYPE LIST}  
     ... 	${BIGTAP POLICY ETHERTYPE FIELD}
     ... 	${ethertype}
+    
+    Click Element  ${BIGTAP POLICY INCLUDE MATCHES POPUP}  and don't wait
 	
 	#Verify Page Contains Element   ${matchall_checkbox_unselected}
 	#Click Element   ${matchall_checkbox_unselected}  and don't wait
@@ -1251,7 +1257,7 @@ Associate Match Rule
 
 
 Configure Big Tap Policy
-	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${filter-group}  ${delivery-group}
+	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${service}  ${filter-group}  ${delivery-group}
 	${random_rbacname}  Generate Random Name  Rbac  5
     Run Keyword If  '${rbac}'=='__new__'  
     ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
@@ -1295,8 +1301,12 @@ Configure Big Tap Policy
     Run Keyword Unless  '${delivery-group}'=='${EMPTY}'  
     ...		Associate Policy Delivery Group Interface  ${delivery-group}
 
-    #Run Keyword Unless  '${service}'=='${EMPTY}'  
-    #...		Associate Policy Service  ${service}
+    Run Keyword Unless  '${service}'=='${EMPTY}'  
+    ...		Associate Policy Service  ${service}
+    Click Element  ${SUMMARY BUTTON}  and don't wait
+    Sleep  10
+    
+    Highlight Element  ${SAVE BUTTON}
     
     Element Should Be Visible  ${SAVE BUTTON}
     Click Element  ${SAVE BUTTON}   and don't wait
@@ -1477,7 +1487,7 @@ Associate Policy Delivery Interface
 
 	Click Element  ${delivery_checkbox}  and don't wait
 	Checkbox Should Be Selected  ${delivery_checkbox}
-
+	
 	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}
 	Click Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
 	
@@ -2380,9 +2390,9 @@ Delete Big Tap Interface from Interface Group
     Run Keyword If  '${role}'=='delivery'
     ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
     
-    Run Keyword If  '${role}'=='delivery'
-    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
-    Sleep  1
+    #Run Keyword If  '${role}'=='delivery'
+    #...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  target=Delivery
+    #Sleep  1
     
     Run Keyword If  '${role}'=='delivery'
     ...   	 Delete Delivery Interface from Group   ${if-name}
@@ -2682,7 +2692,9 @@ Configure Big Tap Tunnels
     Verify Element Visible  ${action_menu}
     Highlight Element   ${action_menu}
     Sleep  1
-    Click Element  ${action_menu}  and don't wait
+    #Click Element  ${action_menu}  and don't wait
+    Mouse Down  ${action_menu}
+    Mouse Up  ${action_menu}
     #Click Element  ${action_menu}  and don't wait
 	Sleep  2
     #Verify Element Visible  ${CREATE TUNNEL MENU ITEM}
@@ -2715,22 +2727,22 @@ Configure Big Tap Tunnels
 	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
 	
     Run Keyword If  '${direction}'=='Receive'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
     
     Run Keyword If  '${direction}'=='Receive'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Transmit
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Not_Transmit
     
     Run Keyword If  '${direction}'=='Transmit'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
     
     Run Keyword If  '${direction}'=='Transmit'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Not_Receive
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Not_Receive
     
     Run Keyword If  '${direction}'=='Bidirectional'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Receive_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
     
     Run Keyword If  '${direction}'=='Bidirectional'
-    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Transmit_Only
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
     
     Click Element  ${TUNNEL SOURCE IP FIELD}  and don't wait
 	Input Text And Verify  ${TUNNEL SOURCE IP FIELD}  ${src-ip}

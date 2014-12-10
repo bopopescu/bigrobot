@@ -8,15 +8,13 @@
 #   https://bigswitch.atlassian.net/wiki/display/QA/Test+Case+Tagging+in+BigRobot
 #
 #   Usage:
-#     % BUILD_NAME="bvs master #2761" ./data_validation_find_testcases_with_missing_test_types.py
+#     % RELEASE_NAME=ironhorse BUILD_NAME="bvs master #2761" ./data_validation_find_testcases_with_missing_test_types.py
 #
 
 import os
 import sys
 from pymongo import MongoClient
 import robot
-
-RELEASE = "IronHorse".lower()
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -31,8 +29,13 @@ import autobot.helpers as helpers
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
+if not 'RELEASE_NAME' in os.environ:
+    helpers.error_exit("Environment variable RELEASE_NAME is not defined.", 1)
 if not 'BUILD_NAME' in os.environ:
     helpers.error_exit("Environment variable BUILD_NAME is not defined.", 1)
+
+RELEASE = os.environ['RELEASE_NAME'].lower()
+
 
 configs = helpers.bigrobot_config_test_catalog()
 db_server = configs['db_server']

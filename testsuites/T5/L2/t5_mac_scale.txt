@@ -28,7 +28,7 @@ add Dual Leaf Three Rack setup
   	add fabric switch
   	#bring up 1 gig interface
   	reconnect switch ips
-  	sleep  5
+  	sleep  50
   	rest verify fabric switch all
   	rest verify fabric link common
    
@@ -672,6 +672,8 @@ T5 test teardown
 
 T5 test setup
 	base test setup
+  	Set swith int variables
+    Set switch dpid variables
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1

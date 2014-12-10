@@ -1,16 +1,19 @@
 *Settings
-Documentation  Corsair Tunnelling Test Suite
-Suite Setup  corsair suite setup
-Suite Teardown   corsair suite teardown
-#Test Setup   base test setup
-#Test Teardown  base test teardown 
-Force Tags   Corsair  BigTap  Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  keywords/ThirdParty.py
+Documentation           Corsair: Tunnelling Sanity Suite
+Suite Setup             corsair suite setup
+Suite Teardown          corsair suite teardown
+Test Setup              corsair test setup
+Test Teardown           corsair test teardown 
+Force Tags              corsair  bigtap  sanity  tunnelling
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 keywords/ThirdParty.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 * Variable
 ${switch1_alias}                        app-ras4600-1  #Alias for switch 1
@@ -691,7 +694,7 @@ TC28:Verify that changing match-mode no affect on tunnel based policy. .
     stop traffic  ${stream} 
     sleep  2    
     verify results  a  d  transmitted_frames  received_data_integrity_frames            
-    ${set_l3l4}=  rest enable feature  l3-l4-match  
+    ${set_l3l4}=  rest enable feature  l3-l4-mode  
     Should be true  ${set_l3l4}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -1334,6 +1337,15 @@ corsair suite setup
     Should be true  ${verify_add_tun_sw4}          
     Sleep  5
 
+corsair test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
+    
+corsair test teardown
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
  
 tunnel teardown
     ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  

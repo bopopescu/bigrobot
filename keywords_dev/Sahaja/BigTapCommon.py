@@ -1068,9 +1068,9 @@ class BigTapCommon(object):
         ver_data = c.rest.content()
         helpers.test_log("Version string got is: %s" % (ver_data))
         if ver_data:
-            ver = re.search('(.+?)\((.+)\)', ver_data[0]["controller"])
+            ver = re.search('(.+?)(\(.+)\)', ver_data[0]["controller"])
             if ver:
-                vf.write("%s" % (ver.group(2)))
+                vf.write("%s %s" % (ver.group(1), ver.group(2)))
             else:
                 helpers.test_failure("Did not match the version format, got %s" % (ver))
                 return False

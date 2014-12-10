@@ -1,15 +1,18 @@
 *Settings
-Documentation  BigTap High Availability Test Suite
-Suite Setup  ha suite setup
-Suite Teardown   ha suite teardown
-Test Setup   base test setup
-Test Teardown  ha test teardown 
-Force Tags   bigtap  ha
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation       BigTap High Availability Test Suite
+Suite Setup         ha suite setup
+Suite Teardown      ha suite teardown
+Test Setup          ha test setup
+Test Teardown       ha test teardown 
+Force Tags          bigtap  ha
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+Library             String.py
 
 * Variable
 
@@ -29,7 +32,7 @@ ${delivery_nick_2}  D2
 ${delivery_nick_2A}  DELIVERY2
         
 *Test Case
-TC1: Verify configuration is successful
+TC001: Verify configuration is successful
     verify config
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
@@ -40,7 +43,7 @@ TC1: Verify configuration is successful
     stop traffic  ${stream}    
     [Tags]  base  
 
-TC2: Flap filter interface and verify traffic is restored        
+TC002: Flap filter interface and verify traffic is restored        
     verify config
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
@@ -58,7 +61,7 @@ TC2: Flap filter interface and verify traffic is restored
     stop traffic  ${stream}    
     [Tags]  filter  
 
-TC3: Flap delivery interfaces and verify traffic is restored        
+TC003: Flap delivery interfaces and verify traffic is restored        
     verify config
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
@@ -78,7 +81,7 @@ TC3: Flap delivery interfaces and verify traffic is restored
     stop traffic  ${stream}    
     [Tags]  delivery  
 
-TC4: Shutdown one core interface and verify traffic is unaffected        
+TC004: Shutdown one core interface and verify traffic is unaffected        
     verify config
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
@@ -99,7 +102,7 @@ TC4: Shutdown one core interface and verify traffic is unaffected
     stop traffic  ${stream}    
     [Tags]  core 
 
-TC5: Rename filter interface and verify traffic flow
+TC005: Rename filter interface and verify traffic flow
     delete bigtap configuration
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1A}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}
     verify config
@@ -115,7 +118,7 @@ TC5: Rename filter interface and verify traffic flow
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
     [Tags]  renameFilter
 
-TC6: Rename delivery interface and verify traffic flow
+TC006: Rename delivery interface and verify traffic flow
     delete bigtap configuration
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1A}  ${delivery_nick_2A}
     verify config
@@ -131,7 +134,7 @@ TC6: Rename delivery interface and verify traffic flow
     [Tags]  renameDelivery
 
 
-TC7: Add and remove an additional filter interface to policy and verify no traffic drop is seen
+TC007: Add and remove an additional filter interface to policy and verify no traffic drop is seen
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -146,7 +149,7 @@ TC7: Add and remove an additional filter interface to policy and verify no traff
     stop traffic  ${stream}
     [Tags]  add-delete-filter
     
-TC8: Deactivate and activate bigtap policy 50 times
+TC008: Deactivate and activate bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -169,7 +172,7 @@ TC8: Deactivate and activate bigtap policy 50 times
     stop traffic  ${stream}
     [Tags]  activate-deactivate                    
 
-TC9: Flap between action active and rate-measure in a bigtap policy 50 times
+TC009: Flap between action active and rate-measure in a bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -193,7 +196,7 @@ TC9: Flap between action active and rate-measure in a bigtap policy 50 times
     [Tags]  active-ratemeasure                   
 
 
-TC10: Delete and re-add bigtap policy 50 times
+TC010: Delete and re-add bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -211,7 +214,7 @@ TC10: Delete and re-add bigtap policy 50 times
     stop traffic  ${stream}
     [Tags]  delete-add                   
 
-TC11: Enable and disable feature overlap 50 times     
+TC011: Enable and disable feature overlap 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -228,7 +231,7 @@ TC11: Enable and disable feature overlap 50 times
     stop traffic  ${stream}
     [Tags]  enable-disable-overlap      
 
-TC12: Enable and disable feature inport-mask 50 times     
+TC012: Enable and disable feature inport-mask 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
     clear stats 
     start traffic  ${stream}
@@ -254,6 +257,12 @@ ha suite setup
     rest add switch alias  s3  app-rly2-1
     rest add switch alias  s4  app-rs4810-1    
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}      
+    
+ha test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
 
 base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  ${delivery_interface_1}  ${delivery_interface_2}  ${filterNick1}  ${filterNick2}  ${deliveryNick1}  ${deliveryNick2}  
     rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
@@ -272,7 +281,9 @@ base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  
     rest add policy interface  admin-view  ZP1  ${deliveryNick2}  delivery
     Sleep  30
     
+    
 verify config
+    ${version_string}=  return version number
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ZP1  num_filter_intf=1  num_delivery_intf=1
@@ -280,9 +291,15 @@ verify config
     ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
     ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  4  
+    Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal1}  4
+    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal1}  4  
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  5  
     ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.0.0'  Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  4
+    Run Keyword If  '${version_string}' == '4.1.0'  Should Be Equal As Integers  ${switchFlowVal2}  4        
+    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  5  
     
 verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Sleep  2
@@ -304,9 +321,11 @@ delete bigtap configuration
     rest delete interface  s1  ${delivery_1}          
     rest delete interface  s2  ${delivery_2}
     Sleep  30
-    
+
 ha test teardown
     delete traffic
+    ${result}=  stop syslog monitor
+    Should be True  ${result}
     
 ha suite teardown
     delete bigtap configuration

@@ -6,9 +6,9 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.4.100.50
+    ip: 10.9.18.7
 c2:
-    ip: 10.4.100.51
+    ip: 10.9.18.8
 
 # Accton AS5710-52X 10G Switch
 s1:

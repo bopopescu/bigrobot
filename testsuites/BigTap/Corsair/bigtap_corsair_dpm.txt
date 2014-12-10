@@ -1,16 +1,18 @@
 *Settings
-Documentation  Corsair Offset Match Test Suite
-Suite Setup  offset suite setup
-Suite Teardown   offset suite teardown
-Test Setup   base test setup
-Test Teardown  offset test teardown 
-Force Tags   Corsair  BigTap  Sanity  Feature
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-#Library  keywords_dev/sakshi/BigTap.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation           Corsair Offset Match Test Suite
+Suite Setup             offset suite setup
+Suite Teardown          offset suite teardown
+Test Setup              offset test setup
+Test Teardown           offset test teardown 
+Force Tags              corsair  bigtap  sanity  feature
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 ### Ixia Ports
 
@@ -533,6 +535,11 @@ offset suite setup
     Should be true   ${return_value}
     sleep  30
 
+offset test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
 
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -552,6 +559,8 @@ verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_fra
 
 offset test teardown
 	delete traffic
+	${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 offset suite teardown
 	REST delete policy  admin-view  ${bigtap_policy_name}

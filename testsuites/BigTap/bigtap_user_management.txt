@@ -1,181 +1,212 @@
 *Settings
-Documentation  BigTap User Management: Release:Blackbird Feature:User Management
-Suite Setup  bigtap suite setup
-Suite Teardown   base suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  Collections.py
-Library  OperatingSystem.py
-Library  String.py
-
-* Variables
-#${version}  Big Tap Controller 4.1.0
+Documentation           BigTap User Management: Release:Blackbird Feature:User Management
+Suite Setup             bigtap suite setup
+Suite Teardown          base suite teardown
+Test Setup              bigtap test setup
+Test Teardown           base test teardown 
+Force Tags              platform  sanity  blackbird
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 *Test Case
-TC1: Verify username userChkPassword can have all lower-case alphabet password
+TC001: Verify username userChkPassword can have all lower-case alphabet password
     verify config  userChkPassword  bsnbsn
     [Tags]  sanity  platform  basic        
 
-TC2: Verify username userChkPassword can have all upper-case alphabet password
-    rest add user password  userChkPassword  BSNBSN
+TC002: Verify username userChkPassword can have all upper-case alphabet password
+    ${result}=  rest add user password    userChkPassword  BSNBSN
+    Should be true  ${result}  
     verify config  userChkPassword  BSNBSN
 
-TC3: Verify username userChkPassword can have a mix of lower-case and upper-case alphabet password
-    rest add user password  userChkPassword  cLiEnTcLiEnT
+TC003: Verify username userChkPassword can have a mix of lower-case and upper-case alphabet password
+    ${result}=  rest add user password    userChkPassword  cLiEnTcLiEnT
+    Should be true  ${result}
     verify config  userChkPassword  cLiEnTcLiEnT 
     [Tags]  sanity  platform      
 
-TC4: Verify username userChkPassword can have a numeric password
-    rest add user password  userChkPassword  1234567890
+TC004: Verify username userChkPassword can have a numeric password
+    ${result}=  rest add user password    userChkPassword  1234567890
+    Should be true  ${result}
     verify config  userChkPassword  1234567890
     [Tags]  sanity  platform      
     
-TC5: Verify username userChkPassword can have a alphanumeric (alphabet all small) password
-    rest add user password  userChkPassword  bsn1234
+TC005: Verify username userChkPassword can have a alphanumeric (alphabet all small) password
+    ${result}=  rest add user password    userChkPassword  bsn1234
+    Should be true  ${result}
     verify config  userChkPassword  bsn1234
     [Tags]  sanity  platform        
     
-TC6: Verify username userChkPassword can have a alphanumeric (alphabet all caps) password
-    rest add user password  userChkPassword  BSN1234
+TC006: Verify username userChkPassword can have a alphanumeric (alphabet all caps) password
+    ${result}=  rest add user password    userChkPassword  BSN1234
+    Should be true  ${result}
     verify config  userChkPassword  BSN1234
     [Tags]  sanity  platform        
 
-TC7: Verify username userChkPassword can have a alphanumeric password with a !
-    rest add user password  userChkPassword  bSn1234!
+TC007: Verify username userChkPassword can have a alphanumeric password with a !
+    ${result}=  rest add user password    userChkPassword  bSn1234!
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234!
     [Tags]  sanity  platform        
 
-TC8: Verify username userChkPassword can have a alphanumeric password with a @
-    rest add user password  userChkPassword  bSn1234@
+TC008: Verify username userChkPassword can have a alphanumeric password with a @
+    ${result}=  rest add user password    userChkPassword  bSn1234@
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234@
     [Tags]  sanity  platform        
 
-TC9: Verify username userChkPassword can have a alphanumeric password with a #
-    rest add user password  userChkPassword  bSn1234%23
+TC009: Verify username userChkPassword can have a alphanumeric password with a #
+    ${result}=  rest add user password    userChkPassword  bSn1234%23
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234#
     [Tags]  sanity  platform  
 
-TC10: Verify username userChkPassword can have a alphanumeric password with a $
-    rest add user password  userChkPassword  bSn1234$
+TC010: Verify username userChkPassword can have a alphanumeric password with a $
+    ${result}=  rest add user password    userChkPassword  bSn1234$
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234$
     [Tags]  sanity  platform        
 
-TC11: Verify username userChkPassword can have a alphanumeric password with a ?
-    rest add user password  userChkPassword  bSn1234%3F
+TC011: Verify username userChkPassword can have a alphanumeric password with a ?
+    ${result}=  rest add user password    userChkPassword  bSn1234%3F
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234?
     [Tags]  sanity  platform       
 
-TC12: Verify username userChkPassword can have a alphanumeric password with a >
-    rest add user password  userChkPassword  bSn1234%3E
+TC012: Verify username userChkPassword can have a alphanumeric password with a >
+    ${result}=  rest add user password    userChkPassword  bSn1234%3E
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234>
     [Tags]  sanity  platform   
 
-TC13: Verify username userChkPassword can have a alphanumeric password with a ^
-    rest add user password  userChkPassword  bSn1234^
+TC013: Verify username userChkPassword can have a alphanumeric password with a ^
+    ${result}=  rest add user password    userChkPassword  bSn1234^
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234^    
     [Tags]  sanity  platform        
 
-TC14: Verify username userChkPassword can have a alphanumeric password with a &
-    rest add user password  userChkPassword  bSn1234&
+TC014: Verify username userChkPassword can have a alphanumeric password with a &
+    ${result}=  rest add user password    userChkPassword  bSn1234&
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234&
     [Tags]  sanity  platform        
 
-TC15: Verify username userChkPassword can have a alphanumeric password with a *
-    rest add user password  userChkPassword  bSn1234*
+TC015: Verify username userChkPassword can have a alphanumeric password with a *
+    ${result}=  rest add user password    userChkPassword  bSn1234*
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234*
     [Tags]  sanity  platform        
 
-TC16: Verify username userChkPassword can have a alphanumeric password with a (
-    rest add user password  userChkPassword  bSn1234(
+TC016: Verify username userChkPassword can have a alphanumeric password with a (
+    ${result}=  rest add user password    userChkPassword  bSn1234(
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234(
     [Tags]  sanity  platform        
 
-TC17: Verify username userChkPassword can have a alphanumeric password with a )
-    rest add user password  userChkPassword  bSn1234)
+TC017: Verify username userChkPassword can have a alphanumeric password with a )
+    ${result}=  rest add user password    userChkPassword  bSn1234)
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234)
     [Tags]  sanity  platform        
 
-TC18: Verify username userChkPassword can have a alphanumeric password with a -
-    rest add user password  userChkPassword  bSn1234-
+TC018: Verify username userChkPassword can have a alphanumeric password with a -
+    ${result}=  rest add user password    userChkPassword  bSn1234-
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234-
     [Tags]  sanity  platform        
 
-TC19: Verify username userChkPassword can have a alphanumeric password with a _
-    rest add user password  userChkPassword  bSn1234_
+TC019: Verify username userChkPassword can have a alphanumeric password with a _
+    ${result}=  rest add user password    userChkPassword  bSn1234_
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234_
     [Tags]  sanity  platform        
 
-TC20: Verify username userChkPassword can have a alphanumeric password with a ;
-    rest add user password  userChkPassword  bSn1234%3B
+TC020: Verify username userChkPassword can have a alphanumeric password with a ;
+    ${result}=  rest add user password    userChkPassword  bSn1234%3B
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234;
     [Tags]  sanity  platform       
 
-TC21: Verify username userChkPassword can have a alphanumeric password with a }
-    rest add user password  userChkPassword  bSn1234}
+TC021: Verify username userChkPassword can have a alphanumeric password with a }
+    ${result}=  rest add user password    userChkPassword  bSn1234}
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234}
     [Tags]  sanity  platform        
 
-TC22: Verify username userChkPassword can have a alphanumeric password with a {
-    rest add user password  userChkPassword  bSn1234{
+TC022: Verify username userChkPassword can have a alphanumeric password with a {
+    ${result}=  rest add user password    userChkPassword  bSn1234{
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234{
     [Tags]  sanity  platform    
 
-TC23: Verify username userChkPassword can have a alphanumeric password with a [
-    rest add user password  userChkPassword  bSn1234[
+TC023: Verify username userChkPassword can have a alphanumeric password with a [
+    ${result}=  rest add user password    userChkPassword  bSn1234[
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234[
     [Tags]  sanity  platform        
 
-TC24: Verify username userChkPassword can have a alphanumeric password with a ]
-    rest add user password  userChkPassword  bSn1234]
+TC024: Verify username userChkPassword can have a alphanumeric password with a ]
+    ${result}=  rest add user password    userChkPassword  bSn1234]
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234]
     [Tags]  sanity  platform        
 
-TC25: Verify username userChkPassword can have a alphanumeric password with a |
-    rest add user password  userChkPassword  bSn|1234
+TC025: Verify username userChkPassword can have a alphanumeric password with a |
+    ${result}=  rest add user password    userChkPassword  bSn|1234
+    Should be true  ${result}
     verify config  userChkPassword  bSn|1234
     [Tags]  sanity  platform       
         
-TC26: Verify username userChkPassword can have a alphanumeric password with a \
-    rest add user password  userChkPassword  bSn1234%5C
+TC026: Verify username userChkPassword can have a alphanumeric password with a \
+    ${result}=  rest add user password    userChkPassword  bSn1234%5C
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234\\ 
     [Tags]  sanity  platform        
         
-TC27: Verify username userChkPassword can have a alphanumeric password with a :
-    rest add user password  userChkPassword  bSn:1234
+TC027: Verify username userChkPassword can have a alphanumeric password with a :
+    ${result}=  rest add user password    userChkPassword  bSn:1234
+    Should be true  ${result}
     verify config  userChkPassword  bSn:1234
     [Tags]  sanity  platform        
     
-TC28: Verify username userChkPassword can have a alphanumeric password with a ,
-    rest add user password  userChkPassword  bSn,1234
+TC028: Verify username userChkPassword can have a alphanumeric password with a ,
+    ${result}=  rest add user password    userChkPassword  bSn,1234
+    Should be true  ${result}
     verify config  userChkPassword  bSn,1234
     [Tags]  sanity  platform        
     
-TC29: Verify username userChkPassword can have a alphanumeric password with a .
-    rest add user password  userChkPassword  bSn.1234
+TC029: Verify username userChkPassword can have a alphanumeric password with a .
+    ${result}=  rest add user password    userChkPassword  bSn.1234
+    Should be true  ${result}
     verify config  userChkPassword  bSn.1234
     [Tags]  sanity  platform           
     
-TC30: Verify username userChkPassword can have a alphanumeric password with a <
-    rest add user password  userChkPassword  bSn1234<
+TC030: Verify username userChkPassword can have a alphanumeric password with a <
+    ${result}=  rest add user password    userChkPassword  bSn1234<
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234<
     [Tags]  sanity  platform        
     
-TC31: Verify username userChkPassword can have a alphanumeric password with a /
-    rest add user password  userChkPassword  bSn1234/
+TC031: Verify username userChkPassword can have a alphanumeric password with a /
+    ${result}=  rest add user password  userChkPassword  bSn1234/
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234/
     [Tags]  sanity  platform        
 
-TC32: Verify username userChkPassword can have a alphanumeric password with a ~
-    rest add user password  userChkPassword  bSn1234~
+TC032: Verify username userChkPassword can have a alphanumeric password with a ~
+    ${result}=  rest add user password  userChkPassword  bSn1234~
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234~
     [Tags]  sanity  platform     
     
-TC33: Verify username userChkPassword can have a alphanumeric password with a `
-    rest add user password  userChkPassword  bSn1234`
+TC033: Verify username userChkPassword can have a alphanumeric password with a `
+    ${result}=  rest add user password  userChkPassword  bSn1234`
+    Should be true  ${result}
     verify config  userChkPassword  bSn1234`
     [Tags]  sanity  platform  
         
@@ -193,6 +224,9 @@ bigtap suite setup
     rest add delivery interface to rbac  chkpassword-view  delivery_name='allow-all' 
     rest add match to rbac  chkpassword-view  match_name='allow-all'       
 
+bigtap test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
 
 set version from controller
     ${version_string}=  rest show version

@@ -22,6 +22,8 @@ Setup Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse  
 	base suite setup     
     add fabric switch
+    Set swith int variables
+    Set switch dpid variables
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0
@@ -318,10 +320,11 @@ T5 test setup
 	base test setup
 
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
 	rest delete tenant  t2
-	base test teardown
+
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10

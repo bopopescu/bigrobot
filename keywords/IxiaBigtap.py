@@ -3,8 +3,10 @@ import modules.IxBigtapLib as IxBigtapLib
 import autobot.test as test
 import autobot.helpers as helpers
 
-
 class IxiaBigtap(object):
+    '''
+    This Class is used for initial Design Implementation of Using Bigtap switches connected to Ixia for Traffic Generation
+    '''
     def __init__(self):
         pass
 
@@ -32,7 +34,7 @@ class IxiaBigtap(object):
         kwargs['bigtap'] = True
         kwargs['bigtap_ports'] = t.traffic_generator(node)._bigtap_ports
         return tg_handle.ix_l2_add(**kwargs)
-    
+
     def l3_add(self, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:
@@ -44,7 +46,7 @@ class IxiaBigtap(object):
         kwargs['bigtap'] = True
         kwargs['bigtap_ports'] = t.traffic_generator(node)._bigtap_ports
         return tg_handle.ix_l3_add(**kwargs)
-    
+
 #     def start_l3_traffic(self, stream=None, **kwargs):
 #         t = test.Test()
 #         if 'node' not in kwargs:
@@ -54,7 +56,7 @@ class IxiaBigtap(object):
 #             del kwargs['node']
 #         tg_handle = t.traffic_generator(node).handle()
 #         return tg_handle._ixia.ix_start_traffic_ethernet(stream)
-     
+
     def start_traffic(self, stream=None, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:
@@ -74,7 +76,7 @@ class IxiaBigtap(object):
 #             del kwargs['node']
 #         tg_handle = t.traffic_generator(node).handle()
 #         return tg_handle._ixia.ix_stop_traffic(stream)
-#     
+#
     def stop_traffic(self, stream=None, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:
@@ -93,11 +95,11 @@ class IxiaBigtap(object):
             node = kwargs['node']
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
-        
+
         result = tg_handle.ix_fetch_port_stats(**kwargs)
         helpers.log('result:\n%s' % helpers.prettify(result))
         return result
-    
+
     def clear_stats(self, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:
@@ -107,7 +109,7 @@ class IxiaBigtap(object):
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_clear_stats()
-    
+
     def delete_traffic(self, **kwargs):
         t = test.Test()
         if 'node' not in kwargs:
@@ -117,5 +119,4 @@ class IxiaBigtap(object):
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_delete_traffic()
-    
-    
+
