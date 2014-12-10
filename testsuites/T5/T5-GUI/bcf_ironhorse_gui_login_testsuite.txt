@@ -28,10 +28,10 @@ T1.4 Local user1
 	Valid Login                 test           		adminadmin
 T1.5 Local user2      
 	Valid Login                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
-T1.6 Remote user1   
-	Valid Login                 tomasz         		password
-T1.7 Remote user2    
-	Valid Login	                test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
+#T1.6 Remote user1   
+#	Valid Login                 tomasz         		password
+#T1.7 Remote user2    
+#	Valid Login	                test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
 
 
 ### Login With Invalid Credentials Should Fail             User Name      		Password
