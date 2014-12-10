@@ -52,31 +52,8 @@ Suite Setup
 
 	Sleep  60
 
-	Wait Until All Switches Connected
-
-    Cli Run  master  system reinstall switch ${s1_alias}
-    Cli Run  master  system reinstall switch ${s2_alias}
-    Cli Run  master  system reinstall switch ${s3_alias}
-    Cli Run  master  system reinstall switch ${s4_alias}
-    Cli Run  master  system reinstall switch ${s5_alias}
-
-    Run Keyword and Ignore Error  Power Cycle All Switches
-	Sleep  60
-
-	Cli Run  master  enable; config
-	Cli Run  master  show switch
-
-	#${status}=  Rest Get Switch Connection State  master  ${s1_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s1
-	#${status}=  Rest Get Switch Connection State  master  ${s2_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s2
-	#${status}=  Rest Get Switch Connection State  master  ${s3_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s3
-	#${status}=  Rest Get Switch Connection State  master  ${s4_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s4
-	#${status}=  Rest Get Switch Connection State  master  ${s5_alias}
-	#Run Keyword If  '${status}'=='False'  Power Cycle Switch  s5
-	#Sleep  200
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -107,7 +84,8 @@ Test Setup
 	Run Keyword and Ignore Error  Cli Run  master  show zerotouch devices
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
-	Wait Until All Switches Connected
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
 Test Teardown
 	Run Keyword and Ignore Error  Sleep  15
@@ -117,8 +95,7 @@ Test Teardown
 	Run Keyword and Ignore Error  Cli  c2  reauth admin adminadmin
 	Run Keyword and Ignore Error  Cli Copy  snapshot://test-config  running-config
 	Run Keyword and Ignore Error  Telnet Set All MA1 State  up
-	#Run Keyword and Ignore Error  Sleep  30
-    Run Keyword If Test Failed  Run Keyword and Ignore Error  Power Cycle Disconnected Switches
+	Run Keyword and Ignore Error  Sleep  30
 	Run Keyword and Ignore Error  Base Test Teardown
 
 Verify Switch Handshake State
@@ -413,21 +390,46 @@ Power Up All Switches
 Wait Until All Switches Connected
     Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
 
+Wait Until All Switches Connected And Return Status
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
+    [Return]  ${status}
+
 Power Cycle Single Switch
     [Arguments]  ${switch_id}
     Power Down Switch  ${switch_id}
     Sleep  10
     Power Up Switch  ${switch_id}
 
+Power Cycle Single Switch and Reinstall Switchlight
+    [Arguments]  ${switch_id}
+    Power Down Switch  ${switch_id}
+    Sleep  10
+    Power Up Switch  ${switch_id}
+    Telnet Reinstall Switch  ${switch_id}
+
 Power Cycle Disconnected Switches
-    ${status}=  Verify Switch Connection State  True  ${s1_alias}
+    ${status}=  Rest Get Switch Connection State  master  ${s1_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s1
-    ${status}=  Verify Switch Connection State  True  ${s2_alias}
+    ${status}=  Rest Get Switch Connection State  master  ${s2_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s2
-    ${status}=  Verify Switch Connection State  True  ${s3_alias}
+    ${status}=  Rest Get Switch Connection State  master  ${s3_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s3
-    ${status}=  Verify Switch Connection State  True  ${s4_alias}
+    ${status}=  Rest Get Switch Connection State  master  ${s4_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s4
-    ${status}=  Verify Switch Connection State  True  ${s5_alias}
+    ${status}=  Rest Get Switch Connection State  master  ${s5_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s5
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
+
+Power Cycle Disconnected Switches and Reinstall Switchlight
+    ${status}=  Rest Get Switch Connection State  master  ${s1_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s1
+    ${status}=  Rest Get Switch Connection State  master  ${s2_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s2
+    ${status}=  Rest Get Switch Connection State  master  ${s3_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s3
+    ${status}=  Rest Get Switch Connection State  master  ${s4_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s4
+    ${status}=  Rest Get Switch Connection State  master  ${s5_alias}
+    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s5
     Wait Until All Switches Connected
