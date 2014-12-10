@@ -9,7 +9,7 @@ if [ ! -x ../bin/gobot ]; then
 fi
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
-dest=data.$ts
+dest=.data.$ts
 
 mkdir $dest
 mv -f raw_data.* debug.log dev_commands.log syslog.txt report.html output.xml log.html bigrobot_listener.log myrobot.log bigrobot_logs* *.txt.gz $dest 2> /dev/null
