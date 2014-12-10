@@ -34,7 +34,7 @@ s1:
     password: apc
   interfaces:
     spine0_int0: ethernet49
-    leaf0b_int0: ethernet37
+    leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
     spine1_int0: ethernet53
   set_session_ssh: false
