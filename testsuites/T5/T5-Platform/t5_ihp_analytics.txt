@@ -64,12 +64,15 @@ T1.11. Verify that user is notified about session expiration and necessity to re
 
 #Viewing logs
 T2.1.1. Verify that all logs available in files on the controller are available in the Analytics tool on Master controller
+    [Tags]  skipped
     ${status}=  Verify Logs Numbers  master
     Should Be True  ${status}
 T2.1.2. Verify that all logs available in files on the controller are available in the Analytics tool on Slave controller
+    [Tags]  skipped
     ${status}=  Verify Logs Numbers  slave
     Should Be True  ${status}
 T2.2. Verify that all logs from before controller graceful failover are visible in the Analytics
+    [Tags]  skipped
     ${status}=  Rest Verify Cluster Election Take Leader
     Should Be True  ${status}
     ${status_master}=  Verify Logs Numbers  master
@@ -77,6 +80,7 @@ T2.2. Verify that all logs from before controller graceful failover are visible 
     Should Be True  ${status_master}
     Should Be True  ${status_slave}
 T2.3. Verify that all logs from before controller graceful reload are visible in the Analytics
+    [Tags]  skipped
     ${status}=  Cluster Node Reload
     Should Be True  ${status}
     ${status_master}=  Verify Logs Numbers  master
@@ -90,6 +94,7 @@ T2.5. Verify that all logs from before controller graceful power-cycle are visib
     Manual Untested
     [Tags]  manual-untested
 T2.6. Check that pre-upgrade logs are still available after the upgrade
+    [Tags]  skipped
     ${status}=  Verify Dual nodes upgrade  ${image_latest}
     Should Be True  ${status}
     ${status_master}=  Verify Logs Numbers  master
@@ -101,6 +106,7 @@ T2.7. Check that all relevant upgrade logs are available in the Analytics tool
     Manual Passed
     [Tags]  manual
 T2.8. Stop elastic search service for some time, restart it, verify that the logs created during the period it was down are eventually pulled into the Analytics Tool
+    [Tags]  skipped
     Bash  master  sudo service elasticsearch stop
     Bash  slave  sudo service elasticsearch stop
     ${status}=  Rest Verify Cluster Election Take Leader
