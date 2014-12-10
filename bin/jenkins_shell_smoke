@@ -12,10 +12,8 @@ qcow_path=$1
 export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
 if [ "$GIT_BRANCH" == "detached" ]  && [ "$ghprbTargetBranch" == "ihplus" ] || [ "$GIT_BRANCH" == "origin/ihplus" ]
 then
- echo "GOT IHPLUSE"
  bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path $qcow_path --vm_ram 2048 --mininet_build_number 117
 else
- echo "DID NOT GET IHPLUS"
  bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path $qcow_path --vm_ram 2048
 fi
 
