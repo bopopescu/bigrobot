@@ -136,8 +136,8 @@ TC31 Verify guest VM can obtain a dhcp address through the fabric without DHCP r
     [Tags]              feature         manual          vmware	
  
 TC32 Verify guest VM can obtain a dhcp address through the fabric with DHCP relay
- 	manual untested
-    [Tags]              feature         manual-untested          vmware	
+ 	manual passed
+    [Tags]              feature         manual          vmware	
  
 TC33 DRS cluster with automatic setting
  	manual passed
