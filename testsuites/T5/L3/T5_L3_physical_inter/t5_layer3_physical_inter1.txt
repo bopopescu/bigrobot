@@ -748,6 +748,7 @@ L3 inter tenant host moved
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH delete tag                             h3                              bond0.1002              soft_error=${true}
+    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     Restart ofad on leaf switch
@@ -783,9 +784,9 @@ L3 inter tenant host moved
     BASH ping                                   h4                              10.252.1.1              count=10
     sleep										30
     ${state1}=									rest_show_endpoints_ip_state                ${mac1}
-    Should Contain								learned
+    Should Contain								${state1}						learned
     ${state2}=									rest_show_endpoints_ip_state                ${mac2}
-    Should Contain								learned
+    Should Contain								${state2}						learned
     sleep										5  #for the l3 host tables to get sync acrros the BCF
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
