@@ -807,7 +807,7 @@ L3 inter tenant host moved
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
     sleep                                       10
     stop traffic                                ${stream1}
-    calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
+    calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream2
     BASH delete route                           h5                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h4                              10.251.0.0/16           10.252.1.1
     
