@@ -59,7 +59,7 @@ T14 background show command (every 1 hour )
 	 cli  master   show switch all interface all counters 	 
 	 cli  master   show tenant all segment all counters	 
 	 cli  master   show tenant all segment all rates
-	 
+	 cli show inventory/interface for all switches	 
 	 	 
 	log  show support  
 		${file}=  generate_support 
@@ -73,6 +73,15 @@ T14 background show command (every 1 hour )
 	  
 
 * Keywords
+
+cli show inventory/interface for all switches
+ 	${switches}=  rest_get_switch_names  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   cli  master   show switch ${sw} inventory  	
+	\   cli  master   show switch ${sw} connections
+	\   cli  master   show switch ${sw} interface 
+	
 
  
 T5 longevity suite setup

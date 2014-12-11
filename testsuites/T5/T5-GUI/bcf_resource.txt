@@ -319,7 +319,7 @@ ${LOGGING LEVEL CHECKBOX ALL}			xpath=//div[@id='logging_config_levels']/descend
 ${LOGGING REMOTE CHECKBOX ALL}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
 ${LOGGING LEVEL CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
 ${LOGGING REMOTE CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
-${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 
 
 #### Monitor Sessions
