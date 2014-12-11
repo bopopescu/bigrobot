@@ -748,6 +748,7 @@ L3 inter tenant host moved
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH delete tag                             h3                              bond0.1002              soft_error=${true}
+    BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h2                              10.251.0.0/16           10.252.1.1  
     Restart ofad on leaf switch
@@ -779,14 +780,22 @@ L3 inter tenant host moved
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h4                              10.252.1.1              count=10
+    sleep										30
+    ${state1}=									rest_show_endpoints_ip_state                ${mac1}
+    Should Contain								${state1}						learned
+    ${state2}=									rest_show_endpoints_ip_state                ${mac2}
+    Should Contain								${state2}						learned
+    sleep										5  #for the l3 host tables to get sync acrros the BCF
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
-    ${stream1}=                                 L3 add                          name=stream1            flow=a<->c              frame_rate=10000            frame_size=9216             frame_cnt=1000000
+    ${stream1}=                                 L3 add                          name=stream2            flow=a<->c              frame_rate=10000            frame_size=9216             frame_cnt=1000000
     ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1                       
     start traffic                               ${stream1}
     sleep  10
     stop traffic                                ${stream1}
-    verify results                              transmitted_frames              received_valid_frames       ${stream1}              stream1
+    verify results                              transmitted_frames              received_valid_frames       ${stream1}              stream2
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
@@ -1330,6 +1339,7 @@ test setup topology
     
 
 test teardown topology
+	base test teardown
     delete traffic
     REST delete vns ip                              X                           X1              10.251.1.1              24  
     REST delete vns ip                              X                           X2              10.251.2.1              24  
@@ -1366,6 +1376,7 @@ test teardown topology
 T5 base suite setup
     base suite setup
     add fabric switch
+    reconnect switch ips
     sleep                                           5
     ${result} =                                     CLI verify controller       s1                          c1      
     Should Be True                                  ${result}
