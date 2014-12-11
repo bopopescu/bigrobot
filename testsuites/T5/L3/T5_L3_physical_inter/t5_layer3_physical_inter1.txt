@@ -781,10 +781,11 @@ L3 inter tenant host moved
     REST show endpoints 
     BASH ping                                   h5                              10.251.1.1              count=10
     BASH ping                                   h4                              10.252.1.1              count=10
+    sleep										30
     ${state1}=									rest_show_endpoints_ip_state                ${mac1}
-    Should Not be False							${state1}
+    Should Contain								learned
     ${state2}=									rest_show_endpoints_ip_state                ${mac2}
-    Should Not be False							${state2}
+    Should Contain								learned
     sleep										5  #for the l3 host tables to get sync acrros the BCF
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
