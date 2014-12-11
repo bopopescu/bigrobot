@@ -1368,6 +1368,7 @@ test teardown topology
 T5 base suite setup
     base suite setup
     add fabric switch
+    reconnect switch ips
     sleep                                           5
     ${result} =                                     CLI verify controller       s1                          c1      
     Should Be True                                  ${result}
