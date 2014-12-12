@@ -1006,12 +1006,13 @@ Link flap between leaf and spine
     verify results                              transmitted_frames              received_valid_frames       ${stream1}              stream1
     start traffic                               ${stream1}
     sleep  10
-    #CLI disable interface                       s3                              ${leaf0a_spine0}
-    REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0}
+    ${leaf0a_spine0_int0}=						get_switch_int_topo  			s1						spine0_int0
+    #CLI disable interface                       s3                              ${leaf0a_spine0_int0}
+    REST disable fabric interface               ${leaf0_a}                       ${leaf0a_spine0_int0}
     sleep                                       5
     log traffic rate                            tx_rate                         rx_rate                 a                       c
-    #CLI enable interface                        s3                              ${leaf0a_spine0}
-    REST enable fabric interface                ${leaf0_a}                       ${leaf0a_spine0}
+    #CLI enable interface                        s3                              ${leaf0a_spine0_int0}
+    REST enable fabric interface                ${leaf0_a}                       ${leaf0a_spine0_int0}
     sleep                                       10
     stop traffic                                ${stream1}
     calculate loss                              transmitted_frames              received_valid_frames       ${stream1}              stream1
