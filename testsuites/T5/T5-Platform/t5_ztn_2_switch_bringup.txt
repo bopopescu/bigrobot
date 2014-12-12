@@ -199,7 +199,7 @@ T2.2.4. Verify that switch is successfully provisioned and no flows for given sp
 	Cli Run  master  mac ${s5_mac}
 	Cli Run  master  fabric-role spine
 	Cli Run  master  shutdown
-	Sleep  30
+	Sleep  60
 	Verify Switch Connection State  False  ${s5_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s5_alias}
 	Telnet Wait For Switch To Reload  s5
