@@ -69,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
-	sleep  3
+	sleep  125
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
@@ -117,7 +117,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest add switch  spine0
 	rest add dpid  spine0  ${spine0_dpid}
 	rest add fabric role  spine0  spine
-	sleep  3
+	sleep  125	#sleep 
 	rest verify no of spine
 	rest verify rack lag from leaf  leaf0-a  spine1
 
