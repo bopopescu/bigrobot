@@ -61,10 +61,9 @@ class T5Platform(object):
             return False
 
 
-    def _cluster_election(self, rigged):
-        ''' Invoke "cluster election" commands: re-run or take-leader
-            If: "rigged" is true then verify the active controller change.
-            Else: execute the election rerun
+    def _cluster_election(self, initial_sync_check):
+        ''' Invoke "failover" commands
+            initial_sync_check - by default True
         '''
         t = test.Test()
         slave = t.controller("slave")
@@ -76,12 +75,12 @@ class T5Platform(object):
 
         helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
 
-        url = '/api/v1/data/controller/cluster/config/new-election'
+        url = '/api/v1/data/controller/core/high-availability/failover'
 
-        if(rigged):
-            slave.rest.post(url, {"rigged": True})
+        if(initial_sync_check):
+            slave.rest.post(url, {"initial-sync-check": True})
         else:
-            slave.rest.post(url, {"rigged": False})
+            slave.rest.post(url, {"initial-sync-check": False})
 
         # helpers.sleep(30)
         helpers.sleep(90)
@@ -91,7 +90,7 @@ class T5Platform(object):
             return False
 
         if(masterID == newMasterID):
-            if(rigged):
+            if(initial_sync_check):
                 helpers.test_failure("Fail: Master didn't change after executing take-leader")
                 return False
             else:
