@@ -116,7 +116,7 @@ T5.6.5. Connected, change config, failover, reconnect, reload
 	Randomize ZTN Configuration
 	Failover
 	Telnet Set All MA1 State  flap
-	Sleep  30
+	Sleep  100
 	Verify All Switches Connected
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
