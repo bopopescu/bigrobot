@@ -150,31 +150,46 @@ T3.8. Ensure that all logs are accompanied by full timestamps (esp. switch logs)
 
 #Resource consumption
 #cgroup limits
+#CPU limits tested by enforcing load on one of controllers (A) while the other is not stressed (B) "dd if=/dev/urandom | bzip2 -9 >> /dev/null"
+#I compared outputs of TOP command, for elasticsearch, while polling for entries in the database
+#While collecting data, ES on not stressed controller (B) was using plenty of CPU resources to gather data, more than when ES is idle
+#While collecting data, loaded controller (A) was using close to the same CPU percentage as when ES is idle
+#That proved limitation of CPU limit in cgroups is working
+
+#Memory use was verified by checking contents of /sys/fs/cgroup/memory/es/memory.max_usage_in_bytes
+#It was confirmed that max usage does exceed the enforced limit
+
+#With limited resources performance downgrade was not that obvious. Requests against ES were taking longer
+#when CPU was busy with other processes. Overall, when CPU is idle and ES does not have to compete with other
+#processes for resources, it uses as much CPU as it requires (standard cgroup behavior).
+
 T4.1. limit memory limit to 5% - expect noticeable performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.2. limit memory limit to 1% - expect blocking performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.3. limit CPU limit to 5% - expect noticeable performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.4. limit CPU limit to 1% - expect blocking performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.5. increase memory limit to 50% - expect no noticeable performance upgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.6. increase CPU limit to 50% - expect no noticeable performance upgrade
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 #T4.7. controller VM with small resources (min. requirement is 16GB and 8 vCPUs)
 T4.7.1. decrease available memory to 4GB and CPUs to 4 - expect noticeable performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    #everything seemed to still be working fine
+    Manual Passed
+    [Tags]  manual
 T4.7.2. decrease available memory to 2GB and CPUs to 1 - expect blocking performance downgrade
-    Manual Untested
-    [Tags]  manual-untested
+    #everything seemed to still be working fine
+    Manual Passed
+    [Tags]  manual
 
 #Scale and Robustness
 T5.1. Verify that user experience is the same on a) regular and b) scale setup
