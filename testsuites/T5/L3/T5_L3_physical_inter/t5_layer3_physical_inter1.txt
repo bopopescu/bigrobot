@@ -1136,14 +1136,16 @@ Traffic forwarding with other tenant mac
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     sleep                                       5   
-#    BASH ping                                   h5                              10.251.1.1              count=10
-#    BASH ping                                   h6                              10.252.1.1              count=10
-#    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
-#    Should Be True                              ${value}        
-#    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
-#    Should Be True                              ${value} 
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.252.1.1              count=10
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
+    Should Be True                              ${value} 
     BASH add static arp                         h5                              10.251.1.1              ${gwEthaddr}
     BASH add static arp                         h6                              10.252.1.1              ${gwEthaddr}
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.252.1.1              count=10   
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} <= 40
     ${mac1} =                                   BASH get intf mac               h5                      bond0
