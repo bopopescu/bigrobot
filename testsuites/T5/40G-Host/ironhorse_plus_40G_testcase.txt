@@ -36,29 +36,35 @@ TC003 Reboot host and verify 40gig bonding works after reboot
     [Tags]              feature         manual          
     
 TC004 Configure static lacp host
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual          
+    manual passed
     
 TC005 Flap single static lacp member and verify VM traffic switch to second member
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 TC006 Configure lldp on two 40g interfaces (check in openstack env)
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
     
 TC007 Flap 40gig link verify lldp start sending
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 TC008 Reboot host and verify 40gig link start sending lldp tlv's
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
     
 
 TC009 Mix lldp with bonding
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
     
 ## From Fabric side:
 
@@ -87,8 +93,9 @@ TC015 Configure tenant, start inter tenant iPerf(Scapy) traffic between two host
     [Tags]              feature         manual          
     
 TC016 Configure a span session in fabric and start capturing in host
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 
 
@@ -98,8 +105,9 @@ TC017 Configure lacp on 40gig bonding host
     [Tags]              feature         manual          
     
 TC018 Flap single 40gig link in bonding and verify VM traffic switch to second member
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
     
 TC020 L2 performance testing using iperf between two Ubuntu VM in a 40gig host
     manual passed
@@ -114,16 +122,19 @@ TC022 L2 performance testing using iperf between two Ubuntu VM across two 40gig 
     [Tags]              feature         manual          
     
 TC023 L3 performance testing using iperf between two Ubuntu VM in a 40gig host
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual failed          
 
 TC024 L3 performance testing using iperf between two Ubuntu VM across two 40gig in the same rack
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 TC025 L3 performance testing using iperf between two Ubuntu VM across two 40gig host across rack
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed         
    
 # Openstack
 TC026 deploy as a compute/controller node(?)
@@ -146,8 +157,9 @@ TC029 Continuous host/leaf reboots
     [Tags]              feature         Manual-untested          
 
 TC030 snmp walk 
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 
 

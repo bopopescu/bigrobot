@@ -227,8 +227,15 @@ T2.13 check the VM connectivity within VPC
 	manual failed 
 	
 T2.14 adding a new pod workflow 
-	[Tags]  feature  cloudstack    manual-untested  Xenserver
-	manual untested
+	[Tags]  feature  cloudstack    manual  Xenserver
+	log  solution 1
+	log  configure segment for mgmt and each pod, config port-group for each seaver
+	log  need to take care of all the route in node and vm
+	log  solution 2
+	log  configure 2ndary address in mgmt node, and config supernet in bcf controller
+	log  mgmt- 192.168.1.50/25 and 192.168.1.129/25  controller 192.168.1.1/24  compute 192.168.1.62/25 and 192.168.1.164/25
+	
+	manual passed
 	
 T2.15 adding a new hypervisor cluster to exisiting pod/zone
 	[Tags]  feature  cloudstack    manual  Xenserver
