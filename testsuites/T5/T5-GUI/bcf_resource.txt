@@ -92,14 +92,14 @@ ${SAVE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(
 ${PROCEED DELTE TENANTS BUTTON}				xpath=//span[@id='dijit_form_Button_5']
 ${SYSTEM TENANT INTERFACE ENABLE BUTTON}	xpath=//td[@class='label' and contains(text(), 'System Tenant Interface')]/parent::tr/descendant::div[@class='icon_node configure']
 ${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
-${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_5']
+${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 ${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}		xpath=//td[@class='label' and contains(text(), 'Applied Policy List')]/parent::tr/descendant::div[@class='icon_node configure']		
 ${APPLY INBOUND POLICY POPUP}						xpath=//div[@title='Apply Inbound Policy']
 ${APPLY INBOUND POLICY DROPDOWN BUTTON}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[1]/input
 ${APPLY INBOUND POLICY LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
 ${APPLY INBOUND POLICY FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[3]/input[1]
-${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//span[@id='dijit_form_Button_5']
+${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 #### Switch Page
 
@@ -111,14 +111,16 @@ ${NONE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_2']/inp
 ${SPINE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
 ${LEAF ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
 ${LEAF GROUP NAME FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
-${SAVE SWITCH CONFIG BUTTON}	xpath=//span[@id='dijit_form_Button_4']
+${SAVE SWITCH CONFIG BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 ${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure')]
 ${CONFIGURE SWITCH POPUP}					xpath=//div[@title='Configure Switch']	
-${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_4']			
+${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]		
 ${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Configuration')]
+#${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'De-provision ...')]
 ${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
-${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+#${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 
 #### Port Groups Page
@@ -138,7 +140,7 @@ ${PROCEED DELTE PORT GROUPS BUTTON}		xpath=//span[@id='dijit_form_Button_4']
 ### Logical Segments Page
 
 ${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
-${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//span[@id='dijit_form_Button_5']
+${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 ${LOGICAL SEGMENTS PLUS BUTTON}				xpath=//h2[contains(text(), 'Logical Segments')]/parent::div[@data-dojo-attach-point='segmentsBlock']/descendant::div[@class='icon_node plus']			
 ${CREATE LOGICAL SEGMENT POPUP}				xpath=//div[@title='Create Segment']
@@ -153,7 +155,7 @@ ${SEGMENT PORT GROUP LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_0_po
 #${SEGMENT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]
 ${SEGMENT PORT GROUP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]		
 ${SEGMENT RULE DESCRIPTION FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rule Description')]/parent::h2/parent::div/parent::div/descendant::textarea[@id='dijit_form_SimpleTextarea_0']
-${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  xpath=//span[@id='dijit_form_Button_4']
+${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 #${SWITCH INTERFACES STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Switch Interfaces')]
 ${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@id='segment_switch_ports_section']/descendant::div[@class='icon_node plus']	
 ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Create Switch Port Membership Rule']
@@ -165,7 +167,7 @@ ${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_1_popup
 ${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input[1]
 ${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
 ${SEGMENT SWITCH INTERFACE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
-${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_9']
+${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_11_label']
 #${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
 ${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
 ${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
@@ -188,11 +190,11 @@ ${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='title
 ${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
 ${ENTER IPV4 ADDRESS POPUP}					xpath=//div[@title='Enter IPv4 Address/Mask Pair(s)']
 ${IP ADDRESS TEXT FIELD}					xpath=//div[@data-dojo-attach-point='messageMultipleAddress']/following-sibling::div/textarea
-${APPEND IP ADDRESSES BUTTON}				xpath=//span[@id='dijit_form_Button_20_label']
+${APPEND IP ADDRESSES BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
 #${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
-${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_14_label']
+${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${LOGICAL SEGMENT DETAIL MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Detail')]
-${SAVE LOGICAL SEGMENT BUTTON} 				xpath=//span[@id='dijit_form_Button_5_label']
+${SAVE LOGICAL SEGMENT BUTTON} 				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 ## Logical Segment Interface page
 
@@ -208,14 +210,14 @@ ${IP ADDRESS TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' an
 ${DHCP RELAY STEP BUTTON}						xpath=//div[@class='step_text' and contains(text(), '2. DHCP Relay')]
 ${DHCP RELAY TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]/parent::h2/parent::div/parent::div/parent::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
 ${DHCP RELAY SERVER IP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server IP')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${SAVE SEGMENT INTERFACE BUTTON}				xpath=//span[@id='dijit_form_Button_5_label']
+${SAVE SEGMENT INTERFACE BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 ## Next Hop group page
 ${NEXT HOP GROUP PLUS BUTTON}						xpath=//h2[contains(text(), 'Next Hop Groups')]/parent::div[@data-dojo-attach-point='nextHopGroupBlock']/descendant::div[@class='icon_node plus']
 ${CREATE NEXT HOP GROUP POPUP}						xpath=//div[@title='Create Next Hop Group']
 ${NEXT HOP GROUP NAME FIELD}						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_NextHopGroup')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}		xpath=//span[@id='dijit_form_Button_11_label']
-${SAVE NEXT HOP GROUP BUTTON}						xpath=//span[@id='dijit_form_Button_5_label']
+${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${SAVE NEXT HOP GROUP BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 
 ##### Logical Router Route Page
@@ -230,7 +232,7 @@ ${LOGICAL ROUTER NEXT HOP FIELD}				xpath=//div[@data-dojo-attach-point='titleNo
 ${LOGICAL ROUTER NEXT HOP GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[1]/input
 ${LOGICAL ROUTER NEXT HOP GROUP LIST}			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
 ${LOGICAL ROUTER NEXT HOP GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[3]/input[1]
-${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//span[@id='dijit_form_Button_5_label']
+${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 
 ##### Logical Router Policy List Page
@@ -238,7 +240,7 @@ ${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//span[@id='dijit_form_Button_5_lab
 ${LOGICAL ROUTER POLICY LIST PLUS BUTTON}		xpath=//div[contains(text(), 'Total Rules')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']	
 ${CREATE POLICY LIST POPUP}						xpath=//div[@title='Create Policy List']				
 ${POLICY LIST NAME FIELD} 						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_PolicyList')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${POLICY LIST SAVE BUTTON}						xpath=//span[@id='dijit_form_Button_5_label']
+${POLICY LIST SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 ### Policy Rule Page
 
@@ -282,15 +284,15 @@ ${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach
 ${POLICY RULE DESTINATION TENANT LIST}				xpath=//div[@id='dijit_form_FilteringSelect_12_popup']     
 ${POLICY RULE DESTINATION TENANT FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]		
 ${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
-${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//span[@id='dijit_form_Button_10_label']
-${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//span[@id='dijit_form_Button_5_label']
+${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 #### Support Bundle Page
 
 ${SUPPORT BUNDLES PLUS BUTTON}						xpath=//div[@id='support_content']/descendant::div[@class='icon_node plus']
 ${GENERATE SUPPORT BUNDLE POPUP}					xpath=//div[@title='Generate Support Bundle']	
 ${GENERATE SUPPORT BUNDLE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Generate')]
-${PROCEED DELTE BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
+${PROCEED DELTE BUTTON}								xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
 
 #### Logging
 ${LOGGING LEVELS STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Levels')]
@@ -304,7 +306,7 @@ ${LOGGING LEVELS EDIT MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and
 ${EDIT LOG LEVEL POPUP}					xpath=//div[@title='Edit Log Level']
 ${LOGGING LEVELS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${DELETE ALL LOG LEVELS MINUS BUTTON}	xpath=//div[@id='logging_config_levels']/descendant::div[@class='icon_node minus']
-${REMOTE SERVER STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Remote Servers')]
+${REMOTE SERVER STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Remote Logging')]
 ${ADD REMOTE SERVER PLUS BUTTON}		xpath=//div[@id='logging_config_remotes']/descendant::div[@class='icon_node plus']
 ${CREATE REMOTE SERVER POPUP}			xpath=//div[@title='Create Remote Server']
 ${REMOTE SERVER IP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input	
@@ -317,7 +319,8 @@ ${LOGGING LEVEL CHECKBOX ALL}			xpath=//div[@id='logging_config_levels']/descend
 ${LOGGING REMOTE CHECKBOX ALL}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
 ${LOGGING LEVEL CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
 ${LOGGING REMOTE CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
-${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[@id='dijit_form_Button_14_label']
+#${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[@id='dijit_form_Button_17_label']
 
 
 #### Monitor Sessions
@@ -391,7 +394,7 @@ ${ADD SNMP TRAP HOST PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='hostsNode
 ${SNMP TRAP HOST SERVER FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${SNMP TRAP HOST UDP PORT FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'UDP Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${SNMP TRAP HOST APPEND BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
-${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4_label']
+${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 ${CONFIGURE SNMP TRAPS BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[2]/descendant::div[@class='icon_node configure']
 ${CONFIGURE SNMP TRAPS POPUP}			xpath=//div[@title='Configure SNMP Traps']
@@ -588,15 +591,15 @@ Go To Signout Page
 Delete All Tenants
 	Go To Tenants Page
     Delete All
-    Verify Element Visible   ${PROCEED DELTE TENANTS BUTTON}
-	Click Element  ${PROCEED DELTE TENANTS BUTTON}  and don't wait
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
     
 Delete All Port Groups
 	Go To Port Groups Page
     Delete All
-    Verify Element Visible   ${PROCEED DELTE PORT GROUPS BUTTON}
-	Click Element  ${PROCEED DELTE PORT GROUPS BUTTON}  and don't wait
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
 	
 Delete All Support Bundles
@@ -949,6 +952,9 @@ Change Switch Config
     Run Keyword If  '${role}'=='Leaf'
     ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
 	
+	Run Keyword If  '${role}'=='Leaf' and '${leaf-group}'=='${EMPTY}' 
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${EMPTY}
+    
 	Click Element  ${SWITCH NAME FIELD}  and don't wait
 	
 	Sleep  1
@@ -1102,8 +1108,14 @@ Create Logical Segments
     ...		${SEGMENT SWITCH INTERFACE LIST}  
     ... 	${SEGMENT SWITCH INTERFACE FIELD}
     ... 	${interface}
+    
+    Highlight Element  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
+    Click Element  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}  and don't wait
 	
 	Verify Element Visible  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}
+	Sleep  10
+	Highlight Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}
+	Click Element  ${SEGMENT SWITCH NAME FIELD}  and don't wait
 	Click Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  and don't wait
 	
 	Verify Element Invisible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
@@ -1577,6 +1589,8 @@ Delete Remote Server
     #Verify Element Visible  ${CONFIRM DELTE POPUP}
     Highlight Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}
     
+    Click Element  ${CONFIRM DELTE POPUP}  and don't wait
+    
     Verify Element Visible   ${DELETE LOGGING REMOTE PROCEED BUTTON}
 	Click Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}  and don't wait
 	#Verify Element Invisible  ${CONFIRM DELTE POPUP}
@@ -1923,6 +1937,8 @@ Configure SNMP Traps
     
    Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
    ...			Input Text And Verify   ${TCAM THRESHOLD PERCENTAGE FIELD}  ${full-match-tcam-threshold}
+   
+   Click Element  ${CONFIGURE SNMP TRAPS POPUP}   and don't wait
    
    Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
    Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait

@@ -42,17 +42,17 @@ T2.6. Try starting up an interface that had just been started up via CLI
     Manual Passed
     [Tags]  manual
 T2.7. Try shutting down a dummy interface on a dummy switch
-    Manual Failed
-    [Tags]  manual  BVS-2604
+    Manual Passed
+    [Tags]  manual
 T2.8. Try shutting down a dummy interface on a physical switch
-    Manual Failed
-    [Tags]  manual  BVS-2604
+    Manual Passed
+    [Tags]  manual
 T2.9. Try shutting down a dummy interface that had just been removed via CLI
-    Manual Failed
-    [Tags]  manual  BVS-2604
+    Manual Passed
+    [Tags]  manual
 T2.10. Try shutting down an interface on a disconnected physical switch
-    Manual Failed
-    [Tags]  manual  BVS-2604
+    Manual Passed
+    [Tags]  manual
 
 #Policy log output
 T3.1. Verify correctness of “show policy log” output - all logs
@@ -127,14 +127,14 @@ T5.2.7. Try doing changes just after they had been done in CLI, verify correct b
 
 #Blocked endpoints
 T6.1. Verify correct presentation of blocked endpoints
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T6.2. Verify clearing blocked endpoints
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T6.3. Try clearing an endpoint after it has been already cleared in CLI
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Reboot, reload, and shutdown controller nodes
 T7.1. Issue reload command to the local controller and verify power cycling of the VM

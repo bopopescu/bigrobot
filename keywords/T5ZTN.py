@@ -296,10 +296,10 @@ class T5ZTN(object):
         s.send("\n")
         options = s.expect([r'=> ', r'[\r\n].*login: $',
                             r'Installer Mode Enabled', s.get_prompt()],
-                            timeout=120)
+                            timeout=200)
         if options[0] == 0:  # Uboot prompt
             s.send('boot')
-            s.expect(r'[\r\n].*login: $', timeout=120)
+            s.expect(r'[\r\n].*login: $', timeout=200)
         elif options[0] == 2:
             s.send('reboot')
             s.expect(r'[\r\n].*login: $', timeout=200)
@@ -497,6 +497,7 @@ class T5ZTN(object):
             s.send("ifconfig ma1 down")
             helpers.sleep(10)
             s.send("ifconfig ma1 up")
+            helpers.sleep(10)
             s.send("exit")
         else:
             helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
@@ -1486,19 +1487,25 @@ class T5ZTN(object):
         """
         t = test.Test()
         n = t.node(switch)
-        self.telnet_reboot_switch(switch)
         s = t.dev_console(switch, modeless=True)
         try:
-            s.expect("Hit any key to stop autoboot")
+            options = s.expect([r"Hit any key to stop autoboot",
+                     "Press enter to boot the selected OS"], timeout=100)
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
 
-        s.send("")
-        s.expect([r'\=\>'], timeout=30)
-        s.send("setenv onie_boot_reason install")
-        s.expect([r'\=\>'], timeout=30)
-        s.send("run onie_bootcmd")
-        s.expect("Loading Open Network Install Environment")
+        if options[0] == 0:
+            s.send("")
+            s.expect([r'\=\>'], timeout=30)
+            s.send("setenv onie_boot_reason install")
+            s.expect([r'\=\>'], timeout=30)
+            s.send("run onie_bootcmd")
+            s.expect("Loading Open Network Install Environment")
+        elif options[0] == 1:
+            s.send("v")
+            s.send("")
+            s.expect([r'Loading ONIE'], timeout=30)
+            s.expect([r'ONIE: Install OS'], timeout=30)
         n.console_close()
         return True
 

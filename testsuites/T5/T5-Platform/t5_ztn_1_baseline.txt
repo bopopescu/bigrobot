@@ -104,16 +104,16 @@ T1.6. Test switch reboot
 T1.7. Reboot all switches from CLI
 	${status}=  Cli Reboot Switch  master  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
 	Sleep  120
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
 	${status}=  Cli Reboot Switch  slave  all
 	Run Keyword If  '${status}'=='False'  Power Cycle All Switches
-	Sleep  30
+	Sleep  60
 	Verify All Switches Disconnected
-	Sleep  120
+	Wait Until All Switches Connected
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
 
@@ -161,6 +161,20 @@ T1.10. Verify switches Switchlight SWI version
 	Verify Switch SWI Version  ${s4_alias}
 	Verify Switch SWI Version  ${s5_alias}
 T1.11. Verify switches Switchlight Installer version
+    Cli Run  master  system reinstall switch ${s1_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s2_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s3_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s4_alias}
+    Sleep  5
+    Cli Run  master  system reinstall switch ${s5_alias}
+    Sleep  5
+
+    Run Keyword and Ignore Error  Power Cycle All Switches
+    Sleep  60
+
 	Verify Switch Installer Version  ${s1_alias}
 	Verify Switch Installer Version  ${s2_alias}
 	Verify Switch Installer Version  ${s3_alias}

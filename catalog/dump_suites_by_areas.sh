@@ -18,7 +18,7 @@ output=raw_data.dump_suites_by_areas.sh
 
 rm -f ${output}.*
 
-for test_area in `cd ../testsuites; find . ! -path . -type d -maxdepth 1 | xargs -I {} basename {}`; do
+for test_area in `cd ../testsuites; find . -maxdepth 1 -type d ! -path . | xargs -I {} basename {}`; do
     echo "Total text files for ${test_area}:"
 
     files=${output}.$test_area
