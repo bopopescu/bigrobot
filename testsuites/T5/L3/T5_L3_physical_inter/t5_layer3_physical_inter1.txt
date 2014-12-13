@@ -1144,6 +1144,8 @@ Traffic forwarding with other tenant mac
 #    Should Be True                              ${value} 
     BASH add static arp                         h5                              10.251.1.1              ${gwEthaddr}
     BASH add static arp                         h6                              10.252.1.1              ${gwEthaddr}
+    BASH ping                                   h6                              10.252.1.100              count=10
+    BASH ping                                   h5                              10.251.1.100              count=10
     ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
     Should Be True                              ${loss} <= 40
     ${mac1} =                                   BASH get intf mac               h5                      bond0
