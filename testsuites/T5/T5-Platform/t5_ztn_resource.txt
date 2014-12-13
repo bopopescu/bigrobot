@@ -53,7 +53,7 @@ Suite Setup
 	Sleep  60
 
     ${status}=  Wait Until All Switches Connected And Return Status
-    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    #Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -85,7 +85,7 @@ Test Setup
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
     ${status}=  Wait Until All Switches Connected And Return Status
-    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    #Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
 
 Test Teardown
 	Run Keyword and Ignore Error  Sleep  15
