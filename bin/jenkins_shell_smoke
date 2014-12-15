@@ -10,7 +10,7 @@ pwd=`pwd`
 echo $pwd
 qcow_path=$1
 export BIGROBOT_PARAMS_INPUT_PRE="$WORKSPACE/bigrobot/testlogs/bigrobot_testbed_$$.topo"
-if [[ "$GIT_BRANCH" == "detached" && "$ghprbTargetBranch" == "master" ]] || [[ "$GIT_BRANCH" == "origin/master" ]]
+if [[ "$GIT_BRANCH" != "origin/master" && "$ghprbTargetBranch" == "master" ]] || [[ "$GIT_BRANCH" == "origin/master" ]]
 then
  bigrobot/bin/smoke_vm_setup c1 --standby_vm c2 --kvm_host $NODE_NAME --mininet_vm mininet --qcow_path $qcow_path --vm_ram 2048
 else
