@@ -6,21 +6,19 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.8.28.10  
-  console:
-    ip: 10.8.28.6
-    libvirt_vm_name: MY-T5-C10
-    user: root
-    password: bsn 
- 
+  ip: 10.8.28.14 
+  monitor_reauth: false  # default=true, set to false to disable  
+  pdu:
+    ip: pdu-116-a.bigswitch.com
+    port: 4
+  
 c2:
-  ip: 10.8.28.11   
-  console:
-    ip: 10.8.28.6
-    libvirt_vm_name: MY-T5-C11
-    user: root
-    password: bsn
- 
+  ip: 10.8.28.15 
+  monitor_reauth: false  # default=true, set to false to disable  
+  pdu:
+    ip: pdu-116-a.bigswitch.com
+    port: 5
+
 s1:
   alias:  spine0
   mac: 70:72:cf:ae:b3:28
@@ -79,7 +77,7 @@ s5:
 
 s6:
   alias:  leaf1-b
-  mac: 70:72:cf:ab:3c:58
+  mac: 70:72:cf:b5:ff:0e
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -87,10 +85,14 @@ s6:
     port: 7006
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 14
+  
   
 s7:
   alias:  leaf2-a
-  mac: 70:72:cf:ab:3a:58
+  mac: 70:72:cf:b7:6d:5c
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -98,10 +100,13 @@ s7:
     port: 7007
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 13
 
 s8:
   alias:  leaf2-b
-  mac: 70:72:cf:ab:3b:18
+  mac: 70:72:cf:bc:c7:5e
   fabric-role: leaf
   console:
     ip: 10.1.8.89
@@ -109,3 +114,21 @@ s8:
     port: 7008
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-116-b.bigswitch.com
+    port: 15
+  
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+#  tcl_server_ip: 10.8.21.10
+  tcl_server_ip: 10.9.19.240
+  #tcl_server_port: 8009
+  #ix_version: '7.10'
+  #set_init_ping: false
+  ports:
+    p1:
+      name: 1/25
+    p2:
+      name: 1/26
+  
