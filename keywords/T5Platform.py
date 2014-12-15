@@ -61,10 +61,9 @@ class T5Platform(object):
             return False
 
 
-    def _cluster_election(self, rigged):
-        ''' Invoke "cluster election" commands: re-run or take-leader
-            If: "rigged" is true then verify the active controller change.
-            Else: execute the election rerun
+    def _cluster_election(self, initial_sync_check):
+        ''' Invoke "failover" commands
+            initial_sync_check - by default True
         '''
         t = test.Test()
         slave = t.controller("slave")
@@ -76,12 +75,12 @@ class T5Platform(object):
 
         helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
 
-        url = '/api/v1/data/controller/cluster/config/new-election'
+        url = '/api/v1/data/controller/core/high-availability/failover'
 
-        if(rigged):
-            slave.rest.post(url, {"rigged": True})
+        if(initial_sync_check):
+            slave.rest.post(url, {"initial-sync-check": True})
         else:
-            slave.rest.post(url, {"rigged": False})
+            slave.rest.post(url, {"initial-sync-check": False})
 
         # helpers.sleep(30)
         helpers.sleep(90)
@@ -91,7 +90,7 @@ class T5Platform(object):
             return False
 
         if(masterID == newMasterID):
-            if(rigged):
+            if(initial_sync_check):
                 helpers.test_failure("Fail: Master didn't change after executing take-leader")
                 return False
             else:
@@ -6435,4 +6434,72 @@ class T5Platform(object):
         return traffic_queue
 
 
+    def rest_clear_endpoints(self, **kwargs):
+
+        '''
+        This function will test the "clear endpoints" command. 
+        It will query for the learned endpoints and then issue the "clear endpoint" command.
+        Then it will again query for the endpoints and verify endpoints infact got cleared.
+        '''
+
+        t = test.Test()
+        master = t.controller("master")
+
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/clear'
+        show_url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint'
+
+        if(kwargs.get('mac')):
+            url = url + '[mac="' + kwargs.get('mac') + '"]'
+            show_url = show_url + '[mac="' + kwargs.get('mac') + '"]'
+        if(kwargs.get('segment')):
+            url = url + '[segment="' + kwargs.get('segment') + '"]'
+            show_url = show_url + '[segment="' + kwargs.get('segment') + '"]'
+        if(kwargs.get('tenant')):
+            url = url + '[tenant="' + kwargs.get('tenant') + '"]'
+            show_url = show_url + '[tenant="' + kwargs.get('tenant') + '"]'
+
+        # Gather all the ip addresses to compare later
+        ipAddrList_B4 = []
+        show_result = master.rest.get(show_url)['content']
+        try:
+            for attachmentPoint in show_result:
+                if 'ip-address' in attachmentPoint:
+                    for ip in attachmentPoint['ip-address']:
+                        ipAddrList_B4.append(ip['ip-address'])
+                else:
+                    pass
+        except:
+            helpers.log("There are no matching endpoints to clear. Returning False")
+            return False
+
+        helpers.log("Before ipAddrList is: %s" % ipAddrList_B4)
+
+        # Clear the endpoints
+        master.rest.get(url)
+        if master.rest.status_code_ok():
+            # Gather all the ip addresses to compare later
+            ipAddrList_after = []
+            show_result = master.rest.get(show_url)['content']
+            try:
+                for attachmentPoint in show_result:
+                    if 'ip-address' in attachmentPoint:
+                        for ip in attachmentPoint['ip-address']:
+                            ipAddrList_after.append(ip['ip-address'])
+                    else:
+                        pass
+            except:
+                helpers.log("Looks like endpoints got cleared. Returning True")
+                return True
+        else:
+                helpers.log("Something went wrong while clearning the endpoints. Returning False")
+                return False
+
+        helpers.log("After ipAddrList is: %s" % ipAddrList_after)
+
+        if(len(ipAddrList_B4) > len(ipAddrList_after)):
+            helpers.log("Some IP's got cleared from the list. Returning true")
+            return True
+        else:
+            helpers.log("IP's didn't get cleared properly. Returning false")
+            return False
 

@@ -601,11 +601,11 @@ T4 Intra Segment: DST Is Subnet Gateway
 
 T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
 	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	
 	
@@ -615,13 +615,13 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 	rest switch int shut   leaf1-a  ${h4_intf0}
 	rest switch int shut   leaf1-b  ${h3_intf1} 
 	sleep  5
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-a  ${h4_intf0}
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-b  ${h3_intf1}
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_ip}
 	rest switch int noshut   leaf1-a  ${h4_intf0}
 	rest switch int noshut   leaf1-b  ${h3_intf1} 
 	Should Be True  ${returnVal}
@@ -629,11 +629,11 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 
 T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
 	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 
 
@@ -712,9 +712,9 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  host=h1  ip=${gateway1IP}
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-ip=${h3_tag_ip}  dst-ip=${h4_tag_ip}  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-ip=${h3_tag_ip}  dst-ip=${h4_ip}  timeout=1000
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test6	 src-ip=${h1_single_ip}  dst-ip=100.3.1.1  timeout=1000
@@ -722,9 +722,9 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test6  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.3.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-ip=${h1_tag_ip}  dst-ip=${h6_tag_ip}  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-ip=${h1_tag_ip}  dst-ip=${h6_ip}  timeout=1000
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 	
 	${returnVal}=  rest configure testpath fabric view  test-name=Test8	 src-ip=${h1_tag_ip}	dst-ip=${gateway2IP}  timeout=1000
@@ -756,47 +756,47 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test12  HostPing  leaf  spine  leaf  host=h1  ip=100.4.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test13	 src-ip=${h4_tag_ip}  dst-ip=100.1.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test13	 src-ip=${h4_ip}  dst-ip=100.1.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test13  HostPing  leaf  spine  leaf  leaf  host=h4  ip=100.1.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test14	 src-ip=${h4_tag_ip}  dst-ip=100.1.2.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test14	 src-ip=${h4_ip}  dst-ip=100.1.2.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test14  HostPing  leaf  spine  leaf  host=h4  ip=100.1.2.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test15	 src-ip=${h4_tag_ip}  dst-ip=100.3.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test15	 src-ip=${h4_ip}  dst-ip=100.3.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test15  HostPing  leaf  spine  leaf  host=h4  ip=100.3.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test16	 src-ip=${h4_tag_ip}  dst-ip=100.4.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test16	 src-ip=${h4_ip}  dst-ip=100.4.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test16  HostPing  leaf  spine  leaf  leaf  host=h4  ip=100.4.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test17	 src-ip=${h4_tag_ip}  dst-ip=100.1.2.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test17	 src-ip=${h4_ip}  dst-ip=100.1.2.2  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test17  HostPing  leaf  spine  leaf  host=h4  ip=100.1.2.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test18	 src-ip=${h4_tag_ip}  dst-ip=100.3.1.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test18	 src-ip=${h4_ip}  dst-ip=100.3.1.2  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test18  HostPing  leaf  spine  leaf  host=h4  ip=100.3.1.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test19	 src-ip=${h4_tag_ip}  dst-ip=100.4.1.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test19	 src-ip=${h4_ip}  dst-ip=100.4.1.2  timeout=1000
 	Should Not Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test19  HostPing  leaf  spine  leaf  host=h4  ip=100.4.1.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test20	 src-ip=${h4_tag_ip}  dst-ip=100.1.1.10  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test20	 src-ip=${h4_ip}  dst-ip=100.1.1.10  timeout=1000
 	Should Not Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test20  HostPing  leaf  spine  leaf  host=h4  ip=100.1.1.10
 	Should Be True  ${returnVal}
 	
-	
+
 	## Re verify all 20 test paths
 	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  host=h1  ip=${h2_tag_ip}
 	Should Be True  ${returnVal}
@@ -806,11 +806,11 @@ Test path - Scalability with 20 active test paths
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  host=h1  ip=${gateway1IP}
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test6  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.3.1.1
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test8  HostPing  leaf  host=h1  ip=${gateway2IP}
 	Should Be True  ${returnVal}
