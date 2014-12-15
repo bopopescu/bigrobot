@@ -127,26 +127,26 @@ T2.11. Delete log file - verify that this does not disrupt the Analytics Tool
 #Parsing logs
 #T3.1. Ensure that information from message fields are parsed out correctly, e.g.:
 T3.1.1. processType: floodlight, firstboot, cron, ntpd, ofad, linux visible essentially
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BSC-6853
 T3.1.2. device: dt-controller1, dt-spine1 etc
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T3.1.3. severity: INFO, WARN, ERROR
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T3.1.4. process: RoleManager, OSConfigManager, java classes inside floodlight
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BSC-6854
 T3.1.5. action: subject of what is being logged. EP added/removed etc
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BVS-2645
 T3.1.6. event: parameters of action e.g for EP it is tenant|segment|hostMAC anything that fits k1=v1 k2=v2 syntax or valid JSON object (newly added)
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BVS-2645
 T3.8. Ensure that all logs are accompanied by full timestamps (esp. switch logs)
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Resource consumption
 #cgroup limits
@@ -196,11 +196,11 @@ T5.1. Verify that user experience is the same on a) regular and b) scale setup
     Manual Untested
     [Tags]  manual-untested
 T5.2. Verify that user experience is the same with a) days and b) months worth of logs
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T5.3. Focus on loading large amounts of logs (change paging to e.g. 200 pages x 500 log lines), check page loading speed, speed of going through tabs
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 T6.1. Floodlight support bundle generation - should not be impacted by Analytics tool
     Manual Passed
@@ -240,8 +240,8 @@ T8.9. Search for all events related to an endpoint, specified by MAC or IP (or i
     Manual Passed
     [Tags]  manual
 T8.10. Summary of all category of syslogs. Example Critical #, Major #, Minor #.
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #Logstash, Kibana & ES:
 T9.1. Creating new dashboards/rows/tables/charts
