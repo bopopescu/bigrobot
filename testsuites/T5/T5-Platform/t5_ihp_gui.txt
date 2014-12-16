@@ -67,23 +67,24 @@ T3.3. Verify correctness of “show policy log” output - specific tenant (in l
 
 #Test path
 T4.1. Manual input of endpoints
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BVS-2646
 T4.2. Input one of existing endpoints and verify
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BVS-2646
 T4.3. External IP addresses (e.g. for google.com) as destination endpoint
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Failed
+    [Tags]  manual  BVS-2646
 T4.4. Input one of existing endpoints with modified IP address
-    Manual Untested
-    [Tags]  manual-untested
+    #since only IP address is inputtable, this just creates a new test
+    Manual Passed
+    [Tags]  manual
 T4.5. Input invalid MAC address / IP address and verify address validation
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 T4.6. Loading existing fabric tests - done passively when user enters the same endpoints as in previously-ran test
-    Manual Untested
-    [Tags]  manual-untested
+    Manual Passed
+    [Tags]  manual
 
 #AAA configuration (accounting, authentication)
 #T5.1. AAA Accounting

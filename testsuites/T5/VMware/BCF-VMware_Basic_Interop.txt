@@ -148,8 +148,8 @@ TC34 Enable HA in the ESXi cluster level
     [Tags]              feature         manual          vmware	
  
 TC35 Enable port mirroring on a dvSwitch and couple it with fabric span
- 	manual untested
-    [Tags]              feature         manual-untested          vmware	
+ 	manual passed
+    [Tags]              feature         manual          vmware	
 
 TC36 ESXi as compute nodes in a Openstack cluster through Fuel-vCenter Integration
  	manual passed

@@ -5,7 +5,7 @@ Suite Teardown   tacacs suite teardown
 Test Setup   tacacs test setup
 Test Teardown   tacacs test teardown
 Force Tags   IronHorse  T5  Platform
-
+Library  OperatingSystem
 Library  keywords/T5.py
 Library  keywords/T5Platform.py
 Library  keywords/T5Utilities.py
@@ -16,7 +16,6 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-${version}      2.0
     
 * Test Case
 TC001: Verify Running-Configuration
@@ -291,6 +290,7 @@ Verify AAA Authentication Configuration
     Should be equal as integers  ${tacacs-priority}  2
 
 verify version  [Arguments]  ${username}  ${new_password}  ${local}
+	${version}=	 Get Environment Variable  BCF_VERSION
     ${content}=  rest show version  string=version  user=${username}  password=${new_password}  local=${local}
     Should Contain  ${content}  ${version}
     ${content}=  rest show version  string=name  user=${username}  password=${new_password}  local=${local}
