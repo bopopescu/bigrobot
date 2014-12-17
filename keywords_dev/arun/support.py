@@ -176,7 +176,8 @@ class support(object):
                                 helpers.log(str(outputs))
                                 match = re.match(r'.*(\d+).*', str(outputs))
                                 if match:
-                                    if int(match.group(0)) == 32 or int(match.group(0)) == 54 or int(match.group(0)) == 128:
+                                    if int(match.group(0)) == 32 or int(match.group(0)) == 54 or\
+                                     int(match.group(0)) == 128 or int(match.group(0)) == 78:
                                         helpers.log("Expected switch hardware counters are logged in switch file : %s" % file_name)
                                     else:
                                         helpers.log("Expected switch hardware counters are not logged..")
