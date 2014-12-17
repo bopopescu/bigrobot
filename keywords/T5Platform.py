@@ -5760,7 +5760,7 @@ class T5Platform(object):
 
         c.enable('')
         c.send('support')
-        options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1200)
+        options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1800)
         if options[0] == 0 :
             c.send('yes')
             c.expect(timout=1200)
@@ -6437,7 +6437,7 @@ class T5Platform(object):
     def rest_clear_endpoints(self, **kwargs):
 
         '''
-        This function will test the "clear endpoints" command. 
+        This function will test the "clear endpoints" command.
         It will query for the learned endpoints and then issue the "clear endpoint" command.
         Then it will again query for the endpoints and verify endpoints infact got cleared.
         '''
