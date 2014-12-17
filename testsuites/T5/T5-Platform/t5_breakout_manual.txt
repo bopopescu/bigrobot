@@ -174,17 +174,17 @@ TC19 Verify the same segment member port breakout interface configuration
 
 TC20 Verify the different segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different segment interface using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC21 Verify the different segment member port with Vlan breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different segment interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC22 Verify the different tenant segment member port breakout interface configuration 
     [Tags]  feature  T5
@@ -238,7 +238,7 @@ TC29 verify the supported HCL breakout cable interface and inventory auto-detect
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the supported HCL breakout cable interface and inventory auto-detection
-    Manual Failed
+    Manual Passed
 
 TC30 verify the supported HCL breakout cable removed and inserted non-supported HCL cable 
     [Tags]  feature  T5
