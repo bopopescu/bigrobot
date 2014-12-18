@@ -77,7 +77,7 @@ s3:
     password: apc
   interfaces:
     ixia1_int0: ethernet24
-    spine1_int0: ethernet53
+    spine1_int0: ethernet52
     leaf1b_int0: ethernet40
     leaf1b_int1: ethernet39
     spine0_int0: ethernet49
