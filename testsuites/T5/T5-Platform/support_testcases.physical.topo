@@ -1,5 +1,5 @@
 c1:
- ip: 10.9.16.44
+ ip: 10.9.16.48
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console:
@@ -8,7 +8,7 @@ c1:
    user: root
    password: bsn
 c2:
- ip: 10.9.16.45
+ ip: 10.9.16.49
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console:
@@ -36,7 +36,7 @@ s1:
     spine0_int0: ethernet49
     leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -57,7 +57,7 @@ s2:
   interfaces:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -77,7 +77,7 @@ s3:
     password: apc
   interfaces:
     ixia1_int0: ethernet24
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
     leaf1b_int0: ethernet40
     leaf1b_int1: ethernet39
     spine0_int0: ethernet49
@@ -101,7 +101,7 @@ s4:
   interfaces:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -123,7 +123,7 @@ s5:
     leaf2b_int0: ethernet39
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s6:
@@ -144,7 +144,7 @@ s6:
   interfaces:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
-    spine1_int0: ethernet52
+    spine1_int0: ethernet53
   set_session_ssh: false
   set_init_ping: false
 s7:
@@ -192,11 +192,6 @@ s8:
   set_session_ssh: false
   set_init_ping: false
   
-s100:
-  ip: 10.8.28.100  #  Arista
-  alias: arista-1
-  user: bsn
-  password: bsn
 h1:
   ip: 10.9.16.13
   user: root

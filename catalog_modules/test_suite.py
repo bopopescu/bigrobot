@@ -158,11 +158,12 @@ class TestSuite(object):
             return authors[output]
         elif status == False:
             helpers.log(
-                    "ERROR: Shell command error (code:'%s', mesg:'%s'). Using 'unknown' author."
-                    % (err_code, err_out))
+                    "ERROR: Shell command error (code:'%s', mesg:'%s') for file '%s'. Using 'unknown' author."
+                    % (err_code, err_out, filename))
         else:
             helpers.log(
-                    "ERROR: Author '%s' does not exist. Using 'unknown' author." % output)
+                    "ERROR: Author '%s' does not exist for file '%s'. Using 'unknown' author."
+                    % (output, filename))
         return authors['Unknown']
 
     def check_topo_type(self, suite):

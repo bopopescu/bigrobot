@@ -653,7 +653,7 @@ T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test9	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	bash add route  h1  100.1.1.0/24  192.168.1.100  eth1
+	#bash add route  h1  100.1.1.0/24  192.168.1.100  eth1
 	sleep  5
 	${returnVal}=  rest verify testpath fabric view  Test9  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.1.1.1
 	Should Be True  ${returnVal}
@@ -689,8 +689,8 @@ Test path - Scalability with 20 active test paths
     [Tags]  testpath  feature  scale
     
     rest clear testpath
-    bash add route  h1  100.0.0.0/8  192.168.1.100  eth1
-    bash add route  h4  100.0.0.0/8  20.20.20.100  bond0.20
+    #bash add route  h1  100.0.0.0/8  192.168.1.100  eth1
+    #bash add route  h4  100.0.0.0/8  192.168.0.100  bond0
     
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-ip=${h1_tag_ip}	dst-ip=${h2_tag_ip}  timeout=1000
 	Should Be True  ${returnVal}
@@ -930,26 +930,26 @@ T0 Setup
 	#bash execute command  leaf1-a  ofad-ctl autoneg 25
 	#bash execute command  leaf1-a  ofad-ctl autoneg 26
 	
-	bring up h1 bond0
-	sleep  2
-	bring up h2 bond0
-	sleep  2
-	bring up h3 bond0
-	sleep  2
-	bring up h4 bond0
-	sleep  2
-	bring up h5 bond0
-	sleep  2
-	bring up h6 bond0
-	sleep  2
-	bring up h1 eth1
-	sleep  2
-	bring up h2 eth1
-	sleep  2
-	bring up h3 eth1
-	sleep  2
-	bring up h4 eth1
-	sleep  2
+	#bring up h1 bond0
+	#sleep  2
+	#bring up h2 bond0
+	#sleep  2
+	#bring up h3 bond0
+	#sleep  2
+	#bring up h4 bond0
+	#sleep  2
+	#bring up h5 bond0
+	#sleep  2
+	#bring up h6 bond0
+	#sleep  2
+	#bring up h1 eth1
+	#sleep  2
+	#bring up h2 eth1
+	#sleep  2
+	#bring up h3 eth1
+	#sleep  2
+	#bring up h4 eth1
+	#sleep  2
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
 	
@@ -992,8 +992,8 @@ T0 Setup
 	
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 
-   auto configure fabric switch  ${spineList}  ${leafList}  2
-   sleep  30
+   #auto configure fabric switch  ${spineList}  ${leafList}  2
+   #sleep  30
    rest add portgroup  p1
    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1

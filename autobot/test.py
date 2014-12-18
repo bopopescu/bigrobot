@@ -1245,33 +1245,33 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot idle timeout modifications have already been applied."
+            helpers.log("'%s' - QA idle timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^command.cli.interactive_read_timeout" %s'
+                            'grep -E "^command.cli.interactive_read_timeout" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (QA mod)/" %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+                            'grep -E "command.cli.interactive_read_timeout.*(BigRobot|QA) mod" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
-        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s'
+        n.sudo('grep -E "^command.cli.interactive_read_timeout" %s'
                % source_file)
         return True
 
@@ -1288,30 +1288,30 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot reauth timeout modifications have already been applied."
+            helpers.log("'%s' - QA reauth timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code == 0:
-            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with BigRobot mod."
+            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with QA mod."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (BigRobot mod)\' | sudo tee -a %s'
+        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (QA mod)\' | sudo tee -a %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code != 0:
-            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+            helpers.environment_failure("Not able to modify reauth time in %s on '%s'."
                                         % (source_file, name))
 
         self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")

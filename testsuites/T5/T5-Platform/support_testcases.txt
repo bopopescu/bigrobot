@@ -1,9 +1,8 @@
 *** Settings ***
 Documentation    Support Test Cases
-Force Tags       T5 
+Force Tags       T5  feature  IronHorse
 Suite Setup     T5 support suite setup
 Test Teardown    base test teardown
-Force Tags       T5
 Library		 OperatingSystem
 Library	 	 String
 Library          keywords/BsnCommon.py
