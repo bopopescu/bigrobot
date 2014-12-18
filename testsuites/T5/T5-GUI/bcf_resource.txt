@@ -1023,7 +1023,7 @@ Enable System Tenant Interface
 	Click Element  ${SYSTEM TENANT INTERFACE ENABLE BUTTON}  and don't wait
 	
 	Verify Element Visible  ${SYSTEM TENANT INTERFACE ENABLE POPUP}
-	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enable
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Yes')]  Enable
 
     Drag And Drop   ${LIST TYPE KNOB}  target=Enable
     
