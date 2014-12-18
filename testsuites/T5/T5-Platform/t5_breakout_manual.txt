@@ -188,10 +188,10 @@ TC21 Verify the different segment member port with Vlan breakout interface confi
 
 TC22 Verify the different tenant segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different tenant interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC23 Verify the port group configuration with all breakout interfaces 
     [Tags]  feature  T5
@@ -457,54 +457,54 @@ TC64 Upgrade Controller Breakout cable auto detection case
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable auto detection case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC65 Upgrade Controller Breakout cable forced configuration case 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable forced configuration case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to non-breakout cable
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in then while upgrade change to non-breakout cable 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - while upgrade change from non-breakout cable to breakout cable  
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual untested
+    Manual Passed
 
 TC68 Breakout cable plugged-in upgrade the controller - supported software package to another one 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in upgrade the controller         
-    Manual Failed
+    Manual Passed
 
 TC69 Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
-    Manual untested 
+    Manual Passed 
      
 #### Misconfiguration cable - two rack connections, loopback on leaf , Dell S6000 etc. 
 
 TC70 Breakout cable plugged-in between two racks 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in between two racks         
-    Manual untested 
+    Manual Passed 
 
 TC71 Breakout cable plugged-in loopback on leaf  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in loopback on leaf         
-    Manual untested 
+    Manual Passed 
 
       
 #### Extended Feature verification may be interface specific SPAN, ACL 
