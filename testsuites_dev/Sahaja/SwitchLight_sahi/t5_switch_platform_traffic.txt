@@ -1,0 +1,459 @@
+* Settings
+Documentation     switch-platform Platform Traffic Test suite- Iron Horse
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
+#Test Setup        base test setup
+Test Teardown     atest teardown
+Force Tags        T5  IronHorse
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py     
+Library         String
+Resource		 testsuites/T5/t5_physical_variables.txt
+*Variables
+
+${j}    1
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf1-a
+${switch7_name}=  spine0
+${tenant}=        testTenant 
+${vns}=           v1
+${vlan}=          -1
+${intf_1}=        ethernet24
+${intf_2}=        ethernet24
+
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5
+
+
+
+*Test Case
+
+###
+### Section I : Traffic Test Verification
+###
+###
+
+TC01 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  switch-platform  L2  traffic  feature    
+
+TC02 Uni-Directional L2 Traffic flow=a->c traffic linerate 10% pktsize 64
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  switch-platform  L2  traffic  feature         
+
+TC03 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 256 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:05  dst_mac=00:11:01:00:00:06  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  switch-platform  L2  traffic  feature   
+
+TC04 Uni-Directional L2 Traffic flow=a->c traffic linerate 25% pktsize 256
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  switch-platform  L2  traffic  feature       
+
+TC05 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 512 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  switch-platform  L2  traffic  feature
+
+TC06 Uni-Directional L2 Traffic flow=a->c traffic linerate 50% pktsize 512
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  switch-platform  L2  traffic  feature
+
+TC07 Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1024
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:02:01  dst_mac=00:11:01:00:02:02  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  feature
+
+TC08 Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5    
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  feature  
+
+TC09 Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  feature  
+
+TC10 Bi-Directional L2 Traffic flow=a<->c traffic linerate 100% pktsize 1518
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  feature  
+
+TC11 Uni-Directional L2 Traffic jumbo flow=a->c traffic linerate 10% pktsize 9150
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:01:0e  dst_mac=00:11:01:00:01:0f  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature    
+
+TC12 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 10% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
+
+TC13 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 25% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=25  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
+
+TC14 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 50% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
+
+TC15 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 100% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=100  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
+
+TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    sleep  10 
+    enable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature          
+
+TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    sleep  10 
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+
+TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
+    ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_bidir_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    sleep  10 
+    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+    
+TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518 
+    ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    sleep  10 
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+
+
+* Keywords
+      
+T5 switch platform test setup
+   #base test setup
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+      
+   #rest add switch  ${switch2_name}
+   #${swDpid2}=  rest return switch dpid from ip  s2
+   #rest add dpid  ${switch2_name}   ${swDpid2}
+   #rest add fabric role  ${switch2_name}  leaf
+   
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine 
+   Set swith int variables
+   Set switch dpid variables
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan}    
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_2}  ${vlan} 
+
+                 
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch2_name}
+   #rest delete fabric switch  ${switch7_name}
+   #base test teardown
+   sleep  5   
+
+atest teardown
+	base test teardown
+    delete traffic
+
+
+
+verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range} 
+
+verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+    
+verify rx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf rxcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}    
+    Should be true  ${in_range} 
+    
+verify tx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf txcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}     
+    Should be true  ${in_range}
+
+clear interface counters on controller  
+    ${result}=  rest clear fabric interface stats  
+    Should be true  ${result} 
+
+clear interface counters on switch  [Arguments]  ${switch} 
+    ${result}=  cli clear interface statistics  $switch
+    Should be true  ${result}     
+
+disable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest disable fabric interface   ${switch}  ${intf}
+    Should be true  ${result} 
+    
+enable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest enable fabric interface   ${switch}  ${intf}
+    Should be true  ${result}  
+      
+add interface to vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+        
+delete interface from vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+    

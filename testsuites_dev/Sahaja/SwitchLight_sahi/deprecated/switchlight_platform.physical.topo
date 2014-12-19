@@ -1,0 +1,33 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.8.25.5
+c2:
+    ip: 10.8.25.6
+
+s1:
+  alias: leaf0-a
+  mac: 70:72:cf:bc:c5:0e
+  fabric-role: leaf
+  leaf-group: rack0
+  console:
+    ip:  10.1.8.181
+    protocol: telnet
+    port: 7002  
+  set_session_ssh: false
+  set_init_ping: false
+
+#s1:
+#    ip: 10.192.88.80
+#    console_ip: 10.1.8.181
+#    console_port: 6003    
+    
+#s2:
+#    ip: 10.192.88.81
+#    console_ip: 10.192.2.89
+#    console_port: 6004
