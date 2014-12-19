@@ -493,7 +493,7 @@ TC29: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP p
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  vxlan  run     
+    [Tags]  vxlan       
 
 TC30: Send NTP packets and match on NTP Version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
@@ -563,7 +563,7 @@ TC33: Send L2TP enacapsulated packets and match on Inner source IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis    
+    [Tags]  l2tp      
 
 TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
@@ -583,7 +583,7 @@ TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis  one  
+    [Tags]  l2tp    one  
 
 
 TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
@@ -602,7 +602,7 @@ TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis
+    [Tags]  l2tp  
                                    
 * Keyword
 
