@@ -305,15 +305,15 @@ TC39 Verify jumbo frame same segment L2 traffic bidirectional
 
 TC40 Verify same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify bidirectional same segment L2 traffic        
-    Manual untested
+    Manual Passed
     
 TC41 Verify jumbo frame same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
-    Manual untested   
+    Manual Passed   
 
 TC42 Verify interface stats incoming same segment L2 traffic unidirectional  
     [Tags]  feature  T5
@@ -353,15 +353,15 @@ TC47 Verify interface stats outgoing jumbo frame same segment L2 traffic with vl
   
 TC48 Verify interface stats drops with traffic   
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface stats Verify interface stats drops with traffic          
-    Manual untested
+    Manual Passed
 
 TC49 Verify interface stats errors with traffic   
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface stats Verify interface stats errors with traffic          
-    Manual untested
+    Manual Passed
   
 ## Adding Deleting, Controller Failover, HA, Reboot, Failure, Upgrade test  
 TC50 Bring up the leaf switch with breakout cable 
@@ -380,31 +380,31 @@ TC52 Remove the breakout cable and plugged in back on the different interfaces -
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces         
-    Manual Failed   
+    Manual Passed   
  
 TC53 Insert first Breakout cable -Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
-    Manual untested
+    Manual Passed
      
 TC54 Insert first 40G DAC cable -Remove the DAC cable and insert the breakout cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
-    Manual untested   
+    Manual Passed   
 
 TC55 Breakout cable plugged-in reboot the switch leaf/spine 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in reboot the switch leaf/spine         
-    Manual Failed
+    Manual Passed
 
 TC56 Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable  
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable         
-    Manual Failed  
+    Manual Passed  
 
 TC57 Breakout cable plugged-in failover the controller with traffic  
     [Tags]  feature  T5
@@ -566,34 +566,34 @@ TC80 verify the server host side STP
 ### GUI Test Cases 
 TC81 GUI- verify the breakout interfaces status link down for all HCL supported cable  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - GUI- verify the breakout interfaces status link down for all HCL supported cable     
-    Manual untested
+    Manual Passed
 
 TC82 GUI- verify the breakout interfaces status link up for all HCL supported cable  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - GUI- verify the breakout interfaces status link up for all HCL supported cable     
-    Manual untested        
+    Manual Passed        
 
 TC83 GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable     
-    Manual untested    
+    Manual Passed    
     
 TC84 GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable     
-    Manual untested       
+    Manual Passed       
 
 TC85 GUI- verify the Fabric error and warnings for breakout interfaces   
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - GUI- verify the Fabric error and warnings for breakout interfaces 
     Log     Step 2 - GUI- verify the Fabric error when not supported breakout inetrfaces are configured.    
-    Manual untested         
+    Manual Passed         
 
 
 *Keywords 
