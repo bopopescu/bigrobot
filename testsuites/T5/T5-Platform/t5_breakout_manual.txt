@@ -563,8 +563,39 @@ TC80 verify the server host side STP
     Log     Step 1 - verify the server host side STP     
     Manual untested
 
-  
-        
+### GUI Test Cases 
+TC81 GUI- verify the breakout interfaces status link down for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual-untested
+    Log     Step 1 - GUI- verify the breakout interfaces status link down for all HCL supported cable     
+    Manual untested
+
+TC82 GUI- verify the breakout interfaces status link up for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual-untested
+    Log     Step 1 - GUI- verify the breakout interfaces status link up for all HCL supported cable     
+    Manual untested        
+
+TC83 GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual-untested
+    Log     Step 1 - GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable     
+    Manual untested    
+    
+TC84 GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual-untested
+    Log     Step 1 - GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable     
+    Manual untested       
+
+TC85 GUI- verify the Fabric error and warnings for breakout interfaces   
+    [Tags]  feature  T5
+    [Tags]  manual-untested
+    Log     Step 1 - GUI- verify the Fabric error and warnings for breakout interfaces 
+    Log     Step 2 - GUI- verify the Fabric error when not supported breakout inetrfaces are configured.    
+    Manual untested         
+
+
 *Keywords 
 
 T5 traffic interface stats test setup
