@@ -1128,7 +1128,7 @@ TC47: With bigtap policy installed with transmit only tunnel on one side and rec
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                        
-    [Tags]  feature  runthis  
+    [Tags]  feature    
 
 TC48: With bigtap policy installed with bidirectional tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
