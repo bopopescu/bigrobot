@@ -24,6 +24,8 @@ ${switch_filter_intf_1}                      ethernet1      #10G filter interfac
 ${switch_filter_alias_1}                     ixia-1-5       #Alias for filter interface on switch app-as5710-1
 ${switch_filter_intf_2}                      ethernet10     #10G filter interface on switch app-as5710-1
 ${switch_filter_alias_2}                     ixia-1-12      #Alias for filter interface on switch app-as5710-1
+${switch_filter_intf_3}                      ethernet3     #10G filter interface on switch app-rly2-1
+${switch_filter_alias_3}                     ixia-1-21      #Alias for filter interface on switch app-rly2-1
 
 ${switch_delivery_intf_1}                    ethernet2      #10G Delivery interface on switch app-as5710-1
 ${switch_delivery_alias_1}                   ixia-1-6       #Alias for delivery interface on switch app-as5710-1
@@ -32,7 +34,11 @@ ${switch_delivery_alias_2}                   ixia-1-9       #Alias for delivery 
 ${switch_delivery_intf_3}                    ethernet12     #1G Delivery interface on switch app-as5710-1
 ${switch_delivery_alias_3}                   ixia-3-2       #Alias for delivery interface on switch app-as5710-1
 ${switch_delivery_intf_4}                    ethernet1      #1G Delivery interface on switch app-as5710-1
-${switch_delivery_alias_4}                   ixia-4-1       #Alias for delivery interface on switch app-as5710-1
+${switch_delivery_alias_4}                   ixia-4-2       #Alias for delivery interface on switch app-as5710-1
+${switch_delivery_intf_5}                    ethernet4      #1G Delivery interface on switch app-rly2-1
+${switch_delivery_alias_5}                   ixia-1-23       #Alias for delivery interface on switch app-rly2-1
+
+
 ${switch_core_as_delivery_intf_1}            ethernet50     #1G Delivery interface on switch app-as5710-1
 ${switch_core_as_delivery_alias_1}           cores1s2       #Alias for delivery interface on switch app-as5710-1
 
@@ -74,7 +80,7 @@ TC002: Trident2: Verify if filter traffic is more than 1G then drop is seen only
     ${in_range_2}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
     Should be true  ${in_range_2}
     stop traffic  ${stream} 
-    [Tags]  feature
+    [Tags]  feature  t2
 
 TC003: Trident2: With two policies, verify if filter traffic is more than 1G then drop is seen only on 1G interface
     ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -114,7 +120,7 @@ TC003: Trident2: With two policies, verify if filter traffic is more than 1G the
     ${in_range_3}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
     Should be true  ${in_range_3}
     stop traffic  ${stream} 
-    [Tags]  feature
+    [Tags]  feature  t2
 
 TC004: Trident2: With two policies, verify if filter traffic is more than 10G then drop is seen only on oversubscribed interface
     ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -157,7 +163,7 @@ TC004: Trident2: With two policies, verify if filter traffic is more than 10G th
     ${in_range_2}=  ixia verify traffic rate  ${rx10g_bc}  ${rx_10g_2}  500    
     Should be true  ${in_range_2}
     stop traffic
-    [Tags]  feature
+    [Tags]  feature  t2
 
 TC005: Trident2: Verify if filter traffic is more than 10G then drop is seen only on 10G interface
     ${output_0a}=  rest delete policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_3}  delivery
@@ -195,7 +201,7 @@ TC005: Trident2: Verify if filter traffic is more than 10G then drop is seen onl
     ${drop_count}=  rest return switch interface stats  ${switch_dpid}  ${s1s2_corelink}  transmit-dropped
     Should Be Equal As Integers  ${drop_count}  0
     Should Be Equal As Integers  ${total_rpackets}  ${tpackets}
-    [Tags]  feature
+    [Tags]  feature  t2
     
 TC006: Trident2: Microburst Testing
     ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -229,7 +235,7 @@ TC006: Trident2: Microburst Testing
     ${drop_count}=  rest return switch interface stats  ${switch_dpid}  ${switch_delivery_intf_1}  transmit-dropped
     Should Be Equal As Integers  ${drop_count}  0
     Should Be Equal As Integers  ${total_rpackets}  ${tpackets}
-    [Tags]  feature 
+    [Tags]  feature  t2 
 
 TC007: Trident2: Verify no pause frames are sent across switches
     rest delete policy  admin-view  ${policy_name_1}
@@ -289,23 +295,63 @@ TC007: Trident2: Verify no pause frames are sent across switches
     Should be equal as integers  ${output_array_1['sent_pause_packets']}  0
     ${output_array_2}=  cli show interface statistics  s2  ${s2s1_corelink}
     Should be equal as integers  ${output_array_2['received_pause_packets']}  0
-    [Tags]  runthis
+    [Tags]  feature  t2  
+
+TC008: Trident Plus: Verify if filter traffic is more than 1G then drop is seen only on 1G interface
+    rest delete policy  admin-view  ${policy_name_1}
+    sleep  2
+    ${output_7}=  rest add interface role  s3  ${switch_filter_intf_3}    filter    intf_nickname=${switch_filter_alias_3}
+    Should be true  ${output_7}
+    ${output_8}=  rest add interface role  s3  ${switch_delivery_intf_4}    delivery  intf_nickname=${switch_delivery_alias_4}
+    Should be true  ${output_8}
+    ${output_9}=  rest add interface role  s3  ${switch_delivery_intf_5}    delivery  intf_nickname=${switch_delivery_alias_5}
+    Should be true  ${output_9}
+    ${output_1}=  rest add policy  admin-view  ${policy_name_1}   forward
+    Should be true  ${output_1}
+    ${output_2}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${output_2}
+    ${output_3}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_filter_alias_3}  filter
+    Should be true  ${output_3}
+    ${output_4}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_4}  delivery
+    Should be true  ${output_4}
+    ${output_5}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch_delivery_alias_5}  delivery
+    Should be true  ${output_5}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${stream}=  L2 add  flow=h->i  line_rate=100  frame_size=64  name=h_i_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    ${report}=  fetch port stats
+    ${tx_10g_1}=  verify dict key  ${report}  h  transmitted_frame_rate
+    ${rx_10g_1}=  verify dict key  ${report}  i  received_valid_frame_rate
+    ${rx_10g_2}=  verify dict key  ${report}  f  received_valid_frame_rate
+    ${in_range_1}=  ixia verify traffic rate  ${tx_10g_1}  ${rx_10g_1}  500
+    Should be true  ${in_range_1}
+    ${rx10g_conv}=  Evaluate  ${rx_10g_2}*10
+    ${in_range_2}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
+    Should be true  ${in_range_2}
+    stop traffic  ${stream}
+    [Tags]  feature  tplus
 
 * Keyword
 backpressure suite setup
     base suite setup
-    ${ovelap_enabled}=  rest enable feature  overlap
-    Should be true  ${ovelap_enabled}
-    ${full_match_enabled}=  rest enable feature  full-match
-    Should be true  ${full_match_enabled}
-    ${inport_disabled}=  rest disable feature  inport-mask
-    Should be true  ${inport_disabled}
+    sleep  10
     ${output_2a}=  rest add switch alias  s1  ${switch_alias_1}
     Should be true  ${output_2a}
     ${output_2b}=  rest add switch alias  s2  ${switch_alias_2}
     Should be true  ${output_2b}
     ${output_2c}=  rest add switch alias  s3  ${switch_alias_3}
     Should be true  ${output_2c}
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}
+    ${full_match_enabled}=  rest enable feature  full-match
+    Should be true  ${full_match_enabled}
+    ${inport_disabled}=  rest disable feature  inport-mask
+    Should be true  ${inport_disabled}
     ${output_3}=  rest add interface role  s1  ${switch_filter_intf_1}      filter        intf_nickname=${switch_filter_alias_1}
     Should be true  ${output_3}
     ${output_4}=  rest add interface role  s1  ${switch_filter_intf_2}      filter        intf_nickname=${switch_filter_alias_2}
@@ -378,6 +424,14 @@ backpressure suite teardown
     Should be true  ${output_7}
     ${output_8}=  rest delete interface  s1  ${switch_delivery_intf_3}
     Should be true  ${output_8}
+    ${output_9}=  rest delete interface role  s3  ${switch_filter_intf_3}  filter
+    Should be true  ${output_9}
+    ${output_10}=  rest delete interface  s3  ${switch_filter_intf_3}
+    Should be true  ${output_10}
+    ${output_11}=  rest delete interface role  s3  ${switch_delivery_intf_5}  filter
+    Should be true  ${output_11}
+    ${output_12}=  rest delete interface  s3  ${switch_delivery_intf_5}
+    Should be true  ${output_12}
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch alias  s3

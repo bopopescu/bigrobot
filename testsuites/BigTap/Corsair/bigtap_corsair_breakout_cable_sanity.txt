@@ -127,8 +127,8 @@ ${filter_nick_s4_1}                 ixia-1-19
 ${filter_s4_2}                      ethernet2
 ${filter_nick_s4_2}                 ixia-1-20
 ${non_breakout_s4s2_2}              ethernet53
-${brekout_s4s2_1}                   ethernet7
-${brekout_s4s2_2}                   ethernet8
+${brekout_s4s2_1}                   ethernet3
+${brekout_s4s2_2}                   ethernet4
 
 
 
@@ -639,7 +639,7 @@ TC028: Verify breakout-ports can be configured as a filter interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s2  ${breakout_filter_s2_2}  filter   ${breakout_filter_nick_s2_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  filter  runthis
+    [Tags]  feature  filter  
     
 TC029: Verify breakout-ports can be configured as a delivery interface
     ${output_1}=    rest add interface role  s2  ${breakout_delivery_s2_1}  delivery    ${breakout_delivery_s2_nick_1}
@@ -722,7 +722,7 @@ TC029: Verify breakout-ports can be configured as a delivery interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s3  ${breakout_filter_s3_2}  filter   ${breakout_filter_nick_s3_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  delivery  runthis
+    [Tags]  feature  delivery  
 
 TC030: Verify same breakout cable can be connected to multiple switches
     cli disable interface  s2  ${brekout_s2s3_1}
@@ -785,7 +785,7 @@ TC030: Verify same breakout cable can be connected to multiple switches
     cli enable interface  s2  ${brekout_s2s3_4}
     ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
     Should be true  ${teardown_2B}
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC031: Verify breakout interface hardware-address on controller matches what is reported by switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -1027,7 +1027,7 @@ TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     Should be true  ${verify_del_tun_sw2}
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  tx  runthis
+    [Tags]  tunnel  tx  
 
 TC038: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1047,7 +1047,7 @@ TC038: Verify Receive-Only Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  rx  runthis
+    [Tags]  tunnel  rx  
 
 TC039: Verify Bidirectional Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1067,7 +1067,7 @@ TC039: Verify Bidirectional Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  bidir  runthis
+    [Tags]  tunnel  bidir  
 
 TC040: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md1}
@@ -1101,7 +1101,7 @@ TC040: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha  runthis
+    [Tags]  ha  
 
 TC041: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md2}
@@ -1135,7 +1135,7 @@ TC041: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha  runthis
+    [Tags]  ha  
 
 TC042: Reboot switch and verify breakout configuration is retained.
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1202,7 +1202,7 @@ TC043: Flap breakout configuration on switch and verify
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
     stop traffic
-    [Tags]  ha  runthis
+    [Tags]  ha  
     
 TC044: Flap breakout interface once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1249,7 +1249,7 @@ TC044: Flap breakout interface once and verify interface shows as up
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  runthis
+    [Tags]  ha  
 
 TC045: Flap breakout interface on remote side once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1296,7 +1296,7 @@ TC045: Flap breakout interface on remote side once and verify interface shows as
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  runthis
+    [Tags]  ha  
 
 
 

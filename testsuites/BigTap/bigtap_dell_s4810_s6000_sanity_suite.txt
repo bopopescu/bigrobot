@@ -699,7 +699,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  tx  runthis
+    [Tags]  bigtap  tunnel  tx  
 
 TC32: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -859,93 +859,8 @@ TC47: Dell S6000 - Verify port-channel (hash-mode:L2) interface shows correct 40
     sleep  5       
     [Tags]  switch-platform  lag
 
-#### Process Restart
 
-TC48: Restart process OFAD on switch S1
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s1  ofad
-    Sleep  90
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-        
-TC49: Restart process OFAD on switch S2
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s2  ofad
-    Sleep  90
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-    
-TC50: Restart process OFAD on switch S3
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s3  ofad
-    Sleep  120
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-
-TC51: Verify interface statistics on switch
+TC48: Verify interface statistics on switch
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->d  frame_rate=10000  frame_cnt=100000  frame_size=64  no_arp=True  name=a_d_flow
@@ -973,10 +888,10 @@ TC51: Verify interface statistics on switch
     Should be true  ${in_range_3} 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  runthis
+    [Tags]  bigtap  ha  stats  
 
 
-TC52: SNMP: Verify interface statistics and match with SNMP
+TC49: SNMP: Verify interface statistics and match with SNMP
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->d  frame_rate=10000  frame_cnt=100000  frame_size=64  no_arp=True  name=a_d_flow
@@ -1036,7 +951,93 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp  runthis
+    [Tags]  bigtap  ha  stats  snmp  
+
+#### Process Restart
+
+TC50: Restart process OFAD on switch S1
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s1  ofad
+    Sleep  90
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  bigtap  ha  ofad
+        
+TC51: Restart process OFAD on switch S2
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s2  ofad
+    Sleep  90
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  bigtap  ha  ofad
+    
+TC52: Restart process OFAD on switch S3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s3  ofad
+    Sleep  120
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  bigtap  ha  ofad
 
 * Keywords
 

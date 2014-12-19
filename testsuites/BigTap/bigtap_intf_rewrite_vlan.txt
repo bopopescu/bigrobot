@@ -670,7 +670,7 @@ TC031: Verify traffic with match on UDP6 DST-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  run
+    [Tags]  intf-vlanrewrite  matchUDP6  
 
 TC032: Verify traffic with match on UDP6 SRC-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 34525, "src-tp-port-min": 65000, "ip-proto":17, "sequence": 1}
@@ -692,7 +692,7 @@ TC032: Verify traffic with match on UDP6 SRC-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  run
+    [Tags]  intf-vlanrewrite  matchUDP6  
 
 TC033: Verify traffic with match on UDP6 DST-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 34525, "dst-tp-port-max": 65535, "ip-proto":17, "sequence": 1}
@@ -714,7 +714,7 @@ TC033: Verify traffic with match on UDP6 DST-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  run
+    [Tags]  intf-vlanrewrite  matchUDP6  
 
 TC034: Verify traffic with match on IPv4, strip vlan
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048}
@@ -739,7 +739,7 @@ TC034: Verify traffic with match on IPv4, strip vlan
     rest delete stripvlan from policy  ${policy_name_1}
     rest delete stripvlan from policy  ${policy_name_1}
     Sleep  5      
-    [Tags]  intf-vlanrewrite  stripvlan  run 
+    [Tags]  intf-vlanrewrite  stripvlan   
 
 TC035: Verify traffic with match on IPv6, strip vlan
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34525}
@@ -764,7 +764,7 @@ TC035: Verify traffic with match on IPv6, strip vlan
     rest delete stripvlan from policy  ${policy_name_1}
     rest delete stripvlan from policy  ${policy_name_1}
     Sleep  5      
-    [Tags]  intf-vlanrewrite  stripvlan  run
+    [Tags]  intf-vlanrewrite  stripvlan  
 
 TC036: Verify traffic with match on L2 IPv4 Multicast MAC Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "01:00:5E:00:00:01", "sequence": 1}
@@ -782,7 +782,7 @@ TC036: Verify traffic with match on L2 IPv4 Multicast MAC Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames 
-    [Tags]  intf-vlanrewrite  ipv4-multicast  run 
+    [Tags]  intf-vlanrewrite  ipv4-multicast   
 
 TC037: Verify traffic with match on IPv4 Multicast Dst-IP Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "225.0.0.1", "ether-type": 2048}
@@ -802,7 +802,7 @@ TC037: Verify traffic with match on IPv4 Multicast Dst-IP Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames  
-    [Tags]  intf-vlanrewrite  ipv4-multicast  run 
+    [Tags]  intf-vlanrewrite  ipv4-multicast   
 
 TC038: Verify traffic with match on L2 IPv6 Multicast MAC Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "33:33:5E:00:00:01", "sequence": 1}
@@ -820,7 +820,7 @@ TC038: Verify traffic with match on L2 IPv6 Multicast MAC Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames 
-    [Tags]  intf-vlanrewrite  ipv6-multicast  run 
+    [Tags]  intf-vlanrewrite  ipv6-multicast   
 
 TC039: Verify traffic with match on IPv6 Multicast Dst-IP Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "ff02::1", "ether-type": 34525}
@@ -840,7 +840,7 @@ TC039: Verify traffic with match on IPv6 Multicast Dst-IP Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  ipv6-multicast  run 
+    [Tags]  intf-vlanrewrite  ipv6-multicast   
 
 * Keywords
 

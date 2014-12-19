@@ -45,7 +45,7 @@ T2.1 Ipv4 prefix list optimization
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
 
-	[Tags]   sanity    optimization    BigTap   blackbird    
+	[Tags]   sanity    optimization    BigTap   blackbir  
 
 
 T2.2 Ipv4 prefix list optimization and ip  
@@ -266,6 +266,6 @@ T2.102 Ipv6 prefix list optimization scale
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
 
-	[Tags]   scaling  optimization   BigTap   blackbird  runthis    
+	[Tags]   scaling  optimization   BigTap   blackbird
 
    

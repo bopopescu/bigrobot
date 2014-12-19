@@ -64,7 +64,7 @@ TC007: Configure mismatched tacacs secret and verify tacacs user cannot login
     sleep  5
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  mismatched-secret  runthis
+    [Tags]  mismatched-secret  
 
 TC008: Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
@@ -72,20 +72,20 @@ TC008: Verify that when AAA is configured for tacacs only, local AAA should not 
     ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
     Should not be true  ${content}            
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${true}  local_priority=2  username=tacacsadmin  password=adminadmin
-    [Tags]  only-tacacs  run
+    [Tags]  only-tacacs  
                 
 TC009: Delete tacacs server from configuration and verify tacacs user has no access
     rest delete tacacs server  10.2.3.201
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  deletetacacs  run
+    [Tags]  deletetacacs  
 
 TC010: Delete user tacacsadmin from group admin and verify access
     cli delete user from group  tacacsadmin  admin
     sleep  3
     verify version  tacacsadmin  adminadmin  ${true}
     rest add user to group  tacacsadmin  admin
-    [Tags]  deleteuser  run 
+    [Tags]  deleteuser   
 
 TC011: Verify user tacacsdemoclient from group readers has access to only his group
     rest add rbac group  readers  readers-view
@@ -103,7 +103,7 @@ TC011: Verify user tacacsdemoclient from group readers has access to only his gr
 TC012: Verify user tacacsnobody, an unprvileged tacacs user, is denied access
     ${content}=  rest show version  string=version  user=tacacsnobody  password=clientclient  local=${false}
     Should not be true  ${content}
-    [Tags]  unprivileged-user  run
+    [Tags]  unprivileged-user  
 
 TC013: Restart process tacacs_plus on Master and verify users can login
     restart process on controller  tacacs_plus  Master

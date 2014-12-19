@@ -578,7 +578,7 @@ TC053: Verify via cli filter-interface-group can have all alphanumeric names wit
     sleep  1             
     verify filter interface group name  filter1.2group  
     [Teardown]  delete interface group testcase configuration  filter1.2group  filter            
-    [Tags]  feature  runthis      
+    [Tags]  feature        
 
 TC054: Verify via cli delivery-interface-group can have all alphanumeric names with a .
     clean configuration 
