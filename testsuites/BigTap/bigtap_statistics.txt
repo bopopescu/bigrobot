@@ -1680,7 +1680,7 @@ TC017: Verify switch interface statistics on controller, with an overlapping pol
     Should be true  ${in_range}
     ${in_range}=            ixia verify traffic rate                ${s2_dintf_value2}          ${tx_value_2}             rangev=10
     Should be true  ${in_range}   
-    [Tags]  switch-stats  multi-switch  multi-policy  overlap  runthis
+    [Tags]  switch-stats  multi-switch  multi-policy  overlap  
     
 
                                                       

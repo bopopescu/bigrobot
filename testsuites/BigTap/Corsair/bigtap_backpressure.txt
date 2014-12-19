@@ -80,7 +80,7 @@ TC002: Trident2: Verify if filter traffic is more than 1G then drop is seen only
     ${in_range_2}=  ixia verify traffic rate  ${tx_10g_1}  ${rx10g_conv}  500
     Should be true  ${in_range_2}
     stop traffic  ${stream} 
-    [Tags]  feature  t2  halit
+    [Tags]  feature  t2
 
 TC003: Trident2: With two policies, verify if filter traffic is more than 1G then drop is seen only on 1G interface
     ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}

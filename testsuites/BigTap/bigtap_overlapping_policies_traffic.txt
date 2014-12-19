@@ -174,7 +174,7 @@ TC011: Add multiple filter interfaces (different filter switches) to both polici
     stop traffic  ${stream}    
     verify results  a  c  transmitted_frames  received_valid_frames
     verify results  a  d  transmitted_frames  received_valid_frames
-    [Tags]  feature  l2  run
+    [Tags]  feature  l2  
      
 TC012: Delete match condition in P1 and verify overlap goes away
     rest delete policy match  admin-view  ${policy_name_1}   1
@@ -325,7 +325,7 @@ TC016: Add vlan re-write to one policy and verify overlap goes away
     stop traffic  ${stream_new}    
     verify results  a  c  transmitted_frames  received_valid_frames     
     verify results  a  d  transmitted_frames  received_valid_frames    
-    [Tags]  feature  vlan  runthis
+    [Tags]  feature  vlan  
     
 TC017: Add vlan re-write to both policies and verify overlap stays
     rest add vlan rewrite  admin-view  ${policy_name_1}   200
@@ -352,7 +352,7 @@ TC017: Add vlan re-write to both policies and verify overlap stays
     stop traffic  ${stream}    
     verify results  a  c  transmitted_frames  received_valid_frames     
     verify results  a  d  transmitted_frames  received_valid_frames              
-    [Tags]  feature  vlan  runthis
+    [Tags]  feature  vlan  
 
     
 TC018: Add a service to P1 and verify overlap policy stays
@@ -777,7 +777,7 @@ TC039: Execute HA Failover and verify overlapping policies still exist
     verify results  a  d  transmitted_frames  received_valid_frames      
     rest execute ha failover
     sleep  90
-    verify overlapping policies   
+    verify overlapping policies
     clear stats    
     start traffic  ${stream}
     sleep  10        

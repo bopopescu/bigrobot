@@ -64,7 +64,7 @@ T1.3 Address group IPv4/IPv6
   	Apply ipv6 address group to policy   IPv46_ADD     "IPV6_10"  200  ${sw1}    80
     Ipv46 address group policy negative         IPv46_ADD     "IPV4_10"    "IPV6_10"   500
  
-	[Tags] 	feature    address_group   BigTap   blackbird  run     
+	[Tags] 	feature    address_group   BigTap   blackbird       
 
  
 T1.4 Address group IPV4 match options  

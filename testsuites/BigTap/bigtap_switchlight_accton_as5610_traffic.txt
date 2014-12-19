@@ -419,7 +419,7 @@ TC28: Verify L3 IPv6 traffic on Accton AS5610: frame size 9150 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs9150  ipv6  run
+    [Tags]  l3  as5610  fs9150  ipv6  
     
 #### L3 Vlan Tagged Traffic : Frame Size 1518 Bytes
 
@@ -434,7 +434,7 @@ TC29: Verify L3 vlan tagged traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  vlantagged  run
+    [Tags]  l3  as5610  vlantagged  
         
 TC30: Verify L3 IPv6 traffic on Accton AS5610: frame size 1518 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -447,7 +447,7 @@ TC30: Verify L3 IPv6 traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  vlantagged  ipv6  run
+    [Tags]  l3  as5610  vlantagged  ipv6  
     
     
 ## Negative Tests

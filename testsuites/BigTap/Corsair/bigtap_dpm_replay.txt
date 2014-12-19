@@ -67,7 +67,7 @@ TC3:Send GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  10
     verify packet count 
-    [Tags]  gre  sandip
+    [Tags]  gre
 
 TC4:Send GRE within GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  60
