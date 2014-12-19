@@ -1,0 +1,550 @@
+* Settings
+Documentation     switch-platform Platform Test suite- Iron Horse
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
+Force Tags        T5  IronHorse
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py   
+Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
+Library         String
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+
+
+*Variables
+${switchlight_version}  SwitchLight
+${j}    1
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf0-b
+${switch7_name}=  spine0
+${tenant}=        testTenant 
+${vns}=           v1
+${vlan}=          -1
+${intf_1}=        ethernet1
+${intf_2}=        ethernet2
+${intf_3}=        ethernet3
+${intf_4}=        ethernet4
+${leafmodel}=     AS5710
+${spinemodel}=    AS6700
+${intf_6}=        ethernet45
+${intf_7}=        ethernet46
+${intf_8}=        ethernet47
+${intf_9}=        ethernet48
+${PSU1}=            PSU1
+${PSU2}=            PSU2
+${PSUnotup}=        PSU1
+
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5
+${software_version_string}=  Software Image Version: Switch Light
+${default_password}=  adminadmin
+${default_user}=  admin
+
+
+
+*Test Case
+
+Config the switch and controller as setup 
+    Log    Step 1 - Configure the base set up according to topology
+    T5 switch platform test setup
+    [Tags]  switch-platform  setup  feature  skipped     
+
+#Verify ONIE Installed on Switch
+#	Log     Step 1 - verify ONIE installed in switch
+#	verify onie installed on switch  s1
+#	verify onie installed on switch  s2
+#	verify onie installed on switch  s7
+#	[Tags]  switch-platform  install  onie  feature  
+            
+Verify the openflow aux channel count on Switch
+	Log    Step 1 - Get the OF aux channel number
+	verify openflow aux channel  s1  c1
+	verify openflow aux channel  s2  c1  
+	verify openflow aux channel  s7  c1  
+    [Tags]  switch-platform  ofaux  feature         
+
+    
+### SECTION B: Initial Configuration 
+
+Verify controller can be configured on Leaf and can be shown as connected
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
+    [Tags]  switch-platform  InitialConfig  feature    
+
+Verify controller can be modified on Leaf and verified as connected
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    delete existing controllers  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    [Tags]  switch-platform  InitialConfig  feature  
+
+Verify multiple controllers can be configured on Leaf and showed as connected
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2    
+    [Tags]  switch-platform  InitialConfig  feature   
+
+Verify Controller IP address is pingable for both the controllers 
+    ping remote  c1
+    ping remote  c2
+    [Tags]  switch-platform  InitialConfig  feature  
+
+#Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30
+#    cli ping from switch  s1  bigswitch.com
+#    [Tags]  switch-platform  InitialConfig  dns  feature        
+
+#Verify DNS server and DNS domain can be deleted and added
+#   [Tags]  switch-platform  InitialConfig  dns  feature 
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30
+#    cli ping from switch  s1  bigswitch.com
+#    deconfigure dns domain  s1  ${dns_server}  ${dns_domain}
+#    Sleep  30 
+#    cli execute command  s1  show running-config
+#    verify ping fail from switch  s1  bigswitch.com
+#    configure dns domain  s1  ${dns_server}  ${dns_domain}
+#   Sleep  30
+#    cli ping from switch  s1  bigswitch.com
+
+Verify ntp configuration on spine
+    configure ntp server  s7  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s7  time-c.nist.gov
+    delete ntp  s1  time-c.nist.gov
+    [Tags]  switch-platform  ntp  feature     
+
+Verify ntp server on spine after process ntp restart
+    configure ntp server  s1  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov
+    bash restart process  s1  ntpd
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov    
+    [Tags]  switch-platform  ntp  feature
+
+Verify ntp configuration on leaf
+    configure ntp server  s2  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s2  time-c.nist.gov
+    delete ntp  s2  time-c.nist.gov
+    [Tags]  switch-platform  ntp  feature     
+
+Verify ntp server on leaf after process ntp restart
+    configure ntp server  s2  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s2  time-c.nist.gov
+    bash restart process  s2  ntpd
+    Sleep  5
+    verify ntp server  s2  time-c.nist.gov    
+    [Tags]  switch-platform  ntp  feature
+
+#Verify the default gateway configuration can be deleted and added
+#    delete static ip  s1  ${netmask}  ${gateway}
+#    add static ip  s1  ${netmask}  ${gateway1}
+#    delete static ip  s1  ${netmask}  ${gateway1}
+#    add static ip  s1  ${netmask}  ${gateway}
+#    ping from switch  s1  ${gateway}  
+#    [Tags]  switch-platform  InitialConfig  feature  
+   
+### Section C : Admin/User Authentication     
+### Section D: System Admin Operation
+
+Verify all interfaces show up (in show o/p from CLI)
+    verify interfaces  s1
+    [Tags]  switch-platform  Interface  feature    
+    
+Shutdown and no shut 10G interface on switch and verify interface state is down and up
+    shut interface  s1  ${interface10g}
+    Sleep  15
+    verify admin interface state  s1  ${interface10g}  True  admin down
+    unshut interface  s1  ${interface10g}
+    Sleep  15
+    verify interface state  s1  ${interface10g}  up
+    [Tags]  switch-platform  interface  feature             
+
+Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
+    shut interface  s1  ${interface1g}
+    Sleep  15
+    verify admin interface state  s1  ${interface1g}  True  admin down
+    unshut interface  s1  ${interface1g}
+    Sleep  15
+    verify interface state  s1  ${interface1g}  up
+    [Tags]  switch-platform  interface  feature  
+
+Verify model in Show version for leaf 
+    Log    Step 1 - Verify right model in Show version for leaf as AS5710
+    verify model in show version  s1  ${leafmodel} 
+    [Tags]  switch-platform  platform  feature  
+   
+Verify model in Show version for spine
+    Log    Step 1 - Verify right model in Show version for spine as AS6700
+    verify model in show version  s7  ${spinemodel} 
+    [Tags]  switch-platform  platform  feature  
+
+Verify switch interface 1g configuration on switch 
+    Log    Step 1 - Verify the 1G interface configuration on switch 
+    #configure 1g interface on switch  s1  ${interface1g}
+    verify 1g interface on switch  s1  ${interface1g}  1G    
+    [Tags]  switch-platform  interface  feature         
+
+verify the ofaux channel on controller  
+    verify ofaux channel on controller  c1  ${switch1_name}
+    [Tags]  switch-platform  ofaux  feature  
+
+#Verify the user password can have alphanumeric character 
+#    [Tags]  switch-platform  usermanagement  feature     
+#    verify user password update  s1  ${default_user}  ${default_password}  admin1234
+#    reset username password  s1  ${default_user}  ${new_password}
+
+#Verify the user password can have special characters !@#
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin!@#
+#    reset username password  s1  ${default_user}  ${new_password}  
+
+#Verify the user password can have special characters $%^ 
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin$%^
+#    reset username password  s1  ${default_user}  ${new_password}    
+
+#Verify the user password can have special characters &*(
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  admin&*(
+#    reset username password  s1  ${default_user}  ${new_password}    
+
+#Verify the user password can have small and big cap letters alphanuric and special aDmin12@#
+#    [Tags]  switch-platform  usermanagement  feature  
+#    verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
+#    reset username password  s1  ${default_user}  ${new_password}
+
+Verify the show environment psu output for Vin 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment psu  s1  none  ${PSU1}  2  Vin
+
+Verify the show environment psu output for Vout
+    [Tags]  switch-platform  environment  feature     
+    verify show environment psu  s1  none  ${PSU1}  2  Vout
+
+Verify the show environment psu output for Iin 
+    [Tags]  switch-platform  environment  feature    
+    verify show environment psu  s1  none  ${PSU1}  2  Iin
+
+Verify the show environment psu output for Iout 
+    [Tags]  switch-platform  environment  feature     
+    verify show environment psu  s1  none  ${PSU1}  2  Iout
+
+Verify the show environment psu output for Pout 
+    [Tags]  switch-platform  environment  feature    
+    verify show environment psu  s1  none  ${PSU1}  2  Pout
+
+Verify the show environment psu output for Pin 
+    [Tags]  switch-platform  environment  feature    
+    verify show environment psu  s1  none  ${PSU1}  2  Pin
+  
+Verify the show environment fan rpm in switch 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment fan status  s1  none  Fan  1  RPM 
+    verify show environment fan status  s1  none  Fan  2  RPM 
+    verify show environment fan status  s1  none  Fan  3  RPM
+    verify show environment fan status  s1  none  Fan  4  RPM
+    verify show environment fan status  s1  none  Fan  5  RPM
+
+Verify the show environment fan state in switch 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment fan status  s1  none  Fan  1  State
+    verify show environment fan status  s1  none  Fan  2  State
+    verify show environment fan status  s1  none  Fan  3  State
+    verify show environment fan status  s1  none  Fan  4  State
+    verify show environment fan status  s1  none  Fan  5  State 
+
+Verify the show environment fan status in switch 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment fan status  s1  none  Fan  1  Status
+    verify show environment fan status  s1  none  Fan  2  Status
+    verify show environment fan status  s1  none  Fan  3  Status
+    verify show environment fan status  s1  none  Fan  4  Status
+    verify show environment fan status  s1  none  Fan  5  Status
+    
+Verify the show environment fan airflow in switch 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment fan status  s1  none  Fan  1  Airflow
+    verify show environment fan status  s1  none  Fan  2  Airflow
+    verify show environment fan status  s1  none  Fan  3  Airflow
+    verify show environment fan status  s1  none  Fan  4  Airflow
+    verify show environment fan status  s1  none  Fan  5  Airflow
+
+Verify the show environment fan speed in switch 
+    [Tags]  switch-platform  environment  feature  
+    verify show environment fan status  s1  none  Fan  1  Speed
+    verify show environment fan status  s1  none  Fan  2  Speed
+    verify show environment fan status  s1  none  Fan  3  Speed
+    verify show environment fan status  s1  none  Fan  4  Speed
+    verify show environment fan status  s1  none  Fan  5  Speed
+
+Verify the show environment thermal Sensor Status in switch
+    [Tags]  switch-platform  environment  feature  
+    verify show environment thermal status  s1  none  thermal  1  Status      
+    verify show environment thermal status  s1  none  thermal  2  Status
+    verify show environment thermal status  s1  none  thermal  3  Status
+    verify show environment thermal status  s1  none  thermal  4  Status
+    verify show environment thermal status  s1  none  thermal  5  Status
+    
+Verify the show environment Thermal Sensor temperature in switch
+    [Tags]  switch-platform  environment  feature  
+    verify show environment thermal status  s1  none  thermal  1  Temperature
+    verify show environment thermal status  s1  none  thermal  2  Temperature
+    verify show environment thermal status  s1  none  thermal  3  Temperature
+    verify show environment thermal status  s1  none  thermal  4  Temperature
+    verify show environment thermal status  s1  none  thermal  5  Temperature
+                    
+#Test the DHCP configuration 
+#    [Tags]  switch-platform  dhcp  
+#    delete dhcp configuration  s1
+#    cli execute command  s1  "show running-config"
+#    #sleep 20 
+#    add dhcp configuration  s1
+#    cli execute command  s1  "show running-config"
+#    #sleep 20 
+
+#Verify switch output from controller 
+#    [Tags]  switch-platform  test2
+#    get switch output from controller  ${switch1_name}  model 
+    
+* Keywords
+
+T5 switch platform test setup
+   base suite setup
+   ${interface10g}=  get_switch_int_topo  s1  leaf0b_int0
+   Set Suite Variable		${interface10g}
+   ${interface1g}=   get_switch_int_topo  s1  ixia1_int0
+   Set Suite Variable		${interface1g}
+   
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch3_name}
+   #${swDpid2}=  rest return switch dpid from ip  s2
+   #rest add dpid  ${switch3_name}   ${swDpid2}
+   #rest add fabric role  ${switch3_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   #sleep  10
+                
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   base suite teardown
+   sleep  5     
+
+verify openflow aux channel  [Arguments]  ${switch}  ${cntrlr} 
+	${ofAux}=   cli return ofaux channel count  ${switch}  ${cntrlr} 
+	Should contain  ${ofAux}  3    
+
+verify ofaux channel on controller  [Arguments]  ${controller}  ${switch_alias}
+    ${retval1}=  cli return ofaux connection from alias  ${controller}  ${switch_alias}
+	Should be True  ${retval1}  
+	         
+verify onie installed on switch  [Arguments]  ${switch}    
+    ${result1}=  bash execute command  ${switch}  cat /proc/mtd
+#	${result1}=  bash  s1  cat /proc/mtd  
+    Should contain  ${result1['content']}  onie 
+    
+
+add interface to vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+        
+delete interface from vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+    
+delete existing controllers  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli delete controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+
+add openflow controller  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli add controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}    
+
+verify openflow controller  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli verify controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+ 
+ping remote  [Arguments]  ${remote}
+    ${ret_value_1}=  ping from local  ${remote}
+    Should Be True  ${ret_value_1}
+
+ping from switch  [Arguments]  ${switch}  ${remote} 
+    ${ret_value_1}=  cli ping from switch  ${switch}  ${remote}
+    Should Be True  ${ret_value_1}  
+
+configure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}  
+    ${ret_value_1}=  cli add dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+verify ping fail from switch  [Arguments]  ${switch}  ${remote} 
+    ${ret_value_1}=  cli ping from switch  ${switch}  ${remote}
+    Should Not Be True  ${ret_value_1}     
+
+deconfigure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli delete dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}  
+
+verify interfaces  [Arguments]  ${switch}
+    cli show all interfaces  ${switch}
+
+shut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli disable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}    
+
+verify interface state  [Arguments]  ${switch}  ${interface}  ${state}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}
+    Should Contain  ${ret_value_1}  ${state}  
+
+verify admin interface state  [Arguments]  ${switch}  ${interface}  ${admin_down}  ${state}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}  ${admin_down}
+    Should Contain  ${ret_value_1}  ${state}
+
+unshut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli enable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}
+
+delete static ip  [Arguments]  ${switch}  ${netmask}  ${gateway}
+    ${ret_value_1}=  cli delete static ip  ${switch}  ${netmask}  ${gateway}
+    Should Be True  ${ret_value_1}
+
+add static ip  [Arguments]  ${switch}  ${netmask}  ${gateway}
+    ${ret_value_1}=  cli add static ip  ${switch}  ${netmask}  ${gateway}
+    Should Be True  ${ret_value_1}
+
+delete dns  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli delete dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+    
+add dns  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli add dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+verify ip dns  [Arguments]  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}  
+    ${ret_value_1}=  cli verify ip dns  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+configure ntp server  [Arguments]  ${switch}  ${ntp_server}
+    ${ret_value_1}=  add ntp server  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+ 
+verify ntp server  [Arguments]  ${switch}  ${ntp_server}
+     ${ret_value_1}=  verify ntp  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+
+delete ntp  [Arguments]  ${switch}  ${ntp_server}
+    ${ret_value_1}=  delete ntp server  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+    
+verify model in show version  [Arguments]  ${switch}  ${model}
+    ${ret_value_1}=  cli t5 switch show version model  ${switch}  ${model} 
+    Should Be True  ${ret_value_1}
+    
+configure 1g interface on switch  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli t5 switch config interface 1g  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}
+
+verify 1g interface on switch  [Arguments]  ${switch}  ${interface}  ${speed}
+    ${ret_value_1}=  cli t5 switch verify interface speed  ${switch}  ${interface}  ${speed}
+    Should Be True  ${ret_value_1}
+
+deconfigure 1g interface on switch  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli t5 switch deconfig interface 1g  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}
+   
+change user password  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    ${ret_value_1}=  cli t5 switch change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    Should Be True  ${ret_value_1}
+
+verify user password update  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    ${ret_vlaue1}=  cli t5 switch verify password change  ${switch}  ${user}  ${updatepass}  ${software_version_string}              
+    Sleep  10
+    Set Global Variable  ${newpassword}  ${updatepass}
+    Should be True  ${ret_vlaue1}
+
+reset username password  [Arguments]  ${switch}  ${user}  ${newpassword}  
+    change user password  ${switch}  ${user}  ${newpassword}  ${default_password} 
+    ${ret_vlaue1}=  cli t5 switch verify password change  ${switch}  ${user}  ${default_password}  ${software_version_string}
+    Should Be True  ${ret_vlaue1}  
+
+verify show environment psu  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component} 
+    ${componentVal}=  cli t5 switch show environment psu  ${switch}  ${model}  ${element}  ${elementnum}  ${component}         
+    Should Be True  ${componentVal}
+
+verify show environment psu notup  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum} 
+    ${retValue1}=  cli t5 switch show environment psu  ${switch}  ${model}  ${element}  ${elementnum}         
+    Should Not Be True  ${retValue1}
+
+verify show environment fan status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
+    ${componentVal}=  cli t5 switch show environment fan  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
+    Should Be True  ${componentVal}
+
+verify show environment thermal status  [Arguments]  ${switch}  ${model}  ${element}  ${elementnum}  ${component}
+     ${componentVal}=  cli t5 switch show environment thermal  ${switch}  ${model}  ${element}  ${elementnum}  ${component}             
+    Should Be True  ${componentVal}
+
+delete dhcp configuration  [Arguments]  ${switch}            
+     ${retValue1}=  cli t5 switch delete dhcp ip  ${switch}
+     Should Be True  ${retValue1}     
+         
+add dhcp configuration  [Arguments]  ${switch}
+    ${retValue1}=  cli t5 switch add dhcp ip  ${switch}
+    Should Be True  ${retValue1}
+
+get switch output from controller  [Arguments]  ${switch}  ${field}
+    ${retvalue1}=  rest get switch output from controller  ${switch}  ${field}         
+    Should Be True  ${retValue1}   
+                
+    
