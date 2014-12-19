@@ -121,7 +121,7 @@ TC12 Verify interface shutdown for spine port 40G breakout cable sub interfaces 
     [Tags]  feature  T5
     Log     Step 1 - verify 40G port port shutdown and bring up 
     Log     Step 2 - Verify interface state shows admin shutdown
-    Manual Passed
+    Manual Failed
 
 TC13 Verify interface no shutdown for spine port 40G breakout cable sub interfaces one-by-one
     [Tags]  feature  T5
@@ -135,7 +135,7 @@ TC14 Verify interface shutdown for leaf switch port interface port shutdown
     [Tags]  manual
     Log     Step 1 - verify interface port down on leaf side - one 10G port
      Log    Step 2 - verify show interface status on spine port 
-    Manual Passed
+    Manual Failed
 
 TC15 Verify interface no shutdown for leaf switch port interface port shutdown
     [Tags]  feature  T5
