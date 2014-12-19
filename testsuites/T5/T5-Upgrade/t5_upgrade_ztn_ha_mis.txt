@@ -64,18 +64,18 @@ ${long}   30
 ${verylong}    90 
 ${upgradetime}    600 
 #${image}     bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/3545/archive/*.pkg
-${image}      bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.0.1/lastSuccessful/archive/controller-*.pkg
-${image1}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.0.1/lastSuccessful/archive/controller-*.pkg
-${image2}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.0.1/lastSuccessful/archive/controller-*.pkg
+${image}      bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image1}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image2}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
  
 ${qcowimage}   bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
 ${bigtapimage}   bsn@10.8.28.6:/home/bsn/controller-upgrade-bigtap-3.0.0-SNAPSHOT.pkg
 
 ${config}   scp://root@10.8.28.6:/home/mingtao/config_basic
-${h2ip}     20.20.20.24
-${h1ip}  	20.20.20.25
+${h2ip}     192.168.0.30
+${h1ip}  	192.168.0.31
 ${File}     script.log
-${vip}      10.8.28.20
+${vip}      10.9.16.55
  
 
 
