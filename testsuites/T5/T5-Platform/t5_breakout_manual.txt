@@ -457,40 +457,40 @@ TC64 Upgrade Controller Breakout cable auto detection case
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable auto detection case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Passed
+    Manual Failed
 
 TC65 Upgrade Controller Breakout cable forced configuration case 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable forced configuration case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Passed
+    Manual Failed
 
 TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to non-breakout cable
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in then while upgrade change to non-breakout cable 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Passed
+    Manual Failed
 
 TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable 
     [Tags]  feature  T5
     [Tags]  manual
     Log     Step 1 - while upgrade change from non-breakout cable to breakout cable  
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Passed
+    Manual Failed
 
 TC68 Breakout cable plugged-in upgrade the controller - supported software package to another one 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in upgrade the controller         
-    Manual Passed
+    Manual Failed 
 
 TC69 Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package 
     [Tags]  feature  T5
     [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
-    Manual Passed 
+    Manual Failed 
      
 #### Misconfiguration cable - two rack connections, loopback on leaf , Dell S6000 etc. 
 
