@@ -22,6 +22,11 @@ s1:
     ip: 10.1.8.201
     port: 7024
     protocol: telnet
+  interfaces:
+    spine0_int0: ethernet9
+    leaf0b_int0: ethernet2
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet23
   pdu:
     ip: pdu-313-a.bigswitch.com
     port: 1
@@ -33,6 +38,11 @@ s2:
   mac: ec:f4:bb:fb:d1:f6
   user: admin
   password: adminadmin
+  interfaces:
+    leaf0a_int0: ethernet2
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet16
+    spine1_int0: ethernet9
   console:
     ip: 10.1.8.201
     port: 7023
@@ -47,6 +57,12 @@ s3:
   mac: 70:72:CF:AE:B7:BA
   user: admin
   password: adminadmin
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet21
+    leaf1b_int0: ethernet11
+    leaf1b_int1: ethernet25
+    spine0_int0: ethernet5
   console:
     ip: 10.1.8.201
     port: 7003
@@ -70,6 +86,10 @@ s4:
     port: 12
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet11
+    spine1_int0: ethernet6
 
 s5:
   alias: leaf2-a
@@ -85,6 +105,11 @@ s5:
     port: 5
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    leaf2b_int0: ethernet15
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet19
+    spine1_int0: ethernet25
 
 s6:
   alias: leaf2-b
@@ -100,6 +125,10 @@ s6:
     port: 6
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet29
+    spine1_int0: ethernet24
     
 s7:
   alias: spine0
@@ -115,6 +144,13 @@ s7:
     port: 3
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    leaf0a_int0: ethernet9
+    leaf1a_int0: ethernet5
+    leaf0b_int0: ethernet21
+    leaf1b_int0: ethernet29
+    leaf2a_int0: ethernet17
+    leaf2b_int0: ethernet25
 
 s8:
   alias: spine1
@@ -130,3 +166,10 @@ s8:
     port: 4
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf0b_int0: ethernet19
+    leaf1a_int0: ethernet9
+    leaf1b_int0: ethernet8
+    leaf2a_int0: ethernet12
+    leaf2b_int0: ethernet24
