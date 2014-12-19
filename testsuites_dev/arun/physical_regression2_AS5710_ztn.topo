@@ -1,0 +1,143 @@
+c1:
+ ip: 10.9.16.46
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_ztn-c1_06251549
+   user: root
+   password: bsn
+c2:
+ ip: 10.9.16.47
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_snt-c2_06251553
+   user: root
+   password: bsn
+   
+s1:
+#  ip: 10.195.0.21
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:CF:C7:C3:F3
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7017
+  pdu:
+    ip: pdu-313-a
+    port: 14
+    user: apc
+    password: apc
+  interfaces:
+    leaf0a_int0: ethernet41
+    leaf1a_int0: ethernet2
+    leaf0b_int0: ethernet16
+    leaf1b_int0: ethernet32
+    leaf2a_int0: ethernet23
+    leaf2b_int0: ethernet11
+  set_session_ssh: false
+  set_init_ping: false
+  
+s2:
+#  ip: 10.195.0.33
+  alias: leaf0-a
+  fabric-role: leaf
+  leaf-group: rack0
+  mac: 70:72:cf:c6:fc:eb
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7017
+    protocol: telnet
+  pdu:
+    ip: pdu-314-a
+    port: 2
+    user: apc
+    password: apc
+  interfaces:
+    spine0_int0: ethernet34
+    leaf0b_int0: ethernet39
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet33
+  set_session_ssh: false
+  set_init_ping: false
+  
+s3:
+#  ip: 10.195.0.34
+  alias: leaf0-b
+  fabric-role: leaf
+  leaf-group: rack0
+  mac: 70:72:cf:c7:cc:9f
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7018
+  pdu:
+    ip: pdu-314-a
+    port: 3
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet34
+    spine1_int0: ethernet33
+    leaf0a_int0: ethernet39
+  set_session_ssh: false
+  set_init_ping: false
+  
+s4:
+#  ip: 10.195.0.35
+  alias: leaf1-a
+  fabric-role: leaf
+  leaf-group: rack1
+  mac: 70:72:cf:c6:fb:2f
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7019
+  pdu:
+    ip: pdu-314-a
+    port: 4
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet33
+    leaf1b_int0: ethernet40
+    leaf1b_int1: ethernet39
+    spine0_int0: ethernet34
+  set_session_ssh: false
+  set_init_ping: false
+
+s5:
+#  ip: 10.195.0.22
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:CF:C7:C4:D1
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7018
+  pdu:
+    ip: pdu-313-a
+    port: 15
+    user: apc
+    password: apc
+  interfaces:
+    leaf0a_int0: ethernet2
+    leaf0b_int0: ethernet23
+    leaf1a_int0: ethernet32
+    leaf1b_int0: ethernet16
+    leaf2a_int0: ethernet41
+    leaf2b_int0: ethernet9
+  set_session_ssh: false
+  set_init_ping: false
+

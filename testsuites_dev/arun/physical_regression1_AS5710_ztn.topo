@@ -1,17 +1,22 @@
-# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
-#
-# c<n>: Controllers
-# s<n>: Switches
-# h<n>: Hosts (including bare metal)
-# mn  : Mininet server
-
 c1:
-  ip: 10.9.16.48
-  monitor_reauth: false
+ ip: 10.9.16.44
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_ztn-c1_06251549
+   user: root
+   password: bsn
 c2:
-  ip: 10.9.16.49
-  monitor_reauth: false
-
+ ip: 10.9.16.45
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_snt-c2_06251553
+   user: root
+   password: bsn
+   
 s1:
 #  ip: 10.195.0.21
   alias: spine0
@@ -34,6 +39,7 @@ s1:
     leaf2b_int0: ethernet44
   set_session_ssh: false
   set_init_ping: false
+  
 s2:
 #  ip: 10.195.0.33
   alias: leaf0-a
@@ -52,11 +58,12 @@ s2:
     password: apc
   interfaces:
     spine0_int0: ethernet32
-    leaf0b_int0: ethernet37
+    leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
     spine1_int0: ethernet31
   set_session_ssh: false
   set_init_ping: false
+
 s3:
 #  ip: 10.195.0.34
   alias: leaf0-b
@@ -78,6 +85,7 @@ s3:
     spine1_int0: ethernet31
   set_session_ssh: false
   set_init_ping: false
+
 s4:
 #  ip: 10.195.0.35
   alias: leaf1-a
@@ -101,6 +109,7 @@ s4:
     spine0_int0: ethernet32
   set_session_ssh: false
   set_init_ping: false
+
 s5:
 #  ip: 10.195.0.22
   alias: spine1
@@ -123,3 +132,6 @@ s5:
     leaf2b_int0: ethernet33
   set_session_ssh: false
   set_init_ping: false
+
+
+
