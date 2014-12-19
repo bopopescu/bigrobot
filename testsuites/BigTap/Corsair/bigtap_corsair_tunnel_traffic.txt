@@ -1319,7 +1319,7 @@ TC044: AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L2  traffic  txrx        
+    [Tags]  feature  L2  traffic  txrx
 
 TC045: AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1349,7 +1349,7 @@ TC045: AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel in
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L2  traffic  txrx
+    [Tags]  feature  L2  traffic  txrx  
     
 TC046: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1677,7 +1677,7 @@ TC056: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
+    [Tags]  feature  L3  traffic  ipv4  txrx  
 
 
 TC057: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
@@ -1709,7 +1709,7 @@ TC057: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx
+    [Tags]  feature  L3  traffic  ipv4  txrx  
 
 TC058: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1737,7 +1737,7 @@ TC058: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx 
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
+    [Tags]  feature  L3  traffic  ipv6  txrx  
 
 
 TC059: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
@@ -1769,7 +1769,7 @@ TC059: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx
+    [Tags]  feature  L3  traffic  ipv6  txrx  
 
 TC060: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1797,7 +1797,7 @@ TC060: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
+    [Tags]  feature  L3  traffic  ipv4  txrx
 
 
 TC061: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface

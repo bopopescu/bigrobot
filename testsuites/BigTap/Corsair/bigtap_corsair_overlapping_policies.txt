@@ -1856,7 +1856,7 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
     reconnect switch to fabric  s4
     reconnect switch to fabric  s5
     reconnect switch to fabric  s6
-    [Tags]  multiple-switch  runthis
+    [Tags]  multiple-switch
                 
 * Keywords
 overlap suite setup
@@ -1866,7 +1866,7 @@ overlap suite setup
     ${full_match_enabled}=  rest enable feature  full-match
     Should be true  ${full_match_enabled}
     ${inport_disabled}=  rest disable feature  inport-mask
-    Should be true  ${inport_disabled}          
+    Should be true  ${inport_disabled}
     #Configure Switch 1
     ${result}=  rest add switch alias  s1  ${switch1_alias}
     Should be true  ${result}      
