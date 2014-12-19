@@ -1,0 +1,377 @@
+* Settings
+Documentation     switch-platform Platform Traffic Test suite- Iron Horse
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
+Test Teardown     traffic teardown
+Force Tags        T5  IronHorse
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py     
+Library         String
+Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+## Jumbo Frame traffic - 9220 in BigTap, 9216 in T5.
+
+*Variables
+
+${j}    1
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf1-a
+${switch7_name}=  spine0
+
+${tenant}=        testTenant 
+${vns1}=           v1
+${vns2}=           v2
+${ip1}=            10.200.0.1
+${ip2}=            10.200.16.1
+${mask1}=           24
+${mask2}=           24
+${vlan}=          -1
+${intf_1}=        ethernet24
+${intf_2}=        ethernet24
+${src_mac}=       00:11:01:00:00:01
+${dst_mac}=       00:12:01:00:00:02
+
+${leaf1_spine0_intf1}=  ethernet49
+${spine0_leaf1_intf1}=  ethernet21
+${leaf2_spine0_intf1}=  ethernet49
+${spine0_leaf2_intf1}=  ethernet22
+
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5
+
+ 
+
+*Test Case
+
+###
+### Section I : Traffic Test Verification
+### Traffic forwarding Sample L3- 
+### Uni-Directional Framerate 10K per sec , pkt size 64, 256, 512, 1024, 1518
+### Line rate 10% [ pkt size 64] , 25% [ pkt size 256],  50% [ pkt size 512] , 
+### Line rate 75% [pkt size 1518 ] , 100% [pkt size 1518 ]
+### Jumbo Frame size 9216 line rate 50% , line rate 100% 
+### 
+
+T5 L3 Traffic set up 
+    T5 switch platform test setup
+    [Tags]  setup  feature  skipped  
+
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=64   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+        
+    [Tags]  switch-platform  L3  traffic  feature             
+
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=256   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+        
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=512   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}   
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1024 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=1024   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 1518 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=1518   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=10  frame_size=64   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature   
+
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 64 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=64   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L3  traffic  feature
+
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 256 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=256   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature
+
+Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=512   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}  
+    [Tags]  switch-platform  L3  traffic  feature
+
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256 
+	ixia initialize  tg1  init=True
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=25  frame_size=256   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature
+
+
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=50  frame_size=512   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature
+
+
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 75% pktsize 1024 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=75  frame_size=1024   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature
+
+
+Bi-Directional L3 Traffic flow=a<->c traffic linerate 100% pktsize 1518 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=100  frame_size=1518   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature
+
+Uni-Directional L3 Traffic Jumbo flow=a->c traffic framerate 10000 pktsize 9216 
+	ixia initialize  tg1  init=True
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  switch-platform  L3  traffic  feature
+ 
+Uni-Directional L3 Traffic Jumbo flow=a->c traffic linerate 10% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=10  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  switch-platform  L3  traffic  feature
+
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 25% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=25  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 50% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=50  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature  
+
+Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216 
+    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=100  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  switch-platform  L3  traffic  feature 
+
+#Process restart L3 Traffic linerate 100% pktsize 1518
+#    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
+#    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+#   ...                 line_rate=100  frame_size=1518   
+#   clear stats
+#    start traffic  ${stream}
+#    sleep          10
+#    ${report}=     fetch port stats
+#    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+#    restart process on switch  s1  ntpd
+#    sleep    20
+#    ${report}=     fetch port stats
+#    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+#    stop traffic   ${stream}     
+#    [Tags]  switch-platform  L3  traffic  feature  test1
+
+
+* Keywords
+      
+T5 switch platform test setup
+   base suite setup
+   #rest add switch  ${switch1_name}
+   #${swDpid1}=  rest return switch dpid from ip  s1
+   #rest add dpid  ${switch1_name}   ${swDpid1}
+   #rest add fabric role  ${switch1_name}  leaf
+   #sleep  2   
+   #rest add switch  ${switch2_name}
+   #${swDpid2}=  rest return switch dpid from ip  s2
+   #rest add dpid  ${switch2_name}   ${swDpid2}
+   #rest add fabric role  ${switch2_name}  leaf
+   #sleep  2
+   #rest add switch  ${switch7_name}
+   #${swDpid7}=  rest return switch dpid from ip  s7
+   #rest add dpid  ${switch7_name}   ${swDpid7}
+   #rest add fabric role  ${switch7_name}  spine
+   #sleep  2   
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns1}
+   rest add vns  ${tenant}  ${vns2}  
+   rest add router intf  ${tenant}  ${vns1}
+   sleep  2
+   rest add router intf  ${tenant}  ${vns2} 
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+   sleep  2
+   rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+   sleep  2 
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${intf_1}  ${vlan} 
+   sleep  2   
+   rest add interface to vns  ${tenant}  ${vns2}  ${switch3_name}  ${intf_2}  ${vlan}
+   sleep  2
+   
+                
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   #rest delete fabric switch  ${switch1_name} 
+   #rest delete fabric switch  ${switch3_name}
+   #rest delete fabric switch  ${switch7_name}
+   #base suite teardown
+   sleep  5   
+
+traffic teardown
+    delete traffic
+
+verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range} 
+
+verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+
+restart process on switch  [Arguments]  ${switch}  ${process}
+    ${retvalue1} =  bash restart process  ${switch}  ${process}
+    Should Be True  ${retvalue1}
+    
+    
+     
+  

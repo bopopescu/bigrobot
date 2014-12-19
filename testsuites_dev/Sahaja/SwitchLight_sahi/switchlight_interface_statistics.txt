@@ -1,0 +1,251 @@
+*Settings
+Documentation  BigTap Rewrite Vlan Test Suite
+Suite Setup  bigtap suite setup
+Suite Teardown   base suite teardown
+Test Setup   bigtap test setup
+Test Teardown  bigtap test teardown 
+Force Tags  BigTap  SwitchLight
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+Library  Collections.py
+
+* Variable
+${switchlight_version}  SwitchLight 2.0.2
+${switch_1_alias}   APP-RLB9-1
+${switch_2_alias}   APP-RLB9-2
+${switch_3_alias}   APP-RLY2-5
+
+${lag_s1_name_1}  port-channel1
+${lag_s1_port_range_1}  49-50
+${lag_s1_name_2}  port-channel2
+${lag_s1_port_range_2}  51-52
+
+
+${lag_s2_name_1}  port-channel1
+${lag_s2_port_range_1}  49-50
+${lag_s2_name_2}  port-channel2
+${lag_s2_port_range_2}  51-52
+${lag_s2_name_3}  port-channel3
+${lag_s2_port_range_3}  13-20
+
+${lag_s3_name_1}  port-channel1
+${lag_s3_port_range_1}  5-6
+${lag_s3_name_2}  port-channel2
+${lag_s3_port_range_2}  7-8
+
+${policy_name_1}    POLICY1
+${policy_name_2}    POLICY2
+${policy_name_3}    POLICY3
+
+${vlan_rewrite_1}   1000
+${vlan_rewrite_2}   1001
+
+${filter_1}  ethernet1  
+${filter_1_nick}  STATS-F1
+${filter_2}  ethernet1  
+${filter_2_nick}  STATS-F2
+${filter_3}  ethernet1  
+${filter_3_nick}  STATS-F3
+
+${delivery_1}  ethernet2  
+${delivery_1_nick}  STATS-D1
+${delivery_2}  ethernet2  
+${delivery_2_nick}  STATS-D2
+${delivery_3}  ethernet2  
+${delivery_3_nick}  STATS-D3
+
+
+
+* Test Case
+
+Verify initial configuration
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+
+Verify all filter interface states are shown as up
+    verify interface state  s1  ${filter_1}  up
+    verify interface state  s2  ${filter_2}  up     
+
+Verify delivery interface state is up
+    verify interface state  s1  ${delivery_1}  up
+    verify interface state  s2  ${delivery_2}  up 
+
+Verify filter and delivery interfaces on LB9 show speed as 1G
+    verify interface speed  s1  ${filter_1}  1G
+    verify interface speed  s2  ${filter_2}  1G
+    verify interface speed  s1  ${delivery_1}  1G
+    verify interface speed  s2  ${delivery_2}  1G              
+
+With both filter and delivery on same switch (LB9), send 50K packets and verify TX and RX values
+    ${stream1}=  L3 add  flow=a->b  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3          
+    start traffic
+    sleep  5
+    stop traffic
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${myouput}=  cli return interface counter brief  s1  ${delivery_1}  tx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput}  rangev=10
+    Should be true  ${in_range}
+    ${rx_value}=  verify dict key  ${report}  a  transmitted_frames  
+    ${myouput1}=  cli return interface counter brief  s1  ${filter_1}  rx
+    ${in_range1}=  ixia verify traffic rate  ${rx_value}  ${myouput1}  rangev=10
+    Should be true  ${in_range1} 
+    [Tags]  portchannel  bigtap  lb9
+
+
+With both filter and delivery on same switch (LY2), send 50K packets and verify TX and RX values
+    ${stream1}=  L3 add  flow=e->f  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:13:01:01:01:01  dst_mac=00:13:01:01:01:02  no_arp=True
+    ...     src_ip=10.2.101.1  dst_ip=10.2.101.2  name=a_c_flow
+    clear stats
+    cli clear interface statistics  s3       
+    start traffic
+    sleep  5
+    stop traffic
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  f  received_valid_frames
+    ${myouput}=  cli return interface counter brief  s3  ${delivery_3}  tx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput}  rangev=10
+    Should be true  ${in_range}
+    ${rx_value}=  verify dict key  ${report}  e  transmitted_frames  
+    ${myouput1}=  cli return interface counter brief  s3  ${filter_3}  rx
+    ${in_range1}=  ixia verify traffic rate  ${rx_value}  ${myouput1}  rangev=10
+    Should be true  ${in_range1} 
+    [Tags]  portchannel  bigtap  ly2
+    
+With filter and delivery on LB9 switch and core as LY2, send 50K packets and verify TX and RX values
+    rest update policy action  admin-view  ${policy_name_1}  inactive
+    rest update policy action  admin-view  ${policy_name_2}  forward
+    sleep  5    
+    ${stream1}=  L3 add  flow=a->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:02:01:01:01  dst_mac=00:11:02:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=a_c_flow
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    cli clear interface statistics  s3    
+    start traffic
+    sleep  5
+    stop traffic
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames  
+    ${myouput0}=  cli return interface counter brief  s1  ${filter_1}  rx
+    ${in_range1}=  ixia verify traffic rate  ${tx_value}  ${myouput0}  rangev=10
+    Should be true  ${in_range1}
+    ${myouput1}=  cli return interface counter brief  s1  ${lag_s1_name_2}  tx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput1}  rangev=10
+    Should be true  ${in_range}
+    ${myouput2}=  cli return interface counter brief  s3  ${lag_s3_name_1}  rx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput2}  rangev=10
+    Should be true  ${in_range}
+    ${myouput3}=  cli return interface counter brief  s3  ${lag_s3_name_2}  tx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput2}  rangev=10
+    Should be true  ${in_range}    
+    ${myouput4}=  cli return interface counter brief  s3  ${lag_s2_name_1}  rx
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput4}  rangev=10
+    Should be true  ${in_range}
+    ${rx_value}=  verify dict key  ${report}  d  received_valid_frames
+    ${myouput}=  cli return interface counter brief  s2  ${delivery_2}  tx
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  ${myouput}  rangev=10
+    Should be true  ${in_range}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput}  rangev=10
+    Should be true  ${in_range}
+    [Tags]  portchannel  bigtap  lb9ly2
+* Keywords
+
+bigtap suite setup
+    base suite setup
+    cli add portchannel  s1  ${lag_s1_name_1}  ${lag_s1_port_range_1}  L2
+    cli add portchannel  s1  ${lag_s1_name_2}  ${lag_s1_port_range_2}  L2
+    cli add portchannel  s2  ${lag_s2_name_1}  ${lag_s2_port_range_1}  L2
+    cli add portchannel  s2  ${lag_s2_name_2}  ${lag_s2_port_range_2}  L2
+    cli add portchannel  s2  ${lag_s2_name_3}  ${lag_s2_port_range_3}  L2
+    cli add portchannel  s3  ${lag_s3_name_1}  ${lag_s3_port_range_1}  L2
+    cli add portchannel  s3  ${lag_s3_name_2}  ${lag_s3_port_range_2}  L2                        
+    rest add switch alias  s1  ${switch_1_alias}
+    rest add switch alias  s2  ${switch_2_alias}
+    rest add switch alias  s3  ${switch_3_alias}       
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest add interface role  s2  ${filter_2}  filter  ${filter_2_nick}
+    rest add interface role  s2  ${delivery_2}  delivery  ${delivery_2_nick}           
+    rest add interface role  s3  ${filter_3}  filter  ${filter_3_nick}
+    rest add interface role  s3  ${delivery_3}  delivery  ${delivery_3_nick}           
+    
+    rest add policy  admin-view  ${policy_name_1}  policy_action=forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_1_nick}  delivery 
+    
+    rest add policy  admin-view  ${policy_name_2}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_2_nick}  delivery
+
+    rest add policy  admin-view  ${policy_name_3}
+    rest add policy match  admin-view  ${policy_name_3}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_3}  ${filter_3_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_3}  ${delivery_3_nick}  delivery
+    
+    cli disable interface  s1  ${lag_s1_name_1}
+    cli disable interface  s2  ${lag_s2_name_2}
+    cli disable interface  s2  ${lag_s2_name_3}
+    cli disable interface  s1  ethernet45
+    cli disable interface  s2  ethernet46                    
+    Sleep  5        
+
+verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}  
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${tx}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${rx}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
+    Should be true  ${in_range} 
+
+bigtap test setup
+    delete traffic
+
+bigtap test teardown
+    delete traffic
+
+verify interface state  [Arguments]  ${switch}  ${interface}  ${state}
+    ${ret_value_1}=  cli return interface counter brief  s1  ${filter_1}  state
+    Should Be Equal As Strings  ${ret_value_1}  ${state}
+    ${ret_value_2}=  cli show interface state  ${switch}  ${interface}
+    Should Contain  ${ret_value_2}  ${state}  
+
+verify interface speed  [Arguments]  ${switch}  ${interface}  ${speed}
+    ${myouput}=  cli return interface counter brief  ${switch}  ${interface}  speed
+    Should Be Equal As Strings  ${myouput}  ${speed}
+
+bigtap suite teardown
+    cli enable interface  s1  ${lag_s1_name_1}
+    cli enable interface  s2  ${lag_s2_name_2}
+    cli enable interface  s2  ${lag_s2_name_3}
+    cli enable interface  s1  ethernet45
+    cli enable interface  s2  ethernet46      
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete policy  admin-view   ${policy_name_2}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s2  ${filter_2}  filter  ${filter_2_nick} 
+    rest delete interface role  s1  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface role  s2  ${delivery_2}  delivery  ${delivery_2_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}
+    rest delete interface  s2  ${filter_2}  switch_alias=${switch_1_alias}    
+    rest delete interface  s1  ${delivery_1}  switch_alias=${switch_2_alias}
+    rest delete interface  s2  ${delivery_2}  switch_alias=${switch_2_alias}    
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3    
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3    
+    base suite teardown
