@@ -408,49 +408,49 @@ TC56 Breakout cable plugged-in reboot the switch and change the cable to regular
 
 TC57 Breakout cable plugged-in failover the controller with traffic  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller with traffic         
-    Manual untested
+    Manual Passed
  
 TC58 Controller Failover- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller         
-    Manual untested
+    Manual Passed
 
 TC59 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in reboot active controller         
-    Manual untested
+    Manual Passed
     
 TC60 Controller Failover- Breakout cable plugged-in taken out and later plugged in non-breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
-    Manual untested
+    Manual Passed
 
 TC61 Controller Failover- Non-Breakout cable pluggedin taken out and plugged in breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
-    Manual untested  
+    Manual Passed  
      
 TC62 Active Controller reboot- Non-Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Non-Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to breakout cable             
-    Manual untested
+    Manual Passed
 
 TC63 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to non breakout cable             
-    Manual untested
+    Manual Passed
     
 TC64 Upgrade Controller Breakout cable auto detection case 
     [Tags]  feature  T5
@@ -552,9 +552,9 @@ TC78 verify the server host side static Lag
     Manual Passed 
  
 TC79 verify the server host side LLDP 
-    [Tags]  feature  T5
+    [Tags]  feature  T5  skipped 
     [Tags]  manual-untested
-    Log     Step 1 - verify the server host side LLDP     
+    Log     Step 1 - verify the server host side LLDP  , Only supported with Openstack     
     Manual untested
 
 TC80 verify the server host side STP 
