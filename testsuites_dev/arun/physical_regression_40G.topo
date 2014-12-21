@@ -141,7 +141,7 @@ s7:
     port: 7007
   pdu:
     ip: pdu-313-a.bigswitch.com
-    port: 3
+    port: 4
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -162,8 +162,8 @@ s8:
     ip: 10.1.8.201
     port: 7008
   pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 4
+    ip: pdu-313-a.bigswitch.com
+    port: 3
   set_session_ssh: false
   set_init_ping: false
   interfaces:
