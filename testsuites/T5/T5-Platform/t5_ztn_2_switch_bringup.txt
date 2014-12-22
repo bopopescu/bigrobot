@@ -84,7 +84,7 @@ T2.1.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s5_alias} reboot factory-default
 	Wait Until All Switches Connected
-	Telnet Wait For Switch To Reload  s5
+	sleep  30
 	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
 	Verify Switch In Provisioned Mode  ${s5_alias}
