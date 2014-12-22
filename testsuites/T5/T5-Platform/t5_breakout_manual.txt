@@ -511,15 +511,15 @@ TC71 Breakout cable plugged-in loopback on leaf
 
 TC72 Verify SPAN configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN configuration for breakout cable - Ingress         
-    Manual untested   
+    Manual Passed   
 
 TC73 Verify SPAN configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN configuration for breakout cable - Egress         
-    Manual untested 
+    Manual Passed 
 
 TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress  
     [Tags]  feature  T5
@@ -529,21 +529,21 @@ TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress
 
 TC75 Verify ACL configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify ACL configuration for breakout cable - Ingress permit deny          
-    Manual untested   
+    Manual Passed   
 
 TC76 Verify ACL configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify ACL configuration for breakout cable Egress permit deny       
-    Manual untested 
+    Manual Passed 
  
 TC77 verify the server host side LACP 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - verify the server host side LACP     
-    Manual untested 
+    Manual Passed 
     
 TC78 verify the server host side static Lag
     [Tags]  feature  T5
@@ -553,7 +553,7 @@ TC78 verify the server host side static Lag
  
 TC79 verify the server host side LLDP 
     [Tags]  feature  T5  skipped 
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - verify the server host side LLDP  , Only supported with Openstack     
     Manual untested
 
