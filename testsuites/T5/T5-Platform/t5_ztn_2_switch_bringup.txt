@@ -58,7 +58,7 @@ T2.1.1. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  system reinstall switch ${s1_alias} reboot factory-default
 	Sleep  10
 	Cli Run  master  switch ${s1_alias}; no fabric-role spine
-	Sleep  100
+	Sleep  165
 	Telnet Wait For Switch To Reload  s1
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
@@ -83,7 +83,7 @@ T2.1.2. Verify that switch is successfully provisioned when no fabric role for t
 T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s5_alias} reboot factory-default
-	Sleep  100
+	Wait Until All Switches Connected
 	Telnet Wait For Switch To Reload  s5
 	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
