@@ -394,14 +394,14 @@ Wait Until All Switches Connected
     Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Connected
 
 Wait Until All Switches Connected And Return Status
-    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Connected
     [Return]  ${status}
 
 Wait Until All Switches Disconnected
     Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Disconnected
 
 Wait Until All Switches Disconnected And Return Status
-    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Disconnected
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Disconnected
     [Return]  ${status}
 
 Wait Until Switch Connected

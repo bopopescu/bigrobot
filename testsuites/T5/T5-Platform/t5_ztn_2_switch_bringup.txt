@@ -57,7 +57,9 @@ T2.1.1. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s1_alias} reboot factory-default
 	Cli Run  master  switch ${s1_alias}; no fabric-role spine
-	Wait Until Switch Reconnected  ${s1_alias}
+    Wait Until Switch Disconnected  ${s1_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Connection State  True  ${s1_alias}
@@ -69,7 +71,9 @@ T2.1.2. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  system reinstall switch ${s2_alias} reboot factory-default
 	Cli Run  master  switch ${s2_alias}; no leaf-group rack0; no fabric-role leaf
 	Cli Run  master  shutdown
-    Wait Until Switch Reconnected  ${s2_alias}
+    Wait Until Switch Disconnected  ${s2_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Connection State  True  ${s2_alias}
@@ -79,7 +83,9 @@ T2.1.2. Verify that switch is successfully provisioned when no fabric role for t
 T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s5_alias} reboot factory-default
-    Wait Until Switch Reconnected  ${s5_alias}
+    Wait Until Switch Disconnected  ${s5_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s5_alias}
 	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
 	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
 	Verify Switch In Provisioned Mode  ${s5_alias}
@@ -88,7 +94,9 @@ T2.1.4. Verify that switch is successfully provisioned and no flows for given sp
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s1_alias} reboot factory-default
 	Cli Run  master  switch ${s1_alias}; shutdown
-    Wait Until Switch Reconnected  ${s1_alias}
+    Wait Until Switch Disconnected  ${s1_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Connection State  True  ${s1_alias}
@@ -98,7 +106,9 @@ T2.1.4. Verify that switch is successfully provisioned and no flows for given sp
 T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
 	Cli Run  master  enable; config
 	Cli Run  master  system reinstall switch ${s3_alias} reboot factory-default
-    Wait Until Switch Reconnected  ${s3_alias}
+    Wait Until Switch Disconnected  ${s3_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch In Provisioned Mode  ${s3_alias}
@@ -108,7 +118,9 @@ T2.1.6. Verify that switch is successfully provisioned and no flows for given le
 	Cli Run  master  system reinstall switch ${s4_alias} reboot factory-default
 	Sleep  10
 	Cli Run  master  switch ${s4_alias}; shutdown
-    Wait Until Switch Reconnected  ${s4_alias}
+    Wait Until Switch Disconnected  ${s4_alias}
+    Sleep  200
+    Wait Until Switch Connected  ${s4_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
 	Verify Switch Connection State  True  ${s4_alias}
