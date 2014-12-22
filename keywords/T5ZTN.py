@@ -1488,6 +1488,9 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(switch)
         s = t.dev_console(switch, modeless=True)
+        self.power_down_switch(switch)
+        helpers.sleep(10)
+        self.power_up_switch(switch)
         try:
             options = s.expect([r"Hit any key to stop autoboot",
                      "Press enter to boot the selected OS"], timeout=100)
