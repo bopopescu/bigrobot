@@ -72,7 +72,7 @@ s4:
 s5:
   alias: spine1
   fabric-role: spine
-  mac: 90:b1:1c:f4:b8:02
+  mac: ec:f4:bb:fb:e2:ca
   user: admin
   password: adminadmin
   console:
