@@ -13,7 +13,7 @@ Library     keywords/T5ZTN.py
 Library     OperatingSystem
 Library     keywords/Host.py
 Library		String
-Resource    t5_upgrade_ztn_resource.txt
+Resource    testsuites/T5/T5-Upgrade/t5_upgrade_ztn_resource.txt
 Force Tags      T5  Feature  IronHorse-Plus  Analytics
 
 *** Variable ***
