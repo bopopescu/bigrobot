@@ -210,6 +210,7 @@ def display_stats(args):
 
     for functionality in cat.test_types() + ["virtual",
                                              "physical",
+                                             "unspecified-topology",
                                              "manual",
                                              "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
@@ -230,6 +231,10 @@ def display_stats(args):
     print_stat3("Total physical test cases:",
                 total_physical,
                 percentage(total_physical, total_tc))
+    total_unspecified_topology = ih.total_testcases_by_tag('unspecified-topology')[0]
+    print_stat3("Total unspecified-topology test cases:",
+                total_unspecified_topology,
+                percentage(total_unspecified_topology, total_tc))
     total_manual = ih.total_testcases_by_tag('manual')[0]
     print_stat3("Total manual test cases:",
                 total_manual,
@@ -314,6 +319,7 @@ def display_stats(args):
 
     for functionality in cat.test_types() + ['virtual',
                                              'physical',
+                                             'unspecified-topology',
                                              "manual",
                                              "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
