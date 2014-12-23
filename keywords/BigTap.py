@@ -110,6 +110,7 @@ class BigTap(object):
                 return content[0]['stats']['flow'][int(flow_id)]['match-field'][int(flow_index)][str(flow_key)]
 
 
+
 # Mingtao
     def rest_show_address_group(self, group):
         """ 
@@ -3899,3 +3900,25 @@ class BigTap(object):
             else:
                 return False
 
+    def rest_verify_interswitch_link(self, node1, node2, interface1="ethernet13", interface2="ethernet14"):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            switch_dpid1 = AppCommon.rest_return_switch_dpid_from_ip(node1)
+            switch_dpid2 = AppCommon.rest_return_switch_dpid_from_ip(node2)
+            url = '/api/v1/data/controller/topology/link'
+            c.rest.get(url)
+            content = c.rest.content()
+            for element in content:
+                if element['src']['switch-dpid'] == str(switch_dpid1)  and element['dst']['switch-dpid'] == str(switch_dpid2):
+                    if element['src']['interface']['name'] == str(interface1) and element['dstr']['interface']['name'] == str(interface2):
+                        return True
+                elif element['src']['switch-dpid'] == str(switch_dpid2)  and element['dst']['switch-dpid'] == str(switch_dpid1):
+                    if element['src']['interface']['name'] == str(interface2) and element['dstr']['interface']['name'] == str(interface1):
+                        return True
+            helpers.test_log("No interswitch links found")
+            return False
