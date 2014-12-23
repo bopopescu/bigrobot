@@ -136,6 +136,7 @@ class T5Platform(object):
             c.config("adminadmin")
             c.send("system failover")
             #c.expect(r"Failover to this controller node \(\"y\" or \"yes\" to continue\)? ")
+            #c.expect(r"Failover to a standby controller node \(\"y\" or \"yes\" to continue\)? ")
             c.expect(r"Failover to a standby controller node \(\"y\" or \"yes\" to continue\)? ")
             c.config("yes")
             # helpers.sleep(30)
