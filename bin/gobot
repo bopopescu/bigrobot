@@ -317,8 +317,7 @@ def test_command(*args):
         elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
             options['settag'] = 'physical'
         else:
-            # If not specified, assume it is physical
-            options['settag'] = 'physical'
+            options['settag'] = 'unspecified-topology'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
