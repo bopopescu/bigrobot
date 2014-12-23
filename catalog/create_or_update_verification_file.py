@@ -102,7 +102,7 @@ class VerificationFileBuilder(object):
 
         if not self._builds:
             helpers.error_exit(
-                "Aggregated build '%s' is not defined in catalog.yaml."
+                "Aggregated build '%s' is not defined in the database."
                 % build)
         # dictionary of test suites indexed by product_suite key.
         self._product_suites = {}
