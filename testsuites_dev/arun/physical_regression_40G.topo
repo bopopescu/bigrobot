@@ -94,7 +94,7 @@ s4:
 s5:
   alias: leaf2-a
   leaf-group: rack2
-  mac: EC:F4:BB:FB:DE:41
+  mac: ec:f4:bb:fb:de:41
   user: admin
   password: adminadmin
   console:
@@ -155,7 +155,7 @@ s7:
 s8:
   alias: spine1
   fabric-role: spine
-  mac: 90:b1:1c:f4:b8:02
+  mac: 90:b1:1c:f4:c6:1e
   user: admin
   password: adminadmin
   console:
