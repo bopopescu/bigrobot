@@ -16,16 +16,3 @@ s1:
 
 s2:
   ip: 10.9.19.2
-
-tg1:
-  platform: 'ixia'
-  chassis_ip: 10.8.0.6
-  tcl_server_ip: 10.9.19.222
-  tcl_server_port: 8009
-  ix_version: '7.10'
-  set_init_ping: false
-  ports:
-    a:
-      name: 1/5
-    b:
-      name: 1/6
