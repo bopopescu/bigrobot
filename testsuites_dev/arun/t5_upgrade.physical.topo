@@ -1,4 +1,4 @@
-# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+ # Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
 #
 # c<n>: Controllers
 # s<n>: Switches
@@ -11,7 +11,8 @@ c1:
 c2:
   ip: 10.9.16.49
   monitor_reauth: false
-
+  
+  
 s1:
   alias: leaf0-a
   leaf-group: rack0
@@ -173,3 +174,16 @@ s8:
     leaf1b_int0: ethernet8
     leaf2a_int0: ethernet12
     leaf2b_int0: ethernet24
+  
+h1:
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+   
+      
+h2:
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+  
+ 

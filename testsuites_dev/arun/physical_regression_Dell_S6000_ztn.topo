@@ -71,15 +71,19 @@ s4:
   set_init_ping: false
 s5:
   alias: spine1
-  fabric-role: spine
-  mac: ec:f4:bb:fb:e2:ca
+  leaf-group: rack2
+  mac: EC:F4:BB:FB:E2:CA
   user: admin
   password: adminadmin
   console:
     ip: 10.1.8.201
-    port: 7008
+    port: 7019
   pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 4
+    ip: pdu-313-a.bigswitch.com
+    port: 6
   set_session_ssh: false
   set_init_ping: false
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet29
+    spine1_int0: ethernet24
