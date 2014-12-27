@@ -532,10 +532,12 @@ Test IXIA
     stop traffic  ${stream}
 	[Tags]
 
-38_IXIA_L3_ADD with Ethertype increment
+38_IXIA_L2_ADD with Ethertype increment
 
-	${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=a0_c_flow
-	...			ethertype=800	ethertype_cnt=10		ethertype_step=2
+	 ${stream}=  L2 add  name=atoc  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
 	pause
 	clear stats
     start traffic  ${stream}

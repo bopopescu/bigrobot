@@ -860,8 +860,10 @@ class Test(object):
                 try:
                     # IXIA support is not available in some packages. So
                     # load it only if it is truly required.
+                    import sys
                     import autobot.node_ixia as node_ixia
-                except:
+                except Exception, e:
+                    helpers.log("Unexpect IXIA Error: \n %s" % str(e))
                     helpers.environment_failure("Unable to import node_ixia")
             if platform.lower() == 'ixia':
                 n = node_ixia.IxiaNode(node, t)

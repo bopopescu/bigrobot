@@ -774,12 +774,12 @@ class Ixia(object):
                 helpers.log("Adding Ethertype with cnt: 1..")
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                           '-auto', False, '-fieldValue', ethertype, '-singleValue', ethertype, '-countValue', 1,
-                                          '-fixedBits', ethertype, '-optionalEnabled ', True)
+                                          '-fixedBits', ethertype, '-optionalEnabled ', 'true')
             else:
                 helpers.log("Adding Ethertype with cnt: %s" % str(ethertype_cnt))
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                         '-countValue', ethertype_cnt, '-startValue', ethertype, '-stepValue', ethertype_step, '-valueType', 'increment',
-                                          '-optionalEnabled ', True)
+                                          '-optionalEnabled ', 'true', '-auto', False)
 
         if vlan_id is not None:
             helpers.log('Adding Vlan ID: %s !!!' % vlan_id)
@@ -1160,6 +1160,9 @@ class Ixia(object):
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', None)
+        ethertype = kwargs.get('ethertype', '0800')
+        ethertype_cnt = kwargs.get('ethertype_cnt', 1)
+        ethertype_step = kwargs.get('ethertype_step', None)
         vlan_id = kwargs.get('vlan_id', None)
         line_rate = kwargs.get('line_rate', None)
         burst_count = kwargs.get('burst_count', None)
@@ -1274,7 +1277,9 @@ class Ixia(object):
         # Create Traffic Stream:
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, ethertype, vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                       frame_cnt, stream_flow, name,
+                                                       ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                       vlan_id=vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                        burst_count=burst_count, burst_gap=burst_gap,
                                                        crc=crc, no_arp=no_arp, line_rate=line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
