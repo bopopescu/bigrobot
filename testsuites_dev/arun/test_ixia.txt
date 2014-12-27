@@ -518,7 +518,7 @@ Test IXIA
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
     [Tags]  traffic
 
-37_IXIA_L3_Add with 
+37_IXIA_L3_Add with IP SrC and DST Increment
 	${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=a0_c_flow
     ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
     ...     src_ip=100.1.1.1  src_ip_step=0.0.0.1  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
@@ -530,8 +530,20 @@ Test IXIA
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
     stop traffic  ${stream}
-	[Tags]  run
+	[Tags]
 
+38_IXIA_L3_ADD with Ethertype increment
+
+	${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=a0_c_flow
+	...			ethertype=800	ethertype_cnt=10		ethertype_step=2
+	pause
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
+    stop traffic  ${stream}
+	[Tags]  run
 
 *Keywords
 atest teardown
