@@ -1960,7 +1960,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             if "Error: "  in cli_output:
-                    return False
+                return False
             else:
                 content = string.split(cli_output, '\n')
                 for i in range(0, len(content)):
