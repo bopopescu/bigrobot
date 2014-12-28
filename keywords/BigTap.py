@@ -18,6 +18,9 @@ import autobot.test as test
 import keywords.AppController as AppController
 import json
 import re
+import time
+from datetime import datetime
+from time import mktime
 
 class BigTap(object):
 
@@ -1303,7 +1306,40 @@ class BigTap(object):
             else:
                 return True
 
-
+    def rest_add_timed_policy(self, rbac_view_name, policy_name, duration, starttime, pktcount):
+        '''
+            Objective:
+            - Update bigtap policy with start time, duration etc.
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if "+" in starttime:
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    helpers.log("URL is %s:" % url)
+                    sttime = starttime[:-1]
+                    helpers.log("Passed from .txt file %s" % str(sttime))
+                    stime = int(time.time() + int(sttime))
+                    helpers.log("STIME is %d" % int(stime))
+                    c.rest.patch(url, {"start-time": int(stime) , "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                elif "now" in starttime:
+                    unixTime = int(time.time())
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": unixTime, "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                else:
+                    UT = datetime.strptime(starttime, '%Y-%m-%dT%H:%M:%S')
+                    unixTime = int(mktime(UT.timetuple()))
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
 
     def rest_add_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
         '''
