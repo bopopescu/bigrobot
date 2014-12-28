@@ -433,9 +433,9 @@ class AppController(object):
                     return False
                 content = c.rest.content()
                 if (content[0]['interface'][0]['state-flags'] == 0):
-                        return True
+                    return True
                 else:
-                        return False
+                    return False
 
 # #SYSLOG
 ############### SYSLOG SHOW COMMANDS ########################
@@ -1295,9 +1295,6 @@ class AppController(object):
         t = test.Test()
         n = t.node(node)
         if helpers.is_bigtap(n.platform()):
-            '''
-                BigTap Controller
-            '''
             c = t.controller('master')
             url = '/rest/v1/system/version'
             if user == "admin":
