@@ -2099,6 +2099,33 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
+    def cli_add_hashseed(self, node, seed1, seed2):
+        '''
+            Objective:
+            - Unconfigure port-channel
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | pcNumber | PortChannel number. Range is between 1 and 30 |
+
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+
+            Examples:
+
+                | cli delete portchannel | 10.192.75.7  |  1  |
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "hash seed1 " + str(seed1) + "  seed2 " + str(seed2)
+            switch.config(cli_input)
+            return True
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+
 ###### L2GRE Tunnel
     def cli_return_tunnel_info(self, node, tunnel_number, tunnel_variable):
         '''

@@ -557,6 +557,7 @@ class BigChain(object):
             else:
                 return True
 
+##### Chain Configuration Commands Start
     def rest_add_a_chain(self, chain_name=None):
         '''
             Objective:
@@ -664,3 +665,56 @@ class BigChain(object):
                     return False
                 else:
                     return True
+##### Chain Configuration Commands End
+##### Service Configuration Commands Start
+    def rest_add_a_bigchain_service(self, chain_service_name=None):
+        '''
+            Objective:
+                -- Add a chain via command "bigchain chain <chain_name>"       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if chain_service_name is None:
+                helpers.log("FAIL: Cannot add a chain without specifying a name")
+                return False
+            else:
+                url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                try:
+                    c.rest.put(url, {'name':str(chain_service_name)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_add_a_bigchain_service_description(self, chain_service_name=None, descrption=None):
+        '''
+            Objective:
+                -- Add a chain via command "bigchain chain <chain_name>"       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (descrption is None):
+                helpers.log("FAIL: Cannot add a description without specifying a chain name or chain description")
+                return False
+            else:
+                url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                try:
+                    c.rest.put(url, {'description':str(descrption)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+##### Service Configuration Commands End
