@@ -67,13 +67,13 @@ T3.3. Verify correctness of “show policy log” output - specific tenant (in l
 
 #Test path
 T4.1. Manual input of endpoints
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.2. Input one of existing endpoints and verify
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.3. External IP addresses (e.g. for google.com) as destination endpoint
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.4. Input one of existing endpoints with modified IP address
     #since only IP address is inputtable, this just creates a new test
@@ -274,11 +274,11 @@ T12.6. Verify button presence/action when there are no switches connected to the
 
 #Tenant visualization (tentative)
 T13.1. Verify visualization
-    #Manual Untested
-    [Tags]  skipped
+    Manual Passed
+    [Tags]  manual
 T13.2. Verify visualization (blank space) when no tenants are configured
-    #Manual Untested
-    [Tags]  skipped
+    Manual Passed
+    [Tags]  manual
 
 #Alerts
 T14.1. Verify alert boxes appear after adding/modifying/deleting entry on a given page
