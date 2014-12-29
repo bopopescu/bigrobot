@@ -157,14 +157,14 @@ TC009: Verify timed policy operation with start now (starting now, duration 70 s
     start traffic
     sleep  10
     stop traffic
-    sleep  10
+    sleep  20
     ${report}=  fetch port stats
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy_3}
     sleep  50
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}
-    [Tags]  feature  
+    [Tags]  feature  runthis
 
 TC010: Veriy policy times out when "stop" command is given 
     ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=0  starttime=now  pktcount=0
@@ -218,7 +218,7 @@ TC012: Verify policy with start time in the past does not get installed if durat
     sleep  3
     ${verify_policy_1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_1}
-    [Tags]  feature  runthis
+    [Tags]  feature
 
 * Keyword
 
