@@ -1569,7 +1569,7 @@ class Ixia(object):
             dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
             ip_type = 'ipv6'
             self._frame_size = kwargs.get('frame_size', 140)
-            protocol = kwargs.get('protocol', 'UDP')
+            protocol = kwargs.get('protocol', None)
         else:
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
@@ -1580,7 +1580,7 @@ class Ixia(object):
             src_ip_step = kwargs.get('src_ip_step', '0.0.0.1')
             dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
             self._frame_size = kwargs.get('frame_size', 130)
-            protocol = kwargs.get('protocol', 'UDP')
+            protocol = kwargs.get('protocol', None)
 
         no_arp = kwargs.get('no_arp', False)
 
