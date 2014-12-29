@@ -846,7 +846,7 @@ vui@Vuis-MacBook-Pro$
         while is_pending and iterations <= max_tries:
             is_pending = False
             iterations += 1
-            helpers.sleep(1)
+            helpers.sleep(3)
             for res in results:
                 task_id = res.task_id
                 action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
