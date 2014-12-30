@@ -523,9 +523,9 @@ TC73 Verify SPAN configuration for breakout cable - Egress
 
 TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN traffic statistics for breakout cable - Ingree, Egress         
-    Manual untested   
+    Manual Passed   
 
 TC75 Verify ACL configuration for breakout cable - Ingress  
     [Tags]  feature  T5
@@ -559,9 +559,9 @@ TC79 verify the server host side LLDP
 
 TC80 verify the server host side STP 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - verify the server host side STP     
-    Manual untested
+    Manual Passed
 
 ### GUI Test Cases 
 TC81 GUI- verify the breakout interfaces status link down for all HCL supported cable  
