@@ -1320,7 +1320,6 @@ class BigTap(object):
             try:
                 if "+" in starttime:
                     url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    helpers.log("URL is %s:" % url)
                     sttime = starttime[:-1]
                     helpers.log("Passed from .txt file %s" % str(sttime))
                     stime = int(time.time() + int(sttime))
@@ -1330,8 +1329,17 @@ class BigTap(object):
                     unixTime = int(time.time())
                     url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                     c.rest.patch(url, {"start-time": unixTime, "delivery-packet-count": int(pktcount), "duration": int(duration)})
-                else:
+                elif ("T" in starttime) and (":" in starttime) and ("-" in starttime):
                     UT = datetime.strptime(starttime, '%Y-%m-%dT%H:%M:%S')
+                    unixTime = int(mktime(UT.timetuple()))
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                elif ("stop" in starttime):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"duration": 1, "start-time": 0, "delivery-packet-count": 0})
+                else:
+                    helpers.log("IN HERE")
+                    UT = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
                     unixTime = int(mktime(UT.timetuple()))
                     url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                     c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
@@ -3958,3 +3966,18 @@ class BigTap(object):
                         return True
             helpers.test_log("No interswitch links found")
             return False
+
+    def rest_clear_bigtap_statistics(self):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/applications/bigtap/clear-stats'
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
