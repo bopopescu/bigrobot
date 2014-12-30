@@ -114,7 +114,7 @@ s5:
 s6:
   alias: leaf2-b
   leaf-group: rack2
-  mac: EC:F4:BB:FB:E2:CA
+  mac: ec:f4:bb:fb:d4:fc
   user: admin
   password: adminadmin
   console:
