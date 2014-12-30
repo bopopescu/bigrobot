@@ -97,7 +97,7 @@ TC002: Verify Destination MAC address hashing for L2 packets
     send and verify traffic  True  True  True  True  
     [Tags]  feature
 
-TC003: Verify Destination MAC address hashing for L2 packets
+TC003: Verify Ethertype hashing for L2 packets
     ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
     ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
