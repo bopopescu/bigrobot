@@ -892,7 +892,7 @@ test teardown topology
     REST delete tenant                              Z
 #   Stop Floodlight Monitor 
     initialize host
-#    BASH ifdown intf                                    h3                          bond0
+    BASH ifdown intf                                    h3                          bond0
     BASH restart networking service                 h1                          timeout=60
     BASH restart networking service                 h3                          timeout=60
     BASH restart networking service                 h6                          timeout=60
