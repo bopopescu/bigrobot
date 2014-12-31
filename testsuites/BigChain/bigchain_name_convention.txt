@@ -81,7 +81,7 @@ TC004: Verify chain name can have alphanumeric (alphabet all lower-case) charact
     sleep  1
     [Tags]  feature
 
-TC005: Verify chain name can have have alphanumeric (alphabet all upper-case) characters in its name
+TC005: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
     ${result2}=  rest add a chain  MYBIGCHAIN1234
     Should be true  ${result2}
     sleep  1
@@ -137,6 +137,111 @@ TC008: Verify chain name can have an alphanumeric name with a _
     ${check_output_1}=  rest verify bigchain chain  node=s1  chain_name=MyBiG_cHaIn  interface1=${chain_interface_1}  interface2=${chain_interface_2}
     Should be true  ${check_output_1}
     ${check_output_2}=  rest delete bigchain chain   chain_name=MyBiG_cHaIn
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+### Check Service Name configuration
+TC009: Verify chain service name can have all lower-case alphabet in its name
+    ${result1}=  rest add a bigchain service  chain_service_name=mybigchain
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=mybigchain  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=mybigchain  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=mybigchain
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC010: Verify chain service name can have all upper-case alphabet in its name
+    ${result1}=  rest add a bigchain service  chain_service_name=MYBIGCHAIN
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MYBIGCHAIN  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MYBIGCHAIN  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MYBIGCHAIN
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC011: Verify chain service name can have a mix of lower-case and upper-case alphabet in its name
+    ${result1}=  rest add a bigchain service  chain_service_name=MyBiGcHaIn
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MyBiGcHaIn  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MyBiGcHaIn  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiGcHaIn
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC012: Verify chain service name can have alphanumeric (alphabet all lower-case) characters in its name
+    ${result1}=  rest add a bigchain service  chain_service_name=mybigchain1234
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=mybigchain1234  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=mybigchain1234  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=mybigchain1234
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC013: Verify chain service name can have alphanumeric (alphabet all upper-case) characters in its name
+    ${result1}=  rest add a bigchain service  chain_service_name=MYBIGCHAIN1234
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MYBIGCHAIN1234  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MYBIGCHAIN1234  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MYBIGCHAIN1234
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC014: Verify chain service name can have an alphanumeric name with a dot
+    ${result1}=  rest add a bigchain service  chain_service_name=MyBiG.cHaIn
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MyBiG.cHaIn  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MyBiG.cHaIn  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG.cHaIn
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC015: Verify chain service name can have an alphanumeric name with a -
+    ${result1}=  rest add a bigchain service  chain_service_name=MyBiG-cHaIn
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MyBiG-cHaIn  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MyBiG-cHaIn  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG-cHaIn
+    Should be true  ${check_output_2}
+    sleep  1
+    [Tags]  feature
+
+TC016: Verify chain service name can have an alphanumeric name with a _
+    ${result1}=  rest add a bigchain service  chain_service_name=MyBiG_cHaIn
+    Should be true  ${result1}
+    ${result2}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=MyBiG_cHaIn  instance_id=1  inintf=ethernet13  outintf=ethernet14
+    Should be true  ${result2}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain service instance  node=s1  chain_service_name=MyBiG_cHaIn  chain_service_type=custom  instance_id=1  inport=ethernet13  outport=ethernet14
+    Should be true  ${check_output_1}
+    ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG_cHaIn
     Should be true  ${check_output_2}
     sleep  1
     [Tags]  feature

@@ -523,6 +523,86 @@ class BigChain(object):
                     else:
                         return False
 
+    def rest_verify_bigchain_service_instance(self, node, chain_service_name=None, chain_service_type=None, instance_id=None, inport=None, outport=None, inskip=False, outskip=False, switch_alias=None, sw_dpid=None):
+        '''
+            Verify service instance is configured correctly
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (chain_service_type is None) or (instance_id is None) or (inport is None) or (outport is None):
+                helpers.log("Cannot verify service instance if service name, instance id, in-port or out-port are missing")
+                return False
+            else:
+                url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                c.rest.get(url1)
+                if not c.rest.status_code_ok():
+                    helpers.test_log(c.rest.error())
+                    return False
+                content = c.rest.content()
+                if content[0]['name'] == str(chain_service_name):
+                    helpers.log("Service correctly reports its name")
+                else:
+                    helpers.log("Service incorrectly reports its name")
+                    return False
+
+                if content[0]['type'] == str(chain_service_type):
+                    helpers.log("Service correctly reports its type")
+                else:
+                    helpers.log("Service incorrectly reports its type")
+                    return False
+
+                for instance_detail in content[0]['instance']:
+                    if instance_detail['id'] == int(instance_id):
+                        helpers.log("Specified instance ID exists")
+                        if (instance_detail['in-skip'] is False) and (inskip is False):
+                            helpers.log("Instance correctly reports in-skip status")
+                        elif (instance_detail['in-skip'] is True) and (inskip is True):
+                            helpers.log("Instance correctly reports in-skip status")
+                        else:
+                            helpers.log("Instance incorrectly reports in-skip status")
+                            return False
+
+                        if (instance_detail['out-skip'] is False) and (outskip is False):
+                            helpers.log("Instance correctly reports out-skip status")
+                        elif (instance_detail['out-skip'] is True) and (outskip is True):
+                            helpers.log("Instance correctly reports out-skip status")
+                        else:
+                            helpers.log("Instance incorrectly reports out-skip status")
+                            return False
+
+                        if instance_detail['interface-pair']['in'] == str(inport):
+                            helpers.log("Instance correctly reports in-port")
+                        else:
+                            helpers.log("Instance incorrectly reports in-port")
+                            return False
+
+                        if instance_detail['interface-pair']['out'] == str(outport):
+                            helpers.log("Instance correctly reports out-port")
+                        else:
+                            helpers.log("Instance incorrectly reports out-port")
+                            return False
+
+                        if instance_detail['interface-pair']['switch'] == str(switch_dpid):
+                            helpers.log("Instance correctly reports switch dpid")
+                        else:
+                            helpers.log("Instance incorrectly reports switch dpid")
+                            return False
+                return True
+
 ###################################################
 ##### CONFIG COMMANDS
 ###################################################
@@ -667,10 +747,10 @@ class BigChain(object):
                     return True
 ##### Chain Configuration Commands End
 ##### Service Configuration Commands Start
-    def rest_add_a_bigchain_service(self, chain_service_name=None):
+    def rest_add_a_bigchain_service(self, chain_service_name=None, service_type="custom", instance_id=1):
         '''
             Objective:
-                -- Add a chain via command "bigchain chain <chain_name>"       
+                -- Add a chain via command "bigchain service <service_name>"       
         '''
         try:
             t = test.Test()
@@ -683,14 +763,25 @@ class BigChain(object):
                 helpers.log("FAIL: Cannot add a chain without specifying a name")
                 return False
             else:
-                url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
                 try:
-                    c.rest.put(url, {'name':str(chain_service_name)})
+                    c.rest.put(url1, {'name':str(chain_service_name)})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
-                else:
-                    return True
+                url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                try:
+                    c.rest.patch(url2, {'type':str(service_type)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                url3 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]' % (str(chain_service_name), int(instance_id))
+                try:
+                    c.rest.put(url3, {'id':int(instance_id)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                return True
 
     def rest_add_a_bigchain_service_description(self, chain_service_name=None, descrption=None):
         '''
@@ -717,4 +808,226 @@ class BigChain(object):
                 else:
                     return True
 
+    def rest_add_a_bigchain_service_instance_interface_pair(self, node, switch_alias=None, sw_dpid=None, chain_service_name=None, instance_id=1, inintf=None, outintf=None, update="False"):
+        '''
+            Objective:
+                -- Add a interface-pair under service instance via command "interface-pair switch <switch_dpid> in <inintf> out <outintf>"       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (inintf is None) or (outintf is None):
+                helpers.log("FAIL: Cannot add a description without specifying a chain name or chain description")
+                return False
+            else:
+                url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/interface-pair' % (str(chain_service_name), int(instance_id))
+                try:
+                    if update == "False":
+                        c.rest.put(url, {"switch": str(switch_dpid), "in": str(inintf), "out": str(outintf)})
+                    else:
+                        c.rest.patch(url, {"switch": str(switch_dpid), "in": str(inintf), "out": str(outintf)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_a_bigchain_service_instance_interface_pair(self, chain_service_name=None, instance_id=1):
+        '''
+            Objective:
+                -- delete an interface-pair under service instance via command "no interface-pair switch <switch_dpid> in <inintf> out <outintf>"       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None):
+                helpers.log("FAIL: Cannot delete an interface-pair without specifying a chain name")
+                return False
+            else:
+                url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/interface-pair/switch' % (str(chain_service_name), int(instance_id))
+                try:
+                    c.rest.delete(url1, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/interface-pair/in' % (str(chain_service_name), int(instance_id))
+                    try:
+                        c.rest.delete(url2, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        url3 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/interface-pair/out' % (str(chain_service_name), int(instance_id))
+                        try:
+                            c.rest.delete(url3, {})
+                        except:
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+
+    def rest_skip_service(self, chain_service_name=None, instance_id=1, inskip="False", outskip="False"):
+        '''
+            Objective:
+                -- Skip service for inbound traffic       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) :
+                helpers.log("FAIL: Cannot add in-skip without specifying a chain name")
+                return False
+            else:
+                try:
+                    if (inskip == "True") or (inskip == "true") or (inskip == "TRUE") :
+                        url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        c.rest.patch(url1, {"in-skip": True})
+                    elif (outskip == "True") or (outskip == "true") or (outskip == "TRUE"):
+                        url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        c.rest.patch(url2, {"out-skip": True})
+                    elif (inskip == "Delete") or (inskip == "delete") or (inskip == "DELETE"):
+                        url3 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d][in-skip="True"][id=%d]/in-skip' % (str(chain_service_name), int(instance_id), int(instance_id))
+                        c.rest.delete(url3, {})
+                    elif (outskip == "Delete") or (outskip == "delete") or (outskip == "DELETE"):
+                        url4 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d][in-skip="True"][id=%d]/out-skip' % (str(chain_service_name), int(instance_id), int(instance_id))
+                        c.rest.delete(url4, {})
+                    else:
+                        helpers.test_log("FAIL: Invalid values sent for either inkip or out-skip")
+                        return False
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_update_bigchain_policy_action(self, chain_service_name=None, policy_action="do-service"):
+        '''
+            Objective:
+                -- Add a service policy       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) :
+                helpers.log("FAIL: Cannot add in-skip without specifying a chain name")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/policy' % str(chain_service_name)
+                    c.rest.patch(url, {"action": str(policy_action)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_add_a_bigchain_policy_match(self, chain_service_name=None, match_number=None, data=None, flag=False):
+        '''
+            Objective:
+                -- Add a service policy       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (match_number is None) or (data is None) :
+                helpers.log("FAIL: Cannot add match condition without specifying a chain name, match number or data")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/policy/rule[sequence=%d]' % (str(chain_service_name), int(match_number))
+                    if not flag:
+                        data_dict = helpers.from_json(data)
+                    else:
+                        data_dict = data
+                    helpers.log("Input dictionary is %s" % data_dict)
+                    c.rest.patch(url, data_dict)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_a_bigchain_policy_match(self, chain_service_name=None, match_number=None, data=None, flag=False):
+        '''
+            Objective:
+                -- Add a service policy       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (match_number is None) or (data is None) :
+                helpers.log("FAIL: Cannot add match condition without specifying a chain name, match number or data")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/policy/rule[sequence=%d]' % (str(chain_service_name), int(match_number))
+                    if not flag:
+                        data_dict = helpers.from_json(data)
+                    else:
+                        data_dict = data
+                    c.rest.delete(url, data_dict)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_bigchain_service(self, chain_service_name=None):
+        '''
+            Objective:
+                -- Delete a service 
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None):
+                helpers.log("FAIL: Cannot delete a service without specifying a service name")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
 ##### Service Configuration Commands End
