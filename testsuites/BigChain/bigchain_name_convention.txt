@@ -4,7 +4,7 @@ Suite Setup             sanity suite setup
 Suite Teardown          sanity suite teardown
 Test Setup              sanity test setup
 Test Teardown           sanity test teardown
-Force Tags              bigchain  corsair-plus  4.5.0  accton  AS5710  chain-name
+Force Tags              bigchain  corsair-plus  4.5.0  accton  AS5710   feature  full
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -34,7 +34,7 @@ TC001: Verify chain name can have all lower-case alphabet in its name
     ${check_output_2}=  rest delete bigchain chain   chain_name=mybigchain
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
 
 TC002: Verify chain name can have all upper-case alphabet in its name
     ${result2}=  rest add a chain  MYBIGCHAIN
@@ -49,7 +49,7 @@ TC002: Verify chain name can have all upper-case alphabet in its name
     ${check_output_2}=  rest delete bigchain chain  chain_name=MYBIGCHAIN
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
 
 TC003: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
     ${result2}=  rest add a chain  MyBiGcHaIn
@@ -64,7 +64,7 @@ TC003: Verify chain name can have a mix of lower-case and upper-case alphabet in
     ${check_output_2}=  rest delete bigchain chain  chain_name=MyBiGcHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
 
 TC004: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
     ${result2}=  rest add a chain  mybigchain1234
@@ -79,7 +79,7 @@ TC004: Verify chain name can have alphanumeric (alphabet all lower-case) charact
     ${check_output_2}=  rest delete bigchain chain  chain_name=mybigchain1234
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
 
 TC005: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
     ${result2}=  rest add a chain  MYBIGCHAIN1234
@@ -94,7 +94,7 @@ TC005: Verify chain name can have alphanumeric (alphabet all upper-case) charact
     ${check_output_2}=  rest delete bigchain chain  chain_name=MYBIGCHAIN1234
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
         
 TC006: Verify chain name can have an alphanumeric name with a dot
     ${result2}=  rest add a chain  MyBiG.cHaIn
@@ -109,7 +109,7 @@ TC006: Verify chain name can have an alphanumeric name with a dot
     ${check_output_2}=  rest delete bigchain chain   chain_name=MyBiG.cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
     
 TC007: Verify chain name can have an alphanumeric name with a -
     ${result2}=  rest add a chain  MyBiG-cHaIn
@@ -124,7 +124,7 @@ TC007: Verify chain name can have an alphanumeric name with a -
     ${check_output_2}=  rest delete bigchain chain   chain_name=MyBiG-cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
     
 TC008: Verify chain name can have an alphanumeric name with a _
     ${result2}=  rest add a chain  MyBiG_cHaIn
@@ -139,7 +139,7 @@ TC008: Verify chain name can have an alphanumeric name with a _
     ${check_output_2}=  rest delete bigchain chain   chain_name=MyBiG_cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  chain
 
 ### Check Service Name configuration
 TC009: Verify chain service name can have all lower-case alphabet in its name
@@ -153,7 +153,7 @@ TC009: Verify chain service name can have all lower-case alphabet in its name
     ${check_output_2}=  rest delete bigchain service   chain_service_name=mybigchain
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC010: Verify chain service name can have all upper-case alphabet in its name
     ${result1}=  rest add a bigchain service  chain_service_name=MYBIGCHAIN
@@ -166,7 +166,7 @@ TC010: Verify chain service name can have all upper-case alphabet in its name
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MYBIGCHAIN
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC011: Verify chain service name can have a mix of lower-case and upper-case alphabet in its name
     ${result1}=  rest add a bigchain service  chain_service_name=MyBiGcHaIn
@@ -179,7 +179,7 @@ TC011: Verify chain service name can have a mix of lower-case and upper-case alp
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiGcHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC012: Verify chain service name can have alphanumeric (alphabet all lower-case) characters in its name
     ${result1}=  rest add a bigchain service  chain_service_name=mybigchain1234
@@ -192,7 +192,7 @@ TC012: Verify chain service name can have alphanumeric (alphabet all lower-case)
     ${check_output_2}=  rest delete bigchain service   chain_service_name=mybigchain1234
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC013: Verify chain service name can have alphanumeric (alphabet all upper-case) characters in its name
     ${result1}=  rest add a bigchain service  chain_service_name=MYBIGCHAIN1234
@@ -205,7 +205,7 @@ TC013: Verify chain service name can have alphanumeric (alphabet all upper-case)
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MYBIGCHAIN1234
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC014: Verify chain service name can have an alphanumeric name with a dot
     ${result1}=  rest add a bigchain service  chain_service_name=MyBiG.cHaIn
@@ -218,7 +218,7 @@ TC014: Verify chain service name can have an alphanumeric name with a dot
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG.cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC015: Verify chain service name can have an alphanumeric name with a -
     ${result1}=  rest add a bigchain service  chain_service_name=MyBiG-cHaIn
@@ -231,7 +231,7 @@ TC015: Verify chain service name can have an alphanumeric name with a -
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG-cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 TC016: Verify chain service name can have an alphanumeric name with a _
     ${result1}=  rest add a bigchain service  chain_service_name=MyBiG_cHaIn
@@ -244,7 +244,7 @@ TC016: Verify chain service name can have an alphanumeric name with a _
     ${check_output_2}=  rest delete bigchain service   chain_service_name=MyBiG_cHaIn
     Should be true  ${check_output_2}
     sleep  1
-    [Tags]  feature
+    [Tags]  service
 
 * Keywords
 
