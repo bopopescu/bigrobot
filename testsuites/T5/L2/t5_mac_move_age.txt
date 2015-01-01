@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse     
+   [Tags]  L2  feature  IronHorse   
    base suite setup
    add fabric switch
    Set swith int variables
@@ -282,6 +282,7 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     Should Be True   -4 < ${result} < 1
     
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
   

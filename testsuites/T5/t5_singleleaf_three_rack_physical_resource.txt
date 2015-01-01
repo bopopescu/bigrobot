@@ -23,7 +23,7 @@ add fabric switch
   ${leaf2a_dpid}=  get_switch_mac_topo  s5 
   rest add dpid  leaf2-a  ${leaf2a_dpid}
   rest add fabric role  leaf2-a  leaf
-  BuiltIn.Sleep  155
+  BuiltIn.Sleep  355
   
 delete fabric switch  
   rest delete fabric switch  spine0 
