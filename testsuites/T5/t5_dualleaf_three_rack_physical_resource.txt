@@ -1,5 +1,7 @@
 * Setting 
 Library  keywords/BsnCommon.py
+Library	 keywords/T5ZTN.py
+Library	 String
 
 * Keywords
 
@@ -42,7 +44,8 @@ add fabric switch
   rest add dpid  leaf2-b  ${leaf2b_dpid}
   rest add fabric role  leaf2-b  leaf
   rest add leaf group  leaf2-b  rack2
-  BuiltIn.Sleep  155
+  sleep  350
+    
 delete fabric switch  
   rest delete fabric switch  spine0 
   rest delete fabric switch  spine1 
@@ -52,5 +55,4 @@ delete fabric switch
   rest delete fabric switch  leaf0-b 
   rest delete fabric switch  leaf1-a 
   rest delete fabric switch  leaf1-b 
-
 
