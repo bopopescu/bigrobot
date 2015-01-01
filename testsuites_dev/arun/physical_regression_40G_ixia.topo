@@ -42,7 +42,7 @@ s2:
     spine1_int0: ethernet10
   console:
     ip: 10.9.16.127
-    port: 7023
+    port: 7004
   pdu:
     ip: pdu-313-a.bigswitch.com
     port: 2
@@ -62,7 +62,7 @@ s3:
     spine0_int0: ethernet5
   console:
     ip: 10.9.16.127
-    port: 7003
+    port: 7005
   set_session_ssh: false
   set_init_ping: false
 
@@ -74,7 +74,7 @@ s4:
   password: adminadmin
   console:
     ip: 10.9.16.127
-    port: 7004
+    port: 7006
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -90,7 +90,7 @@ s5:
   password: adminadmin
   console:
     ip: 10.9.16.127
-    port: 7020
+    port: 7007
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -107,7 +107,7 @@ s6:
   password: adminadmin
   console:
     ip: 10.9.16.127
-    port: 7019
+    port: 7008
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -123,7 +123,7 @@ s7:
   password: adminadmin
   console:
     ip: 10.9.16.127
-    port: 7007
+    port: 7002
   pdu:
     ip: pdu-313-a.bigswitch.com
     port: 4
@@ -145,7 +145,7 @@ s8:
   password: adminadmin
   console:
     ip: 10.9.16.127
-    port: 7008
+    port: 7001
   pdu:
     ip: pdu-313-a.bigswitch.com
     port: 3
