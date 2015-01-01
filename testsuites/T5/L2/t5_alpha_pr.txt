@@ -106,12 +106,4 @@ T5 suite setup
 T5 suite teardown
 	clean configuration
     base suite teardown
-	
-		
-
-
-    bash ifup intf  h5  bond0
-bring up h6 bond0
-	bash init intf  h6  bond0
-    bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0  
+ 

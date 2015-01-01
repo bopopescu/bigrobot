@@ -6,10 +6,10 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.9.16.48
+  ip: 10.9.16.66
   monitor_reauth: false
 c2:
-  ip: 10.9.16.49
+  ip: 10.9.16.67
   monitor_reauth: false
 
 s1:
