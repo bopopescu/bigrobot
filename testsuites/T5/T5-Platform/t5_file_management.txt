@@ -898,6 +898,8 @@ Generate Random Name
 
 File Suite Setup
 	Base Suite Setup
+    Config  master  no aaa accounting exec default start-stop local group tacacs+
+    Config  master  no aaa authentication login default group tacacs+ local
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 
@@ -919,6 +921,7 @@ Teardown
 
 File Suite Teardown
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
+    Config  master  aaa accounting exec default start-stop local
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Compare
