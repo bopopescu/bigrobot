@@ -523,7 +523,7 @@ class BigChain(object):
                     else:
                         return False
 
-    def rest_verify_bigchain_service_instance(self, node, chain_service_name=None, chain_service_type=None, instance_id=None, inport=None, outport=None, inskip=False, outskip=False, switch_alias=None, sw_dpid=None):
+    def rest_verify_bigchain_service_instance(self, node, chain_service_name=None, chain_service_type=None, instance_id=None, inport=None, outport=None, inskip=False, outskip=False, chain_service_description="", switch_alias=None, sw_dpid=None):
         '''
             Verify service instance is configured correctly
         '''
@@ -564,6 +564,13 @@ class BigChain(object):
                 else:
                     helpers.log("Service incorrectly reports its type")
                     return False
+
+                if not chain_service_description:
+                    if content[0]['description'] == str(chain_service_type):
+                        helpers.log("Service correctly reports its description")
+                    else:
+                        helpers.log("Service incorrectly reports its chain_service_description")
+                        return False
 
                 for instance_detail in content[0]['instance']:
                     if instance_detail['id'] == int(instance_id):
@@ -721,6 +728,7 @@ class BigChain(object):
                     return False
                 else:
                     return True
+
     def rest_delete_bigchain_chain(self, chain_name=None):
         '''
             Objective:
@@ -801,7 +809,32 @@ class BigChain(object):
             else:
                 url = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
                 try:
-                    c.rest.put(url, {'description':str(descrption)})
+                    c.rest.patch(url, {'description':str(descrption)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_a_bigchain_service_description(self, chain_service_name=None, descrption=None):
+        '''
+            Objective:
+                -- Add a chain via command "bigchain chain <chain_name>"       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (descrption is None):
+                helpers.log("FAIL: Cannot add a description without specifying a chain name or chain description")
+                return False
+            else:
+                url = '/api/v1/data/controller/applications/bigchain/service[name="%s"][name="%s"][description="%s"]/description' % (str(chain_service_name), str(chain_service_name), str(descrption))
+                try:
+                    c.rest.delete(url, {})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
