@@ -554,9 +554,9 @@ T36 Configure peer links as source interfaces
 
 T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
 	[Tags]  testpath  feature  run
-	BASH ping	h1	${h1_tag_ip}	count=5
-	BASH ping	h2	${h2_tag_ip}	count=5
-	BASH ping	h3	${h3_tag_ip}	count=5
+	BASH ping	h1	${h3_tag_ip}	count=5
+	BASH ping	h2	${h3_tag_ip}	count=5
+	BASH ping	h3	${h1_tag_ip}	count=5
 	cli  master  show endpoint
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
 	#${returnVal}=  rest configure testpath controller view	 src-ip=${h1_tag_ip}  dst-ip=${h2_tag_ip}  ip-protocol=icmp
