@@ -24,8 +24,6 @@ ${switch7_name}=  spine0
 ${tenant}=        testTenant 
 ${vns}=           v1
 ${vlan}=          -1
-${intf_1}=        ethernet24
-${intf_2}=        ethernet24
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -369,6 +367,10 @@ T5 switch platform test setup
    #${swDpid7}=  rest return switch dpid from ip  s7
    #rest add dpid  ${switch7_name}   ${swDpid7}
    #rest add fabric role  ${switch7_name}  spine 
+   ${intf_1}=  get_switch_int_topo  s1  ixia1_int0
+   Set Suite Variable  ${intf_1}
+   ${intf_2}=  get_switch_int_topo  s2  ixia1_int0
+   Set Suite Variable  ${intf_1}
    Set swith int variables
    Set switch dpid variables
    rest add tenant  ${tenant}
