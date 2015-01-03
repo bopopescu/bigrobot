@@ -36,26 +36,26 @@ class T5ZTN(object):
             or re.match(r'.*internal.*', output[4])):
             return helpers.test_failure("SL internal image in the bundle!")
         helpers.log("Trying to check if SL amd64 installer is in %s"
-                    % output[2])
-        if not re.match(r'.*switchlight*amd64*release.ztn.*installer',
-                        output[2]):
+                    % output[3])
+        if not re.match(r'.*switchlight.*ZTN-amd64-release.*installer',
+                        output[3]):
             return helpers.test_failure("SL amd64 installer not found")
         helpers.log("Trying to check if SL amd64 SWI image is in %s"
                     % output[1])
-        if not re.match(r'.*switchlight*amd64*release-bcf.*swi',
+        if not re.match(r'.*switchlight.*amd64-release.*swi',
                         output[1]):
             return helpers.test_failure("SL amd64 SWI image not found")
         helpers.log("Switch Light amd64 installer and SWI image are present")
 
         helpers.log("Trying to check if SL powerpc installer is in %s"
                     % output[4])
-        if not re.match(r'.*switchlight*powerpc*release.ztn.*installer',
+        if not re.match(r'.*switchlight.*ZTN-powerpc-release.*installer',
                         output[4]):
             return helpers.test_failure("SL powerpc installer not found")
         helpers.log("Trying to check if SL powerpc SWI image is in %s"
-                    % output[3])
-        if not re.match(r'.*switchlight*powerpc*release-bcf.*swi',
-                        output[3]):
+                    % output[2])
+        if not re.match(r'.*switchlight.*powerpc-release.*swi',
+                        output[2]):
             return helpers.test_failure("SL powerpc SWI image not found")
         helpers.log("Switch Light powerpc installer and SWI image are present")
         c.config("enable")
