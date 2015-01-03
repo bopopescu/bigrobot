@@ -1064,3 +1064,221 @@ class BigChain(object):
                 else:
                     return True
 ##### Service Configuration Commands End
+##### Span Configuration Commands Begin
+    def rest_add_bigchain_span_service(self, node, span_service_name=None, span_instance_id=1, span_interface=None, switch_alias=None, sw_dpid=None, update=False):
+        '''
+             Objective:
+                -- Add a span interface service       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (span_service_name is None) or (span_interface is None):
+                helpers.log("FAIL: Cannot delete a service without specifying a span service name or interface name")
+                return False
+            else:
+                try:
+                    url1 = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(span_service_name)
+                    c.rest.put(url1, {"name": str(span_service_name)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    try:
+                        url2 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]' % (str(span_service_name), int(span_instance_id))
+                        c.rest.put(url2, {"id": int(span_instance_id)})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        try:
+                            url3 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]/span-interface' % (str(span_service_name), int(span_instance_id))
+                            if update is False:
+                                c.rest.put(url3, {"switch": str(switch_dpid), "interface": str(span_interface)})
+                            else:
+                                c.rest.patch(url3, {"switch": str(switch_dpid), "interface": str(span_interface)})
+                        except:
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+
+    def rest_delete_span_service(self, span_service_name=None):
+        '''
+             Objective:
+                -- Delete a span interface service       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (span_service_name is None):
+                helpers.log("FAIL: Cannot delete a service without specifying a service name")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(span_service_name)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_span_service_instance(self, span_service_name=None, span_instance_id=1):
+        '''
+             Objective:
+                -- Delete a span interface service       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (span_service_name is None):
+                helpers.log("FAIL: Cannot delete a service without specifying a service name")
+                return False
+            else:
+                try:
+                    url = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]' % (str(span_service_name), int(span_instance_id))
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def rest_delete_span_service_interface(self, span_service_name=None, span_instance_id=1):
+        '''
+             Objective:
+                -- Delete a span interface service       
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (span_service_name is None):
+                helpers.log("FAIL: Cannot delete a service without specifying a service name")
+                return False
+            else:
+                try:
+                    url1 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]/span-interface/interface' % (str(span_service_name), int(span_instance_id))
+                    c.rest.delete(url1, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    try:
+                        url2 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]/span-interface/switch' % (str(span_service_name), int(span_instance_id))
+                        c.rest.delete(url2, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        return True
+
+    def rest_add_span_service_to_chain(self, chain_name=None, endpoint1=False, endpoint2=False, span_service_name=None, span_instance_id=1, update=False):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_name is None) or (span_service_name is None):
+                helpers.log("FAIL: Cannot add a span-service without specifying a service name and chain name")
+                return False
+            elif (endpoint1 is False) and (endpoint2 is False) :
+                helpers.log("FAIL: Cannot span-service without specifying a either a from-span or a to-span  as True")
+                return False
+            else:
+                if endpoint1 is True:
+                    try:
+                        url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/from-span' % str(chain_name)
+                        if update is False:
+                            c.rest.put(url, {{"instance": int(span_instance_id), "from-span-name": str(span_service_name)}})
+                        else:
+                            c.rest.patch(url, {{"instance": int(span_instance_id), "from-span-name": str(span_service_name)}})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+
+                if endpoint2 is True:
+                    try:
+                        url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/to-span' % str(chain_name)
+                        if update is False:
+                            c.rest.put(url, {{"instance": int(span_instance_id), "to-span-name": str(span_service_name)}})
+                        else:
+                            c.rest.patch(url, {{"instance": int(span_instance_id), "to-span-name": str(span_service_name)}})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                return True
+
+    def rest_delete_span_service_from_chain(self, chain_name=None, endpoint1=False, endpoint2=False):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_name is None):
+                helpers.log("FAIL: Cannot add a span-service without specifying a chain name")
+                return False
+            elif (endpoint1 is False) and (endpoint2 is False) :
+                helpers.log("FAIL: Cannot span-service without specifying a either a from-span or a to-span  as True")
+                return False
+            else:
+                if endpoint1 is True:
+                    try:
+                        url1 = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/from-span/instance' % str(chain_name)
+                        c.rest.delete(url1, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        try:
+                            url2 = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/from-span/from-span-name' % str(chain_name)
+                            c.rest.delete(url2, {})
+                        except:
+                            helpers.test_log(c.rest.error())
+                            return False
+
+                if endpoint2 is True:
+                    try:
+                        url1 = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/to-span/instance' % str(chain_name)
+                        c.rest.delete(url1, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        try:
+                            url2 = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/to-span/to-span-name' % str(chain_name)
+                            c.rest.delete(url2, {})
+                        except:
+                            helpers.test_log(c.rest.error())
+                            return False
+                return True
+##### Span Configuration Commands End
