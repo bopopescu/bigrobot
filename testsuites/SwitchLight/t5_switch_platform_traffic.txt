@@ -369,7 +369,7 @@ T5 switch platform test setup
    #rest add fabric role  ${switch7_name}  spine 
    ${intf_1}=  get_switch_int_topo  s1  ixia1_int0
    Set Suite Variable  ${intf_1}
-   ${intf_2}=  get_switch_int_topo  s2  ixia1_int0
+   ${intf_2}=  get_switch_int_topo  s3  ixia1_int0
    Set Suite Variable  ${intf_1}
    Set swith int variables
    Set switch dpid variables
