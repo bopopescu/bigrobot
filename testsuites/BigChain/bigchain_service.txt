@@ -233,7 +233,85 @@ TC017: Verify bigchain service instance can deleted
     Should Not Contain  ${content5}  Error
     [Tags]  feature
 
-TC018: Verify a bigchain service can be added to a bigchain chain via cli
+TC018: Verify interface-pair configuration under service instance cannot contain same interface as both in and out interfaces.
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_in_interface1}
+    ${content4}=  cli_content  node=master
+    Should Contain  ${content4}  Error
+    [Tags]  feature
+    
+TC019: Verify feature in-skip can be configured
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=in-skip
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    ${result6}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${s1s2_10g_name_1}  outport=${s1s2_10g_name_2}  chain_service_description=TestBigChainService  inskip=${True}
+    Should be True  ${result6}
+    [Tags]  feature
+    
+TC020: Verify feature out-skip can be configured
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=out-skip
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    ${result6}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${s1s2_10g_name_1}  outport=${s1s2_10g_name_2}  chain_service_description=TestBigChainService  outskip=${True}
+    Should be True  ${result6}
+    [Tags]  feature
+    
+TC021: Verify feature in-skip and out-skip cannot be configured at the same time.
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=out-skip
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=in-skip
+    ${content6}=  cli_content  node=master
+    Should Contain  ${content6}  Error
+    ${result6}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${s1s2_10g_name_1}  outport=${s1s2_10g_name_2}  chain_service_description=TestBigChainService  outskip=${True}
+    Should be True  ${result6}
+    [Tags]  feature
+
+TC022: Verify a bigchain service can be added to a bigchain chain via cli
     add a service and attach it to a chain via cli
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -247,7 +325,7 @@ TC018: Verify a bigchain service can be added to a bigchain chain via cli
     verify results  a  b  transmitted_frames  received_valid_frames
     [Tags]  feature  runthis
     
-TC019: Verify a bigchain service can be added to a bigchain chain via rest
+TC023: Verify a bigchain service can be added to a bigchain chain via rest
     add a service and attach it to a chain via rest
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -261,8 +339,6 @@ TC019: Verify a bigchain service can be added to a bigchain chain via rest
     stop traffic  ${stream_l3_as5710}
     [Tags]  feature
 
-
-    
 * Keywords
 
 service suite setup
