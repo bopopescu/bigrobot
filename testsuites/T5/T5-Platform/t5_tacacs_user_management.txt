@@ -18,6 +18,17 @@ Library  Collections.py
 ${projectname}  Big Cloud Fabric Appliance
     
 * Test Case
+TC000: Warmup
+    Verify Tacacs Configuration  0  10.2.3.201  5
+    Verify AAA Authentication Configuration
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Run Keyword and Ignore Error
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    Sleep  60
+    # workaround for BSC-6771
+    [Tags]  feature  BSC-6771
+
 TC001: Verify Running-Configuration
     Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration 
