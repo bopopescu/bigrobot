@@ -228,10 +228,10 @@ TC27 Verify the the breakout interfaces configuration delete in segment and and 
 
 TC28 Verify bpdu guard protection when breakout interface is connected with Arista switch 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual  
     Log     Step 1 - Verify when STP is enabled on thirdparty vendor 
     Log     Step 2 - Verify when bpdu comes to the breakout interface the interface is shutdown with bpdu error message  
-    Manual untested
+    Manual Failed 
 
 ### Suppported HCL and Non supported HCL breakout cable 
 TC29 verify the supported HCL breakout cable interface and inventory auto-detection 
