@@ -23,6 +23,8 @@ ${chain_interface_1}                    ethernet1
 ${chain_interface_2}                    ethernet2
 ${service_in_interface1}                ethernet13
 ${service_out_interface1}               ethernet14
+${span_service_name}                    SPAN1
+${span_service_interface}               ethernet45
 
 ${s1s2_10g_name_1}                      port-channel1
 ${s1s2_10g_port_range_1}                13,15,17,21
@@ -182,7 +184,7 @@ TC014: Verify service type paloalto-firewall can be deleted
     Should Not Contain  ${content2}  Error    
     [Tags]  feature
 
-TC015: Verify standard ethernet interface can be used as interface-pair
+TC015: Service Instance: Verify standard ethernet interface can be used as interface-pair
     ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
     Should be True  ${result1}
     ${result2}=  rest add a bigchain service description  chain_service_name=${service_name}  descrption=TestBigChainService
@@ -198,7 +200,7 @@ TC015: Verify standard ethernet interface can be used as interface-pair
     Should be True  ${result6}
     [Tags]  feature  jira-bt-1832
 
-TC016: Verify port-channel interface can be used as interface-pair
+TC016: Service Instance: Verify port-channel interface can be used as interface-pair
     ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
     Should be True  ${result1}
     ${result2}=  rest add a bigchain service description  chain_service_name=${service_name}  descrption=TestBigChainService
@@ -214,7 +216,7 @@ TC016: Verify port-channel interface can be used as interface-pair
     Should be True  ${result6}
     [Tags]  feature
 
-TC017: Verify bigchain service instance can deleted
+TC017: Service Instance: Verify bigchain service instance can deleted
     config  node=master  cmd=bigchain service ${service_name}
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
@@ -233,7 +235,7 @@ TC017: Verify bigchain service instance can deleted
     Should Not Contain  ${content5}  Error
     [Tags]  feature
 
-TC018: Verify interface-pair configuration under service instance cannot contain same interface as both in and out interfaces.
+TC018: Service Instance: Verify interface-pair configuration under service instance cannot contain same interface as both in and out interfaces.
     config  node=master  cmd=bigchain service ${service_name}
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
@@ -248,7 +250,7 @@ TC018: Verify interface-pair configuration under service instance cannot contain
     Should Contain  ${content4}  Error
     [Tags]  feature
     
-TC019: Verify feature in-skip can be configured
+TC019: Service Instance: Verify feature in-skip can be configured
     config  node=master  cmd=bigchain service ${service_name}
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
@@ -268,7 +270,7 @@ TC019: Verify feature in-skip can be configured
     Should be True  ${result6}
     [Tags]  feature
     
-TC020: Verify feature out-skip can be configured
+TC020: Service Instance: Verify feature out-skip can be configured
     config  node=master  cmd=bigchain service ${service_name}
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
@@ -288,7 +290,7 @@ TC020: Verify feature out-skip can be configured
     Should be True  ${result6}
     [Tags]  feature
     
-TC021: Verify feature in-skip and out-skip cannot be configured at the same time.
+TC021: Service Instance: Verify feature in-skip and out-skip cannot be configured at the same time.
     config  node=master  cmd=bigchain service ${service_name}
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
@@ -311,7 +313,73 @@ TC021: Verify feature in-skip and out-skip cannot be configured at the same time
     Should be True  ${result6}
     [Tags]  feature
 
-TC022: Verify a bigchain service can be added to a bigchain chain via cli
+TC022: Service Instance: Verify existing span interfaces cannot be used as service in interfaces
+    ${result1}=  rest add bigchain span service  s1  span_service_name=${span_service_name}  span_instance_id=1  span_interface=${span_service_interface}  
+    Should be true  ${result1}
+    sleep  2
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${span_service_interface} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Contain  ${content4}  Error
+    [Tags]  feature
+
+TC023: Service Instance: Verify existing span interfaces cannot be used as service out interfaces
+    ${result1}=  rest add bigchain span service  s1  span_service_name=${span_service_name}  span_instance_id=1  span_interface=${span_service_interface}  
+    Should be true  ${result1}
+    sleep  2
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=type custom
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${span_service_interface}
+    ${content4}=  cli_content  node=master
+    Should Contain  ${content4}  Error
+    [Tags]  feature
+
+TC024: Service Policy: Verify multiple match conditions can be added to a service via CLI 
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match tcp dst-port 80
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=2 match udp dst-port 53
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=sequence 1 dst-tp-port 80 ether-type 2048 ip-proto 6
+    Should be True  ${result1}
+    ${result2}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=2  data=sequence 2 dst-tp-port 53 ether-type 2048 ip-proto 17
+    Should be True  ${result2}    
+    [Tags]  feature  runthis
+
+TC100: Service Instance: Verify a bigchain service can be added to a bigchain chain via cli
     add a service and attach it to a chain via cli
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -323,9 +391,9 @@ TC022: Verify a bigchain service can be added to a bigchain chain via cli
     sleep  10
     stop traffic  ${stream_l3_as5710}
     verify results  a  b  transmitted_frames  received_valid_frames
-    [Tags]  feature  runthis
+    [Tags]  feature  skipped
     
-TC023: Verify a bigchain service can be added to a bigchain chain via rest
+TC101: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
     add a service and attach it to a chain via rest
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -337,7 +405,8 @@ TC023: Verify a bigchain service can be added to a bigchain chain via rest
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5710}
-    [Tags]  feature
+    [Tags]  feature  skipped
+    
 
 * Keywords
 
@@ -363,6 +432,9 @@ service test teardown
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
     config  node=master  cmd=no bigchain service ${service_name}
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=no bigchain span-service ${span_service_name}
     ${content2}=  cli_content  node=master
     Should Not Contain  ${content2}  Error
     delete traffic

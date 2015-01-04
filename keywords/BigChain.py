@@ -610,6 +610,59 @@ class BigChain(object):
                             return False
                 return True
 
+    def rest_verify_bigchain_service_policy(self, chain_service_name=None, sequence=1, data=None):
+        '''
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_service_name is None) or (data is None):
+                helpers.log("Service Name or policy data cannot be empty")
+            else:
+
+                try:
+                    url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]' % str(chain_service_name)
+                    c.rest.get(url1)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    policy_array = str(data).split()
+                    helpers.log("Policy Array is %s" % policy_array)
+                    content = c.rest.content()
+                    policy_content = content[0]['policy']['rule']
+                    helpers.log("Policy Content is %s" % policy_content)
+                    number_of_matches = int(len(policy_array) / 2)
+                    match_found = 0
+                    sequence_found = False
+                    for j in range(0, len(policy_content)):
+                        if policy_content[j]['sequence'] == int(sequence):
+                            sequence_found = True
+                            for i in range(1, len(policy_array), 2):
+                                if ("port" in policy_array[i - 1])  or ("vlan-" in  policy_array[i - 1]) or  ("tos-" in  policy_array[i - 1]) or  ("proto" in  policy_array[i - 1]):
+                                    temp1 = int(policy_content[j][policy_array[i - 1]])
+                                    temp2 = int(policy_array[i])
+                                else:
+                                    temp1 = str(policy_content[j][policy_array[i - 1]])
+                                    temp2 = str(policy_array[i])
+                                if temp1 == temp2:
+                                    match_found = match_found + 1
+                                else:
+                                    helpers.log("Match not found value1:%s  value2:%s" % (temp1, temp2))
+                                    return False
+                    if sequence_found is True:
+                        if (match_found == number_of_matches) or (match_found == (number_of_matches + 1)):
+                            return True
+                        else:
+                            return False
+                    else:
+                        helpers.log("Sequence number not found")
+                        return False
+
 ###################################################
 ##### CONFIG COMMANDS
 ###################################################
@@ -1097,15 +1150,18 @@ class BigChain(object):
                     helpers.test_log(c.rest.error())
                     return False
                 else:
+                    helpers.log("URL1 PUT executed sucessfully")
                     try:
-                        url2 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]' % (str(span_service_name), int(span_instance_id))
+                        url2 = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%s]' % (str(span_service_name), str(span_instance_id))
+                        helpers.log("URL2 is %s" % url2)
                         c.rest.put(url2, {"id": int(span_instance_id)})
                     except:
                         helpers.test_log(c.rest.error())
                         return False
                     else:
+                        helpers.log("URL2 PUT executed sucessfully")
                         try:
-                            url3 = '/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%d]/span-interface' % (str(span_service_name), int(span_instance_id))
+                            url3 = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]/instance[id=%s]/span-interface' % (str(span_service_name), str(span_instance_id))
                             if update is False:
                                 c.rest.put(url3, {"switch": str(switch_dpid), "interface": str(span_interface)})
                             else:
@@ -1114,7 +1170,9 @@ class BigChain(object):
                             helpers.test_log(c.rest.error())
                             return False
                         else:
+                            helpers.log("URL3 PUT executed sucessfully")
                             return True
+                return True
 
     def rest_delete_span_service(self, span_service_name=None):
         '''
@@ -1282,3 +1340,42 @@ class BigChain(object):
                             return False
                 return True
 ##### Span Configuration Commands End
+##### Big Chain Address Group  Start
+    def rest_add_bigchain_address_group(self, chain_addressgrp_name=None, chain_addressgrp_type='ipv4', chain_addressgrp_data=None):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_addressgrp_name is None) or (chain_addressgrp_data is None):
+                helpers.log("FAIL: Cannot add a span-service without specifying a chain name")
+                return False
+            else:
+                try:
+                    url1 = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]' % str(chain_addressgrp_name)
+                    c.rest.put(url1, {"name": str(chain_addressgrp_name)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    try:
+                        url2 = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]' % str(chain_addressgrp_name)
+                        c.rest.patch(url2, {"ip-address-type": str(chain_addressgrp_type)})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        addressgrp_data = str(chain_addressgrp_data).split()
+                        for j in range(0, len(addressgrp_data), 2):
+                            ip_address = addressgrp_data[j]
+                            ip_mask = addressgrp_data[j + 1]
+                            try:
+                                url3 = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]' % (str(chain_addressgrp_type), str(ip_address), str(ip_mask))
+                                c.rest.put(url3, {"ip": str(ip_address), "ip-mask": str(ip_mask)})
+                            except:
+                                helpers.test_log(c.rest.error())
+                                return False
+                        return True
+##### Big Chain Address Group  End
