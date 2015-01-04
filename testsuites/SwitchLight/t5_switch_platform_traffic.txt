@@ -279,9 +279,9 @@ TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
