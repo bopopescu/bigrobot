@@ -403,6 +403,7 @@ t5 suite setup
     ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
     Set Suite Variable		${interface_1}
 	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
+	Set Suite Variable		${interface_2}
 	
 	rest add switch  ${switch1_name}
     ${switch1_dpid}=  get_switch_mac_topo  s1
