@@ -1,0 +1,142 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T3 Verify LLDP different src to port 0 queue 1
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T4 Verify LLDP packet with same src mac are rate limited
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T5 Verify LACP packet to port 0 queue 1
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T6 Verify LACP packet with same src mac are rate limited
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T9 Verify L2srcmiss mac move(dif port then static endpoint) 1 src address to port 0 queue 3
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T10 Verify L2srcmiss mac learning to port 0 queue 3
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T11 Verify L3 packet(intervns big packet) are sent corretly
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T12 Verify L3tocpu packet(intervns packet to unknown host) same addresses to port 0 queue 5
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T13 Verify L3tocpu packet(intervns packet to unknown host) different addresses to port 0 queue 5
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T14 Verify L3 miss packet to port 0 queue 6 (consumed by switch)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T16 Verify qos weight for different queue and same port (same rate)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T17 Verify qos weight for different queue and different port (same rate)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T18 Verify qos weight for different queue (different rate)
+  product_suite: T5/T5_Qos/t5_control_qos
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
