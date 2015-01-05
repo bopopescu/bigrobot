@@ -21,8 +21,6 @@ ${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS-1
 ${vns_2}            T5HAVNS-2
-${interface_1}      ethernet24
-${interface_2}      ethernet24
 ${src_ip}       10.100.100.10
 ${src_gw}       10.100.100.1
 ${dst_ip}       10.100.200.10
@@ -252,6 +250,9 @@ t5 tenant add  [Arguments]  ${vlan}
     
 t5 suite setup
     base suite setup
+    ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable		${interface_1}
+	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
     rest add switch  ${switch1_name}
     ${switch1_dpid}=  rest return switch dpid from ip  s1
     rest add dpid  ${switch1_name}  ${switch1_dpid}
