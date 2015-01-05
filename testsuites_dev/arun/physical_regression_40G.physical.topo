@@ -19,17 +19,14 @@ s1:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7024
+    ip: 10.9.16.213
+    port: 7003
     protocol: telnet
   interfaces:
     spine0_int0: ethernet9
     leaf0b_int0: ethernet2
     ixia1_int0: ethernet24
     spine1_int0: ethernet23
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 1
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -44,11 +41,8 @@ s2:
     spine0_int0: ethernet16
     spine1_int0: ethernet9
   console:
-    ip: 10.1.8.201
-    port: 7023
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 2
+    ip: 10.9.16.213
+    port: 7004
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -64,11 +58,8 @@ s3:
     leaf1b_int1: ethernet25
     spine0_int0: ethernet5
   console:
-    ip: 10.1.8.201
-    port: 7003
-  pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 11
+    ip: 10.9.16.213
+    port: 7007
   set_session_ssh: false
   set_init_ping: false
 
@@ -79,11 +70,8 @@ s4:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7004
-  pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 12
+    ip: 10.9.16.213
+    port: 7008
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -98,11 +86,8 @@ s5:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7020
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 5
+    ip: 10.9.16.213
+    port: 7005
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -118,11 +103,8 @@ s6:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7019
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 6
+    ip: 10.9.16.213
+    port: 7006
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -137,11 +119,8 @@ s7:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7007
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 4
+    ip: 10.9.16.213
+    port: 7002
   set_session_ssh: false
   set_init_ping: false
   interfaces:
@@ -159,11 +138,8 @@ s8:
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7008
-  pdu:
-    ip: pdu-313-a.bigswitch.com
-    port: 3
+    ip: 10.9.16.213
+    port: 7001
   set_session_ssh: false
   set_init_ping: false
   interfaces:
