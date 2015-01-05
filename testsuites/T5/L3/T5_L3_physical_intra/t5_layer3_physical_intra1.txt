@@ -901,6 +901,7 @@ test teardown topology
 T5 base suite setup
     base suite setup
     add fabric switch
+    reconnect_switch_ips
     #BASH network restart                            h1                                timeout=60
     #BASH network restart                            h2                                timeout=60
     #BASH network restart                            h3                                timeout=60
