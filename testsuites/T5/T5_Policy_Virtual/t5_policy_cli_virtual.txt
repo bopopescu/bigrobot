@@ -181,7 +181,8 @@ T5 cli Creating a policy list with two rules and deleting the tenant
 	should be true  ${result}
 	
 T6 cli Creating a policy and deleting the list which did not present
-	[Tags]  cli
+	[Tags]  cli  skipped
+	#Due to JIRA, need to check with Suresh before adding this testcase back
 
 
 	${policy_rule_1}=  Set Variable   11 permit proto tcp 10.10.3.2/32 port 1234 to 10.10.1.2/32 port 5678 log
