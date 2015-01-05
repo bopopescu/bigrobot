@@ -663,6 +663,49 @@ class BigChain(object):
                         helpers.log("Sequence number not found")
                         return False
 
+    def rest_verify_bigchain_address_group(self, chain_addressgrp_name=None, chain_addressgrp_type='ipv4', chain_addressgrp_data=None):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_addressgrp_name is None) or (chain_addressgrp_data is None):
+                helpers.log("FAIL: Cannot verify an address-group without specifying a address-group name or data")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]' % str(chain_addressgrp_name)
+                    c.rest.get(url)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    if content[0]['name'] == str(chain_addressgrp_name):
+                        helpers.log("PASS: Big Chain address group name is reported corretcly as %s" % content[0]['name'])
+                    else:
+                        helpers.log("FAIL: Big Chain address group name is reported incorretcly as %s" % content[0]['name'])
+                        return False
+                    if content[0]['ip-address-type'] == str(chain_addressgrp_type):
+                        helpers.log("PASS: Big Chain address group type is reported corretcly as %s" % content[0]['ip-address-type'])
+                    else:
+                        helpers.log("FAIL: Big Chain address group type is reported incorretcly as %s" % content[0]['ip-address-type'])
+                        return False
+                    addressgrp_data = str(chain_addressgrp_data).split()
+                    match_found = 0
+                    for j in range(0, len(addressgrp_data), 2):
+                        ip_address = addressgrp_data[j]
+                        ip_mask = addressgrp_data[j + 1]
+                        for i in range(0, len(content[0]['address-mask-set'])):
+                            if (content[0]['address-mask-set'][i]['ip'] == str(ip_address)) and (content[0]['address-mask-set'][i]['ip-mask'] == str(ip_mask)):
+                                match_found = match_found + 1
+                    if match_found == (len(addressgrp_data) / 2):
+                        return True
+                    else:
+                        return False
+
 ###################################################
 ##### CONFIG COMMANDS
 ###################################################
@@ -1368,14 +1411,37 @@ class BigChain(object):
                         return False
                     else:
                         addressgrp_data = str(chain_addressgrp_data).split()
+                        helpers.log("Array is %s" % addressgrp_data)
                         for j in range(0, len(addressgrp_data), 2):
-                            ip_address = addressgrp_data[j]
-                            ip_mask = addressgrp_data[j + 1]
+                            ip_address = addressgrp_data[j].strip()
+                            ip_mask = addressgrp_data[j + 1].strip()
                             try:
-                                url3 = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]' % (str(chain_addressgrp_type), str(ip_address), str(ip_mask))
+                                url3 = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]' % (str(chain_addressgrp_name), str(ip_address), str(ip_mask))
+                                helpers.log("URL3: %s" % url3)
                                 c.rest.put(url3, {"ip": str(ip_address), "ip-mask": str(ip_mask)})
                             except:
                                 helpers.test_log(c.rest.error())
                                 return False
                         return True
+
+    def rest_delete_bigchain_address_group(self, chain_addressgrp_name=None):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_addressgrp_name is None):
+                helpers.log("FAIL: Cannot add a span-service without specifying a chain name")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/ip-address-set[name="%s"]' % str(chain_addressgrp_name)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
 ##### Big Chain Address Group  End
