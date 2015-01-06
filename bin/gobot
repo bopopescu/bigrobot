@@ -319,6 +319,8 @@ def test_command(*args):
             options['settag'] = 'physical'
         else:
             options['settag'] = 'unspecified-topology'
+    else:
+        options['settag'] = 'unspecified-topology'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
