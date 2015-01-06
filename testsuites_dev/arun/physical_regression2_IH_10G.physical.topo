@@ -176,7 +176,7 @@ s7:
     leaf0b_int0: ethernet16
     leaf1b_int0: ethernet32
     leaf2a_int0: ethernet23
-    leaf2b_int0: ethernet11
+    leaf2b_int0: ethernet48
   set_session_ssh: false
   set_init_ping: false
 s8:
