@@ -162,13 +162,13 @@ T7 Verify ARP packet to port 0 queue 2
 	log  packet size 64, send 100s arp traffic with 1320pps, did not see drop
 	log   the rate is around 1100pps	
 	log   both ARP and IFP are hit
-	Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS    skipped
 
 T8 Verify L2srcmiss mac move(dif port than static endpoint) to port 0 queue 3
 	log  need to config 5k static endpoints.
-	Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS   skipped
 
 	 
 T9 Verify L2srcmiss mac move(dif port then static endpoint) 1 src address to port 0 queue 3
@@ -326,8 +326,8 @@ T15 Verify DHCP packet to port 0 queue 3 and get the rate
 	log  packet size 64, send 100s arp traffic with 1320pps, did not see drop
 	log   the rate is around 1100pps	
 	log   both ARP and IFP are hit
-	Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS    skipped
 
  
 T16 Verify qos weight for different queue and same port (same rate)
