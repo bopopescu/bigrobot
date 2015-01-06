@@ -265,7 +265,7 @@ UPGRADE: T11.9 Verify upgrade rollback
   	log  step 1 - rollback once the upgrade is finished on both nodes 	
  	log  step 2 - check both controller and switch revert back to old images
 	
-	[Tags]  full   feature  upgrade_ztn    manual 
+	[Tags]  full   feature  upgrade_ztn    manual   
 
 
 
@@ -297,9 +297,9 @@ UPGRADE: T11.10 standby switch behavior during upgrade (behavior change, will no
 UPGRADE: T11.11 suspended switch behavior during upgrade 
 	log  step 0 - prepare switch to suspended 				
  	log  step 1 - upgrade controller
- 		 manual passed
+ 		 
 	  		      	      
-	[Tags] 	full   feature  upgrade_ztn   manual   
+	[Tags] 	full   feature  upgrade_ztn   manual   skipped
 
 UPGRADE: T11.11 disconneted switch behavior during upgrade 
 	log  step 0 - add a nonexisting switch 	
@@ -335,7 +335,7 @@ UPGRADE: T11.12 Verify switch partition for different topology
 		log  result - passed
 	
 
-	[Tags] 	full   feature  upgrade_ztn   manual 
+	[Tags] 	full   feature  upgrade_ztn   manual   skipped
   
 
 UPGRADE: T11.13 upgrade with static ZTN server
@@ -366,7 +366,7 @@ UPGRADE: T11.14 upgrade with dhcp ZTN server
 	log   config dhcp server
 		log  Tomasz tested it with virtual address
 
-	[Tags] 	full   feature  upgrade_ztn   manual 
+	[Tags] 	full   feature  upgrade_ztn   manual    skipped
 
 UPGRADE: T11.15 upgrade with not ZTN server configured
 	log   covered in test case T11.1
@@ -711,26 +711,26 @@ EVENT: T14.9 switch link up/down during upgrade
 		log  siwtch interface down is honored, but up not added
  
 	
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
 	
 EVENT: T14.10 L2 miss traffic during upgrade
 	log  step 1 - during upgrade, send l2 miss traffic
 		log  result - traffic will not be forwarded
-	manual passed
+	 
 	
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+  	[Tags] 	full  feature  upgrade_ztn   manual  skipped
  
 EVENT: T14.11 L3 arp resolve during upgrade 
 	log  step 1 - during upgrade, send arp request from traffic gen
 		log  result - passed
 	
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
 
 EVENT: T14.12 L3 arp request during upgrade  
 	log  step 1 - during upgrade, system need to send arp request
-		log  result - passed
+		 
 	
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
   	
 EVENT: T14.14 config change during upgrade should be blocked 
 		${active}=   get_node_name   master
@@ -821,7 +821,7 @@ NEGATIVE: T15.3 controller upgrade launch
     log  hit ctl-c to terminated active controller before standby finish phase2
     	log  failed - only phase 1 switches are connected back
        
-  	[Tags] 	full  feature  upgrade_ztn    negative  manual 
+  	[Tags] 	full  feature  upgrade_ztn    negative  manual   skipped
   
    	
 
@@ -831,12 +831,12 @@ NEGATIVE: T15.3 controller upgrade launch
  
 MIS: T101 verify 3 node controller upgrade 
 	log  can not form controller with more than 2 nodes
-	manual passed	
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
 
 MIS: T102 upgrade 1 controller, build another one, then join the cluster
-	manual passed
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual   skipped
 
    	
 MIS: T108 upgrade when controller high CPU
@@ -844,8 +844,8 @@ MIS: T108 upgrade when controller high CPU
 		log   with around 370 cpu (send l3 traffic for switch to resolve)
 		log   stage takes long time (10 minutes)
 		log   launch - cpu is reduced due to no event is handled.
-		log   passed
-  	[Tags] 	full  feature  upgrade_ztn   manual 
+		 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
 
 MIS: T109 upgrade when controller does not have enough space  
 	log  upgrade when controller does not have enough space 
@@ -860,8 +860,8 @@ MIS: T111 spawn another session to do upgrade during upgrade
 		log  result: the 2nd session will give error messages:Error: Internal (bug): cmd: sudo /bin/mount /dev/sda3 /tmp/tmp7BMdNw rtn: 32
 		log  result: both gives error: Error: Internal (bug): cmd: sudo /sbin/e2fsck -fy /dev/sda3
 	log   2 session launch image the same time
-		manual failed
-  	[Tags] 	full  feature  upgrade_ztn   manual   JIRA-BSC-6349
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual   JIRA-BSC-6349   skipped
   	
   	
 MIS: T113 admin group non admin user

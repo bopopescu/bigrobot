@@ -117,7 +117,7 @@ T4.3 Controller installation with minimum/maximum supported cpu/memory configura
 	log  warning message -Warning: Minimum recommendation is 4.00 GB of memory 		 
 	log  only warning message is given	 
     
-	[Tags]	full  feature   firstboot  Manual   
+	[Tags]	full  feature   firstboot  skipped  
 
 T4.4 Shutdown the controller  
 	log  manual verified with #1381 
@@ -126,13 +126,13 @@ T4.4 Shutdown the controller
 	log  "virsh start MY-T5-C10"	 
 	log  able to ssh admin@10.192.105.10
   
-	[Tags] 	full  feature   Manual  infra
+	[Tags] 	full  feature   skipped  infra
 
 
 T4.5 Verification of tech-support and related commands  
 	log  show support, support
-    Manual passed
-	[Tags] 	full  feature   Manual  cli  infra
+   
+	[Tags] 	full  feature   skipped  cli  infra
 
  
 

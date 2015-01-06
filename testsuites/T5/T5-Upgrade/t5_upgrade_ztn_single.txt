@@ -179,9 +179,9 @@ UPGRADE: T1.7 disconnected switch behavior during upgrade
 UPGRADE: T1.8 suspended switch behavior during upgrade 
 	log  step 0 - prepaare suspended switch				
  	log  step 1 - upgrade controller
- 		log   passed
+ 		 
  		      	      
-	[Tags] 	full   feature  upgrade_ztn   manual    
+	[Tags] 	full   feature  upgrade_ztn   manual    skipped
 
 
 UPGRADE: T1.9 upgrade with static ZTN server
@@ -314,7 +314,7 @@ EVENT: T3.2 switch disconnected/connected during controller upgrade
    	log  step 6 - switch disconnected during controller reboot
    	log  step 7 - switch connected back after controller come back
   	      
-	[Tags] 	full   feature  upgrade_ztn   manual 
+	[Tags] 	full   feature  upgrade_ztn   manual    skipped
 	
 	
 
