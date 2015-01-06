@@ -63,14 +63,14 @@ T1.6 Check only the T5 image packages are accepted and eligible for staging
 
 T1.7 Integrity checks on the image: SCP half of the image etc 
 	log   SCP half of the image etc  
-    Manual passed
-	[Tags] 	full  upgrade  feature    Manual    singlenode
+   
+	[Tags] 	full  upgrade  feature    Manual    singlenode   skipped
 
   
 T1.8 Only SCP support or : + wget support too?
 	log   copy for cli is the only way
-    Manual passed
-	[Tags] 	full  upgrade  feature   Manual   singlenode
+    
+	[Tags] 	full  upgrade  feature   Manual   singlenode   skipped
 
 
 T1.9 Verify user can pick & choose images for upgrade staging
@@ -95,14 +95,6 @@ T1.10 Test downgrade
 	[Tags] 	full  upgrade  feature  singlenode   run
 
 
-T1.11 Check only the admin group can execute controller image upgrade
-	# this is not suported anymore
-	create user   user1   adminadmin  group1 
-	cli_reauth   user1   adminadmin   	
-	${result}=  cli_check_image   soft_error=True
- 	Should not be True     ${result}  
-  		 
-	[Tags] 	full  upgrade  feature  singlenode   skipped
-  
+ 
  
 	
