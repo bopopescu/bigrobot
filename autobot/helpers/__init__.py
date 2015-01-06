@@ -2291,6 +2291,7 @@ def indent_str(input_str, spaces='    '):
     """
     Indent a multi-lined string by the amount of spaces specified.
     """
+    input_str = str(input_str)  # make sure we're dealing with a string
     lines = str_to_list(input_str)
     new_lines = []
     for line in lines:
