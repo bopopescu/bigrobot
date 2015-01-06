@@ -283,10 +283,10 @@ T0.4. Show remote on Active
 	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s1_alias} switch-view connection
 	...  master connected
@@ -320,10 +320,10 @@ T0.4. Show remote on Active
 	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s2_alias} switch-view connection
 	...  master connected
@@ -357,10 +357,10 @@ T0.4. Show remote on Active
 	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s3_alias} switch-view connection
 	...  master connected
@@ -394,10 +394,10 @@ T0.4. Show remote on Active
 	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s4_alias} switch-view connection
 	...  master connected
@@ -431,10 +431,10 @@ T0.4. Show remote on Active
 	...  NONE
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} switch-view connection
 	...  master connected
@@ -469,10 +469,10 @@ T0.5. Show remote on Standby
 	#...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s1_alias} switch-view connection
 	...  slave \ connected
@@ -506,10 +506,10 @@ T0.5. Show remote on Standby
 	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s2_alias} switch-view connection
 	...  slave \ connected
@@ -543,10 +543,10 @@ T0.5. Show remote on Standby
 	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s3_alias} switch-view connection
 	...  slave \ connected
@@ -580,10 +580,10 @@ T0.5. Show remote on Standby
 	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s4_alias} switch-view connection
 	...  slave \ connected
@@ -617,10 +617,10 @@ T0.5. Show remote on Standby
 	...  NONE
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} connections
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} connections details
-	...  2014
+	...  2015
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} switch-view connection
 	...  slave \ connected
