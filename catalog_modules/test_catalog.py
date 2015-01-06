@@ -51,19 +51,26 @@ class TestCatalog(object):
         """
         See the BUILD_NAME convention wiki guide at:
         https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=58327098
+        "BUILD_NAME Convention (Regression System)"
 
         Sample BUILD_NAME:
-            ihplus_bcf-132_AS5710-54X
-            ^      ^       ^
-            |      |       |
-            |      |       +-- platform name
-            |      +---------- product name (including image tag)
-            +----------------- image release name
+            ihplus_bcf_40g-132_Special_security_patch
+            ^      ^   ^   ^   ^
+            |      |   |   |   |
+            |      |   |   |   +-- optional description
+            |      |   |   +------ platform name
+            |      |   +---------- testbed name (e.g., 10g, 40g, common, generic)
+            |      +-------------- product name (including image tag)
+            +--------------------- image release name
 
         Returns regex object on match.
            match.group(1) == image release name
            match.group(2) == product name
+
         """
+
+        # !!! FIXME: The regex match is not very stringent at this point.
+        #            Will need to tighten down on requirements in the future.
         return re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+).*', build_name)
 
     def get_product_for_build_name(self, build_name):
