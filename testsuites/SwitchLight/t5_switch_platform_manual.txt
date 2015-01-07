@@ -97,7 +97,7 @@ Verify switchLight Installer can upgrade another switchLite image
     [Tags]  switch-platform  install  feature 
     [Tags]  Manual  skipped
     Manual passed
-    
+     
 ## Check Uboot version  ( minimum required version )
 Verify Uboot version  
     Log    Step 1 - Verify the minimum Uboot version 
@@ -266,32 +266,32 @@ Verify multiple telnet connections to Management Port
 PSU failure test Bring up the PSU and Fail back up PSU AC 
     Log    Step 1 - PSU failure test - Bring up PSU1 and PSU2, Fail back up PSU
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
-    Manual passed
+    [Tags]  Manual-untested
+    Manual untested
     
 Verify power output when DUT use two AC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested    
 
 With both AC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested    
 
 Repeat previous testcase with the other AC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested    
 
 With one AC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested    
 
 Verify power output when DUT use one DC power supply
     Log    Step 1 - Verify power output when DUT use one power supply
@@ -331,16 +331,16 @@ Verify LED behavior during and after boot up
     Log    Step 1 - Verify the LED behavior during and after boot up 
     Log    Step 2 - All LEDs should flash and then only link up LED should be green after boot up
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested   
 
 Verify LED behavior when link is up and down of 10G link   
     Log    Step 1 - Verify the LED behavior when link is up 
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual-untested  
+    Manual untested
 
 Verify LED behavior when link is up and down of 1G copper link   
     Log    Step 1 - Verify the LED behavior when link is up 
@@ -355,30 +355,30 @@ Verify LED behavior when link is up and down of 40G link on leaf and Spine
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual-untested  
+    Manual untested
     
 Verify LED behavior when link is disable 
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual-untested  
+    Manual untested
 
 Verify LED status for MGMT Port 
     Log    Step 1 - Verify LED status for Mgmt port when link is connected and up 
     Log    Step 2 - Verify LED status for Mgmt port when cable is taken out from the other end
     Log    Step 3 - Verify LED status when some mgmt traffic is going through mgmt port 
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed   
+    [Tags]  Manual-untested  
+    Manual untested   
 
 Verify LED status for console Port 
     Log    Step 1 - Verify LED status for console port when link is connected and up 
     Log    Step 2 - Verify LED status for console port when cable is taken out from the other end
     Log    Step 3 - For Leaf and Spine there is no LED for console
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual-untested  
+    Manual untested
 
 Verify LED status for data ports 
     Log    Step 1 - Verify LED status data ports when Link is down
@@ -386,8 +386,8 @@ Verify LED status for data ports
     Log    Step 2 - Verify LED status of data port when traffic is passing htorugh 
     
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual-untested  
+    Manual untested   
 
 Verify LED status for PSU 
     Log    Step 1 - Verify LED status for PSU 1 and 2  
@@ -398,15 +398,15 @@ Verify LED status for PSU
 Verify LED status for Fan
     Log    Step 1 - Verify LED status for Fan  
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed  
+    [Tags]  Manual-untested  
+    Manual untested  
 
 Verify LED Beacon feature on leaf and spine 
     Log   Step 1- Verify that LED beacon feature is working (locate command on CLI)
     Log   Step 2- Verify the CLI command feature, timeout etc. 
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed   
+    [Tags]  Manual-untested  
+    Manual untested   
 
 Verify the LED state when system is halted 
     Log    Step 1 - Verify that when systems is halted without reboot, LED stays the same
@@ -423,7 +423,8 @@ Verify the LED state when system is halted
         
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  Manual  interface  feature
+    [Tags]  interface  feature
+    [Tags]  Manual-untested
     Manual Passed
 
 Verify that the supported copper and optics are detected in the data ports
