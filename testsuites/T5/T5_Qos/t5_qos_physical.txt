@@ -2,7 +2,7 @@
 Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
 Documentation    T5 Test Suite
 Suite Setup      fabric infra suite setup
-Suite Teardown   base suite teardown
+Suite Teardown   test teardown topology
 Test Setup       base test setup
 Test Teardown    policy test teardown
 Force Tags       IronHorse   T5
@@ -674,7 +674,7 @@ test teardown topology
 	REST delete tenant routers intf to system		X
 	REST delete tenant routers intf to system		Y
 	REST delete tenant routers intf to system		Z
-	T5 base suite teardown
+	
 
 
 #verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
