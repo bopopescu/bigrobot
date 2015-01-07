@@ -161,8 +161,8 @@ s7:
     ip: pdu-314-b.bigswitch.com
     port: 19
   interfaces:
-    leaf0a_int0: ethernet1
-    leaf1a_int0: ethernet9
+    leaf0a_int0: ethernet21
+    leaf1a_int0: ethernet25
     leaf0b_int0: ethernet22
     leaf1b_int0: ethernet26
     leaf2a_int0: ethernet31
