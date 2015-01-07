@@ -23,10 +23,11 @@ s1:
     port: 7003
     protocol: telnet
   interfaces:
-    spine0_int0: ethernet9
-    leaf0b_int0: ethernet2
-    ixia1_int0: ethernet24
-    spine1_int0: ethernet23
+    spine0_int0: ethernet8
+    leaf0b_int0: ethernet19
+    spine1_int0: ethernet20
+    h1_int0: ethernet13/4
+    h2_int0: ethernet10/2
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -36,10 +37,11 @@ s2:
   user: admin
   password: adminadmin
   interfaces:
-    leaf0a_int0: ethernet2
-    ixia1_int0: ethernet24
-    spine0_int0: ethernet16
-    spine1_int0: ethernet9
+    leaf0a_int0: ethernet19
+    spine0_int0: ethernet3
+    spine1_int0: ethernet20
+    h1_int0: ethernet13/2
+    h2_int0: ethernet10/3
   console:
     ip: 10.9.16.213
     port: 7004
@@ -52,11 +54,12 @@ s3:
   user: admin
   password: adminadmin
   interfaces:
-    ixia1_int0: ethernet24
-    spine1_int0: ethernet21
-    leaf1b_int0: ethernet11
-    leaf1b_int1: ethernet25
-    spine0_int0: ethernet5
+    spine1_int0: ethernet25
+    leaf1b_int0: ethernet21
+    leaf1b_int1: ethernet15
+    spine0_int0: ethernet8
+    h3_int0: ethernet1
+    h4_int0: ethernet9/3
   console:
     ip: 10.9.16.213
     port: 7007
@@ -75,9 +78,12 @@ s4:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    ixia1_int0: ethernet24
-    spine0_int0: ethernet11
-    spine1_int0: ethernet6
+    leaf1a_int0: ethernet25
+    leaf1a_int0: ethernet15
+    spine0_int0: ethernet8
+    spine1_int0: ethernet25
+    h3_int0: ethernet1
+    h4_int0: ethernet10/3
 
 s5:
   alias: leaf2-a
@@ -91,10 +97,11 @@ s5:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    leaf2b_int0: ethernet15
-    ixia1_int0: ethernet24
-    spine0_int0: ethernet19
-    spine1_int0: ethernet25
+    leaf2b_int0: ethernet19
+    spine0_int0: ethernet8
+    spine1_int0: ethernet20
+    h5_int0: ethernet1
+    h6_int0: ethernet24/2
 
 s6:
   alias: leaf2-b
@@ -108,9 +115,11 @@ s6:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    ixia1_int0: ethernet24
-    spine0_int0: ethernet29
-    spine1_int0: ethernet24
+    spine0_int0: ethernet8
+    spine1_int0: ethernet20
+    leaf2a_int0: ethernet19
+    h5_int0: ethernet1
+    h6_int0: ethernet23/3
     
 s7:
   alias: spine0
@@ -143,9 +152,34 @@ s8:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    leaf0a_int0: ethernet1
-    leaf0b_int0: ethernet19
-    leaf1a_int0: ethernet9
-    leaf1b_int0: ethernet8
-    leaf2a_int0: ethernet12
-    leaf2b_int0: ethernet24
+    leaf0a_int0: ethernet2
+    leaf0b_int0: ethernet7
+    leaf1a_int0: ethernet32
+    leaf1b_int0: ethernet27
+    leaf2a_int0: ethernet14
+    leaf2b_int0: ethernet21
+
+h1:
+  ip: 10.9.16.217
+  user: root
+  password: bsn
+h2:
+  ip: 10.9.16.147
+  user: root
+  password: bsn
+h3:
+  ip: 10.9.16.209
+  user: root
+  password: bsn
+h4:
+  ip: 10.9.16.205
+  user: root
+  password: bsn
+h5:
+  ip: 10.9.16.119
+  user: root
+  password: bsn
+h6:
+  ip: 10.9.16.178
+  user: root
+  password: bsn
