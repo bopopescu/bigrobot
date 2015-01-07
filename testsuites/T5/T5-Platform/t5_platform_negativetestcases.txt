@@ -49,8 +49,8 @@ Test Configuration requests originating from standby
     Log     Step 1 - Test Configuration requests originating from standby
     Log     Step 2 - Verify that the configuration should be rejected with error message   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual Passed 
 
 Test Controller behavior during high cpu spikes
     Log     Step 1 - Test Controller behavior during high cpu spikes   
@@ -106,15 +106,15 @@ Killing active deamons (eg: keepalived, ntpd, collectd)
 Test continuous floodlight restarts
     Log     Step 1 - Test continuous floodlight restarts   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
     Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
     Log     Step 2 - Verify that the configuration get rejected with proper error message 
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Changes in the switch role (leaf to spine / spine to leaf)
     Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
