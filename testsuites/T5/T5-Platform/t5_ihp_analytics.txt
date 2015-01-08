@@ -3,7 +3,7 @@ Documentation       T5 IH+ Analytics
 
 ...		The purpose of this test plan is...
 ...
-
+Suite Setup     Analytics Suite Setup
 Library  	keywords/BsnCommon.py
 Library     keywords/Analytics.py
 Library     keywords/T5Platform.py
@@ -60,3 +60,12 @@ T2.8. Stop elastic search service for some time, restart it, verify that the log
     ${status_slave}=  Verify Logs Numbers  slave
     Should Be True  ${status_master}
     Should Be True  ${status_slave}
+
+
+*** Keywords ***
+Analytics Suite Setup
+    Base Suite Setup
+    ${status}=  Rest Verify Cluster Election Take Leader
+    Should Be True  ${status}
+    ${status}=  Rest Verify Cluster Election Take Leader
+    Should Be True  ${status}
