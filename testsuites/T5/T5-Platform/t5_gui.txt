@@ -491,7 +491,7 @@ T11.8. Clear segment counters
 
 #Endpoints:
 T12.1. Filtering
-	Manual Failed
+	Manual Passed
 	[Tags]  manual  BVS-2683
 T12.2. Verify information about endpoints correct
 	Manual Passed
