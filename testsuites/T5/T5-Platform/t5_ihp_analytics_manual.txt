@@ -1,0 +1,294 @@
+*** Settings ***
+Documentation       T5 IH+ Analytics
+
+...		The purpose of this test plan is...
+...
+
+Library  	keywords/BsnCommon.py
+Library     keywords/Analytics.py
+Library     keywords/T5Platform.py
+Library     keywords/T5Utilities.py
+Library     keywords/T5Parallel.py
+Library     keywords/T5ZTN.py
+Library     OperatingSystem
+Library     keywords/Host.py
+Library		String
+Resource    testsuites/T5/T5-Upgrade/t5_upgrade_ztn_resource.txt
+Force Tags      T5  Feature  IronHorse-Plus  Analytics
+
+*** Variable ***
+${image_latest}      bsn@10.2.3.100:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-upgrade-bcf-2.0.0-master01-SNAPSHOT.pkg
+${h2ip}     8.8.8.8
+${h1ip}     10.2.3.100
+${medium}  10
+
+*** Test Cases ***
+#Logging in logging out
+T1.1. Log in as user admin
+    Manual Passed
+    [Tags]  manual
+T1.2. Log in as non-admin local user associated with admin group
+    Manual Passed
+    [Tags]  manual
+T1.3. Log in as non-admin local user not associated with admin group
+    Manual Passed
+    [Tags]  manual
+T1.4. Log in as non-admin remote user associated with admin group
+    Manual Passed
+    [Tags]  manual
+T1.5. Log in as non-admin remote user not associated with admin group
+    Manual Passed
+    [Tags]  manual
+T1.6. Log out from the regular GUI, verify that user is no longer able to view Analytics
+    Manual Passed
+    [Tags]  manual
+T1.7. Clear user session, verify that user is no longer able to view Analytics
+    # Session gets reestablished and user is still able to view Analytics
+    Manual Passed
+    [Tags]  manual
+T1.8. Delete user account, verify that user is no longer able to view Analytics
+    # As long as user session is active, they are able to view Analytics
+    Manual Passed
+    [Tags]  manual
+T1.9. Disassociate user from admin group, verify that user is no longer able to view Analytics
+    # As long as user session is active, they are able to view Analytics
+    Manual Passed
+    [Tags]  manual
+T1.10. Failover should not interrupt Analytics session
+    # If user connected via VIP then session will be terminated
+    Manual Passed
+    [Tags]  manual
+T1.11. Verify that user is notified about session expiration and necessity to reauth
+    # Some notification is presented. It will be refined in next release
+    Manual Passed
+    [Tags]  manual  BSC-6818
+
+#Viewing logs
+T2.4. Verify that all logs from before controller graceful reboot are visible in the Analytics
+    Manual Passed
+    [Tags]  manual
+T2.5. Verify that all logs from before controller graceful power-cycle are visible in the Analytics
+    Manual Passed
+    [Tags]  manual
+T2.6. Check that pre-upgrade logs are still available after the upgrade
+    # IH+ is the first release that supports Analytics. Pre-upgrade logs are irrelevant and not carried over during upgrade.
+    [Tags]  skipped
+T2.7. Check that all relevant upgrade logs are available in the Analytics tool
+    # IH+ is the first release that supports Analytics. Pre-upgrade logs are irrelevant and not carried over during upgrade.
+    [Tags]  skipped
+T2.9. Insert incomplete/corrupted logs into the log file and verify that this does not disrupt the Analytics Tool
+    Manual Passed
+    [Tags]  manual
+T2.10. Insert a number of duplicated logs into the log file and verify that this does not disrupt the Analytics Tool (check in CLI as well)
+    Manual Passed
+    [Tags]  manual
+T2.11. Delete log file - verify that this does not disrupt the Analytics Tool
+    Manual Passed
+    [Tags]  manual
+
+#Parsing logs
+#T3.1. Ensure that information from message fields are parsed out correctly, e.g.:
+T3.1.1. processType: floodlight, firstboot, cron, ntpd, ofad, linux visible essentially
+    #skipping, will be fixed in JF
+    Manual Failed
+    [Tags]  manual  BSC-6853  skipped
+T3.1.2. device: dt-controller1, dt-spine1 etc
+    Manual Passed
+    [Tags]  manual
+T3.1.3. severity: INFO, WARN, ERROR
+    Manual Passed
+    [Tags]  manual
+T3.1.4. process: RoleManager, OSConfigManager, java classes inside floodlight
+    #skipping, will be fixed in JF
+    Manual Failed
+    [Tags]  manual  BSC-6854  skipped
+T3.1.5. action: subject of what is being logged. EP added/removed etc
+    Manual Passed
+    [Tags]  manual  BVS-2645
+T3.1.6. event: parameters of action e.g for EP it is tenant|segment|hostMAC anything that fits k1=v1 k2=v2 syntax or valid JSON object (newly added)
+    Manual Passed
+    [Tags]  manual  BVS-2645
+T3.8. Ensure that all logs are accompanied by full timestamps (esp. switch logs)
+    Manual Passed
+    [Tags]  manual
+
+#Resource consumption
+#cgroup limits
+#CPU limits tested by enforcing load on one of controllers (A) while the other is not stressed (B) "dd if=/dev/urandom | bzip2 -9 >> /dev/null"
+#I compared outputs of TOP command, for elasticsearch, while polling for entries in the database
+#While collecting data, ES on not stressed controller (B) was using plenty of CPU resources to gather data, more than when ES is idle
+#While collecting data, loaded controller (A) was using close to the same CPU percentage as when ES is idle
+#That proved limitation of CPU limit in cgroups is working
+
+#Memory use was verified by checking contents of /sys/fs/cgroup/memory/es/memory.max_usage_in_bytes
+#It was confirmed that max usage does exceed the enforced limit
+
+#With limited resources performance downgrade was not that obvious. Requests against ES were taking longer
+#when CPU was busy with other processes. Overall, when CPU is idle and ES does not have to compete with other
+#processes for resources, it uses as much CPU as it requires (standard cgroup behavior).
+
+T4.1. limit memory limit to 5% - expect noticeable performance downgrade
+    Manual Passed
+    [Tags]  manual
+T4.2. limit memory limit to 1% - expect blocking performance downgrade
+    Manual Passed
+    [Tags]  manual
+T4.3. limit CPU limit to 5% - expect noticeable performance downgrade
+    Manual Passed
+    [Tags]  manual
+T4.4. limit CPU limit to 1% - expect blocking performance downgrade
+    Manual Passed
+    [Tags]  manual
+T4.5. increase memory limit to 50% - expect no noticeable performance upgrade
+    Manual Passed
+    [Tags]  manual
+T4.6. increase CPU limit to 50% - expect no noticeable performance upgrade
+    Manual Passed
+    [Tags]  manual
+#T4.7. controller VM with small resources (min. requirement is 16GB and 8 vCPUs)
+T4.7.1. decrease available memory to 4GB and CPUs to 4 - expect noticeable performance downgrade
+    #everything seemed to still be working fine
+    Manual Passed
+    [Tags]  manual
+T4.7.2. decrease available memory to 2GB and CPUs to 1 - expect blocking performance downgrade
+    #everything seemed to still be working fine
+    Manual Passed
+    [Tags]  manual
+
+#Scale and Robustness
+T5.1. Verify that user experience is the same on a) regular and b) scale setup
+    Manual Passed
+    [Tags]  manual
+T5.2. Verify that user experience is the same with a) days and b) months worth of logs
+    Manual Passed
+    [Tags]  manual
+T5.3. Focus on loading large amounts of logs (change paging to e.g. 200 pages x 500 log lines), check page loading speed, speed of going through tabs
+    Manual Passed
+    [Tags]  manual
+
+T6.1. Floodlight support bundle generation - should not be impacted by Analytics tool
+    Manual Passed
+    [Tags]  manual
+
+T7.1. Verify that after controller cluster upgrade Log Analytics are accessible on both controllers
+    Manual Passed
+    [Tags]  manual
+
+#Canned dashboards:
+#Verify availability and correctness of dashboards committed in CC/EC
+T8.1. Full syslog
+    Manual Passed
+    [Tags]  manual
+T8.2. Syslog based on specific start date/time and end date/time
+    Manual Passed
+    [Tags]  manual
+T8.3. All critical logs for specific start date/time and end date/time
+    Manual Passed
+    [Tags]  manual
+T8.4. Syslog for specific devices (searchable by switch name or DPID) - e.g. give me syslog of switch1b
+    Manual Passed
+    [Tags]  manual
+T8.5. Syslog for config change during specific start date/time and end date/time
+    Manual Passed
+    [Tags]  manual
+T8.6. Syslog indicating when specific end-point came up with name, MAC/IP and date/time info
+    Manual Passed
+    [Tags]  manual
+T8.7. Search for new device connected
+    Manual Passed
+    [Tags]  manual
+T8.8. Syslog for config change by specific user during specific start date/time and end date/time
+    Manual Passed
+    [Tags]  manual
+T8.9. Search for all events related to an endpoint, specified by MAC or IP (or ideally host name)
+    Manual Passed
+    [Tags]  manual
+T8.10. Summary of all category of syslogs. Example Critical #, Major #, Minor #.
+    Manual Passed
+    [Tags]  manual
+
+#Logstash, Kibana & ES:
+T9.1. Creating new dashboards/rows/tables/charts
+    Manual Passed
+    [Tags]  manual
+
+T10.1. Sorting logs
+    Manual Passed
+    [Tags]  manual
+
+#Filtering logs
+T11.1. Select time range older than oldest log
+    Manual Passed
+    [Tags]  manual
+T11.2. Select time range in the future
+    Manual Passed
+    [Tags]  manual
+T11.3. Select date in invalid format
+    Manual Passed
+    [Tags]  manual
+
+#Saving and loading dashboards
+T12. Check if works under normal conditions
+    Manual Passed
+    [Tags]  manual
+T12.1. Preserved after upgrade
+    Manual Passed
+    [Tags]  manual
+T12.2. Preserved after failover
+    Manual Passed
+    [Tags]  manual
+T12.3. Preserved after reload
+    Manual Passed
+    [Tags]  manual
+T12.4. Preserved after reboot
+    Manual Passed
+    [Tags]  manual
+T12.5. Preserved after power-cycle
+    Manual Passed
+    [Tags]  manual
+T12.6. Test access to files saved by different user
+    Manual Passed
+    [Tags]  manual
+
+#Sharing dashboards
+T13.1. Check if saved link works
+    Manual Passed
+    [Tags]  manual
+T13.2. Check if saved link works after upgrade
+    Manual Passed
+    [Tags]  manual
+T13.3. Check if saved link works after failover
+    Manual Passed
+    [Tags]  manual
+T13.4. Check if saved link works after controller reload
+    Manual Passed
+    [Tags]  manual
+T13.5. Check if saved link works after controller reboot
+    Manual Passed
+    [Tags]  manual
+T13.6. Check if saved link works after controller power-cycle
+    Manual Passed
+    [Tags]  manual
+
+#Refreshing
+T14.1. Set refreshing period to 0
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
+T14.2. Check if there’s any max value for refreshing period, try to exceed it
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
+T14.3. Input invalid (e.g. 4r) refreshing period
+    # only pre-defined refreshing periods available
+    [Tags]  skipped
+
+T15.1. Adding filters to match the value (from expanded entry row)
+    Manual Passed
+    [Tags]  manual
+
+T16.1. Adding filters to NOT match the value (from expanded entry row)
+    Manual Passed
+    [Tags]  manual
+
+T17.1. Viewing Table/JSON/Raw
+    Manual Passed
+    [Tags]  manual
