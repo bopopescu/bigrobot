@@ -73,8 +73,8 @@ Add more than 1k nexthop group
     [Tags]              manual           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
-    skipped
-    [Tags]              manual           scaling           
+
+    [Tags]              manual           scaling      skipped     
         
 
 
