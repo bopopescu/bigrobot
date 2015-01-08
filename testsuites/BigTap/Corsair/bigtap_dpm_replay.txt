@@ -308,6 +308,7 @@ TC18: Send basic MPLS packet and match on source IP address.
     bash  h1  /usr/bin/tcpreplay -tq -l 10 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
     sleep  10
     verify packet count
+    pause
     [Tags]  mpls-basic
 
 TC19: Send basic MPLS packet and match on destination IP address.
