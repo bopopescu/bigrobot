@@ -150,6 +150,10 @@ Test invalid link status in fabric error
 T5 base test setup
    Set swith int variables
    Set switch dpid variables
+   fabric infra suite setup
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    bigrobot test ztn  False
    base test setup
       
