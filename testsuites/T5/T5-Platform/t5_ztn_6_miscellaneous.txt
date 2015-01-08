@@ -104,16 +104,16 @@ T6.16. Verify that switch uses cached config after reboot and does not download 
 	Manual Passed
 	[Tags]  manual
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
 	Manual Passed
 	[Tags]  manual
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 	#switch gets suspended due to runtime checksum mismatch
 T6.21. Downgrade process
@@ -135,7 +135,7 @@ T6.25. Check if ZTN logs are implemented on switch/controller
 	[Tags]  manual
 	# logs are part of floodlight log
 T6.26. Check behavior when controller keeps more than one set of SL images
-	Manual Untested
+	Manual Passed
 	# controller picks arbitrary SWI and installer images and serves them to switches
 	[Tags]  manual
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
@@ -149,7 +149,7 @@ T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, n
 	Manual Passed
 	[Tags]  manual
 T6.30. Have DNS servers configured differently on two controllers in cluster - check what happens after failover...
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 	# nothing bad happens
 T6.31. Check REST API call to get inventory of images at switch
@@ -162,10 +162,10 @@ T6.33. Verify pre-staging of both SL installer and SWI before upgrade
 	# moved out to Jack Frost
 	[Tags]  skipped
 T6.34. Check what happens when Switch is assigned new IP address (new DHCP lease) while being connected to controller
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.35. Check what happens when Switch is assigned new IP address (new DHCP lease) while being disconnected from controller
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 
 # Negative
