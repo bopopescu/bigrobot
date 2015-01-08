@@ -61,6 +61,7 @@ TC2: IPv4 Scaling test with 2039 policies in l3-l4-mode mode
     \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
     \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
     \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    pause
     sleep  600    
     : FOR    ${INDEX}    IN RANGE    1    2040
     \    ${NINDEX}=  Convert to string  ${INDEX}  
@@ -75,7 +76,7 @@ TC2: IPv4 Scaling test with 2039 policies in l3-l4-mode mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv4  policy-scale  l3-l4-mode
+    [Tags]  ipv4  policy-scale  l3-l4-mode  runthis
 
 TC3: IPv4 Scaling test with 1019 policies in l3-l4-offset-match mode
     ${thost_enabled}=  rest enable feature  l3-l4-offset-match
