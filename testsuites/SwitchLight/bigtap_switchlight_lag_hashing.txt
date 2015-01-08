@@ -1087,7 +1087,7 @@ lag suite setup
     rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
     rest add policy interface  admin-view  P1  ${filter_nick_2}  filter    
     rest add policy interface  admin-view  P1  ${delivery_nick}  delivery
-    Sleep  10     
+    Sleep  10
  
 verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
     ${inft_state}=  cli show interface state  ${switch}  ${interface_name}

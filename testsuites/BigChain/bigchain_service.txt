@@ -21,8 +21,8 @@ ${chain_name}                           CHAIN1
 ${service_name}                         SERVICE1
 ${chain_interface_1}                    ethernet1
 ${chain_interface_2}                    ethernet2
-${service_in_interface1}                ethernet13
-${service_out_interface1}               ethernet14
+${service_in_interface1}                ethernet23
+${service_out_interface1}               ethernet24
 ${span_service_name}                    SPAN1
 ${span_service_interface}               ethernet45
 ${addressgrp_name}                      BCADDRESSGRP
@@ -477,11 +477,199 @@ TC029: Service Policy: Verify traffic that does not match the policy bypasses th
     ${content5}=  cli_content  node=master
     Should Not Contain  ${content5}  Error
     config  node=master  cmd=1 match ip6
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  5
+    config  node=master  cmd=bigchain chain ${chain_name}
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch1_alias} endpoint1 ${chain_interface_1} endpoint2 ${chain_interface_2}
+    ${content8}=  cli_content  node=master
+    Should Not Contain  ${content8}  Error
+    config  node=master  cmd=use-service ${service_name} instance 1 sequence 1
+    ${content9}=  cli_content  node=master
+    Should Not Contain  ${content9}  Error
     sleep  5
     ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 34525 sequence 1
     Should be True  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    [Tags]  feature  jira-pan-1601
+
+TC030: Service Policy: Verify with traffic, action bypass-service
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match ip src-ip 100.1.1.1 255.255.255.255
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=action bypass-service
+    ${content6A}=  cli_content  node=master
+    Should Not Contain  ${content6A}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  5
+    config  node=master  cmd=bigchain chain ${chain_name}
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch1_alias} endpoint1 ${chain_interface_1} endpoint2 ${chain_interface_2}
+    ${content8}=  cli_content  node=master
+    Should Not Contain  ${content8}  Error
+    config  node=master  cmd=use-service ${service_name} instance 1 sequence 1
+    ${content9}=  cli_content  node=master
+    Should Not Contain  ${content9}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 34525 sequence 1
+    Should be True  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    [Tags]  feature  jira-bt-1840
+
+TC031: Service Policy: Verify with traffic, action do-service
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match ip src-ip 100.1.1.1 255.255.255.255
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=action do-service
+    ${content6A}=  cli_content  node=master
+    Should Not Contain  ${content6A}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  5
+    config  node=master  cmd=bigchain chain ${chain_name}
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch1_alias} endpoint1 ${chain_interface_1} endpoint2 ${chain_interface_2}
+    ${content8}=  cli_content  node=master
+    Should Not Contain  ${content8}  Error
+    config  node=master  cmd=use-service ${service_name} instance 1 sequence 1
+    ${content9}=  cli_content  node=master
+    Should Not Contain  ${content9}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 2048 sequence 1 src-ip 100.1.1.1 src-ip-mask 255.255.255.255
+    Should be True  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
     [Tags]  feature
 
+TC032: Service Policy: Verify with traffic, action drop
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match ip src-ip 100.1.1.1 255.255.255.255
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=action drop
+    ${content6A}=  cli_content  node=master
+    Should Not Contain  ${content6A}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  5
+    config  node=master  cmd=bigchain chain ${chain_name}
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch1_alias} endpoint1 ${chain_interface_1} endpoint2 ${chain_interface_2}
+    ${content8}=  cli_content  node=master
+    Should Not Contain  ${content8}  Error
+    config  node=master  cmd=use-service ${service_name} instance 1 sequence 1
+    ${content9}=  cli_content  node=master
+    Should Not Contain  ${content9}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 2048 sequence 1 src-ip 100.1.1.1 src-ip-mask 255.255.255.255
+    Should be True  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    pause
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_1} > 99990
+    ${intf_4}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    Should Be True  ${intf_2} < 100
+    [Tags]  feature  jira-bt-1841
 
 TC100: Service Instance: Verify a bigchain service can be added to a bigchain chain via cli
     add a service and attach it to a chain via cli
@@ -495,7 +683,7 @@ TC100: Service Instance: Verify a bigchain service can be added to a bigchain ch
     sleep  10
     stop traffic  ${stream_l3_as5710}
     verify results  a  b  transmitted_frames  received_valid_frames
-    [Tags]  feature  skipped
+    [Tags]  feature  jira-pan-1601
     
 TC101: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
     add a service and attach it to a chain via rest
@@ -509,7 +697,7 @@ TC101: Service Instance: Verify a bigchain service can be added to a bigchain ch
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5710}
-    [Tags]  feature  skipped
+    [Tags]  feature  jira-pan-1601
     
 
 * Keywords

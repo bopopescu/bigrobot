@@ -721,7 +721,8 @@ class T5_longevity(object):
         else:
             cli_string = string + ' ?'
         s.send(cli_string, no_cr=True)
-        s.expect(r'[\r\n\x07]?[\w-]+[#>] [\w-]*')
+        # s.expect(r'[\r\n\x07]?[\w-]+[#>] [\w-]*')
+        s.expect(r'[\r\n\x07][\w-]+[#>] ')
         # s.expect(r'.*>')
         content = s.cli_content()
         temp = helpers.strip_cli_output(content)

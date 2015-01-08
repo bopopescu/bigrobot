@@ -340,7 +340,7 @@ TC47: Restart process SNMPD and verify SNMP Stats
     ${snmp_key}=  snmp cmd  s1  snmpget  ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1} 
     [Tags]  process-restart
-                                    
+
 * Keywords  
 snmp suite setup
     base suite setup        
