@@ -58,7 +58,7 @@ s3:
     leaf1b_int0: ethernet21
     leaf1b_int1: ethernet15
     spine0_int0: ethernet8
-    h3_int0: ethernet1
+    h3_int0: ethernet9/1
     h4_int0: ethernet9/3
   console:
     ip: 10.9.16.213
@@ -82,7 +82,7 @@ s4:
     leaf1a_int0: ethernet15
     spine0_int0: ethernet8
     spine1_int0: ethernet25
-    h3_int0: ethernet1
+    h3_int0: ethernet10/4
     h4_int0: ethernet10/3
 
 s5:
@@ -100,7 +100,7 @@ s5:
     leaf2b_int0: ethernet19
     spine0_int0: ethernet8
     spine1_int0: ethernet20
-    h5_int0: ethernet1
+    h5_int0: ethernet24/1
     h6_int0: ethernet24/2
 
 s6:
@@ -118,7 +118,7 @@ s6:
     spine0_int0: ethernet8
     spine1_int0: ethernet20
     leaf2a_int0: ethernet19
-    h5_int0: ethernet1
+    h5_int0: ethernet23/2
     h6_int0: ethernet23/3
     
 s7:
