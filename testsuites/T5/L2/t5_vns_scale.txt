@@ -27,9 +27,10 @@ ${mac1}		00:02:00:00:00:00
 add Dual Leaf Three Rack setup
    [Tags]  L2  scaling  IronHorse  run
    base suite setup
-   add fabric switch
+   fabric infra suite setup
    Set swith int variables
    Set switch dpid variables
+   Set host int variables
    sleep  50
    rest verify fabric switch all
    rest verify fabric link
