@@ -23,7 +23,7 @@ Setup Three Rack Dual Leaf Topology
 	[Tags]  L2  IronHorse
 	bigrobot test ztn  False
 	base suite setup   
-    add fabric switch
+    fabric infra suite setup
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0
@@ -35,6 +35,7 @@ Setup Three Rack Dual Leaf Topology
     BuiltIn.Sleep  25
 	rest verify fabric link common 	
 	Set switch dpid variables
+	Set host int variables
 
 verify static endpoints with port-group
 	[Tags]  L2  IronHorse

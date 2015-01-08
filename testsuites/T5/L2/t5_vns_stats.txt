@@ -22,8 +22,11 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 add Single Leaf Three Rack setup
    [Tags]  L2  feature  IronHorse  run 
    bigrobot test ztn  False
-   add fabric switch  
-   sleep  155  
+   fabric infra suite setup
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
+   sleep  30 
    rest verify fabric switch all
    rest verify fabric link
    rest verify fabric link common  6

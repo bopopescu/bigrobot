@@ -1,3 +1,6 @@
+* Setting 
+Library  keywords/BsnCommon.py
+
 * Variable
 ${bsn_ctrl1}			10.193.0.41
 ${bsn_ctrl2}			10.193.0.42
@@ -67,17 +70,34 @@ ${ixia5}			ethernet24
 ${ixia6}			ethernet24
 ${leaf0a_spine0}	ethernet49
 
-${leaf0_pc1_intf1}	ethernet48
-${leaf0_pc1_intf2}	ethernet48
-${leaf0_pc2_intf1}	ethernet47
-${leaf0_pc2_intf2}	ethernet47
-${leaf1_pc1_intf1}	ethernet1
-${leaf1_pc1_intf2}	ethernet1
-${leaf1_pc2_intf1}	ethernet2
-${leaf1_pc2_intf2}	ethernet2
-${leaf2_pc1_intf1}	ethernet47
-${leaf2_pc1_intf2}	ethernet47
-${leaf2_pc2_intf1}	ethernet48
-${leaf2_pc2_intf2}	ethernet48
+
 ${leaf2a_host5}     ethernet25
 ${leaf2b_host6}     ethernet25
+
+*Keywords
+
+Set host int variables
+	${leaf0_pc1_intf1}=  get_switch_int_topo  s1  h1_int0
+	Set Suite Variable		${leaf0_pc1_intf1}
+	${leaf0_pc1_intf2}=  get_switch_int_topo  s2  h1_int0
+	Set Suite Variable		${leaf0_pc1_intf2}
+	${leaf0_pc2_intf1}=  get_switch_int_topo  s1  h2_int0
+	Set Suite Variable		${leaf0_pc2_intf1}
+	${leaf0_pc2_intf2}=  get_Switch_int_topo  s2  h2_int0
+	Set Suite Variable		${leaf0_pc2_intf2}
+	${leaf1_pc1_intf1}=  get_switch_int_topo  s3  h3_int0
+	Set Suite Variable		${leaf1_pc1_intf1}
+	${leaf1_pc1_intf2}=  get_switch_int_topo  s4  h3_int0
+	Set Suite Variable		${leaf1_pc1_intf2}
+	${leaf1_pc2_intf1}=  get_switch_int_topo  s3  h4_int0
+	Set Suite Variable		${leaf1_pc2_intf1}
+	${leaf1_pc2_intf2}=  get_switch_int_topo  s4  h4_int0
+	Set Suite Variable		${leaf1_pc2_intf2}
+	${leaf2_pc1_intf1}=  get_switch_int_topo  s5  h5_int0
+	Set Suite Variable		${leaf2_pc1_intf1}
+	${leaf2_pc1_intf2}=  get_switch_int_topo  s6  h5_int0
+	Set Suite Variable		${leaf2_pc1_intf2}
+	${leaf2_pc2_intf1}=  get_switch_int_topo  s5  h6_int0
+	Set Suite Variable		${leaf2_pc2_intf1}
+	${leaf2_pc2_intf2}=  get_switch_int_topo  s6  h6_int0	
+	Set Suite Variable		${leaf2_pc2_intf2}
