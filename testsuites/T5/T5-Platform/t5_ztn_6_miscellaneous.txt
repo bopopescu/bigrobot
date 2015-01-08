@@ -104,16 +104,16 @@ T6.16. Verify that switch uses cached config after reboot and does not download 
 	Manual Passed
 	[Tags]  manual
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
 	Manual Passed
 	[Tags]  manual
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 	#switch gets suspended due to runtime checksum mismatch
 T6.21. Downgrade process
@@ -135,7 +135,7 @@ T6.25. Check if ZTN logs are implemented on switch/controller
 	[Tags]  manual
 	# logs are part of floodlight log
 T6.26. Check behavior when controller keeps more than one set of SL images
-	Manual Untested
+	Manual Passed
 	# controller picks arbitrary SWI and installer images and serves them to switches
 	[Tags]  manual
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
@@ -149,7 +149,7 @@ T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, n
 	Manual Passed
 	[Tags]  manual
 T6.30. Have DNS servers configured differently on two controllers in cluster - check what happens after failover...
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 	# nothing bad happens
 T6.31. Check REST API call to get inventory of images at switch
@@ -162,10 +162,10 @@ T6.33. Verify pre-staging of both SL installer and SWI before upgrade
 	# moved out to Jack Frost
 	[Tags]  skipped
 T6.34. Check what happens when Switch is assigned new IP address (new DHCP lease) while being connected to controller
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.35. Check what happens when Switch is assigned new IP address (new DHCP lease) while being disconnected from controller
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 
 # Negative
@@ -200,7 +200,7 @@ T7.9. switch finds manifest for its MAC address, but platform type of the switch
 	[Tags]  manual
 	# Switch fails to download SWI for given platform type
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.11. Verify that SWI image download is resumed after connectivity flap
 	Manual Untested
@@ -209,29 +209,31 @@ T7.12. Verify that ZTN manifest search is resumed after connectivity flap
 	Manual Untested
 	[Tags]  manual
 T7.13. Verify that discovery process times out and restarts when all controllers go down during Switch Light Installer image download
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.14. Verify that discovery process times out and restarts when all controllers go down during SWI image download
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.15. Verify that discovery process times out and restarts when all controllers go down during ZTN manifest search
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.16. Verify that discovery process times out and restarts when connectivity goes down while Switch Light Installer download
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.17. Verify that discovery process times out and restarts when connectivity goes down while SWI Image download
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.18. Verify that discovery process times out and restarts when connectivity goes down while searching for ZTN manifests
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T7.19. Verify that discovery process restarts when downloaded Switch Light Installer image is corrupted
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
+	# installer: *** checksum mismatch
 T7.20. Verify that discovery process restarts when downloaded SWI image is corrupted
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
+	# Key mismatch for the downloaded swi. The swi was not installed.
 T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
 	# skipping for the time being, until I figure out how to corrupt a manifest
 	[Tags]  skipped
@@ -245,11 +247,13 @@ T7.24. Verify that discovery process restarts when switch reboots while searchin
 	Manual Passed
 	[Tags]  manual
 T7.25.1 Verify that discovery process restarts when specified Switch Light Installer image path is invalid
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
+	# "GET /image/switchlight-SWL-BCF-2.5.0-ZTN-powerpc-release-2015.01.07.01.00.installer HTTP/1.1" 500 0 "-" "onie/1.0 (Linux-3.8.13-rt9-QorIQ-SDK-V1.4; BusyBox-v1.20.0)"
 T7.25.2 Verify that discovery process restarts when specified SWI image path is invalid
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
+	# wget: server returned error: HTTP/1.1 500 An exception occured writing the response entity
 
 # Single node cluster
 T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process

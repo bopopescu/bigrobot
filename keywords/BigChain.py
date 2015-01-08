@@ -1099,7 +1099,7 @@ class BigChain(object):
                     else:
                         data_dict = data
                     helpers.log("Input dictionary is %s" % data_dict)
-                    c.rest.patch(url, data_dict)
+                    c.rest.put(url, data_dict)
                 except:
                     helpers.test_log(c.rest.error())
                     return False
