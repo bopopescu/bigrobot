@@ -2120,8 +2120,9 @@ class BsnCommon(object):
                 return interfaces[int_key]
             else:
                 helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
-                helpers.log("Exiting ..to resolve above issue..")
-                helpers.exit_robot_immediately("Please fix above issue")
+                return False
+                # helpers.log("Exiting ..to resolve above issue..")
+                # helpers.exit_robot_immediately("Please fix above issue")
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
