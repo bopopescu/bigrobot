@@ -231,6 +231,18 @@ class BigChain(object):
                         helpers.log("Chain Name %s is not reported correctly" % str(chain_name))
                         return False
 
+                    if (content[0]['status']['runtime-status'] == "installed") :
+                        helpers.log("Run Time Status is reported correctly")
+                    else:
+                        helpers.log("Run Time Status is not reported correctly")
+                        return False
+
+                    if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") :
+                        helpers.log("Detailed Status is reported correctly")
+                    else:
+                        helpers.log("Detailed Status is not reported correctly")
+                        return False
+
                     if (content[0]['status']['from'] == str(interface1)) :
                         helpers.log("Interface %s is reported correctly" % str(interface1))
                     else:
@@ -800,7 +812,7 @@ class BigChain(object):
                 else:
                     return True
 
-    def rest_add_service_to_chain(self, chain_name=None, service_name=None, instance=1, sequence=1):
+    def rest_add_service_to_chain(self, chain_name=None, service_name=None, instance=1, sequence=1, optional=False):
         '''
             Objective:
                 -- Add a service to a chain via command "use-service C1S1 instance 1 sequence 1"
@@ -818,7 +830,10 @@ class BigChain(object):
             else:
                 url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/service[sequence=%s]' % (str(chain_name), str(sequence))
                 try:
-                    c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "sequence": int(sequence)})
+                    if optional is True:
+                        c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "optional": True, "sequence": int(sequence)})
+                    else:
+                        c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "sequence": int(sequence)})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
@@ -1016,7 +1031,7 @@ class BigChain(object):
     def rest_skip_service(self, chain_service_name=None, instance_id=1, inskip="False", outskip="False"):
         '''
             Objective:
-                -- Skip service for inbound traffic       
+                -- Skip service for inbound/outbound traffic       
         '''
         try:
             t = test.Test()
@@ -1031,10 +1046,10 @@ class BigChain(object):
             else:
                 try:
                     if (inskip == "True") or (inskip == "true") or (inskip == "TRUE") :
-                        url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]' % (str(chain_service_name), int(instance_id))
                         c.rest.patch(url1, {"in-skip": True})
                     elif (outskip == "True") or (outskip == "true") or (outskip == "TRUE"):
-                        url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]' % (str(chain_service_name), int(instance_id))
                         c.rest.patch(url2, {"out-skip": True})
                     elif (inskip == "Delete") or (inskip == "delete") or (inskip == "DELETE"):
                         url3 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d][in-skip="True"][id=%d]/in-skip' % (str(chain_service_name), int(instance_id), int(instance_id))
