@@ -78,7 +78,7 @@ s4:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    ixia1_int0: ethernet17/4
+    ixia1_int0: ethernet17/3
     spine0_int0: ethernet5
     spine1_int0: ethernet6
 
