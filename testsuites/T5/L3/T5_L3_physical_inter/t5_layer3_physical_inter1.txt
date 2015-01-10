@@ -61,7 +61,7 @@ TC10 L3 inter tenant forwarding with end host moved to another port
     [Tags]      feature        testpath         
 
 TC11 L3 inter tenant forwarding split horizon on the same port 
-    manual untested
+    manual passed
     [Tags]      feature     manual
     
 TC12 Move ecmp endpoint to another attachment point and verify L3 forwarding
@@ -73,7 +73,7 @@ TC13 Verify L3 traffic switch over to different path when the same route is appl
     [Tags]          manual          feature         
 
 TC14 L3 inter tenant traffic behavior in headless mode
-    manual untested
+    manual passed
     [Tags]          manual          feature         
 
 TC15 Link flap between leaf and spine
@@ -101,7 +101,7 @@ TC20 inter tenant ecmp forwarding in headless mode
     [Tags]          manual          solution            ecmp
 
 TC21 inter tenant dhcp relay in headless mode
-    manual untested
+    manual passed
     [Tags]          manual          solution            dhcp-relay  
 
 TC22 Verify L3 inter tenant forwarding after controller upgrade
@@ -117,15 +117,15 @@ TC24 Verify inter tenant dhcp-relay functionality after controller upgrade
     [Tags]          manual          feature    
 
 TC25 Add and delete nexthop group
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 TC26 Add and delete nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature     negative             
 
 TC27 Add and delete nexthop group IP 
-    manual untested
+    manual passed
     [Tags]          manual              feature            
                     
 TC28 Add and delete route pointing to nexthop group in tenant
@@ -184,6 +184,9 @@ TC41 Traffic forwarding with other tenant mac
     Traffic forwarding with other tenant mac
     [Tags]          feature          
     
+TC42 Verify inter tenant system traffic when nexthop has hint is using system control vlan rather than group vlan
+    manual passed
+    [Tags]          feature 
 
     
 * Keywords
