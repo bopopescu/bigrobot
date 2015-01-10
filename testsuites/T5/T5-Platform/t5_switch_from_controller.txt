@@ -16,6 +16,8 @@ Library         keywords/T5Switch.py
 #Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
 Library         String
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource	    testsuites/T5/t5_physical_variables.txt
 
 
 *Variables
@@ -201,6 +203,12 @@ TC28 Get and Verify the switch PSU Type information from controller
       
 T5 switch platform test setup
    base suite setup
+   Set swith int variables
+   Set switch dpid variables
+   fabric infra suite setup
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    reconnect switch ips
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
