@@ -15,7 +15,7 @@ Library       		String
 
         
 *Test Case
-### Configure Big Tap Interface from Controller Menu 		ID	 					Switch							Role				Name	 	
+### Configure Big Tap Interface from Controller Menu 		ID	 					Switch				Role				Name	 	
 T1.1 Interface with regular name-filter		
  	Configure Big Tap Interface from Controller Menu		ethernet1				app-rlb9-1			filter				filter-1
 	[Tags]  blackbird
