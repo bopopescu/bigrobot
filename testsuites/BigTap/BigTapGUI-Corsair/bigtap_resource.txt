@@ -345,7 +345,7 @@ ${BIGTAP POLICY IP PROTOCOL NUMBER FIELD}								xpath=//input[@id='dijit_form_N
 ${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}							xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='button presentation']
 #${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@class='inline_block top']/child::div[1]/child::div[3]/child::input[@id='dijit_form_FilteringSelect_2']
 ${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='textbox']
-${BIGTAP POLICY IP PROTOCOL LIST}										xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
+${BIGTAP POLICY IP PROTOCOL LIST}										xpath=//div[@id='dijit_form_FilteringSelect_8_popup']
 ${BIGTAP POLICY SERVICES DROPDOWN BUTTON}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode')]
 ${BIGTAP POLICY SERVICES LIST}  								xpath=//div[@id='widget_dijit_form_FilteringSelect_1_dropdown']
 ${BIGTAP POLICY SERVICES FIELD}									xpath=//input[@id='dijit_form_FilteringSelect_1']
@@ -780,6 +780,11 @@ Generate Action Menu Xpath
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+    
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
 
 Generate Action Menu Xpath Policy
 	[Arguments]  ${attachment_point}  ${text}
@@ -803,8 +808,9 @@ Generate Action Menu Xpath Interfaces Tunnels
         
 Generate Action Menu Xpath Interface Controller
 	[Arguments]  ${attachment_point}  ${id}  ${switch}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/div[@class='content' and (text()='  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/preceding-sibling::td/div/div[@class='bsn_ellipsis' and (text()='  ${switch}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+   
     
 Generate Action Menu Xpath Interface Lock
  	[Arguments]  ${attachment_point}  ${text}
@@ -2069,7 +2075,7 @@ Configure Switch Alias
 	[Arguments]  ${dpid}  ${alias}
     Go To Controller Switches Page
     Verify Page Contains Text  ${dpid}
-    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${dpid}
+    ${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${alias}
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait]
     Verify Element Visible  ${SET ALIAS MENU POPUP}
