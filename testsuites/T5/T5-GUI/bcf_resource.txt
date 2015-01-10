@@ -1835,7 +1835,7 @@ Configure SNMP
 	Verify Element Invisible  ${CONFIGURE SNMP POPUP}
 	
 Configure SNMP Traps
-	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${flow-table-threshold}  ${full-match-tcam-threshold}
+	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${full-match-tcam-threshold}
 	
 	Go To SNMP Page
     Verify Element Visible  ${CONFIGURE SNMP TRAPS BUTTON}
@@ -1914,18 +1914,6 @@ Configure SNMP Traps
    Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
    ...			Input Text And Verify   ${MEMORY THRESHOLD PERCENTAGE FIELD}  ${memory-threshold}
    
-   
-   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No L2
-   Run Keyword If  '${flow-table-threshold}' == '${EMPTY}'
-    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=No L2
-	
-   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  L2
-   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
-    ...			Drag And Drop   ${L2 FLOW TABLE THRESHOLDS KNOB}  target=L2
-    
-   Run Keyword Unless  '${flow-table-threshold}' == '${EMPTY}'
-   ...			Input Text And Verify   ${L2 FLOW THRESHOLD PERCENTAGE FIELD}  ${flow-table-threshold}
-    
     
    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No TCAM 
    Run Keyword If  '${full-match-tcam-threshold}' == '${EMPTY}'

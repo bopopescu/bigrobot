@@ -163,23 +163,41 @@ h1:
   ip: 10.9.16.217
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h2:
   ip: 10.9.16.147
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h3:
   ip: 10.9.16.209
   user: root
   password: bsn
+  interfaces:
+    leaf1a_int0: eth4
+    leaf1b_int0: eth5
 h4:
   ip: 10.9.16.205
   user: root
   password: bsn
+  interfaces:
+    leaf1a_int0: eth2
+    leaf1b_int0: eth3
 h5:
   ip: 10.9.16.119
   user: root
   password: bsn
+  interfaces:
+    leaf2a_int0: eth4
+    leaf2b_int0: eth5
 h6:
   ip: 10.9.16.178
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3

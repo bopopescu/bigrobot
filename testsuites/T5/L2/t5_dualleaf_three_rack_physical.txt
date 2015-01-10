@@ -199,7 +199,8 @@ Tear down the config
    
 T5 base suite setup
 	base suite setup
-	add fabric switch
+	fabric infra suite setup
+	Set host int variables
 	add a portgroup  p1 
     add interface to portgroup  leaf0-a  ${h1_intf0}  p1
     add interface to portgroup  leaf0-b  ${h1_intf1}  p1

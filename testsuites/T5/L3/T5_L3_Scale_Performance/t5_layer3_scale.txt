@@ -21,24 +21,24 @@ Configure 1k Tenant with 4k segment in global vlan-mapping mode
 	[Tags]				manual			scaling	
 
 L3 Arp learning rate
-    skipped
-    [Tags]              manual          performance
+  
+    [Tags]              manual          performance  skipped
     
 L3 Arp discovery rate
-    skipped
-    [Tags]              manual          performance
+    
+    [Tags]              manual          performance  skipped
 
 Configure 1k Tenant with 4k segment in default vlan-mapping mode
     manual passed
 	[Tags]				manual			scaling	
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
-    skipped
-    [Tags]              manual           scaling     
+    
+    [Tags]              manual           scaling     skipped
 
 DHCP request from 48k host 
-    skipped
-	[Tags]				manual 			scaling			
+    
+	[Tags]				manual 			scaling			skipped
 
 Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
     manual untested
@@ -73,8 +73,8 @@ Add more than 1k nexthop group
     [Tags]              manual           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
-    skipped
-    [Tags]              manual           scaling           
+
+    [Tags]              manual           scaling      skipped     
         
 
 

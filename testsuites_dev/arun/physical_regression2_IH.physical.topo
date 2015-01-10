@@ -38,6 +38,8 @@ s1:
     leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
     spine1_int0: ethernet52
+    h1_int0: ethernet48
+    h2_int0: ethernet47
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -60,6 +62,8 @@ s2:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
     spine1_int0: ethernet52
+    h1_int0: ethernet48
+    h2_int0: ethernet47
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -84,6 +88,8 @@ s3:
     leaf1b_int0: ethernet40
     leaf1b_int1: ethernet39
     spine0_int0: ethernet49
+    h3_int0: ethernet1
+    h4_int0: ethernet2 
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -106,7 +112,8 @@ s4:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
     spine1_int0: ethernet52
-    
+    h3_int0: ethernet1
+    h4_int0: ethernet2 
   set_session_ssh: false
   set_init_ping: false
 s5:
@@ -130,6 +137,8 @@ s5:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
     spine1_int0: ethernet52
+    h5_int0: ethernet47
+    h6_int0: ethernet48
   set_session_ssh: false
   set_init_ping: false
 s6:
@@ -152,6 +161,8 @@ s6:
     ixia1_int0: ethernet24
     spine0_int0: ethernet49
     spine1_int0: ethernet52
+    h5_int0: ethernet47
+    h6_int0: ethernet48
   set_session_ssh: false
   set_init_ping: false
 s7:

@@ -25,7 +25,7 @@ s1:
   interfaces:
     spine0_int0: ethernet9
     leaf0b_int0: ethernet31
-    ixia1_int0: ethernet17/2
+    ixia1_int0: ethernet17/4
     spine1_int0: ethernet10
   set_session_ssh: false
   set_init_ping: false
@@ -168,7 +168,7 @@ tg1:
   #set_init_ping: false
   ports:
     a:
-      name: 3/1
+      name: 3/4
     b:
       name: 3/2
     c:

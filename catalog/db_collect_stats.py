@@ -388,7 +388,8 @@ def display_stats(args):
     print ""
     print "Manual Verification Details"
     print "==================================================================="
-    test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    # test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    test_case_cursor = ih.testcases_archive(release=ih.release_lowercase(), build=build)
     # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
     i = 0
     pass_rate = {}

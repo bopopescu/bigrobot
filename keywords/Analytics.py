@@ -79,8 +79,8 @@ class Analytics(object):
         helpers.log("There are %s entries in elasticsearch" % total_elastic)
 
         helpers.log("Controller: %s, Elastic: %s" % (total_logs, total_elastic))
-        tolerance = total_logs / 20
-        helpers.log("Allowed discrepancy in logs is 5%%, i.e. %s" % tolerance)
+        tolerance = total_logs / 14
+        helpers.log("Allowed discrepancy in logs is 7%%, i.e. %s" % tolerance)
         discrepancy = abs(total_logs - total_elastic)
         helpers.log("Actual discrepancy is %s" % discrepancy)
 
