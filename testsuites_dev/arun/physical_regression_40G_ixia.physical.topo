@@ -37,7 +37,7 @@ s2:
   password: adminadmin
   interfaces:
     leaf0a_int0: ethernet31
-    ixia1_int0: ethernet17/2
+    ixia1_int0: ethernet17/3
     spine0_int0: ethernet9
     spine1_int0: ethernet10
   console:
@@ -174,7 +174,7 @@ tg1:
     c:
       name: 3/18
     d:
-      name: 3/9
+      name: 3/12
     e:
       name: 3/20
     f:
