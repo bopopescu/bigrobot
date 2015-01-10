@@ -37,7 +37,7 @@ s2:
   password: adminadmin
   interfaces:
     leaf0a_int0: ethernet31
-    ixia1_int0: ethernet17/3
+    ixia1_int0: ethernet17/2
     spine0_int0: ethernet9
     spine1_int0: ethernet10
   console:
@@ -78,7 +78,7 @@ s4:
   set_session_ssh: false
   set_init_ping: false
   interfaces:
-    ixia1_int0: ethernet17/1
+    ixia1_int0: ethernet17/3
     spine0_int0: ethernet5
     spine1_int0: ethernet6
 
