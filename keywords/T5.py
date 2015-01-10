@@ -1643,7 +1643,7 @@ class T5(object):
                 return False
         else:
             helpers.log("fabric role is not configured")
-            return True
+            return False
 
     def rest_verify_fabric_link(self):
         t = test.Test()
