@@ -925,7 +925,7 @@ OF packet capture details
 
 * Keywords 
 T0 Setup
-	add fabric switch
+	fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
