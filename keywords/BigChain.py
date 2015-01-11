@@ -718,6 +718,67 @@ class BigChain(object):
                     else:
                         return False
 
+    def rest_verify_bigchain_span_service(self, node, switch_alias=None, sw_dpid=None, chain_span_service_name=None, chain_span_service_interface=None, chain_span_service_instance=1):
+        '''
+            Execute CLI command "show bigchain span-service <span_service_name>" and verify
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_span_service_name is None) or (chain_span_service_interface is None):
+                helpers.test_log("Cannot execute command if chain_span_service_name and chain_span_service_interface are not provided ")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(chain_span_service_name)
+                    c.rest.get(url)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    found = 0
+                    if content[0]['name'] == str(chain_span_service_name):
+                        helpers.log("Span Service corretcly reports its name as %s" % str(chain_span_service_name))
+                    else:
+                        helpers.log("Span Service incorretcly reports its name as %s" % str(content[0]['name']))
+
+                    for i in range(0, len(content[0]['instance'])):
+                        if content[0]['instance'][i]['id'] == int(chain_span_service_instance):
+                            helpers.log("Span Service corretcly reports its instance ID as %s" % str(chain_span_service_instance))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its instance ID  as %s" % str(content[0]['instance'][i]['id']))
+
+                        if content[0]['instance'][i]['span-interface']['interface'] == str(chain_span_service_interface):
+                            helpers.log("Span Service corretcly reports its span interface as %s" % str(chain_span_service_interface))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its span interface as %s" % str(content[0]['instance'][i]['span-interface']['interface']))
+
+                        if content[0]['instance'][i]['span-interface']['switch'] == str(switch_dpid):
+                            helpers.log("Span Service corretcly reports its switch_dpid as %s" % str(switch_dpid))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its switch_dpid as %s" % str(content[0]['instance'][i]['span-interface']['switch']))
+                    if found == 0:
+                        return False
+                    else:
+                        return True
+
 ###################################################
 ##### CONFIG COMMANDS
 ###################################################
