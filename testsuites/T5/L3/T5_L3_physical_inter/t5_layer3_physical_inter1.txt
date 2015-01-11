@@ -65,12 +65,12 @@ TC11 L3 inter tenant forwarding split horizon on the same port
     [Tags]      feature     manual
     
 TC12 Move ecmp endpoint to another attachment point and verify L3 forwarding
-    skipped
-    [Tags]          manual          feature         ecmp        
+
+    [Tags]          manual          feature         ecmp      skipped  
 
 TC13 Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
-    skipped
-    [Tags]          manual          feature         
+    
+    [Tags]          manual          feature         skipped
 
 TC14 L3 inter tenant traffic behavior in headless mode
     manual passed
@@ -81,20 +81,20 @@ TC15 Link flap between leaf and spine
     [Tags]          feature         
 
 TC16 L3 inter tenant forwarding to external router
-    skipped
-    [Tags]          manual          feature         
+    
+    [Tags]          manual          feature       skipped  
 
 TC17 L3 inter tenant forwarding to VRRP routers
-    skipped
-    [Tags]          manual          feature
+    
+    [Tags]          manual          feature	      skipped
     
 TC18 L3 inter tenant destroy active controller VM from KVM
-    skipped
-    [Tags]          manual            feature        
+    
+    [Tags]          manual            feature        skipped
 
 TC19 L3 inter tenant destroy standby controller VM from KVM
-    skipped
-    [Tags]          manual           feature  
+    
+    [Tags]          manual           feature    skipped
 
 TC20 inter tenant ecmp forwarding in headless mode
     manual untested
@@ -105,16 +105,16 @@ TC21 inter tenant dhcp relay in headless mode
     [Tags]          manual          solution            dhcp-relay  
 
 TC22 Verify L3 inter tenant forwarding after controller upgrade
-    skipped
-    [Tags]          manual          feature                 
+    
+    [Tags]          manual          feature           skipped      
 
 TC23 Verify inter tenant ecmp forwarding after controller upgrade
-    skipped
-    [Tags]          manual          feature                 
+    
+    [Tags]          manual          feature           skipped      
 
 TC24 Verify inter tenant dhcp-relay functionality after controller upgrade
-    skipped
-    [Tags]          manual          feature    
+    
+    [Tags]          manual          feature     skipped
 
 TC25 Add and delete nexthop group
     manual passed
@@ -145,20 +145,20 @@ TC31 Add and delete route pointing to unknown nexthop group in system
     [Tags]          manual              feature            
 
 TC32 Add and delete route pointing to nexthop group defined in other tenant in system
-    skipped
-    [Tags]          manual              feature            
+    
+    [Tags]          manual              feature       skipped     
 
 TC33 Add and delete route pointing to nexthop group defined in tenantX in tenantY
-    skipped
-    [Tags]          manual              feature            
+    
+    [Tags]          manual              feature        skipped    
 
 TC34 Verify nexthop group config is still applied on HA failover
     manual untested
     [Tags]          manual              feature            HA
     
 TC35 Verify routing loop is not causing packets to loop forever
-    skipped
-    [Tags]          manual          feature   
+    
+    [Tags]          manual          feature     skipped
     
 TC36 Spine reboot
     Spine reboot
