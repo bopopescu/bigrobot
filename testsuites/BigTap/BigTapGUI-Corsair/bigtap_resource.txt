@@ -511,7 +511,7 @@ ${CONFIRM UNLOCK POPUP}			xpath=//div[@title='Confirm Unlock']
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
-	Set Suite Variable		${BT SIGNOUT URL}			https://${SERVER}/login
+	Set Suite Variable		${BT SIGNOUT URL}			https://${SERVER}/logout
 	Set Suite Variable     	${WELCOME URL}  			https://${SERVER}/
 	Set Suite Variable     	${ERROR URL}     			https://${SERVER}/login
 	Set Suite Variable     	${BIGTAP URL}    			https://${SERVER}/bigtap/main

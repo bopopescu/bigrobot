@@ -173,25 +173,25 @@ T4.8 Configure udf0 with L4 start offset 24
 
 # ### Configure Switch Alias										Switch	 						Alias	 			
 T7.1 Switch with regular alias	 				
- 	Configure Switch Alias										app-rlb9-1			app-rlb9-1
+ 	Configure Switch Alias										00:00:08:9e:01:b3:0c:0c			app-rlb9-1
 	[Tags]  blackbird
 T7.2 Edit switch alias			 							
- 	Configure Switch Alias										app-rly2-1			app-rly2-1
+ 	Configure Switch Alias										00:00:08:9e:01:f8:6b:8b			app-rly2-1
 	[Tags]  blackbird
 T7.3 Delete switch regular alias	 	
- 	Configure Switch Alias										app-rlb9-1			${EMPTY}
+ 	Configure Switch Alias										00:00:08:9e:01:b3:0c:0c			${EMPTY}
 	[Tags]  blackbird
 T7.4 Switch with alias containing allowed special characters-
- 	Configure Switch Alias										app-rlb9-1			switch-2
+ 	Configure Switch Alias										00:00:08:9e:01:b3:0c:0c			switch-2
 	[Tags]  blackbird
 T7.5 Switch with alias containing allowed special characters_
- 	Configure Switch Alias										app-rlb9-1			switch_3
+ 	Configure Switch Alias										00:00:08:9e:01:b3:0c:0c			switch_3
 	[Tags]  blackbird
 T7.6 Switch with empty alias		 			
- 	Configure Switch Alias										app-rlb9-1			${EMPTY}
+ 	Configure Switch Alias										00:00:08:9e:01:b3:0c:0c			${EMPTY}
 	[Tags]  blackbird
 T7.7 Switch with empty alias		 			
- 	Configure Switch Alias										app-rly2-1			${EMPTY}
+ 	Configure Switch Alias										00:00:08:9e:01:f8:6b:8b			${EMPTY}
 	[Tags]  blackbird 	
 
 #### Enable Disable Match Modes								Match Mode
