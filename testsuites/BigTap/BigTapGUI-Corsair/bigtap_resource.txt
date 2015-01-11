@@ -2075,7 +2075,7 @@ Configure Switch Alias
 	[Arguments]  ${dpid}  ${alias}
     Go To Controller Switches Page
     Verify Page Contains Text  ${dpid}
-    ${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${dpid}
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${dpid}
     Verify Element Visible  ${action_menu}
     Click Element  ${action_menu}  and don't wait]
     Verify Element Visible  ${SET ALIAS MENU POPUP}
