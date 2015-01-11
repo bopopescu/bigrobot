@@ -231,6 +231,18 @@ class BigChain(object):
                         helpers.log("Chain Name %s is not reported correctly" % str(chain_name))
                         return False
 
+                    if (content[0]['status']['runtime-status'] == "installed") :
+                        helpers.log("Run Time Status is reported correctly")
+                    else:
+                        helpers.log("Run Time Status is not reported correctly")
+                        return False
+
+                    if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") :
+                        helpers.log("Detailed Status is reported correctly")
+                    else:
+                        helpers.log("Detailed Status is not reported correctly")
+                        return False
+
                     if (content[0]['status']['from'] == str(interface1)) :
                         helpers.log("Interface %s is reported correctly" % str(interface1))
                     else:
@@ -706,6 +718,67 @@ class BigChain(object):
                     else:
                         return False
 
+    def rest_verify_bigchain_span_service(self, node, switch_alias=None, sw_dpid=None, chain_span_service_name=None, chain_span_service_interface=None, chain_span_service_instance=1):
+        '''
+            Execute CLI command "show bigchain span-service <span_service_name>" and verify
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_span_service_name is None) or (chain_span_service_interface is None):
+                helpers.test_log("Cannot execute command if chain_span_service_name and chain_span_service_interface are not provided ")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(chain_span_service_name)
+                    c.rest.get(url)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    found = 0
+                    if content[0]['name'] == str(chain_span_service_name):
+                        helpers.log("Span Service corretcly reports its name as %s" % str(chain_span_service_name))
+                    else:
+                        helpers.log("Span Service incorretcly reports its name as %s" % str(content[0]['name']))
+
+                    for i in range(0, len(content[0]['instance'])):
+                        if content[0]['instance'][i]['id'] == int(chain_span_service_instance):
+                            helpers.log("Span Service corretcly reports its instance ID as %s" % str(chain_span_service_instance))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its instance ID  as %s" % str(content[0]['instance'][i]['id']))
+
+                        if content[0]['instance'][i]['span-interface']['interface'] == str(chain_span_service_interface):
+                            helpers.log("Span Service corretcly reports its span interface as %s" % str(chain_span_service_interface))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its span interface as %s" % str(content[0]['instance'][i]['span-interface']['interface']))
+
+                        if content[0]['instance'][i]['span-interface']['switch'] == str(switch_dpid):
+                            helpers.log("Span Service corretcly reports its switch_dpid as %s" % str(switch_dpid))
+                            found = 1
+                        else:
+                            helpers.log("Span Service incorretcly reports its switch_dpid as %s" % str(content[0]['instance'][i]['span-interface']['switch']))
+                    if found == 0:
+                        return False
+                    else:
+                        return True
+
 ###################################################
 ##### CONFIG COMMANDS
 ###################################################
@@ -800,7 +873,7 @@ class BigChain(object):
                 else:
                     return True
 
-    def rest_add_service_to_chain(self, chain_name=None, service_name=None, instance=1, sequence=1):
+    def rest_add_service_to_chain(self, chain_name=None, service_name=None, instance=1, sequence=1, optional=False):
         '''
             Objective:
                 -- Add a service to a chain via command "use-service C1S1 instance 1 sequence 1"
@@ -818,7 +891,10 @@ class BigChain(object):
             else:
                 url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/service[sequence=%s]' % (str(chain_name), str(sequence))
                 try:
-                    c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "sequence": int(sequence)})
+                    if optional is True:
+                        c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "optional": True, "sequence": int(sequence)})
+                    else:
+                        c.rest.put(url, {"service-name": str(service_name), "instance": int(instance), "sequence": int(sequence)})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
@@ -1016,7 +1092,7 @@ class BigChain(object):
     def rest_skip_service(self, chain_service_name=None, instance_id=1, inskip="False", outskip="False"):
         '''
             Objective:
-                -- Skip service for inbound traffic       
+                -- Skip service for inbound/outbound traffic       
         '''
         try:
             t = test.Test()
@@ -1031,10 +1107,10 @@ class BigChain(object):
             else:
                 try:
                     if (inskip == "True") or (inskip == "true") or (inskip == "TRUE") :
-                        url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        url1 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]' % (str(chain_service_name), int(instance_id))
                         c.rest.patch(url1, {"in-skip": True})
                     elif (outskip == "True") or (outskip == "true") or (outskip == "TRUE"):
-                        url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]/' % (str(chain_service_name), int(instance_id))
+                        url2 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d]' % (str(chain_service_name), int(instance_id))
                         c.rest.patch(url2, {"out-skip": True})
                     elif (inskip == "Delete") or (inskip == "delete") or (inskip == "DELETE"):
                         url3 = '/api/v1/data/controller/applications/bigchain/service[name="%s"]/instance[id=%d][in-skip="True"][id=%d]/in-skip' % (str(chain_service_name), int(instance_id), int(instance_id))

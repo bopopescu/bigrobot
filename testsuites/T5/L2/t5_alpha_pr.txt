@@ -22,7 +22,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 Setup Three Rack Dual Leaf Topology
 	[Tags]  L2  feature  IronHorse   
     rest verify fabric switch all
-	rest verify fabric link common 	
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common 	
 
 Static endpoint age test
 	[Tags]  L2  feature  IronHorse 

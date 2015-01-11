@@ -87,6 +87,7 @@ ${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOve
 ${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB TUNNELING}							xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB PATCH MODE}						xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@class='knob_icon']
 ${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]
 ${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]
 ${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]
@@ -95,14 +96,18 @@ ${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), '
 ${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation?')]
 ${CONFIRM ENABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]
 ${CONFIRM DISABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]
+${CONFIRM ENABLE PATCH MODE POPUP}					xpath=//descendant::div[contains(text(), 'Enable Patch Mode')]
+${CONFIRM DISABLE PATCH MODE POPUP}					xpath=//descendant::div[contains(text(), 'Disable Patch Mode')]
 ${ENABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${ENABLE INPORT MASK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${ENABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${ENABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE PATCH MODE SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Patch Mode')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${DISABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${DISABLE INPORT MASK SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${DISABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 ${DISABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE PATCH MODE SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Patch Mode')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
 
 
 
@@ -111,9 +116,12 @@ ${DISABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 
 ${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
 #${GROUPNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${GROUPNAME FIELD}				xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
-${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_1']
-${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_2']
-${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+#${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_1']
+${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+#${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_2']
+#${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
 ${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE NAME}				xpath=//div[@class='input_error']
@@ -134,10 +142,14 @@ ${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
 
 ### Users Page
 #${USERNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
-${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
-${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
-${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+#${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
+#${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+#${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
+#${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${USERNAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Username')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
 ${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
@@ -146,7 +158,8 @@ ${SAVE BUTTON}					xpath=//descendant::span[contains(@id, 'dijit_form_Button') a
 ${ERROR BACKEND}				xpath=//div[@class='errors']
 ${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Groups')]
 ${GROUP ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
-${APPEND GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_9']
+#${APPEND GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_9']
+${APPEND GROUP BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 ${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
 ${CREATE USER POPUP}			xpath=//div[@title='Create User']
 ${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
@@ -326,13 +339,13 @@ ${BIGTAP POLICY ALLOW ALL MATCHES CHECKBOX UNSELECTED}   			 	xpath=//div[@data-
 ${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}								xpath=//div[@data-dojo-attach-point='blockEthertype']/descendant::div[@class='inline_block top']/descendant::input[@role='button presentation']
 ${BIGTAP POLICY ETHERTYPE FIELD}										xpath=//div[@data-dojo-attach-point='blockEthertype']/descendant::div[@class='inline_block top']/descendant::input[@role='textbox']
 #${BIGTAP POLICY ETHERTYPE FIELD}										xpath=//div[@class='nowrap']/child::div[@class='inline_block top']/descendant::input[@role='textbox']
-${BIGTAP POLICY ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${BIGTAP POLICY ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
 ${BIGTAP POLICY ETHERTYPE NUMBER FIELD}									xpath=//input[@id='dijit_form_NumberSpinner_2']
 ${BIGTAP POLICY IP PROTOCOL NUMBER FIELD}								xpath=//input[@id='dijit_form_NumberSpinner_3']
 ${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}							xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='button presentation']
 #${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@class='inline_block top']/child::div[1]/child::div[3]/child::input[@id='dijit_form_FilteringSelect_2']
 ${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='textbox']
-${BIGTAP POLICY IP PROTOCOL LIST}										xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
+${BIGTAP POLICY IP PROTOCOL LIST}										xpath=//div[@id='dijit_form_FilteringSelect_8_popup']
 ${BIGTAP POLICY SERVICES DROPDOWN BUTTON}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode')]
 ${BIGTAP POLICY SERVICES LIST}  								xpath=//div[@id='widget_dijit_form_FilteringSelect_1_dropdown']
 ${BIGTAP POLICY SERVICES FIELD}									xpath=//input[@id='dijit_form_FilteringSelect_1']
@@ -485,10 +498,20 @@ ${APPEND IP LIST BUTTON}								xpath=//span[@id='dijit_form_Button_10']
 ${SAVE IP LIST BUTTON}									xpath=//span[@id='dijit_form_Button_4']
 
 
+#### Big Tap Interface Lock
+
+${BIGTAP INTERFACE LOCK}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Lock')]
+${CONFIRM LOCK POPUP}			xpath=//div[@title='Confirm Lock']
+${CONFIRM OK BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'OK')]
+${BIGTAP INTERFACE UNLOCK}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Unlock')]
+${CONFIRM UNLOCK POPUP}			xpath=//div[@title='Confirm Unlock']
+
+
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
-	Set Suite Variable		${BT SIGNOUT URL}			https://${SERVER}/login
+	Set Suite Variable		${BT SIGNOUT URL}			https://${SERVER}/logout
 	Set Suite Variable     	${WELCOME URL}  			https://${SERVER}/
 	Set Suite Variable     	${ERROR URL}     			https://${SERVER}/login
 	Set Suite Variable     	${BIGTAP URL}    			https://${SERVER}/bigtap/main
@@ -757,6 +780,11 @@ Generate Action Menu Xpath
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+    
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
 
 Generate Action Menu Xpath Policy
 	[Arguments]  ${attachment_point}  ${text}
@@ -780,7 +808,13 @@ Generate Action Menu Xpath Interfaces Tunnels
         
 Generate Action Menu Xpath Interface Controller
 	[Arguments]  ${attachment_point}  ${id}  ${switch}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/div[@class='content' and (text()='  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/preceding-sibling::td/div/div[@class='bsn_ellipsis' and (text()='  ${switch}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+   
+    
+Generate Action Menu Xpath Interface Lock
+ 	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
     
 Input Text And Verify
@@ -955,20 +989,24 @@ Configure User
     #${random_username}  Generate Random Name  User  5
     #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
 
-    Input Text And Verify  ${USERNAME FIELD}  ${username}    
-    Input Text And Verify  ${PASSWORD FIELD}  ${password}    
-    Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${conf_password}    
+    Input Text And Verify  ${USERNAME FIELD}  ${username}
+    Click Element  ${CREATE USER POPUP}   and don't wait    
+    Input Text And Verify  ${PASSWORD FIELD}  ${password}  
+    Click Element  ${CREATE USER POPUP}   and don't wait  
+    Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${conf_password} 
+    Click Element  ${CREATE USER POPUP}   and don't wait   
     Input Text And Verify  ${FULL NAME FIELD}  ${full_name}
+    Click Element  ${CREATE USER POPUP}   and don't wait
 
-    Run Keyword Unless  '${password}'=='${conf_password}'  
-    ...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
-    Run Keyword Unless  '${password}'=='${conf_password}'
-    ...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}
+ 	#Run Keyword Unless  '${password}'=='${conf_password}'  
+    #...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
+    #Run Keyword Unless  '${password}'=='${conf_password}'
+    #...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}   
 
     #Run Keyword Unless  '${password}'=='${EMPTY}'  
     #...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
 
-    Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
+    #Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
 
     Run Keyword Unless  '${group}'=='${EMPTY}'  
     ...		Associate Group  ${group}
@@ -2651,6 +2689,29 @@ Configure Match Mode
     
     #Sleep  2
     
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      PatchMode_Enabled
+	Run Keyword If  '${match-mode}'=='!Patch Mode'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 PatchMode_Disabled
+
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+    ... 	Drag And Drop   ${LIST TYPE KNOB PATCH MODE}  target=PatchMode_Enabled
+    
+     Run Keyword If  '${match-mode}'=='Patch Mode'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE PATCH MODE POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+    ...		Click Element  ${ENABLE PATCH MODE SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ... 	Drag And Drop   ${LIST TYPE KNOB PATCH MODE}  target=PatchMode_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE PATCH MODE POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ...		Click Element  ${DISABLE PATCH MODE SUBMIT BUTTON}  and don't wait
+    
 	
 Configure Big Tap User Defined Offsets
 	[Arguments]  ${udf}  ${anchor}  ${offset}
@@ -2797,8 +2858,123 @@ Delete Tunnel
     Click Element  ${DELETE TUNNEL MENU POPUP}  and don't wait
     Verify Element Visible  ${CONFIRM DELETE POPUP}
 	
-   Verify Element Visible  ${PROCEED DELTE BUTTON}
-   Click Element  ${PROCEED DELTE BUTTON}  and don't wait
-   Sleep   1
+  	Verify Element Visible  ${PROCEED DELTE BUTTON}
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+    Sleep   1
+    
+ 
+Verify Packet Rate on Policy Page 
+	[Arguments]  ${policy-name}  ${role}  ${packet-rate}
+	
+	Go To Big Tap Policies Page
+    
+    ${action_menu_policy}  Generate Expand Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${expand_menu_policy}
+    Click Element  ${expand_menu_policy}  and don't wait
+    
+    Run Keyword If  '${role}'=='filter'
+    ... 	Verify Packet Rate on Filter Interface
+    
+    Run Keyword If  '${role}'=='delivery'
+    ... 	Verify Packet Rate on Delivery Interface
+    
+    Run Keyword If  '${role}'=='core'
+    ... 	Verify Packet Rate on Core Interfaces
     
     
+Verify Packet Rate on Filter Interface
+	[Arguments]  ${role}  ${packet-rate}
+
+    Verify Element Visible  ${expand_menu_operational_state}
+    Click Element  ${expand_menu_operational_state}  and don't wait
+
+
+	${return_value}=  ixia verify traffic rate   ${packet-rate}  ${filter-packet-rate}  rangev=500
+	Should be True  ${return_value}
+	
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+
+	#Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+	
+	Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+       	  
+    Sleep  1
+    
+    Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY IP PROTOCOL LIST} 
+    ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
+    ... 	${ipprotocol}
+    
+    Sleep  1
+    
+    Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	#Sleep  20
+	Highlight Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
+	
+	Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+    
+    Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+    #Verify Page Contains Text   ${policy}
+    Sleep   2
+    
+    
+Configure Lock on BigTap Interface
+	[Arguments]  ${role}  ${if-name}
+	
+	Go To Big Tap Interfaces Page
+    	
+	${action_menu_if}  Generate Action Menu Xpath Interface Lock  div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    
+	Verify Element Visible  ${BIGTAP INTERFACE LOCK}
+    Click Element  ${BIGTAP INTERFACE LOCK}  and don't wait 
+    
+    Verify Element Visible  ${CONFIRM LOCK POPUP}
+	
+  	Verify Element Visible  ${CONFIRM OK BUTTON}
+    Click Element  ${CONFIRM OK BUTTON}  and don't wait
+    
+    
+Unlock the BigTap Interface
+	[Arguments]  ${role}  ${if-name}
+	
+	Go To Big Tap Interfaces Page
+    	
+	${action_menu_if}  Generate Action Menu Xpath Interface Lock  div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    
+	Verify Element Visible  ${BIGTAP INTERFACE UNLOCK}
+    Click Element  ${BIGTAP INTERFACE UNLOCK}  and don't wait 
+    
+    Verify Element Visible  ${CONFIRM UNLOCK POPUP}
+	
+  	Verify Element Visible  ${CONFIRM OK BUTTON}
+    Click Element  ${CONFIRM OK BUTTON}  and don't wait
+    
+	
+
+    
+    
+    
+       
+
+	
+	
+	  
