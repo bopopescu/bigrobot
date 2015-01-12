@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # Description:
 #   Check for test suites which do not have the correct topo files. E.g.,
-#     - detect suites with no topo file
-#     - detect suites with <suite>.topo (but should be 'virtual' or 'physical')
+#     - detect suites with generic topo file or no topo file
+#     - detect suites with <suite>.<virtual|physical>.topo file
 
 import os
 import sys
 import re
 from pymongo import MongoClient
-import robot
+
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -34,39 +34,49 @@ database = configs['database']
 client = MongoClient(db_server, db_port)
 db = client[database]
 
+testsuites = db.test_suites
+
+
+def get_suites():
+    return testsuites.find({"build_name": os.environ['BUILD_NAME']},
+                           { "author": 1, "source": 1, "topo_type": 1, "_id": 1})
+
+
+def get_topo_file(text_file, topo_type='generic-topology'):
+    _suite = os.path.splitext(text_file)[0]
+    _suite = re.sub(r'^bigrobot/', '', _suite)
+    if topo_type == 'generic-topology':
+        return "../" + _suite + ".topo"
+    elif topo_type == 'physical':
+        return "../" + _suite + ".physical.topo"
+    elif topo_type == 'virtual':
+        return "../" + _suite + ".virtual.topo"
+    else:
+        return "missing-topology"
+
+
+def get_topo_type(text_file):
+    _topo_file = get_topo_file(text_file, "generic-topology")
+    if helpers.file_exists(_topo_file):
+        return "generic-topology"
+    else:
+        return "missing-topology"
+
 
 print_all = False
 print_unknown = True
-print_mv_commands = True
+print_mv_commands = False
 
 
-testsuites = db.test_suites
+# There may be
+text_names = {}
 
-suites = testsuites.find({"build_name": os.environ['BUILD_NAME']},
-                          { "author": 1, "source": 1, "topo_type": 1, "_id": 1}
-                          )
 
 if print_all:
-    for x in sorted(suites, key=lambda k: k['author']):
-        print("%10s   %-10s %s" % (x["topo_type"], x["author"], x["source"]))
+    for x in sorted(get_suites(), key=lambda k: k['author']):
+        print("%10s   %-12s %s" % (x["topo_type"], x["author"], x["source"]))
 
 if print_unknown:
-    for x in sorted(suites, key=lambda k: k['author']):
-        if x["topo_type"] == 'unknown':
-            print("%10s   %-10s %s" % (x["topo_type"], x["author"], x["source"]))
-            # x["dest_source"] = os.path.splitext(x["source"])[0] + ".physical.topo"
-            # print("mv %s %s" % (x["source"], x["dest_source"]))
-
-if print_mv_commands:
-    for x in sorted(suites, key=lambda k: k['author']):
-        if x["topo_type"] == 'unknown':
-            suite = os.path.splitext(x["source"])[0]
-            suite = re.sub(r'^bigrobot/', '', suite)
-
-            topo_file_current = "../" + suite + ".topo"
-            topo_file_new = "../" + suite + ".physical.topo"
-
-            if helpers.file_exists(topo_file_current):
-                # print("mv %s %s" % (topo_file_current, topo_file_new))
-                print("git mv %s %s" % (topo_file_current, topo_file_new))
-                # print("ls -la %s" % topo_file_current)
+    for x in sorted(get_suites(), key=lambda k: k['author']):
+        if x["topo_type"] in ['unknown', 'generic-topology', 'missing-topology']:
+            print("%10s   %-12s %s" % (get_topo_type(x["source"]), x["author"], x["source"]))
