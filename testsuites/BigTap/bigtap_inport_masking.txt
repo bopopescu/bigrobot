@@ -4,7 +4,7 @@ Suite Setup             inport suite setup
 Suite Teardown          inport suite teardown
 Test Setup              inportmask test setup
 Test Teardown           inportmask test teardown 
-Force Tags              feature  bigtap  inport-mask  Blackbird
+Force Tags              BigTap  Blackbird  3.0.0  Quanta  Dell  S4810  LY2  LB9  inport-mask
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -110,7 +110,7 @@ TC1:Verify # of flows with and without Inport Mask
     ${switchFlowVal}=  REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
     Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
-    [Tags]  bigtap  inport-mask       
+    [Tags]  feature
     
 TC2:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2
     ${version_string}=  return version number
@@ -143,7 +143,7 @@ TC2:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interfac
     #rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask    
+    [Tags]  feature
         
 TC3:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S5
     ${version_string}=  return version number
@@ -174,7 +174,7 @@ TC3:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interfac
     ${switchFlowVa13}=  REST show switch flow  s6
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask       
+    [Tags]  feature
 
 TC4:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S2
     ${version_string}=  return version number
@@ -205,7 +205,7 @@ TC4:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interfac
     ${switchFlowVa13}=   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask     
+    [Tags]  feature     
     
 TC5:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2
     ${version_string}=  return version number
@@ -242,7 +242,7 @@ TC5:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interfac
     ${switchFlowVa13} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask     
+    [Tags]  feature     
     
 TC6:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2 and service node on S2
     ${version_string}=  return version number
@@ -281,7 +281,7 @@ TC6:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interfac
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    [Tags]  feature   
     
 TC7:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2
     ${version_string}=  return version number
@@ -315,7 +315,7 @@ TC7:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     ${switchFlowVa13} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    [Tags]  feature   
     
 TC8:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service node on S2
     ${version_string}=  return version number
@@ -350,7 +350,7 @@ TC8:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    [Tags]  feature   
     
 TC9:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service nodes on S2 and S5
     ${version_string}=  return version number
@@ -386,7 +386,7 @@ TC9:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfac
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0  
-    [Tags]  bigtap  inport-mask
+    [Tags]  feature
     
 TC10:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     ${version_string}=  return version number
@@ -426,7 +426,7 @@ TC10:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
-    [Tags]  bigtap  inport-mask  T6098    
+    [Tags]  feature
     
 TC11:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2 and S5
     ${version_string}=  return version number
@@ -467,7 +467,7 @@ TC11:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
-    [Tags]  bigtap  inport-mask    
+    [Tags]  feature    
     
 TC12:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3
     ${version_string}=  return version number
@@ -514,7 +514,7 @@ TC12:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
-    [Tags]  bigtap  inport-mask  T6101    
+    [Tags]  feature
         
 TC13:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     ${version_string}=  return version number
@@ -562,7 +562,7 @@ TC13:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
-    [Tags]  bigtap  inport-mask  T6102 
+    [Tags]  feature
     
 TC14:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     ${version_string}=  return version number
@@ -602,7 +602,7 @@ TC14:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal4} =   REST show switch flow  s6 
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    [Tags]  bigtap  inport-mask  T6103  
+    [Tags]  feature
     
 TC15:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2
     ${version_string}=  return version number
@@ -643,7 +643,7 @@ TC15:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    [Tags]  bigtap  inport-mask  T6104   
+    [Tags]  feature
     
 TC16:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     ${version_string}=  return version number
@@ -692,7 +692,7 @@ TC16:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery 
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    [Tags]  bigtap  inport-mask   
+    [Tags]  feature   
         
 TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery interfaces on S2 and S3
     ${version_string}=  return version number
@@ -741,7 +741,7 @@ TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery 
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
     Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    [Tags]  bigtap  inport-mask  
+    [Tags]  feature  
     
 * Keywords
 

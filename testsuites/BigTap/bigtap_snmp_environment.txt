@@ -33,7 +33,7 @@ TC001: Verify CPU Temperature is reported correctly in CLI and in SNMP Walk Outp
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   CPU Temperature
     Should be true  ${snmp_cmp}
-    [Tags]    fan  runthis
+    [Tags]  feature
     
 TC002: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -41,7 +41,7 @@ TC002: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk 
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   Ambient Temperature
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature
     
 TC003: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -49,7 +49,7 @@ TC003: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 1A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature
     
 TC004: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -57,7 +57,7 @@ TC004: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 1B 
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature
     
     
 TC005: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on master
@@ -66,7 +66,7 @@ TC005: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 2A
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature
     
     
 TC006: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on master
@@ -75,7 +75,7 @@ TC006: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 2B
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature
 
 TC007: Verify FAN 3A is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -83,7 +83,7 @@ TC007: Verify FAN 3A is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 3A
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
 TC008: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -91,7 +91,7 @@ TC008: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 3B
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
 
 TC009: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -99,7 +99,7 @@ TC009: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 4A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
 
 TC010: Verify FAN 4B is reported correctly in CLI and in SNMP Walk Output on master
     
@@ -107,7 +107,7 @@ TC010: Verify FAN 4B is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 4B
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
 TC011: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on master
@@ -116,7 +116,7 @@ TC011: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 5A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
 TC012: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on master
@@ -125,7 +125,7 @@ TC012: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on mas
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 5B
     Should be true  ${snmp_cmp}
-    [Tags]    fan             
+    [Tags]  feature             
 
     
 TC013: Verify CPU Temperature is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -134,7 +134,7 @@ TC013: Verify CPU Temperature is reported correctly in CLI and in SNMP Walk Outp
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   CPU Temperature
     Should be true  ${snmp_cmp}
-    [Tags]    fan    
+    [Tags]  feature    
     
 TC014: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk Output on Slave
     
@@ -142,7 +142,7 @@ TC014: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk 
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   Ambient Temperature
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
 TC015: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on Slave
     
@@ -150,7 +150,7 @@ TC015: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 1A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
 TC016: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on Slave
     
@@ -158,7 +158,7 @@ TC016: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 1B 
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
     
 TC017: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -167,7 +167,7 @@ TC017: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 2A
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
     
 TC018: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -176,7 +176,7 @@ TC018: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 2B
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
     
     
@@ -186,7 +186,7 @@ TC019: Verify FAN 3A is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 3A
     Should be true  ${snmp_cmp}
-    [Tags]    fan  
+    [Tags]  feature  
     
 TC020: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on Slave
     
@@ -194,7 +194,7 @@ TC020: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 3B
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
 TC021: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -203,7 +203,7 @@ TC021: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 4A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
     
@@ -213,7 +213,7 @@ TC021: Verify FAN 4B is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 4B
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
 TC022: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -222,7 +222,7 @@ TC022: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 5A
     Should be true  ${snmp_cmp}
-    [Tags]    fan 
+    [Tags]  feature 
     
     
 TC023: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on Slave
@@ -231,7 +231,7 @@ TC023: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on Sla
     ${compare_value_3}=  return snmp value  ${snmp_value1}  1
     ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 5B
     Should be true  ${snmp_cmp}
-    [Tags]    fan
+    [Tags]  feature
 
     
 * Keywords

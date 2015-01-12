@@ -1,20 +1,20 @@
 * Setting
-Documentation   BigTap Test Suite Release:Blackbird Feature:L3-L4 Mode
-Suite Setup     Bigtap list op l3_l4 suite setup
-Suite Teardown  Bigtap list op l3_l4 suite teardown
-Test Setup      Bigtap list op l3_l4 case setup
-Test Teardown   Bigtap list op l3_l4 case teardown
-Force Tags      BigTap
-#Library         keywords_dev/mingtao/Common.py
-Library             keywords/BsnCommon.py
-Library             keywords/AppController.py
-Library             keywords/BigTap.py
-Library             keywords/SwitchLight.py
-Library             keywords/Ixia.py
-Library             Collections.py
-Library             OperatingSystem.py
-Library             String.py
-Resource	testsuites/BigTap/blackbird_list_op_l34_resource.txt
+Documentation           BigTap Test Suite Release:Blackbird Feature:L3-L4 Mode
+Suite Setup             Bigtap list op l3_l4 suite setup
+Suite Teardown          Bigtap list op l3_l4 suite teardown
+Test Setup              Bigtap list op l3_l4 case setup
+Test Teardown           Bigtap list op l3_l4 case teardown
+Force Tags              BigTap  Blackbird  3.0.0  Quanta  LB9
+
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Resource                testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 
 * Variable
@@ -47,7 +47,7 @@ T3.1 Default l3-l4: Test ipv4/6 group and optimization
 	bigtap delete all 
 	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
 
-	[Tags]  sanity  l3_l4   BigTap   blackbird_1    
+	[Tags]  sanity
 
 
 T3.2 Enable l3-l4: Test ipv4/6 group and optimization 
@@ -60,7 +60,7 @@ T3.2 Enable l3-l4: Test ipv4/6 group and optimization
 	bigtap delete all 
 	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
 	 
-	[Tags]  sanity  l3_l4   BigTap   blackbird_1    
+	[Tags]  sanity
 
 
 T3.3 Change l3-l4 with policy with no mac configured
@@ -82,7 +82,7 @@ T3.3 Change l3-l4 with policy with no mac configured
     ${Flow3}=   rest_show_switch_flow       ${sw1}	    
     Should Be Equal As Integers            ${Flow1}    ${Flow3}
   
-   [Tags]  sanity  l3_l4   BigTap   blackbird_1     
+   [Tags]  sanity
 
 
 T3.4 ipv4 mac can be configured/not configured correctly  
@@ -105,7 +105,7 @@ T3.4 ipv4 mac can be configured/not configured correctly
     ${result}=   rest_enable_feature    l3-l4-mode 
     Should be True                      ${result}     
     
-   [Tags]  feature   l3_l4   BigTap   blackbird_1   
+   [Tags]  feature
 
 
 
@@ -134,9 +134,7 @@ T3.5 ipv6 mac can be configured/not configured correctly
     Config ipv6 mac all negative         P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
     Sleep	                            ${short} 
     Verify switch entry                 ${sw1}	   3    
- 
-    
-   [Tags]  feature   l3_l4   BigTap   blackbird_1     
+   [Tags]  feature
 
 
 
@@ -163,7 +161,7 @@ T3.6 feature integration: l3_l4 & trackhost BT-1144
     Sleep	                               ${medium}    
     Verify switch entry                     ${sw1}	10         
    
-   [Tags]  sanity  l3_l4   BigTap   blackbird_1     
+   [Tags]  sanity
 
  
  

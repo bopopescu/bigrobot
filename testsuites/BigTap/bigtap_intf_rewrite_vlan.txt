@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              bigtap test setup
 Test Teardown           bigtap test teardown 
-Force Tags              bigtap  feature  vlan-rewrite
+Force Tags              BigTap  Blackbird  3.0.0  Quanta  LB9  LY2  interface  rewrite-vlan
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -39,7 +39,7 @@ ${delivery_2_nick}  ixia-2-14
 TC001: Verify intial configuration
     REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
     REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1
-    [Tags]  verifyconfig
+    [Tags]  feature
 
 TC002: Verify traffic with match any
     ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
@@ -54,7 +54,7 @@ TC002: Verify traffic with match any
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames       
-    [Tags]  intf-vlanrewrite  match-any
+    [Tags]  feature  traffic
 
 TC003: Verify traffic with match on src-mac
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:11:01:01:01:01", "sequence": 1}
@@ -74,7 +74,7 @@ TC003: Verify traffic with match on src-mac
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  match-mac  
+    [Tags]  feature  traffic
 
 TC004: Verify traffic with match on dst-mac
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:11:01:01:01:02", "sequence": 1}
@@ -94,7 +94,7 @@ TC004: Verify traffic with match on dst-mac
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  match-mac
+    [Tags]  feature  traffic
 
 TC005: Verify traffic with match on ethertype
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 8943}
@@ -112,7 +112,7 @@ TC005: Verify traffic with match on ethertype
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  match-ethertype    
+    [Tags]  feature  traffic
 
 TC006: Verify traffic with match on IPv4
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048}
@@ -132,7 +132,7 @@ TC006: Verify traffic with match on IPv4
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip 
+    [Tags]  feature  traffic
 
 TC007: Verify traffic with match on IPv4 src-ip
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.224.0", "sequence": 1, "src-ip": "10.1.101.1", "ether-type": 2048}
@@ -152,7 +152,7 @@ TC007: Verify traffic with match on IPv4 src-ip
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchsrcip 
+    [Tags]  feature  traffic
 
 TC008: Verify traffic with match on IPv4 dst-ip
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "10.1.101.2", "ether-type": 2048}
@@ -172,7 +172,7 @@ TC008: Verify traffic with match on IPv4 dst-ip
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchdstip     
+    [Tags]  feature  traffic
 
 TC009: Verify traffic with match on IPv4 TCP
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 2048}
@@ -194,7 +194,7 @@ TC009: Verify traffic with match on IPv4 TCP
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp                
+    [Tags]  feature  traffic
 
 TC010: Verify traffic with match on IPv4 TCP SRC-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
@@ -216,7 +216,7 @@ TC010: Verify traffic with match on IPv4 TCP SRC-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    [Tags]  feature  traffic
 
 TC011: Verify traffic with match on IPv4 TC0P SRC-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 2048, "src-tp-port-min": 65000, "ip-proto": 6, "sequence": 1}
@@ -238,7 +238,7 @@ TC011: Verify traffic with match on IPv4 TC0P SRC-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    [Tags]  feature  traffic
     
 TC012: Verify traffic with match on IPv4 TCP DST-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 65535, "ip-proto": 6, "sequence": 1}
@@ -260,7 +260,7 @@ TC012: Verify traffic with match on IPv4 TCP DST-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpdstport    
+    [Tags]  feature  traffic
 
 TC013: Verify traffic with match on IPv4 TCP DST-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 2048, "dst-tp-port-max": 65535, "ip-proto": 6, "sequence": 1}
@@ -282,7 +282,7 @@ TC013: Verify traffic with match on IPv4 TCP DST-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpdstport     
+    [Tags]  feature  traffic
  
 TC014: Verify traffic with match on IPv4 UDP
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048}
@@ -304,7 +304,7 @@ TC014: Verify traffic with match on IPv4 UDP
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp                
+    [Tags]  feature  traffic
 
 TC015: Verify traffic with match on IPv4 UDP SRC-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
@@ -326,7 +326,7 @@ TC015: Verify traffic with match on IPv4 UDP SRC-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    [Tags]  feature  traffic
 
 TC16: Verify traffic with match on IPv4 UDP SRC-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 2048, "src-tp-port-min": 65000, "ip-proto": 17, "sequence": 1}
@@ -348,7 +348,7 @@ TC16: Verify traffic with match on IPv4 UDP SRC-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    [Tags]  feature  traffic
     
 TC017: Verify traffic with match on IPv4 UDP DST-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 65535, "ip-proto": 17, "sequence": 1}
@@ -370,7 +370,7 @@ TC017: Verify traffic with match on IPv4 UDP DST-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpdstport    
+    [Tags]  feature  traffic
 
 TC018: Verify traffic with match on IPv4 UDP DST-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 2048, "dst-tp-port-max": 65535, "ip-proto": 17, "sequence": 1}
@@ -392,7 +392,7 @@ TC018: Verify traffic with match on IPv4 UDP DST-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcpdstport  
+    [Tags]  feature  traffic
 
 ######
 
@@ -414,7 +414,7 @@ TC019: Verify traffic with match on IPv6
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip6 
+    [Tags]  feature  traffic
 
 TC020: Verify traffic with match on IPv6 Src IP (unicast)
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001::1", "ether-type": 34525}
@@ -434,7 +434,7 @@ TC020: Verify traffic with match on IPv6 Src IP (unicast)
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip6-srcip 
+    [Tags]  feature  traffic
 
 TC021: Verify traffic with match on IPv6 Src IP (Link Local Unicast)
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "FE80:0:0:0:211:FF:FE00:101", "ether-type": 34525}
@@ -454,7 +454,7 @@ TC021: Verify traffic with match on IPv6 Src IP (Link Local Unicast)
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip6-srcip-ll 
+    [Tags]  feature  traffic
     
 TC022: Verify traffic with match on IPv6 DST IP (Global unicast)
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "2001::1", "ether-type": 34525}
@@ -474,7 +474,7 @@ TC022: Verify traffic with match on IPv6 DST IP (Global unicast)
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip6-dstip  
+    [Tags]  feature  traffic
 
 TC023: Verify traffic with match on IPv6 Dst IP (Link Local Unicast)
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "FE80:0:0:0:211:FF:FE00:101", "ether-type": 34525}
@@ -494,7 +494,7 @@ TC023: Verify traffic with match on IPv6 Dst IP (Link Local Unicast)
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchip6-dstip-ll 
+    [Tags]  feature  traffic
 
 TC024: Verify traffic with match on TCP6
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 34525}
@@ -516,7 +516,7 @@ TC024: Verify traffic with match on TCP6
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp6
+    [Tags]  feature  traffic
 
 TC025: Verify traffic with match on TCP6 SRC-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
@@ -538,7 +538,7 @@ TC025: Verify traffic with match on TCP6 SRC-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp6
+    [Tags]  feature  traffic
 
 TC026: Verify traffic with match on TCP6 DST-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
@@ -560,7 +560,7 @@ TC026: Verify traffic with match on TCP6 DST-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp6
+    [Tags]  feature  traffic
 
 TC027: Verify traffic with match on TCP6 SRC-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 34525, "src-tp-port-min": 65000, "ip-proto": 6, "sequence": 1}
@@ -582,7 +582,7 @@ TC027: Verify traffic with match on TCP6 SRC-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp6
+    [Tags]  feature  traffic
 
 TC028: Verify traffic with match on TCP6 DST-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 34525, "dst-tp-port-max": 65535, "ip-proto": 6, "sequence": 1}
@@ -604,7 +604,7 @@ TC028: Verify traffic with match on TCP6 DST-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchtcp6            
+    [Tags]  feature  traffic
 
 TC029: Verify traffic with match on UDP6
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 34525}
@@ -626,7 +626,7 @@ TC029: Verify traffic with match on UDP6
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6
+    [Tags]  feature  traffic
 
 TC030: Verify traffic with match on UDP6 SRC-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 34525, "ip-proto":17, "sequence": 1}
@@ -648,7 +648,7 @@ TC030: Verify traffic with match on UDP6 SRC-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6
+    [Tags]  feature  traffic
 
 TC031: Verify traffic with match on UDP6 DST-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto":17, "sequence": 1}
@@ -670,7 +670,7 @@ TC031: Verify traffic with match on UDP6 DST-PORT
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  
+    [Tags]  feature  traffic
 
 TC032: Verify traffic with match on UDP6 SRC-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 34525, "src-tp-port-min": 65000, "ip-proto":17, "sequence": 1}
@@ -692,7 +692,7 @@ TC032: Verify traffic with match on UDP6 SRC-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  
+    [Tags]  feature  traffic
 
 TC033: Verify traffic with match on UDP6 DST-PORT RANGE
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 34525, "dst-tp-port-max": 65535, "ip-proto":17, "sequence": 1}
@@ -714,7 +714,7 @@ TC033: Verify traffic with match on UDP6 DST-PORT RANGE
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  matchUDP6  
+    [Tags]  feature  traffic
 
 TC034: Verify traffic with match on IPv4, strip vlan
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048}
@@ -739,7 +739,7 @@ TC034: Verify traffic with match on IPv4, strip vlan
     rest delete stripvlan from policy  ${policy_name_1}
     rest delete stripvlan from policy  ${policy_name_1}
     Sleep  5      
-    [Tags]  intf-vlanrewrite  stripvlan   
+    [Tags]  feature  traffic
 
 TC035: Verify traffic with match on IPv6, strip vlan
     rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34525}
@@ -764,7 +764,7 @@ TC035: Verify traffic with match on IPv6, strip vlan
     rest delete stripvlan from policy  ${policy_name_1}
     rest delete stripvlan from policy  ${policy_name_1}
     Sleep  5      
-    [Tags]  intf-vlanrewrite  stripvlan  
+    [Tags]  feature  traffic
 
 TC036: Verify traffic with match on L2 IPv4 Multicast MAC Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "01:00:5E:00:00:01", "sequence": 1}
@@ -782,7 +782,7 @@ TC036: Verify traffic with match on L2 IPv4 Multicast MAC Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames 
-    [Tags]  intf-vlanrewrite  ipv4-multicast   
+    [Tags]  feature  traffic
 
 TC037: Verify traffic with match on IPv4 Multicast Dst-IP Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "225.0.0.1", "ether-type": 2048}
@@ -802,7 +802,7 @@ TC037: Verify traffic with match on IPv4 Multicast Dst-IP Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames  
-    [Tags]  intf-vlanrewrite  ipv4-multicast   
+    [Tags]  feature  traffic
 
 TC038: Verify traffic with match on L2 IPv6 Multicast MAC Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "33:33:5E:00:00:01", "sequence": 1}
@@ -820,7 +820,7 @@ TC038: Verify traffic with match on L2 IPv6 Multicast MAC Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames 
-    [Tags]  intf-vlanrewrite  ipv6-multicast   
+    [Tags]  feature  traffic
 
 TC039: Verify traffic with match on IPv6 Multicast Dst-IP Address
     rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "ff02::1", "ether-type": 34525}
@@ -840,7 +840,7 @@ TC039: Verify traffic with match on IPv6 Multicast Dst-IP Address
     stop traffic
     verify results  a  transmitted_frames  c  received_data_integrity_frames
     verify results  b  transmitted_frames  d  received_data_integrity_frames      
-    [Tags]  intf-vlanrewrite  ipv6-multicast   
+    [Tags]  feature  traffic
 
 * Keywords
 
