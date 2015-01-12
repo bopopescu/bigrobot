@@ -70,7 +70,8 @@ T6.5. Verify that switch stays in provisioned mode when all controllers go down 
 T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
 	# LY2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it downloaded correct image and was let into the fabric.
 	# LB2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it was unable to download SWI because of wrong platform.
-	Manual Untested
+    # Controller responds to manifest request: "cannot find image for switch"
+	Manual Passed
 	[Tags]  manual
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
 	Manual Passed
@@ -124,7 +125,7 @@ T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flav
 	[Tags]  skipped
 	# only one failover type implemented in CLI
 T6.23. Check behavior with bandwidt-limited pipe (many switches downloading images?)
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 	# Memory usage and CPU spike while download, but returns to normal after it's done. Tested with 38 parallel downloads (both SWI and Installer)
 T6.24. Check that switch and controllers can configure and use separate remote syslog servers
@@ -196,8 +197,9 @@ T7.8. switch's MAC address is not configured on the controller - after Switch Li
 	Manual Passed
 	[Tags]  manual
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
+	# Controller responds to manifest request: "cannot find image for switch"
 	# Switch fails to download SWI for given platform type
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
 	Manual Passed
