@@ -15,6 +15,7 @@ Library	         Collections.py
 Library		keywords/T5Utilities.py
 Library		keywords/T5ZTN.py
 Library		keywords_dev/arun/support.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 *** Test Cases ***
 TC01 Check New Flood light Partitions for Diagnostics
@@ -124,6 +125,7 @@ TC20 check ofad error in Support Log for switch
 	[Tags]  support  run
 * Keywords
 T5 support suite setup
+	fabric infra suite setup
 	delete support bundles
 	${result}=  Generate support  master
 	Log  ${result}
