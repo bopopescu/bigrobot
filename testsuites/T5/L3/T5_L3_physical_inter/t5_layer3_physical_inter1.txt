@@ -129,19 +129,19 @@ TC27 Add and delete nexthop group IP
     [Tags]          manual              feature            
                     
 TC28 Add and delete route pointing to nexthop group in tenant
-    manual untested
+    manual passed
     [Tags]          manual              feature            
                     
 TC29 Add and delete route pointing to different nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 TC30 Add and delete route pointing to nexthop group in system
-    manual untested
+    manual passed
     [Tags]          manual              feature            
 
 TC31 Add and delete route pointing to unknown nexthop group in system
-    manual untested
+    manual passsed
     [Tags]          manual              feature            
 
 TC32 Add and delete route pointing to nexthop group defined in other tenant in system
@@ -153,7 +153,7 @@ TC33 Add and delete route pointing to nexthop group defined in tenantX in tenant
     [Tags]          manual              feature        skipped    
 
 TC34 Verify nexthop group config is still applied on HA failover
-    manual untested
+    manual passed
     [Tags]          manual              feature            HA
     
 TC35 Verify routing loop is not causing packets to loop forever

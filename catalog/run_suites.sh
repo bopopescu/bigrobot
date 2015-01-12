@@ -34,6 +34,11 @@ fi
 
 unset BIGROBOT_TESTBED
 unset BIGROBOT_PARAMS_INPUT
+unset BIGROBOT_TOPOLOGY
+  # In regression environment, BIGROBOT_TOPOLOGY may be pointing to a reference
+  # topology. So unset it. The established convention is for each test suite
+  # to have a companion topology file of the same suite name.  
+
 export BIGROBOT_CI=True
 if [ "$BIGROBOT_PATH"x = x ]; then
     export BIGROBOT_PATH=`pwd`/..
