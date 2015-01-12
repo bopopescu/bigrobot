@@ -928,6 +928,7 @@ T0 Setup
 	fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
+    Set host int variables
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	#bash execute command  leaf0-a  ofad-ctl autoneg 25
