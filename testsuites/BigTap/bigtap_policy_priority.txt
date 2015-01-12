@@ -4,7 +4,7 @@ Suite Setup             priority suite setup
 Suite Teardown          priority suite teardown
 Test Setup              priority test setup
 Test Teardown           priority test teardown 
-Force Tags              BigTap  ToS  Blackbird
+Force Tags              BigTap  Blackbird  3.0.0  Quanta  LB9  policy  priority
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -58,7 +58,7 @@ ${policy_overlap_3}                          _ZR1_o_R1
 TC001: Verify Configuration
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
-    [Tags]  basic
+    [Tags]  feature
     
 TC002: Change policy priority and verify policy
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200

@@ -4,7 +4,7 @@ Suite Setup             offset suite setup
 Suite Teardown          offset suite teardown
 Test Setup              offset test setup
 Test Teardown           offset test teardown 
-Force Tags              corsair  bigtap  sanity  feature
+Force Tags              BigTap  Corsair  4.0.0  Quanta  LB9  LY2  match-conditions  dpm
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -348,7 +348,7 @@ TC16:Verify CLI "show running-config"
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['mask']}    4294967295
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['offset']}  12
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['value']}  100
-    [Tags]  feature	
+    [Tags]  feature
 
 
 TC17:Delete and re-add policy and verify flows get deleted and re-installed.
@@ -375,7 +375,7 @@ TC17:Delete and re-add policy and verify flows get deleted and re-installed.
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1    
     sleep  10    
-    [Tags]  feature
+    [Tags]  negative
 	
 
 TC18:With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI disallows
@@ -386,7 +386,7 @@ TC18:With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI 
     ${return_value}=  rest enable feature  l3-l4
     Should not be true   ${return_value} 
     sleep  10     
-    [Tags]  feature
+    [Tags]  negative
 	
 
 TC20:With policy installed, go from l3-l4-offset mode to full-match mode. Verify CLI disallows
@@ -397,7 +397,7 @@ TC20:With policy installed, go from l3-l4-offset mode to full-match mode. Verify
     ${return_value}=  rest enable feature  full-match
     Should not be true   ${return_value}
     sleep  10         
-    [Tags]  feature
+    [Tags]  negative
 
 TC21:With policy installed, enable overlap mode. Verify no affect on BigTap policy
      
@@ -414,7 +414,7 @@ TC21:With policy installed, enable overlap mode. Verify no affect on BigTap poli
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1
     sleep  10     
-    [Tags]  feature
+    [Tags]  negative
 
 TC22:With policy installed, disable overlap mode. Verify no affect on BigTap policy
       
@@ -432,7 +432,7 @@ TC22:With policy installed, disable overlap mode. Verify no affect on BigTap pol
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
     sleep  5     
-    [Tags]  feature
+    [Tags]  negative
 
 TC23:With policy installed, enable inport-masking. Verify no affect on BigTap policy
 
@@ -446,7 +446,7 @@ TC23:With policy installed, enable inport-masking. Verify no affect on BigTap po
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     sleep  5      
-    [Tags]  feature
+    [Tags]  negative
 
 TC24:With policy installed, disable inport-masking. Verify no affect on BigTap policy
 
@@ -459,7 +459,7 @@ TC24:With policy installed, disable inport-masking. Verify no affect on BigTap p
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1} 
     sleep  5
-    [Tags]  feature
+    [Tags]  negative
 
 TC25:With policy installed, send non-matching traffic. Verify traffic is dropped at ingress ports
 	
@@ -480,7 +480,7 @@ TC25:With policy installed, send non-matching traffic. Verify traffic is dropped
     sleep  10
     verify false results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  feature
+    [Tags]  negative
 
 TC26:With policy installed and match on GTP TEID, send packet with GTP header and bad CRC
 	
@@ -508,7 +508,7 @@ TC26:With policy installed and match on GTP TEID, send packet with GTP header an
  	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
  	Should be True  ${return_value}
     stop traffic  ${stream}
- 	[Tags]  feature
+ 	[Tags]  negative
 
 
 	

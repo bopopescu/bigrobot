@@ -4,7 +4,7 @@ Suite Setup             breakout suite setup
 Suite Teardown          breakout suite teardown
 Test Setup              breakout test setup
 Test Teardown           breakout test teardown 
-Force Tags              corsair  feature  bigtap  4.1.1  4.5.0
+Force Tags              BigTap  Corsair  4.1.1  Accton  Dell    S4810  AS5710  S6000  breakout
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -149,7 +149,7 @@ TC001: Verify L2 traffic: frame size 64 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs64 
+   [Tags]  sanity  traffic
 
 TC002: Verify L2 traffic: frame size 128 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -167,7 +167,7 @@ TC002: Verify L2 traffic: frame size 128 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs128 
+   [Tags]  sanity  traffic
 
 TC003: Verify L2 traffic: frame size 256 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -185,7 +185,7 @@ TC003: Verify L2 traffic: frame size 256 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs256
+   [Tags]  sanity  traffic
    
 
 TC004: Verify L2 traffic: frame size 512 bytes
@@ -204,7 +204,7 @@ TC004: Verify L2 traffic: frame size 512 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs512
+   [Tags]  sanity  traffic
 
 TC005: Verify L2 traffic: frame size 1024 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -222,7 +222,7 @@ TC005: Verify L2 traffic: frame size 1024 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs1024
+   [Tags]  sanity  traffic
 
 TC006: Verify L2 traffic: frame size 1518 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -240,7 +240,7 @@ TC006: Verify L2 traffic: frame size 1518 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  fs1518
+   [Tags]  sanity  traffic
 
 TC007: Verify L2 traffic: frame size 9216 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -258,7 +258,7 @@ TC007: Verify L2 traffic: frame size 9216 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  jumbo
+   [Tags]  sanity  traffic
 
 TC008: Verify L2 Vlan Tagged traffic: frame size 9216 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -276,7 +276,7 @@ TC008: Verify L2 Vlan Tagged traffic: frame size 9216 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  vlan
+   [Tags]  sanity  traffic
 
 TC009: Verify L2 Traffic with CRC Errors: frame size 9216 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -294,7 +294,7 @@ TC009: Verify L2 Traffic with CRC Errors: frame size 9216 bytes
     stop traffic
     sleep  10
     verify interface stats
-   [Tags]  l2  vlan
+   [Tags]  sanity  traffic
 
 TC010: Verify L3 IPv4 traffic: frame size 68 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -307,7 +307,7 @@ TC010: Verify L3 IPv4 traffic: frame size 68 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs68  ipv4
+   [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 68 Bytes
         
@@ -322,7 +322,7 @@ TC011: Verify L3 IPv6 traffic: frame size 68 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs68  ipv6
+   [Tags]  sanity  traffic
 
 
 TC012: Verify L3 IPv4 traffic: frame size 128 bytes
@@ -336,7 +336,7 @@ TC012: Verify L3 IPv4 traffic: frame size 128 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs128  ipv4
+   [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 128 Bytes
         
@@ -351,7 +351,7 @@ TC013: Verify L3 IPv6 traffic: frame size 128 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs128  ipv6
+    [Tags]  sanity  traffic
     
 #### L3 IPv4 Traffic : Frame Size 256 Bytes
 TC014: Verify L3 IPv4 traffic: frame size 256 bytes
@@ -365,7 +365,7 @@ TC014: Verify L3 IPv4 traffic: frame size 256 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs256  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 256 Bytes
         
@@ -380,7 +380,7 @@ TC015: Verify L3 IPv6 traffic: frame size 256 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs256  ipv6
+    [Tags]  sanity  traffic
     
 #### L3 IPv4 Traffic : Frame Size 512 Bytes
 TC016: Verify L3 IPv4 traffic: frame size 512 bytes
@@ -394,7 +394,7 @@ TC016: Verify L3 IPv4 traffic: frame size 512 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs512  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 512 Bytes
         
@@ -409,7 +409,7 @@ TC017: Verify L3 IPv6 traffic: frame size 512 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs512  ipv6
+    [Tags]  sanity  traffic
     
 #### L3 IPv4 Traffic : Frame Size 1024 Bytes
 TC018: Verify L3 IPv4 traffic: frame size 1024 bytes
@@ -423,7 +423,7 @@ TC018: Verify L3 IPv4 traffic: frame size 1024 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1024  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1024 Bytes
         
@@ -438,7 +438,7 @@ TC19: Verify L3 IPv6 traffic: frame size 1024 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1024  ipv6
+    [Tags]  sanity  traffic
     
 #### L3 IPv4 Traffic : Frame Size 1280 Bytes
 TC020: Verify L3 IPv4 traffic: frame size 1280 bytes
@@ -452,7 +452,7 @@ TC020: Verify L3 IPv4 traffic: frame size 1280 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1280  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1280 Bytes
         
@@ -467,7 +467,7 @@ TC21: Verify L3 IPv6 traffic: frame size 1280 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1280  ipv6
+    [Tags]  sanity  traffic
     
     
 #### L3 IPv4 Traffic : Frame Size 1518 Bytes
@@ -482,7 +482,7 @@ TC022: Verify L3 IPv4 traffic: frame size 1518 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1518  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1518 Bytes
         
@@ -497,9 +497,8 @@ TC023: Verify L3 IPv6 traffic: frame size 1518 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs1518  ipv6
-    
-    
+    [Tags]  sanity  traffic
+        
 #### L3 IPv4 Traffic : Frame Size 9150 Bytes
 TC024: Verify L3 IPv4 traffic: frame size 9150 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -512,7 +511,7 @@ TC024: Verify L3 IPv4 traffic: frame size 9150 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs9150  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 IPv6 Traffic : Frame Size 9150 Bytes
         
@@ -527,7 +526,7 @@ TC025: Verify L3 IPv6 traffic: frame size 9150 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs9150  ipv6
+    [Tags]  sanity  traffic
 
 #### L3 Vlan Tagged IPv4 Traffic : Frame Size 9150 Bytes
 TC026: Verify L3 IPv4 traffic: frame size 9150 bytes
@@ -541,7 +540,7 @@ TC026: Verify L3 IPv4 traffic: frame size 9150 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs9150  ipv4
+    [Tags]  sanity  traffic
     
 #### L3 Vlan Tagged IPv6 Traffic : Frame Size 9150 Bytes
         
@@ -556,7 +555,7 @@ TC027: Verify L3 IPv6 traffic: frame size 9150 bytes
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_s4810}
-    [Tags]  l3   fs9150  ipv6
+    [Tags]  sanity  traffic
 
 ######
 TC028: Verify breakout-ports can be configured as a filter interface
@@ -639,7 +638,7 @@ TC028: Verify breakout-ports can be configured as a filter interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s2  ${breakout_filter_s2_2}  filter   ${breakout_filter_nick_s2_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  filter  
+    [Tags]  sanity  traffic
     
 TC029: Verify breakout-ports can be configured as a delivery interface
     ${output_1}=    rest add interface role  s2  ${breakout_delivery_s2_1}  delivery    ${breakout_delivery_s2_nick_1}
@@ -722,7 +721,7 @@ TC029: Verify breakout-ports can be configured as a delivery interface
     Should be true      ${teardown_5}
     ${teardown_6}=     rest delete interface role  s3  ${breakout_filter_s3_2}  filter   ${breakout_filter_nick_s3_2}
     Should be true      ${teardown_6}
-    [Tags]  feature  delivery  
+    [Tags]  sanity  traffic
 
 TC030: Verify same breakout cable can be connected to multiple switches
     cli disable interface  s2  ${brekout_s2s3_1}
@@ -785,7 +784,7 @@ TC030: Verify same breakout cable can be connected to multiple switches
     cli enable interface  s2  ${brekout_s2s3_4}
     ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
     Should be true  ${teardown_2B}
-    [Tags]  feature  
+    [Tags]  sanity  traffic
 
 TC031: Verify breakout interface hardware-address on controller matches what is reported by switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -804,7 +803,7 @@ TC031: Verify breakout interface hardware-address on controller matches what is 
     ${mac_address_4}=   cli show interface macaddress  s2  ${brekout_s2s4_4}
     ${cntrl_return_mac4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  hardware-address
     Should be equal as strings  ${mac_address_4}  ${cntrl_return_mac4}
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
 
 TC032: Verify breakout interface name on controller matches what is reported on switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -820,7 +819,7 @@ TC032: Verify breakout interface name on controller matches what is reported on 
 
     ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  name
     Should be equal as strings  ${brekout_s2s4_4}  ${cntrl_return_name4}
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
 
 TC033: Verify breakout interface state on controller is reported correctly
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -836,7 +835,7 @@ TC033: Verify breakout interface state on controller is reported correctly
 
     ${cntrl_return_name4}=  rest return switch interface details  ${switch_dpid_s2}  ${brekout_s2s4_4}  runtime-state
     Should be equal as strings  ${cntrl_return_name4}  up
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
     
 TC034: Verify breakout interface statistics on controller matches what is reported on switch
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
@@ -886,7 +885,7 @@ TC034: Verify breakout interface statistics on controller matches what is report
     cli enable interface  s2  ${brekout_s2s3_4}
     ${teardown_2B}=  rest delete policy  admin-view  ${policy_name_5}
     Should be true  ${teardown_2B}    
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
 
 TC035: Verify overlapping policies when same breakout cable is connected to multiple switches
     ${disable_feature}=  rest disable feature  inport-mask
@@ -946,7 +945,7 @@ TC035: Verify overlapping policies when same breakout cable is connected to mult
     Should be true  ${teardown_44A}
     ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
     Should be true  ${teardown_44B}
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
 
 TC036: Enable inport-masking and verify overlapping policies when same breakout cable is connected to multiple switches
     ${enable_feature}=  rest enable feature  inport-mask
@@ -1007,7 +1006,7 @@ TC036: Enable inport-masking and verify overlapping policies when same breakout 
     Should be true  ${teardown_44A}
     ${teardown_44B}=  rest delete policy  admin-view  ${policy_name_7}
     Should be true  ${teardown_44B}
-    [Tags]  cli  feature  
+    [Tags]  sanity  traffic
 
 TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     rest enable feature  tunneling
@@ -1027,7 +1026,7 @@ TC037: Verify Transmit-Only Tunnel across Dell S6000 breakout port
     Should be true  ${verify_del_tun_sw2}
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  tx  
+    [Tags]  sanity  traffic  tunnel
 
 TC038: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1047,7 +1046,7 @@ TC038: Verify Receive-Only Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  rx  
+    [Tags]  sanity  traffic  tunnel
 
 TC039: Verify Bidirectional Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -1067,7 +1066,7 @@ TC039: Verify Bidirectional Tunnel across Dell S6000
     Should be true  ${verify_del_tun_sw2}          
     rest disable feature  tunneling
     rest disable feature  crc
-    [Tags]  tunnel  bidir  
+    [Tags]  sanity  traffic  tunnel
 
 TC040: Verify ports in breakout mode can be configured as port-channel interfaces in L2 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md1}
@@ -1101,7 +1100,7 @@ TC040: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha  
+    [Tags]  ha  traffic  portchannel
 
 TC041: Verify ports in breakout mode can be configured as port-channel interfaces in L3 Mode
     ${pc_add_result_1}=  cli add portchannel  s1  ${breakout_port_channel_s1s2_num}  ${breakout_port_channel_s1s2_intf}  ${breakout_port_channel_s1s2_md2}
@@ -1135,7 +1134,7 @@ TC041: Verify ports in breakout mode can be configured as port-channel interface
     ${output_24}=    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_s3_2}  delivery
     Should be true  ${output_24}
     Sleep  5
-    [Tags]  ha  
+    [Tags]  ha  traffic  portchannel
 
 TC042: Reboot switch and verify breakout configuration is retained.
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1165,7 +1164,7 @@ TC042: Reboot switch and verify breakout configuration is retained.
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha 
+    [Tags]  ha  traffic
 
 TC043: Flap breakout configuration on switch and verify 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1202,7 +1201,7 @@ TC043: Flap breakout configuration on switch and verify
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
     stop traffic
-    [Tags]  ha  
+    [Tags]  ha  traffic
     
 TC044: Flap breakout interface once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1249,7 +1248,7 @@ TC044: Flap breakout interface once and verify interface shows as up
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  
+    [Tags]  ha  traffic
 
 TC045: Flap breakout interface on remote side once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1296,10 +1295,7 @@ TC045: Flap breakout interface on remote side once and verify interface shows as
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  
-
-
-
+    [Tags]  ha  traffic
 
 * Keyword
 breakout suite setup
