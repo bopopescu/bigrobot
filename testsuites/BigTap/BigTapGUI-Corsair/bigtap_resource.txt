@@ -788,7 +788,7 @@ Generate Action Menu Xpath Switch
 
 Generate Action Menu Xpath Policy
 	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::a/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
     
 Generate Overlapping Policy Xpath  
