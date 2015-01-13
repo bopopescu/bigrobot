@@ -134,7 +134,7 @@ ping h2 to h3 dual rack single leaf static endpoints tag
 * Keywords
 Single Leaf Three Rack Suite Setup
    base suite setup
-   fabric infra suite setup
+   add fabric switch
    Set swith int variables
    Set switch dpid variables
    Set host int variables
