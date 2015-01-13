@@ -15,6 +15,7 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py     
 Library         String
 Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 ## Jumbo Frame traffic - 9220 in BigTap, 9216 in T5.
 
 *Variables
@@ -308,6 +309,8 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
       
 T5 switch platform test setup
    base suite setup
+   fabric infra suite setup
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
@@ -353,6 +356,7 @@ T5 switch platform test teardown
    sleep  5   
 
 traffic teardown
+    base test teardown
     delete traffic
 
 verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
