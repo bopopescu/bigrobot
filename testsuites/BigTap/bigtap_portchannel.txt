@@ -4,7 +4,7 @@ Suite Setup                 portchannel suite setup
 Suite Teardown              portchannel suite teardown
 Test Setup                  portchannel test setup
 Test Teardown               portchannel test teardown 
-Force Tags                  BigTap  Blackbird  3.0.0  Accton  Dell  AS5610  S4810  AS6700  portchannel
+Force Tags                  BigTap  Blackbird  3.0.0  Accton-AS5610  Dell-S4810  Accton-AS6700  portchannel
 Library                     keywords/BsnCommon.py
 Library                     keywords/AppController.py
 Library                     keywords/BigTap.py
@@ -83,7 +83,7 @@ ${postservice_name}                         policy-post-service
 TC001: Verify port-channel interfaces are (hash-mode:L2) is up on switch  
     verify portchannel interface is up  s1  ${as5610_arista_10G_pc_name}
     verify portchannel interface is up  s2  ${s4810_arista_10G_pc_name}
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC002: Verify port-channel interface (hash-mode:L2) can be used as a filter interface
     ${return_value}=    rest add interface role  s1  ${as5610_arista_10G_pc_name}   filter      ${filter_lag_alias}
@@ -113,7 +113,7 @@ TC002: Verify port-channel interface (hash-mode:L2) can be used as a filter inte
     Should be true  ${return_value}
     ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
     Should be true  ${return_value}                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC003: Verify port-channel interface (hash-mode:L3) can be used as a filter interface
     change portchannel hash-mode to  L3
@@ -145,7 +145,7 @@ TC003: Verify port-channel interface (hash-mode:L3) can be used as a filter inte
     ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
     Should be true  ${return_value}
     change portchannel hash-mode to  L2                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC004: Verify port-channel interface (hash-mode:L2) can be used as a delivery interface
     ${return_value}=    rest add interface role  s1  ${sw1_filter_intf_ixia}        filter      ${sw1_filter_intf_alias}
@@ -175,7 +175,7 @@ TC004: Verify port-channel interface (hash-mode:L2) can be used as a delivery in
     Should be true  ${return_value}
     ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}        
     Should be true  ${return_value}                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC005: Verify port-channel interface (hash-mode:L3) can be used as a delivery interface
     change portchannel hash-mode to  L3
@@ -207,7 +207,7 @@ TC005: Verify port-channel interface (hash-mode:L3) can be used as a delivery in
     ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}        
     Should be true  ${return_value}
     change portchannel hash-mode to  L2                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC006: Verify port-channel interface (hash-mode:L2) can be used as a core interface
     configure core interfaces as port-channel interfaces with hash-mode  L2
@@ -239,7 +239,7 @@ TC006: Verify port-channel interface (hash-mode:L2) can be used as a core interf
     ${return_value}=    rest delete interface  s2  ${sw2_delivery_intf_ixia}        
     Should be true  ${return_value}
     unconfigure core interfaces as port-channel interfaces                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC007: Verify port-channel interface (hash-mode:L3) can be used as a core interface
     configure core interfaces as port-channel interfaces with hash-mode  L3
@@ -273,7 +273,7 @@ TC007: Verify port-channel interface (hash-mode:L3) can be used as a core interf
     Should be true  ${return_value}   
     change portchannel hash-mode to  L2
     unconfigure core interfaces as port-channel interfaces                     
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC008: Verify port-channel interface (hash-mode:L2) can be used as a service interface on filter switch 
     configure port-channel as a service-interface with hash-mode  L2
@@ -324,7 +324,7 @@ TC008: Verify port-channel interface (hash-mode:L2) can be used as a service int
     ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC009: Verify port-channel interface (hash-mode:L3) can be used as a service interface on filter switch 
     configure port-channel as a service-interface with hash-mode  L3
@@ -375,7 +375,7 @@ TC009: Verify port-channel interface (hash-mode:L3) can be used as a service int
     ${return_value}=    rest delete interface  s1  ${as5610_arista_10G_pc_name}          
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC010: Verify port-channel interface (hash-mode:L2) can be used as a service interface on delivery switch 
     configure port-channel as a service-interface with hash-mode  L2
@@ -426,7 +426,7 @@ TC010: Verify port-channel interface (hash-mode:L2) can be used as a service int
     ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC011: Verify port-channel interface (hash-mode:L3) can be used as a service interface on delivery switch 
     configure port-channel as a service-interface with hash-mode  L3
@@ -477,7 +477,7 @@ TC011: Verify port-channel interface (hash-mode:L3) can be used as a service int
     ${return_value}=    rest delete interface  s2  ${s4810_arista_10G_pc_name}          
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface       
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC012: Verify bigtap policy with port-channel (hash-mode:L2) as service interface (filter-switch) and core-interface
     configure core interfaces as port-channel interfaces with hash-mode  L2 
@@ -530,7 +530,7 @@ TC012: Verify bigtap policy with port-channel (hash-mode:L2) as service interfac
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface
     unconfigure core interfaces as port-channel interfaces       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC013: Verify bigtap policy with port-channel (hash-mode:L3) as service interface (filter-switch) and core-interface
     configure core interfaces as port-channel interfaces with hash-mode  L3 
@@ -583,7 +583,7 @@ TC013: Verify bigtap policy with port-channel (hash-mode:L3) as service interfac
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface
     unconfigure core interfaces as port-channel interfaces       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC014: Verify bigtap policy with port-channel (hash-mode:L2) as service interface (delivery-switch) and core-interface
     configure core interfaces as port-channel interfaces with hash-mode  L2
@@ -636,7 +636,7 @@ TC014: Verify bigtap policy with port-channel (hash-mode:L2) as service interfac
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface
     unconfigure core interfaces as port-channel interfaces       
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC015: Verify bigtap policy with port-channel (hash-mode:L3) as service interface (delivery-switch) and core-interface
     configure core interfaces as port-channel interfaces with hash-mode  L3 
@@ -689,7 +689,7 @@ TC015: Verify bigtap policy with port-channel (hash-mode:L3) as service interfac
     Should be true  ${return_value}          
     unconfigure port-channel as a service-interface
     unconfigure core interfaces as port-channel interfaces       
-    [Tags]  feature
+    [Tags]  full  feature
 
 * Keywords
 portchannel suite setup
