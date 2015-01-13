@@ -14,6 +14,7 @@ if [ "$BUILD_NAME"x = x ]; then
     usage
 fi
 
+# !!! FIXME: This code is duplicated from populate_db_regression.sh.
 if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
     ts=`date "+%Y-%m-%d_%H%M%S"`
     dest=.data.$ts
