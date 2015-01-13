@@ -308,7 +308,7 @@ TC014: Verify traffic with match on IPv4 UDP
 
 TC015: Verify traffic with match on IPv4 UDP SRC-PORT
     rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
-    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 49, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
     sleep  5
     REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
     REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
@@ -318,7 +318,7 @@ TC015: Verify traffic with match on IPv4 UDP SRC-PORT
     ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
     ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
     ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
-    ...     protocol=UDP  src_port=53  dst_port=80    
+    ...     protocol=UDP  src_port=49  dst_port=80    
     ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
     clear stats  
     start traffic
@@ -340,7 +340,7 @@ TC16: Verify traffic with match on IPv4 UDP SRC-PORT RANGE
     ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
     ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
     ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
-    ...     protocol=UDP  src_port=53  dst_port=80    
+    ...     protocol=UDP  src_port=49  dst_port=80    
     ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
     clear stats  
     start traffic
