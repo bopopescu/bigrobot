@@ -762,18 +762,20 @@ class BigChain(object):
                             found = 1
                         else:
                             helpers.log("Span Service incorretcly reports its instance ID  as %s" % str(content[0]['instance'][i]['id']))
-
-                        if content[0]['instance'][i]['span-interface']['interface'] == str(chain_span_service_interface):
-                            helpers.log("Span Service corretcly reports its span interface as %s" % str(chain_span_service_interface))
-                            found = 1
+                        if content[0]['instance'][i].has_key('span-interface'):
+                            if content[0]['instance'][i]['span-interface']['interface'] == str(chain_span_service_interface):
+                                helpers.log("Span Service corretcly reports its span interface as %s" % str(chain_span_service_interface))
+                                found = 1
+                            else:
+                                helpers.log("Span Service incorretcly reports its span interface as %s" % str(content[0]['instance'][i]['span-interface']['interface']))
+                            if content[0]['instance'][i]['span-interface']['switch'] == str(switch_dpid):
+                                helpers.log("Span Service corretcly reports its switch_dpid as %s" % str(switch_dpid))
+                                found = 1
+                            else:
+                                helpers.log("Span Service incorretcly reports its switch_dpid as %s" % str(content[0]['instance'][i]['span-interface']['switch']))
                         else:
-                            helpers.log("Span Service incorretcly reports its span interface as %s" % str(content[0]['instance'][i]['span-interface']['interface']))
-
-                        if content[0]['instance'][i]['span-interface']['switch'] == str(switch_dpid):
-                            helpers.log("Span Service corretcly reports its switch_dpid as %s" % str(switch_dpid))
-                            found = 1
-                        else:
-                            helpers.log("Span Service incorretcly reports its switch_dpid as %s" % str(content[0]['instance'][i]['span-interface']['switch']))
+                            helpers.log("The key span-interface does not exist")
+                            return False
                     if found == 0:
                         return False
                     else:

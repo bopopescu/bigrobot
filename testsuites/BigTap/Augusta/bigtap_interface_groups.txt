@@ -1,15 +1,15 @@
 *Settings
-Documentation  Interface Groups Test Suite
-Suite Setup  interface suite setup
-Suite Teardown   interface suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   AugustaP2  BigTap  
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation                   Interface Groups Test Suite
+Suite Setup                     interface suite setup
+Suite Teardown                  interface suite teardown
+Test Setup                      base test setup
+Test Teardown                   base test teardown 
+Force Tags                      BigTap  Augusta  Patch2   Arista
+Library                         keywords/BsnCommon.py
+Library                         keywords/AppController.py
+Library                         keywords/BigTap.py
+Library                         keywords/SwitchLight.py
+Library                         keywords/Ixia.py
 
 * Variable
 ${switch1_alias}                          app-arista               #Alias for switch 1
@@ -39,7 +39,7 @@ ${vlan_rewrite_1}                         1024
 ${vlan_rewrite_2}                         2048
 
 *Test Case
-Verify filter interfaces can be added to a group via rest 
+TC001: Verify filter interfaces can be added to a group via rest 
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
@@ -50,21 +50,21 @@ Verify filter interfaces can be added to a group via rest
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  feature
     
-Verify a filter interface can be deleted from a filter interface group via rest
+TC002: Verify a filter interface can be deleted from a filter interface group via rest
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['filter-group'][0]['name']}     
     [Tags]  feature
     
-Verify a filter interface-group can be deleted via rest
+TC003: Verify a filter interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['name']}    
     [Tags]  feature
     
-Verify delivery interfaces can be added to a group via rest 
+TC004: Verify delivery interfaces can be added to a group via rest 
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
@@ -73,21 +73,21 @@ Verify delivery interfaces can be added to a group via rest
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
     [Tags]  feature
     
-Verify a delivery interface can be deleted from a delivery interface group via rest
+TC005: Verify a delivery interface can be deleted from a delivery interface group via rest
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['delivery-group'][0]['name']}     
     [Tags]  feature
     
-Verify a delivery interface-group can be deleted via rest
+TC006: Verify a delivery interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
     Should be true  ${return_value}
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['name']}  
     [Tags]  feature
 
-Verify multiple interfaces can be added to filter-interface-group
+TC007: Verify multiple interfaces can be added to filter-interface-group
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
@@ -100,7 +100,7 @@ Verify multiple interfaces can be added to filter-interface-group
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][1]['name']}  ${switch1_filter_alias_3}    
     [Tags]  feature
 
-Verify multiple interfaces can be added to delivery-interface-group
+TC008: Verify multiple interfaces can be added to delivery-interface-group
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
@@ -113,7 +113,7 @@ Verify multiple interfaces can be added to delivery-interface-group
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][1]['name']}  ${switch1_delivery_alias_3}
     [Tags]  feature
 
-Verify filter-interface group with multiple member interfaces can be added to policy
+TC009: Verify filter-interface group with multiple member interfaces can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
     Should be true  ${return_value}
     Sleep  5      
@@ -129,7 +129,7 @@ Verify filter-interface group with multiple member interfaces can be added to po
     Sleep  5        
     [Tags]  feature      
 
-Verify delivery-interface group with multiple member interfaces can be added to policy
+TC010: Verify delivery-interface group with multiple member interfaces can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     Should be true  ${return_value}
     Sleep  5      
@@ -146,7 +146,7 @@ Verify delivery-interface group with multiple member interfaces can be added to 
     [Tags]  feature      
 
 
-Verify delivery-interface group and filter-interface group can be added to policy
+TC011: Verify delivery-interface group and filter-interface group can be added to policy
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
     Should be true  ${return_value}
     ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
@@ -161,7 +161,7 @@ Verify delivery-interface group and filter-interface group can be added to polic
     Should be true  ${verify_policy1}      
     [Tags]  feature 
 
-Delete filter interface from filter-interface group and verify policy gets updated automatically
+TC012: Delete filter interface from filter-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}
     Should be true  ${return_value}
     Sleep  5 
@@ -169,7 +169,7 @@ Delete filter interface from filter-interface group and verify policy gets updat
     Should be true  ${verify_policy1}
     [Tags]  feature
     
-Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
+TC013: Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
     Should be true  ${return_value}   
     Sleep  5          
@@ -177,7 +177,7 @@ Add the deleted filter interface back to the filter interface group and verify p
     Should be true  ${verify_policy1}
     [Tags]  feature
 
-Delete delivery interface from delivery-interface group and verify policy gets updated automatically
+TC014: Delete delivery interface from delivery-interface group and verify policy gets updated automatically
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}
     Should be true  ${return_value}
     Sleep  5 
@@ -185,7 +185,7 @@ Delete delivery interface from delivery-interface group and verify policy gets u
     Should be true  ${verify_policy1}
     [Tags]  feature  
     
-Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
+TC015: Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
     Should be true  ${return_value}   
     Sleep  5          
@@ -193,7 +193,7 @@ Add the deleted delivery interface back to the delivery interface group and veri
     Should be true  ${verify_policy1}
     [Tags]  feature  
 
-Verify same filter interface can be added to a two groups
+TC016: Verify same filter interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
     ${return_value}=  rest add interface group  ${filter_interface_group_name_2}  filter  
@@ -211,7 +211,7 @@ Verify same filter interface can be added to a two groups
     Should be equal as strings   ${filter_dictionary[1]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  feature
 
-Verify same delivery interface can be added to a two groups
+TC017: Verify same delivery interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_2}  delivery  
@@ -229,7 +229,7 @@ Verify same delivery interface can be added to a two groups
     Should be equal as strings   ${delivery_dictionary[1]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}    
     [Tags]  feature
 
-Verify a filter interface and a filter interface group can be both added to a policy
+TC018: Verify a filter interface and a filter interface group can be both added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -248,7 +248,7 @@ Verify a filter interface and a filter interface group can be both added to a po
     Should be true  ${verify_policy1}        
     [Tags]  feature
 
-Verify a delivery interface and a delivery interface group can be both added to a policy
+TC019: Verify a delivery interface and a delivery interface group can be both added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -267,7 +267,7 @@ Verify a delivery interface and a delivery interface group can be both added to 
     Should be true  ${verify_policy1}        
     [Tags]  feature
 
-Verify a filter interface and a filter interface group with common interface can be added to a policy
+TC020: Verify a filter interface and a filter interface group with common interface can be added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -287,7 +287,7 @@ Verify a filter interface and a filter interface group with common interface can
     [Tags]  feature
 
 
-Verify a delivery interface and a delivery interface group with common interface can be added to a policy
+TC021: Verify a delivery interface and a delivery interface group with common interface can be added to a policy
     rest delete policy  admin-view  ${policy_name}
     Sleep  10    
     rest add policy  admin-view  ${policy_name}  forward
@@ -307,7 +307,7 @@ Verify a delivery interface and a delivery interface group with common interface
     rest delete policy  admin-view  ${policy_name}        
     [Tags]  feature
 
-Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a filter interface group.  
+TC022: Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a filter interface group.  
     rest delete policy  admin-view  ${policy_name}
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
@@ -327,7 +327,7 @@ Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a f
     Should be true  ${verify_policy1}
     [Tags]  feature                 
 
-Verify interfaces tagged with and without vlan-rewrite can exist in a filter interface group
+TC023: Verify interfaces tagged with and without vlan-rewrite can exist in a filter interface group
     rest delete policy  admin-view  ${policy_name}
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
@@ -357,7 +357,7 @@ Verify interfaces tagged with and without vlan-rewrite can exist in a filter int
     Should be true  ${return_value}    
     [Tags]  feature 
 
-Verify multiple filter interface groups can be added to a policy
+TC024: Verify multiple filter interface groups can be added to a policy
     clean configuration 
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
@@ -381,7 +381,7 @@ Verify multiple filter interface groups can be added to a policy
     clean configuration   
     [Tags]  feature  jira-bt-1367  skipped
 
-Verify multiple delivery interface groups can be added to a policy
+TC025: Verify multiple delivery interface groups can be added to a policy
     clean configuration 
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
@@ -405,43 +405,42 @@ Verify multiple delivery interface groups can be added to a policy
     clean configuration          
     [Tags]  feature  jira-bt-1367  skipped
     
-Verify filter and delivery interface-groups can have all lower-case alphabet names
+TC026: Verify filter and delivery interface-groups can have all lower-case alphabet names
     clean configuration 
     verify group name  filtergroup  deliverygroup
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all upper-case alphabet names
+TC027: Verify filter and delivery interface-groups can have all upper-case alphabet names
     verify group name  FILTERGROUP  DELIVERYGROUP
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have mix of lower-case and upper-case alphabet names
+TC028: Verify filter and delivery interface-groups can have mix of lower-case and upper-case alphabet names
     verify group name  FiLtErGrOuP  DeLiVeRyGrOuP
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have alphanumeric (alphabet all small) names
+TC029: Verify filter and delivery interface-groups can have alphanumeric (alphabet all small) names
     verify group name  filtergroup1234  deliverygroup1234
     [Tags]  feature                                             
 
-Verify filter and delivery interface-groups can have alphanumeric (alphabet all caps) names
+TC030: Verify filter and delivery interface-groups can have alphanumeric (alphabet all caps) names
     verify group name  FILTERGROUP1234  DELIVERYGROUP1234
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a -
+TC031: Verify filter and delivery interface-groups can have all alphanumeric names with a -
     verify group name  filter-Group1  delivery-Group1
     [Tags]  feature
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a _
+TC032: Verify filter and delivery interface-groups can have all alphanumeric names with a _
     verify group name  filter_Group1  delivery_Group1
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a :
+TC033: Verify filter and delivery interface-groups can have all alphanumeric names with a :
     verify group name  filter:Group1  delivery:Group1
     [Tags]  feature 
 
-Verify filter and delivery interface-groups can have all alphanumeric names with a .
+TC034: Verify filter and delivery interface-groups can have all alphanumeric names with a .
     verify group name  filter.Group1  delivery.Group1
     [Tags]  feature 
-
 
 * Keyword
 
