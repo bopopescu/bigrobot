@@ -26,7 +26,7 @@ Setup Three Rack Dual Leaf Topology
     Set host int variables
     sleep  30
     rest verify fabric switch all
-    rest verify fabric link common
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 verify interface cli 
 	[Tags]  Fabric  feature  IronHorse
