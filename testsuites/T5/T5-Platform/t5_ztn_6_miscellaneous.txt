@@ -157,7 +157,7 @@ T6.31. Check REST API call to get inventory of images at switch
 	Manual Passed
 	[Tags]  manual
 T6.32. Confirm that switch in stand-by mode sends NO packet-ins to the controller (before t5_pipeline_mode message is sent)
-	Manual Untested
+	Manual Passed
 	[Tags]  manual
 T6.33. Verify pre-staging of both SL installer and SWI before upgrade
 	# moved out to Jack Frost
