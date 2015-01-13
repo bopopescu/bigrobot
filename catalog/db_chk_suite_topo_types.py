@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Description:
 #   Check for test suites which do not have the correct topo files. E.g.,
-#     - detect suites with generic topo file or no topo file
+#     - detect suites with generic topo file or missing topo file
 #     - detect suites with <suite>.<virtual|physical>.topo file
 
 import os
@@ -42,41 +42,30 @@ def get_suites():
                            { "author": 1, "source": 1, "topo_type": 1, "_id": 1})
 
 
-def get_topo_file(text_file, topo_type='generic-topology'):
-    _suite = os.path.splitext(text_file)[0]
-    _suite = re.sub(r'^bigrobot/', '', _suite)
-    if topo_type == 'generic-topology':
-        return "../" + _suite + ".topo"
-    elif topo_type == 'physical':
-        return "../" + _suite + ".physical.topo"
-    elif topo_type == 'virtual':
-        return "../" + _suite + ".virtual.topo"
-    else:
-        return "missing-topology"
-
-
 def get_topo_type(text_file):
-    _topo_file = get_topo_file(text_file, "generic-topology")
-    if helpers.file_exists(_topo_file):
-        return "generic-topology"
-    else:
-        return "missing-topology"
+    _suite = os.path.splitext(text_file)[0]
+    _suite = re.sub(r'^bigrobot/', '../', _suite)
+
+    if helpers.file_exists(_suite + ".topo"):
+	return "generic-topology"
+    if helpers.file_exists(_suite + ".virtual.topo"):
+	return "virtual"
+    if helpers.file_exists(_suite + ".physical.topo"):
+	return "physical"
+    return "missing-topology"
 
 
 print_all = False
 print_unknown = True
 print_mv_commands = False
 
-
-# There may be
-text_names = {}
-
-
 if print_all:
     for x in sorted(get_suites(), key=lambda k: k['author']):
-        print("%10s   %-12s %s" % (x["topo_type"], x["author"], x["source"]))
+        print("%18s   %-12s %s" % (x["topo_type"], x["author"], x["source"]))
 
 if print_unknown:
     for x in sorted(get_suites(), key=lambda k: k['author']):
-        if x["topo_type"] in ['unknown', 'generic-topology', 'missing-topology']:
-            print("%10s   %-12s %s" % (get_topo_type(x["source"]), x["author"], x["source"]))
+        topo_type = get_topo_type(x["source"])
+        if topo_type in ['generic-topology', 'missing-topology']:
+            print("%18s   %-12s %s" % (topo_type, x["author"], x["source"]))
+
