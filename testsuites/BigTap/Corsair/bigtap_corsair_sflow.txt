@@ -1,0 +1,22 @@
+*Settings
+Documentation  sFlow Test Suite Release:Corsair Plus
+#Suite Setup  sFlow suite setup
+#Suite Teardown   sFlow suite teardown
+#Test Setup   base test setup
+#Test Teardown   base test teardown
+Force Tags   Corsair_plus  sFlow
+Library  keywords/BsnCommon.py
+Library  keywords_dev/Sahaja/BigTap.py 
+
+* Variable
+
+    
+* Test Case
+Configure and Verify Configuration 
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.10  col_param=ip-addr
+    Should be true  ${collector_return}
+    ${counter_ret}=  rest verify sflow config    counter-interval   10
+    Should be true  ${counter_ret}
+    ${sample_ret}=  rest verify sflow config    sample-rate   300
+    Should not be true  ${sample_ret}
+    
