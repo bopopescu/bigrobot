@@ -174,7 +174,7 @@ h2:
     leaf0a_int0: eth2
     leaf0b_int0: eth3
 h3:
-  ip: 10.9.16.209
+  ip: 10.9.16.73
   user: root
   password: bsn
   interfaces:
