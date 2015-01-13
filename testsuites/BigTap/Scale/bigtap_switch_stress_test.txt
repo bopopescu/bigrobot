@@ -4,7 +4,7 @@ Suite Setup                     scale suite setup
 Suite Teardown                  scale suite teardown
 Test Setup                      base test setup
 Test Teardown                   base test teardown 
-Force Tags                      BigTap  Corsair  4.1.1  Accton  AS5710  scale  switch
+Force Tags                      BigTap  Corsair  4.1.1  Accton  AS5710  scaling  switch
 Library                         keywords/BsnCommon.py
 Library                         keywords/AppController.py
 Library                         keywords/BigTap.py
@@ -27,121 +27,121 @@ TC1: Verify policies
     \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
     \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
     \    Should be true  ${verify_policy}
-    [Tags]  scale  policy  l3l4-match
+    [Tags]  full  scaling  policy  l3l4-match
 
 TC2: Execute command show inventory on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show inventory
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC3: Execute command show interface on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC4: Execute command show interfaces ma1 on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ma1
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC5: Execute command show interfaces ma1 detail on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ma1 detail
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC6: Execute command show interfaces negotiate on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface negotiate
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC7: Execute command show interfaces ethernet1 on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ethernet1
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC8: Execute command show interfaces ethernet1 detail on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show interface ethernet1 detail
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC9: Execute command show startup-config on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show startup-config
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC10: Execute command show running-config on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show running-config
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC11: Execute command show ntp on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show ntp
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC12: Execute command show version on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show version
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC13: Execute command show users on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show users
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC14: Execute command show forwarding crc status on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding crc status
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC15: Execute command show forwarding l2cache status on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding l2cache status
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC16: Execute command show forwarding pause status on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding pause status
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC17: Execute command show forwarding pimu status on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show forwarding pause status
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC18: Execute command show environment on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show environment
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC19: Execute command show datapath on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show datapath
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC20: Execute command show controller on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC21: Execute command show controller history on switch
     : FOR  ${INDEX}  IN RANGE  1  51
@@ -153,43 +153,43 @@ TC22: Execute command show controller statistics on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller statistics
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC23: Execute command show controller statistics detail on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller statistics detail
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC24: Execute command show flowtable on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC25: Execute command show flowtable detail on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable detail
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC26: Execute command show flowtable summary on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller flowtable summary
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC27: Execute command show boot on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  show controller boot
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 TC28: Execute command copy tech-support flash2 on switch
     : FOR  ${INDEX}  IN RANGE  1  51
     \    enable  s1  copy tech-support flash2
     \    sleep  2
-    [Tags]  show-cli  stress
+    [Tags]  show-cli  robustness
     
 * Keyword
 
