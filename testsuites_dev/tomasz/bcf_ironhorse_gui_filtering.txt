@@ -142,7 +142,7 @@ T1.3.13 Active Since
 	Verify Filtering Result  endpoint-3  False
 T1.3.14 Last Seen
 	Open Advanced Query Builder  Endpoints
-	Add Filter Query  Last Moved  is before  ${EMPTY}
+	Add Filter Query  Last Moved  is after  ${EMPTY}
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
