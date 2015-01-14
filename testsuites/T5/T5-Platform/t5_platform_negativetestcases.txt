@@ -156,18 +156,30 @@ Adding/deleting Controller IP address
     Manual passed
 
 Connecting leaves in between racks
-    Log     Step 1 - Connecting leaves in between racks   
+    Log     Step 1 - Connecting leaves in between racks 
+    Log     Step 2 - show fabric error reported Invalid Link between Leaf groups 
+    Log     Step 3 - 
+    Log     Step 4 - Invalid links  
+    Log     Step 5 Direction Reason  Source Switch Source Interface Dest Switch Dest Interface Last Seen-
+    Log     Step 6 B         Link between Leaf Groups [rack1, rack0 ] leaf1-a       ethernet35       leaf0-a     ethernet34     2015-01-14 20:10:42.152000 UTC
+    Log     Step 7 2 B         Link between Spine switches              spine1        ethernet9        spine0      ethernet9      2015-01-14 20:10:41.733000 UTC
+    
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Add spine to spine direct links
     Log     Step 1 - Add spine to spine direct links  
     Log     Step 2 - Verify that fabric error reports the error for invalid links
     Log     Step 3 - Verify that the fabric error shows the misconfigured link is displayed in show fabric error  
+    Log     Step 4 - Invalid links  
+    Log     Step 5 Direction Reason  Source Switch Source Interface Dest Switch Dest Interface Last Seen-
+    Log     Step 6 B         Link between Leaf Groups [rack1, rack0 ] leaf1-a       ethernet35       leaf0-a     ethernet34     2015-01-14 20:10:42.152000 UTC
+    Log     Step 7 2 B         Link between Spine switches              spine1        ethernet9        spine0      ethernet9      2015-01-14 20:10:41.733000 UTC
+    
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Try to create external stp loop sending STP bpdu 
     Log     Step 1 - Try to create external stp loop- Bpdu guard is by default enabled and it brings port down 
@@ -182,8 +194,8 @@ Different flavor of traffic types ( CRC, malformed, Invalid protocols)
     Log     Step 3 - Collecting the result matrix with different type of invalid packets 
     Log     Step 4 - Will Mark pass and fail if find any behavior inconsistent
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 IP header with more than 1500 Bytes Invalid header type 
     Log     Step 1 - IP header with more than 1500 Bytes or Invalid header type 
@@ -195,8 +207,8 @@ IP header with more than 1500 Bytes Invalid header type
 Killing OFAD
     Log     Step 1 - Killing OFAD
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual Passed
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
@@ -209,15 +221,15 @@ Loosely attached SFP<->Fiber connections
 Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff, 00:00:00:00:00:00)
     Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested  
-    Manual untested
+    [Tags]  Manual  
+    Manual Passed
 
 Test with traffic invalid src mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid src mac like 00:00:00:00:00:00 
     Log     Step 2 - Traffic should be dropped and mac should not be learned 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested     
-    Manual untested
+    [Tags]  Manual    
+    Manual Passed
 
 Test with traffic invalid dst mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid dst mac like 00:00:00:00:00:00 
