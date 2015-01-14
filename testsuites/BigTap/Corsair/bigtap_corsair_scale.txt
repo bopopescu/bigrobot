@@ -4,7 +4,7 @@ Suite Setup             corsair suite setup
 Suite Teardown          corsair suite teardown
 Test Setup              corsair test setup
 Test Teardown           corsair test teardown 
-Force Tags              BigTap  Corsair  4.0.0  Accton  AS4600  tunnel
+Force Tags              BigTap  Corsair-400  Accton-AS4600  tunnel
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
