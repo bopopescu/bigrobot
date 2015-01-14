@@ -14,6 +14,15 @@ usage() {
     exit 0
 }
 
+# !!! FIXME: This code is duplicated from run_repopulate_build_baseline.sh.
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    ts=`date "+%Y-%m-%d_%H%M%S"`
+    dest=.data.$ts
+    mkdir $dest
+    export TEST_CATALOG_LOG_DIR=$dest
+    echo "TEST_CATALOG_LOG_DIR='$TEST_CATALOG_LOG_DIR'"
+fi
+
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
 if [ ! -x ../bin/gobot ]; then
@@ -34,11 +43,16 @@ fi
 
 unset BIGROBOT_TESTBED
 unset BIGROBOT_PARAMS_INPUT
+unset BIGROBOT_TOPOLOGY
+  # In regression environment, BIGROBOT_TOPOLOGY may be pointing to a reference
+  # topology. So unset it. The established convention is for each test suite
+  # to have a companion topology file of the same suite name.  
+
 export BIGROBOT_CI=True
 if [ "$BIGROBOT_PATH"x = x ]; then
     export BIGROBOT_PATH=`pwd`/..
 fi
-export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/bigrobot_logs
+export BIGROBOT_LOG_PATH=${BIGROBOT_PATH}/catalog/${TEST_CATALOG_LOG_DIR}/bigrobot_logs
 
 if [ -d $BIGROBOT_LOG_PATH ]; then
     #rm -rf $BIGROBOT_LOG_PATH
@@ -61,4 +75,5 @@ for x in `cat $f`; do
     fi
 done
 
-find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log
+find $BIGROBOT_LOG_PATH -name output.xml > ${TEST_CATALOG_LOG_DIR}/$f.dryrun.output_xml.log
+

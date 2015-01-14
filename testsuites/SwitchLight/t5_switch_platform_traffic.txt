@@ -15,6 +15,8 @@ Library         keywords/Ixia.py
 Library         keywords/T5.py     
 Library         String
 Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
 *Variables
 
 ${j}    1
@@ -352,6 +354,8 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
 * Keywords
       
 T5 switch platform test setup
+   fabric infra suite setup
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    #base test setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1

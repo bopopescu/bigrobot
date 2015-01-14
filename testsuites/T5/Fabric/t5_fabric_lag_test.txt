@@ -119,7 +119,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric  feature  IronHorse  
 	sleep  15
-	rest verify fabric link common  
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1

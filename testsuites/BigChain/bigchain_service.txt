@@ -17,12 +17,29 @@ Library                                 String.py
 
 * Variable
 ${switch1_alias}                        app-ras5710-1
+
 ${chain_name}                           CHAIN1
-${service_name}                         SERVICE1
+${chain_name2}                           CHAIN2
 ${chain_interface_1}                    ethernet1
 ${chain_interface_2}                    ethernet2
+${chain_interface_3}                    ethernet9
+${chain_interface_4}                    ethernet12
+
+
+${service_name}                         SERVICE1
+${service_name2}                        SERVICE2
+${service_name3}                        SERVICE3
 ${service_in_interface1}                ethernet23
 ${service_out_interface1}               ethernet24
+${service_in_interface2}                ethernet25
+${service_out_interface2}               ethernet26
+${service_in_interface3}                ethernet27
+${service_out_interface3}               ethernet28
+${service_in_interface4}                ethernet29
+${service_out_interface4}               ethernet30
+${service_in_interface5}                ethernet31
+${service_out_interface5}               ethernet32
+
 ${span_service_name}                    SPAN1
 ${span_service_interface}               ethernet45
 ${addressgrp_name}                      BCADDRESSGRP
@@ -709,8 +726,74 @@ TC033: Change policy match condition and verify behavior. Verify flow installed 
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
     Should Be True  ${intf_4} > 99990
     [Tags]  feature
+
+TC034: Service Policy: Verify match on src-mac should not be configurable as default match mode is L3-L4 match mode.
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match full src-mac 00:11:01:01:01:01
+    ${content6}=  cli_content  node=master
+    Should Contain  ${content6}  Error
+    [Tags]  negative
+
+TC035: Service Policy: Verify match on dst-mac should not be configurable as default match mode is L3-L4 match mode.
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match full dst-mac 00:11:01:01:01:01
+    ${content6}=  cli_content  node=master
+    Should Contain  ${content6}  Error
+    [Tags]  negative
+
+TC036: Service Policy: Verify match on ether-type should not be configurable as default match mode is L3-L4 match mode.
+    config  node=master  cmd=bigchain service ${service_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match full ether-type 0x811
+    ${content6}=  cli_content  node=master
+    Should Contain  ${content6}  Error
+    [Tags]  negative
     
-TC100: Service Instance: Verify a bigchain service can be added to a bigchain chain via cli
+TC037: Service Instance: Verify a bigchain service can be added to a bigchain chain via cli
     add a service and attach it to a chain via cli
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -724,7 +807,7 @@ TC100: Service Instance: Verify a bigchain service can be added to a bigchain ch
     verify results  a  b  transmitted_frames  received_valid_frames
     [Tags]  feature  jira-pan-1601
     
-TC101: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
+TC038: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
     add a service and attach it to a chain via rest  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should be true  ${result1}
@@ -737,7 +820,523 @@ TC101: Service Instance: Verify a bigchain service can be added to a bigchain ch
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5710}
     [Tags]  feature  jira-pan-1601
+
+TC039: Verify multiple services can be created
+    ## Service #1
+    ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${service_name}  descrption=TestBigChainService1
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=1  inintf=${service_in_interface1}  outintf=${service_out_interface1}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${service_name}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${service_name}  match_number=1  data={"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    Should be True  ${result5}
+    ## Service #2
+    ${result1}=  rest add a bigchain service  chain_service_name=${service_name2}  service_type=custom  instance_id=1
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${service_name2}  descrption=TestBigChainService2
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name2}  instance_id=1  inintf=${service_in_interface2}  outintf=${service_out_interface2}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${service_name2}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${service_name2}  match_number=1  data={"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "101.1.1.1", "ether-type": 2048}
+    Should be True  ${result5}
+    ## Service #3
+    ${result1}=  rest add a bigchain service  chain_service_name=${service_name3}  service_type=custom  instance_id=1
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${service_name3}  descrption=TestBigChainService3
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name3}  instance_id=1  inintf=${service_in_interface3}  outintf=${service_out_interface3}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${service_name3}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${service_name3}  match_number=1  data={"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "102.1.1.1", "ether-type": 2048}
+    Should be True  ${result5}
+    sleep  10
+    ${output1}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${service_in_interface1}  outport=${service_out_interface1}  chain_service_description=TestBigChainService1
+    Should be True  ${output1}
+    ${output2}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name2}  chain_service_type=custom  instance_id=1  inport=${service_in_interface2}  outport=${service_out_interface2}  chain_service_description=TestBigChainService2
+    Should be True  ${output2}    
+    ${output3}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name3}  chain_service_type=custom  instance_id=1  inport=${service_in_interface3}  outport=${service_out_interface3}  chain_service_description=TestBigChainService3
+    Should be True  ${output3}
+    [Tags]  feature
     
+TC040: Verify multiple instances can be created in a given service
+    ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${service_name}  descrption=TestBigChainService1
+    Should be True  ${result2}
+    ${result3}=  rest update bigchain policy action  chain_service_name=${service_name}
+    Should be True  ${result3}
+    ${result4}=  rest add a bigchain policy match  chain_service_name=${service_name}  match_number=1  data={"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    Should be True  ${result4}
+    sleep  5
+    ## Instance #1
+    ${result5}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=1  inintf=${service_in_interface1}  outintf=${service_out_interface1}
+    Should be True  ${result5}
+    ## Instance #2
+    ${result6}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=2  inintf=${service_in_interface2}  outintf=${service_out_interface2}
+    Should be True  ${result6}
+    ## Instance #3
+    ${result7}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=3  inintf=${service_in_interface3}  outintf=${service_out_interface3}
+    Should be True  ${result7}
+    ## Instance #4
+    ${result8}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=4  inintf=${service_in_interface4}  outintf=${service_out_interface4}
+    Should be True  ${result8}
+    ## Instance #5
+    ${result9}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=5  inintf=${service_in_interface5}  outintf=${service_out_interface5}
+    Should be True  ${result9}
+    sleep  10
+    ${output1}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${service_in_interface1}  outport=${service_out_interface1}  chain_service_description=TestBigChainService1
+    Should be True  ${output1}
+    ${output2}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=2  inport=${service_in_interface2}  outport=${service_out_interface2}  chain_service_description=TestBigChainService1
+    Should be True  ${output2}    
+    ${output3}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=3  inport=${service_in_interface3}  outport=${service_out_interface3}  chain_service_description=TestBigChainService1
+    Should be True  ${output3}
+    ${output4}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=4  inport=${service_in_interface4}  outport=${service_out_interface4}  chain_service_description=TestBigChainService1
+    Should be True  ${output4}
+    ${output5}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=5  inport=${service_in_interface5}  outport=${service_out_interface5}  chain_service_description=TestBigChainService1
+    Should be True  ${output5}
+    [Tags]  feature
+ 
+TC041: Verify multiple chains cannot use same instance of a service
+     ## Create a Service
+    ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${service_name}  descrption=TestBigChainService1
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=s1  chain_service_name=${service_name}  instance_id=1  inintf=${service_in_interface1}  outintf=${service_out_interface1}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${service_name}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${service_name}  match_number=1  data={"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    Should be True  ${result5}
+    sleep  10
+    ### Add service and instance 1 to CHAIN1-- This should work
+    ${output1}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=1  inport=${service_in_interface1}  outport=${service_out_interface1}  chain_service_description=TestBigChainService1
+    Should be True  ${output1}
+    ${result6}=  rest add a chain  chain_name=${chain_name}
+    Should be True  ${result6}
+    ${result7}=  rest add chain endpoint  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result7}
+    ${result8}=  rest add service to chain  chain_name=${chain_name}  service_name=${service_name}  instance=1  sequence=1
+    Should be True  ${result8}
+    sleep  5
+    ### Add service and instance 1 to CHAIN2-- This should not work
+    ${result9}=  rest add a chain  chain_name=${chain_name2}
+    Should be True  ${result9}
+    ${result10}=  rest add chain endpoint  s1  chain_name=${chain_name2}  interface1=${chain_interface_3}  interface2=${chain_interface_4}
+    Should be True  ${result10}
+    ${result11}=  rest add service to chain  chain_name=${chain_name2}  service_name=${service_name}  instance=1  sequence=1
+    Should not be True  ${result11}
+    [Tags]  feature
+    
+TC042: For a mandatory service, verify chain is disabled when a service instance in-interface goes down
+    add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Now disable the in-interface of the service
+    ${ret_value_1}=  cli disable interface  s1  ${service_in_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should not be true  ${result1}
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_3} > 99990
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_4} < 100
+    ### Re-enable the in-interface of the service
+    ${ret_value_1}=  cli enable interface  s1  ${service_in_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    [Tags]  feature  
+
+TC043: For a mandatory service, verify chain is disabled when a service instance out-interface goes down
+    add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Now disable the in-interface of the service
+    ${ret_value_1}=  cli disable interface  s1  ${service_out_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should not be true  ${result1}
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_3} > 99990
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_4} < 100
+    ### Re-enable the in-interface of the service
+    ${ret_value_1}=  cli enable interface  s1  ${service_out_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    [Tags]  feature  
+
+TC044: For an optional service,verify service instance is bypassed when a service instance in-interface goes down
+    add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${result2}=  rest add service to chain  chain_name=${chain_name}  service_name=${service_name}  instance=1  sequence=1  optional=${true}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result3}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Now disable the in-interface of the service
+    ${ret_value_1}=  cli disable interface  s1  ${service_in_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Re-enable the in-interface of the service
+    ${ret_value_1}=  cli enable interface  s1  ${service_in_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    [Tags]  feature
+
+TC045: For an optional service,verify service instance is bypassed when a service instance out-interface goes down
+    add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${result2}=  rest add service to chain  chain_name=${chain_name}  service_name=${service_name}  instance=1  sequence=1  optional=${true}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result3}
+    ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Now disable the in-interface of the service
+    ${ret_value_1}=  cli disable interface  s1  ${service_out_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} < 100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} < 100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    ### Re-enable the in-interface of the service
+    ${ret_value_1}=  cli enable interface  s1  ${service_out_interface1}
+    Should Be True  ${ret_value_1}
+    sleep  5
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_l3_as5710}
+    sleep  10
+    stop traffic  ${stream_l3_as5710}
+    ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1} > 99990
+    Should Be True  ${intf_1} < 100100
+    ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2} > 99990
+    Should Be True  ${intf_2} < 100100
+    ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100100
+    ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4} > 99990
+    Should Be True  ${intf_4} < 100100
+    [Tags]  feature
+
+TC046: Verify with traffic that service interfaces are taken in both directions when in-skip or out-skip is not configured.
+    add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${stream_l3_as5710_1}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    ${stream_l3_as5710_2}=  L3 add  flow=b->a  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.2  dst_ip=100.1.1.1  name=b_a_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic
+    sleep  10
+    stop traffic
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
+    ${intf_1_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    Should Be True  ${intf_1_rx} > 99990
+    Should Be True  ${intf_1_rx} < 100100
+    ${intf_2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2_rx} > 99990
+    Should Be True  ${intf_2_rx} < 100100
+    ${intf_2_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    Should Be True  ${intf_2_tx} > 99990
+    Should Be True  ${intf_2_tx} < 100100
+    ${intf_3_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3_tx} > 99990
+    Should Be True  ${intf_3_tx} < 100100
+    ${intf_3_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    Should Be True  ${intf_3_rx} > 99990
+    Should Be True  ${intf_3_rx} < 100100
+    ${intf_4_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4_rx} > 99990
+    Should Be True  ${intf_4_rx} < 100100
+    ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    Should Be True  ${intf_4_tx} > 99990
+    Should Be True  ${intf_4_tx} < 100100
+    [Tags]  feature
+
+TC047: Configure in-skip and verify service instance is skipped when traffic is coming into the network
+    add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
+    ${result0}=  rest skip service  chain_service_name=${service_name}  instance_id=1  inskip=True
+    should be true  ${result0}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${stream_l3_as5710_1}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    ${stream_l3_as5710_2}=  L3 add  flow=b->a  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.2  dst_ip=100.1.1.1  name=b_a_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic
+    sleep  10
+    stop traffic
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1_tx} < 100
+    ${intf_1_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    Should Be True  ${intf_1_rx} > 99990
+    Should Be True  ${intf_1_rx} < 100100
+    ${intf_2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2_rx} < 100
+    ${intf_2_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    Should Be True  ${intf_2_tx} > 99990
+    Should Be True  ${intf_2_tx} < 100100
+    ${intf_3_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3_tx} > 99990
+    Should Be True  ${intf_3_tx} < 100100
+    ${intf_3_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    Should Be True  ${intf_3_rx} > 99990
+    Should Be True  ${intf_3_rx} < 100100
+    ${intf_4_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4_rx} > 99990
+    Should Be True  ${intf_4_rx} < 100100
+    ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    Should Be True  ${intf_4_tx} > 99990
+    Should Be True  ${intf_4_tx} < 100100
+    [Tags]  feature  runthis
+
+TC048: Configure out-skip and verify service instance is skipped when traffic is coming into the network
+    add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
+    ${result0}=  rest skip service  chain_service_name=${service_name}  instance_id=1  outskip=True
+    should be true  ${result0}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
+    Should be true  ${result1}
+    ${stream_l3_as5710_1}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
+    ${stream_l3_as5710_2}=  L3 add  flow=b->a  frame_cnt=100000  frame_rate=10000  frame_size=9150
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.2  dst_ip=100.1.1.1  name=b_a_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic
+    sleep  10
+    stop traffic
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
+    ${intf_1_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    Should Be True  ${intf_1_rx} < 100
+    ${intf_2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    Should Be True  ${intf_2_rx} > 99990
+    Should Be True  ${intf_2_rx} < 100100
+    ${intf_2_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    Should Be True  ${intf_2_tx} < 100
+    ${intf_3_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    Should Be True  ${intf_3_tx} > 99990
+    Should Be True  ${intf_3_tx} < 100100
+    ${intf_3_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    Should Be True  ${intf_3_rx} > 99990
+    Should Be True  ${intf_3_rx} < 100100
+    ${intf_4_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    Should Be True  ${intf_4_rx} > 99990
+    Should Be True  ${intf_4_rx} < 100100
+    ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    Should Be True  ${intf_4_tx} > 99990
+    Should Be True  ${intf_4_tx} < 100100
+    [Tags]  feature  runthis
 
 * Keywords
 
@@ -762,7 +1361,16 @@ service test teardown
     config  node=master  cmd=no bigchain chain ${chain_name}    
     ${content1}=  cli_content  node=master
     Should Not Contain  ${content1}  Error
+    config  node=master  cmd=no bigchain chain ${chain_name2}    
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
     config  node=master  cmd=no bigchain service ${service_name}
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=no bigchain service ${service_name2}
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=no bigchain service ${service_name3}
     ${content2}=  cli_content  node=master
     Should Not Contain  ${content2}  Error
     config  node=master  cmd=no bigchain span-service ${span_service_name}

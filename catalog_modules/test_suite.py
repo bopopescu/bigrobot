@@ -181,7 +181,9 @@ class TestSuite(object):
             return "virtual"
         if helpers.file_exists(suite + ".physical.topo"):
             return "physical"
-        return "unknown"
+        if helpers.file_exists(suite + ".topo"):
+            return "generic-topology"
+        return "missing-topology"
 
     def db_populate_suite(self):
         if self._is_regression:

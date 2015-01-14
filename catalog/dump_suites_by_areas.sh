@@ -13,8 +13,13 @@ if [ ! -x ../bin/gobot ]; then
     exit 1
 fi
 
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    echo "Error: Env var TEST_CATALOG_LOG_DIR is not defined."
+    exit 1
+fi
+
 testsuite_path=`pwd | sed 's/catalog$//'`testsuites
-output=raw_data.dump_suites_by_areas.sh
+output=${TEST_CATALOG_LOG_DIR}/raw_data.dump_suites_by_areas.sh
 
 rm -f ${output}.*
 

@@ -34,6 +34,7 @@ add Fabric setup Three Rack Dual Leaf
    [Tags]  L2  feature  smoke  sanity  IronHorse  
    rest verify fabric switch all
    rest verify fabric link 
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 ping h5 to h6 dual leaf single rack dynamic endpoints
    [Tags]  L2  feature  smoke   sanity  IronHorse        

@@ -14,10 +14,6 @@ Bigtap list op l3_l4 suite teardown
 	sleep    5
 
 Bigtap list op l3_l4 case setup
-    ${result1}=  write version to file
-    Should be true  ${result1}
-    ${result}=  start syslog monitor
-    Should be true  ${result}
     bigtap delete all 
     rest disable feature      l3-l4-mode 
     rest disable feature      tracked-host        
@@ -25,8 +21,6 @@ Bigtap list op l3_l4 case setup
 
 Bigtap list op l3_l4 case teardown
     sleep  5
-    ${result1}=  stop syslog monitor
-    Should be true  ${result1}
 
 
 Log to file    [Arguments]    ${File}     ${title}    ${sw1}
