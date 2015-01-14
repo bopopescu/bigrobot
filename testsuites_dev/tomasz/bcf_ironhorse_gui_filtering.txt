@@ -41,6 +41,113 @@ T1.2 Add Endpoint Filter
 	Add Filter Query  Port Group  		contains  		test
 	Close And Filter Advanced Query Builder
 
+#T1.3 Verify Endpoint Filtering
+T1.3.1 Any
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  contains  x
+	Add Filter Query  Any  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.2 VLAN
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  VLAN  greater than  11
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.3 Tenant
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Tenant  starts with  tenant-
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.4 Segment
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Segment  ends with  -2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.5 Name
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Name  is  endpoint-1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.6 Attachment State
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Attachment State  contains  Down
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.7 Description
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Description  contains  endpoint
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.8 IP Addresses
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  IP Addresses  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
+T1.3.9 MAC Address
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  MAC Address  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.10 Switch
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Switch  contains  b
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.11 Interface
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Interface  starts with  ethernet
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.12 Port Group
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Port Group  contains  pg
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
+T1.3.13 Active Since
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Active Since  is after  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.14 Last Seen
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Last Moved  is before  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+
 ### Tenants
 T2.1 Check Tenants Advanced Query Builder
 	Check Advanced Query Builder  Tenants  ${TENANT COMPARISON COLUMNS}
@@ -64,7 +171,105 @@ T2.2 Add Tenant Filter
 	Add Filter Query  Total Policy Lists		less than		1
 	Close And Filter Advanced Query Builder
 
-
+#T2.3 Verify Tenant Filtering
+T2.3.1 Any
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Any  contains  tenant
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.2 Name
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Name  contains  system
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.3 Description
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Description  contains  test
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.4 Router MAC Address
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Router MAC Address  contains  5c:16:c7:01
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  True
+T2.3.5 VRF ID
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	VRF ID  equals  1023
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.6 Default Route
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Default Route  ends with  test
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.7 Applied Policy List
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Applied Policy List  starts with  my-
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.8 System Tenant Interface
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  System Tenant Interface  True  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.9 Total Tenant Interfaces
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Tenant Interfaces  greater than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.10 Total Segment Interfaces
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Segment Interfaces  greater than  0
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.11 Total Segments
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Segments  less than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.12 Total Routes
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Routes  equals  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.13 Total Next Hop Groups
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Next Hop Groups  less than  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  True
+T2.3.14 Total Policy Lists
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Policy Lists  less than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
 			
 *** Keyword ***
 config suite setup
