@@ -50,19 +50,19 @@ TC003: Add user tacacsadmin to group admin and verify access
 TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  5
+    ${result}=  rest add tacacs server  10.9.18.3  secret  5
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
-    ${result}=  rest delete tacacs server  10.9.18.2    
+    ${result}=  rest delete tacacs server  10.9.18.3    
     Should be true  ${result}
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  5
+    ${result}=  rest add tacacs server  10.9.18.3  secret  5
     Should be true  ${result}
     Verify Tacacs Configuration  0  10.2.3.201  5
-    Verify Tacacs Configuration  1  10.9.18.2  5
-    ${result}=  rest delete tacacs server  10.9.18.2        
+    Verify Tacacs Configuration  1  10.9.18.3  5
+    ${result}=  rest delete tacacs server  10.9.18.3        
     Should be true  ${result}
     [Tags]  feature
 

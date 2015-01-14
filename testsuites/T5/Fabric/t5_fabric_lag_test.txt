@@ -26,6 +26,7 @@ add Three Rack Dual Leaf Topology
     Set host int variables
     sleep  10
     rest verify fabric switch all
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
     Set switch dpid variables
    
 Verify Fabric Lag formation from leaf node 

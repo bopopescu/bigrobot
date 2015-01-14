@@ -26,6 +26,7 @@ add Dual Leaf Three Rack setup
    sleep  35
    rest verify fabric switch all
    rest verify fabric link
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
 
 add/delete a tenant with different characters
    [Tags]   L2  feature  IronHorse
