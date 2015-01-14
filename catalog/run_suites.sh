@@ -15,6 +15,8 @@ usage() {
 }
 
 # !!! FIXME: This code is duplicated from run_repopulate_build_baseline.sh.
+# This is really not neccessary since it's primarily catalog/_doit.sh which
+# calls this script.
 if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
     ts=`date "+%Y-%m-%d_%H%M%S"`
     dest=.data.$ts
@@ -34,6 +36,10 @@ if [ $# -ne 1 ]; then
     usage
 fi
 
+#
+# f should be a <name>.dryrun.output_xml.log. It should also contain
+# $TEST_CATALOG_LOG_DIR in the path.
+#
 f=$1
 
 if [ ! -f $f ]; then
@@ -75,5 +81,5 @@ for x in `cat $f`; do
     fi
 done
 
-find $BIGROBOT_LOG_PATH -name output.xml > ${TEST_CATALOG_LOG_DIR}/$f.dryrun.output_xml.log
+find $BIGROBOT_LOG_PATH -name output.xml > $f.dryrun.output_xml.log
 
