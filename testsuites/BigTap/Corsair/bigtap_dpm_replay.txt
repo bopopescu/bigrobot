@@ -4,7 +4,7 @@ Suite Setup         corsair suite setup
 Suite Teardown      corsair suite teardown
 Test Setup          corsair test setup
 Test Teardown       corsair test teardown 
-Force Tags          BigTap  Corsair  4.0.0  Dell  S4810  dpm  match-conditions  traffic
+Force Tags          BigTap  Corsair-400  Dell-S4810  dpm  match-conditions  traffic
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py

@@ -4,7 +4,7 @@ Suite Setup                         overlap suite setup
 Suite Teardown                      overlap suite teardown
 Test Setup                          overlap test setup
 Test Teardown                       overlap test teardown 
-Force Tags                          BigTap  Corsair  4.0.0  Quanta  Dell  S4810  LY2  LB9  overlap
+Force Tags                          BigTap  Corsair-400  Quanta-LY2  Quanta-LB9  Dell-S4810  overlap
 Library                             keywords/BsnCommon.py
 Library                             keywords/AppController.py
 Library                             keywords/BigTap.py
