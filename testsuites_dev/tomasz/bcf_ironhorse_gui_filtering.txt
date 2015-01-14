@@ -1,0 +1,86 @@
+*** Settings ***
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags              T5  GUI  BCF  Feature  IronHorse-Plus
+Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
+Library        		SeleniumLibrary
+Resource        	bcf_resource.txt
+Library       		String
+
+*** Variables ***
+@{ENDPOINT COMPARISON COLUMNS}=   Any  Tenant  Segment  Name  Attachment State  Description  Active Since  Last Moved  IP Addresses  MAC Address  Switch  Interface  Port Group  VLAN
+	
+@{TENANT COMPARISON COLUMNS}=  Any  Name  Description  Router MAC Address  VRF ID  Default Route  Applied Policy List
+...  System Tenant Interface  Total Tenant Interfaces  Total Segment Interfaces  Total Segments  Total Routes  Total Next Hop Groups
+...  Total Policy Lists
+
+*** Test Case ***
+### Endpoints	
+T1.1 Check Endpoints Advanced Query Builder
+	Check Advanced Query Builder  Endpoints  ${ENDPOINT COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T1.2 Add Endpoint Filter
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  				contains  		test
+	Add Filter Query  VLAN  			greater than  	1
+	Add Filter Query  Tenant  			starts with  	test
+	Add Filter Query  Segment  			ends with  		test
+	Add Filter Query  Name  			contains  		test
+	Add Filter Query  Attachment State	contains  		test
+	Add Filter Query  Description  		contains  		test
+	Add Filter Query  IP Addresses  	contains  		1
+	Add Filter Query  MAC Address  		contains  		test
+	Add Filter Query  Switch  			contains  		test
+	Add Filter Query  Interface  		contains  		test
+	Add Filter Query  Port Group  		contains  		test
+	Close And Filter Advanced Query Builder
+
+### Tenants
+T2.1 Check Tenants Advanced Query Builder
+	Check Advanced Query Builder  Tenants  ${TENANT COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T2.2 Add Tenant Filter
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Any						contains		test
+	Add Filter Query  Name  					contains		test
+	Add Filter Query  Description  				starts with		test
+	Add Filter Query  Router MAC Address  		ends with		test
+	Add Filter Query  VRF ID  					equals			1
+	Add Filter Query  Default Route  			ends with		test
+	Add Filter Query  Applied Policy List		starts with		test
+	Add Filter Query  System Tenant Interface  	True			${EMPTY}
+	Add Filter Query  Total Tenant Interfaces  	equals			1
+	Add Filter Query  Total Segment Interfaces 	greater than 	1
+	Add Filter Query  Total Segments  			less than		1
+	Add Filter Query  Total Routes  			equals			1
+	Add Filter Query  Total Next Hop Groups		greater than	1
+	Add Filter Query  Total Policy Lists		less than		1
+	Close And Filter Advanced Query Builder
+
+
+			
+*** Keyword ***
+config suite setup
+    base suite setup
+	Set Selenium Timeout  20
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    
+	
+config suite teardown
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown
