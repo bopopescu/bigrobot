@@ -28,7 +28,7 @@ TC001: Verify one openflow controller can be configured
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]   platform  feature  
+    [Tags]  sanity  feature 
 
 TC002: Verify controller can be modified 
     delete existing controllers  s1  c1
@@ -38,7 +38,7 @@ TC002: Verify controller can be modified
     delete existing controllers  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
-    [Tags]   platform  feature  
+    [Tags]  sanity  feature 
 
 TC003: Verify multiple openflow controllers can be configured
     delete existing controllers  s1  c1
@@ -47,21 +47,21 @@ TC003: Verify multiple openflow controllers can be configured
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]   platform  feature  
+    [Tags]  sanity  feature 
 
 TC004: Verify Controller IP address is pingable
     ping remote  s1
-    [Tags]   platform  feature  
+    [Tags]  sanity  feature 
 
 TC005: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]   platform  feature      
+    [Tags]  sanity  feature     
 
 TC006: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]   platform  feature      
+    [Tags]  sanity  feature     
  
 TC007: Shutdown an interface and verify interface state is down
     shut interface  s1  ethernet1
@@ -72,7 +72,7 @@ TC007: Shutdown an interface and verify interface state is down
     Sleep  30
     ${ret_value_1}=  cli show interface state  s1  ethernet1
     Should Contain  ${ret_value_1}  up     
-    [Tags]   platform  feature         
+    [Tags]  sanity  ha  robustness
 
 TC008: Verify ma1 ip address configuration via static config
     delete static ip  s1  ${netmask}  ${gateway}
@@ -82,14 +82,14 @@ TC008: Verify ma1 ip address configuration via static config
     add dns  s1  ${dns_server}  ${dns_domain}
     Sleep  60
     verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]   platform  feature    
+    [Tags]  sanity  feature   
     
 TC009: Verify ntp
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  platform  ntp  feature     
+    [Tags]  sanity  feature     
 
 TC010: Verify ntp server after process ntp restart
     configure ntp server  s1  time-c.nist.gov
@@ -98,13 +98,13 @@ TC010: Verify ntp server after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov    
-    [Tags]  platform  ntp  feature
+    [Tags]  sanity  feature
 
 TC011: Verify DPID on switch is same as being reported to Controller
     ${controller_dpid}=  rest return switch dpid from ip  s1
     ${switch_dpid}=      cli show switch dpid  s1
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
-    [Tags]  platform  dpid  feature  runthis
+    [Tags]  sanity  feature
             
 * Keywords 
 
