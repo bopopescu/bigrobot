@@ -4,7 +4,7 @@ Documentation  sFlow Test Suite Release:Corsair Plus
 #Suite Teardown   sFlow suite teardown
 #Test Setup   base test setup
 #Test Teardown   base test teardown
-Force Tags   Corsair_plus  sFlow
+Force Tags   BigTap  Corsair-plus  4.5.0  sFlow  Accton-AS5710
 Library  keywords/BsnCommon.py
 Library  keywords_dev/Sahaja/BigTap.py 
 
@@ -12,11 +12,64 @@ Library  keywords_dev/Sahaja/BigTap.py
 
     
 * Test Case
-Configure and Verify Configuration 
-    ${collector_return}=  rest verify sflow config    collector   10.8.33.10  col_param=ip-addr
+
+TC01: Configure and verify sflow collector config 
+	${config_sflow}=  rest config sflow collector   10.8.33.10 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.10
     Should be true  ${collector_return}
-    ${counter_ret}=  rest verify sflow config    counter-interval   10
+    [Tags]  feature  sanity 
+    
+TC02: Configure and verify sflow collector config with udp-port 0
+	${config_sflow}=  rest config sflow collector   10.8.33.10   col_param=udp-port  col_param_val=0 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.10  col_param=udp-port   col_sub_param_val=0
+    Should be true  ${collector_return}
+    [Tags]  feature  sanity  
+    
+    
+TC03: Config and Verify sflow sample-rate
+	${config_sample}=  rest config sflow collector  sample_rate=1000
+	Should be true  ${config_sample}
+    ${sample_ret}=  rest verify sflow config    sample-rate  1000
+    Should be true  ${sample_ret}
+    [Tags]  feature  sanity 
+    
+    
+TC04: Config and Verify Counter-interval config    
+	${config_counter}=  rest config sflow collector  counter_interval=60
+	Should be true  ${config_counter}
+    ${counter_ret}=  rest verify sflow config    counter-interval   60
     Should be true  ${counter_ret}
-    ${sample_ret}=  rest verify sflow config    sample-rate   300
-    Should not be true  ${sample_ret}
+    [Tags]  feature  sanity 
+    
+    
+TC05: Config and Verify header-size config    
+	${config_header}=  rest config sflow collector  header_size=64
+	Should be true  ${config_header}
+    ${header_ret}=  rest verify sflow config    max-header-size   64
+    Should be true  ${header_ret}
+    [Tags]  feature  sanity   
+    
+    
+TC06: Config and Verify all the parameters in one test
+	${config_ret}=  rest config sflow collector  10.8.33.10   col_param=udp-port  col_param_val=10   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+	${counter_ret}=  rest verify sflow config   collector   10.8.33.10  col_param=udp-port   col_sub_param_val=10
+	Should be true  ${counter_ret}
+	${sample_ret}=  rest verify sflow config    sample-rate  3000
+    Should be true  ${sample_ret}
+    ${counter_ret}=  rest verify sflow config    counter-interval   600
+    Should be true  ${counter_ret}    
+    ${header_ret}=  rest verify sflow config    max-header-size   32
+    Should be true  ${header_ret}       
+    [Tags]  feature  sanity  
+    
+* Keyword
+
+sFlow suite setup
+    base suite setup
+    rest configure sflow   collector  10.8.33.10  
+    rest enable feature  overlap
+ 
     
