@@ -4,7 +4,7 @@ Suite Setup             flag suite setup
 Suite Teardown          flag suite teardown
 Test Setup              flag test setup
 Test Teardown           flag test teardown 
-Force Tags              BigTap  Corsair  4.0.0  Accton  AS5710  match-conditions  tcp-flags
+Force Tags              BigTap  corsair-400  Accton-AS5710  match-conditions  tcp-flags
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -48,7 +48,7 @@ TC001: Verify all positive combinations of TCP flags
     \    stop traffic  ${stream}
     \    delete traffic
     \    sleep  2
-    [Tags]  feature  sanity
+    [Tags]  feature  full
 
         
 TC002: Verify all positive combinations of TCP6 flags
@@ -71,7 +71,7 @@ TC002: Verify all positive combinations of TCP6 flags
     \    stop traffic  ${stream}
     \    delete traffic
     \    sleep  2
-    [Tags]  feature  sanity
+    [Tags]  feature  full
                                           
 * Keyword
 

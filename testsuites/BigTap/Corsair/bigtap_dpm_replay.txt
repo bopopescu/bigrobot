@@ -37,7 +37,8 @@ ${policy_overlap}                           _ZP1_o_P1
 TC001:Verify Configuration
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
-    [Tags]  feature
+    [Tags]  full  feature
+
 TC002:Send GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  36
     Should be true  ${set_udf}
@@ -52,7 +53,7 @@ TC002:Send GRE packets and verify match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  30
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 TC003:Send GRE packets and verify match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  40
     Should be true  ${set_udf}
@@ -67,7 +68,7 @@ TC003:Send GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC004:Send GRE within GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  60
@@ -83,7 +84,7 @@ TC004:Send GRE within GRE packets and verify match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap  timeout=180
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC005:Send GRE within GRE packets and verify match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  72
@@ -99,7 +100,7 @@ TC005:Send GRE within GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC006:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  12
@@ -115,7 +116,7 @@ TC006:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 
 TC007:Send doubly tagged 802.1q tunneled IP packet and verify match on destination IP
@@ -132,7 +133,7 @@ TC007:Send doubly tagged 802.1q tunneled IP packet and verify match on destinati
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
     sleep  10
     verify packet count   
-    [Tags]  feature
+    [Tags]  full  feature
         
 TC008:Send GTPv1(control) packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
@@ -148,7 +149,7 @@ TC008:Send GTPv1(control) packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
     sleep  30
     verify packet count      
-    [Tags]  feature
+    [Tags]  full  feature
         
 TC009:Send GTPv1(control) packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
@@ -164,7 +165,7 @@ TC009:Send GTPv1(control) packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
     sleep  10
     verify packet count      
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC010:Send GTPv1(user) packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
@@ -180,7 +181,7 @@ TC010:Send GTPv1(user) packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap     timeout=300
     sleep  10
     verify packet count      
-    [Tags]  feature
+    [Tags]  full  feature
         
 TC011:Send GTPv1(user) packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
@@ -196,7 +197,7 @@ TC011:Send GTPv1(user) packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count  
-    [Tags]  feature
+    [Tags]  full  feature
         
 TC012:Send GTPv1(user) packets and match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  32
@@ -212,7 +213,7 @@ TC012:Send GTPv1(user) packets and match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC013:Send GTPv1(user) packets and match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  44
@@ -228,7 +229,7 @@ TC013:Send GTPv1(user) packets and match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC014:Send GTP Prime packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
@@ -244,7 +245,7 @@ TC014:Send GTP Prime packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
     sleep  10
     verify packet count      
-    [Tags]  feature
+    [Tags]  full  feature
         
 TC015:Send GTP Prime packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
@@ -260,7 +261,7 @@ TC015:Send GTP Prime packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC016:Send IP-in-GTP packets and match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  28
@@ -276,7 +277,7 @@ TC016:Send IP-in-GTP packets and match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC017:Send IP-in-GTP packets and match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  40
@@ -292,7 +293,7 @@ TC017:Send IP-in-GTP packets and match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC018: Send basic MPLS packet and match on source IP address.
     ${set_udf}=  rest add bigtap udf  0  l3-start  12
@@ -308,7 +309,7 @@ TC018: Send basic MPLS packet and match on source IP address.
     bash  h1  /usr/bin/tcpreplay -tq -l 10 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC019: Send basic MPLS packet and match on destination IP address.
     ${set_udf}=  rest add bigtap udf  0  l3-start  24
@@ -324,7 +325,7 @@ TC019: Send basic MPLS packet and match on destination IP address.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC020: Send Ethernet over MPLS packet and match on MPLS Label
     ${set_udf}=  rest add bigtap udf  0  l3-start  0
@@ -340,7 +341,7 @@ TC020: Send Ethernet over MPLS packet and match on MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC021: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
     ${set_udf}=  rest add bigtap udf  0  l3-start  32
@@ -356,7 +357,7 @@ TC021: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC022: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
     ${set_udf}=  rest add bigtap udf  0  l3-start  36
@@ -372,7 +373,7 @@ TC022: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC023: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
     ${set_udf}=  rest add bigtap udf  0  l3-start  44
@@ -388,7 +389,7 @@ TC023: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC024: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
     ${set_udf}=  rest add bigtap udf  0  l3-start  48
@@ -404,7 +405,7 @@ TC024: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC025: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  4
@@ -420,7 +421,7 @@ TC025: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC026: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  44
@@ -438,7 +439,7 @@ TC026: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
       
 
 TC027: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
@@ -455,7 +456,7 @@ TC027: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC028: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP packet
     ${set_udf}=  rest add bigtap udf  0  l4-start  44
@@ -471,7 +472,7 @@ TC028: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP 
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC029: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP packet
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  52    
@@ -489,7 +490,7 @@ TC029: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP 
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC030: Send NTP packets and match on NTP Version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
@@ -505,7 +506,7 @@ TC030: Send NTP packets and match on NTP Version
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/ntp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC031: Send BOOTP packets and match on Client Mac Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
@@ -523,7 +524,7 @@ TC031: Send BOOTP packets and match on Client Mac Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC032: Send BOOTP packets and match on Your(client) IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  24    
@@ -539,7 +540,7 @@ TC032: Send BOOTP packets and match on Your(client) IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC033: Send L2TP enacapsulated packets and match on Inner source IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  32    
@@ -559,7 +560,7 @@ TC033: Send L2TP enacapsulated packets and match on Inner source IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC034: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
@@ -579,7 +580,7 @@ TC034: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC035: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  8    
@@ -597,7 +598,7 @@ TC035: Send L2TP enacapsulated packets and match on first two bits of L2TP Heade
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  feature
+    [Tags]  full  feature
     
 * Keyword
 
