@@ -116,12 +116,12 @@ seperate storage VLAN workflow while deploying cloudstack
 	[Tags]  solution  cloudstack    manual	 
 	manual passed
 identify service insertion workflow for cloudstack
-	[Tags]  solution  cloudstack    manual-untested 
+	[Tags]  solution  cloudstack    manual-untested  skipped
 	manual untested 
 	
 verify fabric setting global mode
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Test deployment script for KVM
 	[Tags]  scaling  cloudstack    manual	
@@ -148,8 +148,8 @@ restart mysql database service
 	manual passed
 
 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack    manual
@@ -200,7 +200,7 @@ T2.7 Verify floating IP assignment to each VM
 	
 T2.8 migrate a VM to different host workflow
 	[Tags]  feature  cloudstack    manual  JIRA-BVS-2589  Xenserver
-	manual failed
+	manual passed
 	
 T2.9 delete a VM 
 	[Tags]  feature  cloudstack    manual  Xenserver
@@ -224,11 +224,18 @@ T2.13 check the VM connectivity within VPC
 	[Tags]  feature  cloudstack    manual  Xenserver
 	log  able to ping from router vm to other vms ip
 	log   unable to ping if vms are in different hosts
-	manual failed 
+	manual passed 
 	
 T2.14 adding a new pod workflow 
-	[Tags]  feature  cloudstack    manual-untested  Xenserver
-	manual untested
+	[Tags]  feature  cloudstack    manual  Xenserver
+	log  solution 1
+	log  configure segment for mgmt and each pod, config port-group for each seaver
+	log  need to take care of all the route in node and vm
+	log  solution 2
+	log  configure 2ndary address in mgmt node, and config supernet in bcf controller
+	log  mgmt- 192.168.1.50/25 and 192.168.1.129/25  controller 192.168.1.1/24  compute 192.168.1.62/25 and 192.168.1.164/25
+	
+	manual passed
 	
 T2.15 adding a new hypervisor cluster to exisiting pod/zone
 	[Tags]  feature  cloudstack    manual  Xenserver
@@ -248,8 +255,10 @@ T2.17 Verify the VPC/network creation after BCF controller failover
 	manual passed
 	 
 T2.18 adding Manual membership rule to cloudstack tenants
-	[Tags]  feature  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  feature  cloudstack  manual  Xenserver
+	log  add a member to a cloudstack tenant
+	log  the manual rule not removed by sync
+	manual passed 
 	
 T2.19 router workflow test in cloudstack
 	[Tags]  solution  cloudstack    manual  Xenserver  skipped
@@ -272,8 +281,11 @@ T2.22 Delete and readd BCF controllers from the cloudstack management
 	manual passed 
 	
 T2.23 Upgrade cloudstack package workflow with BCF controllers present
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  stop cloudstack servive:sudo service cloudstack-management stop
+	log  download package and install package
+	log  sudo service cloudstack-management restart
+	manual passed 
 	
 T2.24 Verify sync operation using BCF CLI deleting a tenant
 	[Tags]  solution  cloudstack    manual  Xenserver
@@ -296,45 +308,57 @@ T2.27 Upgrade BCF controller to check SSL ceritificate preserve
 	manual passed
 	
 T2.28 seperate storage VLAN workflow while deploying cloudstack
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack  manual  Xenserver
+	manual passed 
 	
 T2.29 identify service insertion workflow for cloudstack 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
+	[Tags]  solution  cloudstack    manual-untested  Xenserver  skipped
 	manual untested 
 	
 T2.30 verify fabric setting global mode
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
+	[Tags]  solution  cloudstack    manual-untested  Xenserver  skipped
 	manual untested 
 	
 T2.32 Test deployment script for Xenserver
-	[Tags]  scaling  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  scaling  cloudstack   manual  Xenserver
+	manual passed 
 
 T2.33 Performance(between 2 VM using iperf)
-	[Tags]  performance  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  performance  cloudstack    manual  Xenserver
+	log  0.0-10.0 sec 250 MBytes 210 Mbits/sec
+	manual passed
 
 T2.34 reboot cloudstack management server
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  Reboot management node, it comes back fine
+	manual passed 
 
 T2.35 reboot cloudstack Xenserver host node
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	manual passed 
 
 T2.36 restart cloudstack management service 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack    manual  Xenserver
+	log  service cloudstack-management restart	
+	manual passed 
 
 T2.37 restart mysql database service 
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  service mysql restart 
+	log  All the icon are freshing,  see error: Unable to acquire DB connection for global lock system
+	log  Has to restart: service cloudstack-management restart
+	manual passed 
 
 T2.38 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 
+	[Tags]  solution  cloudstack  manual  Xenserver
+	log  stop cloudstack servive:sudo service cloudstack-management stop
+	log  download package and install package
+	log  sudo service cloudstack-management restart
+	manual passed 
 
 T2.39 Replacing server workflow with same host name and IP
-	[Tags]  solution  cloudstack    manual-untested  Xenserver
-	manual untested 	
+	[Tags]  solution  cloudstack   manual  Xenserver
+	log  vm move 
+	log  host remove
+	log  host add
+	manual passed 	

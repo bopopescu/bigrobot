@@ -108,8 +108,8 @@ T1.6 Verification of CLI commands (whoami , ping , set length , history , reauth
 
 T1.7 Traceroute
 	Log  traceroute in bash, verified in HA and standalone
-    Manual passed
-	[Tags] 	full   feature  infra  Manual  HA   
+    
+	[Tags] 	full   feature  infra  Manual  HA   skipped
 
 T1.8 Watch debug command output
     Log  watch debug/delete is not useful

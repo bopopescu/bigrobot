@@ -151,6 +151,7 @@ class support(object):
                 if re.match(r'.*%s.*' % node_mac, directory):
                     return True
         return False
+
     def check_switch_hardware_counters(self, support_bundle_folder=None, node_name='master'):
         '''
             Check for hardware counters are logded on support logs
@@ -167,21 +168,51 @@ class support(object):
                         helpers.test_failure("Please check for connected switches / Support Fail to Generate Switch support logs")
                     else:
                         for file_name in files:
-                            output = helpers.run_cmd2('cat %s/%s | grep "ofad-ctl brcm port-hw counters-all" | wc -l' % (support_bundle_folder, file_name), shell=True)
-                            outputs = output[1]
-                            helpers.log(str(outputs))
-                            match = re.match(r'.*(\d+).*', str(outputs))
-                            if match:
-                                if int(match.group(0)) == 32 or int(match.group(0)) == 54:
-                                    helpers.log("Expected switch hardware counters are logged in switch file : %s" % file_name)
-                                else:
-                                    if file_name == 'support.log':
-                                        helpers.log("Skipping checking for support.log")
+                            if file_name == 'support.log':
+                                helpers.log("Skipping checking for support.log")
+                            else:
+                                output = helpers.run_cmd2('cat %s/%s | grep "ofad-ctl brcm port-hw counters-all" | wc -l' % (support_bundle_folder, file_name), shell=True)
+                                outputs = output[1]
+                                helpers.log(str(outputs))
+                                match = re.match(r'.*(\d+).*', str(outputs))
+                                if match:
+                                    if int(match.group(0)) == 32 or int(match.group(0)) == 54 or\
+                                     int(match.group(0)) == 128 or int(match.group(0)) == 78:
+                                        helpers.log("Expected switch hardware counters are logged in switch file : %s" % file_name)
                                     else:
-                                        result = False
-                                helpers.log(str(match.group(0)))
+                                        helpers.log("Expected switch hardware counters are not logged..")
+                                    helpers.log(str(match.group(0)))
                         return result
         return False
+
+    def check_switch_cmd(self, switch_cmd, support_bundle_folder=None, node_name='master'):
+        '''
+            Check whether the given switch cmd is logded on support logs
+        '''
+        node_mac = self.get_node_mac_address(node_name)
+        node_mac = re.sub(':', '', node_mac)
+        result = True
+        support_bundle_folder = re.sub('\.tar\.gz', '', support_bundle_folder)
+        for root, dirs, files in os.walk(support_bundle_folder):
+            helpers.log("Dir Name: %s  File Name: %s" % (dirs, files))
+            for directory in dirs:
+                if re.match(r'.*%s.*' % node_mac, directory):
+                    if len(files) == 0:
+                        helpers.test_failure("Please check for connected switches / Support Fail to Generate Switch support logs")
+                    else:
+                        for file_name in files:
+                            if file_name == 'support.log':
+                                helpers.log("Skipping checking for support.log")
+                            else:
+                                output = helpers.run_cmd2('cat %s/%s | grep "%s" | wc -l' % (support_bundle_folder, file_name, switch_cmd), shell=True)
+                                outputs = output[1]
+                                helpers.log(str(outputs))
+                                match = re.match(r'.*(\d+).*', str(outputs))
+                                if match:
+                                    helpers.log(str(match.group(0)))
+                                    if int(match.group(0)) == 0:
+                                        result = False
+        return result
 
     def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='master'):
         '''

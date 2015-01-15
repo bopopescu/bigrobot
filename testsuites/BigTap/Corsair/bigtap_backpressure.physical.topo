@@ -6,13 +6,16 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.9.18.7
+  ip: 10.8.30.10
 c2:
-  ip: 10.9.18.8
+  ip: 10.8.30.11
 
-### app-rlb9-1
 s1:
-    ip: 10.9.19.48
+    ip: 10.9.19.7
+s2:
+    ip: 10.9.19.8
+s3:
+    ip: 10.9.19.13
     
 tg1:
   platform: 'ixia'
@@ -21,12 +24,23 @@ tg1:
   tcl_server_port: 8009
   ix_version: '7.10'
   set_init_ping: false
-  ports:  
+  ports:
     a:
-      name: 1/15 
+      name: 1/5
     b:
-      name: 1/16
+      name: 1/6
     c:
       name: 1/9
     d:
       name: 3/2
+    e:
+      name: 1/12
+    f:
+      name: 4/2
+    g:
+      name: 4/3
+    h:
+      name: 1/21
+    i:
+      name: 1/23
+      

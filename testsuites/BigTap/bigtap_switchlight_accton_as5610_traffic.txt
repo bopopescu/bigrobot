@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              traffic test setup
 Test Teardown           traffic teardown 
-Force Tags              platform  sanity  blackbird  traffic
+Force Tags              BigTap  blackbird-300  Accton-AS5610
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -34,7 +34,7 @@ TC1: Verify L2 traffic on AS5610: frame size 64 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs64  
+    [Tags]  sanity  feature  traffic
     
 #### L2 Traffic: Frame Size 128 Bytes
 TC2: Verify L2 traffic on AS5610: frame size 128 bytes
@@ -46,7 +46,7 @@ TC2: Verify L2 traffic on AS5610: frame size 128 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs128  
+    [Tags]  sanity  feature  traffic
 
 #### L2 Traffic: Frame Size 256 Bytes
 
@@ -59,7 +59,7 @@ TC3: Verify L2 traffic on AS5610: frame size 256 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs256  
+    [Tags]  sanity  feature  traffic
 
 #### L2 Traffic : Frame Size 512 Bytes
 
@@ -72,7 +72,7 @@ TC4: Verify L2 traffic on AS5610: frame size 512 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs512  
+    [Tags]  sanity  feature  traffic
     
 #### L2 Traffic : Frame Size 1024 Bytes
 
@@ -85,7 +85,7 @@ TC5: Verify L2 traffic on AS5610: frame size 1024 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs1024                  
+    [Tags]  sanity  feature  traffic
 
 #### L2 Traffic : Frame Size 1280 Bytes
 
@@ -98,7 +98,7 @@ TC6: Verify L2 traffic on AS5610: frame size 1280 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs1280  
+    [Tags]  sanity  feature  traffic
 
 #### L2 Traffic : Frame Size 1518 Bytes
 
@@ -111,7 +111,7 @@ TC7: Verify L2 traffic on AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  fs1518  
+    [Tags]  sanity  feature  traffic
     
 #### L2 Traffic : Frame Size 9216 Bytes
 
@@ -124,8 +124,8 @@ TC8: Verify L2 traffic on AS5610: frame size 9216 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  jumbo9216      
-
+    [Tags]  sanity  feature  traffic
+    
 #### L2 Vlan Tagged Traffic : Frame Size 1518 Bytes
 
 TC9: Verify L2 vlan tagged traffic on AS5610: frame size 1518 bytes
@@ -138,7 +138,8 @@ TC9: Verify L2 vlan tagged traffic on AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  vlantagged 
+    
+    [Tags]  sanity  feature  traffic
     
 ###  L2 Traffic with CRC Errors: Frame Size 1518 Bytes
 
@@ -152,7 +153,8 @@ TC10: Verify L2 Traffic with CRC Errors on AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  l2crc  
+    
+    [Tags]  sanity  feature  traffic
 
 ### L2 Traffic :  Spanning Tree Protocol (for bridges) IEEE 802.1D
 TC11: Verify L2 Traffic on Accton AS5610: Spanning Tree Protocol (for bridges) IEEE 802.1D
@@ -164,7 +166,8 @@ TC11: Verify L2 Traffic on Accton AS5610: Spanning Tree Protocol (for bridges) I
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  l2stp  
+    
+    [Tags]  sanity  feature  traffic
     
 ### L2 Traffic :  LLDP with ethernet ethertype
 TC12: Verify L2 Traffic on Accton AS5610: LLDP with ethernet ethertype
@@ -176,7 +179,8 @@ TC12: Verify L2 Traffic on Accton AS5610: LLDP with ethernet ethertype
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  l2  as5610  lldp 
+    
+    [Tags]  sanity  feature  traffic
     
 ### L3 Traffic    
 #### L3 IPv4 Traffic : Frame Size 68 Bytes
@@ -192,7 +196,8 @@ TC13: Verify L3 IPv4 traffic on Accton AS5610: frame size 68 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs64  ipv4
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 68 Bytes
         
@@ -207,7 +212,8 @@ TC14: Verify L3 IPv6 traffic on Accton AS5610: frame size 68 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs64  ipv6
+    
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 128 Bytes
 
@@ -222,8 +228,8 @@ TC15: Verify L3 traffic on Accton AS5610: frame size 128 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs128
     
+    [Tags]  sanity  feature  traffic
 #### L3 IPv6 Traffic : Frame Size 128 Bytes
         
 TC16: Verify L3 IPv6 traffic on Accton AS5610: frame size 68 bytes
@@ -237,7 +243,8 @@ TC16: Verify L3 IPv6 traffic on Accton AS5610: frame size 68 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs128  ipv6
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv4 Traffic : Frame Size 256 Bytes
 
@@ -252,7 +259,8 @@ TC17: Verify L3 traffic on Accton AS5610: frame size 256 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs256
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 256 Bytes
         
@@ -267,7 +275,8 @@ TC18: Verify L3 IPv6 traffic on Accton AS5610: frame size 256 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs256  ipv6
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv4 Traffic : Frame Size 512 Bytes
     
@@ -282,7 +291,8 @@ TC19: Verify L3 traffic on Accton AS5610: frame size 512 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs512
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 512 Bytes
         
@@ -297,7 +307,8 @@ TC20: Verify L3 IPv6 traffic on Accton AS5610: frame size 512 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs512  ipv6
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv4 Traffic : Frame Size 1024 Bytes
 
@@ -312,7 +323,8 @@ TC21: Verify L3 traffic on Accton AS5610: frame size 1024 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1024
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1024 Bytes
         
@@ -327,7 +339,8 @@ TC22: Verify L3 IPv6 traffic on Accton AS5610: frame size 1024 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1024  ipv6
+    
+    [Tags]  sanity  feature  traffic
         
 #### L3 IPv4 Traffic : Frame Size 1280 Bytes
 
@@ -343,7 +356,8 @@ TC23: Verify L3 traffic on Accton AS5610: frame size 1280 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1280
+    
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv6 Traffic : Frame Size 1280 Bytes
         
@@ -358,7 +372,8 @@ TC24: Verify L3 IPv6 traffic on Accton AS5610: frame size 1280 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1280  ipv6
+    
+    [Tags]  sanity  feature  traffic
 
 #### L3 Traffic : Frame Size 1518 Bytes
 
@@ -373,7 +388,8 @@ TC25: Verify L3 traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1518
+    
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv6 Traffic : Frame Size 1518 Bytes
         
@@ -388,7 +404,8 @@ TC26: Verify L3 IPv6 traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs1518  ipv6
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 Traffic : Frame Size 9150 Bytes
 
@@ -403,7 +420,8 @@ TC27: Verify L3 traffic on Accton AS5610: frame size 9150 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  jumbo9150
+    
+    [Tags]  sanity  feature  traffic
 
 
 #### L3 IPv6 Traffic : Frame Size 9150 Bytes
@@ -419,7 +437,8 @@ TC28: Verify L3 IPv6 traffic on Accton AS5610: frame size 9150 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  fs9150  ipv6  run
+    
+    [Tags]  sanity  feature  traffic
     
 #### L3 Vlan Tagged Traffic : Frame Size 1518 Bytes
 
@@ -434,7 +453,8 @@ TC29: Verify L3 vlan tagged traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  vlantagged  run
+    
+    [Tags]  sanity  feature  traffic
         
 TC30: Verify L3 IPv6 traffic on Accton AS5610: frame size 1518 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -447,7 +467,8 @@ TC30: Verify L3 IPv6 traffic on Accton AS5610: frame size 1518 bytes
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  vlantagged  ipv6  run
+    
+    [Tags]  sanity  feature  traffic 
     
     
 ## Negative Tests
@@ -471,8 +492,7 @@ TC31: Flap Filter Interface on AS5610 and verify traffic: frame size 1518 bytes
     Should be true  ${verify_policy1}
     verify results  a  b  transmitted_frame_rate  received_frame_rate               
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  flapIntf
-
+    [Tags]  full  negative  traffic
 
 ### Flap egress/delivery interface and verify traffic
 TC32: Flap Delivery Interface on AS5610 and verify traffic: frame size 1518 bytes
@@ -493,9 +513,8 @@ TC32: Flap Delivery Interface on AS5610 and verify traffic: frame size 1518 byte
     Should be true  ${verify_policy1}
     verify results  a  b  transmitted_frame_rate  received_frame_rate               
     stop traffic  ${stream_l3_as5610}
-    [Tags]  l3  as5610  flapIntf                        
+    [Tags]  full  negative  traffic
 
-                                                        
 * Keywords
 
 bigtap suite setup

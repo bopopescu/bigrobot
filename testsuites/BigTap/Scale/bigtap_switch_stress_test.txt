@@ -1,0 +1,240 @@
+*Settings
+Documentation                   CLI test under load conditions on Accton AS5710
+Suite Setup                     scale suite setup
+Suite Teardown                  scale suite teardown
+Test Setup                      base test setup
+Test Teardown                   base test teardown 
+Force Tags                      BigTap  Corsair  4.1.1  Accton-AS5710  scaling  switch  longevity
+Library                         keywords/BsnCommon.py
+Library                         keywords/AppController.py
+Library                         keywords/BigTap.py
+Library                         keywords/SwitchLight.py
+Library                         keywords/Ixia.py
+
+* Variable
+#### AS5610
+${switch1_alias}                        app-ras5710-1       #Alias for AS5710 switch
+${filter_intf_1}                        ethernet1
+${filter_alias_1}                       ixia-1-1
+${delivery_intf_1}                      ethernet2
+${delivery_alias_1}                     ixia-1-2
+${policy_ras5610}                       policy-ras5710
+
+*Test Case
+TC1: Verify policies
+    : FOR  ${INDEX}  IN RANGE  1  2040
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
+    \    ${verify_policy}=  rest verify bigtap policy  ${mypolicy}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy}
+    [Tags]  full  scaling  policy  l3l4-match  longevity
+
+TC2: Execute command show inventory on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show inventory
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC3: Execute command show interface on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC4: Execute command show interfaces ma1 on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface ma1
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC5: Execute command show interfaces ma1 detail on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface ma1 detail
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC6: Execute command show interfaces negotiate on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface negotiate
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC7: Execute command show interfaces ethernet1 on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface ethernet1
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC8: Execute command show interfaces ethernet1 detail on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show interface ethernet1 detail
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC9: Execute command show startup-config on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show startup-config
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC10: Execute command show running-config on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show running-config
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC11: Execute command show ntp on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show ntp
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC12: Execute command show version on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show version
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC13: Execute command show users on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show users
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC14: Execute command show forwarding crc status on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show forwarding crc status
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC15: Execute command show forwarding l2cache status on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show forwarding l2cache status
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC16: Execute command show forwarding pause status on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show forwarding pause status
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC17: Execute command show forwarding pimu status on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show forwarding pause status
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC18: Execute command show environment on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show environment
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC19: Execute command show datapath on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show datapath
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC20: Execute command show controller on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC21: Execute command show controller history on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller history
+    \    sleep  2
+    [Tags]  show
+    
+TC22: Execute command show controller statistics on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller statistics
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC23: Execute command show controller statistics detail on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller statistics detail
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC24: Execute command show flowtable on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller flowtable
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC25: Execute command show flowtable detail on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller flowtable detail
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC26: Execute command show flowtable summary on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller flowtable summary
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC27: Execute command show boot on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  show controller boot
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+TC28: Execute command copy tech-support flash2 on switch
+    : FOR  ${INDEX}  IN RANGE  1  51
+    \    enable  s1  copy tech-support flash2
+    \    sleep  2
+    [Tags]  show-cli  robustness  longevity
+    
+* Keyword
+
+scale suite setup
+    base suite setup
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}
+    ${l3l4_match_enabled}=  rest enable feature  l3-l4-mode
+    Should be true  ${l3l4_match_enabled}
+    ${inport_disabled}=  rest disable feature  inport-mask
+    Should be true  ${inport_disabled}
+    rest add switch alias  s1  ${switch1_alias}
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${filter_intf_1}       filter      intf_nickname=${filter_alias_1}
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${delivery_intf_1}     delivery    intf_nickname=${delivery_alias_1}
+    ${thost_enabled}=  rest disable feature  overlap
+    Should be true  ${thost_enabled} 
+    ${thost_enabled}=  rest enable feature  full-match
+    Should be true  ${thost_enabled}    
+    : FOR  ${INDEX}    IN RANGE    1    2040
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
+    \    Log    ${mypolicy}      
+    \    rest add policy  admin-view  ${mypolicy}  forward     
+    \    rest add policy interface  admin-view   ${mypolicy}   ${filter_alias_1}    filter
+    \    rest add policy interface  admin-view   ${mypolicy}   ${delivery_alias_1}  delivery
+    \    rest add policy match  admin-view  ${mypolicy}  1  {"src-tp-port": ${INDEX}, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  360
+    
+scale suite teardown
+    : FOR  ${INDEX}  IN RANGE  1  2040
+    \    Log    ${INDEX}
+    \    ${NINDEX}=  Convert to string  ${INDEX}
+    \    ${mypolicy}=  Catenate  SEPARATOR=  ${policy_ras5610}  ${INDEX}
+    \    Log    ${mypolicy}
+    \    rest delete policy  admin-view  ${mypolicy}
+    sleep  100
+    ${full_match_enabled}=  rest enable feature  full-match
+    Should be true  ${full_match_enabled}
+    rest delete interface role  s1  ${filter_intf_1}  filter 
+    rest delete interface role  s1  ${delivery_intf_1}  delivery 
+    rest delete interface  s1  ${filter_intf_1}
+    rest delete interface  s1  ${delivery_intf_1}
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown

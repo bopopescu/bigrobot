@@ -1,0 +1,42 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.192.97.1
+c2:
+    ip: 10.192.97.2
+
+# LB9
+s1:
+    ip: 10.192.88.80
+    
+# LY2
+s2:
+    ip: 10.192.88.84
+
+# Accton AS4600-54T (1Gig AC Power box)
+s3:
+    ip: 10.192.75.192
+
+# Accton AS5610-52X (10Gig AC Power box)    
+s4:
+    ip: 10.192.75.194
+
+
+# Accton AS4600-54T (1Gig DC Power box)    
+s5:
+    ip: 10.192.75.196
+    
+
+# Accton AS5610-52X (10Gig DC Power box)    
+s6:
+    ip: 10.192.75.197    
+
+# Accton AS5710-52X (T5 Trident2 10Gig AC Power box)    
+#s7:
+#    ip: 10.192.75.195    
+    

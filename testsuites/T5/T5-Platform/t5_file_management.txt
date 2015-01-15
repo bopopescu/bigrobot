@@ -13,121 +13,183 @@ Library        		String
 
 
 *** Variables ***
-${temp}				scp://bsn@10.9.16.52:/tmp/scp
-${scp}				scp://bsn@10.9.16.52:file-management-testsuite/scp
-${scp RC}			scp://bsn@10.9.16.52:file-management-testsuite/config-RC
-${scp file}			scp://bsn@10.9.16.52:file-management-testsuite/config-file
-${scp config}		scp://bsn@10.9.16.52:file-management-testsuite/config-config-scp
-${scp double}		scp://scp://bsn@10.9.16.52:file-management-testsuite/config-scp
-${scp location}		bsn@10.9.16.52:file-management-testsuite/config-scp
-${scp inexistent}   	scp://bsn@10.9.16.52:file-management-testsuite/inexistent
-${scp switch}		scp://bsn@10.9.16.52:file-management-testsuite/scp-config-large
-${scp image}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
-${scp image corrupted}		scp://bsn@10.9.16.52:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
-${scp image bigtap}		scp://bsn@10.9.16.52:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
-${file}				file://config-file
-${config}			snapshot://config-config
-${config double}	snapshot://snapshot://config-config
-${config name}		config-config
-${image}			image://image-file
-${image double}		image://image://image-file
-@{spineList}		00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
-@{leafList}			00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
+${scp server}                       scp://bsn@10.9.16.52
+${http server}                      http://10.2.3.11
+${temp}                             ${scp server}:/tmp/scp
+${scp}                              ${scp server}:file-management-testsuite/scp
+${scp RC}                           ${scp server}:file-management-testsuite/config-RC
+${scp file}                         ${scp server}:file-management-testsuite/config-file
+${scp config}                       ${scp server}:file-management-testsuite/config-config-scp
+${scp double}                       scp://${scp server}:file-management-testsuite/config-scp
+${scp location}                     bsn@10.9.16.52:file-management-testsuite/config-scp
+${scp inexistent}                   ${scp server}:file-management-testsuite/inexistent
+${scp switch}                       ${scp server}:file-management-testsuite/scp-config-large
+${scp extensive file}               ${scp server}:file-management-testsuite/extensive-file
+${scp extensive config}             ${scp server}:file-management-testsuite/extensive-config
+${scp extensive config start}       ${scp server}:file-management-testsuite/extensive-config-start
+${http extensive file}              ${http server}/~bsn/file-management-testsuite/extensive-file
+${http extensive config}            ${http server}/~bsn/file-management-testsuite/extensive-config
+${http extensive config start}      ${http server}/~bsn/file-management-testsuite/extensive-file-start
+${http inexistent}                  ${http server}/~bsn/file-management-testsuite/inexistent
+
+${file}                             file://config-file
+${config}                           snapshot://config-config
+${config double}                    snapshot://snapshot://config-config
+${config name}                      config-config
+${image}                            image://image-file
+${image double}                     image://image://image-file
+${scp image}                        ${scp server}:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
+${scp image corrupted}              ${scp server}:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
+${scp image bigtap}                 ${scp server}:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
+@{spineList}                        00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+@{leafList}                         00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
 
 
 *** Test Cases ***
 T0.1 Extensive config and file compare locally
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  snapshot://extensive-config
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  file://extensive-file
+	Cli Copy  ${scp extensive config}  snapshot://extensive-config
+	Cli Copy  ${scp extensive file}  file://extensive-file
 	Compare  file://extensive-file  snapshot://extensive-config
 
 T0.2 Extensive config remote copy
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  snapshot://extensive-config
+	Cli Copy  ${scp extensive config}  running-config
+	Compare  ${scp extensive config}  running-config
+	Cli Copy  ${scp extensive config}  snapshot://extensive-config
 	Compare  snapshot://extensive-config  running-config
 	[Tags]  BSC-5370
 
 T0.3 Extensive file remote copy
 	Rest Delete Tenant  TenantTest12345
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  running-config
+	Cli Copy  ${scp extensive file}  running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  running-config
+	Compare  ${scp extensive file}  running-config
 	Compare  snapshot://extensive-config  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  file://extensive-file
+	Cli Copy  ${scp extensive file}  file://extensive-file
 	Compare  file://extensive-file  running-config
 
 T0.4 Extensive config remote replace
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
-	...  running-config
+	Cli Copy  ${scp extensive config start}  running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
-	...  running-config
+	Compare  ${scp extensive config start}  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
-	...  snapshot://extensive-config-start
+	Cli Copy  ${scp extensive config start}  snapshot://extensive-config-start
 	Compare  snapshot://extensive-config-start  running-config
 
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
+	Cli Copy  ${scp extensive config}  running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
+	Compare  ${scp extensive config}  running-config
 	Sleep  10
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  snapshot://extensive-config
+	Cli Copy  ${scp extensive config}  snapshot://extensive-config
 	Compare  snapshot://extensive-config  running-config
 	[Tags]  BSC-5370  BSC-5488
 
 T0.5 Extensive config local copy
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  snapshot://extensive-config
+	Cli Copy  ${scp extensive config}  snapshot://extensive-config
 	Cli Copy  snapshot://extensive-config  running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
+	Compare  ${scp extensive config}  running-config
 	Compare  snapshot://extensive-config  running-config
 	[Tags]  BSC-5488
 
 T0.6 Extensive file local copy
 	Rest Delete Tenant  TenantTest12345
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  file://extensive-file
+	Cli Copy  ${scp extensive file}  file://extensive-file
 	Cli Copy  file://extensive-file  running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file
-	...  running-config
+	Compare  ${scp extensive file}  running-config
 	Compare  file://extensive-file  running-config
 
 T0.7 Extensive config local replace
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
-	...  snapshot://extensive-config-start
+	Cli Copy  ${scp extensive config start}  snapshot://extensive-config-start
 	Cli Copy  snapshot://extensive-config-start  running-config
 	Cli Run  master  show running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config-start
-	...  running-config
+	Compare  ${scp extensive config start}  running-config
 	Compare  snapshot://extensive-config-start  running-config
 
 	Sleep  10
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  snapshot://extensive-config
+	Cli Copy  ${scp extensive config}  snapshot://extensive-config
 	Cli Copy  snapshot://extensive-config  running-config
 	Cli Run  master  show running-config
 	Sleep  10
-	Compare  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config
-	...  running-config
+	Compare  ${scp extensive config}  running-config
 	Compare  snapshot://extensive-config  running-config
 	[Tags]  BSC-5488
+
+T0.8 Extensive config and file compare locally from http
+    Cli Copy  ${http extensive config}  snapshot://extensive-config-http
+    Cli Copy  ${http extensive file}  file://extensive-file-http
+    Compare  file://extensive-file-http  snapshot://extensive-config-http
+    [Tags]  HTTP  skipped
+
+T0.9 Extensive config remote copy from http
+    Cli Copy  ${http extensive config}  running-config
+    Compare  ${http extensive config}  running-config
+    Cli Copy  ${http extensive config}  snapshot://extensive-config
+    Compare  snapshot://extensive-config  running-config
+    [Tags]  HTTP  skipped
+
+T0.10 Extensive file remote copy
+    Rest Delete Tenant  TenantTest12345
+    Cli Copy  ${http extensive file}  running-config
+    Sleep  10
+    Compare  ${http extensive file}  running-config
+    Compare  snapshot://extensive-config  running-config
+    Sleep  10
+    Cli Copy  ${http extensive file}  file://extensive-file
+    Compare  file://extensive-file  running-config
+    [Tags]  HTTP  skipped
+
+T0.11 Extensive config remote replace
+    Cli Copy  ${http extensive config start}  running-config
+    Sleep  10
+    Compare  ${http extensive config start}  running-config
+    Sleep  10
+    Cli Copy  ${http extensive config start}  snapshot://extensive-config-start
+    Compare  snapshot://extensive-config-start  running-config
+
+    Cli Copy  ${http extensive config}  running-config
+    Sleep  10
+    Compare  ${http extensive config}  running-config
+    Sleep  10
+    Cli Copy  ${http extensive config}  snapshot://extensive-config
+    Compare  snapshot://extensive-config  running-config
+    [Tags]  HTTP  skipped
+
+T0.12 Extensive config local copy
+    Cli Copy  ${http extensive config}  snapshot://extensive-config
+    Cli Copy  snapshot://extensive-config  running-config
+    Sleep  10
+    Compare  ${http extensive config}  running-config
+    Compare  snapshot://extensive-config  running-config
+    [Tags]  HTTP  skipped
+
+T0.13 Extensive file local copy
+    Rest Delete Tenant  TenantTest12345
+    Cli Copy  ${http extensive file}  file://extensive-file
+    Cli Copy  file://extensive-file  running-config
+    Sleep  10
+    Compare  ${http extensive file}  running-config
+    Compare  file://extensive-file  running-config
+    [Tags]  HTTP  skipped
+
+T0.14 Extensive config local replace
+    Cli Copy  ${http extensive config start}  snapshot://extensive-config-start
+    Cli Copy  snapshot://extensive-config-start  running-config
+    Cli Run  master  show running-config
+    Sleep  10
+    Compare  ${http extensive config start}  running-config
+    Compare  snapshot://extensive-config-start  running-config
+
+    Sleep  10
+    Cli Copy  ${http extensive config}  snapshot://extensive-config
+    Cli Copy  snapshot://extensive-config  running-config
+    Cli Run  master  show running-config
+    Sleep  10
+    Compare  ${http extensive config}  running-config
+    Compare  snapshot://extensive-config  running-config
+    [Tags]  HTTP  skipped
 
 T1.1 Copy running config to file
 	Cli Copy  running-config  ${file}
@@ -367,6 +429,12 @@ T5.8.10 Verify: compare scp:// image://
 	...  Cli Compare  master  ${scp file}  image://
 	[Tags]  SCP  Image
 
+T5.8.11 Verify: compare <http://> scp://<running-config>
+    Run Keyword and Expect Error
+    ...  *Error: Invalid Use: scp://* not supported*
+    ...  Compare  ${http extensive config}  ${scp RC}
+    [Tags]  SCP  HTTP  skipped
+
 T5.9.1 Verify: copy scp://<running-config> running-config
 	Cli Copy  running-config  ${scp RC}
 	Cli Copy  ${scp RC}  running-config
@@ -426,6 +494,57 @@ T5.9.9 Verify: copy scp://<snapshot://> config
 	[Tags]  SCP
 
 
+T5.10.1 Verify: copy & compare http://<file://> running-config
+    Cli Copy  ${http extensive file}  running-config
+    Compare  ${http extensive file}  running-config
+    Modify Running Config
+    Compare Negative  ${http extensive file}  running-config
+    [Tags]  HTTP  skipped
+
+T5.10.2 Verify: copy & compare http://<file://> file
+    Cli Copy  ${http extensive file}  ${file}
+    Compare  ${http extensive file}  ${file}
+    Modify Running Config
+    Cli Copy  running-config  ${file}
+    Compare Negative  ${http extensive file}  ${file}
+    [Tags]  HTTP  skipped
+
+T5.10.3 Verify: copy & compare http://<file://> config
+    Run Keyword and Expect Error
+    ...  *invalid snapshot file*
+    ...  Cli Copy  ${http extensive file}  ${config}
+    Cli Copy  ${http extensive file}  running-config
+    Modify Running Config
+    Cli Copy  running-config  ${config}
+    Compare Negative  ${http extensive file}  ${config}
+    [Tags]  HTTP  skipped
+
+T5.10.4 Verify: copy & compare http://<snapshot://> running-config
+    Cli Copy  ${http extensive config}  running-config
+    Compare  ${http extensive config}  running-config
+    Modify Running Config
+    Compare Negative  ${http extensive config}  running-config
+    [Tags]  HTTP  skipped
+
+T5.10.5 Verify: copy & compare http://<snapshot://> file
+    Cli Copy  ${http extensive config}  ${file}
+    Compare  ${http extensive config}  ${file}
+    Cli Copy  ${http extensive config}  running-config
+    Modify Running Config
+    Cli Copy  running-config  ${file}
+    Compare Negative  ${http extensive config}  ${file}
+    [Tags]  HTTP  skipped
+
+T5.10.6 Verify: copy & compare http://<snapshot://> config
+    Cli Copy  ${http extensive config}  ${config}
+    Compare  ${http extensive config}  ${config}
+    Cli Copy  ${http extensive config}  running-config
+    Modify Running Config
+    Cli Copy  running-config  ${config}
+    Compare Negative  ${http extensive config}  ${config}
+    [Tags]  HTTP  skipped
+
+
 T6.1.1 Verify Filename containing ~
 	Validate Filename  file://test~test
 	[Tags]  Filename
@@ -453,9 +572,9 @@ T6.2.4 Verify snapshot:// name containing _
 	[Tags]  Filename
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
-	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/test#test
-	Compare  running-config  scp://bsn@10.9.16.52:file-management-testsuite/test#test
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/test#test   running-config
+	Cli Copy  running-config  ${scp server}:file-management-testsuite/test#test
+	Compare  running-config  ${scp server}:file-management-testsuite/test#test
+	Cli Copy  ${scp server}:file-management-testsuite/test#test   running-config
 	[Tags]  Filename  SCP
 
 T6.4 Verify empty file name is not allowed
@@ -500,6 +619,11 @@ T6.10 Verify snapshot://snapshot:// not correct in compare function
 T6.11 Verify image-double not correct in copy and compare
 	Run Keyword and Expect Error  *Error: Invalid Use: Image target must only be image://*  Cli Copy  ${scp}  image://image://
 	[Tags]  BSC-4957  Filename
+
+T6.12 Verify empty http:// name is not allowed
+    Run Keyword and Expect Error  *Error: Invalid Use: No path after http://*  Cli Copy  http://  running-config
+    Run Keyword and Expect Error  *Error: Invalid Use: No path after http://*  Compare  http://  running-config
+    [Tags]  Filename  HTTP  skipped
 
 ### and check verifications for empty file names + error messages
 T7.1 Verify comparison function between running-config and file
@@ -548,9 +672,9 @@ T7.6 Verify comparison function between file and scp://
 	Compare  ${file}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  file://file-new
-	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
+	Cli Copy  running-config  ${scp server}:file-management-testsuite/config-scp-new
 	Compare Negative  file://file-new  ${scp}
-	Compare Negative  ${file}  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
+	Compare Negative  ${file}  ${scp server}:file-management-testsuite/config-scp-new
 	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
@@ -569,8 +693,8 @@ T7.8 Verify comparison function between scp:// and snapshot://
 	Compare  ${config}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  snapshot://config-new
-	Cli Copy  running-config  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
-	Compare  snapshot://config-new  scp://bsn@10.9.16.52:file-management-testsuite/config-scp-new
+	Cli Copy  running-config  ${scp server}:file-management-testsuite/config-scp-new
+	Compare  snapshot://config-new  ${scp server}:file-management-testsuite/config-scp-new
 	Compare Negative  snapshot://config-new  ${scp}
 	Compare Negative  snapshot://config-new  ${config}
 	[Tags]  SCP
@@ -678,6 +802,7 @@ T7.23 Verify comparison function between scp:// and image:// - negative
 	[Tags]  SCP
 
 
+
 T8.1 Verify deletion of file
 	Cli Copy  running-config  ${file}
 	Cli Delete  ${file}
@@ -718,6 +843,24 @@ T9.4 Verify impossible to copy from inexistent SCP
 	Run Keyword and Expect Error  *Error: Invalid Use: file-management-testsuite/inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
 	[Tags]  SCP
 
+T9.5 Verify impossible to copy from invalid HTTP
+    Run Keyword and Expect Error  *urlopen error [Errno -2] Name or service not known*
+    ...  Cli Copy  http://aaa  running-config
+    [Tags]  HTTP  skipped
+
+T9.6 Verify impossible to compare with invalid HTTP
+    Run Keyword and Expect Error  *http failed: URL Error: [Errno -2] Name or service not known*
+    ...  Compare  running-config  http://aaa
+    Run Keyword and Expect Error  *http failed: URL Error: [Errno -2] Name or service not known*
+    ...  Compare  http://aaa  running-config
+    [Tags]  HTTP  skipped
+
+T9.7 Verify impossible to copy from inexistent HTTP
+    Run Keyword and Expect Error  *Error: Invalid Use: HTTP Error 404: Not Found*
+    ...  Cli Copy  ${http inexistent}  running-config
+    [Tags]  HTTP  skipped
+
+
 T10.1 Verify validation function of scp:// to image:// - textfile
 	Run Keyword and Expect Error
 	...  *Validating Image Contents: check for expected contents*
@@ -755,9 +898,8 @@ Generate Random Name
 
 File Suite Setup
 	Base Suite Setup
-	#Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
-	Config  master  no aaa accounting exec default start-stop local group tacacs+
-	Config  master  no aaa authentication login default group tacacs+ local
+    Config  master  no aaa accounting exec default start-stop local group tacacs+
+    Config  master  no aaa authentication login default group tacacs+ local
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 
@@ -779,7 +921,7 @@ Teardown
 
 File Suite Teardown
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
-	Run Keyword and Ignore Error  Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+    Config  master  aaa accounting exec default start-stop local
 	Run Keyword and Ignore Error  Base Suite Teardown
 
 Compare

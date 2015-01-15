@@ -302,11 +302,13 @@ class Test(object):
                     #   arista-1 - for Arista switches
                     #   h1-rack1 - for hosts
                     #   h1-vm1-rack1 - for virtual hosts
-                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    #   ixia<n> - for IXIA traffic generator (tg<n> node)
+                    r = r'^(global|leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+|ixia\d*)$'
                     if not re.match(r, alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b},"
                                      " spine{n}, s{nnn}, arista-{n},"
-                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o},"
+                                     " ixia{n}")
                         helpers.environment_failure(
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
@@ -747,9 +749,9 @@ class Test(object):
         #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
         #  Hosts: h1, h2, h3
         #  OpenStack servers: os1, os2
-        #  Traffic generators: tg1, tg2
+        #  Traffic generators: tg1, tg2, ixia1
         #
-        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+)$', node)
+        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+|ixia\d*)$', node)
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
@@ -858,8 +860,10 @@ class Test(object):
                 try:
                     # IXIA support is not available in some packages. So
                     # load it only if it is truly required.
+                    import sys
                     import autobot.node_ixia as node_ixia
-                except:
+                except Exception, e:
+                    helpers.log("Unexpect IXIA Error: \n %s" % str(e))
                     helpers.environment_failure("Unable to import node_ixia")
             if platform.lower() == 'ixia':
                 n = node_ixia.IxiaNode(node, t)
@@ -1243,33 +1247,33 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot idle timeout modifications have already been applied."
+            helpers.log("'%s' - QA idle timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^command.cli.interactive_read_timeout" %s'
+                            'grep -E "^command.cli.interactive_read_timeout" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (QA mod)/" %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+                            'grep -E "command.cli.interactive_read_timeout.*(BigRobot|QA) mod" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
-        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s'
+        n.sudo('grep -E "^command.cli.interactive_read_timeout" %s'
                % source_file)
         return True
 
@@ -1286,30 +1290,30 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot reauth timeout modifications have already been applied."
+            helpers.log("'%s' - QA reauth timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code == 0:
-            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with BigRobot mod."
+            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with QA mod."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (BigRobot mod)\' | sudo tee -a %s'
+        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (QA mod)\' | sudo tee -a %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code != 0:
-            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+            helpers.environment_failure("Not able to modify reauth time in %s on '%s'."
                                         % (source_file, name))
 
         self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")
@@ -1480,8 +1484,8 @@ class Test(object):
             master.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.log("Waiting 30 secs for the switche to get connected to Controller..")
-        helpers.sleep(55)
-        if helpers.bigrobot_ztn_reload().lower() != "true":
+        helpers.sleep(155)
+        if helpers.bigrobot_ztn_reload().lower() != "true" and helpers.bigrobot_ztn_installer().lower() == "false":
             helpers.log("BIGROBOT_ZTN_RELOAD is False Skipp rebooting switches from Consoles..")
             return True
         if not ('ip' in console and 'port' in console):

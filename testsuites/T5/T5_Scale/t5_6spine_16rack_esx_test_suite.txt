@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 #Test Setup       T5 base test setup
 #Test Teardown    T5 base test teardown
-Force Tags      IronHorse  T5
+#Force Tags      IronHorse-plus
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 #Library	         keywords_dev/svoora/T5Fabric.py
@@ -53,18 +53,18 @@ T1 Scale config applying line by line (copy file to running-config)
     Log    Copy scale config file to running config
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual failed
 	
 T2 Scale config applying snapshot (copy file to snapshot)
     Log    Copy Scale Config snapshot file to Master Controller
     Log    Copy scale config file to snapshot
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 
 
 T3 During (T1 or T2) reboot all switches
@@ -74,9 +74,9 @@ T3 During (T1 or T2) reboot all switches
     Log    Reboot all switches, repeat for few times
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 	
 T4 During (T1 or T2) Simulate split-brain
@@ -87,12 +87,12 @@ T4 During (T1 or T2) Simulate split-brain
     Log    Measure the time takes to complete the copying config fle to running config
     Log    Verify for any excpetions, CPU, Memory Utilization and root partition size
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 T5 Mix T3 and T4	
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 	
@@ -102,9 +102,9 @@ T6 Verify L2 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2 
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 
 T7 Verify L3 Traffic Convergence with scale configuration first time
@@ -113,9 +113,9 @@ T7 Verify L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L3
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-    #Manual passed
+    Manual failed
      
 T8 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Build scale configuration with Scale Config
@@ -123,16 +123,16 @@ T8 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Start Traffic on all ixia ports + BigTap ports
     Log    Copy scale config to running config
     Log    Measure traffic convergence time for L2/L3 mixed
-    manual untested
+    #manual untested
 	[Tags] 	sanity    Manual   scaling
-    #Manual passed
+    Manual failed
     
 T9 Verify L2 traffic drop time after deleting the scale config
     Log    Repeat T1
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 T10 Verify L3 traffic drop time after deleting the scale config
@@ -140,7 +140,7 @@ T10 Verify L3 traffic drop time after deleting the scale config
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
     #Manual passed
     
 T11 Verify L2/L3 traffic drop time after deleting the scale config
@@ -148,7 +148,7 @@ T11 Verify L2/L3 traffic drop time after deleting the scale config
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 
@@ -160,7 +160,7 @@ T12 Reboot entire fabric to measure time all flows start forwarding without any 
     Log    Measure the time all traffic flows are forwarding without any packet drops
     Log    Repeat T7 for 32k/64k/96k/ L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
     #Manual passed
     
    
@@ -169,9 +169,9 @@ T13 Controller HA fail-over via CLI
     Log    Perform controller fail-over
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
-	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+    #Manual untested
+	[Tags] 	sanity    Manual-untested  scaling
+	Manual passed
 	
 T14 Controller HA fail-over via CLI, during split-brain
     Log    Repeat T3
@@ -179,7 +179,7 @@ T14 Controller HA fail-over via CLI, during split-brain
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 T15 Controller HA fail-over via CLI, during all switch reboots
@@ -188,7 +188,7 @@ T15 Controller HA fail-over via CLI, during all switch reboots
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 
@@ -198,9 +198,9 @@ T16 Controller master reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	
 T17 Controller master reboot during spilt-brain
     Log    Repeat T9
@@ -209,7 +209,7 @@ T17 Controller master reboot during spilt-brain
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 T18 Controller master reboot during spilt-brain and all switches reboot
@@ -219,7 +219,7 @@ T18 Controller master reboot during spilt-brain and all switches reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 
@@ -229,9 +229,9 @@ T19 Controller slave reboot
     Log    Master Controller reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
-    Manual untested
+    #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	#Manual passed
+	Manual passed
 	    
 T20 Controller slave reboot during split-brain
     Log    Repeat T9
@@ -240,7 +240,7 @@ T20 Controller slave reboot during split-brain
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 T21 Controller slave reboot during split-brain and all switches reboot
@@ -250,7 +250,7 @@ T21 Controller slave reboot during split-brain and all switches reboot
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 
 	   
@@ -262,7 +262,7 @@ T22 Kill floodlight deamon in master contorller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#manual passed
 	
 	
@@ -274,7 +274,7 @@ T23 Kill floodlight deamon in slave contorller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#manual passed
 	
 T24 Kill floodlight deamon in master/slave contorller
@@ -285,7 +285,7 @@ T24 Kill floodlight deamon in master/slave contorller
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#manual passed
 	
 T25 Power off/on one spine
@@ -296,7 +296,7 @@ T25 Power off/on one spine
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 	
@@ -308,7 +308,7 @@ T26 Power off/on leaf
     Log   Verify fabric state
     Log   Measure traffic loss/Convergence time
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 T27 Power up/down 16th rack
@@ -319,7 +319,7 @@ T27 Power up/down 16th rack
     Log   Verify fabric stability
     Log   Measure traffic convergence/loss    
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	    
 T28 Disconnect/Reconnect all switches from BSN controller
@@ -330,7 +330,7 @@ T28 Disconnect/Reconnect all switches from BSN controller
     Log   Verify controller stability
     Log   Measure time till traffic gets dropped
     manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 T29 Fail management switch one at a time               
@@ -341,7 +341,7 @@ T29 Fail management switch one at a time
     Log   Verify controller/fabric stability
     Log   Measure time till traffic gets dropped
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 T30 Verify L2 learning rate
@@ -350,9 +350,9 @@ T30 Verify L2 learning rate
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 T31 Verify traffic loss/convergence after removing static endpoints
    Log   Repeat T3
@@ -361,7 +361,7 @@ T31 Verify traffic loss/convergence after removing static endpoints
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 T32 Verify image upgrade of controller
@@ -370,9 +370,9 @@ T32 Verify image upgrade of controller
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   Manual untested
+   #Manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual failed
 	
 	
 T33 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
@@ -382,7 +382,7 @@ T33 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 	
@@ -393,7 +393,7 @@ T34 Verify/measure traffic convergence/cli times for incremental config changes
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 	
@@ -404,7 +404,7 @@ T35 Verify fabric stability on spine/leaf interface continuous flap
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 T36 Verify traffic loss in headless mode of controller
@@ -414,7 +414,7 @@ T36 Verify traffic loss in headless mode of controller
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 T37 Verify snmp polling (get/getnext/getbulk)
@@ -423,9 +423,9 @@ T37 Verify snmp polling (get/getnext/getbulk)
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 T38 Verify controller stability when switch sends line rate traffic to controller (For VFT)
    Log   Repeat T3
@@ -434,7 +434,7 @@ T38 Verify controller stability when switch sends line rate traffic to controlle
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual-untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 	
@@ -445,7 +445,7 @@ T39 Verify switch stability when controller sends line rate traffic switch (For 
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
    manual untested
-   [Tags] 	sanity    Manual  scaling
+   [Tags] 	sanity    Manual-untested  scaling
    #Manual passed
 	
 	
@@ -455,9 +455,9 @@ T40 Verify policy changes
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 
 T41 Controller continuous reboot (active)
@@ -467,7 +467,7 @@ T41 Controller continuous reboot (active)
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 T42 Controller continuous reboot (standby)
@@ -477,7 +477,7 @@ T42 Controller continuous reboot (standby)
     Log    Verify traffic loss
     Log    Repeat for 32k/64k/96k L2/L3 hosts
     Manual untested
-	[Tags] 	sanity    Manual  scaling
+	[Tags] 	sanity    Manual-untested  scaling
 	#Manual passed
 	
 * Keywords

@@ -19,12 +19,12 @@ from catalog_modules.test_catalog import TestCatalog
 
 def prog_args():
     descr = """\
-Given the build (BUILD_NAME argument), print a list of failed test cases.
-If release is not specified, default to 'IronHorse' release.
+Given the release (RELEASE_NAME env) and build (BUILD_NAME env), print a list
+of failed test cases.
 
 Examples:
-   % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./dump_test_cases_not_in_release.py
-   % BUILD_NAME="bvs master aggregated 2014 wk40" ./dump_test_cases_not_in_release.py --release ironhorse
+   % RELEASE_NAME=ironhorse BUILD_NAME="bvs master bcf-2.0.0 fcs" ./dump_test_cases_not_in_release.py
+   % ./dump_test_cases_not_in_release.py --release ironhorse --build "bvs master aggregated 2014 wk40"
 
 """
     parser = argparse.ArgumentParser(prog='dump_test_cases_not_in_release',
@@ -33,7 +33,7 @@ Examples:
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
-    parser.add_argument('--release', required=False, default='IronHorse',
+    parser.add_argument('--release',
                         help=("Product release, e.g., 'IronHorse'"))
     parser.add_argument('--show-tags', action='store_true', default=False,
                         help=("Show test case tags"))
@@ -48,18 +48,26 @@ Examples:
     else:
         os.environ['BUILD_NAME'] = _args.build
 
+    # _args.release <=> env RELEASE_NAME
+    if not _args.release and 'RELEASE_NAME' in os.environ:
+        _args.release = os.environ['RELEASE_NAME']
+    elif not _args.release:
+        helpers.error_exit("Must specify --release option or set environment"
+                           " variable RELEASE_NAME")
+    else:
+        os.environ['RELEASE_NAME'] = _args.release
+    _args.release = _args.release.lower()
+
     return _args
 
 
 def print_failed_tests(args):
-    release = args.release.lower()
-
     db = TestCatalog()
 
     ts_author_dict = db.test_suite_author_mapping(args.build)
 
     query = {"build_name": args.build,
-             "tags": {"$nin": [release]},
+             "tags": {"$nin": [args.release]},
              }
     tc_archive_collection = db.test_cases_archive_collection().find(query).sort(
                                             [("product_suite", pymongo.ASCENDING),

@@ -18,6 +18,9 @@ import autobot.test as test
 import keywords.AppController as AppController
 import json
 import re
+import time
+from datetime import datetime
+from time import mktime
 
 class BigTap(object):
 
@@ -108,6 +111,7 @@ class BigTap(object):
                 return False
             else:
                 return content[0]['stats']['flow'][int(flow_id)]['match-field'][int(flow_index)][str(flow_key)]
+
 
 
 # Mingtao
@@ -1302,7 +1306,48 @@ class BigTap(object):
             else:
                 return True
 
-
+    def rest_add_timed_policy(self, rbac_view_name, policy_name, duration, starttime, pktcount):
+        '''
+            Objective:
+            - Update bigtap policy with start time, duration etc.
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if "+" in starttime:
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    sttime = starttime[:-1]
+                    helpers.log("Passed from .txt file %s" % str(sttime))
+                    stime = int(time.time() + int(sttime))
+                    helpers.log("STIME is %d" % int(stime))
+                    c.rest.patch(url, {"start-time": int(stime) , "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                elif "now" in starttime:
+                    unixTime = int(time.time())
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": unixTime, "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                elif ("T" in starttime) and (":" in starttime) and ("-" in starttime):
+                    UT = datetime.strptime(starttime, '%Y-%m-%dT%H:%M:%S')
+                    unixTime = int(mktime(UT.timetuple()))
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
+                elif ("stop" in starttime):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"duration": 1, "start-time": 0, "delivery-packet-count": 0})
+                else:
+                    helpers.log("IN HERE")
+                    UT = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+                    unixTime = int(mktime(UT.timetuple()))
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
 
     def rest_add_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
         '''
@@ -3899,3 +3944,40 @@ class BigTap(object):
             else:
                 return False
 
+    def rest_verify_interswitch_link(self, node1, node2, interface1="ethernet13", interface2="ethernet14"):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            switch_dpid1 = AppCommon.rest_return_switch_dpid_from_ip(node1)
+            switch_dpid2 = AppCommon.rest_return_switch_dpid_from_ip(node2)
+            url = '/api/v1/data/controller/topology/link'
+            c.rest.get(url)
+            content = c.rest.content()
+            for element in content:
+                if element['src']['switch-dpid'] == str(switch_dpid1)  and element['dst']['switch-dpid'] == str(switch_dpid2):
+                    if element['src']['interface']['name'] == str(interface1) and element['dstr']['interface']['name'] == str(interface2):
+                        return True
+                elif element['src']['switch-dpid'] == str(switch_dpid2)  and element['dst']['switch-dpid'] == str(switch_dpid1):
+                    if element['src']['interface']['name'] == str(interface2) and element['dstr']['interface']['name'] == str(interface1):
+                        return True
+            helpers.test_log("No interswitch links found")
+            return False
+
+    def rest_clear_bigtap_statistics(self):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            url = '/api/v1/data/controller/applications/bigtap/clear-stats'
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True

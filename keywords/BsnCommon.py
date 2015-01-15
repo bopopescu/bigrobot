@@ -425,6 +425,48 @@ class BsnCommon(object):
         t = test.Test()
         return t.params(*args, **kwargs)
 
+    def interfaces(self, node, if_name=None, soft_error=False):
+        """
+        Return the interface on node which is connected to a peer device. The
+        convention is to define an interface bundle in the topo file which
+        contains the key/value pairs for all the peer connections. The key is
+        the alias for the peer and the value is the actual interface on the
+        node. Multiple interfaces to the same peer can be specified using the
+        format '<alias>_<n>' where <n> is an integer.
+
+        Example topology definition:
+
+           s1:
+             interfaces:
+               ixia_1: ethernet2
+               ixia_2: ethernet3
+               s2: ethernet3
+
+        Example usage:
+
+           ${ixia_if} =    interfaces   node=s1   if_name=ixia_1
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | if_name  | name of interface in node, e.g., 'ixia_1' |
+        | soft_error | Default (False) is to generate an exception on error (e.g., can't find interface). If True, then return (False) and user will perform their own error handling. |
+
+        Return Value:
+        - If if_name is not specified, return the whole interfaces dictionary
+        - If if_name is specified, return the actual interface name
+        """
+        node_bundle = self.params(node)
+        if 'interfaces' not in node_bundle:
+            return helpers.test_error("Node '%s' does not have an interfaces bundle defined"
+                                      % node, soft_error=soft_error)
+        interfaces = node_bundle['interfaces']
+        if if_name == None:
+            return interfaces
+        if if_name not in interfaces:
+            return helpers.test_error("Node '%s' does not have the interface '%s' defined"
+                                      % (node, if_name), soft_error=soft_error)
+        return interfaces[if_name]
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
@@ -538,7 +580,11 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported version comparison operator: '%s'" % op)
 
-        helpers.log("%s %s %s: %s" % (node_version_str, op, version_str, status))
+        s = "Version check %s %s %s: %s" % (node_version_str, op, version_str, status)
+        if status == False:
+            helpers.warn(s, level=3)
+        else:
+            helpers.log(s, level=3)
         return status
 
     def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
@@ -1453,6 +1499,39 @@ class BsnCommon(object):
         temp_array[array_length - int(offset)] = temp_array[array_length - int(offset)].strip('"')
         return temp_array[array_length - int(offset)]
 
+# ## Author: Sahaja
+    def rest_verify_snmp_controller(self, node, val, param):
+        '''
+        Verify if the value is correct
+        Input: Value from snmp walk and which type(ex: CPU temperature, Fan, etc)
+        Output : True or False
+        '''
+        # helpers.test_log("Arguments got are 1: {} 2: {} 3: {}".format(node, val, param))
+        try:
+            t = test.Test()
+            n = t.node(node)
+        except:
+            return False
+        else:
+            try:
+                url = "/rest/v1/environment/data/default/controller/localhost/summary"
+                n.rest.get(url)
+                out = n.rest.content()
+                snmp_dic = dict(zip(map(lambda x: x.lower(), out.keys()), out.values()))
+                # helpers.test_log("Here is the hash we got {} and value is {}".format(out, snmp_dic[param.lower()]))
+                diff = int(val) - int(snmp_dic[param.lower()].split()[0])
+            except:
+                return False
+            else:
+                if abs(diff) < 3:
+                    helpers.log("Values are almost the same for module{} observed value is {} expected value is {}".format(param, int(snmp_dic[param.lower()].split()[0]), val))
+                    return True
+                else:
+                    helpers.log("Values are not almost same for module{} observed value is {} expected value is {}".format(param, int(snmp_dic[param.lower()].split()[0]), val))
+                    return False
+
+# ## Author: Sahaja
+
     def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
         '''
             Objective:
@@ -1558,39 +1637,38 @@ class BsnCommon(object):
         if helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
-                '''
-                BigTap SNMP Configuration goes here
-                '''
                 helpers.log("The node is a BigTap Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                controller1 = t.controller('master')
+                controller2 = t.controller('slave')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/ha/role reply"
-                    c1.rest.get(url1)
-                    master_output = c1.rest.content()
-                    c2.rest.get(url1)
-                    slave_output = c2.rest.content()
+
+                    controller1.rest.get(url1)
+                    master_output = controller1.rest.content()
                     master_clustername = master_output['clustername']
-                    slave_clustername = slave_output['clustername']
-                    # Open Firewall
                     interface_master = master_clustername + "|Ethernet|0"
-                    interface_slave = slave_clustername + "|Ethernet|0"
                     urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    c1.rest.put(interface_slave, {})
-                    c2.rest.put(urlslave_delete, {})
+                    # controller1.rest.put(interface_slave, {})
+                    controller1.rest.put(urlmaster_delete, {})
                 except:
-                    helpers.log(c1.rest.error())
-                    helpers.log(c2.rest.error())
-                    return False
+                    helpers.log(controller1.rest.error())
                 else:
-                    return True
+                    try:
+                        controller2.rest.get(url1)
+                        slave_output = controller2.rest.content()
+                        slave_clustername = slave_output['clustername']
+                        interface_slave = slave_clustername + "|Ethernet|0"
+                        urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                        controller2.rest.put(urlslave_delete, {})
+                    except:
+                        helpers.log(controller2.rest.error())
+                        return False
+                    else:
+                        return True
+
             elif helpers.is_bigwire(n.platform()):
-                '''
-                BigWire SNMP Configuration goes here
-                '''
-                helpers.log("The node is a BigTap Controller")
+                helpers.log("The node is a BigWire Controller")
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
@@ -1607,7 +1685,8 @@ class BsnCommon(object):
                     interface_slave = slave_clustername + "|Ethernet|0"
                     urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
                     urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    c1.rest.put(interface_slave, {})
+                    # c1.rest.put(interface_slave, {})
+                    c1.rest.put(urlmaster_delete, {})
                     c2.rest.put(urlslave_delete, {})
                 except:
                     helpers.log(c1.rest.error())
@@ -1616,9 +1695,6 @@ class BsnCommon(object):
                 else:
                     return True
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller
-                '''
                 helpers.log("The node is a T5 Controller")
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
@@ -2030,6 +2106,26 @@ class BsnCommon(object):
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
 
+    def get_switch_int_topo(self, node, int_key):
+        '''
+        Return the Interface name defined in Topo for the swtich with key int_key like below:
+        s1:
+            interfaces:
+                int_key: ethernet24
+        '''
+        t = test.Test()
+        if node in t.params():
+            interfaces = t.params(node, 'interfaces')
+            if int_key in interfaces:
+                return interfaces[int_key]
+            else:
+                helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
+                return False
+                # helpers.log("Exiting ..to resolve above issue..")
+                # helpers.exit_robot_immediately("Please fix above issue")
+        else:
+            helpers.log("No Node: %s  Defined in Topo File.." % str(node))
+            return False
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
@@ -2143,3 +2239,5 @@ class BsnCommon(object):
         else:
             t.setup_ztn_phase2(node)
         return True
+
+

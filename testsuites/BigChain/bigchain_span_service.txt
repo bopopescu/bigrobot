@@ -1,0 +1,217 @@
+*Settings
+Documentation                           BigChain Span Service Test Suite
+Suite Setup                             span suite setup
+Suite Teardown                          span suite teardown
+Test Setup                              span test setup
+Test Teardown                           span test teardown
+Force Tags                              bigchain  corsair-plus  4.5.0  accton  AS5710
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/AppController.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/BigChain.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+Library                                 Collections.py
+Library                                 OperatingSystem.py
+Library                                 String.py
+
+
+* Variable
+${switch1_alias}                        app-ras5710-2
+
+${span_service_name_1}                  SPAN1
+${span_service_interface_1}             ethernet5
+${span_service_interface_2}             ethernet13
+${span_service_interface_3}             ethernet15
+
+${service_name_1}                       SERVICE1
+${service_in_interface1}                ethernet23
+${service_out_interface1}               ethernet24
+
+
+${arista_ixia_interface}                Ethernet3
+${arista_span_interface}                Ethernet6
+${s1s2_10g_name_1}                      port-channel1
+${s1s2_10g_port_range_1}                13,15,17,21
+${s1s2_10g_number_1}                    1
+${s1s2_10g_name_2}                      port-channel2
+${s1s2_10g_port_range_2}                14,16,18,22
+${s1s2_10g_number_2}                    2
+
+
+* Test Case
+
+TC001: Verify span interface can be configured via CLI command
+    config  node=master  cmd=bigchain span-service ${span_service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=instance 1
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=span-interface switch ${switch1_alias} interface ${span_service_interface_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    [Tags]  feature
+
+TC002: Verify span interface can be configured via REST command
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    [Tags]  feature
+
+TC003: Verify multiple span instances can be configured
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=2  span_interface=${span_service_interface_2}
+    Should be True  ${config2}
+    ${config3}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=3  span_interface=${span_service_interface_3}
+    Should be True  ${config3}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    ${result3}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_2}  chain_span_service_instance=2
+    Should be True  ${result3}
+    ${result3}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_3}  chain_span_service_instance=3
+    Should be True  ${result3}
+    [Tags]  feature
+
+TC004: Verify port-channel interface can be used as span-interface
+    cli add portchannel  s1  ${s1s2_10g_number_1}  ${s1s2_10g_port_range_1}  L3
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  L3
+    sleep  5
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${s1s2_10g_name_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    cli delete portchannel  s1  ${s1s2_10g_number_1}
+    cli delete portchannel  s1  ${s1s2_10g_number_2}
+    [Tags]  feature
+    
+TC005: Verify existing service in-interface cannot be used as span interfaces
+    config  node=master  cmd=bigchain service ${service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match tcp dst-port 80
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  10
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${service_in_interface1}
+    Should not be True  ${config1}
+    sleep  10
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${service_in_interface1}  chain_span_service_instance=1
+    Should not be True  ${result1}
+    [Tags]  feature  runthis
+    
+TC006: Verify existing service out-interface cannot be used as span interfaces
+    config  node=master  cmd=bigchain service ${service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match tcp dst-port 80
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  10
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${service_out_interface1}
+    Should not be True  ${config1}
+    sleep  10
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${service_out_interface1}  chain_span_service_instance=1
+    Should not be True  ${result1}
+    [Tags]  feature  runthis
+    
+* Keywords
+span suite setup
+    base suite setup
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    ${result2}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result2}
+    config  node=s3  cmd=interface ${arista_ixia_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    
+span test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+
+span test teardown
+    ${result1}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest delete bigchain service  chain_service_name=${service_name_1}
+    Should be True  ${result2}
+    delete traffic
+    sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+span suite teardown
+    config  node=s3  cmd=interface ${arista_ixia_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    ${result1}=  rest add switch role  node=s1  mode=bigtap
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest verify switch mode show  node=s1  mode=bigtap-full-match
+    Should be true  ${result2}
+    ${result3}=  rest delete switch alias  s1
+    Should be true  ${result3}
+    ${result4}=  rest delete switch  s1
+    Should be true  ${result4}
+    base suite teardown

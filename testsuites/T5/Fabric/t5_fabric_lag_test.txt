@@ -20,15 +20,14 @@ Resource         testsuites/T5/t5_physical_variables.txt
 add Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse  
 	base suite setup  
-    add fabric switch
-    bring up h1 bond0
-    bring up h2 bond0
-    bring up h3 bond0
-    bring up h4 bond0
-    bring up h5 bond0
-    bring up h6 bond0
+    fabric infra suite setup
+    Set swith int variables
+    Set switch dpid variables
+    Set host int variables
     sleep  10
     rest verify fabric switch all
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
+    Set switch dpid variables
    
 Verify Fabric Lag formation from leaf node 
 	[Tags]	 Fabric  feature  IronHorse    
@@ -56,7 +55,7 @@ Verify Fabric Lag from spine after adding back spine node
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  Fabric  feature  IronHorse  	
+	[Tags]  Fabric  feature  IronHorse	
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b
@@ -66,7 +65,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack0
-	sleep  3
+	sleep  125
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
@@ -114,14 +113,14 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest add switch  spine0
 	rest add dpid  spine0  ${spine0_dpid}
 	rest add fabric role  spine0  spine
-	sleep  3
+	sleep  125	#sleep 
 	rest verify no of spine
 	rest verify rack lag from leaf  leaf0-a  spine1
 
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric  feature  IronHorse  
 	sleep  15
-	rest verify fabric link common  
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -370,6 +369,8 @@ Verify Duplicate ARP broadcast on Edge Port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
@@ -394,6 +395,8 @@ Verify Duplicate Multicast packets on edge port groups
     start traffic  ${stream}
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
+    reconnect switch ips  s5
+    reconnect switch ips  s6
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
@@ -495,29 +498,4 @@ T5 test teardown
 	rest delete tenant  t1
 	rest clean switch interface
 	base test teardown
-	
-bring up h1 bond0
-	bash init intf  h1  bond0.10
-    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
-    bash ifup intf  h1  bond0 
-bring up h2 bond0
-	bash init intf  h2  bond0.10
-    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
-    bash ifup intf  h2  bond0
-bring up h3 bond0
-	bash init intf  h3  bond0.10
-    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
-    bash ifup intf  h3  bond0 
-bring up h4 bond0
-	bash init intf  h4  bond0
-    bash add ip address  h4  ${h4_ip}/24  bond0
-    bash ifup intf  h4  bond0
-bring up h5 bond0
-	bash init intf  h5  bond0
-    bash add ip address  h5  ${h5_ip}/24  bond0
-    bash ifup intf  h5  bond0
-bring up h6 bond0
-	bash init intf  h6  bond0
-    bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0  
 

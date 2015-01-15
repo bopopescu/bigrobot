@@ -5,10 +5,25 @@ if [ ! -x ../bin/gobot ]; then
     exit 1
 fi
 
-RELEASE='ironhorse'
-config="../configs/catalog.yaml"
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    echo "Error: Env var TEST_CATALOG_LOG_DIR is not defined."
+    exit 1
+fi
 
-phase1=1    # Find all test suites in product areas, report totals
+usage() {
+    echo "Usage: `basename $0`"
+    echo ""
+    echo "If RELEASE_NAME env is provided then print additional stats for the release."
+    echo "Examples of release name: 'ironhorse', 'ironhorse-plus', 'jackfrost', 'blackbird', 'corsair', etc."
+    echo ""
+
+    exit 1
+}
+
+
+release=$RELEASE_NAME
+
+phase1=1    # Find all test suites in test areas, report totals
 phase2=1    # Dry-run to generate output.xml, and generate JSON files
 phase2a=1   #   Step a: Dry-run to generate output.xml
 phase2b=1   #   Step b: Generate JSON files
@@ -41,8 +56,17 @@ if [ $phase2 -eq 1 ]; then
 
     subject "Running all the test suites in dry-run mode"
 
-    for product in `python -c "import yaml; print '\n'.join(yaml.load(open('${config}'))['products'])" | grep -v '^#'`; do
-        file=raw_data.dump_suites_by_areas.sh.${product}.suite_files
+    # Production test suites are located in test area folders under
+    # bigrobot/testsuites/. E.g.,
+    #    SwitchLight
+    #    BigWire
+    #    BigTap
+    #    SwitchLight
+    #    BigChain
+    #    T5
+
+    for test_area in `cd ../testsuites; find . ! -path . -type d -maxdepth 1 | xargs -I {} basename {}`; do
+        file=${TEST_CATALOG_LOG_DIR}/raw_data.dump_suites_by_areas.sh.${test_area}.suite_files
         dryrun_out=${file}.dryrun
         xml_logs=${file}.dryrun.output_xml.log
 
@@ -56,20 +80,23 @@ if [ $phase2 -eq 1 ]; then
         time ./parse_test_xml_output.py \
                 --input=$xml_logs \
                 --is-baseline \
-                --output-suites=raw_data.test_suites_${product}.json \
-                --output-testcases=raw_data.test_cases_${product}.json
+                --output-suites=${TEST_CATALOG_LOG_DIR}/raw_data.test_suites_${test_area}.json \
+                --output-testcases=${TEST_CATALOG_LOG_DIR}/raw_data.test_cases_${test_area}.json
     done
 fi
 
 if [ $phase3 -eq 1 ]; then
-    subject2 "Total IronHorse test cases"
-    grep -i $RELEASE raw_data.test_cases_*.json | wc -l
+    
+    if [ "$release"x != x ]; then
+        subject2 "Total $release test cases"
+        grep -i $release ${TEST_CATALOG_LOG_DIR}/raw_data.test_cases_*.json | wc -l
+    fi
 
     subject2 "Total manual test cases"
-    grep -i manual raw_data.test_cases_*.json | wc -l
+    grep -i manual ${TEST_CATALOG_LOG_DIR}/raw_data.test_cases_*.json | wc -l
 
     subject2 "Total manual-untested test cases"
-    grep -i manual-untested raw_data.test_cases_*.json | wc -l
+    grep -i manual-untested ${TEST_CATALOG_LOG_DIR}/raw_data.test_cases_*.json | wc -l
 fi
 
 echo "End time: `date`"

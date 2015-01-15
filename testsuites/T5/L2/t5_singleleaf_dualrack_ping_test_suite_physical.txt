@@ -21,6 +21,7 @@ Verify fabric switch and Link
    [Tags]  L2  feature  smoke  sanity  IronHorse   
    rest verify fabric switch all
    rest verify fabric link
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  6
 
 ping h3 to h4 single leaf single rack dynamic endpoints
    [Tags]  L2  feature  smoke  sanity  IronHorse      
@@ -134,6 +135,9 @@ ping h2 to h3 dual rack single leaf static endpoints tag
 Single Leaf Three Rack Suite Setup
    base suite setup
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2

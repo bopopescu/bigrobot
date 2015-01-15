@@ -7,7 +7,7 @@ Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
 Force Tags       IronHorse-plus
-
+Library          keywords/BsnCommon.py
 
 * Test Case 
 
@@ -20,7 +20,7 @@ TC02 Configure vSwitch with 1G uplinks on a ESXi host & verify basic traffic for
     [Tags]              feature         manual          vmware	
     
 TC03 Flap Single uplink member port and veriy traffic failover
-	manual untested
+	manual passed
     [Tags]              feature         manual          vmware	
     
 TC04 Configure dvSwitch with 10G uplinks, enable LACP and verify LACP negotiation
@@ -32,7 +32,7 @@ TC05 Configure dvSwitch with 1G uplinks, enable LACP and verify LACP negotiation
     [Tags]              feature         manual          vmware	
     
 TC06 Flap Single uplink member port from LACP lag and veriy traffic failover
-	manual untested
+	manual passed
     [Tags]              feature         manual          vmware	
     
 TC07 Verify LACP lag formation after rebooting an ESX host
@@ -96,7 +96,7 @@ TC21 vMotion a VM between two ESXi hosts
     [Tags]              feature         manual          vmware	
     
 TC22 vMotion a VM between two ESXi hosts using multiple VMKernel interfaces
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC23 Remove and add VMKernel interfaces and veriy vMotion connectivity
@@ -132,15 +132,15 @@ TC30 L3 traffic performance within a VM between different vNICs belong to a same
     [Tags]              feature         manual          vmware	
  
 TC31 Verify guest VM can obtain a dhcp address through the fabric without DHCP relay
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC32 Verify guest VM can obtain a dhcp address through the fabric with DHCP relay
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC33 DRS cluster with automatic setting
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
  
 TC34 Enable HA in the ESXi cluster level
@@ -148,7 +148,7 @@ TC34 Enable HA in the ESXi cluster level
     [Tags]              feature         manual          vmware	
  
 TC35 Enable port mirroring on a dvSwitch and couple it with fabric span
- 	manual untested
+ 	manual passed
     [Tags]              feature         manual          vmware	
 
 TC36 ESXi as compute nodes in a Openstack cluster through Fuel-vCenter Integration
@@ -167,4 +167,15 @@ TC39 Controller failover and fabric intergrity while running ESXi workloads
  	manual passed
     [Tags]              feature         manual          vmware	
     
+* Keywords    
+T5 base suite setup
+    sleep                                       1
+    
+T5 base suite teardown
+    sleep                                       1
+ 
+T5 Platform test setup
+	sleep                                       1
 
+T5 Platform test teardown
+	sleep                                       1

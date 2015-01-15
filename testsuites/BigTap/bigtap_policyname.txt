@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              bigtap test setup
 Test Teardown           bigtap test teardown
-Force Tags              bigtap  feature  blackbird
+Force Tags              BigTap  blackbird-300  Accton-AS6700  policy  naming-convention
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -20,259 +20,289 @@ TC001: Verify policy name can have all lower-case alphabet in its name
     setup policy  policyname  F1  D1    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  verifyconfig
+    [Tags]  full  feature
 
 TC002: Verify policy can have all upper-case alphabet in its name  
     setup interfaces  F1  D1
     setup policy  POLICYNAME  F1  D1    
     REST verify bigtap policy  policy_name=POLICYNAME  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  POLICYNAME
-
+    [Tags]  full  feature
+    
 TC003: Verify policy can have a mix of lower-case and upper-case alphabet in its name  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE
-
+    [Tags]  full  feature
+    
 TC004: Verify policy name can have alphanumeric (alphabet all lower-case) characters in its name  
     setup interfaces  F1  D1
     setup policy  policy1234  F1  D1    
     REST verify bigtap policy  policy_name=policy1234  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policy1234        
-
-TC004: Verify policy name can have alphanumeric (alphabet all upper-case) characters in its name  
+    [Tags]  full  feature
+    
+TC005: Verify policy name can have alphanumeric (alphabet all upper-case) characters in its name  
     setup interfaces  F1  D1
     setup policy  POLICYNAME1234  F1  D1    
     REST verify bigtap policy  policy_name=POLICYNAME1234  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  POLICYNAME1234
-
-TC005: Verify policy name can have an alphanumeric name with a !  
+    [Tags]  full  feature
+    
+TC006: Verify policy name can have an alphanumeric name with a !  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE!  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE!  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE!        
-
-TC006: Verify policy name can have an alphanumeric name with a @  
+    [Tags]  full  feature
+    
+TC007: Verify policy name can have an alphanumeric name with a @  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE@  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE@  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE@
-          
-TC007: Verify policy name can have an alphanumeric name with a #  
+    [Tags]  full  feature
+    
+TC008: Verify policy name can have an alphanumeric name with a #  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE%23  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE%23  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE%23          
-
-TC008: Verify policy name can have an alphanumeric name with a $  
+    [Tags]  full  feature
+    
+TC009: Verify policy name can have an alphanumeric name with a $  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE$  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE$  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE$          
-
-TC009: Verify policy name can have an alphanumeric name with a ?  
+    [Tags]  full  feature
+    
+TC010: Verify policy name can have an alphanumeric name with a ?  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE%3F  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE%3F  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE%3F
-
-TC010: Verify policy name can have an alphanumeric name with a >  
+    [Tags]  full  feature
+    
+TC011: Verify policy name can have an alphanumeric name with a >  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE%3E  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE%3E  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE%3E
-
-TC011: Verify policy name can have an alphanumeric name with a ^  
+    [Tags]  full  feature
+    
+TC012: Verify policy name can have an alphanumeric name with a ^  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE^  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE^  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE^
+    [Tags]  full  feature
     
-TC012: Verify policy name can have an alphanumeric name with a &  
+TC013: Verify policy name can have an alphanumeric name with a &  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE&  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE&  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE&
+    [Tags]  full  feature
     
-TC013: Verify policy name can have an alphanumeric name with a *  
+TC014: Verify policy name can have an alphanumeric name with a *  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE*  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE*  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE*                           
-
-TC014: Verify policy name can have an alphanumeric name with a (  
+    [Tags]  full  feature
+    
+TC015: Verify policy name can have an alphanumeric name with a (  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE(  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE(  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE(          
-
-TC015: Verify policy name can have an alphanumeric name with a )  
+    [Tags]  full  feature
+    
+TC016: Verify policy name can have an alphanumeric name with a )  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE)  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE)  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE)
-
-TC016: Verify policy name can have an alphanumeric name with a -  
+    [Tags]  full  feature
+    
+TC017: Verify policy name can have an alphanumeric name with a -  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE-  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE-  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE-
-              
-TC017: Verify policy name can have an alphanumeric name with a _  
+    [Tags]  full  feature
+    
+TC018: Verify policy name can have an alphanumeric name with a _  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE_  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE_  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE_          
-          
-TC018: Verify policy name can have an alphanumeric name with a ;  
+    [Tags]  full  feature
+    
+TC019: Verify policy name can have an alphanumeric name with a ;  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE%3B  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE%3B  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE%3B
-
-TC019: Verify policy name can have an alphanumeric name with a }  
+    [Tags]  full  feature
+    
+TC020: Verify policy name can have an alphanumeric name with a }  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE}  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE}  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE}
-
-TC020: Verify policy name can have an alphanumeric name with a {  
+    [Tags]  full  feature
+    
+TC021: Verify policy name can have an alphanumeric name with a {  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE{  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE{  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE{
-
-TC021: Verify policy name can have an alphanumeric name with a [  
+    [Tags]  full  feature
+    
+TC022: Verify policy name can have an alphanumeric name with a [  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE[  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE[  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE[
-
-TC022: Verify policy name can have an alphanumeric name with a ]  
+    [Tags]  full  feature
+    
+TC023: Verify policy name can have an alphanumeric name with a ]  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE]  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE]  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE]    
-
-TC023: Verify policy name can have an alphanumeric name with a |  
+    [Tags]  full  feature
+    
+TC024: Verify policy name can have an alphanumeric name with a |  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE|  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE|  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE|           
-
-TC024: Verify policy name can have an alphanumeric name with a \  
+    [Tags]  full  feature
+    
+TC025: Verify policy name can have an alphanumeric name with a \  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE%5C  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE%5C  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE%5C 
-
-TC025: Verify policy name can have an alphanumeric name with a :  
+    [Tags]  full  feature
+    
+TC026: Verify policy name can have an alphanumeric name with a :  
     setup interfaces  F1  D1
     setup policy  pOlIcY:nAmE  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcY:nAmE  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcY:nAmE 
-
-TC026: Verify policy name can have an alphanumeric name with a ,  
+    [Tags]  full  feature
+    
+TC027: Verify policy name can have an alphanumeric name with a ,  
     setup interfaces  F1  D1
     setup policy  pOlIcY,nAmE  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcY,nAmE  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcY,nAmE 
-
-TC027: Verify policy name can have an alphanumeric name with a .  
+    [Tags]  full  feature
+    
+TC028: Verify policy name can have an alphanumeric name with a .  
     setup interfaces  F1  D1
     setup policy  pOlIcY.nAmE  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcY.nAmE  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcY.nAmE                
-
-TC028: Verify policy name can have an alphanumeric name with a <  
+    [Tags]  full  feature
+    
+TC029: Verify policy name can have an alphanumeric name with a <  
     setup interfaces  F1  D1
     setup policy  pOlIcY<nAmE  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcY<nAmE  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcY<nAmE 
-
-TC028: Verify policy name can have an alphanumeric name with a /  
+    [Tags]  full  feature
+    
+TC030: Verify policy name can have an alphanumeric name with a /  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE/  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE/  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE/ 
-
-TC028: Verify policy name can have an alphanumeric name with a ~  
+    [Tags]  full  feature
+    
+TC031: Verify policy name can have an alphanumeric name with a ~  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE~  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE~  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE~ 
+    [Tags]  full  feature
     
-TC029: Verify policy name can have an alphanumeric name with a `  
+TC032: Verify policy name can have an alphanumeric name with a `  
     setup interfaces  F1  D1
     setup policy  pOlIcYnAmE`  F1  D1    
     REST verify bigtap policy  policy_name=pOlIcYnAmE`  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  pOlIcYnAmE`
-
+    [Tags]  full  feature
+    
 ########
-TC030: Verify filter and delivery names can have all lower-case alphabet in their name
+TC033: Verify filter and delivery names can have all lower-case alphabet in their name
     setup interfaces  filterinterface  deliveryinterface 
     setup policy  policyname  filterinterface  deliveryinterface    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC031: Verify filter and delivery names can have all upper-case alphabet in their name
+TC034: Verify filter and delivery names can have all upper-case alphabet in their name
     setup interfaces  FILTERINTERFACE  DELIVERYINTERFACE 
     setup policy  policyname  FILTERINTERFACE  DELIVERYINTERFACE    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC032: Verify filter and delivery names can have a mix of lower-case and upper-case alphabet in their name
+TC035: Verify filter and delivery names can have a mix of lower-case and upper-case alphabet in their name
     setup interfaces  fIlTeRiNtErFaCe  dEliVeRyiNtErFaCe 
     setup policy  policyname  fIlTeRiNtErFaCe  dEliVeRyiNtErFaCe    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC033: Verify filter and delivery names can have alphanumeric (alphabet all lower-case) characters in their name
+TC036: Verify filter and delivery names can have alphanumeric (alphabet all lower-case) characters in their name
     setup interfaces  filterinterface1234  deliveryinterface1234 
     setup policy  policyname  filterinterface1234  deliveryinterface1234    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC034: Verify filter and delivery names can have have alphanumeric (alphabet all upper-case) characters in their name
+TC037: Verify filter and delivery names can have have alphanumeric (alphabet all upper-case) characters in their name
     setup interfaces  FILTERINTERFACE1234  DELIVERYINTERFACE1234 
     setup policy  policyname  FILTERINTERFACE1234  DELIVERYINTERFACE1234    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC035: Verify filter and delivery names can have alphanumeric name with a . in their name
+TC038: Verify filter and delivery names can have alphanumeric name with a . in their name
     setup interfaces  FILTER.INTERFACE  DELIVERY.INTERFACE
     setup policy  policyname  FILTER.INTERFACE  DELIVERY.INTERFACE    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC035: Verify filter and delivery names can have alphanumeric name with a : in their name
+TC039: Verify filter and delivery names can have alphanumeric name with a : in their name
     setup interfaces  FILTER:INTERFACE  DELIVERY:INTERFACE
     setup policy  policyname  FILTER:INTERFACE  DELIVERY:INTERFACE        
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname
-    [Tags]  bigtap  interfacenames  jira-bt-1187
+    [Tags]  full  feature  jira-bt-1187
     
-TC035: Verify filter and delivery names can have alphanumeric name with a - in their name
+TC040: Verify filter and delivery names can have alphanumeric name with a - in their name
     setup interfaces  FILTER-INTERFACE  DELIVERY-INTERFACE 
     setup policy  policyname  FILTER-INTERFACE  DELIVERY-INTERFACE    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname    
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
     
-TC036: Verify filter and delivery names can have alphanumeric name with a _ in their name
+TC041: Verify filter and delivery names can have alphanumeric name with a _ in their name
     setup interfaces  FILTER_INTERFACE  DELIVERY_INTERFACE 
     setup policy  policyname  FILTER_INTERFACE  DELIVERY_INTERFACE    
     REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
     REST delete policy  admin-view  policyname 
-    [Tags]  bigtap  interfacenames
+    [Tags]  full  feature
 
-                                        
 * Keywords
 
 bigtap suite setup

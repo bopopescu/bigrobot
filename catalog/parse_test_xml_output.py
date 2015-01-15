@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 """
+Note: Must pass in BUILD_NAME environment since it is indirectly required by
+      TestSuite module.
 """
 
 import os
@@ -72,17 +74,23 @@ class TestCollection(object):
         if self._is_regression == False:
             f = self._output_suites
             print("Importing %s into Mongo test suites collection" % f)
-            (_, output, _, _) = helpers.run_cmd2(
+            (status, output, error, error_code) = helpers.run_cmd2(
                                   cmd="./mongoimport_suites_collection.sh %s" % f,
                                   shell=True)
-            print("Output:\n%s" % helpers.indent_str(output))
+            print("Status:\n'%s'" % helpers.indent_str(status))
+            print("Output:\n'%s'" % helpers.indent_str(output))
+            print("Error:\n'%s'" % helpers.indent_str(error))
+            print("Error code:\n'%s'" % helpers.indent_str(error_code))
 
             f = self._output_testcases
             print("Importing %s into Mongo test case collection" % f)
-            (_, output, _, _) = helpers.run_cmd2(
+            (status, output, error, error_code) = helpers.run_cmd2(
                                   cmd="./mongoimport_testcases_collection.sh %s" % f,
                                   shell=True)
-            print("Output:\n%s" % helpers.indent_str(output))
+            print("Status:\n'%s'" % helpers.indent_str(status))
+            print("Output:\n'%s'" % helpers.indent_str(output))
+            print("Error:\n'%s'" % helpers.indent_str(error))
+            print("Error code:\n'%s'" % helpers.indent_str(error_code))
 
     def suites(self):
         return self._suites
@@ -104,7 +112,7 @@ class TestCollection(object):
 
 def prog_args():
     descr = """\
-Parse the Robot output.xml files to generate the collections for the
+Parse the Robot output.xml files and generate/populate the collections for the
 Test Catalog (MongoDB) database.
 """
     parser = argparse.ArgumentParser(prog='parse_test_xml_output',

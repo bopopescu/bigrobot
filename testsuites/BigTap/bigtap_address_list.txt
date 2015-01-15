@@ -1,11 +1,11 @@
 * Setting
-Documentation   BigTap Test Suite Release:Blackbird Feature:IPv4/IPv6 Address Groups
-Suite Setup     Bigtap list op l3_l4 suite setup
-Suite Teardown  Bigtap list op l3_l4 suite teardown
-Test Setup      Bigtap list op l3_l4 case setup
-Test Teardown   Bigtap list op l3_l4 case teardown
-Force Tags      BigTap  blackbird  address_group
-Library         keywords_dev/mingtao/Common.py
+Documentation           BigTap Test Suite Release:Blackbird Feature:IPv4/IPv6 Address Groups
+Suite Setup             Bigtap list op l3_l4 suite setup
+Suite Teardown          Bigtap list op l3_l4 suite teardown
+Test Setup              Bigtap list op l3_l4 case setup
+Test Teardown           Bigtap list op l3_l4 case teardown
+Force Tags              BigTap  blackbird-300  Quanta-LB9  address_group
+Library                 keywords_dev/mingtao/Common.py
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -14,7 +14,7 @@ Library                 keywords/Ixia.py
 Library                 Collections.py
 Library                 OperatingSystem.py
 Library                 String.py
-Resource	testsuites/BigTap/blackbird_list_op_l34_resource.txt
+Resource	            testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 
 * Variable
@@ -43,8 +43,7 @@ T1.1 Address group IPv4
     Config bigtap policy                 IPv4_ADD    ${sw1_f1}     ${sw1_d1}        
     Apply ipv4 address group to policy   IPv4_ADD    "IPV4"  20   ${sw1}   4    
     Ipv4 address group policy negative          IPv4_ADD    "IPV4"    100
-    
- 	[Tags] 	sanity  address_group   BigTap   blackbird     
+    [Tags]  sanity  feature
 
     
 T1.2 Address group IPv6  
@@ -53,8 +52,7 @@ T1.2 Address group IPv6
     Config bigtap policy                  IPv6_ADD    ${sw1_f1}     ${sw1_d1}   
 	Apply ipv6 address group to policy    IPv6_ADD    "IPV6"  20  ${sw1}   4     
 	Ipv6 address group policy negative       IPv6_ADD    "IPV6"     100
-	
- 	[Tags] 	sanity    address_group     BigTap   blackbird    
+    [Tags]  sanity  feature
 
 T1.3 Address group IPv4/IPv6  
     Config number of ipv4 entries        IPV4_10     10.0.0.0          0.1.0.2         255.255.255.254      10 
@@ -63,8 +61,7 @@ T1.3 Address group IPv4/IPv6
     Apply ipv4 address group to policy   IPv46_ADD     "IPV4_10"  100  ${sw1}    40   
   	Apply ipv6 address group to policy   IPv46_ADD     "IPV6_10"  200  ${sw1}    80
     Ipv46 address group policy negative         IPv46_ADD     "IPV4_10"    "IPV6_10"   500
- 
-	[Tags] 	feature    address_group   BigTap   blackbird  run     
+    [Tags]  full  feature
 
  
 T1.4 Address group IPV4 match options  
@@ -72,16 +69,14 @@ T1.4 Address group IPV4 match options
     Config bigtap policy                 IPv4_ADD    ${sw1_f1}     ${sw1_d1}	 
     Ipv4 all match option                IPv4_ADD    "IPV4_10"     500
     Verify policy running config matches    IPv4_ADD   17
-
-	[Tags] 	sanity     address_group   BigTap   blackbird     
+    [Tags]  sanity  feature
 
 T1.5 Address group IPV6 match options
     Config number of ipv6 entries        IPV6_10     2001:100:200:300:0:0:0:0   0:0:0:0:0:1:0:1   FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF  10  
     Config bigtap policy                 IPv6_ADD    ${sw1_f1}    ${sw1_d1}  
     Ipv6 all match option                IPv6_ADD    "IPV6_10"    500
     Verify policy running config matches    IPv6_ADD   16
-
-	[Tags] 	sanity   address_group    BigTap   blackbird    
+    [Tags]  sanity  feature
 
 
 T1.6 Address group IPv4 overlap
@@ -93,8 +88,7 @@ T1.6 Address group IPv4 overlap
      Config ipv4 list dst                 P2    "G_2"   10
      Sleep     ${medium}      
      Verify switch entry   ${sw1}   120
- 
-	[Tags] 	sanity   address_group   BigTap   blackbird    
+     [Tags]  sanity  feature
  
  
 T1.7 Address group IPv6 overlap
@@ -106,16 +100,14 @@ T1.7 Address group IPv6 overlap
      Config ipv6 list dst                 P2    "G_2"   10
      Sleep     ${medium}      
      Verify switch entry   ${sw1}   120
- 
-	[Tags] 	feature     address_group   BigTap   blackbird    
+    [Tags]  full  feature
  
 T1.8 ipv4/6 list config options
     REST add address group  		    G4    ipv4  
     REST add address group  		    G6    ipv6  
     Config ipv4/ipv6 list               G4     G6    
     Config ipv4/ipv6 list negative      G4     G6
-
-	[Tags] 	feature     address_group   BigTap   blackbird  
+    [Tags]  full  feature
 
 
 T1.101 Address group IPv4 scale 
@@ -125,8 +117,7 @@ T1.101 Address group IPv4 scale
     Config ipv4 list dst                 P1    "G1"   30   
     Sleep     ${long}       
     Verify switch entry                 ${sw1}   512	
-    
- 	[Tags] 	scaling  address_group   BigTap   blackbird    
+    [Tags]  full  scaling
 
 T1.102 Address group IPv6 scale 
  	Config number of ipv6 entries         G1     2001:100:200:300:0:0:0:0     0:0:0:0:1:0:1:0     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0     256 
@@ -135,7 +126,6 @@ T1.102 Address group IPv6 scale
     Config ipv6 list dst                  P1    "G1"   30   
     Sleep     ${long}       
     Verify switch entry                   ${sw1}   512	
- 	
- 	[Tags] 	scaling   address_group   BigTap   blackbird    
+    [Tags]  full  scaling
 
  

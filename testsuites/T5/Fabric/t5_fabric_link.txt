@@ -20,10 +20,13 @@ Setup Three Rack Dual Leaf Topology
 	[Tags]  Fabric  feature  IronHorse
 	bigrobot test ztn  False
 	base suite setup    
-    add fabric switch
-    sleep  125
+    fabric infra suite setup
+    Set swith int variables
+    Set switch dpid variables
+    Set host int variables
+    sleep  30
     rest verify fabric switch all
-    rest verify fabric link common
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 verify interface cli 
 	[Tags]  Fabric  feature  IronHorse

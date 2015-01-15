@@ -41,7 +41,7 @@ Suite Setup		Base Suite Setup
 Suite Teardown		Base Suite Teardown
 Test Setup		Base Test Setup
 Test Teardown	Base Test Teardown
-Force Tags		T5  ZTN  Feature  IronHorse
+Force Tags		T5  ZTN  Feature  IronHorse-Plus
 Library  		keywords/BsnCommon.py
 Library		keywords/T5Platform.py
 Library		keywords/T5Utilities.py
@@ -70,6 +70,7 @@ T6.5. Verify that switch stays in provisioned mode when all controllers go down 
 T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
 	# LY2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it downloaded correct image and was let into the fabric.
 	# LB2 was suspended when running wrong SWI - suspended (unsupported OF version). After switching to ZTN mode, it was unable to download SWI because of wrong platform.
+    # Controller responds to manifest request: "cannot find image for switch"
 	Manual Passed
 	[Tags]  manual
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
@@ -198,6 +199,7 @@ T7.8. switch's MAC address is not configured on the controller - after Switch Li
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
 	Manual Passed
 	[Tags]  manual
+	# Controller responds to manifest request: "cannot find image for switch"
 	# Switch fails to download SWI for given platform type
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
 	Manual Passed
@@ -229,9 +231,11 @@ T7.18. Verify that discovery process times out and restarts when connectivity go
 T7.19. Verify that discovery process restarts when downloaded Switch Light Installer image is corrupted
 	Manual Passed
 	[Tags]  manual
+	# installer: *** checksum mismatch
 T7.20. Verify that discovery process restarts when downloaded SWI image is corrupted
 	Manual Passed
 	[Tags]  manual
+	# Key mismatch for the downloaded swi. The swi was not installed.
 T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
 	# skipping for the time being, until I figure out how to corrupt a manifest
 	[Tags]  skipped
@@ -247,9 +251,11 @@ T7.24. Verify that discovery process restarts when switch reboots while searchin
 T7.25.1 Verify that discovery process restarts when specified Switch Light Installer image path is invalid
 	Manual Passed
 	[Tags]  manual
+	# "GET /image/switchlight-SWL-BCF-2.5.0-ZTN-powerpc-release-2015.01.07.01.00.installer HTTP/1.1" 500 0 "-" "onie/1.0 (Linux-3.8.13-rt9-QorIQ-SDK-V1.4; BusyBox-v1.20.0)"
 T7.25.2 Verify that discovery process restarts when specified SWI image path is invalid
 	Manual Passed
 	[Tags]  manual
+	# wget: server returned error: HTTP/1.1 500 An exception occured writing the response entity
 
 # Single node cluster
 T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process

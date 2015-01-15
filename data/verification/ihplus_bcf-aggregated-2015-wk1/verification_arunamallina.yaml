@@ -1,0 +1,54 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC04 Intra tenant L3 traffic same rack different leaf switch
+  product_suite: T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra1
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC10 L3 inter tenant forwarding with end host moved to another port
+  product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter1
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 

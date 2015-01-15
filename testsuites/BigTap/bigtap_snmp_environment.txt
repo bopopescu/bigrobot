@@ -1,0 +1,290 @@
+*Settings
+Documentation               Controller Environment and SNMP Test Suite
+Force Tags                  BigTap  corsair-450  snmp  environment  snmp-controller
+Suite Setup                 snmp suite setup
+Suite Teardown              snmp suite teardown
+Test Setup                  snmp test setup
+Test Teardown               snmp test teardown
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${snmp_ccommunity_1}        ro public
+${snmp_community_1}         public
+${snmp_ccommunity_2}        ro bigswitch
+${snmp_community_2}         bigswitch
+${snmp_contact_1}           snmphost@bigswitch.com
+${snmp_contact_2}           host@bigswitch.com
+${snmp_location_1}          CS-214-6001
+${snmp_location_2}          CS214-6001    
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
+
+* Test Case
+TC001: Verify CPU Temperature is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.1001
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   CPU Temperature
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  cpu
+    
+TC002: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.2001
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   Ambient Temperature
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  temperature
+    
+TC003: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4011
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 1A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC004: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4012
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 1B 
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC005: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4021
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 2A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC006: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4022
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 2B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+
+TC007: Verify FAN 3A is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4031
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 3A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC008: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4032 
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 3B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+
+TC009: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4041
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 4A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+
+TC010: Verify FAN 4B is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4042
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 4B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC011: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4051
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 5A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC012: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on master
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4052
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  master   ${compare_value_3}   FAN 5B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+
+    
+TC013: Verify CPU Temperature is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.1001
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   CPU Temperature
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC014: Verify Ambient Temperature is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   master   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.2001
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   Ambient Temperature
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC015: Verify FAN 1A is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4011
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 1A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC016: Verify FAN 1B is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4012
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 1B 
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC017: Verify FAN 2A is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4021
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 2A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC018: Verify FAN 2B is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4022
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 2B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+    
+TC019: Verify FAN 3A is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4031
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 3A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+TC020: Verify FAN 3B is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4032 
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 3B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC021: Verify FAN 4A is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4041
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 4A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+    
+TC022: Verify FAN 4B is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4042
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 4B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC023: Verify FAN 5A is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4051
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 5A
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+    
+    
+TC024: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on Slave
+    
+    ${snmp_value1} =     snmp cmd   slave   snmpwalk    public   .1.3.6.1.2.1.99.1.1.1.4.4052
+    ${compare_value_3}=  return snmp value  ${snmp_value1}  1
+    ${snmp_cmp}=  rest verify snmp controller  slave   ${compare_value_3}   FAN 5B
+    Should be true  ${snmp_cmp}
+    [Tags]  full  feature  fan
+
+    
+* Keywords
+snmp suite setup
+    base suite setup
+    set version from controller
+    ${result1}=  rest add snmp keyword  community  public
+    Should be True  ${result1}
+    ${result2}=  rest add snmp keyword  contact  Big Switch Networks
+    Should be True  ${result2}
+    ${result3}=  rest add snmp keyword  location  Mountain View
+    Should be True  ${result3}
+    ${result4}=  rest add snmp keyword  trap-enable  True
+    Should be True  ${result4}
+    ${result5}=  rest add snmp host  10.9.18.2  162
+    Should be True  ${result5}
+    ${result6}=  rest add snmp host  10.9.18.3  162
+    Should be True  ${result6}
+    ${result7}=  rest add firewall rule  protocol=udp  proto_port=161
+    Should be True  ${result7}
+    ${result8}=  rest add firewall rule  protocol=udp  proto_port=162
+    Should be True  ${result8}
+    Sleep  10
+
+snmp test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+
+snmp test teardown
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+set version from controller
+    ${version_string}=  rest show version
+    ${version}=  split string  ${version_string}
+    Set Environment Variable  controller_version  ${version[3]}
+    Environment Variable Should Be Set  controller_version  
+           
+snmp suite teardown
+    ${result1}=  rest add snmp keyword  community  null
+    Should be True  ${result1}
+    ${result2}=  rest add snmp keyword  contact  null
+    Should be True  ${result2}
+    ${result3}=  rest add snmp keyword  location  null
+    Should be True  ${result3}
+    ${result4}=  rest add snmp keyword  trap-enable  false
+    Should be True  ${result4}
+    rest delete snmp host  10.9.18.3  162
+    rest delete snmp host  10.9.18.2  162
+    ${result7}=  rest delete firewall rule  protocol=udp  proto_port=162
+    Should be True  ${result7}
+    ${result8}=  rest delete firewall rule  protocol=udp  proto_port=161
+    Should be True  ${result8}
+    base suite teardown

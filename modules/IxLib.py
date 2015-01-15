@@ -4,6 +4,7 @@
 '''
 import autobot.helpers as helpers
 import time, re
+import sys
 from vendors.Ixia import IxNetwork
 import modules.IxBigtapLib as IxBigtapLib
 
@@ -677,9 +678,11 @@ class Ixia(object):
         return trafficStream1 + stream_name_id
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
-                                      frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                      frameMode, frameCount, flow, name, ethertype=None, ethertype_cnt=1, ethertype_step=None,
+                                      vlan_id=None, vlan_cnt=1, vlan_step=None,
                                       burst_count=None, burst_gap=None,
-                                      line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False,
+                                      line_rate=None, crc=None, src_ip=None, src_ip_cnt=1, src_ip_step=None,
+                                      dst_ip=None, dst_ip_cnt=1, dst_ip_step=None, no_arp=False,
                                       protocol=None, src_port=None, dst_port=None,
                                       icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None,
                                       hex_src_mac=None, hex_dst_mac=None,
@@ -767,18 +770,16 @@ class Ixia(object):
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1', '-crc', 'badCrc')
         if ethertype is not None:
             helpers.log('Adding Ethertype %s !!!' % ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-auto', False)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-fieldValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-singleValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-countValue', 1)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-fixedBits', ethertype)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                      '-optionalEnabled ', True)
+            if ethertype_cnt == 1:
+                helpers.log("Adding Ethertype with cnt: 1..")
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-auto', False, '-fieldValue', ethertype, '-singleValue', ethertype, '-countValue', 1,
+                                          '-fixedBits', ethertype, '-optionalEnabled ', 'true')
+            else:
+                helpers.log("Adding Ethertype with cnt: %s" % str(ethertype_cnt))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                        '-countValue', ethertype_cnt, '-startValue', ethertype, '-stepValue', ethertype_step, '-valueType', 'increment',
+                                          '-optionalEnabled ', 'true', '-auto', False)
 
         if vlan_id is not None:
             helpers.log('Adding Vlan ID: %s !!!' % vlan_id)
@@ -807,21 +808,57 @@ class Ixia(object):
                 if ip_type == "ipv4":
                     helpers.log('Adding src_ip and dst_ip ..')
                     helpers.log("Ipv4 id : ipv4-%s" % ip_layer_id)
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
+                    if src_ip_cnt == 1:
+                        helpers.log("Adding SRC_IP: %s WITH Count: 1.." % src_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding SRC_IP:%s  WITH Count: %s and step: %s" % (src_ip, str(src_ip_cnt), str(src_ip_step)))
+                        if src_ip_step is None:
+                            helpers.log("PLEASE PROVIDE SRC_IP_STEP WITH START, SRC_IP FOR MULTIPLE IPs..")
+                            return False
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                                  '-countValue', src_ip_cnt, '-startValue', src_ip, '-stepValue', src_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+
+                    if dst_ip_cnt == 1:
+                        helpers.log("Adding DST_IP %s WITH Count: 1.." % dst_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding DST_IP:%s  WITH Count: %s and step: %s" % (dst_ip, str(dst_ip_cnt), str(dst_ip_step)))
+                        if dst_ip_step is None:
+                            helpers.log("PLEASE PROVIDE DST_IP_STEP WITH START DST_IP FOR MULTIPLE IPs..")
+                            return False
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                                  '-countValue', dst_ip_cnt, '-startValue', dst_ip, '-stepValue', dst_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+
                 elif ip_type == "ipv6":
                     helpers.log('Adding src_ip and dst_ip ..')
                     helpers.log("Ipv4 id : ipv6-%s" % ip_layer_id)
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                    if src_ip_cnt == 1:
+                        helpers.log("Adding SRC_IP: %s WITH Count: 1.." % src_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding SRC_IP:%s  WITH Count: %s and step: %s" % (src_ip, str(src_ip_cnt), str(src_ip_step)))
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+                                                  '-countValue', src_ip_cnt, '-startValue', src_ip, '-stepValue', src_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+                    if dst_ip_cnt == 1:
+                        helpers.log("Adding DST_IP %s WITH Count: 1.." % dst_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding DST_IP:%s  WITH Count: %s and step: %s" % (dst_ip, str(dst_ip_cnt), str(dst_ip_step)))
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+                                                  '-countValue', dst_ip_cnt, '-fieldValue', dst_ip, '-stepValue', dst_ip_step, '-valueType', 'increment',
+                                             '-optionalEnabled', True)
         helpers.log("Committing IP Config in IXIA...")
         self._handle.commit()
         if protocol is not None:
@@ -947,18 +984,9 @@ class Ixia(object):
                                                '-burstPacketCount ', burst_count, '-type', 'custom ', '-minGapBytes', 12,
                                      '-interBurstGap ', burst_gap, '-enableInterBurstGap ', True)
             if ethertype is not None:
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-auto', False)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-fieldValue', ethertype)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-singleValue', ethertype)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-countValue', 1)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-fixedBits', ethertype)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
-                                          '-optionalEnabled ', True)
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-auto', False, '-fieldValue', ethertype, '-singleValue', ethertype,
+                                          '-countValue', 1, '-fixedBits', ethertype, '-optionalEnabled ', True)
             if vlan_id is not None:
                 helpers.log('Adding Vlan ID: %s !!!' % vlan_id)
                 if vlan_cnt == 1:
@@ -977,24 +1005,60 @@ class Ixia(object):
                                               '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
 
             if src_ip is not None:
-                if ip_type == 'ipv4':
+                if ip_type == "ipv4":
                     helpers.log('Adding src_ip and dst_ip ..')
                     helpers.log("Ipv4 id : ipv4-%s" % ip_layer_id)
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
+                    if dst_ip_cnt == 1:
+                        helpers.log("Adding SRC_IP: %s WITH Count: 1.." % dst_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding SRC_IP:%s  WITH Count: %s and step: %s" % (dst_ip, str(dst_ip_cnt), str(dst_ip_step)))
+                        if dst_ip_step is None:
+                            helpers.log("PLEASE PROVIDE SRC_IP_STEP WITH START, SRC_IP FOR MULTIPLE IPs..")
+                            return False
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                                                  '-countValue', dst_ip_cnt, '-startValue', dst_ip, '-stepValue', dst_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+
+                    if src_ip_cnt == 1:
+                        helpers.log("Adding DST_IP %s WITH Count: 1.." % src_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding DST_IP:%s  WITH Count: %s and step: %s" % (src_ip, str(src_ip_cnt), str(src_ip_step)))
+                        if src_ip_step is None:
+                            helpers.log("PLEASE PROVIDE DST_IP_STEP WITH START DST_IP FOR MULTIPLE IPs..")
+                            return False
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                                                  '-countValue', src_ip_cnt, '-startValue', src_ip, '-stepValue', src_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+
                 elif ip_type == "ipv6":
                     helpers.log('Adding src_ip and dst_ip ..')
                     helpers.log("Ipv4 id : ipv6-%s" % ip_layer_id)
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                    if dst_ip_cnt == 1:
+                        helpers.log("Adding SRC_IP: %s WITH Count: 1.." % src_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding SRC_IP:%s  WITH Count: %s and step: %s" % (dst_ip, str(dst_ip_cnt), str(dst_ip_step)))
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+                                                  '-countValue', dst_ip_cnt, '-startValue', dst_ip, '-stepValue', dst_ip_step, '-valueType', 'increment',
+                                                 '-optionalEnabled', True)
+                    if src_ip_cnt == 1:
+                        helpers.log("Adding DST_IP %s WITH Count: 1.." % src_ip)
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+                                                  '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
-                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
+                    else:
+                        helpers.log("Adding DST_IP:%s  WITH Count: %s and step: %s" % (src_ip, str(src_ip_cnt), str(src_ip_step)))
+                        self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+                                                  '-countValue', src_ip_cnt, '-fieldValue', src_ip, '-stepValue', src_ip_step, '-valueType', 'increment',
+                                             '-optionalEnabled', True)
             helpers.log("Commiting IP config in IXIA...")
             self._handle.commit()
             if protocol is not None:
@@ -1096,6 +1160,9 @@ class Ixia(object):
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', None)
+        ethertype = kwargs.get('ethertype', '0800')
+        ethertype_cnt = kwargs.get('ethertype_cnt', 1)
+        ethertype_step = kwargs.get('ethertype_step', None)
         vlan_id = kwargs.get('vlan_id', None)
         line_rate = kwargs.get('line_rate', None)
         burst_count = kwargs.get('burst_count', None)
@@ -1210,7 +1277,9 @@ class Ixia(object):
         # Create Traffic Stream:
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, ethertype, vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                       frame_cnt, stream_flow, name,
+                                                       ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                       vlan_id=vlan_id, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                        burst_count=burst_count, burst_gap=burst_gap,
                                                        crc=crc, no_arp=no_arp, line_rate=line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
@@ -1464,6 +1533,8 @@ class Ixia(object):
         self._frame_size = kwargs.get('frame_size', 128)
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', '0800')
+        ethertype_cnt = kwargs.get('ethertype_cnt', 1)
+        ethertype_step = kwargs.get('ethertype_step', None)
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
@@ -1498,7 +1569,7 @@ class Ixia(object):
             dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
             ip_type = 'ipv6'
             self._frame_size = kwargs.get('frame_size', 140)
-            protocol = kwargs.get('protocol', 'UDP')
+            protocol = kwargs.get('protocol', None)
         else:
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
@@ -1509,7 +1580,7 @@ class Ixia(object):
             src_ip_step = kwargs.get('src_ip_step', '0.0.0.1')
             dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
             self._frame_size = kwargs.get('frame_size', 130)
-            protocol = kwargs.get('protocol', 'UDP')
+            protocol = kwargs.get('protocol', None)
 
         no_arp = kwargs.get('no_arp', False)
 
@@ -1620,18 +1691,26 @@ class Ixia(object):
                 if vlan_priority is None:
                     traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                                frame_type, self._frame_size, frame_rate, frame_mode,
-                                                               frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id, src_ip=src_ip, dst_ip=dst_ip,
+                                                               frame_cnt, stream_flow, name, crc=crc, vlan_id=vlan_id,
+                                                               src_ip=src_ip, src_ip_step=src_ip_step, src_ip_cnt=s_cnt,
+                                                               dst_ip=dst_ip, dst_ip_step=dst_ip_step, dst_ip_cnt=d_cnt,
                                                                protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                                burst_count=burst_count, burst_gap=burst_gap,
-                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp,
+                                                               ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                               ip_type=ip_type, line_rate=line_rate,
                                                                synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
                 else:
                     traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                                frame_type, self._frame_size, frame_rate, frame_mode,
-                                                               frame_cnt, stream_flow, name, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
+                                                               frame_cnt, stream_flow, name, crc=crc,
+                                                               src_ip=src_ip, src_ip_step=src_ip_step, src_ip_cnt=s_cnt,
+                                                               dst_ip=dst_ip, dst_ip_step=dst_ip_step, dst_ip_cnt=d_cnt,
                                                                protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                                burst_count=burst_count, burst_gap=burst_gap,
-                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                               src_port=src_port, dst_port=dst_port, no_arp=no_arp,
+                                                               ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                               ip_type=ip_type, line_rate=line_rate,
                                                                synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
 
                 traffic_stream1.append(traffic_stream)
@@ -1651,7 +1730,9 @@ class Ixia(object):
                                                              vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
-                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             src_port=src_port, dst_port=dst_port,
+                                                             ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                             ip_type=ip_type, line_rate=line_rate,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
                 else:
                     traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
@@ -1659,7 +1740,9 @@ class Ixia(object):
                                                              vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
-                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             src_port=src_port, dst_port=dst_port,
+                                                             ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                             ip_type=ip_type, line_rate=line_rate,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
 
                 traffic_stream1.append(traffic_item)
@@ -1679,7 +1762,9 @@ class Ixia(object):
                                                              frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
                                                              protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, icmp_type=icmp_type, icmp_code=icmp_code,
-                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             src_port=src_port, dst_port=dst_port,
+                                                             ethertype=ethertype, ethertype_cnt=ethertype_cnt, ethertype_step=ethertype_step,
+                                                             ip_type=ip_type, line_rate=line_rate,
                                                              payload=payload, src_vport=src_vport, dst_vport=dst_vport,
                                                              hex_src_mac=src_mac, hex_dst_mac=dst_mac,
                                                              synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
@@ -1736,6 +1821,7 @@ class Ixia(object):
             except:
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
+                    helpers.log("Unexpected error: %s" % sys.exc_info()[0])
                     return False
                 else:
                     helpers.log("Got IXIA exception while Applying traffic ...")
@@ -1761,6 +1847,7 @@ class Ixia(object):
                 self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
             except:
                 helpers.log("Got Exception while trying to apply traffic..")
+                helpers.log("Unexpected error: %s" % sys.exc_info()[0])
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
                     return False

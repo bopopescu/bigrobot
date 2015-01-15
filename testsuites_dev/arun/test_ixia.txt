@@ -495,7 +495,7 @@ Test IXIA
     stop traffic  ${stream1}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  run
+    [Tags]  traffic  
 
 35_IXIA_RAW_STREAM_LACP with just the lacp_src_mac and different src_mac
 	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  src_cnt=100  src_mac_step=00:00:00:00:00:02
@@ -517,6 +517,36 @@ Test IXIA
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
     [Tags]  traffic
+
+37_IXIA_L3_Add with IP SrC and DST Increment
+	${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=a0_c_flow
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.1  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
+    stop traffic  ${stream}
+	[Tags]
+
+38_IXIA_L2_ADD with Ethertype increment
+
+	 ${stream}=  L2 add  name=atoc  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+	pause
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
+    stop traffic  ${stream}
+	[Tags]  run
+
 *Keywords
 atest teardown
 	delete traffic

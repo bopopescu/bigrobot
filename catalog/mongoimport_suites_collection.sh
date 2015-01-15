@@ -15,6 +15,7 @@ mongo_server=`python -c "import yaml; print yaml.load(open('${config}'))['db_ser
 mongo_port=`python -c "import yaml; print yaml.load(open('${config}'))['db_port']"`
 database=`python -c "import yaml; print yaml.load(open('${config}'))['database']"`
 
+set -x
 for json_file in $json_files; do
     if [ ! -f $json_file ]; then
         echo "ERROR: JSON file '$json_file' is not found."
@@ -30,5 +31,6 @@ for json_file in $json_files; do
         --jsonArray \
         --file $json_file
 done
+set +x
 
 echo "Done."

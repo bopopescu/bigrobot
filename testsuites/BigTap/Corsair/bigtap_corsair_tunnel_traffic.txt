@@ -4,7 +4,7 @@ Suite Setup             corsair suite setup
 Suite Teardown          corsair suite teardown
 Test Setup              corsair test setup
 Test Teardown           corsair test teardown 
-Force Tags              corsair  bigtap  feature tunnelling
+Force Tags              BigTap  corsair-400  tunnel  Accton-AS4600  Accton-AS5710  Accton-AS6700
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -168,17 +168,17 @@ TC001: AS4600:Verify bidirectional tunnel interface
     Should be true  ${verify_tun_sw1}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
-    [Tags]  feature
+    [Tags]  full  feature  
 
 TC002: AS5710:Verify bidirectional tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw3}
-    [Tags]  feature
+    [Tags]  full  feature  
     
 TC003: AS6700:Verify bidirectional tunnel interface   
     ${verify_tun_sw4}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw4}
-    [Tags]  feature  
+    [Tags]  full  feature  
 
 TC004: AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -203,7 +203,7 @@ TC004: AS4600:Match on src-mac and verify L2 traffic across bidirectional tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L2  traffic    
+    [Tags]  full  feature  traffic  
 
 TC005: AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -231,7 +231,7 @@ TC005: AS6700-AS5710:Match on src-mac and verify L2 traffic across bidirectional
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L2  traffic
+    [Tags]  full  feature  traffic
     
 TC006: AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -256,8 +256,8 @@ TC006: AS4600:Match on dst-mac and verify L2 traffic across bidirectional tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L2  traffic    
-
+    [Tags]  full  feature  traffic
+    
 TC007: AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
     cli disable interface  s3  ${core_interface_as5710}
@@ -284,8 +284,8 @@ TC007: AS6700-AS5710:Match on dst-mac and verify L2 traffic across bidirectional
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L2  traffic
-        
+    [Tags]  full  feature  traffic
+    
 TC008: AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -309,7 +309,7 @@ TC008: AS4600:Verify L2 traffic (jumbo frames) across bidirectional tunnel inter
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L2  traffic        
+    [Tags]  full  feature  traffic
 
 TC009: AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -337,7 +337,7 @@ TC009: AS6700-AS5710:Verify L2 traffic (jumbo frames) across bidirectional tunne
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L2  traffic
+    [Tags]  full  feature  traffic
     
 TC010: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -362,8 +362,7 @@ TC010: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across bidirection
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L2  traffic        
-
+    [Tags]  full  feature  traffic
 
 TC011: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -391,7 +390,7 @@ TC011: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across bidi
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L2  traffic
+    [Tags]  full  feature  traffic
     
 TC012: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -417,8 +416,7 @@ TC012: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tu
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC013: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -447,7 +445,7 @@ TC013: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across bidirecti
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4    
+    [Tags]  full  feature  traffic
     
 TC014: AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -473,8 +471,7 @@ TC014: AS4600:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tu
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC015: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -503,7 +500,7 @@ TC015: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across bidirecti
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4 
+    [Tags]  full  feature  traffic
     
 TC016: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -529,8 +526,7 @@ TC016: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tu
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC017: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -559,7 +555,7 @@ TC017: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across bidirecti
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6    
+    [Tags]  full  feature  traffic
     
 TC018: AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -585,8 +581,7 @@ TC018: AS4600:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tu
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC019: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -615,8 +610,8 @@ TC019: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across bidirecti
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6       
-
+    [Tags]  full  feature  traffic
+    
 TC020: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -641,8 +636,7 @@ TC020: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidi
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC021: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -671,8 +665,8 @@ TC021: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4
-
+    [Tags]  full  feature  traffic
+    
 TC022: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -697,8 +691,7 @@ TC022: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bid
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC023: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -727,8 +720,8 @@ TC023: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6
-
+    [Tags]  full  feature  traffic
+    
 TC024: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -753,8 +746,7 @@ TC024: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across bidi
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC025: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -783,8 +775,8 @@ TC025: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4
-
+    [Tags]  full  feature  traffic
+    
 TC026: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -809,8 +801,7 @@ TC026: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bid
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC027: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -839,7 +830,7 @@ TC027: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6
+    [Tags]  full  feature  traffic  L3  traffic  ipv6
 
 
 TC028: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
@@ -866,8 +857,7 @@ TC028: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidi
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC029: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -896,8 +886,8 @@ TC029: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4
-
+    [Tags]  full  feature  traffic
+    
 TC030: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -922,8 +912,7 @@ TC030: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bid
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC031: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -952,7 +941,7 @@ TC031: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6
+    [Tags]  full  feature  traffic
 
 TC032: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -978,8 +967,7 @@ TC032: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across bidi
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4        
-
+    [Tags]  full  feature  traffic
 
 TC033: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1008,8 +996,8 @@ TC033: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic 
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4
-
+    [Tags]  full  feature  traffic
+    
 TC034: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -1034,8 +1022,7 @@ TC034: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bid
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6        
-
+    [Tags]  full  feature  traffic
 
 TC035: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1064,8 +1051,7 @@ TC035: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6
-             
+    [Tags]  full  feature  traffic
 
 TC036: AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1091,8 +1077,7 @@ TC036: AS4600:Match on TCP Flag and verify L3 traffic across bidirectional tunne
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  flags        
-
+    [Tags]  full  feature  traffic
 
 TC037: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1121,8 +1106,7 @@ TC037: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across bidirectiona
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  flags
-             
+    [Tags]  full  feature  traffic
 
 TC038: AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1148,8 +1132,7 @@ TC038: AS4600:Match on TCP6 Flag and verify L3 traffic across bidirectional tunn
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  flags        
-
+    [Tags]  full  feature  traffic
 
 TC039: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirectional tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1178,8 +1161,8 @@ TC039: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across bidirection
     cli enable interface  s3  ${core_interface_as5710}    
     sleep  5
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  flags
-
+    [Tags]  full  feature  traffic
+    
 TC040: AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
@@ -1204,8 +1187,7 @@ TC040: AS4600:Match on src-mac and verify L2 traffic across tx and rx tunnel int
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L2  traffic  txrx
-
+    [Tags]  full  feature  traffic
 
 TC041: AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1235,7 +1217,7 @@ TC041: AS6700-AS5710:Match on src-mac and verify L2 traffic across tx and rx tun
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L2  traffic  txrx
+    [Tags]  full  feature  traffic
     
 TC042: AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1262,7 +1244,7 @@ TC042: AS4600:Match on dst-mac and verify L2 traffic across tx and rx tunnel int
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L2  traffic  txrx    
+    [Tags]  full  feature  traffic
 
 TC043: AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1292,8 +1274,8 @@ TC043: AS6700-AS5710:Match on dst-mac and verify L2 traffic across tx and rx tun
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L2  traffic  txrx
-        
+    [Tags]  full  feature  traffic
+    
 TC044: AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
@@ -1319,7 +1301,7 @@ TC044: AS4600:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L2  traffic  txrx        
+    [Tags]  full  feature  traffic
 
 TC045: AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1349,7 +1331,7 @@ TC045: AS6700-AS5710:Verify L2 traffic (jumbo frames) across tx and rx tunnel in
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L2  traffic  txrx
+    [Tags]  full  feature  traffic
     
 TC046: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1376,8 +1358,7 @@ TC046: AS4600:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx t
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L2  traffic  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC047: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1408,8 +1389,7 @@ TC047: AS6700-AS5710:Match on VLAN and verify L2 VLAN tagged traffic across tx a
     change tunnel direction to bidir    
     sleep  5
     delete traffic        
-    [Tags]  feature  L2  traffic  txrx
-
+    [Tags]  full  feature  traffic
     
 TC048: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1437,7 +1417,7 @@ TC048: AS4600:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
+    [Tags]  full  feature  traffic  L3  traffic  ipv4  txrx        
 
 
 TC049: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx tunnel interface
@@ -1469,7 +1449,7 @@ TC049: AS6700-AS5710:Match on IPv4 SRC-IP and verify L3 traffic across tx and rx
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx    
+    [Tags]  full  feature  traffic
     
 TC050: AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1497,8 +1477,7 @@ TC050: AS4600:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC051: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1529,7 +1508,7 @@ TC051: AS6700-AS5710:Match on IPv4 DST-IP and verify L3 traffic across tx and rx
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx 
+    [Tags]  full  feature  traffic
     
 TC052: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1557,8 +1536,7 @@ TC052: AS4600:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC053: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1589,7 +1567,7 @@ TC053: AS6700-AS5710:Match on IPv6 SRC-IP and verify L3 traffic across tx and rx
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx    
+    [Tags]  full  feature  traffic
     
 TC054: AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1617,8 +1595,7 @@ TC054: AS4600:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC055: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1649,7 +1626,7 @@ TC055: AS6700-AS5710:Match on IPv6 DST-IP and verify L3 traffic across tx and rx
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx       
+    [Tags]  full  feature  traffic
 
 TC056: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1677,8 +1654,7 @@ TC056: AS4600:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC057: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1709,7 +1685,7 @@ TC057: AS6700-AS5710:Match on TCP SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx
+    [Tags]  full  feature  traffic 
 
 TC058: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1737,8 +1713,7 @@ TC058: AS4600:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx 
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC059: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1769,8 +1744,8 @@ TC059: AS6700-AS5710:Match on TCP6 SRC-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx
-
+    [Tags]  full  feature  traffic
+    
 TC060: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
@@ -1797,8 +1772,7 @@ TC060: AS4600:Match on TCP DST-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC061: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1829,8 +1803,8 @@ TC061: AS6700-AS5710:Match on DST SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx
-
+    [Tags]  full  feature  traffic
+    
 TC062: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
     sleep  20
@@ -1857,8 +1831,7 @@ TC062: AS4600:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx 
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     sleep  5
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC063: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1889,8 +1862,7 @@ TC063: AS6700-AS5710:Match on TCP6 DST-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx
-
+    [Tags]  full  feature  traffic
 
 TC064: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1918,8 +1890,7 @@ TC064: AS4600:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC065: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -1950,7 +1921,7 @@ TC065: AS6700-AS5710:Match on UDP SRC-PORT and verify IPv4 based L3 traffic acro
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx
+    [Tags]  full  feature  traffic
 
 TC066: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -1978,8 +1949,7 @@ TC066: AS4600:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx 
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC067: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -2010,7 +1980,7 @@ TC067: AS6700-AS5710:Match on UDP6 SRC-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx
+    [Tags]  full  feature  traffic
 
 TC068: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -2038,8 +2008,7 @@ TC068: AS4600:Match on UDP DST-PORT and verify IPv4 based L3 traffic across tx a
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC069: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -2070,7 +2039,7 @@ TC069: AS6700-AS5710:Match on UDP DST SRC-PORT and verify IPv4 based L3 traffic 
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  txrx
+    [Tags]  full  feature  traffic
 
 TC070: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -2098,8 +2067,7 @@ TC070: AS4600:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx 
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC071: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -2130,8 +2098,7 @@ TC071: AS6700-AS5710:Match on UDP6 DST-PORT and verify IPv6 based L3 traffic acr
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  txrx
-             
+    [Tags]  full  feature  traffic 
 
 TC072: AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -2159,7 +2126,7 @@ TC072: AS4600:Match on TCP Flag and verify L3 traffic across tx and rx tunnel in
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv4  flags  txrx        
+    [Tags]  full  feature  traffic
 
 
 TC073: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tunnel interface
@@ -2191,8 +2158,7 @@ TC073: AS6700-AS5710:Match on TCP Flag and verify L3 traffic across tx and rx tu
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv4  flags  txrx
-             
+    [Tags]  full  feature  traffic
 
 TC074: AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
     change tunnel direction to txrx
@@ -2220,8 +2186,7 @@ TC074: AS4600:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel i
     rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
     change tunnel direction to bidir    
     delete traffic  
-    [Tags]  feature  L3  traffic  ipv6  flags  txrx        
-
+    [Tags]  full  feature  traffic
 
 TC075: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across tx and rx tunnel interface
     ## Disable 40G Direct link between app-ac6700-1 and app-ac5710-4 so that traffic takes the tunnel
@@ -2252,7 +2217,7 @@ TC075: AS6700-AS5710:Match on TCP6 Flag and verify L3 traffic across tx and rx t
     cli enable interface  s3  ${core_interface_as5710}    
     change tunnel direction to bidir    
     delete traffic        
-    [Tags]  feature  L3  traffic  ipv6  flags  txrx
+    [Tags]  full  feature  traffic
 
                           
 * Keyword
