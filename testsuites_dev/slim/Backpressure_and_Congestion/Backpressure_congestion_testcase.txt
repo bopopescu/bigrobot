@@ -1,0 +1,77 @@
+* Setting
+Documentation   Backpressure and congestion testsuite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      test setup topology
+Test Teardown   test teardown topology
+Force Tags      
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5Platform.py
+Library         keywords/SwitchLight.py
+Library         keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library         Collections.py
+Library         keywords/Ixia.py
+Library         keywords/KVMOperations.py
+Resource        testsuites_dev/slim/Backpressure_and_congestion/Backpressure_congestion_testcase.txt
+
+* Test Cases
+TC01 Send linerate traffic from two 10gig port to one 10gig port all in one leaf switch
+    manual untested
+    [Tags]     manual       feature
+
+TC02 Send linerate traffic from two 10gig port in one switch to one 10gig port across rack through peer link
+    manual untested
+    [Tags]     manual       feature
+
+TC03 Send linerate traffic from two 10gig port to one 10gig port across spine
+    manual untested
+    [Tags]     manual       feature
+
+TC05 Send linerate traffic from one 10gig port to one 1gig port in one leaf switch
+    manual untested
+    [Tags]     manual       feature
+
+TC06 Send linerate traffic from one 10gig port to one 1gig port across rack through peer link
+    manual untested
+    [Tags]     manual       feature
+
+TC07 Send linerate traffic from one 10gig port to one 1gig port across spine
+    manual untested
+    [Tags]     manual       feature
+
+TC08 Send linerate traffic from two 40gig port to one 40gig port in one leaf switch
+    manual untested
+    [Tags]     manual       feature
+
+TC09 Send linerate traffic from two 40gig port to one 40gig port across rack through peer link
+    manual untested
+    [Tags]     manual       feature
+
+TC10 Send linerate traffic from two 40gig port to one 40gig port across spine
+    manual untested
+    [Tags]     manual       feature
+
+TC11 Send linerate traffic from two 10gig port in two leaf switches in two rack destined to one 10gig port in another rack
+
+TC12 Send linerate traffic from two 40gig port in two leaf switches in two rack destined to one 40gig port in another rack
+
+TC13 Send linerate traffic from one 40gig port in one leaf switch destined to one 10gig port in another rack
+
+TC21 Oversubscripe peer link 
+
+TC22 Oversubscripe spine link
+
+TC23 Oversubscribe 1gig edge port
+
+TC24 Oversubscribe 10gig edge port
+
+TC25 Oversubscribe 40gig edge port
+
+
+    
+* Keywords
+L3 inter tenant same rack untagged with dynamic endpoints
+    

@@ -68,8 +68,8 @@ Add more than 4k segment
     manual passed
     [Tags]              manual          scaling           
     
-Add more than 1k nexthop group
-    manual untested
+Add more than 1k ecmp nexthop group
+    manual passed
     [Tags]              manual           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
