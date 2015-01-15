@@ -4,7 +4,7 @@ Suite Setup             priority suite setup
 Suite Teardown          priority suite teardown
 Test Setup              priority test setup
 Test Teardown           priority test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  policy  priority
+Force Tags              BigTap  blackbird-300  Quanta-LB9  policy  priority
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

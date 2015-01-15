@@ -1,6 +1,6 @@
 *Settings
 Documentation               Controller Environment and SNMP Test Suite
-Force Tags                  BigTap  corsair-450  SNMP  environment
+Force Tags                  BigTap  corsair-450  snmp  environment  snmp-controller
 Suite Setup                 snmp suite setup
 Suite Teardown              snmp suite teardown
 Test Setup                  snmp test setup

@@ -509,7 +509,7 @@ TC007: Trident2: With two policies, verify if filter traffic is more than 40G th
     Should be true  ${configure_15}
     ${configure_16}=  rest delete interface role   s2  ${switch_filter_intf_6}  filter
     Should be true  ${configure_16}
-    [Tags]  full  feature  trident2  runthis
+    [Tags]  full  feature  trident2
 
 TC008: Trident2: Microburst Testing
     ${output_0}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}

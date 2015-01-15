@@ -4,7 +4,7 @@ Suite Setup                         time suite setup
 Suite Teardown                      time suite teardown
 Test Setup                          time test setup
 Test Teardown                       time test teardown 
-Force Tags                          bigtap  corsair-450  Accton-AS5710
+Force Tags                          bigtap  corsair-450  Accton-AS5710  timed-policy  policy
 Library                             keywords/BsnCommon.py
 Library                             keywords/AppController.py
 Library                             keywords/BigTap.py

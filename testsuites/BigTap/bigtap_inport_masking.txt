@@ -4,7 +4,7 @@ Suite Setup             inport suite setup
 Suite Teardown          inport suite teardown
 Test Setup              inportmask test setup
 Test Teardown           inportmask test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  Dell-S4810  Quanta-LY2  inport-mask
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Dell-S4810  Quanta-LY2  inport-mask
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

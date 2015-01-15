@@ -4,7 +4,7 @@ Suite Setup             overlap suite setup
 Suite Teardown          overlap suite teardown
 Test Setup              overlap test setup
 Test Teardown           overlap test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  Quanta-LY2  overlap
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  overlap
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

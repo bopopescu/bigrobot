@@ -4,7 +4,7 @@ Suite Setup             cli suite setup
 Suite Teardown          cli suite teardown
 Test Setup              cli test setup
 Test Teardown           cli test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  Quanta-LY2  show-cli
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  show-cli
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
