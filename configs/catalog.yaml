@@ -46,11 +46,18 @@ products:
                    - 2.0.0
           software_image_map:
                    - augusta
-      - blackbird:
+      - blackbird-300:
           version:
                    - 3.0.0
+                   - 3.0.1
           software_image_map:
-                   - blackbird
+                   - blackbird300
+      - blackbird-310:
+          version:
+                   - 3.1.0
+                   - 3.1.1
+          software_image_map:
+                   - blackbird310
       - corsair-400:
           version:
                    - 4.0.0
@@ -91,10 +98,20 @@ features:
 
   # Big Tap Releases
   blackbird:
-    [
+    [ ha, user, tacacs, address_group, inport-mask, rewrite-vlan, interface, overlap, 
+      match-conditions,  iptos, policy, priority, naming-convention, portchannel, 
+      optimization, snmp, rbac, statistics, show-cli, vft, traffic, 
+      fan, cpu, temperature, interface-rewrite, policy-rewrite, process-restart, 
+      controller, l3-l4-mode, snmp-controller, reboot, switch, full-match
     ]
   corsair:
-    [
+    [ environment, snmp-controller, ha, user, tacacs, address_group, inport-mask, 
+      rewrite-vlan, interface, overlap, tunnel, trident2, trident-plus, back-pressure, 
+      buffer, breakout, tcp-flags, sflow, timed-policy, interface-group, dpm, 
+      match-conditions,  iptos, policy, priority, naming-convention, portchannel,
+      optimization, snmp, rbac, statistics, show-cli, vft, traffic, 
+      fan, cpu, temperature, interface-rewrite, policy-rewrite, process-restart, 
+      controller, l3-l4-mode, snmp-controller, reboot, switch, full-match
     ]
 
   # Big Cloud Fabric Releases
