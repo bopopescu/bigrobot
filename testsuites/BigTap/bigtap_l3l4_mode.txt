@@ -4,7 +4,7 @@ Suite Setup             Bigtap list op l3_l4 suite setup
 Suite Teardown          Bigtap list op l3_l4 suite teardown
 Test Setup              Bigtap list op l3_l4 case setup
 Test Teardown           Bigtap list op l3_l4 case teardown
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9
+Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  l4l4-mode
 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
@@ -46,7 +46,7 @@ T3.1 Default l3-l4: Test ipv4/6 group and optimization
     Testcase T2.1 Ipv4 prefix list optimization   ${sw1}     ${sw1_f1}     ${sw1_d1}
     bigtap delete all 
     Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}
-    [Tags]  sanity  feature
+    [Tags]  sanity  feature  optimization
 
 T3.2 Enable l3-l4: Test ipv4/6 group and optimization 
     rest enable feature       l3-l4-mode
@@ -57,7 +57,7 @@ T3.2 Enable l3-l4: Test ipv4/6 group and optimization
     Testcase T2.1 Ipv4 prefix list optimization     ${sw1}     ${sw1_f1}     ${sw1_d1}
     bigtap delete all 
     Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}
-    [Tags]  sanity  feature
+    [Tags]  sanity  feature  optimization
 
 T3.3 Change l3-l4 with policy with no mac configured
     ${result}=  cli_show_l3_l4

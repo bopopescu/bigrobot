@@ -127,7 +127,7 @@ TC22: Restart process SNMP on Master controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  ha  robustness  full
+    [Tags]  ha  robustness  full  restart-process  controller
  
 TC23: Restart process SNMP on Slave controller and verify snmpget
     ${version_string}=  Get Environment Variable  controller_version
@@ -135,7 +135,7 @@ TC23: Restart process SNMP on Slave controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  ha  robustness  full 
+    [Tags]  ha  robustness  full  restart-process  controller
     
 TC24: Change community from public to bigswitch and verify snmp walk
     ${version_string}=  Get Environment Variable  controller_version
