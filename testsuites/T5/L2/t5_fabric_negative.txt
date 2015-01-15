@@ -23,7 +23,7 @@ Setup Three Rack Dual Leaf Topology
 	[Tags]  L2  IronHorse
 	bigrobot test ztn  False
 	base suite setup   
-    fabric infra suite setup
+	fabric infra suite setup
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0
@@ -73,7 +73,7 @@ restart ofad to verify the fabric link
 	BuiltIn.Sleep  45
 	rest verify fabric link common
 	reconnect_switch_ips  s3
-	bash execute command  leaf1-a  service ofad restart
+	bash execute command  leaf1-a  service ofad restart  120
 	BuiltIn.Sleep  2
 	rest verify fabric link common  12
 	BuiltIn.Sleep  45
@@ -364,7 +364,7 @@ check forwarding vlan table consistency after switch mgmt remove/add
     Should be True  ${count} == 3   
 
 verifying flow reconsilation when new switch is connected to the fabric
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
@@ -379,6 +379,9 @@ verifying flow reconsilation when new switch is connected to the fabric
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
     clean configuration
+    rest add tenant  t1
+	rest add vns  t1  v1
+    rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
     BuiltIn.Sleep  3
     rest add switch  leaf2-a
     rest add dpid  leaf2-a  ${leaf2a_dpid}
@@ -435,16 +438,9 @@ T5 test setup
     Set swith int variables
     Set switch dpid variables 
 	base test setup
-	add fabric switch
-	BuiltIn.Sleep  55
 	Set switch dpid variables
+	Set host int variables
 	
-bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
-
 bring up h1 bond0
 	bash init intf  h1  bond0.10
     bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
