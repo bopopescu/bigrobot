@@ -16,6 +16,9 @@ Library         Collections.py
 Library         keywords/Ixia.py
 Library         keywords/KVMOperations.py
 Resource        testsuites_dev/slim/Backpressure_and_congestion/Backpressure_congestion_testcase.txt
+### Traffic frame size from 64, 256, 512, 1518 and 9216 bytes
+### Corsair Testcase Description: https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=60850185
+### Setup Information: https://drive.google.com/open?id=0B4kp2PZQLI-Kbjl5bm5JcVhGODg&authuser=1
 
 * Test Cases
 TC01 Oversubscribe one 10gig edge port
@@ -46,3 +49,10 @@ TC07 Receive pause frame from traffic generator
     manual untested
     [Tags]     feature       platform
 
+TC08 Send traffic from one port to two egress port with one port at slower speed
+    manual untested
+    [Tags]     feature       platform
+
+TC09 microburst traffic (reference from Corsair testplan)
+
+TC10 vlan priority traffic (reference from Corsair testplan)
