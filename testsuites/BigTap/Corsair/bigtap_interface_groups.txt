@@ -4,7 +4,7 @@ Suite Setup             interface suite setup
 Suite Teardown          interface suite teardown
 Test Setup              interface test setup
 Test Teardown           interface test teardown 
-Force Tags              BigTap  BigTap  corsair-400  Accton-AS5710
+Force Tags              BigTap  BigTap  corsair-400  Accton-AS5710  interface-group
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

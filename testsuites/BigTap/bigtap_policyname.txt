@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              bigtap test setup
 Test Teardown           bigtap test teardown
-Force Tags              BigTap  Blackbird  3.0.0  Accton-AS6700  policy  naming-convention
+Force Tags              BigTap  blackbird-300  Accton-AS6700  policy  naming-convention
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

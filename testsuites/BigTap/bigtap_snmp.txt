@@ -4,7 +4,7 @@ Suite Setup             snmp suite setup
 Suite Teardown          snmp suite teardown
 Test Setup              snmp test setup
 Test Teardown           snmp test teardown
-Force Tags              BigTap  Blackbird  3.0.0  SNMP
+Force Tags              BigTap  blackbird-300  snmp  snmp-controller
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -127,7 +127,7 @@ TC22: Restart process SNMP on Master controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  ha  robustness  full
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC23: Restart process SNMP on Slave controller and verify snmpget
     ${version_string}=  Get Environment Variable  controller_version
@@ -135,7 +135,7 @@ TC23: Restart process SNMP on Slave controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  ha  robustness  full 
+    [Tags]  ha  robustness  full  process-restart  controller
     
 TC24: Change community from public to bigswitch and verify snmp walk
     ${version_string}=  Get Environment Variable  controller_version

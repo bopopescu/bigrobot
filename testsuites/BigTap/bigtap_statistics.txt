@@ -4,7 +4,7 @@ Suite Setup                             statistics suite setup
 Suite Teardown                          statistics suite teardown
 Test Setup                              statistics test setup
 Test Teardown                           statistics test teardown 
-Force Tags                              BigTap  Blackbird  3.0.0  Accton-AS6700  Accton-AS5710  Accton-AS4600  Accton-AS5610  statistics
+Force Tags                              BigTap  blackbird-300  Accton-AS6700  Accton-AS5710  Accton-AS4600  Accton-AS5610  statistics
 Library                                 keywords/BsnCommon.py
 Library                                 keywords/AppController.py
 Library                                 keywords/BigTap.py

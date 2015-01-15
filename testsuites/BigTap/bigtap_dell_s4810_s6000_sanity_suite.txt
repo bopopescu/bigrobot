@@ -4,7 +4,7 @@ Suite Setup             dell suite setup
 Suite Teardown          dell suite teardown
 Test Setup              traffic test setup
 Test Teardown           traffic test teardown 
-Force Tags              BigTap  Corsair  4.1.1  Dell-S4810  Dell-S6000
+Force Tags              BigTap  corsair-411  Dell-S4810  Dell-S6000
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

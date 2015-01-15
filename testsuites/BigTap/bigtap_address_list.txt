@@ -4,7 +4,7 @@ Suite Setup             Bigtap list op l3_l4 suite setup
 Suite Teardown          Bigtap list op l3_l4 suite teardown
 Test Setup              Bigtap list op l3_l4 case setup
 Test Teardown           Bigtap list op l3_l4 case teardown
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  address_group
+Force Tags              BigTap  blackbird-300  Quanta-LB9  address_group
 Library                 keywords_dev/mingtao/Common.py
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py

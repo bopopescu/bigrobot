@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              bigtap test setup
 Test Teardown           bigtap test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  Quanta-LY2  policy  rewrite-vlan
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  policy-rewrite  rewrite-vlan
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
