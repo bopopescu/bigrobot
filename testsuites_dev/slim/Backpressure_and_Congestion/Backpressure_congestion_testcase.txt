@@ -18,60 +18,31 @@ Library         keywords/KVMOperations.py
 Resource        testsuites_dev/slim/Backpressure_and_congestion/Backpressure_congestion_testcase.txt
 
 * Test Cases
-TC01 Send linerate traffic from two 10gig port to one 10gig port all in one leaf switch
+TC01 Oversubscribe one 10gig edge port
     manual untested
-    [Tags]     manual       feature
+    [Tags]     feature       platform
 
-TC02 Send linerate traffic from two 10gig port in one switch to one 10gig port across rack through peer link
+TC02 Oversubscribe one 1gig edge port
     manual untested
-    [Tags]     manual       feature
+    [Tags]     feature       platform
 
-TC03 Send linerate traffic from two 10gig port to one 10gig port across spine
+TC03 Oversubscribe one 40gig edge port
     manual untested
-    [Tags]     manual       feature
+    [Tags]     feature       platform
 
-TC05 Send linerate traffic from one 10gig port to one 1gig port in one leaf switch
+TC04 Oversubscribe one 10gig peer link
     manual untested
-    [Tags]     manual       feature
+    [Tags]     feature       platform
 
-TC06 Send linerate traffic from one 10gig port to one 1gig port across rack through peer link
+TC05 Oversubscribe one 40gig peer link
     manual untested
-    [Tags]     manual       feature
+    [Tags]     feature       platform
 
-TC07 Send linerate traffic from one 10gig port to one 1gig port across spine
+TC06 Oversubscribe one 40gig spine link
     manual untested
-    [Tags]     manual       feature
-
-TC08 Send linerate traffic from two 40gig port to one 40gig port in one leaf switch
-    manual untested
-    [Tags]     manual       feature
-
-TC09 Send linerate traffic from two 40gig port to one 40gig port across rack through peer link
-    manual untested
-    [Tags]     manual       feature
-
-TC10 Send linerate traffic from two 40gig port to one 40gig port across spine
-    manual untested
-    [Tags]     manual       feature
-
-TC11 Send linerate traffic from two 10gig port in two leaf switches in two rack destined to one 10gig port in another rack
-
-TC12 Send linerate traffic from two 40gig port in two leaf switches in two rack destined to one 40gig port in another rack
-
-TC13 Send linerate traffic from one 40gig port in one leaf switch destined to one 10gig port in another rack
-
-TC21 Oversubscripe peer link 
-
-TC22 Oversubscripe spine link
-
-TC23 Oversubscribe 1gig edge port
-
-TC24 Oversubscribe 10gig edge port
-
-TC25 Oversubscribe 40gig edge port
-
-
+    [Tags]     feature       platform
     
-* Keywords
-L3 inter tenant same rack untagged with dynamic endpoints
-    
+TC07 Receive pause frame from traffic generator
+    manual untested
+    [Tags]     feature       platform
+
