@@ -1,0 +1,137 @@
+*** Settings ***
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		GUI ZTN Suite Setup
+Suite Teardown  	GUI ZTN Suite Teardown
+Test Setup			Test Setup
+Test Teardown		Test Teardown
+Force Tags              T5  GUI  BCF  Feature  IronHorse-Plus
+Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
+Library				keywords/T5Platform.py
+Library				keywords/T5Utilities.py
+Library				keywords/T5ZTN.py
+Library        		SeleniumLibrary
+Resource        	bcf_resource.txt
+Resource			../T5-Platform/t5_ztn_resource.txt
+Library       		String
+
+*** Variables ***
+
+*** Test Case ***
+T0.1 Basic Check
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+	GUI Randomize ZTN Configuration
+	Sleep  60
+	Verify All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T0.2 Failover Check
+	Failover From Fabric Page
+	Sleep  30
+	GUI Randomize ZTN Configuration
+	Sleep  60
+	Verify All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+	
+
+# Rebooting Switches
+T1.1 Reboot All Connected Switches From Fabric Page
+	Reboot All Connected Switches From Fabric Page
+	Verify All Switches Disconnected
+
+T1.2 Reboot Switch From Switches Page
+	Reboot Switch From Switches Page  ${s1_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s1_alias}
+
+	Reboot Switch From Switches Page  ${s2_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+
+	Reboot Switch From Switches Page  ${s3_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+
+	Reboot Switch From Switches Page  ${s4_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s4_alias}
+
+	Reboot Switch From Switches Page  ${s5_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s5_alias}
+	
+T1.3 Reboot Switch From Fabric Page
+	Reboot Switch From Fabric Page  SpineSwitch_0
+	Sleep  30
+	Verify Switch Connection State  False  ${s1_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_0
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_1
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_2
+	Sleep  30
+	Verify Switch Connection State  False  ${s4_alias}
+
+	Reboot Switch From Fabric Page  SpineSwitch_1
+	Sleep  30
+	Verify Switch Connection State  False  ${s5_alias}	
+	
+			
+*** Keyword ***
+GUI ZTN Suite Setup
+	Suite Setup
+	Set Selenium Timeout  20
+	${master_ip}=            get node ip   master
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    #Clear Switch Config			${s1_alias}
+    #Clear Switch Config			${s2_alias}
+    #Clear Switch Config			${s3_alias}
+    #Clear Switch Config			${s4_alias}
+    #Clear Switch Config			${s5_alias}
+	#Sleep  30
+
+    #Provision Switch			${s1_mac}		${s1_alias}			Spine		${EMPTY}
+    #Provision Switch			${s2_mac}		${s2_alias}			Leaf		rack0
+    #Provision Switch			${s3_mac}		${s3_alias}			Leaf		rack0
+    #Provision Switch			${s4_mac}		${s4_alias}			Leaf		rack1
+    #Provision Switch			${s5_mac}		${s5_alias}			Spine		${EMPTY}
+    
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
+    
+	
+GUI ZTN Suite Teardown
+	Close Browser
+    #Stop Selenium Server
+	Suite Teardown
+
+GUI Randomize ZTN Configuration
+	${hostname_random}  Generate Random Name  hostname.tmk.  5
+	Configure Remote Server  ${hostname_random}.com  514
+	${host_random}  Generate Random IP
+	Configure NTP Server  ${host_random}
+	${contact_random}  Generate Random Name  contact  5
+	${location_random}  Generate Random Name  location  5
+	${community_random}  Generate Random Name  community  5
+	${host_random}  Generate Random IP
+	Configure SNMP			${contact_random}   ${location_random}  ${community_random}  Enabled	${host_random}  162
+	${thr1}  Generate Random Threshold
+	${thr2}  Generate Random Threshold
+	Configure SNMP Traps  1${thr1}  1${thr2}  1${thr1}  1${thr1}  1${thr2}  1${thr1}  ${thr2}
