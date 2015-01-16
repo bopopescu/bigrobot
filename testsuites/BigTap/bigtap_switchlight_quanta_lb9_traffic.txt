@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              traffic test setup
 Test Teardown           traffic teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9
+Force Tags              BigTap  blackbird-300  Quanta-LB9
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

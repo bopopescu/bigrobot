@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              tacacs test setup
 Test Teardown           tacacs test teardown
-Force Tags              BigTap  Blackbird  3.0.0  user  tacacs
+Force Tags              BigTap  blackbird-300  user  tacacs
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

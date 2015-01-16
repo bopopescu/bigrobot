@@ -4,7 +4,7 @@ Suite Setup                 portchannel suite setup
 Suite Teardown              portchannel suite teardown
 Test Setup                  portchannel test setup
 Test Teardown               portchannel test teardown 
-Force Tags                  BigTap  Blackbird  3.0.0  Accton-AS5610  Dell-S4810  Accton-AS6700  portchannel
+Force Tags                  BigTap  blackbird-300  Accton-AS5610  Dell-S4810  Accton-AS6700  portchannel
 Library                     keywords/BsnCommon.py
 Library                     keywords/AppController.py
 Library                     keywords/BigTap.py

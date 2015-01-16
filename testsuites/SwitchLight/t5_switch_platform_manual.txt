@@ -266,32 +266,32 @@ Verify multiple telnet connections to Management Port
 PSU failure test Bring up the PSU and Fail back up PSU AC 
     Log    Step 1 - PSU failure test - Bring up PSU1 and PSU2, Fail back up PSU
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
     
 Verify power output when DUT use two AC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested  
-    Manual untested    
+    [Tags]  Manual
+    Manual Passed   
 
 With both AC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested  
-    Manual untested    
+    [Tags]  Manual 
+    Manual Passed    
 
 Repeat previous testcase with the other AC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested  
-    Manual untested    
+    [Tags]  Manual  
+    Manual Passed    
 
 With one AC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual-untested  
-    Manual untested    
+    [Tags]  Manual  
+    Manual Passed    
 
 Verify power output when DUT use one DC power supply
     Log    Step 1 - Verify power output when DUT use one power supply
