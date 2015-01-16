@@ -119,9 +119,9 @@ TC11 Verify breakout cable detection show link on controller
 
 TC12 Verify interface shutdown for spine port 40G breakout cable sub interfaces one-by-one
     [Tags]  feature  T5
-    Log     Step 1 - verify 40G port port shutdown and bring up 
+    Log     Step 1 - verify 40G port port shutdown 
     Log     Step 2 - Verify interface state shows admin shutdown
-    Manual Failed
+    Manual Passed
 
 TC13 Verify interface no shutdown for spine port 40G breakout cable sub interfaces one-by-one
     [Tags]  feature  T5
@@ -135,7 +135,7 @@ TC14 Verify interface shutdown for leaf switch port interface port shutdown
     [Tags]  manual
     Log     Step 1 - verify interface port down on leaf side - one 10G port
      Log    Step 2 - verify show interface status on spine port 
-    Manual Failed
+    Manual Passed
 
 TC15 Verify interface no shutdown for leaf switch port interface port shutdown
     [Tags]  feature  T5
@@ -156,14 +156,14 @@ TC17 Verify the 40G breakout cable breakout configured taken out and reinserted 
     [Tags]  manual 
     Log     Step 1 - Verify interface detection 
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual Failed 
+    Manual Passed
     
 TC18 Verify the 40G breakout cable sub-interface port taken out and reinserted back on leaf side
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Verify interface detection 
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual Failed
+    Manual Passed
 
 TC19 Verify the same segment member port breakout interface configuration 
     [Tags]  feature  T5
@@ -231,7 +231,7 @@ TC28 Verify bpdu guard protection when breakout interface is connected with Aris
     [Tags]  manual  
     Log     Step 1 - Verify when STP is enabled on thirdparty vendor 
     Log     Step 2 - Verify when bpdu comes to the breakout interface the interface is shutdown with bpdu error message  
-    Manual Failed 
+    Manual Passed
 
 ### Suppported HCL and Non supported HCL breakout cable 
 TC29 verify the supported HCL breakout cable interface and inventory auto-detection 
@@ -244,25 +244,26 @@ TC30 verify the supported HCL breakout cable removed and inserted non-supported 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the supported HCL breakout cable removed and inserted non-supported HCL cable
-    Manual Failed
+    Manual Passed
 
 TC31 verify the non-supported HCL breakout cable inserted and not auto detected 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable inserted and not auto detected
-    Manual Failed   
+    Log     Step 2 - Arista not in HCL list is being detected 
+    Manual Passed   
 
 TC32 verify the non-supported HCL breakout cable inserted and force CLI configuration 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable inserted and force CLI configuration
-    Manual Failed 
+    Manual Passed
     
 TC33 verify the non-supported HCL breakout cable configuration, remove and put the regular DAC cable 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable configuration, remove and put the regular DAC cable
-    Manual Failed
+    Manual Passed
 
    
 #### Traffic test : Topology - Leaf- spine-Leaf [ leaf 10G breakoutport- Spine 40G port ]
@@ -374,7 +375,7 @@ TC51 Remove the breakout cable and plugged in back on the same interfaces
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Remove the breakout cable and plugged in back on the same interfaces         
-    Manual Failed   
+    Manual Passed  
  
 TC52 Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces 
     [Tags]  feature  T5
@@ -457,21 +458,21 @@ TC64 Upgrade Controller Breakout cable auto detection case
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable auto detection case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC65 Upgrade Controller Breakout cable forced configuration case 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable forced configuration case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to non-breakout cable
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in then while upgrade change to non-breakout cable 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable 
     [Tags]  feature  T5
@@ -490,7 +491,7 @@ TC69 Breakout cable plugged-in upgrade the controller - from not-supported softw
     [Tags]  feature  T5
     [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
-    Manual Failed 
+    Manual Passed
      
 #### Misconfiguration cable - two rack connections, loopback on leaf , Dell S6000 etc. 
 
