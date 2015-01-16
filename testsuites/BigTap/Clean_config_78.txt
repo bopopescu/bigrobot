@@ -38,8 +38,8 @@ TC1: Delete Configuration
 	clean switch configuration  s6  snmp-server
     clean switch configuration  s7  port-channel
 	clean switch configuration  s7  snmp-server
-    clean switch configuration  s8  port-channel
-	clean switch configuration  s8  snmp-server
+#    clean switch configuration  s8  port-channel
+#	clean switch configuration  s8  snmp-server
     clean switch configuration  s9  port-channel
 	clean switch configuration  s9  snmp-server
     clean switch configuration  s10  port-channel
