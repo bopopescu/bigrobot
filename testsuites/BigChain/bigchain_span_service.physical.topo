@@ -36,8 +36,6 @@ tg1:
     a:
       name: 5/1
     b:
-      name: 5/3
-    c:
       name: 5/2
-    d:
-      name: 2/7
+    c:
+      name: 1/8
