@@ -817,6 +817,7 @@ class SwitchDevConf(BsnDevConf):
             # For SwitchLight, you need to enter Enable mode to execute
             # 'debug bash'.
             self.enable('')
+        helpers.log("*********** I am here!!!!! ")
         super(SwitchDevConf, self).bash(*args, **kwargs)
         return self.result()
 
