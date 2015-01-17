@@ -1471,7 +1471,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def bash_execute_command(self, node, command):
+    def bash_execute_command(self, node, command, timeout=60):
         '''
         Objective:
         -Execute a command in bash mode and return output
@@ -1491,7 +1491,7 @@ class SwitchLight(object):
         except:
             return False
         else:
-            switch.bash(command)
+            switch.bash(command, timeout=timeout)
             bash_output = switch.cli_content()
             new_output = bash_output.split('\n')
             del new_output[0]
@@ -2131,10 +2131,10 @@ class SwitchLight(object):
         '''
             Objective:
             - Return info specific to tunnel from switch after executing cli command "show tunnel X"
-            
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
-            | tunnel_number | Tunnel number |            
+            | tunnel_number | Tunnel number |
         '''
         try:
             t = test.Test()
