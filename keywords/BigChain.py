@@ -1265,8 +1265,9 @@ class BigChain(object):
                 return False
             else:
                 try:
-                    url1 = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(span_service_name)
-                    c.rest.put(url1, {"name": str(span_service_name)})
+                    if update is False:
+                        url1 = '/api/v1/data/controller/applications/bigchain/span-service[name="%s"]' % str(span_service_name)
+                        c.rest.put(url1, {"name": str(span_service_name)})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
@@ -1396,9 +1397,9 @@ class BigChain(object):
                     try:
                         url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/from-span' % str(chain_name)
                         if update is False:
-                            c.rest.put(url, {{"instance": int(span_instance_id), "from-span-name": str(span_service_name)}})
+                            c.rest.put(url, {"instance": int(span_instance_id), "from-span-name": str(span_service_name)})
                         else:
-                            c.rest.patch(url, {{"instance": int(span_instance_id), "from-span-name": str(span_service_name)}})
+                            c.rest.patch(url, {"instance": int(span_instance_id), "from-span-name": str(span_service_name)})
                     except:
                         helpers.test_log(c.rest.error())
                         return False
@@ -1407,9 +1408,9 @@ class BigChain(object):
                     try:
                         url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/to-span' % str(chain_name)
                         if update is False:
-                            c.rest.put(url, {{"instance": int(span_instance_id), "to-span-name": str(span_service_name)}})
+                            c.rest.put(url, {"instance": int(span_instance_id), "to-span-name": str(span_service_name)})
                         else:
-                            c.rest.patch(url, {{"instance": int(span_instance_id), "to-span-name": str(span_service_name)}})
+                            c.rest.patch(url, {"instance": int(span_instance_id), "to-span-name": str(span_service_name)})
                     except:
                         helpers.test_log(c.rest.error())
                         return False
