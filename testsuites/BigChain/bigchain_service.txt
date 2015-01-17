@@ -4,7 +4,7 @@ Suite Setup                             service suite setup
 Suite Teardown                          service suite teardown
 Test Setup                              service test setup
 Test Teardown                           service test teardown
-Force Tags                              bigchain  corsair-plus  4.5.0  accton  AS5710
+Force Tags                              bigchain  corsair-450  accton-AS5710  chain-service
 Library                                 keywords/BsnCommon.py
 Library                                 keywords/AppController.py
 Library                                 keywords/BigTap.py
@@ -19,7 +19,7 @@ Library                                 String.py
 ${switch1_alias}                        app-ras5710-1
 
 ${chain_name}                           CHAIN1
-${chain_name2}                           CHAIN2
+${chain_name2}                          CHAIN2
 ${chain_interface_1}                    ethernet1
 ${chain_interface_2}                    ethernet2
 ${chain_interface_3}                    ethernet9
