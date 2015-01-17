@@ -166,11 +166,14 @@ def analyze(s, level=3):
     info(s, level)
 
 
-def prettify(data):
+def prettify(data, format_newline=False):
     """
     Return the Python object as a prettified string (formatted).
     """
-    return pprint.pformat(data)
+    pretty_str = pprint.pformat(data)
+    if format_newline:
+        pretty_str = pretty_str.replace('\\n', '\n')
+    return pretty_str
 
 
 def prettify_xml(xml_str):
@@ -188,8 +191,8 @@ def prettify_xml(xml_str):
     return text
 
 
-def prettify_log(s, data, level=3):
-    analyze(''.join((s, '\n', prettify(data))), level)
+def pretty_log(s, format_newline=True, level=3):
+    log(prettify(s, format_newline), level)
 
 
 def exception_info_type():
