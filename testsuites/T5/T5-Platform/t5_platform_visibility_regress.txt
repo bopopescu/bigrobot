@@ -32,7 +32,7 @@ ${gateway2IP}	192.168.0.100
 ${s1SrcSwitch}  leaf0-a
 ${s1SrcInt}		ethernet25
 ${s1DstSwitch}	leaf0-a
-${s1DstInt}		ethernet26
+${s1DstInt}		ethernet28
 ${s1PingIP}		192.168.1.10
 ${s1VerifyHost}  h2
 ${s1VerifyInt}	eth1
@@ -40,7 +40,7 @@ ${s1VerifyInt}	eth1
 ${s2SrcSwitch}  leaf0-a
 ${s2SrcInt}		ethernet48
 ${s2DstSwitch}	leaf0-a
-${s2DstInt}		ethernet26
+${s2DstInt}		ethernet28
 ${s2PingIP}		192.168.4.10
 ${s2VerifyHost}  h2
 ${s2VerifyInt}	eth1
@@ -50,7 +50,7 @@ ${s2ShutInt}  ethernet48
 ${s1IxiaSrcSwitch}  leaf0-a
 ${s1IxiaSrcInt}		ethernet24
 ${s1IxiaDstSwitch}	leaf0-a
-${s1IxiaDstInt}		ethernet26
+${s1IxiaDstInt}		ethernet28
 ${s1IxiaVerifyHost}  h2
 ${s1IxiaVerifyInt}	eth1
 
@@ -929,6 +929,18 @@ T0 Setup
     Set swith int variables
     Set switch dpid variables
     Set host int variables
+    BASH run command                                h1							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h2							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h3							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h4							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h5							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h6							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH restart networking service                 h1                          timeout=60
+    BASH restart networking service                 h2                          timeout=60
+    BASH restart networking service                 h3                          timeout=60
+    BASH restart networking service                 h4                          timeout=60
+    BASH restart networking service                 h5                          timeout=60
+    BASH restart networking service                 h6                          timeout=60
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	#bash execute command  leaf0-a  ofad-ctl autoneg 25
