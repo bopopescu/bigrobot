@@ -1449,11 +1449,9 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
 service suite teardown
     cli delete portchannel  s1  ${s1s2_10g_number_1}
     cli delete portchannel  s1  ${s1s2_10g_number_2}
-    ${result1}=  rest add switch role  node=s1  mode=bigtap
+    ${result1}=  rest delete switch role  node=s1  mode=bigchain
     Should be true  ${result1}
     sleep  5
-    ${result2}=  rest verify switch mode show  node=s1  mode=bigtap-full-match
-    Should be true  ${result2}
     ${result3}=  rest delete switch alias  s1
     Should be true  ${result3}
     ${result4}=  rest delete switch  s1
