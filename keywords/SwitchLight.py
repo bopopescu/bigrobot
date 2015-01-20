@@ -1527,7 +1527,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def bash_restart_process(self, node, processName, timeout=None):
+    def bash_restart_process(self, node, processName, timeout=60):
         '''
         Objective:
         -Restart a process on switch
