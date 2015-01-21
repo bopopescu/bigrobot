@@ -74,6 +74,12 @@ class BsnRestClient(RestClient):
         return super(BsnRestClient, self).request_session_cookie(url)
 
     def delete_session_cookie(self, url=None):
+        """
+        Delete the session cookie which was previously created using
+        request_session_cookie() - the "localhost" session cookie.
+        Note: We currently don't delete the session cookie which is implicitly
+              created by the CLI session.
+        """
         if helpers.bigrobot_delete_session_cookies().lower() == 'false':
             helpers.log("Env BIGROBOT_DELETE_SESSION_COOKIES is False. Don't delete session cookies.")
             return None
