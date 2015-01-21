@@ -326,6 +326,6 @@ Test common Params
 Test run_cmd
     #[Tags]  skipped
     ${out} =        run cmd   ls -la /etc/
-    pretty log      ${out}   format_newline=${false}
+    pretty log      ${out}   format_newline=${true}
 
 
