@@ -726,6 +726,14 @@ def bigrobot_preserve_mininet_screen_session_on_fail(new_val=None, default='Fals
                             new_val, default)
 
 
+def bigrobot_delete_session_cookies(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to pause test case after it had failed.
+    """
+    return _env_get_and_set('BIGROBOT_DELETE_SESSION_COOKIES', new_val, default)
+
+
 def bigrobot_test_suite_status(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
