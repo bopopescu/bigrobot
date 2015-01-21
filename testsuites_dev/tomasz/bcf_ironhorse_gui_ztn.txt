@@ -90,12 +90,12 @@ T1.3 Reboot Switch From Fabric Page
 
 T2.1 Deleting a switch
 	Clear Switch Config  ${s1_alias}
-    Wait Until Switch Disconnected  ${s1_alias}
+	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s1
 
 T2.2 Deleting a switch and adding it back as stand-by switch
 	Clear Switch Config  ${s2_alias}
-    Wait Until Switch Disconnected  ${s2_alias}
+    Sleep  30
     GUI Randomize ZTN Configuration
     Provision Switch  ${s2_mac}  ${s2_alias}  None  ${EMPTY}
     Wait Until Switch Connected  ${s2_alias}
@@ -115,7 +115,7 @@ T2.3 Shutting down a switch
 	Verify Switch Fabric Connection State  suspended  ${s3_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s3_alias}
 
-T3.1 Replacing Switch MAC Addresses 
+T3.1 Replacing Switch MAC Addresses
 	Clear Switch Config  ${s1_alias}
 	Clear Switch Config  ${s5_alias}
 	GUI Randomize ZTN Configuration
@@ -137,6 +137,9 @@ T3.2 Replacing Switch MAC Addresses when switches are down
 	GUI Randomize ZTN Configuration
     Provision Switch  ${s2_mac}  ${s3_alias}  Leaf  rack0
     Provision Switch  ${s3_mac}  ${s2_alias}  Leaf  rack0
+    Power Up Switch  s2
+	Sleep  5
+	Power Up Switch  s3
     Wait Until Switch Connected  ${s2_alias}
     Wait Until Switch Connected  ${s3_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
@@ -145,7 +148,7 @@ T3.2 Replacing Switch MAC Addresses when switches are down
 	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
 
 T4.1 Changing switch mode to stand-by
-	Change Switch Config  {s4_alias}  None  ${EMPTY}
+	Change Switch Config  ${s4_alias}  None  ${EMPTY}
 	GUI Randomize ZTN Configuration
 	Sleep  30
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
@@ -154,7 +157,7 @@ T4.1 Changing switch mode to stand-by
 	Verify Switch Suspended Reason  No fabric role configured  ${s4_alias}
 
 T4.2 Changing switch mode to stand-by and reboot
-	Change Switch Config  {s5_alias}  None  ${EMPTY}
+	Change Switch Config  ${s5_alias}  None  ${EMPTY}
 	Reboot Switch From Switches Page  ${s5_alias}
 	GUI Randomize ZTN Configuration
 	Sleep  30
@@ -164,7 +167,7 @@ T4.2 Changing switch mode to stand-by and reboot
 	Verify Switch Suspended Reason  No fabric role configured  ${s5_alias}
 
 T4.3 Changing switch mode to stand-by and failover and reboot
-	Change Switch Config  {s5_alias}  None  ${EMPTY}
+	Change Switch Config  ${s5_alias}  None  ${EMPTY}
 	Failover From Fabric Page
 	Reboot Switch From Switches Page  ${s5_alias}
 	GUI Randomize ZTN Configuration
@@ -199,7 +202,7 @@ T6.1 Reset switch connections from switches page
 	Reset Switch Connection From Switches Page  ${s5_alias}
 
 T6.2 Split from leaf group from switches page
-	Split From Leaf Group From Fabric Page  ${s2_alias}
+	Split From Leaf Group From Switches Page  ${s2_alias}
 	Sleep  10
 	Go To Controller Switches Page
 	Page Should Contain  ${s2_dpid}
@@ -242,34 +245,35 @@ T6.5 Clear switch configuration from switches page
 	Clear Switch Configuration From Switches Page  ${s3_alias}
 	Clear Switch Configuration From Switches Page  ${s4_alias}
 	Clear Switch Configuration From Switches Page  ${s5_alias}
-	Wait Until All Switches Disconnected
+	#Wait Until All Switches Disconnected
+	# add better validation here
 
 T7.1 Reset switch connections from fabric page
-	Reset Switch Connection From Fabric Page  ${s1_alias}
-	Reset Switch Connection From Fabric Page  ${s2_alias}
-	Reset Switch Connection From Fabric Page  ${s3_alias}
-	Reset Switch Connection From Fabric Page  ${s4_alias}
-	Reset Switch Connection From Fabric Page  ${s5_alias}
+	Reset Switch Connection From Fabric Page  SpineSwitch_0
+	Reset Switch Connection From Fabric Page  LeafSwitch_0
+	Reset Switch Connection From Fabric Page  LeafSwitch_1
+	Reset Switch Connection From Fabric Page  LeafSwitch_2
+	Reset Switch Connection From Fabric Page  SpineSwitch_1
 	
 
 T7.2 Split from leaf group from fabric page
-	Split From Leaf Group From Fabric Page  ${s1_alias}
+	Split From Leaf Group From Fabric Page  LeafSwitch_1
 	Sleep  10
-	Page Should Contain  ${s1_dpid}
+	Page Should Contain  ${s3_dpid}
 
 T7.3 Beacon switch from fabric page
-	Beacon Switch From Fabric Page  ${s1_alias}
-	Beacon Switch From Fabric Page  ${s2_alias}
-	Beacon Switch From Fabric Page  ${s3_alias}
-	Beacon Switch From Fabric Page  ${s4_alias}
-	Beacon Switch From Fabric Page  ${s5_alias}
+	Beacon Switch From Fabric Page  SpineSwitch_0
+	Beacon Switch From Fabric Page  LeafSwitch_0
+	Beacon Switch From Fabric Page  LeafSwitch_1
+	Beacon Switch From Fabric Page  LeafSwitch_2
+	Beacon Switch From Fabric Page  SpineSwitch_1
 
 T7.4 Shutdown and Start switch from fabric page
-	Shutdown Switch From Fabric Page  ${s1_alias}
-	Shutdown Switch From Fabric Page  ${s2_alias}
-	Shutdown Switch From Fabric Page  ${s3_alias}
-	Shutdown Switch From Fabric Page  ${s4_alias}
-	Shutdown Switch From Fabric Page  ${s5_alias}
+	Shutdown Switch From Fabric Page  SpineSwitch_0
+	Shutdown Switch From Fabric Page  LeafSwitch_0
+	Shutdown Switch From Fabric Page  LeafSwitch_1
+	Shutdown Switch From Fabric Page  LeafSwitch_2
+	Shutdown Switch From Fabric Page  SpineSwitch_1
 	Sleep  30
 	Verify Switch Fabric Connection State  suspended  ${s1_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
@@ -281,21 +285,21 @@ T7.4 Shutdown and Start switch from fabric page
 	Verify Switch Suspended Reason  Admin shutdown  ${s3_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s4_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s5_alias}
-	Start Switch From Fabric Page  ${s1_alias}
-	Start Switch From Fabric Page  ${s2_alias}
-	Start Switch From Fabric Page  ${s3_alias}
-	Start Switch From Fabric Page  ${s4_alias}
-	Start Switch From Fabric Page  ${s5_alias}
+	Start Switch From Fabric Page  SpineSwitch_0
+	Start Switch From Fabric Page  LeafSwitch_0
+	Start Switch From Fabric Page  LeafSwitch_1
+	Start Switch From Fabric Page  LeafSwitch_2
+	Start Switch From Fabric Page  SpineSwitch_1
 	Sleep  30
 	Verify All Switches In Provisioned Mode
-	
+
 T7.5 Clear switch configuration from fabric page
-	Clear Switch Configuration From Fabric Page  ${s1_alias}
-	Clear Switch Configuration From Fabric Page  ${s2_alias}
-	Clear Switch Configuration From Fabric Page  ${s3_alias}
-	Clear Switch Configuration From Fabric Page  ${s4_alias}
-	Clear Switch Configuration From Fabric Page  ${s5_alias}
-	Wait Until All Switches Disconnected
+	Clear Switch Configuration From Fabric Page  SpineSwitch_1
+	Clear Switch Configuration From Fabric Page  SpineSwitch_0
+	Clear Switch Configuration From Fabric Page  LeafSwitch_2
+	Clear Switch Configuration From Fabric Page  LeafSwitch_1
+	Clear Switch Configuration From Fabric Page  LeafSwitch_0
+	#Wait Until All Switches Disconnected
 
 
 *** Keyword ***
