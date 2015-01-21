@@ -450,6 +450,10 @@ class ControllerNode(Node):
     def monitor_reauth(self, state):
         return self.dev.monitor_reauth(state)
 
+    def close(self):
+        super(ControllerNode, self).close()
+        self.rest.delete_session_cookie()
+
 
 class MininetNode(Node):
     def __init__(self, name, ip, user, password, t,

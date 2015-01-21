@@ -62,10 +62,9 @@ class BsnRestClient(RestClient):
                                         self.platform)
 
     def request_session_cookie(self, url=None):
-        helpers.log("Request a new HTTP session cookies for REST access on"
+        helpers.log("Request a new HTTP session cookie for REST access on"
                     " '%s' (platform=%s)"
                     % (self.host, self.platform))
-
         if not url:
             if helpers.is_bvs(self.platform):
                 url = "/api/v1/auth/login"
@@ -73,6 +72,35 @@ class BsnRestClient(RestClient):
                   helpers.is_bigwire(self.platform)):
                 url = "/auth/login"
         return super(BsnRestClient, self).request_session_cookie(url)
+
+    def delete_session_cookie(self, url=None):
+        """
+        Delete the session cookie which was previously created using
+        request_session_cookie() - the "localhost" session cookie.
+        Note: We currently don't delete the session cookie which is implicitly
+              created by the CLI session.
+        """
+        if helpers.bigrobot_delete_session_cookies().lower() == 'false':
+            helpers.log("Env BIGROBOT_DELETE_SESSION_COOKIES is False. Don't delete session cookies.")
+            return None
+
+        if not helpers.is_bvs(self.platform):
+            helpers.log("HTTP session cookie deletion is only supported on BCF platform")
+            return None
+
+        helpers.log("Delete the HTTP session cookie on '%s' (platform=%s)"
+                    % (self.host, self.platform))
+        if not url:
+            if helpers.is_bvs(self.platform):
+                url = '/api/v1/data/controller/core/aaa/session[auth-token="%s"]' % self.get_session_cookie()
+            elif (helpers.is_bigtap(self.platform) or
+                  helpers.is_bigwire(self.platform)):
+                # !!! FIXME: Need to clear session-cookie for BigTap/BigWire
+                return None
+        return super(BsnRestClient, self).delete_session_cookie(url)
+
+    def get_session_cookie(self):
+        return super(BsnRestClient, self).get_session_cookie()
 
     def post(self, url, *args, **kwargs):
         url = self.format_url(url)
