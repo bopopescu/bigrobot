@@ -2240,4 +2240,14 @@ class BsnCommon(object):
             t.setup_ztn_phase2(node)
         return True
 
+    def pretty_log(self, *args, **kwargs):
+        """
+        To print out a Python data structure, consider using this keyword.
+        It formats the object to make it more readable. By default, it will
+        also convert the \n found in the string into newline.
 
+        Examples:
+        | pretty log | ${data} |  | Pretty print data structure, converting \n to newline |
+        | pretty log | ${data} | format_newline=${false} | Pretty print data structure, preserve \n in result |
+        """
+        helpers.pretty_log(*args, **kwargs)

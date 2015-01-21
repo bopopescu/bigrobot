@@ -163,7 +163,7 @@ T2.2.2. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  switch ${s3_alias}
 	Cli Run  master  mac ${s3_mac}
 	Cli Run  master  shutdown
-	Sleep  30
+	Sleep  45
 	Verify Switch Connection State  False  ${s3_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
 	Telnet Wait For Switch To Reload  s3
@@ -183,7 +183,7 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  switch ${s1_alias}
 	Cli Run  master  mac ${s1_mac}
 	Cli Run  master  fabric-role spine
-	Sleep  30
+	Sleep  45
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
 	Telnet Wait For Switch To Reload  s1
@@ -241,7 +241,7 @@ T2.2.6. Verify that switch is successfully provisioned and no flows for given le
 	Cli Run  master  mac ${s4_mac}
 	Cli Run  master  fabric-role leaf
 	Cli Run  master  shutdown
-	Sleep  30
+	Sleep  45
 	Verify Switch Connection State  False  ${s4_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s4_alias}
 	Telnet Wait For Switch To Reload  s4
@@ -259,7 +259,7 @@ T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not r
 	Cli Run  master  enable; config
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
-	Sleep  30
+	Sleep  45
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Verify ZTN Discovery Failed  s2

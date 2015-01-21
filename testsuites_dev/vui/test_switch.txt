@@ -7,6 +7,7 @@ Test Teardown   base test teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords/Controller.py
+Library         keywords/SwitchLight.py
 Library         keywords_dev/vui/MyTest.py
 
 
@@ -40,7 +41,7 @@ Test debug bash
     bash     s1   ls -la
 
 Test get node alias
-   #[Tags]  skipped
+   [Tags]  skipped
    ${alias}=       get node alias   s1
 
    ${if_bundle1}=  params   s1   key=interfaces
@@ -52,3 +53,6 @@ Test get node alias
    ${ixia_if}=     interfaces   s1  ixia_1
    log             IXIA interface: ${ixia_if}
 
+Test switch bash execute command
+    #[Tags]  skipped
+    bash execute command   s1   uname -a

@@ -524,7 +524,6 @@ class Test(object):
             if not self._setup_in_progress:
                 self.setup()
 
-        # helpers.prettify_log("_topology:", self._topology)
         if name and node:
             name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node

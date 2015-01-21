@@ -4,7 +4,7 @@ Suite Setup             rbac suite setup
 Suite Teardown          rbac suite teardown
 Test Setup              rbac test setup
 Test Teardown           rbac test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  Quanta-LY2  rbac
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  rbac
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

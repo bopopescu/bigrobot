@@ -27,7 +27,8 @@ Setup Three Rack Dual Leaf Topology
     Set host int variables
     sleep  5
     rest verify fabric switch all
-	rest verify fabric link 	
+	rest verify fabric link 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     [Tags]  Fabric  feature  IronHorse  

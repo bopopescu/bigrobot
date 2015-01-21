@@ -91,13 +91,12 @@ T5 test teardown
 	delete traffic
 	rest delete tenant  internal
 
-T5 test setup
-    fabric infra suite setup    
+T5 test setup    
 	base test setup
 
 T5 suite setup
 	base suite setup  
-    add fabric switch
+    fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
     Set host int variables

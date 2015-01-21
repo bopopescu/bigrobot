@@ -4,7 +4,7 @@ Suite Setup             iptos suite setup
 Suite Teardown          iptos suite teardown
 Test Setup              iptos test setup
 Test Teardown           iptos test teardown 
-Force Tags              BigTap  Blackbird  3.0.0  Quanta-LB9  match-conditions  iptos
+Force Tags              BigTap  blackbird-300  Quanta-LB9  match-conditions  iptos
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
