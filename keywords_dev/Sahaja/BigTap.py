@@ -15,7 +15,7 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
-import AppController as AppController
+import keywords.AppController as AppController
 import SwitchLight as SwitchLight
 import json
 import re
