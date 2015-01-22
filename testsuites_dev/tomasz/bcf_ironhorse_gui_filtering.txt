@@ -219,7 +219,7 @@ T2.3.6 Default Route
 	Verify Filtering Result  system  False
 T2.3.7 Applied Policy List
 	Open Advanced Query Builder  Tenants
-	Add Filter Query  Applied Policy List  starts with  my-
+	Add Filter Query  Applied Policy List  starts with  test1
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  tenant-a  True
 	Verify Filtering Result  tenant-b  False
@@ -228,7 +228,7 @@ T2.3.8 System Tenant Interface
 	Open Advanced Query Builder  Tenants
 	Add Filter Query  System Tenant Interface  True  ${EMPTY}
 	Close And Filter Advanced Query Builder
-	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-a  True
 	Verify Filtering Result  tenant-b  True
 	Verify Filtering Result  system  False
 T2.3.9 Total Tenant Interfaces
@@ -257,7 +257,7 @@ T2.3.12 Total Routes
 	Add Filter Query  Total Routes  equals  1
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  tenant-a  True
-	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  tenant-b  True
 	Verify Filtering Result  system  False
 T2.3.13 Total Next Hop Groups
 	Open Advanced Query Builder  Tenants
