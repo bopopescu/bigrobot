@@ -61,16 +61,22 @@ class RestClient(object):
     def request_session_cookie(self, url=None):
         if url:
             self.session_cookie_url = url
-        helpers.log("session_cookie_url: %s" % self.session_cookie_url)
+        helpers.log("session_cookie_url: '%s'" % self.session_cookie_url)
         authen = {"user":self.user, "password":self.password}
-        helpers.debug("session cookie authen info: %s" % authen)
+        helpers.debug("session cookie authen info: '%s'" % authen)
         result = self.post(self.session_cookie_url, authen)
         session_cookie = result['content']['session_cookie']
         self.set_session_cookie(session_cookie)
         return session_cookie
 
-    def set_session_cookie(self, session):
-        helpers.log("Saving session cookie %s" % session)
+    def delete_session_cookie(self, url=None):
+        result = self.delete(url)
+        self.set_session_cookie(session=None, quiet=True)
+        return result
+
+    def set_session_cookie(self, session, quiet=False):
+        if not quiet:
+            helpers.log("Saving session cookie '%s'" % session)
         self.session_cookie = session
         return self.session_cookie
 

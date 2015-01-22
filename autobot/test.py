@@ -940,7 +940,7 @@ class Test(object):
         self.node(node).close()
         c = self.node_connect(node_name, quiet=1, **kwargs)
         if helpers.is_controller(node):
-            c.rest.request_session_cookie()
+            self.setup_controller_http_session_cookie(node)
         return self.node(node)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
@@ -1351,9 +1351,12 @@ class Test(object):
         else:
             helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
+        helpers.log("I am here... status1=%s status2=%s" % (status1, status2))
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
             # properties.
+
+            helpers.log("Reconnecting nodes")
             self.node_reconnect(name)
         return True
 
