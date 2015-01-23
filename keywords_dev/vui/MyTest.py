@@ -1082,7 +1082,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         output = helpers.strip_cli_output(content)
         helpers.log("**** output: %s" % output)
         try:
-            n = t.node_reconnect(node)
+            n = t.node_reconnect(node, delete_session_cookie=False)
         except:
             helpers.log(helpers.exception_info())
         n.bash('uptime')
