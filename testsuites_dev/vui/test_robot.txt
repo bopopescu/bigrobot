@@ -327,10 +327,16 @@ Test BigRobot params argument
     ...              This is line 5 of test case description - image <img src="http://oxpedia.org/wiki/images/thumb/c/c6/Ad.jpg/800px-Ad.jpg" alt="arch diagram">
     ...
     ...              An image    [https://docs.python.org/2/_static/py.png|Python icon]
-    #[Tags]           skipped
+    [Tags]           skipped
     #${val}=         params    common.my_image
     #print           Value = ${val}
     test common params
+
+
+Test evaluation
+    ${status}        set variable    10
+    ${status}        evaluate    ${status} + 1
+    log              new status = ${status}
 
 
 * Keywords
