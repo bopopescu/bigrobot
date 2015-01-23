@@ -886,7 +886,7 @@ class Test(object):
                            br_utils.end_of_output_marker()))
         return n
 
-    def node_disconnect(self, node=None):
+    def node_disconnect(self, node=None, delete_session_cookie=True):
         """
         Disconnect the node's SSH/Telnet sessions.
         If node name is not specified, disconnect all the nodes. If node name
@@ -904,10 +904,13 @@ class Test(object):
             for _, handle in self.topology().items():
                 node_handles.append(handle)
         for h in node_handles:
-            h.close()
+            if helpers.is_controller(h.name()):
+                h.close(delete_session_cookie=delete_session_cookie)
+            else:
+                h.close()
             del self._topology[h.name()]
 
-    def node_reconnect(self, node, **kwargs):
+    def node_reconnect(self, node, delete_session_cookie=True, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
         if helpers.is_controller(node):
@@ -937,7 +940,12 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        self.node(node_name).close()
+
+        if helpers.is_controller(node_name):
+            self.node(node_name).close(delete_session_cookie=delete_session_cookie)
+        else:
+            self.node(node_name).close()
+
         c = self.node_connect(node_name, quiet=1, **kwargs)
         if helpers.is_controller(node_name):
             helpers.log("Create HTTP session cookie for '%s'" % node_name)
