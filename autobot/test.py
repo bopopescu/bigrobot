@@ -937,11 +937,12 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        self.node(node).close()
+        self.node(node_name).close()
         c = self.node_connect(node_name, quiet=1, **kwargs)
-        if helpers.is_controller(node):
-            self.setup_controller_http_session_cookie(node)
-        return self.node(node)
+        if helpers.is_controller(node_name):
+            helpers.log("Create HTTP session cookie for '%s'" % node_name)
+            self.setup_controller_http_session_cookie(node_name)
+        return self.node(node_name)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
         """
