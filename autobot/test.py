@@ -942,7 +942,7 @@ class Test(object):
         if helpers.is_controller(node_name):
             helpers.log("Create HTTP session cookie for '%s'" % node_name)
             self.setup_controller_http_session_cookie(node_name)
-        return self.node(node_name)
+        return self.node(node)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
         """
