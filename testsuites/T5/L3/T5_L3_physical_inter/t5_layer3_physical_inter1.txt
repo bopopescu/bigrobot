@@ -802,7 +802,7 @@ L3 inter tenant host moved
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s3                              ofad                    timeout=60
+    BASH restart process                        s3                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s3                      ofad
     Should Contain                              ${value}                        is started
@@ -958,7 +958,7 @@ Restart ofad on leaf switch
     start traffic                               ${stream1}
     sleep                                       5
     verify traffic rate                         tx_rate                         rx_rate                 a                       c
-    BASH restart process                        s3                              ofad                    timeout=60
+    BASH restart process                        s3                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s3                      ofad
     Should Contain                              ${value}                        is started
