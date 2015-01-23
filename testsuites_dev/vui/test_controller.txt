@@ -209,7 +209,7 @@ Test controller console
     test controller console      c1
 
 Test node reconnect
-    [Tags]  skipped
+    #[Tags]  skipped
     test node reconnect   c1
 
 Test reauth timeout
@@ -324,7 +324,7 @@ Test common Params
     #test common params
 
 Test run_cmd
-    #[Tags]  skipped
+    [Tags]  skipped
     ${out} =        run cmd   ls -la /etc/
     pretty log      ${out}   format_newline=${true}
 

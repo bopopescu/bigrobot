@@ -3207,7 +3207,7 @@ class BigTap(object):
                 cli_input_2 = "no associate user " + str(username)
                 c.config(cli_input_2)
             except:
-                helpers.test_log(c.rest.error())
+                helpers.test_log(helpers.exception_info())
                 return False
             else:
                 return True
