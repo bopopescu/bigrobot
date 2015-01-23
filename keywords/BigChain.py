@@ -497,7 +497,6 @@ class BigChain(object):
                         return False
                 return True
 
-
     def rest_verify_bigchain_chain_policy(self, node, chain_name=None, endpoint1=None, endpoint2=None):
         '''
             Objective:
@@ -781,6 +780,65 @@ class BigChain(object):
                         return False
                     else:
                         return True
+
+    def rest_verify_bigchain_chain_span_service_connection(self, chain_name=None, chain_span_service_name=None, instance=1, endpoint1=False, endpoint2=False):
+        '''
+            Execute CLI command "show bigchain chain <chain_name> span-service" and verify span service is linked with chain
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            helpers.test_log("Could not execute command")
+            return False
+        else:
+            if (chain_name is None) or (chain_span_service_name is None):
+                helpers.test_log("Cannot execute command if chain_span_service_name and chain_span_service_interface are not provided ")
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/chain[name="{}"]/endpoint1-span'.format(str(chain_name))
+                    c.rest.get(url)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    if (bool(content[0]) is False) and (endpoint1 is False):
+                        helpers.test_log("CLI correctly returns empty dictionary when endpoint1-span is not configured connected to endpoint1")
+                    elif endpoint1 is True:
+                        if int(content[0]['instance']) == int(instance):
+                            helpers.test_log("CLI corretcly reports instance ID for span-service connected to endpoint1")
+                        else:
+                            helpers.test_log("CLI does not corretcly report instance ID for span-service connected to endpoint1")
+                            return False
+                        if str(content[0]['instance']) == str(chain_span_service_name):
+                            helpers.test_log("CLI corretcly reports span-service name connected to endpoint1")
+                        else:
+                            helpers.test_log("CLI does not corretcly report span-service name connected to endpoint1")
+                            return False
+                try:
+                    url = '/api/v1/data/controller/applications/bigchain/chain[name="{}"]/endpoint2-span'.format(str(chain_name))
+                    c.rest.get(url)
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    if (bool(content[0]) is False) and (endpoint2 is False):
+                        helpers.test_log("CLI correctly returns empty dictionary when endpoint2-span is not configured")
+                    elif endpoint2 is True:
+                        if int(content[0]['instance']) == int(instance):
+                            helpers.test_log("CLI corretcly reports instance ID for span-service connected to endpoint2")
+                        else:
+                            helpers.test_log("CLI does not corretcly report instance ID for span-service connected to endpoint2")
+                            return False
+                        if str(content[0]['instance']) == str(chain_span_service_name):
+                            helpers.test_log("CLI corretcly reports span-service name connected to endpoint2")
+                        else:
+                            helpers.test_log("CLI does not corretcly report span-service name connected to endpoint2")
+                            return False
+                return True
 
 ###################################################
 ##### CONFIG COMMANDS
