@@ -258,8 +258,11 @@ class RestClient(object):
                 if int(result['status_code']) == 401:
                     if self.session_cookie_loop > 5:
                         helpers.test_error("Detected session cookie loop.")
-                    elif re.match(r'.*session found for cookie.*', result['description'], re.I):
-                        # Error: "Authorization failed: No session found for cookie", retry
+                    elif ('description' in result['content'] and
+                          re.match(r'.*cookie.*', result['content']['description'], re.I)):
+                        # Retry if:
+                        #   "Authorization failed: No session found for cookie"
+                        #   "Authorization failed: No session cookie provided"
                         self.session_cookie_loop += 1
                         helpers.log("It appears the session cookie has expired."
                                     "  Requesting new session cookie.")
