@@ -452,7 +452,11 @@ class ControllerNode(Node):
 
     def close(self):
         super(ControllerNode, self).close()
-        self.rest.delete_session_cookie()
+        try:
+            self.rest.delete_session_cookie()
+        except:
+            helpers.log("Failed to delete REST session cookie for node '%s'. Ignore error."
+                        % self.name())
 
 
 class MininetNode(Node):
