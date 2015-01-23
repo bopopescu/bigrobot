@@ -224,7 +224,8 @@ Randomize ZTN Configuration
 	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random_1}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random_1}${threshold_random_2}
 	Cli Run  master  snmp-server switch trap fan-status 1${threshold_random_1}${threshold_random_2}
-	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}${threshold_random_2}
+	# 1 in the middle ${}1${} below to avoid numbers <10
+	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}1${threshold_random_2}
 	Cli Run  master  snmp-server switch trap link-status ${threshold_random_1}${threshold_random_2}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
