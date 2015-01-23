@@ -1374,9 +1374,9 @@ test teardown topology
     initialize host
 #    Stop Floodlight Monitor    
     BASH ifdown intf                                h3                          bond0
-    BASH restart networking service                 h1                          timeout=60
-    BASH restart networking service                 h3                          timeout=60
-    BASH restart networking service                 h6                          timeout=60
+    BASH restart networking service                 h1                          timeout=190
+    BASH restart networking service                 h3                          timeout=190
+    BASH restart networking service                 h6                          timeout=190
     
 
 T5 base suite setup
