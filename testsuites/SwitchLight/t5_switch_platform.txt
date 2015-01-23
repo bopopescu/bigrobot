@@ -186,10 +186,10 @@ Shutdown and no shut 10G interface on switch and verify interface state is down 
 
 Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface1g}
-    Sleep  15
+    Sleep  60
     verify admin interface state  s1  ${interface1g}  True  admin down
     unshut interface  s1  ${interface1g}
-    Sleep  15
+    Sleep  60
     verify interface state  s1  ${interface1g}  up
     [Tags]  switch-platform  interface  feature  
 
