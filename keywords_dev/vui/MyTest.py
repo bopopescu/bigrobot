@@ -1081,7 +1081,10 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         content = n.cli('show user')['content']
         output = helpers.strip_cli_output(content)
         helpers.log("**** output: %s" % output)
-        n = t.node_reconnect(node)
+        try:
+            n = t.node_reconnect(node)
+        except:
+            helpers.log(helpers.exception_info())
         n.bash('uptime')
         n2 = t.node_spawn(ip=n.ip())
         n2.cli('show session')
