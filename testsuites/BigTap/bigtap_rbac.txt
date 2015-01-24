@@ -247,6 +247,14 @@ rbac suite setup
     sleep  15
 
 rbac test setup
+    ${config1}=  cli enable interface  s1  ${filter_1}
+    Should be true  ${config1}
+    ${config2}=  cli enable interface  s1  ${delivery_1}
+    Should be true  ${config2}
+    ${config3}=  cli enable interface  s2  ${filter_2}
+    Should be true  ${config3}
+    ${config4}=  cli enable interface  s2  ${delivery_2}
+    Should be true  ${config4}
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result}=  start syslog monitor
