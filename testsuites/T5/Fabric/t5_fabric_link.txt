@@ -99,7 +99,7 @@ delete one of the leaf in Dual Leaf setup and verify the link
     sleep  125
     rest add fabric role  leaf0-a  leaf
     rest add leaf group  leaf0-a  rack0
-    sleep  125
+    Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
     rest verify fabric link
     
 Reboot spine switch spine1 and verify the fabric link
@@ -148,13 +148,13 @@ Delete and Readd the Rack2
 	rest add dpid  leaf2-a  ${leaf2a_dpid}
 	rest add fabric role  leaf2-a  leaf
 	rest add leaf group  leaf2-a  rack2
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf2-a
 	rest verify fabric link
 	rest add switch  leaf2-b
 	rest add dpid  leaf2-b  ${leaf2b_dpid}
 	rest add fabric role  leaf2-b  leaf
 	rest add leaf group  leaf2-b  rack2
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf2-b
 	rest verify fabric link
 
 add portgroup lacp to 2 different rack
@@ -165,11 +165,12 @@ add portgroup lacp to 2 different rack
 	rest add dpid  leaf0-a  ${leaf0a_dpid}
 	rest add fabric role  leaf0-a  leaf
 	rest add leaf group  leaf0-a  rack5
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack6
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-b
 	rest add portgroup  p1
 	rest add portgroup lacp  p1
 	rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
