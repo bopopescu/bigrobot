@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse   
+   [Tags]  L2  feature  IronHorse   daily-sanity
    base suite setup
    fabric infra suite setup
    Set swith int variables
@@ -31,7 +31,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  L2  feature  IronHorse    
+	[Tags]  L2  feature  IronHorse    daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -92,7 +92,7 @@ tagged/untagged packet move between rack
   
 
 Mac move between the vns same tenant
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature  IronHorse  daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add vns  t1  v2

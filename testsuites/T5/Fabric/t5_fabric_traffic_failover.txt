@@ -19,7 +19,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse   daily-sanity
 	base suite setup     
     fabric infra suite setup
     Set swith int variables
@@ -31,7 +31,7 @@ Setup Three Rack Dual Leaf Topology
 	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  Fabric  feature  IronHorse  
+    [Tags]  Fabric  feature  IronHorse   daily-sanity
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -85,7 +85,7 @@ Spine Link Failover/back test from leaf0-b tagged packet
     rest delete tenant  t2    
 
 Peer link failover between leaf1a to leaf1b
-	[Tags]  Fabric  feature  IronHorse    
+	[Tags]  Fabric  feature  IronHorse    daily-sanity
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
@@ -210,7 +210,7 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest delete portgroup  p4  
 
 change portgroup from lacp to static and verify the forwarding
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse   daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 

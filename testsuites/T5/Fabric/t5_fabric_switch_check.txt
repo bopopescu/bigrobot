@@ -22,7 +22,7 @@ Resource	    testsuites/T5/t5_physical_variables.txt
 * Test Case   
 
 Add Fabric Switch Spine and Verify the Status 
-  [Tags]  Fabric  feature  IronHorse
+  [Tags]  Fabric  feature  IronHorse  daily-sanity
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   add switch  spine0 
@@ -32,7 +32,7 @@ Add Fabric Switch Spine and Verify the Status
   rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
-  [Tags]  Fabric  feature  IronHorse   
+  [Tags]  Fabric  feature  IronHorse   daily-sanity
   add switch  leaf0-a
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
@@ -78,7 +78,7 @@ add 2 different leaf groups with peer link added
    	rest verify forwarding port table  leaf0-a  
 
 source mac check verification on spine and leaf switches
-	[Tags]  Fabric  feature  IronHorse    
+	[Tags]  Fabric  feature  IronHorse   daily-sanity 
 	add switch  spine0  
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
