@@ -47,23 +47,23 @@ TC001: Verify filter interfaces can be added to a group via rest
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['name']}  ${filter_interface_group_name_1}    
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  sanity  feature
     
 TC002: Verify a filter interface can be deleted from a filter interface group via rest
     ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['filter-group'][0]['name']}     
     [Tags]  sanity  feature
     
 TC003: Verify a filter interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
     Should be true  ${return_value}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Variable should not exist   ${filter_dictionary[0]['name']}    
     [Tags]  sanity  feature
     
@@ -72,21 +72,21 @@ TC004: Verify delivery interfaces can be added to a group via rest
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
     [Tags]  sanity  feature
     
 TC005: Verify a delivery interface can be deleted from a delivery interface group via rest
     ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['delivery-group'][0]['name']}     
     [Tags]  sanity  feature
     
 TC006: Verify a delivery interface-group can be deleted via rest
     ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
     Should be true  ${return_value}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Variable should not exist   ${delivery_dictionary[0]['name']}  
     [Tags]  sanity  feature
 
@@ -97,9 +97,9 @@ TC007: Verify multiple interfaces can be added to filter-interface-group
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
     Should be true  ${return_value}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][1]['name']}  ${switch1_filter_alias_3}    
     [Tags]  sanity  feature
 
@@ -110,9 +110,9 @@ TC008: Verify multiple interfaces can be added to delivery-interface-group
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
     Should be true  ${return_value}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][1]['name']}  ${switch1_delivery_alias_3}
     [Tags]  sanity  feature
 
@@ -204,13 +204,13 @@ TC016: Verify same filter interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_2}  filter  ${switch1_filter_alias_2}    
     Should be true  ${return_value}
     Sleep  15
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['name']}  ${filter_interface_group_name_1}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[1]['name']}  ${filter_interface_group_name_2}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[1]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
     [Tags]  full  feature
 
@@ -222,13 +222,13 @@ TC017: Verify same delivery interface can be added to a two groups
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_2}  delivery  ${switch1_delivery_alias_2}    
     Should be true  ${return_value}
     Sleep  15
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['name']}  ${delivery_interface_group_name_1}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[1]['name']}  ${delivery_interface_group_name_2}    
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[1]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}    
     [Tags]  full  feature
 
@@ -1011,9 +1011,9 @@ verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
     ${return_value}=  rest add interface group  ${group_name_delivery}  delivery  
     Should be true  ${return_value}
     Sleep  3
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${filter_dictionary[0]['name']}  ${group_name_filter}    
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${delivery_dictionary[0]['name']}  ${group_name_delivery}
     ${return_value}=  rest delete interface group  ${group_name_filter}  filter   
     Should be true  ${return_value}
@@ -1022,15 +1022,15 @@ verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
     Sleep  3            
 
 verify filter interface group name  [Arguments]  ${interface_group_name} 
-    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group?config=true
     Should be equal as strings   ${group_config_dictionary[0]['name']}  ${interface_group_name}    
-    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group[name="${interface_group_name}"]/info
+    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group[name="${interface_group_name}"]/info
     Should be equal as strings   ${group_exec_dictionary[0]['filter-interface-group-name']}  ${interface_group_name}    
 
 verify delivery interface group name  [Arguments]  ${interface_group_name} 
-    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    ${group_config_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group?config=true
     Should be equal as strings   ${group_config_dictionary[0]['name']}  ${interface_group_name}    
-    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group[name="${interface_group_name}"]/info
+    ${group_exec_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group[name="${interface_group_name}"]/info
     Should be equal as strings   ${group_exec_dictionary[0]['delivery-interface-group-name']}  ${interface_group_name}   
 
 add interface to interface group  [Arguments]   ${interface_group_name}   ${interface_group_type}   ${interface_alias}
@@ -1045,14 +1045,14 @@ add interface to interface group  [Arguments]   ${interface_group_name}   ${inte
     Sleep  1
 
 verify filter interface name in interface group  [Arguments]  ${interface_group_name}  ${interface_name}  ${interface_alias} 
-    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group[name="${interface_group_name}"]/info
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/filter-interface-group[name="${interface_group_name}"]/info
     Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['filter-interface-name']}  ${interface_alias}    
     Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['interface']}  ${interface_name}    
     Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['state']}  up    
     Should be equal as strings   ${filter_dictionary[0]['filter-interface'][0]['direction']}  rx    
 
 verify delivery interface name in interface group  [Arguments]  ${interface_group_name}  ${interface_name}  ${interface_alias} 
-    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group[name="${interface_group_name}"]/info
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/delivery-interface-group[name="${interface_group_name}"]/info
     Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['delivery-interface-name']}  ${interface_alias}    
     Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['interface']}  ${interface_name}    
     Should be equal as strings   ${delivery_dictionary[0]['delivery-interface'][0]['state']}  up    
