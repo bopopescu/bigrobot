@@ -951,7 +951,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_add_interface_group(self, group_name, group_type, user="admin", password="adminadmin"):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
@@ -973,10 +974,13 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]'.format(str(group_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]'.format(str(group_name))
                 else:
+                    helpers.test_log("Invalid Group Type was assigned to variable group_type")
                     return False
                 if "admin" not in user:
                     c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
@@ -990,7 +994,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_delete_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_delete_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_delete_interface_group(self, group_name, group_type, user="admin", password="adminadmin"):
         '''
             Objective
             - Delete an existing filter-interface-group or delivery-interface-group
@@ -1012,9 +1017,11 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]'.format(str(group_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]'.format(str(group_name))
                 else:
                     return False
                 if "admin" not in user:
@@ -1029,7 +1036,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, user="admin", password="adminadmin"):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
@@ -1052,9 +1060,11 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]/filter-group[name="{}"]'.format(str(group_name), str(interface_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]/delivery-group[name="{}"]'.format(str(group_name), str(interface_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
                 else:
                     return False
                 if "admin" not in user:
@@ -1069,7 +1079,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, user="admin", password="adminadmin"):
         '''
             Objective
             - Delete a interface from an interface group
@@ -1092,9 +1103,11 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]/filter-group[name="{}"]'.format(str(group_name), str(interface_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]/delivery-group[name="{}"]'.format(str(group_name), str(interface_name))
+                    # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
                 else:
                     return False
                 if "admin" not in user:
