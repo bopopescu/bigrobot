@@ -3,7 +3,7 @@ Documentation   	Test suite with tests to match TCP Flags. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  corsair  gui  match-conditions  tcp-flags
+Force Tags      	bigtap  corsair  gui  match-conditions  tcp-flags  match-conditions
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
