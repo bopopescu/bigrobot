@@ -1,0 +1,276 @@
+* Settings
+Documentation   	Test suite to do the Deep Packet Matching. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags      	bigtap  corsair  gui
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		SeleniumLibrary
+Library        		keywords/BsnSelenium.py
+Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+Library       		String
+Library         	keywords/BsnCommon.py
+Library         	keywords_dev/vui/MyTest.py
+Library         	keywords/Ixia.py
+*Test Case 
+
+
+
+TC Set up
+		#Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1				filter			ixia-2-9
+		#Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-intern1		delivery		ixia-2-15	
+		#Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 				delivery		ixia-4-8
+		#Configure Big Tap Policy					 					policy-stats		admin-view				Forward			IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	${EMPTY}	
+		${stream}=  L3 add  name=policy-stats  flow=a->b  frame_cnt=1000
+    	...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    	...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    	clear stats    
+    	start traffic  ${stream}
+ 		Sleep  10
+ 
+### Basic Configuration Verification
+TC1 Go To Big Tap Page
+    Go To Big Tap Page
+TC1.1 Verify Filter Interface bandwidth on Big Tap Page                 
+    Verify Bandwidth on Big Tap page							Filter		40
+TC1.2 Verify Delivery Interface bandwidth on Big Tap Page
+	Verify Bandwidth on Big Tap page							Delivery	41
+TC1.3 Verify Service Interface bandwidth on Big Tap Page
+	Verify Bandwidth on Big Tap page							Service		0
+TC1.4 Verify number of Filter Interfaces on Big Tap Page
+	Verify Number of Filter Interfaces								
+TC1.5 Verify number of Delivery Interfaces on Big Tap Page
+	Verify Number of Delivery Interfaces						
+TC1.6 Verify number of Service Interfaces on Big Tap Page 
+	Verify Number of Service Interfaces							
+#TC1.7 Verify number of Core Interfaces on Big Tap Page  
+#	Verify Number of BigTap Interfaces							BigTap		Core
+TC1.8 Verify number of Filter Switches on Big Tap Page
+	Verify Number of Switches									Filter		1
+TC1.9 Verify number of Delivery Switches on Big Tap Page
+	Verify Number of Switches									Delivery	2
+TC1.10 Verify number of Service Switches on Big Tap Page 
+	Verify Number of Switches									Service		0
+TC1.11 Verify total number of switches on Big Tap Page
+	Verify Number of Switches									Total		5
+TC1.12 Verify total number of policies on Big Tap Page
+	Verify Number of Big Tap Policies							
+TC1.13 Verify refresh button for Info on Big Tap Page works
+	Verify Refresh Button on BigTap page						Info
+TC1.14 Verify refresh button for Interface Statistics on Big Tap Page works
+	Verify Refresh Button on BigTap page						Interface Statistics
+TC1.15 Verify refresh button on top for Big Tap Policy Page works
+	Verify Refresh Button on BigTap Policies page				Main					${EMPTY}
+TC1.16 Verify refresh button for Operational State on Big Tap Policy Page works
+	Verify Refresh Button on BigTap Policies page				Operational State		policy-stats
+TC1.17 Verify total Ingress traffic on Big Tap Page
+	Verify Total Traffic										BigTap		Ingress		0
+TC1.18 Verify total Delivery Traffic on Big Tap Page
+	Verify Total Traffic										BigTap		Delivery	0
+TC1.19 Verify total Filter Capacity on Big Tap Policy Page
+	Verify Interface Bandwidth on Big Tap Policy Page			policy-stats		Filter		40
+TC1.20 Verify total Delivery Capacity on Big Tap Policy Page
+	Verify Interface Bandwidth on Big Tap Policy Page			policy-stats		Delivery	1
+	
+	    
+##	Normal Stats 1G Filter 1G Delivery No drops											policy-name		interface-name		role		stats			value																					
+TC2.1 Verify packet count for filter interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-9			Filter		packet-count	1000			
+TC2.2 Verify packet count for delivery interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-15			Delivery	packet-count	1000		
+TC2.3 Verify packet count for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet5		Core		packet-count	1000	
+TC2.4 Verify packet count for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-intern1	ethernet5		Core		packet-count	1000
+TC2.5 Verify packet count for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-1			ethernet6		Core		packet-count	1000
+TC2.6 Verify packet count for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet6		Core		packet-count	1000
+TC2.7 Verify packet count for service interface on policy page.				
+	Verify Stats on Big Tap Policy Page													policy-stats	${EMPTY}			Service		packet-count	${EMPTY}										
+TC2.8 Verify packet rate for filter interface on policy page.				
+	Verify Stats on Big Tap Policy Page											 		policy-stats	ixia-2-9			Filter		packet-rate		0
+TC2.9 Verify packet rate for delivery interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-15			Delivery	packet-rate		0		
+TC2.10 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet5		Core		packet-rate		0	
+TC2.11 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-intern1	ethernet5		Core		packet-rate		0	
+TC2.12 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-1			ethernet6		Core		packet-rate		0	
+TC2.13 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet6		Core		packet-rate		0	
+TC2.14 Verify packet rate for service interface on policy page.				
+	Verify Stats on Big Tap Policy Page													policy-stats	${EMPTY}			Service		packet-rate		${EMPTY}
+TC2.15 Verify bit rate for filter interface on policy page.				
+	Verify Stats on Big Tap Policy Page											 		policy-stats	ixia-2-9			Filter		bit-rate		0
+TC2.16 Verify bit rate for delivery interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-15			Delivery	bit-rate		0		
+TC2.17 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet5		Core		bit-rate	0	
+TC2.18 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-intern1	ethernet5		Core		bit-rate	0	
+TC2.19 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-1			ethernet6		Core		bit-rate	0	
+TC2.20 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet6		Core		bit-rate	0	
+TC2.21 Verify bit rate for service interface on policy page.				
+	Verify Stats on Big Tap Policy Page													policy-stats	${EMPTY}			Service		bit-rate		${EMPTY}
+
+#TC2.7 Verify packet count under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-as5710-1		policy			Flow			match		packet-count	1000										
+#TC2.8 Verify packet count (IPv6) under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-as5710-1		policy			Flow			IPv6		packet-count	0										
+#TC2.9 Verify packet count under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-1			policy			Flow			match		packet-count	1000
+#TC2.7 Verify packet count (IPv6) under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-1			policy			Flow			IPv6		packet-count	0										
+#TC2.8 Verify packet count under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-intern1	policy			Flow			match		packet-count	1000										
+#TC2.9 Verify packet count (IPv6) under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-intern1	policy			Flow			IPv6		packet-count	0										
+TC2.22 Verify packet count for filter interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												ixia-2-9		Filter				packet-count	1000	
+TC2.23 Verify packet count for delivery interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page									 			ixia-2-15		Delivery			packet-count	1000			
+TC2.24 Verify packet count for service interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page									 			${EMPTY}		Service				packet-count	0	
+TC2.25 Verify dropped packet count tx for filter interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packets-dropped-tx		0
+TC2.26 Verify dropped packet count rx for filter interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-9		Filter				packets-dropped-rx		0
+TC2.27 Verify dropped packet count tx for delivery interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-tx		0			
+TC2.28 Verify dropped packet count rx for delivery interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-rx		0	
+TC2.29 Verify packet count for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			policy-stats	ixia-2-9			Interfaces		Filter		1000
+TC2.30 Verify packet count for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			policy-stats	ixia-2-15			Interfaces		Delivery	1000		
+TC2.31 Verify packet count for service interface on Big Tap page.				
+	Verify Policy Packet Count												 			policy-stats	${EMPTY}			Interfaces		Service		0
+TC2.32 Verify dropped packet count for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			policy-stats	ixia-2-9			Interfaces		Filter		0
+TC2.33 Verify dropped packet count for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			policy-stats	ixia-2-15			Interfaces		Delivery	0		
+TC2.34 Verify Clear stats button work on Big Tap Interfaces page
+	Verify Clear Stats Button															Interfaces
+TC2.35 Verify Clear stats button work on Big Tap Policies page
+	Verify Clear Stats Button															Policy
+	stop traffic
+		
+##Normal Stats 1G Filter 1G Delivery No drops											policy-name		interface-name		page			role		packet-rate																					
+
+TC3   ${stream}=  L3 add  name=policy-stats  flow=a->b  frame_rate=10000
+    	...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    	...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    	clear stats    
+    	start traffic  ${stream}
+    	sleep   30
+    	
+TC3.1 Verify packet rate for filter interface on policy page.				
+	Verify Stats on Big Tap Policy Page											 		policy-stats	ixia-2-9			Filter		packet-rate		100000
+TC3.2 Verify packet rate for delivery interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-15			Delivery	packet-rate		100000	
+TC3.3 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet5		Core		packet-rate		100000	
+TC3.4 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-intern1	ethernet5		Core		packet-rate		100000	
+TC3.5 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-1			ethernet6		Core		packet-rate		100000	
+TC3.6 Verify packet rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet6		Core		packet-rate		100000	
+TC3.7 Verify packet rate for service interface on policy page.				
+	Verify Stats on Big Tap Policy Page													policy-stats	${EMPTY}			Service		1000	
+TC3.8 Verify bit rate for filter interface on policy page.				
+	Verify Stats on Big Tap Policy Page											 		policy-stats	ixia-2-9			Filter		bit-rate		100000
+TC3.9 Verify bit rate for delivery interface on policy page.				
+	Verify Stats on Big Tap Policy Page										 			policy-stats	ixia-2-15			Delivery	bit-rate		100000	
+TC3.10 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet5		Core		bit-rate		100000	
+TC3.11 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-intern1	ethernet5		Core		bit-rate		100000	
+TC3.12 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-rlb9-1			ethernet6		Core		bit-rate		100000	
+TC3.13 Verify bit rate for core interface on policy page.				
+	Verify Policy Stats for Core Interface												policy-stats	app-as5710-1		ethernet6		Core		bit-rate		100000	
+TC3.14 Verify bit rate for service interface on policy page.				
+	Verify Stats on Big Tap Policy Page													policy-stats	${EMPTY}			Service		1000										
+									
+#TC3.7 Verify packet rate under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-1			policy			core		1000										
+#TC3.8 Verify packet rate under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-1			policy			core		1000										
+#TC3.9 Verify packet rate under policy flow info.				
+#	Verify Policy Packet Count															policy-stats	app-rlb9-1			policy			core		1000										
+TC3.15 Verify packet rate for filter interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												ixia-2-9		Filter				packet-rate		100000
+TC3.16 Verify packet rate for delivery interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												ixia-2-15		Delivery			packet-rate		100000		
+TC3.17 Verify packet rate for service interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												${EMPTY}		ixia-2-15			Service			100000	
+TC3.18 Verify bit rate for filter interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page									 			ixia-2-9		Filter				bit-rate		100000
+TC3.19 Verify bit rate for delivery interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												ixia-2-15		Delivery			bit-rate		100000			
+TC3.20 Verify bit rate for service interface on Big Tap Interface page.				
+	Verify Stats on Big Tap Interfaces Page												${EMPTY}		Service				bit-rate		100000	
+TC2.21 Verify dropped packet rate tx for filter interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-tx		0
+TC2.22 Verify dropped packet rate rx for filter interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-rx		0		
+TC2.23 Verify dropped packet rate tx for delivery interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx		0	
+TC2.24 Verify dropped packet rate rx for delivery interface on Big Tap Interface page.				
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx		0	
+TC3.25 Verify packet rate for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-9		Filter				packet-rate		100000		
+TC3.26 Verify packet rate for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-15		Delivery			packet-rate		100000		
+TC3.27 Verify bit rate for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-9		Filter				packet-rate		100000		
+TC3.28 Verify bit rate for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-15		Delivery			bit-rate		100000		
+TC2.29 Verify dropped packet rate tx for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-9		Filter				packet-dropp-rate-tx		0
+TC2.30 Verify dropped packet rate rx for filter interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-9		Filter				packet-dropp-rate-rx		0		
+TC2.31 Verify dropped packet rate tx for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-15		Delivery			packet-dropp-rate-tx		0		
+TC2.32 Verify dropped packet rate rx for delivery interface on Big Tap page.				
+	Verify Policy Packet Count												 			ixia-2-15		Delivery			packet-dropp-rate-tx		0				
+
+	stop traffic  ${stream}
+	clear stats
+	
+	
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    #Delete All Big Tap Resources
+	#Set Switching Mode		L3-L4 Offset Match
+	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+ 	#Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+ 	
+ 	#Configure Switch Alias	00:00:08:9e:01:b3:0c:0c			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:f8:6b:8b			app-rly2-1
+ 	#Configure Switch Alias	00:00:08:9e:01:62:d1:b1			app-rlb9-intern1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:b2:df:96			app-rly2-intern1
+ 	#Configure Switch Alias	00:00:70:72:cf:ab:36:d8			app-as5710-1		 							
+ 	
+config suite teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown
+
