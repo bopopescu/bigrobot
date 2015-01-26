@@ -11,388 +11,400 @@ Library          keywords/BsnCommon.py
 
 * Test Case 
 
-################    Functional      ################
+################    1. Functional      ################
 
 ###  vSwitch related test cases
 
-Add vSwitch
+TC01 Add vSwitch
   [Tags]        feature     vmware
 
-Add single uplink
+TC02 Add single uplink
   [Tags]        feature     vmware
   
-Enable CDP with single uplink
+TC03 Enable CDP with single uplink
   [Tags]        feature     vmware
 
-Add multiple uplinks
+TC04 Add multiple uplinks
   [Tags]        feature     vmware
 
-Enable CDP with multiple uplinks
+TC05 Enable CDP with multiple uplinks
   [Tags]        feature     vmware
 
-Add a std port group
+TC06 Add a std port group
   [Tags]        feature     vmware
 
-Add multiple std port groups
+TC07 Add multiple std port groups
   [Tags]        feature     vmware
 
-Add a VLAN - VST/EST/VGT Modes
+TC08 Add a VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Change VLAN - VST/EST/VGT Modes
+TC09 Change VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Delete VLAN - VST/EST/VGT Modes
+TC10 Delete VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Flap Single uplink member port and veriy traffic failover
+TC11 Flap uplink member port and veriy traffic failover/failback
   [Tags]        feature     vmware
 
-Delete an uplink
+TC12 Delete an uplink
   [Tags]        feature     vmware
 
-Delete all uplinks
+TC13 Delete all uplinks
   [Tags]        feature     vmware
 
-Disable and reenable CDP
+TC14 Disable and reenable CDP
   [Tags]        feature     vmware
 
-Disable CDP
+TC15 Disable CDP
   [Tags]        feature     vmware
 
-Delete std port group
+TC16 Delete std port group
   [Tags]        feature     vmware
 
-Delete multiple std port groups
+TC17 Delete multiple std port groups
   [Tags]        feature     vmware
 
-Delete vSwitch
+TC18 Delete vSwitch
   [Tags]        feature     vmware
 
 
 ### dvSwitch related test cases
 
-Add dvSwitch
+TC19 Add dvSwitch
   [Tags]        feature     vmware
 
-Add single uplink
+TC20 Add single uplink
   [Tags]        feature     vmware
   
-Enable CDP with single uplink
+TC21 Enable CDP with single uplink
   [Tags]        feature     vmware
 
-Enable LLDP with single uplink
+TC22 Enable LLDP with single uplink
   [Tags]        feature     vmware
 
-Add multiple uplinks
+TC23 Add multiple uplinks
   [Tags]        feature     vmware
 
-Enable CDP with multiple uplinks
+TC24 Enable CDP with multiple uplinks
   [Tags]        feature     vmware
 
-Enable LLDP with multiple uplinks
+TC25 Enable LLDP with multiple uplinks
   [Tags]        feature     vmware
 
-Add a dv port group
+TC26 Add a dv port group
   [Tags]        feature     vmware
 
-Add multiple dv port groups
+TC27 Add multiple dv port groups
   [Tags]        feature     vmware
 
-Add a VLAN - VST/EST/VGT Modes
+TC28 Add a VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Change VLAN - VST/EST/VGT Modes
+TC29 Change VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Delete VLAN - VST/EST/VGT Modes
+TC30 Delete VLAN - VST/EST/VGT Modes
   [Tags]        feature     vmware
 
-Flap Single uplink member port and veriy traffic failover
+TC31 Flap uplink member port and veriy traffic failover/failback
   [Tags]        feature     vmware
 
-Delete an uplink
+TC32 Delete an uplink
   [Tags]        feature     vmware
 
-Delete all uplinks
+TC33 Delete all uplinks
   [Tags]        feature     vmware
 
-Disable and reenable CDP
+TC34 Disable and reenable CDP
   [Tags]        feature     vmware
 
-Disable and reenable LLDP
+TC35 Disable and reenable LLDP
   [Tags]        feature     vmware
 
-Disable CDP
+TC36 Disable CDP
   [Tags]        feature     vmware
 
-Disable LLDP
+TC37 Disable LLDP
   [Tags]        feature     vmware
 
-Delete dv port group
+TC38 Delete dv port group
   [Tags]        feature     vmware
 
-Delete multiple dv port groups
+TC39 Delete multiple dv port groups
   [Tags]        feature     vmware
 
-Delete dvSwitch
+TC40 Delete dvSwitch
   [Tags]        feature     vmware
 
 
 ### VM operations related test cases
 
-Create VM with no vnics
+TC41 Create VM with no vnics
   [Tags]        feature     vmware
 
-Create VM with std vnic
+TC42 Create VM with std vnic
   [Tags]        feature     vmware
 
-Create VM with multiple std vnics
+TC43 Create VM with multiple std vnics
   [Tags]        feature     vmware
 
-Create VM with both std & dvnics
+TC44 Create VM with both std & dvnics
   [Tags]        feature     vmware
 
-Power on VM with single dvnics
+TC45 Power on VM with single dvnics
   [Tags]        feature     vmware
 
-Power on VM with multiple dvnics
+TC46 Power on VM with multiple dvnics
   [Tags]        feature     vmware
 
-Power on VM with both std & dvnics
+TC47 Power on VM with both std & dvnics
   [Tags]        feature     vmware
 
-Validate vnic IP address association
+TC48 Validate vnic IP address association
   [Tags]        feature     vmware
 
-Add stdvnics to a powered off VM
+TC49 Add stdvnics to a powered off VM
   [Tags]        feature     vmware
 
-Add stdvnics to a powered on VM
+TC50 Add stdvnics to a powered on VM
   [Tags]        feature     vmware
 
-Add dvnics to a powered off VM
+TC51 Add dvnics to a powered off VM
   [Tags]        feature     vmware
 
-Add dvnics to a powered on VM
+TC52 Add dvnics to a powered on VM
   [Tags]        feature     vmware
 
-Change vnic association from std pg to another std pg
+TC53 Change vnic association from std pg to another std pg
   [Tags]        feature     vmware
 
-Change vnic association from dvpg to another dvpg
+TC54 Change vnic association from dvpg to another dvpg
   [Tags]        feature     vmware
 
-Change vnic association from std pg to dvpg
+TC55 Change vnic association from std pg to dvpg
   [Tags]        feature     vmware
 
-Change std vnic connected state to disconnected state
+TC56 Change std vnic connected state to disconnected state
   [Tags]        feature     vmware
 
-Change dvnic connected state to disconnected state
+TC57 Change dvnic connected state to disconnected state
   [Tags]        feature     vmware
 
-Change std vnic disconnected state to connected state
+TC58 Change std vnic disconnected state to connected state
   [Tags]        feature     vmware
 
-Change dvnic disconnected state to connected state
+TC59 Change dvnic disconnected state to connected state
   [Tags]        feature     vmware
 
-Rename a VM
+TC60 Rename a VM
   [Tags]        feature     vmware
 
-Unregister a VM with no vnics
+TC61 Unregister a VM with no vnics
   [Tags]        feature     vmware
 
-Unregister a VM with std vnics
+TC62 Unregister a VM with std vnics
   [Tags]        feature     vmware
 
-Unregister a VM wih dvnics
+TC63 Unregister a VM wih dvnics
   [Tags]        feature     vmware
 
-Unregister a VM with both std & dvnics
+TC64 Unregister a VM with both std & dvnics
   [Tags]        feature     vmware
 
-Delete VM with no vnics
+TC65 Delete VM with no vnics
   [Tags]        feature     vmware
 
-Delete VM with std vnics
+TC66 Delete VM with std vnics
   [Tags]        feature     vmware
 
-Delete VM with dvnics
+TC67 Delete VM with dvnics
   [Tags]        feature     vmware
 
-Delete VM with both std & dvnics
+TC68 Delete VM with both std & dvnics
   [Tags]        feature     vmware
 
 
 
 ### Host related test cases
 
-Add a new bare metal ESXi host (without VMs/vSwitches)
+TC69 Add a new bare metal ESXi host (without VMs/vSwitches)
   [Tags]        feature     vmware
 
-Add a provisioned ESXi host (with VMs and vSwitches)
+TC70 Add a provisioned ESXi host (with VMs and vSwitches)
   [Tags]        feature     vmware
 
-Change the hostname of an ESXi host
+TC71 Change the hostname of an ESXi host
   [Tags]        feature     vmware
 
-Add a vmkernel to a vSwitch
+TC72 Add a vmkernel to a vSwitch
   [Tags]        feature     vmware
 
-Add a vmkernel to a dvSwitch
+TC73 Add a vmkernel to a dvSwitch
   [Tags]        feature     vmware
 
-Change IP address of a vmkernel
+TC74 Change IP address of a vmkernel
   [Tags]        feature     vmware
 
-Reboot a host
+TC75 Reboot a host
   [Tags]        feature     vmware
 
 
 ### vCenter related test cases
 
-Add hosts to a cluster
+TC76 Add hosts to a cluster
   [Tags]        feature     vmware
 
-vMotion a VM from one host to another host
+TC77 vMotion a VM from one host to another host
   [Tags]        feature     vmware
 
-vMotion back a VM to its original host
+TC78 vMotion back a VM to its original host
   [Tags]        feature     vmware
 
-Storage vMotion a VM from one datastore to another datastore
+TC79 Storage vMotion a VM from one datastore to another datastore
   [Tags]        feature     vmware
   
-Enable automatic DRS on a cluster
+TC80 Enable automatic DRS on a cluster
   [Tags]        feature     vmware
 
-Delete a cluster 
+TC81 Delete a cluster 
   [Tags]        feature     vmware
 
 
 
 ### BCF related test cases
 
-Configure vCenter on BCF and tenant creation
+TC81 Configure vCenter on BCF and tenant creation
   [Tags]        feature     vmware
 
-Change the vCenter password on vCenter side and verify proper authentication failure notifications
+TC82 Change the vCenter password on vCenter side and verify proper authentication failure notifications
   [Tags]        feature     vmware
 
-Update the vCenter password on BCF side and verify the normal operation
+TC83 Update the vCenter password on BCF side and verify the normal operation
   [Tags]        feature     vmware
 
-Add a user with a different permission level and verify only the authorized objects are getting mapped
+TC84 Add a user with a different permission level and verify only the authorized objects are getting mapped
   [Tags]        feature     vmware
 
-Verify the proper member port group creation and vmnic associations 
+TC85 Verify the proper member port group creation and vmnic associations 
   [Tags]        feature     vmware
 
-Verify the proper segment creation for portgroups with differnt names but same vlans
+TC86 Verify the proper segment creation for portgroups with differnt names but same vlans
   [Tags]        feature     vmware
 
-Verify the proper endpoint creation under different segments
+TC87 Verify the proper endpoint creation under different segments
   [Tags]        feature     vmware
 
-Verify the proper member port group & vlan associations under segments
+TC88 Verify the proper member port group & vlan associations under segments
   [Tags]        feature     vmware
 
-Verify users are able to manually create different port groups for other needs such as storage traffic
+TC89 Verify users are able to manually create different port groups for other needs such as storage traffic
   [Tags]        feature     vmware
 
-Verify users are able to manually create L3 routing
+TC90 Verify users are able to manually create L3 routing
   [Tags]        feature     vmware
 
-Configure multiple vCenters on BCF and verify the tenant and segment creations
+TC91 Configure multiple vCenters on BCF and verify the tenant and segment creations
   [Tags]        feature     vmware
 
-Verify the attachment point state with active traffic
+TC92 Verify the attachment point state with active traffic
   [Tags]        feature     vmware
 
-Verify the changes in attachment points and traffic behaviors during vMotion
+TC93 Verify the changes in attachment points and traffic behaviors during vMotion
   [Tags]        feature     vmware
 
-Verify the continous vCenter event update mechanisms with a single vCenter
+TC94 Verify the continous vCenter event update mechanisms with a single vCenter
   [Tags]        feature     vmware
 
-Verify the continous vCenter event update mechanisms with multiple vCenters
+TC95 Verify the continous vCenter event update mechanisms with multiple vCenters
   [Tags]        feature     vmware
 
-Verify the vCenter configuration co-existence with other manual config elements
+TC96 Verify the vCenter configuration co-existence with other manual config elements
   [Tags]        feature     vmware
 
-Verify the integrity of vCenter updates during and after controller failovers
+TC97 Verify the integrity of vCenter updates during and after controller failovers
   [Tags]        feature     vmware
 
 
 
 ################    Stress      ################
 
-Create/Delete vSwitch
+TC98 Create/Delete vSwitch
   [Tags]        stress     vmware
 
-Create/Delete dvSwitch
+TC99 Create/Delete dvSwitch
   [Tags]        stress     vmware
 
-Enable/Reenable CDP
+TC100 Enable/Reenable CDP
   [Tags]        stress     vmware
 
-Enable/Reenable LLDP
+TC101 Enable/Reenable LLDP
   [Tags]        stress     vmware
 
-Add/Delete uplinks
+TC102 Add/Delete uplinks
   [Tags]        stress     vmware
 
-Create/Delete VMs
+TC103 Create/Delete VMs
   [Tags]        stress     vmware
 
-Poweron/off VMs
+TC104 Poweron/off VMs
   [Tags]        stress     vmware
 
-Add/Delete std vnics
+TC105 Add/Delete std vnics
   [Tags]        stress     vmware
 
-Add/Delete dvnics
+TC106 Add/Delete dvnics
   [Tags]        stress     vmware
 
-Change vnics & dvnic associations
+TC107 Change vnics & dvnic associations
   [Tags]        stress     vmware
 
-Add delete ESXi host
+TC108 Add delete ESXi host
   [Tags]        stress     vmware
 
-vMotions in a loop
+TC109 vMotions in a loop
   [Tags]        stress     vmware
 
-Delete/Re-configure vCenter on BCF side
+TC110 Delete/Re-configure vCenter on BCF side
   [Tags]        stress     vmware
 
-Delete/Re-configure multiple vCenters on BCF side
+TC111 Delete/Re-configure multiple vCenters on BCF side
   [Tags]        stress     vmware
 
+TC112 Run multiple vCenters alongside with a manual scalability configuration
+  [Tags]        stress     vmware
 
 
 ################    Negative     ################
 
-Delete/Reconfigure the vCenter tenant and verify the behavior
+TC113 Delete/Reconfigure the vCenter tenant and verify the behavior
     [Tags]        negative     vmware
 
-Delete/Reconfigure the vCenter hostname and verify the behavior
+TC114 Delete/Reconfigure the vCenter hostname and verify the behavior
     [Tags]        negative     vmware
 
-Delete/Reconfigure the vCenter password and verify the behavior
+TC115 Delete/Reconfigure the vCenter password and verify the behavior
     [Tags]        negative     vmware
 
-Delete/Reconfigure the vCenter username and verify the behavior
+TC116 Delete/Reconfigure the vCenter username and verify the behavior
     [Tags]        negative     vmware
 
-Multiple vCenters with same IP ranges
+TC117 Multiple vCenters with same IP ranges
     [Tags]        negative     vmware
 
 
 
+################    Longevity     ################
+
+TC118 Run a single vCenter with active traffic for 72 hours with regular updates
+    [Tags]        negative     vmware
+
+TC119 Run multiple vCenters with active traffic for 72 hours with regular updates
+    [Tags]        negative     vmware
+
+TC120 Run a single vCenter without any updates for more than 72 hours
+    [Tags]        negative     vmware
 
 
 
