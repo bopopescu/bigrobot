@@ -87,9 +87,9 @@ TC007: Configure single chain without service and verify chain via rest command 
     sleep  5
     ${check_output_1}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=detailedstatus
     Should Be Equal As Strings  ${check_output_1}  All policies active and installed for this chain
-    ${check_output_2}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=from
+    ${check_output_2}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1
     Should Be Equal As Strings  ${check_output_2}  ${chain_interface_1}
-    ${check_output_3}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=from-drop
+    ${check_output_3}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1-drop
     Should not be true  ${check_output_3}
     ${check_output_4}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=name-in-status
     Should Be Equal As Strings  ${check_output_4}  ${chain_name}
@@ -100,9 +100,9 @@ TC007: Configure single chain without service and verify chain via rest command 
     ${switch_dpid}=  rest return switch dpid from ip  s1
     ${check_output_7}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=switch
     Should Be Equal As Strings  ${check_output_7}  ${switch_dpid}
-    ${check_output_8}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=to
+    ${check_output_8}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint2
     Should Be Equal As Strings  ${check_output_8}  ${chain_interface_2}
-    ${check_output_9}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=to-drop
+    ${check_output_9}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint2-drop
     Should not be true  ${check_output_9}
     [Tags]  sanity  feature    chain
 
