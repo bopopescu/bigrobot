@@ -1,0 +1,411 @@
+== BCF-VMware Integration Test Suite ==
+
+* Setting
+Documentation    BCF-VMware Integration Suite 
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
+Test Setup       T5 Platform test setup
+Test Teardown    T5 Platform test teardown
+Force Tags       IronHorse-plus  BCF2.6.0
+Library          keywords/BsnCommon.py
+
+* Test Case 
+
+################    Functional      ################
+
+###  vSwitch related test cases
+
+Add vSwitch
+  [Tags]        feature     vmware
+
+Add single uplink
+  [Tags]        feature     vmware
+  
+Enable CDP with single uplink
+  [Tags]        feature     vmware
+
+Add multiple uplinks
+  [Tags]        feature     vmware
+
+Enable CDP with multiple uplinks
+  [Tags]        feature     vmware
+
+Add a std port group
+  [Tags]        feature     vmware
+
+Add multiple std port groups
+  [Tags]        feature     vmware
+
+Add a VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Change VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Delete VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Flap Single uplink member port and veriy traffic failover
+  [Tags]        feature     vmware
+
+Delete an uplink
+  [Tags]        feature     vmware
+
+Delete all uplinks
+  [Tags]        feature     vmware
+
+Disable and reenable CDP
+  [Tags]        feature     vmware
+
+Disable CDP
+  [Tags]        feature     vmware
+
+Delete std port group
+  [Tags]        feature     vmware
+
+Delete multiple std port groups
+  [Tags]        feature     vmware
+
+Delete vSwitch
+  [Tags]        feature     vmware
+
+
+### dvSwitch related test cases
+
+Add dvSwitch
+  [Tags]        feature     vmware
+
+Add single uplink
+  [Tags]        feature     vmware
+  
+Enable CDP with single uplink
+  [Tags]        feature     vmware
+
+Enable LLDP with single uplink
+  [Tags]        feature     vmware
+
+Add multiple uplinks
+  [Tags]        feature     vmware
+
+Enable CDP with multiple uplinks
+  [Tags]        feature     vmware
+
+Enable LLDP with multiple uplinks
+  [Tags]        feature     vmware
+
+Add a dv port group
+  [Tags]        feature     vmware
+
+Add multiple dv port groups
+  [Tags]        feature     vmware
+
+Add a VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Change VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Delete VLAN - VST/EST/VGT Modes
+  [Tags]        feature     vmware
+
+Flap Single uplink member port and veriy traffic failover
+  [Tags]        feature     vmware
+
+Delete an uplink
+  [Tags]        feature     vmware
+
+Delete all uplinks
+  [Tags]        feature     vmware
+
+Disable and reenable CDP
+  [Tags]        feature     vmware
+
+Disable and reenable LLDP
+  [Tags]        feature     vmware
+
+Disable CDP
+  [Tags]        feature     vmware
+
+Disable LLDP
+  [Tags]        feature     vmware
+
+Delete dv port group
+  [Tags]        feature     vmware
+
+Delete multiple dv port groups
+  [Tags]        feature     vmware
+
+Delete dvSwitch
+  [Tags]        feature     vmware
+
+
+### VM operations related test cases
+
+Create VM with no vnics
+  [Tags]        feature     vmware
+
+Create VM with std vnic
+  [Tags]        feature     vmware
+
+Create VM with multiple std vnics
+  [Tags]        feature     vmware
+
+Create VM with both std & dvnics
+  [Tags]        feature     vmware
+
+Power on VM with single dvnics
+  [Tags]        feature     vmware
+
+Power on VM with multiple dvnics
+  [Tags]        feature     vmware
+
+Power on VM with both std & dvnics
+  [Tags]        feature     vmware
+
+Validate vnic IP address association
+  [Tags]        feature     vmware
+
+Add stdvnics to a powered off VM
+  [Tags]        feature     vmware
+
+Add stdvnics to a powered on VM
+  [Tags]        feature     vmware
+
+Add dvnics to a powered off VM
+  [Tags]        feature     vmware
+
+Add dvnics to a powered on VM
+  [Tags]        feature     vmware
+
+Change vnic association from std pg to another std pg
+  [Tags]        feature     vmware
+
+Change vnic association from dvpg to another dvpg
+  [Tags]        feature     vmware
+
+Change vnic association from std pg to dvpg
+  [Tags]        feature     vmware
+
+Change std vnic connected state to disconnected state
+  [Tags]        feature     vmware
+
+Change dvnic connected state to disconnected state
+  [Tags]        feature     vmware
+
+Change std vnic disconnected state to connected state
+  [Tags]        feature     vmware
+
+Change dvnic disconnected state to connected state
+  [Tags]        feature     vmware
+
+Rename a VM
+  [Tags]        feature     vmware
+
+Unregister a VM with no vnics
+  [Tags]        feature     vmware
+
+Unregister a VM with std vnics
+  [Tags]        feature     vmware
+
+Unregister a VM wih dvnics
+  [Tags]        feature     vmware
+
+Unregister a VM with both std & dvnics
+  [Tags]        feature     vmware
+
+Delete VM with no vnics
+  [Tags]        feature     vmware
+
+Delete VM with std vnics
+  [Tags]        feature     vmware
+
+Delete VM with dvnics
+  [Tags]        feature     vmware
+
+Delete VM with both std & dvnics
+  [Tags]        feature     vmware
+
+
+
+### Host related test cases
+
+Add a new bare metal ESXi host (without VMs/vSwitches)
+  [Tags]        feature     vmware
+
+Add a provisioned ESXi host (with VMs and vSwitches)
+  [Tags]        feature     vmware
+
+Change the hostname of an ESXi host
+  [Tags]        feature     vmware
+
+Add a vmkernel to a vSwitch
+  [Tags]        feature     vmware
+
+Add a vmkernel to a dvSwitch
+  [Tags]        feature     vmware
+
+Change IP address of a vmkernel
+  [Tags]        feature     vmware
+
+Reboot a host
+  [Tags]        feature     vmware
+
+
+### vCenter related test cases
+
+Add hosts to a cluster
+  [Tags]        feature     vmware
+
+vMotion a VM from one host to another host
+  [Tags]        feature     vmware
+
+vMotion back a VM to its original host
+  [Tags]        feature     vmware
+
+Storage vMotion a VM from one datastore to another datastore
+  [Tags]        feature     vmware
+  
+Enable automatic DRS on a cluster
+  [Tags]        feature     vmware
+
+Delete a cluster 
+  [Tags]        feature     vmware
+
+
+
+### BCF related test cases
+
+Configure vCenter on BCF and tenant creation
+  [Tags]        feature     vmware
+
+Change the vCenter password on vCenter side and verify proper authentication failure notifications
+  [Tags]        feature     vmware
+
+Update the vCenter password on BCF side and verify the normal operation
+  [Tags]        feature     vmware
+
+Add a user with a different permission level and verify only the authorized objects are getting mapped
+  [Tags]        feature     vmware
+
+Verify the proper member port group creation and vmnic associations 
+  [Tags]        feature     vmware
+
+Verify the proper segment creation for portgroups with differnt names but same vlans
+  [Tags]        feature     vmware
+
+Verify the proper endpoint creation under different segments
+  [Tags]        feature     vmware
+
+Verify the proper member port group & vlan associations under segments
+  [Tags]        feature     vmware
+
+Verify users are able to manually create different port groups for other needs such as storage traffic
+  [Tags]        feature     vmware
+
+Verify users are able to manually create L3 routing
+  [Tags]        feature     vmware
+
+Configure multiple vCenters on BCF and verify the tenant and segment creations
+  [Tags]        feature     vmware
+
+Verify the attachment point state with active traffic
+  [Tags]        feature     vmware
+
+Verify the changes in attachment points and traffic behaviors during vMotion
+  [Tags]        feature     vmware
+
+Verify the continous vCenter event update mechanisms with a single vCenter
+  [Tags]        feature     vmware
+
+Verify the continous vCenter event update mechanisms with multiple vCenters
+  [Tags]        feature     vmware
+
+Verify the vCenter configuration co-existence with other manual config elements
+  [Tags]        feature     vmware
+
+Verify the integrity of vCenter updates during and after controller failovers
+  [Tags]        feature     vmware
+
+
+
+################    Stress      ################
+
+Create/Delete vSwitch
+  [Tags]        stress     vmware
+
+Create/Delete dvSwitch
+  [Tags]        stress     vmware
+
+Enable/Reenable CDP
+  [Tags]        stress     vmware
+
+Enable/Reenable LLDP
+  [Tags]        stress     vmware
+
+Add/Delete uplinks
+  [Tags]        stress     vmware
+
+Create/Delete VMs
+  [Tags]        stress     vmware
+
+Poweron/off VMs
+  [Tags]        stress     vmware
+
+Add/Delete std vnics
+  [Tags]        stress     vmware
+
+Add/Delete dvnics
+  [Tags]        stress     vmware
+
+Change vnics & dvnic associations
+  [Tags]        stress     vmware
+
+Add delete ESXi host
+  [Tags]        stress     vmware
+
+vMotions in a loop
+  [Tags]        stress     vmware
+
+Delete/Re-configure vCenter on BCF side
+  [Tags]        stress     vmware
+
+Delete/Re-configure multiple vCenters on BCF side
+  [Tags]        stress     vmware
+
+
+
+################    Negative     ################
+
+Delete/Reconfigure the vCenter tenant and verify the behavior
+    [Tags]        negative     vmware
+
+Delete/Reconfigure the vCenter hostname and verify the behavior
+    [Tags]        negative     vmware
+
+Delete/Reconfigure the vCenter password and verify the behavior
+    [Tags]        negative     vmware
+
+Delete/Reconfigure the vCenter username and verify the behavior
+    [Tags]        negative     vmware
+
+Multiple vCenters with same IP ranges
+    [Tags]        negative     vmware
+
+
+
+
+
+
+
+* Keywords    
+T5 base suite setup
+    sleep                                       1
+    
+T5 base suite teardown
+    sleep                                       1
+ 
+T5 Platform test setup
+	sleep                                       1
+
+T5 Platform test teardown
+	sleep                                       1
