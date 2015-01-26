@@ -238,7 +238,7 @@ class BigChain(object):
                         helpers.log("Run Time Status is not reported correctly")
                         return False
 
-                    if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") :
+                    if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") or (content[0]['status']['detailed-status'] == "All flows installed for this chain") :
                         helpers.log("Detailed Status is reported correctly")
                     else:
                         helpers.log("Detailed Status is not reported correctly")
