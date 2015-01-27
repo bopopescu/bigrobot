@@ -24,7 +24,7 @@ ${long}   30
 ${verylong}     120 
 
 ${sw}       leaf2-b
-${uut}      leaf2-a
+${uut}      leaf2-b
 
 ${f_rate}       5000
 ${time}         5	 	 
