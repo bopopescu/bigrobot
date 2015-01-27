@@ -272,8 +272,8 @@ T13 Verify L3tocpu packet(intervns packet to unknown host) different addresses t
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 
 
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f=f
+		L3 start hosts  port_name=f
  	
     	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01   
@@ -300,8 +300,8 @@ T14 Verify L3 miss packet to port 0 queue 6 (consumed by switch)
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 
  		
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
  					
     	${L3_3}=  raw_stream_add  name=L3_3  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01    
@@ -332,8 +332,8 @@ T16 Verify qos weight for different queue and same port (same rate)
 	log   tested with arp and lacp
 		${f_cnt}=   expr   ${f_rate} * ${time} 
   				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 	 		
 	log  LLDP stream with different src address
  	
@@ -375,8 +375,8 @@ T17 Verify qos weight for different queue and different port (same rate)
 	log   tested with l3 to cpu and lldp
  		${f_cnt}=   expr   ${f_rate} * ${time} 
   				 				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 
 		
 	log  LLDP stream with different src address
@@ -417,8 +417,8 @@ T18 Verify qos weight for different queue (different rate)
  
  		${f_cnt}=   expr   ${f_rate} * ${time} 
   				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 		
 	log  LLDP stream with different src address
 	
