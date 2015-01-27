@@ -1160,7 +1160,6 @@ class Ixia(object):
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', None)
-        ethertype = kwargs.get('ethertype', '0800')
         ethertype_cnt = kwargs.get('ethertype_cnt', 1)
         ethertype_step = kwargs.get('ethertype_step', None)
         vlan_id = kwargs.get('vlan_id', None)
