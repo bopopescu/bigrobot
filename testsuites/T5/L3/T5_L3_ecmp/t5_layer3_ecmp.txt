@@ -82,7 +82,7 @@ Add and delete more specific route for L3 inter tenant traffic to external host
 
 Add and delete config changes
     Add and delete config changes
-    [Tags]                       smoke                          sanity              run30
+    [Tags]                       smoke                          sanity              run30           skipped
 
 Verify ecmp forwarding after controller upgrade     
     manual passed
