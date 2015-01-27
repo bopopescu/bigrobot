@@ -455,7 +455,6 @@ T3.3.13 Auto-Negotiation & Number
 *** Keyword ***
 Filtering Suite Setup
     Base Suite Setup
-	Set Selenium Timeout  20
 	${master_ip}=            get node ip   master
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs

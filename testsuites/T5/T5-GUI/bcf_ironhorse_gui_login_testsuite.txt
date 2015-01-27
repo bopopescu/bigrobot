@@ -59,7 +59,6 @@ config suite setup
     Set URLs
     Rest Add Tacacs Server  10.2.3.201  secret  10
     Rest Add Tacacs Authentication
-    #Rest Delete Tacacs Authorization
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     CLI Run  master  group admin; associate user tomasz; associate user test-user-local
