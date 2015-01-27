@@ -28,6 +28,9 @@ s1:
     spine1_int0: ethernet20
     h1_int0: ethernet13/4
     h2_int0: ethernet10/2
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 3
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -42,6 +45,9 @@ s2:
     spine1_int0: ethernet20
     h1_int0: ethernet13/2
     h2_int0: ethernet10/3
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 4
   console:
     ip: 10.9.16.213
     port: 7004
@@ -60,6 +66,9 @@ s3:
     spine0_int0: ethernet8
     h3_int0: ethernet1
     h4_int0: ethernet9/3
+  pdu:
+    ip: pdu-111-b.bigswitch.com
+    port: 1
   console:
     ip: 10.9.16.213
     port: 7007
@@ -77,6 +86,9 @@ s4:
     port: 7008
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-b.bigswitch.com
+    port: 2
   interfaces:
     leaf1a_int0: ethernet25
     leaf1a_int0: ethernet15
@@ -96,6 +108,7 @@ s5:
     port: 7005
   set_session_ssh: false
   set_init_ping: false
+
   interfaces:
     leaf2b_int0: ethernet19
     spine0_int0: ethernet8
@@ -132,6 +145,9 @@ s7:
     port: 7002
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 2
   interfaces:
     leaf0a_int0: ethernet9
     leaf1a_int0: ethernet5
@@ -151,6 +167,9 @@ s8:
     port: 7001
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 1
   interfaces:
     leaf0a_int0: ethernet2
     leaf0b_int0: ethernet7
