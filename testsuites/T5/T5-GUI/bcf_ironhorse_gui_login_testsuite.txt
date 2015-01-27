@@ -16,15 +16,6 @@ Library       		String
 
 
 *Test Case
-T0.0 Warmup
-    Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote
-    Run Keyword and Ignore Error
-    ...  Cli Run  slave  show tacacs  user=remote  password=remote
-    Sleep  60
-    # workaround for BSC-6771
-    [Tags]  feature  BSC-6771
-
 ### Valid Login		           	User Name      		Password
 T1.1 Local admin        
 	Valid Login					admin          		adminadmin
@@ -70,6 +61,11 @@ config suite setup
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     CLI Run  master  group admin; associate user tomasz; associate user test-user-local
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Run Keyword and Ignore Error
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    Sleep  60
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin
