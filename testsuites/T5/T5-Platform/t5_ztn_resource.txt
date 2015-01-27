@@ -4,8 +4,8 @@
 	...  powerpc-as5710-54x-r0b
 @{supported_swi_platforms}  powerpc-quanta-ly2-r0  powerpc-as6700-32x-r0
 	...  powerpc-as5710-54x-r0a  powerpc-as5710-54x-r0b
-${timeout}  8 min
-${period}  30 sec
+${ztn_timeout}  8 min
+${ztn_period}  30 sec
 
 *** Keywords ***
 Suite Setup
@@ -392,26 +392,26 @@ Power Up All Switches
 	Sleep  5
 
 Wait Until All Switches Connected
-    Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Connected
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Connected
 
 Wait Until All Switches Connected And Return Status
-    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Connected
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Connected
     [Return]  ${status}
 
 Wait Until All Switches Disconnected
-    Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Disconnected
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Disconnected
 
 Wait Until All Switches Disconnected And Return Status
-    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify All Switches Disconnected
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Disconnected
     [Return]  ${status}
 
 Wait Until Switch Connected
     [Arguments]  ${switch_alias}
-    Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify Switch Connection State  True  ${switch_alias}
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify Switch Connection State  True  ${switch_alias}
 
 Wait Until Switch Disconnected
     [Arguments]  ${switch_alias}
-    Wait Until Keyword Succeeds  ${timeout}  ${period}  Verify Switch Connection State  False  ${switch_alias}
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify Switch Connection State  False  ${switch_alias}
 
 Wait Until Switch Reconnected
     [Arguments]  ${switch_alias}
