@@ -519,10 +519,31 @@ Go To Topology Page
     Title Should Contain  ${TOPOLOGY TITLE}
     Sleep  1
 
+Go To Fabric Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
 Go To Tenants Page
     Go To  ${TENANTS URL}
     Wait Until Page Loaded 
     Title Should Contain  ${TENANTS TITLE}
+    Sleep  1
+
+Go To Specific Tenant Page
+	[Arguments]  ${tenant}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Sleep  1
+
+Go To Tenant Segment Page
+	[Arguments]  ${tenant}  ${segment}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}/segment/${segment}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Title Should Contain  ${segment}
     Sleep  1
 
 Go To Endpoints Page
