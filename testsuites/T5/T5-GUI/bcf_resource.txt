@@ -101,6 +101,15 @@ ${APPLY INBOUND POLICY LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0
 ${APPLY INBOUND POLICY FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[3]/input[1]
 ${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
+### Tenant System Page
+${TENANT INTERFACES PLUS BUTTON} 		xpath=//h3[contains(text(), 'Tenant Interfaces')]/parent::div/descendant::div[@class='icon_node plus']
+${CREATE TENANT INTERFACE POPUP}		xpath=//div[@title='Create Tenant Interface']
+${SELECT TENANT DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[1]/input
+${SELECT TENANT LIST}					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${SELECT TENANT FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]
+${SAVE TENANT INTERFACE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
 #### Switch Page
 
 ${ADD SWITCH PLUS BUTTON}		xpath=//div[@class='icon_node plus']
@@ -121,6 +130,16 @@ ${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='container
 ${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
 #${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
 ${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+${REBOOT SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Reboot')]
+${SHUTDOWN SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Shutdown')]
+${START SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Start')]
+${RESET CONNECTION SWITCH MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Reset Connection')]
+${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}	xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Split From Leaf Group')]
+${BEACON SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Beacon')]
+${CONFIRM SWITCH ACTION POPUP}				xpath=//div[@title='Confirm']
+${SPLIT LEAF GROUP POPUP}					xpath=//div[@title='Split Leaf Group']
+${CONFIRM SWITCH SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
 
 
 #### Port Groups Page
@@ -161,13 +180,13 @@ ${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@id='segment_switch_ports_sect
 ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Create Switch Port Membership Rule']
 ${SEGMENT SWITCH NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
 ${SEGMENT SWITCH NAME DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
-${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
 #${SEGMENT SWITCH NAME FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_1']
-#${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_2']
+#${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_1']
 ${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input[1]
-${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
 ${SEGMENT SWITCH INTERFACE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
-${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_11_label']
+${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_5_label']
 #${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
 ${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
 ${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
@@ -176,15 +195,15 @@ ${ATTACHMENT TYPE DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleN
 ${ATTACHMENT TYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
 ${ATTACHMENT TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]			
 ${ENDPOINT PORT GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[1]/input
-${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
 ${ENDPOINT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[3]/input[1]
 ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
-${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']			   
+${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
 ${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
 
 ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
-${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_8_popup']						   
+${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
 ${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
 
 ${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
@@ -428,6 +447,71 @@ ${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
 ${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
 
+
+#### Advanced Query
+${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div
+${FILTER QUERY BUTTON}						xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Filter')]
+${FILTER QUERY CLEAR BUTTON}				xpath=//div[@class='bsn_button_group bottom']/div[1]
+${ADVANCED QUERY BUILDER BUTTON}			xpath=//div[@class='bsn_button_group bottom']/div[2]
+${ADVANCED QUERY BUILDER POPUP}				xpath=//div[@title='Refine Filter']
+${ADVANCED QUERY LINE}						xpath=//div[@class='builder_row']
+${ADD QUERY LINE BUTTON SUFFIX}				/descendant::div[@class='icon_node plus']
+${DEL QUERY LINE BUTTON SUFFIX}				/descendant::div[@class='icon_node minus']
+${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}			/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${COMPARISON COLUMN DROPDOWN FIELD SUFFIX} 	 		/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']
+${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE} 	${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}/following-sibling::input[@type='hidden']
+${COMPARISON COLUMN DROPDOWN LIST}					xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='inputsNode']/descendant::div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+
+${COMPARISON FUNCTION AREA SUFFIX}					/descendant::div[@data-dojo-attach-point='inputsNode']/div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]
+${COMPARISON FUNCTION SUFFIX}						${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'compare_select')]
+${COMPARISON FUNCTION SUFFIX VALUE}					${COMPARISON FUNCTION SUFFIX}/descendant::input[@type='hidden']
+${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}		${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX} 		${COMPARISON FUNCTION SUFFIX}/descendant::input[@class='dijitReset dijitInputInner']
+
+${COMPARISON VALUE SUFFIX}					${COMPARISON FUNCTION SUFFIX}/following-sibling::div/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input
+${CLOSE AND FILTER BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close & Filter')]
+${CLOSE AND NOT FILTER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close') and not(contains(text(), 'Filter'))]
+
+
+
+### Fabric Page
+${REBOOT ALL CONNECTED SWITCHES BUTTON}		xpath=//div[@data-dojo-attach-point='actionBlockRebootSwitches']/descendant::div[@class='bsn_control_button enabled']
+${CONFIRM SWITCH REBOOTS POPUP}				xpath=//div[@title='Confirm Switch Reboots']
+${REBOOTING SWITCHES POPUP}					xpath=//div[@title='Rebooting Switches']
+${PROCEED WITH SWITCH REBOOTS BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${SWITCH ICON PREFIX}						xpath=//div[@id='bcf_widgets_graphical_Fabric_nodeDisplays_
+${SWITCH SIDE PANEL}						xpath=//div[@id='bcf_widgets_graphical_Fabric_content_Switch_0']
+${SWITCH VISUALIZE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShow']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH CONFIGURE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockEdit']/descendant::div[@class='enabled bsn_control_button']
+#${SWITCH DELETE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockDelete']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH CLEAR CONFIGURATION BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockClear']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH SPLIT FROM LEAF GROUP BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockSplit']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH RESET CONNECTION BUTTON}			${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReset']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH REBOOT BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReboot']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH SHUTDOWN BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockStop']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH START BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockStart']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH BEACON BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockBeacon']/descendant::div[@class='enabled bsn_control_button']
+
+${ACTIVE CONTROLLER CUBE}					xpath=//div[@class='front_role' and contains(text(), 'Active')]
+${STANDBY CONTROLLER CUBE}					xpath=//div[@class='front_role' and contains(text(), 'Standby')]
+${CONTROLLER SIDE PANEL}					xpath=//div[@id='bcf_widgets_graphical_Fabric_content_ClusterNode_0']
+${CONTROLLER FAILOVER BUTTON}				${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockFailover' and not(contains(@class, 'display_none'))]/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER REMOVE BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockRemove' and not(contains(@class, 'display_none'))]/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER SHUTDOWN BUTTON}				${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShutdown']/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER REBOOT BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReboot']/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER RELOAD BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReload']/descendant::div[@class='enabled bsn_control_button']
+${CONFIRM CONTROLLER FAILOVER POPUP}		xpath=//div[@title='Confirm Failover']
+${PROCEED WITH CONTROLLER FAILOVER BUTTON}	xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+
+### Clock Page
+${ADD NTP SERVER BUTTON}				xpath=//div[@class='icon_node plus']
+${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
+${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
+${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
@@ -510,10 +594,31 @@ Go To Topology Page
     Title Should Contain  ${TOPOLOGY TITLE}
     Sleep  1
 
+Go To Fabric Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
 Go To Tenants Page
     Go To  ${TENANTS URL}
     Wait Until Page Loaded 
     Title Should Contain  ${TENANTS TITLE}
+    Sleep  1
+
+Go To Specific Tenant Page
+	[Arguments]  ${tenant}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Sleep  1
+
+Go To Tenant Segment Page
+	[Arguments]  ${tenant}  ${segment}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}/segment/${segment}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Title Should Contain  ${segment}
     Sleep  1
 
 Go To Endpoints Page
@@ -1031,7 +1136,26 @@ Enable System Tenant Interface
 	Click Element  ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}  and don't wait
 	
 	Verify Element Invisible  ${SYSTEM TENANT INTERFACE ENABLE POPUP}
-	
+
+Configure Tenant Interface for System Tenant
+	[Arguments]  ${tenant-name}
+	Go To Specific Tenant Page  system
+	Verify Element Visible  ${TENANT INTERFACES PLUS BUTTON}
+	Click Element  ${TENANT INTERFACES PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT INTERFACE POPUP}
+
+	Select From List And Verify
+    ... 	${SELECT TENANT DROPDOWN BUTTON}
+    ...		${SELECT TENANT LIST}
+    ... 	${SELECT TENANT FIELD}
+    ... 	${tenant-name}
+
+	Click Element  ${CREATE TENANT INTERFACE POPUP}  and don't wait
+	Verify Element Visible  ${SAVE TENANT INTERFACE BUTTON}
+	Click Element  ${SAVE TENANT INTERFACE BUTTON}  and don't wait
+	Verify Element Invisible  ${CREATE TENANT INTERFACE POPUP}
+
+
 	
 Create Logical Segments
 	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
@@ -1059,7 +1183,23 @@ Create Logical Segments
     
     Verify Element Visible  ${LOGICAL SEGMENT DETAIL MENU ITEM}
     Click Element  ${LOGICAL SEGMENT DETAIL MENU ITEM}  and don't wait
-	
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${port-group}' == '${EMPTY}'
+	...  Append Port-Group Membership Rule To Segment  ${port-group}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${switch-name}' == '${EMPTY}'
+	...  Append Switch-Port Membership Rule To Segment  ${switch-name}  ${interface}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+
+
+
+Append Port-Group Membership Rule To Segment
+	[Arguments]  ${port-group}
 	Verify Element Visible  ${ADD SEGMENT PORT GROUP PLUS BUTTON}
 	Click Element   ${ADD SEGMENT PORT GROUP PLUS BUTTON}  and don't wait
 	
@@ -1082,19 +1222,13 @@ Create Logical Segments
 	
 	Verify Element Invisible  ${PORT GROUP MEMBERSHIP RULE POPUP}
 	
-	#Verify Page Contains Element  ${SWITCH INTERFACES STEP BUTTON}
-	#Click Element  ${SWITCH INTERFACES STEP BUTTON}  and don't wait
-	
+
+Append Switch-Port Membership Rule To Segment
+	[Arguments]  ${switch-name}  ${interface}
 	Verify Element Visible  ${ADD SWITCH INTERFACE PLUS BUTTON}
 	Click Element   ${ADD SWITCH INTERFACE PLUS BUTTON}  and don't wait
 	
 	Verify Element Visible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
-	#Click Element   ${SEGMENT SWITCH NAME FIELD}   and don't wait
-	#Input Text And Verify  ${SEGMENT SWITCH NAME FIELD}  ${switch-name}
-	#Sleep  5
-	#Click Element   ${SEGMENT SWITCH INTERFACE FIELD}   and don't wait
-	#Input Text And Verify  ${SEGMENT SWITCH INTERFACE FIELD}  ${interface}
-	#Sleep  2
 	
 	Select From List And Verify  
     ... 	${SEGMENT SWITCH NAME DROPDOWN BUTTON}
@@ -1119,10 +1253,10 @@ Create Logical Segments
 	Click Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  and don't wait
 	
 	Verify Element Invisible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
-	
-	#Verify Page Contains Element  ${ENDPOINTS STEP BUTTON}
-	#Click Element  ${ENDPOINTS STEP BUTTON}  and don't wait
-	
+
+
+Append Endpoint to Segment
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
 	
@@ -2013,5 +2147,368 @@ Delete TACACS Host
 	Highlight Element  ${PROCEED DELTE BUTTON}
 	
     Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+
+
+
+Check Advanced Query Builder
+	[Arguments]  ${page}  ${columns}
+	${length}=  Get Length  ${columns}
+	Log  ${length}
+	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
+	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
+	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
+	Verify Element Visible  ${FILTER QUERY CLEAR BUTTON}
+	Click Element  ${FILTER QUERY CLEAR BUTTON}  and don't wait
+
+	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
+	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
+
+	:FOR  ${index}  IN RANGE  1  ${length + 1}
+	\	Log  ${index}
+	\	Select From List And Verify
+	\	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
+	\	...  ${COMPARISON COLUMN DROPDOWN LIST}[${index}]
+	\	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}
+	\	...  @{columns}[${index - 1}]
+	\	Verify Element Visible  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION AREA SUFFIX}
+	\	Verify Element Visible  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}
+	\	Click Element  ${ADVANCED QUERY LINE}[${index}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+	Log  ${length}
+	Click Element  ${ADVANCED QUERY LINE}[${length + 1}]${DEL QUERY LINE BUTTON SUFFIX}  and don't wait
+
+	Verify Element Visible  ${CLOSE AND NOT FILTER BUTTON}
+	Click Element  ${CLOSE AND NOT FILTER BUTTON}  and don't wait
+
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Open Advanced Query Builder
+	[Arguments]  ${page}
+	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
+	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
+	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
+	Clear Filtering Query
+	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
+	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
+
+Clear Filtering Query
+	Click Element  ${FILTER QUERY CLEAR BUTTON}  and don't wait
+
+Close And Filter Advanced Query Builder
+	Verify Element Visible  ${CLOSE AND FILTER BUTTON}
+	Click Element  ${CLOSE AND FILTER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Close And Not Filter Advanced Query Builder
+	Verify Element Visible  ${CLOSE AND NOT FILTER BUTTON}
+	Click Element  ${CLOSE AND NOT FILTER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Add Second Filter Query or Use First Empty
+	Highlight Element  ${ADVANCED QUERY LINE}[1]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE}
+	${selected column}  Get Value  ${ADVANCED QUERY LINE}[1]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE}
+	Log  ${selected column}
+	Run Keyword Unless  '${selected column}' == '${EMPTY}'
+	...  Click Element  ${ADVANCED QUERY LINE}[1]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+
+Add Filter Query
+	[Arguments]  ${column}  ${comparison}  ${value}
+	${configured}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	Log  ${configured}
+	Run Keyword If  '${configured}' == '1'
+	...  Add Second Filter Query or Use First Empty
+	Run Keyword Unless  '${configured}' == '1'
+	...  Click Element  ${ADVANCED QUERY LINE}[${configured}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+	${index}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	Log  ${index}
+	${column_index}=  Evaluate  int((2 * ${index}) - 1)
+	Select From List And Verify
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
+	...  ${COMPARISON COLUMN DROPDOWN LIST}[${column_index}]
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}
+	...  ${column}
+
+	Click Element  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}  and don't wait
+
+	${function_index}=  Evaluate  int(2 * ${index})
+	Select From List And Verify
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}
+	...  ${COMPARISON COLUMN DROPDOWN LIST}[${function_index}]
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX}
+	...  ${comparison}
+
+
+	Run Keyword Unless  '${value}' == '${EMPTY}'
+	...  Input Text And Verify  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}  ${value}
+	Click Element  ${ADVANCED QUERY BUILDER POPUP}  and don't wait
+
+Verify Filtering Result
+	[Arguments]  ${value}  ${flag}
+	Run Keyword If  '${flag}' == 'True'
+	...  Page Should Contain  ${value}
+	Run Keyword If  '${flag}' == 'False'
+	...  Page Should Not Contain  ${value}
+
+Verify Interface Filtering Result
+	[Arguments]  ${value}  ${flag}
+	${matches}=  Get Matching Xpath Count  //tbody[@class='main']/descendant::tr[contains(@id, 'bsn_widgets_FunctionalTableBodyRow_') and not(contains(@style, 'display: none'))]/descendant::div[@class='content' and contains(text(), '${value}')]
+	Run Keyword If  '${flag}' == 'True'
+	...  Should Be True  ${matches} > 0
+	Run Keyword If  '${flag}' == 'False'
+	...  Should Be True  ${matches} == 0
+
+Failover From Fabric Page
+	Go To Fabric Page
+	Verify Element Visible  ${STANDBY CONTROLLER CUBE}
+	Click Element  ${STANDBY CONTROLLER CUBE}  and don't wait
+	Verify Element Visible  ${CONTROLLER FAILOVER BUTTON}
+	Click Element  ${CONTROLLER FAILOVER BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM CONTROLLER FAILOVER POPUP}
+	Verify Element Visible  ${PROCEED WITH CONTROLLER FAILOVER BUTTON}
+	Click Element  ${PROCEED WITH CONTROLLER FAILOVER BUTTON}  and don't wait
+	Sleep  30
+	${master_ip}=            get node ip   master
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Valid Login  admin  adminadmin
+
+Reboot All Connected Switches From Fabric Page
+	Go To Fabric Page
+	Verify Element Visible  ${REBOOT ALL CONNECTED SWITCHES BUTTON}
+	Click Element  ${REBOOT ALL CONNECTED SWITCHES BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM SWITCH REBOOTS POPUP}
+	Verify Element Visible  ${PROCEED WITH SWITCH REBOOTS BUTTON}
+	Click Element  ${PROCEED WITH SWITCH REBOOTS BUTTON}  and don't wait
+	Sleep  30
+	Verify Element Invisible  ${CONFIRM SWITCH REBOOTS POPUP}
+	Verify Element Invisible  ${REBOOTING SWITCHES POPUP}
+
+Reboot Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH REBOOT BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH REBOOT BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Reset Switch Connection From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH RESET CONNECTION BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH RESET CONNECTION BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Split From Leaf Group From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH SPLIT FROM LEAF GROUP BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH SPLIT FROM LEAF GROUP BUTTON}  and don't wait
+    Verify Element Visible  ${SPLIT LEAF GROUP POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Beacon Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH BEACON BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH BEACON BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Shutdown Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH SHUTDOWN BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH SHUTDOWN BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Start Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH START BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH START BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Clear Switch Configuration From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH CLEAR CONFIGURATION BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH CLEAR CONFIGURATION BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+
+Reboot Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${REBOOT SWITCH MENU ITEM}
+    Click Element  ${REBOOT SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+
+Shutdown Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${SHUTDOWN SWITCH MENU ITEM}
+    Click Element  ${SHUTDOWN SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Start Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
     
-    
+    Verify Element Visible  ${START SWITCH MENU ITEM}
+    Click Element  ${START SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Clear Switch Configuration From Switches Page
+	[Arguments]  ${name}
+	Clear Switch Config  ${name}
+
+Reset Switch Connection From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${RESET CONNECTION SWITCH MENU ITEM}
+    Click Element  ${RESET CONNECTION SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Split From Leaf Group From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}
+    Click Element  ${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${SPLIT LEAF GROUP POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Beacon Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BEACON SWITCH MENU ITEM}
+    Click Element  ${BEACON SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Configure NTP Server
+	[Arguments]  ${server}
+	Go To Clock Page
+	Verify Element Visible  ${ADD NTP SERVER BUTTON}
+	Click Element  ${ADD NTP SERVER BUTTON}  and don't wait
+	Verify Element Visible  ${ADD NTP SERVER POPUP}
+	Verify Element Visible  ${INPUT NTP SERVER FILED}
+	Input Text And Verify  ${INPUT NTP SERVER FILED}  ${server}
+	Click Element  ${ADD NTP SERVER POPUP}  and don't wait
+	Verify Element Visible  ${SAVE NTP SERVER BUTTON}
+	Click Element  ${SAVE NTP SERVER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADD NTP SERVER POPUP}
+	Page Should Contain  ${server}
+
+
+Physical GUI Suite Setup
+	${tmp}  params  node=c1  key=ip
+	Set Suite Variable  ${c1_ip}  ${tmp}
+	${tmp}  params  node=c2  key=ip
+	Set Suite Variable  ${c2_ip}  ${tmp}
+
+	${tmp}  params  node=s1  key=mac
+	Set Suite Variable  ${s1_mac}  ${tmp}
+	${tmp}  params  node=s2  key=mac
+	Set Suite Variable  ${s2_mac}  ${tmp}
+	${tmp}  params  node=s3  key=mac
+	Set Suite Variable  ${s3_mac}  ${tmp}
+	${tmp}  params  node=s4  key=mac
+	Set Suite Variable  ${s4_mac}  ${tmp}
+	${tmp}  params  node=s5  key=mac
+	Set Suite Variable  ${s5_mac}  ${tmp}
+
+	${tmp}  params  node=s1  key=alias
+	Set Suite Variable  ${s1_alias}  ${tmp}
+	${tmp}  params  node=s2  key=alias
+	Set Suite Variable  ${s2_alias}  ${tmp}
+	${tmp}  params  node=s3  key=alias
+	Set Suite Variable  ${s3_alias}  ${tmp}
+	${tmp}  params  node=s4  key=alias
+	Set Suite Variable  ${s4_alias}  ${tmp}
+	${tmp}  params  node=s5  key=alias
+	Set Suite Variable  ${s5_alias}  ${tmp}
+
+	Set Suite Variable  ${s1_dpid}  00:00:${s1_mac}
+	Set Suite Variable  ${s2_dpid}  00:00:${s2_mac}
+	Set Suite Variable  ${s3_dpid}  00:00:${s3_mac}
+	Set Suite Variable  ${s4_dpid}  00:00:${s4_mac}
+	Set Suite Variable  ${s5_dpid}  00:00:${s5_mac}
+
+    Provision Switch			${s1_mac}		${s1_alias}			Spine		${EMPTY}
+    Provision Switch			${s2_mac}		${s2_alias}			Leaf		rack0
+    Provision Switch			${s3_mac}		${s3_alias}			Leaf		rack0
+    Provision Switch			${s4_mac}		${s4_alias}			Leaf		rack1
+    Provision Switch			${s5_mac}		${s5_alias}			Spine		${EMPTY}

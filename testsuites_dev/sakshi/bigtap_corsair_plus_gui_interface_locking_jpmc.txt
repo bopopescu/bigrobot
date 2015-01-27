@@ -118,13 +118,13 @@ T3.5 Verify new user can be created being in Patch Mode
 	Configure User							new-user  password  password  New User  ${EMPTY}
 	
 T3.6 Verify new group can be created being in Patch Mode
-	Configure Lock on BigTap Interface		new-group  new-user  admin-view
+	Configure Lock on BigTap Interface		new-group  new-user  ${EMPTY}
 	
 #T3.7 Verify new view cannot be created being in Patch Mode
 #	Configure Lock on BigTap Interface		
 	
 T3.8 Verify locked interfaces can be deleted
-	Configure Lock on BigTap Interface		filter		ixia-2-9
+	Delete Big Tap Interfaces				filter		ixia-2-9
 	
 
 	

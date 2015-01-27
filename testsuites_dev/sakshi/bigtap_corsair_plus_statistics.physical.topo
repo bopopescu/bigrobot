@@ -21,3 +21,17 @@ s4:
   
 s2:
   ip: 10.9.18.84
+  
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+  tcl_server_ip: 10.9.19.249
+  tcl_server_port: 8009
+  #ix_version: '7.10'
+  #set_init_ping: false
+  ports:
+    a:
+      name: 2/9
+    b:
+      name: 2/15
+     

@@ -71,7 +71,8 @@ class RestClient(object):
 
     def delete_session_cookie(self, url=None):
         result = self.delete(url)
-        self.set_session_cookie(session=None, quiet=True)
+        helpers.log("Removing session cookie '%s'" % self.session_cookie)
+        self.session_cookie = None
         return result
 
     def set_session_cookie(self, session, quiet=False):
@@ -254,21 +255,24 @@ class RestClient(object):
                 else:
                     raise
             else:
-                # !!! FIXME: Handle case where session cookie is expired for
-                # Big Switch controllers. It really shouldn't be in the generic
-                # module. Should really reside in bsn_restclient.py.
                 if int(result['status_code']) == 401:
                     if self.session_cookie_loop > 5:
                         helpers.test_error("Detected session cookie loop.")
-                    else:
+                    elif ('description' in result['content'] and
+                          re.match(r'.*cookie.*', result['content']['description'], re.I)):
+                        # Retry if:
+                        #   "Authorization failed: No session found for cookie"
+                        #   "Authorization failed: No session cookie provided"
                         self.session_cookie_loop += 1
-
-                    helpers.log("It appears the session cookie has expired."
-                                "  Requesting new session cookie.")
-                    self.request_session_cookie()
-                    # helpers.sleep(2)
-                    # Re-run command
-                    result = self._http_request(*args, **kwargs)
+                        helpers.log("It appears the session cookie has expired."
+                                    "  Requesting new session cookie.")
+                        self.request_session_cookie()
+                        # helpers.sleep(2)
+                        # Re-run command
+                        result = self._http_request(*args, **kwargs)
+                    else:
+                        # Error, possibly due to "invalid user/password combination" or others.
+                        helpers.test_error("Unable to create session cookie.")
                 else:
                     self.session_cookie_loop = 0
                 break

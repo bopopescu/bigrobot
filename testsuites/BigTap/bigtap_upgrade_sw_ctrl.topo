@@ -6,9 +6,11 @@
 # mn  : Mininet server
 
 c1:
+### Console: telnet cs-215 6010
   ip: 10.9.18.7
 
 c2:
+### Console: telnet cs-215 6026
   ip: 10.9.18.8
 
 ### Accton AS4600 (app-ras4600-1)  
@@ -106,6 +108,10 @@ s12:
 ### ethernet2:  4/10  
 s13:
   ip: 10.9.18.93
+  
+s14:
+  ip: 10.9.19.4
+### Dell S4810
   
   
   
