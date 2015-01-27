@@ -3810,7 +3810,7 @@ T5 base suite teardown
     CLI arista delete route                         s12                             20.0.0.0/8      10.98.1.2    
     CLI arista disable ip routing                  s11
     CLI arista disable ip routing                  s12    
-    sleep                                      60   
+    sleep                                           10   
     base suite teardown 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}  ${range}=5
