@@ -89,7 +89,7 @@ T5.1.3. Power down, change config, failover
 	Randomize ZTN Configuration
 	Failover
 	Power Up All Switches
-	Sleep  120
+	Sleep  200
 	Verify All Switches Connected
 	Verify All Switches Startup Config
 	Verify All Switches Running Config

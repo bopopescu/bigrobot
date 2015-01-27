@@ -159,7 +159,7 @@ root@nova-controller:~#
 root@nova-controller:~#
 """
         out_dict = helpers.openstack_convert_table_to_dict(openstack_output)
-        helpers.prettify_log("out_dict:", out_dict)
+        helpers.pretty_log(out_dict)
 
         # Now you can walk through the dictionary...
         key = '02f4a4d1-0930-43bf-94db-2d39b11c343d'
@@ -1081,7 +1081,10 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         content = n.cli('show user')['content']
         output = helpers.strip_cli_output(content)
         helpers.log("**** output: %s" % output)
-        n = t.node_reconnect(node)
+        try:
+            n = t.node_reconnect(node)
+        except:
+            helpers.log(helpers.exception_info())
         n.bash('uptime')
         n2 = t.node_spawn(ip=n.ip())
         n2.cli('show session')

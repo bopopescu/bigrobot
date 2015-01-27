@@ -19,6 +19,9 @@ Library       		String
 ...  System Tenant Interface  Total Tenant Interfaces  Total Segment Interfaces  Total Segments  Total Routes  Total Next Hop Groups
 ...  Total Policy Lists
 
+@{INTERFACE COMPARISON COLUMNS}=  Any  Switch  Switch MAC  Interface Name  Status  Admin Status  Link Status  Hardware Address  Number
+...  Spine Switch  Leaf Switch  Port Group  Breakout  Auto-Negotiation
+
 *** Test Case ***
 ### Endpoints	
 T1.1 Check Endpoints Advanced Query Builder
@@ -216,7 +219,7 @@ T2.3.6 Default Route
 	Verify Filtering Result  system  False
 T2.3.7 Applied Policy List
 	Open Advanced Query Builder  Tenants
-	Add Filter Query  Applied Policy List  starts with  my-
+	Add Filter Query  Applied Policy List  starts with  test1
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  tenant-a  True
 	Verify Filtering Result  tenant-b  False
@@ -225,7 +228,7 @@ T2.3.8 System Tenant Interface
 	Open Advanced Query Builder  Tenants
 	Add Filter Query  System Tenant Interface  True  ${EMPTY}
 	Close And Filter Advanced Query Builder
-	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-a  True
 	Verify Filtering Result  tenant-b  True
 	Verify Filtering Result  system  False
 T2.3.9 Total Tenant Interfaces
@@ -254,7 +257,7 @@ T2.3.12 Total Routes
 	Add Filter Query  Total Routes  equals  1
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  tenant-a  True
-	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  tenant-b  True
 	Verify Filtering Result  system  False
 T2.3.13 Total Next Hop Groups
 	Open Advanced Query Builder  Tenants
@@ -270,7 +273,181 @@ T2.3.14 Total Policy Lists
 	Verify Filtering Result  tenant-a  False
 	Verify Filtering Result  tenant-b  False
 	Verify Filtering Result  system  True
-			
+
+### Interfaces
+T3.1 Check Interfaces Advanced Query Builder
+	Check Advanced Query Builder  Interfaces  ${INTERFACE COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T3.2 Add Interface Filter
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any						contains				test
+	Add Filter Query  Switch  					is						test
+	Add Filter Query  Switch MAC  				starts with				test
+	Add Filter Query  Interface Name  			ends with				test
+	Add Filter Query  Status  					True					${EMPTY}
+	Add Filter Query  Admin Status  			False					${EMPTY}
+	Add Filter Query  Link Status				Null or unspecified  	${EMPTY}
+	Add Filter Query  Hardware Address  		is						test
+	Add Filter Query  Number  					equals					1
+	Add Filter Query  Spine Switch 				True					${EMPTY}
+	Add Filter Query  Leaf Switch  				False					${EMPTY}
+	Add Filter Query  Port Group  				is						test
+	Add Filter Query  Breakout					Null or unspecified  	${EMPTY}
+	Add Filter Query  Auto-Negotiation			Null or unspecified  	${EMPTY}
+	Close And Filter Advanced Query Builder
+
+#T3.3 Verify Interfaces Filtering
+T3.3.1 Any
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any  contains  ethernet11
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.2 Switch & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Interface Name  ends with  ethernet1
+	Add Filter Query  Switch  contains  leaf
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.3 Switch MAC & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Interface Name  is  ethernet1
+	Add Filter Query  Switch MAC  is  ${s1_mac}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.4 Status
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Status  True  ${EMPTY}}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  Link Down  False
+
+T3.3.5 Admin Status & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Admin Status  True  ${EMPTY}
+	Add Filter Query  Interface Name  contains  ethernet12
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+
+T3.3.6 Link Status
+	Config  master  switch test-switch; interface test-interface
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Link Status  Null or unspecified  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  test-interface  True
+	Config  master  no switch test-switch
+
+T3.3.7 Hardware Address
+	Config  master  switch test-switch; interface test-interface
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Hardware Address  is  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  test-interface  True
+	Config  master  no switch test-switch
+
+T3.3.8 Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Number  greater than  53
+	Add Filter Query  Number  less than  55
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.9 Spine Switch & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Spine Switch  True  ${EMPTY}
+	Add Filter Query  Number  less than  3
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  ethernet5  False
+
+T3.3.10 Leaf Switch & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Leaf Switch  True  ${EMPTY}
+	Add Filter Query  Number  less than  3
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet5  False
+
+T3.3.11 Port Group & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Port Group  is  test
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.12 Breakout & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Breakout  False  ${EMPTY}
+	Add Filter Query  Number  greater than  50
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.13 Auto-Negotiation & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Auto-Negotiation  Null or unspecified  ${EMPTY}
+	Add Filter Query  Number  equals  5
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+
 *** Keyword ***
 config suite setup
     base suite setup
@@ -283,7 +460,39 @@ config suite setup
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-    
+
+	${tmp}  params  node=c1  key=ip
+	set suite variable  ${c1_ip}  ${tmp}
+	${tmp}  params  node=c2  key=ip
+	set suite variable  ${c2_ip}  ${tmp}
+
+	${tmp}  params  node=s1  key=mac
+	set suite variable  ${s1_mac}  ${tmp}
+	${tmp}  params  node=s2  key=mac
+	set suite variable  ${s2_mac}  ${tmp}
+	${tmp}  params  node=s3  key=mac
+	set suite variable  ${s3_mac}  ${tmp}
+	${tmp}  params  node=s4  key=mac
+	set suite variable  ${s4_mac}  ${tmp}
+	${tmp}  params  node=s5  key=mac
+	set suite variable  ${s5_mac}  ${tmp}
+
+	${tmp}  params  node=s1  key=alias
+	set suite variable  ${s1_alias}  ${tmp}
+	${tmp}  params  node=s2  key=alias
+	set suite variable  ${s2_alias}  ${tmp}
+	${tmp}  params  node=s3  key=alias
+	set suite variable  ${s3_alias}  ${tmp}
+	${tmp}  params  node=s4  key=alias
+	set suite variable  ${s4_alias}  ${tmp}
+	${tmp}  params  node=s5  key=alias
+	set suite variable  ${s5_alias}  ${tmp}
+
+	set suite variable  ${s1_dpid}  00:00:${s1_mac}
+	set suite variable  ${s2_dpid}  00:00:${s2_mac}
+	set suite variable  ${s3_dpid}  00:00:${s3_mac}
+	set suite variable  ${s4_dpid}  00:00:${s4_mac}
+	set suite variable  ${s5_dpid}  00:00:${s5_mac}    
 	
 config suite teardown
 	Close Browser

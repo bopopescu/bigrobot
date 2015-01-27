@@ -49,30 +49,7 @@ s8:
   alias: spine1
   user: admin
   password: adminadmin
-h1:
-  ip: 10.195.0.103
-  user: root
-  password: bsn
-h2:
-  ip: 10.195.0.104
-  user: root
-  password: bsn
-h3:
-  ip: 10.195.0.101
-  user: root
-  password: bsn
-h4:
-  ip: 10.195.0.102
-  user: root
-  password: bsn
-h5:
-  ip: 10.195.0.105
-  user: root
-  password: bsn
-h6:
-  ip: 10.195.0.106
-  user: root
-  password: bsn 
+ 
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151

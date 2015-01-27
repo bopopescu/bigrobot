@@ -409,7 +409,7 @@ class T5Platform(object):
                 master.enable("yes")
                 helpers.log("Master is rebooting")
                 # helpers.sleep(90)
-                helpers.sleep(160)
+                helpers.sleep(190)
             else:
                 slave = t.controller("slave")
                 actual_node_name = slave.name()
@@ -418,10 +418,10 @@ class T5Platform(object):
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
                 # helpers.sleep(90)
-                helpers.sleep(160)
+                helpers.sleep(190)
         except:
             helpers.log("Node is rebooting")
-            helpers.sleep(90)
+            helpers.sleep(160)
             count = 0
             while (True):
                 loss = helpers.ping(ipAddr)
@@ -430,12 +430,12 @@ class T5Platform(object):
                     if (count > 5):
                         helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
                         return False
-                    helpers.sleep(60)
+                    helpers.sleep(120)
                     count += 1
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     helpers.log("Controller just came alive. Waiting for it to become fully functional")
-                    helpers.sleep(120)
+                    helpers.sleep(180)
                     break
 
         helpers.log("*** actual_node_name is '%s'. Node reconnect." % actual_node_name)

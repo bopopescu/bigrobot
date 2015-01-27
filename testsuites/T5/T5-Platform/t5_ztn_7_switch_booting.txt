@@ -82,7 +82,7 @@ T7.26.2.2 - while SWI download - startup-config cached - switch undefined
     Sleep  30
     Telnet Wait For Switch To Find Manifest  s3
     Cli Run  master  switch ${s3_alias}; no mac ${s3_mac}
-    Sleep  60
+    Sleep  150
     Verify Switch Connection State  False  ${s3_alias}
     Cli Run and Verify Output  master
     ...  show switch
@@ -93,7 +93,7 @@ T7.26.3 - while image startup - switch rebooted (starts up, gets removed)
     Sleep  30
     Telnet Wait For Switch To Start Booting  s4
     Cli Run  master  switch ${s4_alias}; no mac ${s4_mac}
-    Sleep  60
+    Sleep  150
     Verify Switch Connection State  False  ${s4_alias}
     Cli Run and Verify Output  master
     ...  show switch
@@ -108,7 +108,7 @@ T7.27.1 - while Installer download - correct SWI download and fabric join
     Telnet Verify Onie Discovery Succeeded  s5
     Cli Run  master  switch ${s5_alias}; no mac ${s5_mac}
     Cli Run  master  switch temp-name; mac ${s5_mac}; fabric-role spine
-    Sleep  100
+    Sleep  120
     Telnet Wait For Switch To Reload  s5
     Sleep  60
     Verify Switch Startup Config  ${s5_mac}  temp-name
@@ -121,7 +121,7 @@ T7.27.2.1 - while SWI download - startup-config not cached - switch boots proper
     Telnet Wait For Switch To Find Manifest  s1
     Cli Run  master  switch ${s1_alias}; no mac ${s1_mac}
     Cli Run  master  switch temp-name; mac ${s1_mac}; fabric-role spine
-    Sleep  200
+    Sleep  220
     Telnet Wait For Switch To Reload  s1
     Sleep  30
     Verify Switch Startup Config  ${s1_mac}  temp-name
@@ -147,7 +147,7 @@ T7.27.3 - while image startup - reload indicated
     Telnet Wait For Switch To Start Booting  s3
     Cli Run  master  switch ${s3_alias}; no mac ${s3_mac}
     Cli Run  master  switch temp-name; mac ${s3_mac}; fabric-role leaf
-    Sleep  60
+    Sleep  120
     Verify Switch Startup Config  ${s3_mac}  temp-name
     Verify Switch Running Config  ${s3_mac}  ${s3_alias}
     Verify Switch In Provisioned Mode  temp-name
@@ -205,7 +205,7 @@ T7.29.2 - while SWI download - switch undefined (suspended)
 	Telnet Wait For Switch To Find Manifest  s1
 	Set All Switches Mode Standby
 	Telnet Wait For Switch To Reload  s1
-	Sleep  30
+	Sleep  100
 	Verify All Switches In Standby Mode
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
@@ -215,7 +215,7 @@ T7.29.3 - while image startup - switch undefined (suspended)
 	Telnet Wait For Switch To Start Booting  s5
 	Set All Switches Mode Standby
 	Telnet Wait For Switch To Reload  s5
-	Sleep  30
+	Sleep  100
 	Verify All Switches In Standby Mode
 	Verify All Switches Startup Config
 	Verify All Switches Running Config

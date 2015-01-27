@@ -166,11 +166,14 @@ def analyze(s, level=3):
     info(s, level)
 
 
-def prettify(data):
+def prettify(data, format_newline=False):
     """
     Return the Python object as a prettified string (formatted).
     """
-    return pprint.pformat(data)
+    pretty_str = pprint.pformat(data)
+    if format_newline:
+        pretty_str = pretty_str.replace('\\n', '\n')
+    return pretty_str
 
 
 def prettify_xml(xml_str):
@@ -188,8 +191,8 @@ def prettify_xml(xml_str):
     return text
 
 
-def prettify_log(s, data, level=3):
-    analyze(''.join((s, '\n', prettify(data))), level)
+def pretty_log(s, format_newline=True, level=3):
+    log(prettify(s, format_newline), level)
 
 
 def exception_info_type():
@@ -721,6 +724,14 @@ def bigrobot_preserve_mininet_screen_session_on_fail(new_val=None, default='Fals
     """
     return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION_ON_FAIL',
                             new_val, default)
+
+
+def bigrobot_delete_session_cookies(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to pause test case after it had failed.
+    """
+    return _env_get_and_set('BIGROBOT_DELETE_SESSION_COOKIES', new_val, default)
 
 
 def bigrobot_test_suite_status(new_val=None, default=None):

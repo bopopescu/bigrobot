@@ -1,26 +1,24 @@
-''' 
+'''
 ###  WARNING !!!!!!!
-###  
+###
 ###  This is where common code for BigTap will go in.
-###  
-###  To commit new code, please contact the Library Owner: 
+###
+###  To commit new code, please contact the Library Owner:
 ###  Animesh Patcha (animesh.patcha@bigswitch.com)
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
-###  
+###
 ###  Last Updated: 01/30/2014
-###  
+###
 ###  WARNING !!!!!!!
 '''
 
 import autobot.helpers as helpers
 import autobot.test as test
 import keywords.AppController as AppController
+import SwitchLight as SwitchLight
 import json
 import re
-import time
-from datetime import datetime
-from time import mktime
 
 class BigTap(object):
 
@@ -34,17 +32,17 @@ class BigTap(object):
 
     def rest_show_switch_flow(self, node, switch_alias=None, sw_dpid=None, return_value=None):
         '''
-        Objective: 
+        Objective:
         - Returns number of flows on a switch
-        
-        Input: 
-        | 'switch_dpid' |  Datapath ID of the switch | 
-        
+
+        Input:
+        | 'switch_dpid' |  Datapath ID of the switch |
+
         Description:
         - The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch[dpid="<SWITCH_DPID>"]?select=stats/table
         - Returns number of active flows
-        
-        Return value: 
+
+        Return value:
         - Number of active flows on the switch
         '''
         t = test.Test()
@@ -78,12 +76,12 @@ class BigTap(object):
     def rest_return_switch_flow(self, node, flow_index, flow_key, flow_id=0, switch_alias=None, sw_dpid=None, soft_error=False):
         '''
             Objective: Verify flow is pushed via controller
-            
+
             Input:
             | node | Specify switch as defined in topo file|
             |flow_index| Index in flow you want returned|
             |_key| Key in the index you want returned|
-            
+
             Return Value:
             Value of the specified key
         '''
@@ -113,13 +111,12 @@ class BigTap(object):
                 return content[0]['stats']['flow'][int(flow_id)]['match-field'][int(flow_index)][str(flow_key)]
 
 
-
 # Mingtao
     def rest_show_address_group(self, group):
-        """ 
+        """
             Objective:
             Return output of show address-group group_name.
-            
+
             Input:
             | group | Name of IP Address Group|
 
@@ -143,10 +140,10 @@ class BigTap(object):
 
 # Mingtao
     def rest_show_policy_optimize(self, policy):
-        ''' 
+        '''
             Objective:
             Return number of optimized matches per given policy.
-            
+
             Input:
             | policy | Name of policy|
 
@@ -177,7 +174,7 @@ class BigTap(object):
     def rest_show_run_policy(self, policy):
         """ Get the rest output of "show run bigtap policy XX"
             -- Mingtao
-            Usage:                     
+            Usage:
         """
         t = test.Test()
         c = t.controller('master')
@@ -200,7 +197,7 @@ class BigTap(object):
     def rest_get_run_policy_feild(self, input_dict, policy, match=None):
         """ Get the rest output of "show bigtap policy XX"
             -- Mingtao
-            Usage:                     
+            Usage:
         """
         helpers.log("Output: input_dict: %s" % input_dict)
 
@@ -230,10 +227,10 @@ class BigTap(object):
 
 # Mingtao
     def rest_show_feature(self, feature="l3-l4-mode"):
-        """ 
+        """
             Objective: Verify bigtap mode: l3_l4 and inport_mask
-            
-            Input: 
+
+            Input:
             |Feature | Name of Feature being verified|
         """
         t = test.Test()
@@ -338,12 +335,12 @@ class BigTap(object):
             Objective:
             - Execute the CLI command 'user username'
             - Execute the CLI command 'password passwd' (if non-empty)
-        
+
             Input:
-            | `username` |  Username | 
+            | `username` |  Username |
             | `passwd` | Password |
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration is successful
             - False otherwise
         '''
@@ -375,26 +372,26 @@ class BigTap(object):
         '''
         Objective:
         Parse the output of cli command 'show bigtap policy <policy_name>'
-              
+
         Inputs:
-        
-        | `policy_name` | Name of the policy being parsed | 
-        | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
-        | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
+
+        | `policy_name` | Name of the policy being parsed |
+        | `num_filter_intf` | Number of configured Filter Interfaces in the policy |
+        | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy |
         | `return_value` | If you need a particular value from the dictionary|
-        
+
         Description:
         The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
-        The policy returns True if and only if all the following conditions are True 
+        The policy returns True if and only if all the following conditions are True
         - Policy name is seen correctly in the output
         - Config-Status is either "active and forwarding" or "active and rate measure"
         - Type is "Configured"
         - Runtime Status is "installed"
         - Delivery interface count is num_delivery_intf
         - Filter Interface count is num_filter_intf
-        - Detailed status is either "installed to forward" or "installed to measure rate"        
-        
-        Return value: 
+        - Detailed status is either "installed to forward" or "installed to measure rate"
+
+        Return value:
         - True on success
         - False otherwise
         '''
@@ -567,19 +564,19 @@ class BigTap(object):
         '''
             Objective:
             - Execute a rest get and verify if a particular key exists in a policy
-        
+
             Inputs
-            | `policy_name` |  Policy Name being tested for| 
-            | `method`    |  Methods can be info/rule/filter-interface/delivery-interface/service-interface/core-interface/failed-paths| 
-            | `index`    |  Index in the array| 
-            | `key`      |  Particular key we are looking for.| 
-            
+            | `policy_name` |  Policy Name being tested for|
+            | `method`    |  Methods can be info/rule/filter-interface/delivery-interface/service-interface/core-interface/failed-paths|
+            | `index`    |  Index in the array|
+            | `key`      |  Particular key we are looking for.|
+
             Description:
                 rest_check_policy_key('testPolicy','ip-proto',0,'rule') would check execute a REST get on "http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="testPolicy"]/rule
                 and return the value "ip-proto"
-            
-            Return Value: 
-            - Value of key if the key exists, 
+
+            Return Value:
+            - Value of key if the key exists,
             - False if it does not.
         '''
         try:
@@ -605,8 +602,8 @@ class BigTap(object):
     def verify_address_group(self, input_dict, group_name, group_type=None, entry=None):
         """ Verify the  type or/and entry number bigtap address group
             -- Mingtao
-            Usage: 
-             verify_address_group        ${input_dict}    IPV4   group_type=ipv4   entry=1                    
+            Usage:
+             verify_address_group        ${input_dict}    IPV4   group_type=ipv4   entry=1
         """
         helpers.log("input_dict: %s" % input_dict)
         if str(group_name) == input_dict['name']:
@@ -677,7 +674,7 @@ class BigTap(object):
 
 # Mingtao
     def verify_switch_tcam_limitaion(self, node, policy, match_type='mixed', base='10.0.0.0', step='0.1.0.1', v6base='1001:0:0:0:0:0:0:0', v6step='0:0:1:0:1:0:0:0'):
-        """ verify the switch tcam flow limitaion 
+        """ verify the switch tcam flow limitaion
             Usage:  verify_switch_tcam   S203    type
                     type - 'ipv4'   'ipv6'   mixed
             return:  the tcam flow entries
@@ -801,14 +798,14 @@ class BigTap(object):
         '''
             Objective:
             - Execute the CLI command 'bigtap role filter interface-name F1'
-        
-            Input: 
-            | `switch_dpid` |  DPID of the switch | 
-            | `intf_name`    |  Interface Name viz. etherenet1, ethernet2 etc. | 
-            | `intf_type`    |  Interface Type viz. filter, delivery, service | 
-            | `intf_nickname` |  Nickname for the interface for eg. F1, D1, S1 etc. | 
-            
-            Return Value: 
+
+            Input:
+            | `switch_dpid` |  DPID of the switch |
+            | `intf_name`    |  Interface Name viz. etherenet1, ethernet2 etc. |
+            | `intf_type`    |  Interface Type viz. filter, delivery, service |
+            | `intf_nickname` |  Nickname for the interface for eg. F1, D1, S1 etc. |
+
+            Return Value:
             - True if configuration is successful
             - False otherwise
         '''
@@ -861,20 +858,20 @@ class BigTap(object):
     def rest_delete_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
         '''
             Objective:
-            - Delete filter/service/delivery interface from switch configuration. 
-         
-            Input: 
-             | `switch_dpid` | Datapath ID of the switch | 
-             | `intf_name` |  Interface Name viz. etherenet1, ethernet2 etc. | 
-             | `intf_type` | Interface Type viz. filter, delivery, service | 
-             | `intf_nickname` | Nickname for the interface for eg. F1, D1, S1 etc. | 
-                
+            - Delete filter/service/delivery interface from switch configuration.
+
+            Input:
+             | `switch_dpid` | Datapath ID of the switch |
+             | `intf_name` |  Interface Name viz. etherenet1, ethernet2 etc. |
+             | `intf_type` | Interface Type viz. filter, delivery, service |
+             | `intf_nickname` | Nickname for the interface for eg. F1, D1, S1 etc. |
+
             Description:
             - Similar to executing the CLI command 'no bigtap role filter interface-name F1'
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration is successful
-            - False otherwise    
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -917,14 +914,14 @@ class BigTap(object):
         '''
             Objective
             - Delete interface from switch
-         
-            Input: 
-             | `switch_dpid` | DPID of the switch | 
-             | `intf_name` | Interface Name viz. etherenet1, ethernet2 etc. | 
-            
-            Return Value: 
+
+            Input:
+             | `switch_dpid` | DPID of the switch |
+             | `intf_name` | Interface Name viz. etherenet1, ethernet2 etc. |
+
+            Return Value:
             - True if configuration delete is successful
-            - False otherwise       
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -955,15 +952,15 @@ class BigTap(object):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
-            
+
             Input:
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
-            
-            
+
+
             Return Value:
             - True if configuration add is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -994,15 +991,15 @@ class BigTap(object):
         '''
             Objective
             - Delete an existing filter-interface-group or delivery-interface-group
-            
+
             Input:
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
-            
-            
+
+
             Return Value:
             - True if configuration delete is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1033,16 +1030,16 @@ class BigTap(object):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
-            
+
             Input:
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
             | interface_name | Name of interface being added to interface-group |
-            
-            
+
+
             Return Value:
             - True if configuration add is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1073,16 +1070,16 @@ class BigTap(object):
         '''
             Objective
             - Delete a interface from an interface group
-            
+
             Input:
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
             | interface_name | Name of interface being added to interface-group |
-            
-            
+
+
             Return Value:
             - True if configuration add is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1113,17 +1110,17 @@ class BigTap(object):
         '''
             Objective
             - Add filter-interface-group or delivery-interface-group to policy
-            
+
             Input:
             | policy_name | Name of policy to which group is added|
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
 
-            
-            
+
+
             Return Value:
             - True if configuration add is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1161,17 +1158,17 @@ class BigTap(object):
         '''
             Objective
             - Delete filter-interface-group or delivery-interface-group to policy
-            
+
             Input:
             | policy_name | Name of policy to which group is added|
             | group_name | Name of Group |
             | group_type | Filter or Delivery|
 
-            
-            
+
+
             Return Value:
             - True if configuration add is successful
-            - False otherwise              
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1203,15 +1200,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap policy.
-        
+
             Input:
-             | rbac_view_name` | RBAC View Name for eg. admin-view | 
-             | `policy_name` | Policy Name | 
-             | `policy_action` | Policy action. The permitted values are "forward" or "rate-measure", default is inactive | 
-            
-            Return Value: 
+             | rbac_view_name` | RBAC View Name for eg. admin-view |
+             | `policy_name` | Policy Name |
+             | `policy_action` | Policy action. The permitted values are "forward" or "rate-measure", default is inactive |
+
+            Return Value:
             - True if configuration is successful
-            - False otherwise       
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -1248,14 +1245,14 @@ class BigTap(object):
         '''
             Objective:
             - Delete a bigtap policy.
-        
+
             Input:
-             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
-             | `policy_name` | Policy Name | 
-            
-            Return Value: 
+             | `rbac_view_name` | RBAC View Name for eg. admin-view |
+             | `policy_name` | Policy Name |
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful          
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1281,15 +1278,15 @@ class BigTap(object):
         '''
             Objective:
             - Update bigtap policy priority. Default value is 100.
-        
+
             Input:
-             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
-             | `policy_name` | Policy Name | 
+             | `rbac_view_name` | RBAC View Name for eg. admin-view |
+             | `policy_name` | Policy Name |
              | policy_priority| New priority value|
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful          
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1306,62 +1303,21 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_timed_policy(self, rbac_view_name, policy_name, duration, starttime, pktcount):
-        '''
-            Objective:
-            - Update bigtap policy with start time, duration etc.
-        '''
-        try:
-            t = test.Test()
-        except:
-            return False
-        else:
-            c = t.controller('master')
-            try:
-                if "+" in starttime:
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    sttime = starttime[:-1]
-                    helpers.log("Passed from .txt file %s" % str(sttime))
-                    stime = int(time.time() + int(sttime))
-                    helpers.log("STIME is %d" % int(stime))
-                    c.rest.patch(url, {"start-time": int(stime) , "delivery-packet-count": int(pktcount), "duration": int(duration)})
-                elif "now" in starttime:
-                    unixTime = int(time.time())
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    c.rest.patch(url, {"start-time": unixTime, "delivery-packet-count": int(pktcount), "duration": int(duration)})
-                elif ("T" in starttime) and (":" in starttime) and ("-" in starttime):
-                    UT = datetime.strptime(starttime, '%Y-%m-%dT%H:%M:%S')
-                    unixTime = int(mktime(UT.timetuple()))
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
-                elif ("stop" in starttime):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    c.rest.patch(url, {"duration": 1, "start-time": 0, "delivery-packet-count": 0})
-                else:
-                    helpers.log("IN HERE")
-                    UT = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
-                    unixTime = int(mktime(UT.timetuple()))
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                    c.rest.patch(url, {"start-time": int(unixTime), "delivery-packet-count": int(pktcount), "duration": int(duration)})
-            except:
-                helpers.test_log(c.rest.error())
-                return False
-            else:
-                return True
+
 
     def rest_add_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
         '''
             Objective:
             - Update bigtap policy priority. Default value is 100.
-        
+
             Input:
-             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
-             | `policy_name` | Policy Name | 
+             | `rbac_view_name` | RBAC View Name for eg. admin-view |
+             | `policy_name` | Policy Name |
              | policy_priority| New priority value|
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful          
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1382,15 +1338,15 @@ class BigTap(object):
         '''
             Objective:
             - Update bigtap policy priority. Default value is 100.
-        
+
             Input:
-             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
-             | `policy_name` | Policy Name | 
+             | `rbac_view_name` | RBAC View Name for eg. admin-view |
+             | `policy_name` | Policy Name |
              | policy_priority| New priority value|
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful          
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1411,16 +1367,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
-        
+
             Input:
-             | `rbac_view_name` |   RBAC View Name for eg. admin-view| 
-             | `policy_name` |  Policy Name| 
-             | `intf_nickname` |  Interface Nick-Name for eg. F1 or D1 | 
-             | `intf_type` |  Interface Type. Allowed values are `filter` or `delivery` | 
-            
-            Return Value: 
+             | `rbac_view_name` |   RBAC View Name for eg. admin-view|
+             | `policy_name` |  Policy Name|
+             | `intf_nickname` |  Interface Nick-Name for eg. F1 or D1 |
+             | `intf_type` |  Interface Type. Allowed values are `filter` or `delivery` |
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful     
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1449,18 +1405,18 @@ class BigTap(object):
     def rest_delete_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type, user="admin", password="adminadmin"):
         '''
             Objective:
-            - Delete a bigtap policy interface viz. 
+            - Delete a bigtap policy interface viz.
             - Delete a filter-interface and/or delivery-interface from a bigtap policy.
-        
+
             Input:
-            | `rbac_view_name` | RBAC View Name for eg. admin-view | 
-            | `policy_name` | Policy Name | 
-            | `intf_nickname` | Interface Nick-Name for eg. F1 or D1 | 
-            | `intf_type` | Interface Type. Allowed values are `filter` or `delivery` | 
-            
-            Return Value: 
+            | `rbac_view_name` | RBAC View Name for eg. admin-view |
+            | `policy_name` | Policy Name |
+            | `intf_nickname` | Interface Nick-Name for eg. F1 or D1 |
+            | `intf_type` | Interface Type. Allowed values are `filter` or `delivery` |
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful    
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1490,16 +1446,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap policy match condition.
-        
+
             Input:
-            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
-            | `policy_name` | Policy Name | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
-            
-            Return Value: 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view |
+            | `policy_name` | Policy Name |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful         
+            - False if configuration add is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1530,15 +1486,15 @@ class BigTap(object):
         '''
             Objective:
             - Delete a bigtap policy match condition.
-        
+
             Input:
-            | `rbac_view_name` |  RBAC View Name for eg. admin-view | 
-            | `policy_name` | Policy Name | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            
-            Return Value: 
+            | `rbac_view_name` |  RBAC View Name for eg. admin-view |
+            | `policy_name` | Policy Name |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful         
+            - False if configuration delete is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1565,15 +1521,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a filter set.
-        
+
             Input:
-            | `filter_set_name`| Name of filter set | 
-            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
-            
-            Return Value: 
+            | `filter_set_name`| Name of filter set |
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
         '''
         try:
             t = test.Test()
@@ -1600,15 +1556,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a filter set.
-        
+
             Input:
-            | `filter_set_name`| Name of filter set | 
-            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
-            
-            Return Value: 
+            | `filter_set_name`| Name of filter set |
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
         '''
         try:
             t = test.Test()
@@ -1635,16 +1591,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap match condition to a filtet set
-        
+
             Input:
-            | `filter_set_name` | Name of filter set | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
-            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
-            
-            Return Value: 
+            | `filter_set_name` | Name of filter set |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} |
+            | `rbac_view_name`| RBAC View Name for eg. admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful         
+            - False if configuration add is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1672,16 +1628,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap match condition to a filtet set
-        
+
             Input:
-            | `filter_set_name` | Name of filter set | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
-            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
-            
-            Return Value: 
+            | `filter_set_name` | Name of filter set |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} |
+            | `rbac_view_name`| RBAC View Name for eg. admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful         
+            - False if configuration add is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1707,16 +1663,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap match condition to a filtet set
-        
+
             Input:
             | `policy_name` |  Name of policy  |
-            | `filter_set_name` | Name of filter set | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
-            
-            Return Value: 
+            | `filter_set_name` | Name of filter set |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+            | `rbac_view_name`| RBAC View Name for eg. admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful         
+            - False if configuration add is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1742,16 +1698,16 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap match condition to a filtet set
-        
+
             Input:
             | `policy_name` |  Name of policy  |
-            | `filter_set_name` | Name of filter set | 
-            | `match_number` |  Match number like the '1' in  '1 match tcp | 
-            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
-            
-            Return Value: 
+            | `filter_set_name` | Name of filter set |
+            | `match_number` |  Match number like the '1' in  '1 match tcp |
+            | `rbac_view_name`| RBAC View Name for eg. admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful         
+            - False if configuration add is unsuccessful
         '''
         try:
             t = test.Test()
@@ -1779,15 +1735,15 @@ class BigTap(object):
         '''
             Objective:
             - Strip Vlan from incoming traffic that matches policy.
-        
+
             Input:
-            | `policy_name`| Name of Policy | 
-            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
-            
-            Return Value: 
+            | `policy_name`| Name of Policy |
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
         '''
         try:
             t = test.Test()
@@ -1814,15 +1770,15 @@ class BigTap(object):
         '''
             Objective:
             - Stop removing Vlans from incoming traffic that matches policy.
-        
+
             Input:
-            | `policy_name`| Name of Policy | 
-            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
-            
-            Return Value: 
+            | `policy_name`| Name of Policy |
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
         '''
         try:
             t = test.Test()
@@ -1849,19 +1805,19 @@ class BigTap(object):
         '''
             Objective:
             - Add a bigtap service.
-        
+
             Input:
-            | `service_name`| Name of Service | 
-            | `pre_service_intf_nickname`| Name of pre-service interface | 
-            | `post_service_intf_nickname`| Name of post-service interface | 
-            
-            Return Value: 
+            | `service_name`| Name of Service |
+            | `pre_service_intf_nickname`| Name of pre-service interface |
+            | `post_service_intf_nickname`| Name of post-service interface |
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
             Examples:
-                | rest add bigtap service  |  S1-LB7  |  S1-LB7_E3-HP1_E3-PRE  |  S1-LB7_E4-HP1_E4-POST  |  
-                Result is 
+                | rest add bigtap service  |  S1-LB7  |  S1-LB7_E3-HP1_E3-PRE  |  S1-LB7_E4-HP1_E4-POST  |
+                Result is
                 bigtap service S1-LB7
                   post-service S1-LB7_E4-HP1_E4-POST
                   pre-service S1-LB7_E3-HP1_E3-PRE
@@ -1913,14 +1869,14 @@ class BigTap(object):
         '''
             Objective:
             - Delete a bigtap service.
-        
+
             Input:
             | `service_name` | Name of Service |
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration delete is successful
-            - False if configuration delete is unsuccessful  
-        
+            - False if configuration delete is unsuccessful
+
         '''
         try:
             t = test.Test()
@@ -1945,21 +1901,21 @@ class BigTap(object):
     def rest_add_interface_service(self, service_name, intf_type, intf_nickname, user="admin", password="adminadmin"):
         '''
             Objective:
-            - Add a service interface to a service. 
+            - Add a service interface to a service.
             - This is similar to executing CLI command "post-service S1-LB7_E4-HP1_E4-POST"
-        
+
             Input:
             | `service_name` | Name of Service |
             | `intf_type`  | Interface Type. Acceptable values are `pre` or `post` |
             | `post_service_intf_nickname` | Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST |
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
             Examples:
-                | rest add interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |  
-                Result is 
+                | rest add interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |
+                Result is
                 bigtap service S1-LB7
                   post-service S1-LB7_E4-HP1_E4-POST
         '''
@@ -1990,19 +1946,19 @@ class BigTap(object):
         '''
             Objective:
             - Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
-        
+
             Input:
             | `service_name` | Name of Service |
             | `intf_type` | Interface Type. Acceptable values are `pre` or `post` |
             | `post_service_intf_nickname` | Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST |
-            
-            Return Value: 
+
+            Return Value:
             - True if configuration add is successful
-            - False if configuration add is unsuccessful  
-        
+            - False if configuration add is unsuccessful
+
             Examples:
-                | rest delete interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |  
-                Result is 
+                | rest delete interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |
+                Result is
                 bigtap service S1-LB7
         '''
         try:
@@ -2032,20 +1988,20 @@ class BigTap(object):
         '''
           Objective:
           - Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
-        
+
           Input:
             |`rbac_view_name` | RBAC View Name for eg. admin-view |
             |`policy_name` | Policy Name |
             |`service_name` | Name of Service |
             |`sequence_number`| Sequence number of the policy, to determine order in which policies are processed |
-            
+
           Return Value:
             - True if action add for policy is successful
             - False if action add for policy is unsuccessful
-        
+
           Examples:
-                | rest add service to policy  |  admin-view  |  testPolicy  |  S1-LB7  |  1  |  
-                Result is 
+                | rest add service to policy  |  admin-view  |  testPolicy  |  S1-LB7  |  1  |
+                Result is
                 bigtap policy testPolicy rbac-permission admin-view
                     ...
                     ...
@@ -2076,16 +2032,16 @@ class BigTap(object):
         '''
             Objective:
             - Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
-        
+
             Input:
             |`rbac_view_name`| RBAC View Name for eg. admin-view |
             |`policy_name` | Policy Name |
             |`service_name` | Name of Service |
-            
+
             Return Value:
             - True if action delete for policy is successful
             - False if action delete for policy is unsuccessful
-        
+
         '''
         try:
             t = test.Test()
@@ -2112,33 +2068,33 @@ class BigTap(object):
         '''
           Objective:
           - Change the action field in a bigtap policy
-        
+
           Input:
-           |`rbac_view_name`|RBAC View Name for eg. admin-view |    
+           |`rbac_view_name`|RBAC View Name for eg. admin-view |
            |`policy_name`|Policy Name |
            |`policy_action`|Desired action. Values are `forward`, `rate-measure` and `inactive` |
 
-          
-          Description: 
-          Change a bigtap policy action from 
-          - Forward --> Rate-Measure, 
-          - Forward --> Inactive, 
-          - Rate-Measure--> Forward, 
+
+          Description:
+          Change a bigtap policy action from
+          - Forward --> Rate-Measure,
+          - Forward --> Inactive,
+          - Rate-Measure--> Forward,
           - Rate-Measure--> Inactive
-          
+
           Return Value:
             - True if action change for policy is successful
             - False if action change for policy is unsuccessful
 
           Examples:
-                | rest change policy action  |  admin-view  |  testPolicy  |  rate-measure |  
-                Result is 
+                | rest change policy action  |  admin-view  |  testPolicy  |  rate-measure |
+                Result is
                 bigtap policy testPolicy rbac-permission admin-view
                     action rate-measure
                     ...
                     ...
                     ...
-        
+
         '''
         try:
             t = test.Test()
@@ -2170,16 +2126,16 @@ class BigTap(object):
         '''
             Objective:
             - Disable a bigtap feature
-        
+
            Input:
-            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode` | 
-            
-            Return Value 
+            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode` |
+
+            Return Value
             - True if feature is enabled
             - False if feature could not be enabled
-            
+
             Examples:
-                | rest disable feature  |  overlap |  
+                | rest disable feature  |  overlap |
         '''
         try:
             t = test.Test()
@@ -2220,16 +2176,16 @@ class BigTap(object):
         '''
             Objective:
             - Enable a bigtap feature
-        
+
            Input:
-            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode`, `tunneling` | 
-            
-            Return Value 
+            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode`, `tunneling` |
+
+            Return Value
             - True if feature is enabled
             - False if feature could not be enabled
-            
+
             Examples:
-                | rest enable feature  |  overlap |  
+                | rest enable feature  |  overlap |
         '''
         try:
             t = test.Test()
@@ -2276,14 +2232,14 @@ class BigTap(object):
         '''
             Objective
             - Compare coreswitch flow counts. Useful when we have multiple core-switches.
-        
+
             Inputs:
-            | flow_1 | Number of flows on core switch 1 | 
-            | flow_2 | Number of flows on core switch 2 | 
-            | flow_value_1 | Desired number of flows on switch 1 or switch 2 | 
-            | flow_value_2 | Desired number of flows on switch 1 or switch 2 | 
-        
-            Return Value 
+            | flow_1 | Number of flows on core switch 1 |
+            | flow_2 | Number of flows on core switch 2 |
+            | flow_value_1 | Desired number of flows on switch 1 or switch 2 |
+            | flow_value_2 | Desired number of flows on switch 1 or switch 2 |
+
+            Return Value
             - True if flow is found on switch
             - False if flow is not found on switch
         '''
@@ -2303,14 +2259,14 @@ class BigTap(object):
 
 # Mingtao
     def bigtap_delete_policy(self, policy=None, rbac_view='admin-view'):
-        ''' 
-            Objective: 
+        '''
+            Objective:
             Delete a Policy
-            
+
             Input:
             | policy | Name of policy  |
             | rbac_view | Name of rbac_view in which the policy resides. |
-            
+
             Return Values:
             | True |  if configuration delete is successful.|
             | False | if configuration delete is unsuccessful.|
@@ -2347,13 +2303,13 @@ class BigTap(object):
 
 # Mingtao
     def bigtap_delete_address_group(self, addr_group=None):
-        ''' 
-            Objective: 
+        '''
+            Objective:
             Delete an address-group
-            
+
             Input:
             | addr_group | Name of Address Group |
-            
+
             Return Values:
             | True | configuration delete is successful.|
             | False | configuration delete is unsuccessful.|
@@ -2388,13 +2344,13 @@ class BigTap(object):
 
 # Mingtao
     def bigtap_delete_service(self, service=None):
-        ''' 
-            Objective: 
+        '''
+            Objective:
             Delete a service
-            
+
             Input:
             | service | Name of service |
-            
+
             Return Values:
             | True | configuration delete is successful.|
             | False | configuration delete is unsuccessful.|
@@ -2429,14 +2385,14 @@ class BigTap(object):
 
 # Mingtao
     def rest_add_address_group(self, name, addr_type):
-        ''' 
-            Objective: 
+        '''
+            Objective:
             Add a IPv4/IPv6 Address Group
-            
+
             Input:
             | name | Name of Address Group |
             | addr_type | IPv4 or IPv6 |
-            
+
             Return Values:
             | True | configuration add is successful.|
             | False | configuration add is unsuccessful.|
@@ -2460,14 +2416,14 @@ class BigTap(object):
 
 # Mingtao
     def rest_add_address_group_entry(self, name, addr, mask):
-        ''' 
-            Objective: 
+        '''
+            Objective:
             Add an IPv4/IPv6 Address Group
-            
+
             Input:
             | name | Name of Address Group |
             | addr_type | IPv4 or IPv6 |
-            
+
             Return Values:
             | True | configuration add is successful.|
             | False | configuration add is unsuccessful.|
@@ -2493,10 +2449,10 @@ class BigTap(object):
 
 # Mingtao
     def gen_add_address_group_entries(self, group, addr_type, base, incr, mask, number):
-        """ 
+        """
             Objective:
             Generate IPv4 and/or IPv6 addresses for an address group.
-            
+
             Input:
             | group | Name of IP Address Group|
             | addr_type | IPv4/IpV6|
@@ -2507,7 +2463,7 @@ class BigTap(object):
 
             Usage:
                 gen_add_address_group_entries     IPV4    ipv4     10.0.0.0     0.1.0.1        255.255.255.0     20
-                gen_add_address_group_entries     IPV6    ipv6     f001:100:0:0:0:0:0:0     0:0:0:0:0:0:0:1     
+                gen_add_address_group_entries     IPV6    ipv6     f001:100:0:0:0:0:0:0     0:0:0:0:0:0:0:1
                                                     ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff     20
         """
         helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s"
@@ -2997,14 +2953,14 @@ class BigTap(object):
         '''
             Objective:
             - Add a user
-            
+
             Inputs:
             |username| Desired username for user|
-            
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3025,14 +2981,14 @@ class BigTap(object):
         '''
             Objective:
             - Add a user
-            
+
             Inputs:
             |username| Desired username for user|
-            
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3055,15 +3011,15 @@ class BigTap(object):
         '''
             Objective:
             - Set password for given user
-            
+
             Inputs:
             |username| username for which password is being configured|
-            |password| Password to be configured|            
-            
+            |password| Password to be configured|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3092,15 +3048,15 @@ class BigTap(object):
         '''
             Objective:
             - Create a group and assign bigtap rbac-permission
-            
+
             Inputs:
             |group_name| Group Name that is being configured|
-            |rbac_view| RBAC View to be associated with group|            
-            
+            |rbac_view| RBAC View to be associated with group|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3125,15 +3081,15 @@ class BigTap(object):
         '''
             Objective:
             - Create a group and assign bigtap rbac-permission
-            
+
             Inputs:
             |group_name| Group Name that is being configured|
-            |rbac_view| RBAC View to be associated with group|            
-            
+            |rbac_view| RBAC View to be associated with group|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3155,15 +3111,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a user to group
-            
+
             Inputs:
             |group_name| Group Name that is being configured|
-            |username| username which is being assigned to the group|            
-            
+            |username| username which is being assigned to the group|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3207,7 +3163,7 @@ class BigTap(object):
                 cli_input_2 = "no associate user " + str(username)
                 c.config(cli_input_2)
             except:
-                helpers.test_log(helpers.exception_info())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
@@ -3216,14 +3172,14 @@ class BigTap(object):
         '''
             Objective:
             - Add a user to group
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3245,14 +3201,14 @@ class BigTap(object):
         '''
             Objective:
             - Delete an rbac permission
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3274,15 +3230,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a filter-interface to rbac-permission
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            |filter_name| Filter Interface that is being added|      
-            
+            |filter_name| Filter Interface that is being added|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3307,15 +3263,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a delivery interface to rbac-permission
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            |delivery_name| Delivery Interface that is being added|      
-            
+            |delivery_name| Delivery Interface that is being added|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3341,15 +3297,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a service to rbac-permission
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            |service_name| Service that is being added|      
-            
+            |service_name| Service that is being added|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3376,15 +3332,15 @@ class BigTap(object):
         '''
             Objective:
             - Add a service to rbac-permission
-            
+
             Inputs:
             |rbac_view| RBAC group name that is being configured|
-            |service_name| Service that is being added|      
-            
+            |service_name| Service that is being added|
+
             Return Value:
             | True | On Configuration success|
             | False | On Configuration failure|
-            
+
         '''
         try:
             t = test.Test()
@@ -3944,40 +3900,306 @@ class BigTap(object):
             else:
                 return False
 
-    def rest_verify_interswitch_link(self, node1, node2, interface1="ethernet13", interface2="ethernet14"):
+
+# #Author:: Sahaja
+    def copy_image(self, timeout=600, sleep_time=300):
+        '''
+        Copy image 'http://10.2.3.22/abat/last-passed-m.bsc.bigdb/vm/bigswitchcontroller-upgrade.pkg' to both the controllers to upgrade
+        '''
+        image = 'http://10.2.3.22/abat/last-passed-m.bsc.bigdb/vm/bigswitchcontroller-upgrade.pkg'
         try:
             t = test.Test()
-            c = t.controller('master')
-            AppCommon = AppController.AppController()
+            node_handles = t.controllers()
         except:
-            return False
-        else:
-            switch_dpid1 = AppCommon.rest_return_switch_dpid_from_ip(node1)
-            switch_dpid2 = AppCommon.rest_return_switch_dpid_from_ip(node2)
-            url = '/api/v1/data/controller/topology/link'
-            c.rest.get(url)
-            content = c.rest.content()
-            for element in content:
-                if element['src']['switch-dpid'] == str(switch_dpid1)  and element['dst']['switch-dpid'] == str(switch_dpid2):
-                    if element['src']['interface']['name'] == str(interface1) and element['dstr']['interface']['name'] == str(interface2):
-                        return True
-                elif element['src']['switch-dpid'] == str(switch_dpid2)  and element['dst']['switch-dpid'] == str(switch_dpid1):
-                    if element['src']['interface']['name'] == str(interface2) and element['dstr']['interface']['name'] == str(interface1):
-                        return True
-            helpers.test_log("No interswitch links found")
             return False
 
-    def rest_clear_bigtap_statistics(self):
-        try:
-            t = test.Test()
-            c = t.controller('master')
-        except:
-            return False
-        else:
-            url = '/api/v1/data/controller/applications/bigtap/clear-stats'
-            c.rest.get(url)
-            if not c.rest.status_code_ok():
-                helpers.test_log(c.rest.error())
-                return False
+        for node in node_handles:
+            helpers.log("Starting the download and upgrade process on node {}".format(node))
+            node.bash("cd /home/images")
+            node.bash("sudo rm -f /home/images/*")
+            out = node.bash("sudo wget {}".format(image))
+
+            if out:
+                helpers.log("Copying successful")
+                try:
+                    node.enable('enable')
+                    node.send("upgrade")
+                    node.expect(r"\(yes to continue\)")
+                    node.send("yes")
+                    node.expect(r"Password:")
+                    node.enable("adminadmin", timeout=timeout)
+                    node.send("reload")
+                    node.expect(r"Confirm Reload \(yes to continue\)")
+                    node.send("yes")
+                    helpers.sleep(sleep_time)
+                except:
+                    helpers.test_log("Output: %s" % n.cli_content())
+                    helpers.log("Upgrade of node {} failed".format(node))
+                    return False
+
             else:
-                return True
+                helpers.log("Copying not successful")
+                return False
+        helpers.log("Both the nodes got upgraded successfully")
+        return True
+
+
+# ## Sahaja
+    def copy_upgrade_switch(self, sw, image=None):
+        '''
+        Copy the image to the switch and upgrade
+        '''
+
+        t = test.Test()
+        switch = t.switch(sw)
+        helpers.log("Switch argument {} handle {}".format(sw, switch.ip()))
+        copy_url = "http://10.6.1.1/export/switchlight/autobuilds/master/latest.switchlight-BT-4.5.0-2cad4a5-powerpc-release.swi"
+
+        switch.cli("enable")
+        sw_basic_setup = ["boot netdev ma1", "boot netip {}", "boot netmask {}", "boot netgw {}", "boot netdns {}", "boot netdomain qa.bigswitch.com"]
+
+        switch.config("boot netdev ma1")
+        switch.config("boot netip {}".format(switch.ip()))
+        switch.config("boot netmask 255.255.192.0")
+        switch.config("boot netgw 10.8.0.1")
+        switch.config("boot netdns 10.3.0.4")
+        switch.config("boot netdomain qa.bigswitch.com")
+        switch.config("boot image {}".format(copy_url))
+        switch.config("copy running-config startup-config")
+
+
+
+# ##Author ::: Sahaja
+    def rest_get_list_of_conn_bigtap(self):
+        '''
+        Function which returns all the connections between switches from controller perspective
+        Input : None
+        Output : List of connections
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        try:
+            url = '/api/v1/data/controller/core/switch?select=alias'
+            helpers.log("Trying to issue the command %s" % (url))
+            c.rest.get(url)
+            helpers.log("Could issue the command")
+        except:
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()
+        helpers.log("Data received from cmd is %s" % (data))
+
+        # Create a list of tuples for switch combination
+        l_dpid = []
+        for entry in data:
+            l_dpid.append(entry['dpid'])
+        t_dpid = [(a, b) for a in l_dpid for b in l_dpid if b != a]  # Creates a list with each entry twice ex: [(a,b),(b,a)]
+        switch_comb = list(set(map(lambda x: tuple(sorted(x)), t_dpid)))  # switch_comb has unique tuple entries
+
+        # Command to get list of links between switches "show link" from controller
+        url1 = '/api/v1/data/controller/topology/link'
+        try:
+            helpers.log("Trying to issue the command %s" % (url1))
+            c.rest.get(url1)
+            helpers.log("Could issue the command")
+        except:
+            helpers.test_failure(c.rest.error())
+        data1 = c.rest.content()
+        helpers.log("Data received from link cmd is %s" % (data1))
+
+        lis_dic = []
+        for elem in data1:
+            l_dic = {}
+            if elem[u'src'][u'switch-dpid'] != elem[u'dst'][u'switch-dpid']:
+                l_dic[elem[u'src'][u'switch-dpid']] = elem[u'src'][u'interface'][u'number']
+                l_dic[elem[u'dst'][u'switch-dpid']] = elem[u'dst'][u'interface'][u'number']
+                lis_dic.append(l_dic)
+
+        lis_dic = [dict(y) for y in set(tuple(x.items()) for x in lis_dic)]  # To remove the duplicate entries fo ex: [{'00:00:70:72:cf:c7:cd:7d': 'ethernet21', '00:00:70:72:cf:c7:ce:a5': 'ethernet6'}, {'00:00:70:72:cf:c7:cd:7d': 'ethernet21', '00:00:70:72:cf:c7:ce:a5': 'ethernet6'}]
+        helpers.log("Final list of dictionary is {}".format(lis_dic))
+        return lis_dic
+
+# ##Author ::: Sahaja
+    def rest_config_sflow_collector(self, collector_val=None, col_param="ip-addr", col_param_val=None, sample_rate=None, counter_interval=None, header_size=None):
+        '''
+        Function to configure sflow level config collector, sample rate, header-size, counter-interval
+        Input : Parameter to be configured and value to assign
+        Output : True or False depending on if config has succeeded or not
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bigtap/sflow/collector[ip-addr="{}"]'.format(str(collector_val))
+        sample_ctr_hdr_url = '/api/v1/data/controller/applications/bigtap/sflow'
+
+# Configure sample_rate
+        if sample_rate is not None:
+            try:
+                c.rest.patch(sample_ctr_hdr_url, {"sample-rate": sample_rate})
+                helpers.log("Sample rate {} has been configured".format(sample_rate))
+            except:
+                helpers.test_log("Could not configure sample-rate {}".format(sample_rate))
+                helpers.test_failure(c.rest.error())
+                return False
+
+# Configure counter_interval
+        if counter_interval is not None:
+            try:
+                c.rest.patch(sample_ctr_hdr_url, {"counter-interval": counter_interval})
+                helpers.log("Counter interval {} has been configured".format(counter_interval))
+            except:
+                helpers.test_log("Could not configure counter interval {}".format(counter_interval))
+                helpers.test_failure(c.rest.error())
+                return False
+
+# Configure header_size
+        if header_size is not None:
+            try:
+                c.rest.patch(sample_ctr_hdr_url, {"max-header-size": header_size})
+                helpers.log("Header size {} has been configured".format(header_size))
+            except:
+                helpers.test_log("Could not configure header size {}".format(header_size))
+                helpers.test_failure(c.rest.error())
+                return False
+
+# Configure collector ip and port
+        if collector_val is not None:
+            try:
+                if col_param_val is not None:
+                    c.rest.put(url, {"ip-addr": collector_val, col_param: col_param_val})
+                    helpers.log("Configured collector ip {} and udp-port {}".format(collector_val, col_param_val))
+                    return True
+                else:
+                    c.rest.put(url, {"ip-addr": collector_val})
+                    helpers.log("Configured collector ip {}".format(collector_val))
+                    return True
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+
+        helpers.log("The given parameters have been configured successfully")
+        return True
+
+
+
+# ##Author ::: Sahaja
+    def rest_verify_sflow_config(self, param, param_val, col_param=None, col_sub_param_val=None):
+        '''
+        Function to verify if the sflow config looks okay in running-config
+        Input : Parameter(ex: sample-rate, collector, header-size, counter-interval), Parameter value
+        Output : True or False depending on match has been observed or not
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        try:
+            url = '/api/v1/data/controller/applications/bigtap/sflow?config=true'
+            helpers.log("Trying to issue the command %s" % (url))
+            c.rest.get(url)
+            helpers.log("Could issue the command")
+        except:
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()
+        helpers.log("Data received from cmd is %s" % (data))
+        for elem in data:
+            if type(elem[param]) == list:
+                helpers.log("1. elem[param] is {}".format(elem[param]))
+                for col in elem[param]:
+                    helpers.log("2. col is {}".format(col))
+                    if col["ip-addr"] == param_val:
+                        helpers.log("3. col['ip-addr'] is {}".format(col["ip-addr"]))
+                        if col_param is not None:
+                            helpers.log("4. col_param{} col[col_param] is {} expected is {}".format(col_param, col[col_param], col_sub_param_val))
+                            if int(col[col_param]) == int(col_sub_param_val) :
+                                helpers.log("Match has occured for parameter {} and col_param".format(param, col_param))
+                                return True
+                        else:
+                            helpers.log("Given only ip check for ip {}".format(param_val))
+                            return True
+
+            else:
+                helpers.log("Entered the else loop as it is not list param: {} value: {}".format(param, elem[param]))
+                if int(elem[param]) == int(param_val):
+                    helpers.log("Match has occured for parameter {}".format(param))
+                    return True
+
+        helpers.log("Match has not occured either for collector or others expected parameter: {} Value: {}".format(param, param_val))
+        return False
+
+
+####Author: Sahaja
+
+    def rest_check_sfp(self, s1, s2, s3, lis):
+        '''
+        Function which returns list of links which has same sfp
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        sl = SwitchLight.SwitchLight()
+        ap = AppController.AppController()
+
+        sw1_dpid = ap.rest_return_switch_dpid_from_ip(s1)
+        sw2_dpid = ap.rest_return_switch_dpid_from_ip(s2)
+        sw3_dpid = ap.rest_return_switch_dpid_from_ip(s3)
+
+        s_dpid = [sw1_dpid, sw2_dpid, sw3_dpid]
+
+        helpers.log("Switch 1 dpid is {}".format(sw1_dpid))
+        helpers.log("Switch 2 dpid is {}".format(sw2_dpid))
+        helpers.log("Switch 3 dpid is {}".format(sw3_dpid))
+        cmd = "show inventory"
+
+        sw1_op = sl.parse_switch_cmd(s1, cmd)
+        sw2_op = sl.parse_switch_cmd(s2, cmd)
+        sw3_op = sl.parse_switch_cmd(s3, cmd)
+
+
+        dic_op_dpid = {sw1_dpid: sw1_op, sw2_dpid: sw2_op, sw3_dpid:sw3_op}
+
+        for pair in lis:
+            for key1, key2 in [tuple(pair.keys())]:
+                if key1 in s_dpid:
+                    for out in dic_op_dpid[key1]:
+                        if int(out['Port']) == pair[key1]:
+                            helpers.log("port {} for dpid {}".format(out['Port'], key1))
+                            for out1 in dic_op_dpid[key2]:
+                                if int(out1['Port']) == pair[key2]:
+                                    if out['Model'] == out1['Model']:
+                                        helpers.log("Same sfp switch1 {} port {} model {} switch 2 {} port {}".format(key1, pair[key1], out['Model'], key2, pair[key2]))
+
+
+
+
+
+
+
+    def test(self):
+        for pair in lis:
+            sw1_url = '/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/inventory' % (pair.values()[0][0])
+            sw2_url = '/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/inventory' % (pair.values()[1][0])
+            try:
+                c.rest.get(sw1_url)
+            except:
+                helpers.test_failure(c.rest.error())
+            sw1_data = c.rest.content()
+            try:
+                c.rest.get(sw2_url)
+            except:
+                helpers.test_failure(c.rest.error())
+            sw2_data = c.rest.content()
+
+            # print "sw1 data received is {}".format(sw1_data)
+            # print "sw2 data received is {}".format(sw2_data)
+            # Create a dictionary for both the data's
+            sw1_dic = sl.parse_switch_op(str(sw1_data[0].values()[0]).split('\n'))
+            sw2_dic = sl.parse_switch_op(str(sw2_data[0].values()[0]).split('\n'))
+
+            helpers.log("*********Dictionary got for sw1 %s *****************" % (sw1_dic))
+            helpers.log("*********Dictionary got for sw2 %s *****************" % (sw2_dic))
+
+            # pair.values()[1][1] and pair.values()[0][1] has port # for a switch
+            for sw1_link in sw1_dic:
+                if sw1_link['Port'] == pair.values()[0][1]:
+                    for sw2_link in sw2_dic:
+                        if sw2_link['Port'] == pair.values()[1][1]:
+                            if sw1_link['Vendor'] == sw2_link['Vendor'] and sw1_link['Model'] == sw2_link['Model']:
+                                helpers.log("Port {} on sw1 {} and Port {} on sw2 {} have same model {} and vendor {}".format(sw1_link['Port'], pair.keys()[0], sw2_link['Port'], pair.keys()[1], sw1_link['Model'], sw1_link['Vendor']))

@@ -524,7 +524,6 @@ class Test(object):
             if not self._setup_in_progress:
                 self.setup()
 
-        # helpers.prettify_log("_topology:", self._topology)
         if name and node:
             name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node
@@ -938,10 +937,11 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        self.node(node).close()
+        self.node(node_name).close()
         c = self.node_connect(node_name, quiet=1, **kwargs)
-        if helpers.is_controller(node):
-            c.rest.request_session_cookie()
+        if helpers.is_controller(node_name):
+            helpers.log("Create HTTP session cookie for '%s'" % node_name)
+            self.setup_controller_http_session_cookie(node_name)
         return self.node(node)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
@@ -1352,9 +1352,12 @@ class Test(object):
         else:
             helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
+        helpers.log("I am here... status1=%s status2=%s" % (status1, status2))
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
             # properties.
+
+            helpers.log("Reconnecting nodes")
             self.node_reconnect(name)
         return True
 
