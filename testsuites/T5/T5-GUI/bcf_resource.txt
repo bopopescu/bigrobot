@@ -101,6 +101,15 @@ ${APPLY INBOUND POLICY LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0
 ${APPLY INBOUND POLICY FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[3]/input[1]
 ${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
+### Tenant System Page
+${TENANT INTERFACES PLUS BUTTON} 		xpath=//h3[contains(text(), 'Tenant Interfaces')]/parent::div/descendant::div[@class='icon_node plus']
+${CREATE TENANT INTERFACE POPUP}		xpath=//div[@title='Create Tenant Interface']
+${SELECT TENANT DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[1]/input
+${SELECT TENANT LIST}					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${SELECT TENANT FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]
+${SAVE TENANT INTERFACE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
 #### Switch Page
 
 ${ADD SWITCH PLUS BUTTON}		xpath=//div[@class='icon_node plus']
@@ -1031,7 +1040,26 @@ Enable System Tenant Interface
 	Click Element  ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}  and don't wait
 	
 	Verify Element Invisible  ${SYSTEM TENANT INTERFACE ENABLE POPUP}
-	
+
+Configure Tenant Interface for System Tenant
+	[Arguments]  ${tenant-name}
+	Go To Specific Tenant Page  system
+	Verify Element Visible  ${TENANT INTERFACES PLUS BUTTON}
+	Click Element  ${TENANT INTERFACES PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT INTERFACE POPUP}
+
+	Select From List And Verify
+    ... 	${SELECT TENANT DROPDOWN BUTTON}
+    ...		${SELECT TENANT LIST}
+    ... 	${SELECT TENANT FIELD}
+    ... 	${tenant-name}
+
+	Click Element  ${CREATE TENANT INTERFACE POPUP}  and don't wait
+	Verify Element Visible  ${SAVE TENANT INTERFACE BUTTON}
+	Click Element  ${SAVE TENANT INTERFACE BUTTON}  and don't wait
+	Verify Element Invisible  ${CREATE TENANT INTERFACE POPUP}
+
+
 	
 Create Logical Segments
 	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
