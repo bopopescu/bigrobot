@@ -155,9 +155,9 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
-    sleep  90
+    sleep  190
     cli restart switch  leaf2-b
-    sleep  90
+    sleep  190
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4

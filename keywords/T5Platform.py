@@ -5763,7 +5763,7 @@ class T5Platform(object):
         options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1800)
         if options[0] == 0 :
             c.send('yes')
-            c.expect(timout=1200)
+            c.expect(timeout=1200)
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         lines = helpers.str_to_list(temp)

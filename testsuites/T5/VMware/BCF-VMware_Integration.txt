@@ -225,7 +225,8 @@ TC67 Delete VM with dvnics
 TC68 Delete VM with both std & dvnics
   [Tags]        feature     vmware
 
-
+TC++ Verify endpoint creation ommission for VM templates
+  [Tags]        feature     vmware
 
 ### Host related test cases
 
@@ -326,7 +327,8 @@ TC96 Verify the vCenter configuration co-existence with other manual config elem
 TC97 Verify the integrity of vCenter updates during and after controller failovers
   [Tags]        feature     vmware
 
-
+TC++ Verify warning messages for non-IP hashed uplink port groups
+  [Tags]        feature     vmware
 
 ################    Stress      ################
 
