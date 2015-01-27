@@ -170,13 +170,13 @@ ${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@id='segment_switch_ports_sect
 ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Create Switch Port Membership Rule']
 ${SEGMENT SWITCH NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
 ${SEGMENT SWITCH NAME DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
-${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
 #${SEGMENT SWITCH NAME FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_1']
-#${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_2']
+#${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_1']
 ${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input[1]
-${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
 ${SEGMENT SWITCH INTERFACE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
-${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_11_label']
+${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_5_label']
 #${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
 ${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
 ${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
@@ -185,15 +185,15 @@ ${ATTACHMENT TYPE DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleN
 ${ATTACHMENT TYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
 ${ATTACHMENT TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]			
 ${ENDPOINT PORT GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[1]/input
-${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
 ${ENDPOINT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[3]/input[1]
 ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
-${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']			   
+${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
 ${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
 
 ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
-${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_8_popup']						   
+${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
 ${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
 
 ${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
@@ -1087,7 +1087,23 @@ Create Logical Segments
     
     Verify Element Visible  ${LOGICAL SEGMENT DETAIL MENU ITEM}
     Click Element  ${LOGICAL SEGMENT DETAIL MENU ITEM}  and don't wait
-	
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${port-group}' == '${EMPTY}'
+	...  Append Port-Group Membership Rule To Segment  ${port-group}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${switch-name}' == '${EMPTY}'
+	...  Append Switch-Port Membership Rule To Segment  ${switch-name}  ${interface}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+
+
+
+Append Port-Group Membership Rule To Segment
+	[Arguments]  ${port-group}
 	Verify Element Visible  ${ADD SEGMENT PORT GROUP PLUS BUTTON}
 	Click Element   ${ADD SEGMENT PORT GROUP PLUS BUTTON}  and don't wait
 	
@@ -1110,19 +1126,13 @@ Create Logical Segments
 	
 	Verify Element Invisible  ${PORT GROUP MEMBERSHIP RULE POPUP}
 	
-	#Verify Page Contains Element  ${SWITCH INTERFACES STEP BUTTON}
-	#Click Element  ${SWITCH INTERFACES STEP BUTTON}  and don't wait
-	
+
+Append Switch-Port Membership Rule To Segment
+	[Arguments]  ${switch-name}  ${interface}
 	Verify Element Visible  ${ADD SWITCH INTERFACE PLUS BUTTON}
 	Click Element   ${ADD SWITCH INTERFACE PLUS BUTTON}  and don't wait
 	
 	Verify Element Visible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
-	#Click Element   ${SEGMENT SWITCH NAME FIELD}   and don't wait
-	#Input Text And Verify  ${SEGMENT SWITCH NAME FIELD}  ${switch-name}
-	#Sleep  5
-	#Click Element   ${SEGMENT SWITCH INTERFACE FIELD}   and don't wait
-	#Input Text And Verify  ${SEGMENT SWITCH INTERFACE FIELD}  ${interface}
-	#Sleep  2
 	
 	Select From List And Verify  
     ... 	${SEGMENT SWITCH NAME DROPDOWN BUTTON}
@@ -1147,10 +1157,10 @@ Create Logical Segments
 	Click Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  and don't wait
 	
 	Verify Element Invisible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
-	
-	#Verify Page Contains Element  ${ENDPOINTS STEP BUTTON}
-	#Click Element  ${ENDPOINTS STEP BUTTON}  and don't wait
-	
+
+
+Append Endpoint to Segment
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
 	
