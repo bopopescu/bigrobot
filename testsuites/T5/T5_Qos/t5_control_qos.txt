@@ -349,8 +349,9 @@ T16 Verify qos weight for different queue and same port (same rate)
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -392,8 +393,9 @@ T17 Verify qos weight for different queue and different port (same rate)
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -436,8 +438,9 @@ T18 Verify qos weight for different queue (different rate)
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -466,6 +469,7 @@ fabric infra suite setup
  	base suite setup 
 # 	rest_delete_tenant_all
 	set fabric switches 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
 	reconnect_switch_ips  
 	rest_delete_portgroup_all
 	rest_delete_tenant_all
@@ -476,9 +480,10 @@ qos base suite teardown
 #	base suite teardown	
     sleep  1 
 fabric qos base test teardown
+	base test teardown
 	delete traffic
 	sleep  5
-	base test teardown 
+	 
 	 
 set fabric switches  
  	${switches}=  get_all_switch_nodes  
