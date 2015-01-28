@@ -299,8 +299,102 @@ T7.5 Clear switch configuration from fabric page
 	Clear Switch Configuration From Fabric Page  LeafSwitch_2
 	Clear Switch Configuration From Fabric Page  LeafSwitch_1
 	Clear Switch Configuration From Fabric Page  LeafSwitch_0
-	#Wait Until All Switches Disconnected
 
+T8.1 Shutdown and Startup Switch Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet6
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.2 Shutdown and Startup Switch Interface From Switches Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.3 Set And Unset Breakout Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet5
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.4 Set And Unset Breakout Interface From Switches Page
+	${switch}  Set Variable  spine1
+	${interface}  Set Variable  ethernet4
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.5 Set And Unset Autoneg Interface From Interfaces Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
+
+T8.6 Set And Unset Autoneg Interface From Switches Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet8
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
 
 *** Keyword ***
 GUI ZTN Suite Setup
