@@ -3317,3 +3317,19 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
                 self.cli_link_flap_between_nodes(node1, node2, interval)
 
         return True
+
+    def rest_show_fabric(self):
+        '''return fabric information 
+            REST-SIMPLE: GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/summary/fabric
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric' 
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data)) 
+        if len(data) == 0:
+            return {}
+        else:
+            return data
