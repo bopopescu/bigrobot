@@ -28,6 +28,13 @@ TC01 Configure 1k Tenant with 4k segment in global vlan-mapping mode
     \  KLOOP1                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5
     REST add tenant                             Tenant-999
     KLOOP1                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
     ${stream}=                                  L3 add  name=stream1  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...                                         src_cnt=2000  dst_cnt=2000  src_ip=20.0.1.11  dst_ip=20.15.160.11
     ...                                         src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.1.1  src_gw_step=0.0.1.0
@@ -56,6 +63,14 @@ TC04 Configure 1k Tenant with 4k segment in default vlan-mapping mode
     \  KLOOP2                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5       ${leaf2_a}          ${ixia2a_1}             
     REST add tenant                             Tenant-999
     KLOOP2                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9       ${leaf2_a}          ${ixia2a_1}  
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    
     [Tags]                        scaling       TC04
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
@@ -98,9 +113,23 @@ TC12 Add more than 1k tenant in global mode
     ${value} =                                  REST add tenant                             Tenant-999
     Should Be True                              ${value}
     KLOOP1                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
     sleep                                       1
     ${value} =                                  REST add tenant                 Tenant-1001
     Should Not Be True                          ${value}    
+    sleep                                       1
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
     [Tags]              manual          scaling           TC12
     
 TC13 Add more than 4k segment
@@ -127,6 +156,22 @@ TC13 Add more than 4k segment
     \   ${vlanid} =                             evaluate                        ${vlanid} + 1
     \   Set Suite Variable                      ${vlanid}
     \   Set Suite Variable                      ${ipAddr}
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1
+    Should Be True                              ${noSegments} == 4000
+    sleep                                       1
+    ${result} =                                 REST add vns                                Tenant-4k                       Tenant-4k-4001
+    Should Not Be True                          ${result}
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1
+    Should Be True                              ${noSegments} == 4000    
     [Tags]              manual          scaling           TC13           
     
 Add more than 1k ecmp nexthop group
