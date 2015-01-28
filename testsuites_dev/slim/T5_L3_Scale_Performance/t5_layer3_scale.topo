@@ -6,66 +6,23 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.193.0.41
+  ip: 10.8.24.101
 
 c2:
-  ip: 10.193.0.42
-  
-
-s1:
-  ip: 10.195.0.21
-   
-s2:
-  ip: 10.195.0.22
-  
-s3:
-  ip: 10.195.0.33
-
-s4:
-  ip: 10.195.0.34
-  
-s5:
-  ip: 10.195.0.35
-
-s6:
-  ip: 10.195.0.36 
-
-s7:
-  ip: 10.195.0.31
-
-s8:
-  ip: 10.195.0.32
+  ip: 10.8.24.102
 
 
-h1:
-#  ip: 10.193.0.21
-   ip: 10.195.0.103
-   user: root
-   password: bsn
-   
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+  tcl_server_ip: 10.8.24.22
+  ports:
+    a:
+      name: 4/6
+### Connected to Leaf2-a port 34
+    b:
+      name: 4/7
+### Connected to BigTap port 47
       
-h2:
-  ip: 10.195.0.104
-  user: root
-  password: bsn
-  
-h3:
-  ip: 10.195.0.101
-  user: root
-  password: bsn
-   
-h4:
-  ip: 10.195.0.102
-  user: root
-  password: bsn
-     
-h5:
-  ip: 10.195.0.105
-  user: root
-  password: bsn
-     
-h6:
-  ip: 10.195.0.106
-  user: root
-  password: bsn
-  
+      
+        
