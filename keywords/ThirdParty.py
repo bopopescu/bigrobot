@@ -264,8 +264,6 @@ class ThirdParty(object):
             return False
         else:
             switch.config("ip route %s %s" % (route, nexthop))
-            switch.config("exit")
-            switch.config("ip routing")
             return True
         
     def cli_arista_delete_route(self, node, route, nexthop):
@@ -276,7 +274,6 @@ class ThirdParty(object):
             return False
         else:
             switch.config("no ip route %s %s" % (route, nexthop))
-#            switch.config("ip routing")
             return True        
 
     def cli_arista_add_vlan_ip_address(self, node, ip_address, mask, vlan_intf):

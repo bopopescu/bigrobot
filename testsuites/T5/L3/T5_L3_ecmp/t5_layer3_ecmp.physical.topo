@@ -191,48 +191,48 @@ s14:
     password: adminadmin    
 
     
-h1:
-   ip: 10.8.24.31
-   alias: h1-rack0
-   user: root
-   password: bsn
+#h1:
+#   ip: 10.8.24.31
+#   alias: h1-rack0
+#   user: root
+#   password: bsn
 
-h2:
-   ip: 10.8.24.32
-   alias: h2-rack0
-   user: root
-   password: bsn
+#h2:
+#   ip: 10.8.24.32
+#   alias: h2-rack0
+#   user: root
+#   password: bsn
 
-h3:
-   ip: 10.8.24.33
-   alias: h1-rack1
-   user: root
-   password: bsn
+#h3:
+#   ip: 10.8.24.33
+#   alias: h1-rack1
+#   user: root
+#   password: bsn
      
-h4:
-   ip: 10.8.24.34
-   alias: h2-rack1
-   user: root
-   password: bsn
+#h4:
+#   ip: 10.8.24.34
+#   alias: h2-rack1
+#   user: root
+#   password: bsn
    
-h5:
-   ip: 10.8.24.35
-   alias: h1-rack2
-   user: root
-   password: bsn
+#h5:
+#   ip: 10.8.24.35
+#   alias: h1-rack2
+#   user: root
+#   password: bsn
      
-h6:
-   ip: 10.8.24.36
-   alias: h2-rack2
-   user: root
-   password: bsn
+#h6:
+#   ip: 10.8.24.36
+#   alias: h2-rack2
+#   user: root
+#   password: bsn
     
 
-h10:
-   ip: 10.8.24.40
-   alias: h4-rack2
-   user: root
-   password: bsn
+#h10:
+#   ip: 10.8.24.40
+#   alias: h4-rack2
+#   user: root
+#   password: bsn
     
 
 tg1:
