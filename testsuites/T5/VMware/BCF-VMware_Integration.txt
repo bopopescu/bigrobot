@@ -251,7 +251,10 @@ TC74 Change IP address of a vmkernel
 TC75 Reboot a host
   [Tags]        feature     vmware
 
-
+TC++ Clone a VM
+    [Tags]        feature     vmware
+    
+    
 ### vCenter related test cases
 
 TC76 Add hosts to a cluster
@@ -330,6 +333,10 @@ TC97 Verify the integrity of vCenter updates during and after controller failove
 TC++ Verify warning messages for non-IP hashed uplink port groups
   [Tags]        feature     vmware
 
+TC++ Management VLAN configuration
+  [Tags]         feature     vmware
+  
+
 ################    Stress      ################
 
 TC98 Create/Delete vSwitch
@@ -393,6 +400,9 @@ TC116 Delete/Reconfigure the vCenter username and verify the behavior
     [Tags]        negative     vmware
 
 TC117 Multiple vCenters with same IP ranges
+    [Tags]        negative     vmware
+    
+TC++ Automatic segment configuration when manual wildcard configurations exist
     [Tags]        negative     vmware
 
 
