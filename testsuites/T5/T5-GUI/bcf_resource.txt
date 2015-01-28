@@ -43,6 +43,8 @@ ${PROCEED DELTE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and co
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
+${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
+${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -140,7 +142,11 @@ ${CONFIRM SWITCH ACTION POPUP}				xpath=//div[@title='Confirm']
 ${SPLIT LEAF GROUP POPUP}					xpath=//div[@title='Split Leaf Group']
 ${CONFIRM SWITCH SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
-
+#### Interfaces Page
+${SHUTDOWN INTERFACE ACTION MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Shutdown')]
+${STARTUP INTERFACE ACTION MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Startup')]
+${SHUTDOWN INTERFACE POPUP}					xpath=//div[@title='Confirm Interface Shutdown']
+${STARTUP INTERFACE POPUP}					xpath=//div[@title='Confirm Interface Start Up']
 
 #### Port Groups Page
 
@@ -449,7 +455,7 @@ ${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
 
 
 #### Advanced Query
-${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div
+${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div/input
 ${FILTER QUERY BUTTON}						xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Filter')]
 ${FILTER QUERY CLEAR BUTTON}				xpath=//div[@class='bsn_button_group bottom']/div[1]
 ${ADVANCED QUERY BUILDER BUTTON}			xpath=//div[@class='bsn_button_group bottom']/div[2]
@@ -461,9 +467,6 @@ ${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}			/descendant::div[@data-dojo-attach
 ${COMPARISON COLUMN DROPDOWN FIELD SUFFIX} 	 		/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']
 ${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE} 	${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}/following-sibling::input[@type='hidden']
 ${COMPARISON COLUMN DROPDOWN LIST}					xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
-#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
-#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
-#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='inputsNode']/descendant::div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
 
 ${COMPARISON FUNCTION AREA SUFFIX}					/descendant::div[@data-dojo-attach-point='inputsNode']/div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]
 ${COMPARISON FUNCTION SUFFIX}						${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'compare_select')]
@@ -486,7 +489,6 @@ ${SWITCH ICON PREFIX}						xpath=//div[@id='bcf_widgets_graphical_Fabric_nodeDis
 ${SWITCH SIDE PANEL}						xpath=//div[@id='bcf_widgets_graphical_Fabric_content_Switch_0']
 ${SWITCH VISUALIZE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShow']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH CONFIGURE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockEdit']/descendant::div[@class='enabled bsn_control_button']
-#${SWITCH DELETE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockDelete']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH CLEAR CONFIGURATION BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockClear']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH SPLIT FROM LEAF GROUP BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockSplit']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH RESET CONNECTION BUTTON}			${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReset']/descendant::div[@class='enabled bsn_control_button']
@@ -948,6 +950,11 @@ Generate Action Menu Xpath Logging
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+
+Generate Action Menu Xpath Interface
+	[Arguments]  ${attachment_point}  ${switch}  ${interface}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${interface}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='content'  and (text()= '  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
     
 Generate Src Interface Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
@@ -963,7 +970,13 @@ Generate Monitor Session Direction Xpath
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '  ${text}  ')]/parent::tr/td[4]/div/input
     [Return]  ${xpath}
-    	
+
+Generate Action Menu Action Item Xpath
+	[Arguments]  ${action}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), '  ${action}  ')]
+    [Return]  ${xpath}
+
+
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
 	Go To Tenants Page
@@ -1292,7 +1305,8 @@ Append Endpoint to Segment
     Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
 	
 	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
-	
+
+
 	
 Add IP Address to Endpoint
 	[Arguments]  ${ip-addr}
@@ -2148,7 +2162,13 @@ Delete TACACS Host
 	
     Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 
-
+Add Simple Filtering Query
+	[Arguments]  ${query}
+	Clear Filtering Query
+	Verify Element Visible  ${FILTER QUERY FIELD}
+	Input Text And Verify  ${FILTER QUERY FIELD}  ${query}
+	Verify Element Visible  ${FILTER QUERY BUTTON}
+	Click Element  ${FILTER QUERY BUTTON}  and don't wait
 
 
 Check Advanced Query Builder
@@ -2457,6 +2477,103 @@ Beacon Switch From Switches Page
     Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
     Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
     Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Shutdown Interface From Interfaces Page
+	[Arguments]  ${switch}  ${interface}
+	Go To Controller Interfaces Page
+	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
+	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
+	Verify Element Visible  ${action_menu}
+	Click Element  ${action_menu}  and don't wait
+	Verify Element Visible  ${SHUTDOWN INTERFACE ACTION MENU ITEM}
+	Click Element  ${SHUTDOWN INTERFACE ACTION MENU ITEM}  and don't wait
+	Verify Element Visible  ${SHUTDOWN INTERFACE POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Startup Interface From Interfaces Page
+	[Arguments]  ${switch}  ${interface}
+	Go To Controller Interfaces Page
+	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
+	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
+	Verify Element Visible  ${action_menu}
+	Click Element  ${action_menu}  and don't wait
+	Verify Element Visible  ${STARTUP INTERFACE ACTION MENU ITEM}
+	Click Element  ${STARTUP INTERFACE ACTION MENU ITEM}  and don't wait
+	Verify Element Visible  ${STARTUP INTERFACE POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Execute Interface Action From Interfaces Page
+	[Arguments]  ${switch}  ${interface}  ${action}
+	Go To Controller Interfaces Page
+	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
+	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
+	Verify Element Visible  ${action_menu}
+	Click Element  ${action_menu}  and don't wait
+	${action_menu_item}  Generate Action Menu Action Item Xpath  ${action}
+	Verify Element Visible  ${action_menu_item}
+	Click Element  ${action_menu_item}  and don't wait
+	#Verify Element Visible  ${GENERIC CONFIRM POPUP}
+    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
+    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+    Page Should Not Contain  ${GENERIC CONFIRM POPUP}
+
+Shutdown Interface From Switches Page
+	[Arguments]  ${switch}  ${interface}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
+	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
+	Verify Element Visible  ${expand_row_button}
+	Click Element  ${expand_row_button}  and don't wait
+	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
+	Verify Element Visible  ${auxilary_row}
+	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
+	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+	Click Element  ${interface_action_menu}  and don't wait
+	Verify Element Visible  ${SHUTDOWN INTERFACE ACTION MENU ITEM}
+	Click Element  ${SHUTDOWN INTERFACE ACTION MENU ITEM}  and don't wait
+	Verify Element Visible  ${SHUTDOWN INTERFACE POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Startup Interface From Switches Page
+	[Arguments]  ${switch}  ${interface}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
+	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
+	Verify Element Visible  ${expand_row_button}
+	Click Element  ${expand_row_button}  and don't wait
+	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
+	Verify Element Visible  ${auxilary_row}
+	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
+	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+	Click Element  ${interface_action_menu}  and don't wait
+	Verify Element Visible  ${STARTUP INTERFACE ACTION MENU ITEM}
+	Click Element  ${STARTUP INTERFACE ACTION MENU ITEM}  and don't wait
+	Verify Element Visible  ${STARTUP INTERFACE POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Execute Interface Action From Switches Page
+	[Arguments]  ${switch}  ${interface}  ${action}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
+	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
+	Verify Element Visible  ${expand_row_button}
+	Click Element  ${expand_row_button}  and don't wait
+	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
+	Verify Element Visible  ${auxilary_row}
+	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
+	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+	Click Element  ${interface_action_menu}  and don't wait
+	${action_menu_item}  Generate Action Menu Action Item Xpath  ${action}
+	Verify Element Visible  ${action_menu_item}
+	Click Element  ${action_menu_item}  and don't wait
+	#Verify Element Visible  ${GENERIC CONFIRM POPUP}
+    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
+    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+    Page Should Not Contain  ${GENERIC CONFIRM POPUP}
 
 Configure NTP Server
 	[Arguments]  ${server}
