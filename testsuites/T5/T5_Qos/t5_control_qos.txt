@@ -469,6 +469,7 @@ fabric infra suite setup
  	base suite setup 
 # 	rest_delete_tenant_all
 	set fabric switches 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
 	reconnect_switch_ips  
 	rest_delete_portgroup_all
 	rest_delete_tenant_all
