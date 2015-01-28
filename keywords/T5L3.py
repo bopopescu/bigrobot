@@ -1756,3 +1756,23 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         helpers.log("no Match")
         return {}
         
+    def rest_verify_policy_stats(self, tenant, seq, frame_cnt):
+        ''' Function to verify policy rule counter
+        Input: tenant name, policy seq number and packets tx
+        Output: policy counter
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_cnt = int(frame_cnt)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/policy-counter[policy/seq="%s"][tenant-name="%s"]' % (seq, tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant-name"] == tenant and data[0]['policy'][0]['seq'] == seq:
+                    if (int(data[0]['policy'][0]['packet']) == frame_cnt):
+                        helpers.log("Pass: Policy Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                        return True
+                    else:
+                        helpers.test_failure("Policy counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                        return False
+        else:
+            helpers.log("Given tenant name and policy seq number does not match the config")
