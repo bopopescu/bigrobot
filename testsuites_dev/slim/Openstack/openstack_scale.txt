@@ -1,0 +1,64 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BVS APP Functional Openstack integration work flow test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       T5 base test setup
+Test Teardown    T5 base test teardown
+Force Tags       T5  IronHorse  feature 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library          keywords/SwitchLight.py
+Library          keywords/Host.py
+Library          keywords/Ixia.py
+Library          keywords/T5Openstack.py
+Library          Collections.py
+Resource         testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
+
+* Test Case 
+    
+add more than 1k projects in openstack
+    [Tags]   openstack
+    openstack source  keystonerc_admin
+    : FOR  ${i}  IN RANGE  1  1001
+    \ openstack add tenant   Tenant-${i}
+    \ openstack add user  Tenant-${i}  app  app  app@app.com
+    \ openstack add net  Tenant-${i}  Tenant-${i}-nw
+    sleep  10
+    ${result} =  rest show fabric
+    Should Not Be Empty  ${result}
+    ${noTenants} =   Set Variable  ${result['tenant-count']}
+    ${noSegments} =  Set Variable  ${result['segment-count']}
+    Should Be True  ${noTenants} == 1000
+    
+        
+* keywords
+T5 Functional Suite Setup
+    base suite setup
+    openstack source  keystonerc_admin  
+    
+T5 Functional Suite Teardown
+    openstack source  keystonerc_admin
+    openstack delete user  t5test
+    base suite teardown
+    
+T5 base test setup
+    base test setup
+    openstack source  keystonerc_admin
+    
+T5 base test teardown
+    openstack source  keystonerc_admin
+    openstack delete net  app
+    openstack delete net  web
+    openstack delete net  db
+    openstack delete user  app
+    openstack delete user  web
+    openstack delete user  db
+    openstack delete tenant  app-tenant
+    openstack delete tenant  web-tenant
+    openstack delete tenant  db-tenant
+    base test teardown
+  

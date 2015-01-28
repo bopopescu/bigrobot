@@ -9,6 +9,7 @@ Library         keywords/Host.py
 Library         keywords/BsnCommon.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
+Library         keywords/T5ZTN.py
 Library         keywords/T5Platform.py
 Library         keywords/BsnCommon.py
 Library         keywords/SwitchLight.py
@@ -87,7 +88,14 @@ Add and delete config changes
 Verify ecmp forwarding after controller upgrade     
     manual passed
     [Tags]                  manual          feature                 ecmp        run201
-            
+ 
+Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    [Tags]                       ecmp                           sanity              run31
+
+Powercycle single leaf switch with one nexthop part of ecmp
+    Powercycle single leaf switch with one nexthop part of ecmp
+    [Tags]                       ecmp                           sanity              run32              
     
 * Keywords
 
@@ -2931,7 +2939,217 @@ Add and delete more specific route for L3 inter tenant traffic to external host
     REST delete static routes                       External                                10.99.254.0/23                  A2
     REST delete nexthop group                       External                                A1
 	REST delete nexthop group                       External                                A2
-    
+
+Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST delete static routes                       External                        10.99.255.0/24          ecmp-A16
+    REST add interface to vns                       X                               X192                    leaf0-a         ethernet33          -1
+    REST add static routes                          system                          10.99.255.0/24          {"next-hop-group": "ecmp-A1", "tenant": "External"}
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "ecmp-A1"}
+    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0       leaf0-a
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    Should Not Be True                              ${ecmpIndex} == 0
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    sleep                                           1
+
+    ${stream1}=                                     L3 add                          name=stream1            flow=c->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.251.192.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.251.192.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           12
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000    
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    power down switch                               s5
+    sleep                                           5
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    power up switch                                 s5
+    sleep                                           300
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000       
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1     10000
+
+Powercycle single leaf switch with one nexthop part of ecmp
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST delete static routes                       External                        10.99.255.0/24          ecmp-A16
+    #REST add interface to vns                       External                        External-Host           leaf0-a         ethernet33          -1
+    REST add interface to vns                       X                               X192                    leaf0-a         ethernet33          -1
+    REST add static routes                          system                          10.99.255.0/24          {"next-hop-group": "ecmp-A1", "tenant": "External"}
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "ecmp-A1"}
+    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0       leaf0-a
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    Should Not Be True                              ${ecmpIndex} == 0
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=c->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.251.192.101           src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.251.192.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           12
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000       
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    power down switch                               s3
+    sleep                                           45
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 1   
+    power up switch                                 s3
+    sleep                                           120
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000     
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1     2000000
+        
 Add and delete config changes
     ${value} =                                  REST enable endpoint flap protection
     Log                                         ${value}
@@ -3170,6 +3388,10 @@ initialize host
     BASH init intf                              h1-rack2                                bond0
     BASH init intf                              h2-rack2                                bond0
     BASH stop service                           h1-rack0                        isc-dhcp-server
+
+
+
+
 
 setup topology
     base test setup

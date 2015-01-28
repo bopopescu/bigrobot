@@ -1697,9 +1697,6 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
                 if entry['ecmp-group-id'] == ecmpIndex:
                     count = count + 1
         return count
-        
-
-
 
     def rest_get_logical_router_segment_interface(self, tenant, vnsName=None):
         '''return segment interface information 

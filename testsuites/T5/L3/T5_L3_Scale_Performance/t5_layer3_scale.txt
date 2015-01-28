@@ -27,7 +27,15 @@ TC01 Configure 1k Tenant with 4k segment in global vlan-mapping mode
     \  KLOOP1                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5
     REST add tenant                             Tenant-999
     KLOOP1                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9
-
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    
+    
   
 
 #  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
