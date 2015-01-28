@@ -452,7 +452,7 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
 	sleep  2
 	#Rebooting leaf0-a
 	cli reboot switch name  node=master  switch=leaf0-a
-    sleep  150
+    sleep  190
     #repeating above traffic again
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
