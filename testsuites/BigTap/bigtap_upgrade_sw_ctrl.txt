@@ -22,6 +22,7 @@ TC01: Switch Upgrade
 	Run Keyword And Ignore Error  cli upgrade switch   s11  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-release.swi   netmask=255.255.254.0  netgw=10.9.18.1
 	Run Keyword And Ignore Error  cli upgrade switch   s12  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-release.swi   netmask=255.255.254.0  netgw=10.9.18.1
 	Run Keyword And Ignore Error  cli upgrade switch   s13  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-release.swi   netmask=255.255.254.0  netgw=10.9.18.1
+	Run Keyword And Ignore Error  cli upgrade switch   s14  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-release.swi   netmask=255.255.254.0  netgw=10.9.18.1
 	sleep  600
 	cli  node=s1  cmd=show version
 	${content1}=  cli_content  node=s1
