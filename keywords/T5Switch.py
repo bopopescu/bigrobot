@@ -607,3 +607,40 @@ class  T5Switch(object):
                     return False
 
 
+    def rest_config_breakout_interface(self, switch, intf):
+        ''' Function to configure force breakout interface
+           input - switch , interface 
+           output - returns true
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            url1 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.put(url1, {"name": str(intf)})
+            url2 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.patch(url2, {"breakout": True})
+            helpers.sleep(20)
+            return True
+       
+        except: 
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return  False
+
+
+    def rest_delete_breakout_interface(self, switch, intf, timeout=30):
+        ''' Function to delete force breakout interface
+           input - switch , interface 
+           output - returns true
+        '''
+        try: 
+            t = test.Test()
+            c = t.controller('master')
+            url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.delete(url, {"breakout": None})
+            helpers.sleep(20)
+            return True
+        
+        except:
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return  False
+

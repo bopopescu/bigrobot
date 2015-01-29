@@ -1300,7 +1300,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         next_hop = kwargs.get('next-hop', None)
         tenant = kwargs.get('tenant', None)
         polname = kwargs.get('polname', None)
-        # log = kwargs.get('log', None)
+        log = kwargs.get('log', None)
         segment = kwargs.get('segment-interface', None)
 
         if (tenant is None or polname is None or seqnum is None):
@@ -1496,9 +1496,9 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         if (next_hop is not None and action == "next-hop" ):
             if (ip_proto is None):
                 if (srcdata is not None and dstdata is not None):
-                    if (segment is not None):
+                    if (segment is not None and log is not None):
                         helpers.test_log("next hop is not none, ip proto is none and action is next-hop")
-                        data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                        data = {"src":srcdata, "log":log, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
                     else:
                         data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
@@ -1697,9 +1697,6 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
                 if entry['ecmp-group-id'] == ecmpIndex:
                     count = count + 1
         return count
-        
-
-
 
     def rest_get_logical_router_segment_interface(self, tenant, vnsName=None):
         '''return segment interface information 
@@ -1755,4 +1752,64 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
                     return entry
         helpers.log("no Match")
         return {}
+        
+    def rest_verify_policy_stats(self, tenant, seq, frame_cnt, flag=False):
+        ''' Function to verify policy rule counter
+        Input: tenant name, policy seq number and packets tx
+        Output: policy counter
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_cnt = int(frame_cnt)
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/policy-counter[policy/seq="%s"][tenant-name="%s"]' % (seq, tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("Printing len of data: %d and flag:%s" % (len(data), flag))
+        if (len(data) != 0 and flag is False):
+            helpers.log("In len.data not ZERO and FLAG is FALSE")
+            if data[0]["tenant-name"] == tenant and data[0]['policy'][0]['seq'] == seq:
+                if (int(data[0]['policy'][0]['packet']) == frame_cnt):
+                    helpers.log("Pass: Policy Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                    return True
+                else:
+                    helpers.test_failure("Policy counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                    return False
+            else:
+                helpers.log("Given tenant name and policy seq number does not match the config")
+        else:
+            helpers.log("In len.data eq ZERO and FLAG is TRUE")
+            return True
+        
+
+    def rest_clear_policy_stats(self, tenant, seq):
+        ''' Function to clear policy counters
+        Input: tenant name, policy seq number
+        Output: none
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/statistic/policy-counter[tenant-name="%s"]/policy[seq="%s"]' % (tenant, seq)
+        c.rest.delete(url, {})
+
+    def rest_get_policy_log_pkt_cnt(self, tenant):
+        ''' Function to verify policy log counter
+        Input: tenant name
+        Output: policy log counter
+        '''
+        return_null = 0
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/policy-log/counter[tenant="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant"] == tenant:
+            log_cnt = data[0]['value']['packet']
+            if (log_cnt):
+                helpers.log("Pass: Policy log Counters value %d" % log_cnt)
+                return log_cnt
+            else:
+                return return_null
+                    
+        else:
+            helpers.log("Given tenant name did not match the config")
         

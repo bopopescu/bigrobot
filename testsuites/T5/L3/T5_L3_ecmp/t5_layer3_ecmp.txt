@@ -9,6 +9,7 @@ Library         keywords/Host.py
 Library         keywords/BsnCommon.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
+Library         keywords/T5ZTN.py
 Library         keywords/T5Platform.py
 Library         keywords/BsnCommon.py
 Library         keywords/SwitchLight.py
@@ -82,12 +83,19 @@ Add and delete more specific route for L3 inter tenant traffic to external host
 
 Add and delete config changes
     Add and delete config changes
-    [Tags]                       smoke                          sanity              run30
+    [Tags]                       smoke                          sanity              run30           skipped
 
 Verify ecmp forwarding after controller upgrade     
     manual passed
     [Tags]                  manual          feature                 ecmp        run201
-            
+ 
+Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    [Tags]                       ecmp                           sanity              run31
+
+Powercycle single leaf switch with one nexthop part of ecmp
+    Powercycle single leaf switch with one nexthop part of ecmp
+    [Tags]                       ecmp                           sanity              run32              
     
 * Keywords
 
@@ -1868,9 +1876,9 @@ Verify system nexthop group uses all members across rack
     ${sumC} =                                       evaluate                                ${diffA7} + ${diffA8} + ${diffA13} + ${diffA14}
     ${sumD} =                                       evaluate                                ${diffA9} + ${diffA10} + ${diffA11} + ${diffA12}
     Should Be True                                  ${sumA} > 1100000 
-    Should Be True                                  ${sumB} < 50
+    Should Be True                                  ${sumB} < 2000
     Should Be True                                  ${sumC} > 1100000 
-    Should Be True                                  ${sumD} < 50
+    Should Be True                                  ${sumD} < 2000
     verify results                                  transmitted_frames                      received_valid_frames         ${stream1}              stream1
 	sleep                                           1
     CLI arista enable disable interface             s11                             		port-channel 5          		disable=${False}
@@ -2400,7 +2408,7 @@ restart ofad on single-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s3                                      ofad                    timeout=60
+    BASH restart process                            s3                                      ofad                    timeout=120
     sleep                                           5
     ${value} =                                      BASH check service status               s3                      ofad
     Should Contain                                  ${value}                                is started
@@ -2493,7 +2501,7 @@ restart ofad on dual-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s1                                      ofad                    timeout=60
+    BASH restart process                            s1                                      ofad                    timeout=120
     sleep                                           5
     ${value} =                                      BASH check service status               s1                      ofad
     Should Contain                                  ${value}                                is started
@@ -2531,7 +2539,7 @@ restart ofad on dual-leaf rack with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s2                                      ofad                    timeout=60
+    BASH restart process                            s2                                      ofad                    timeout=120
     sleep                                           5
     ${value} =                                      BASH check service status               s2                      ofad
     Should Contain                                  ${value}                                is started
@@ -2623,7 +2631,7 @@ restart ofad on spine with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s7                                      ofad                    timeout=60
+    BASH restart process                            s7                                      ofad                    timeout=120
     sleep                                           5
     ${value} =                                      BASH check service status               s7                      ofad
     Should Contain                                  ${value}                                is started
@@ -2659,7 +2667,7 @@ restart ofad on spine with ecmp nexthop
     ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
     ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
     ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
-    BASH restart process                            s8                                      ofad                    timeout=60
+    BASH restart process                            s8                                      ofad                    timeout=120
     sleep                                           5
     ${value} =                                      BASH check service status               s8                      ofad
     Should Contain                                  ${value}                                is started
@@ -2931,7 +2939,217 @@ Add and delete more specific route for L3 inter tenant traffic to external host
     REST delete static routes                       External                                10.99.254.0/23                  A2
     REST delete nexthop group                       External                                A1
 	REST delete nexthop group                       External                                A2
-    
+
+Powercycle single leaf switch with ecmp nexthop lag on dual leaf
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST delete static routes                       External                        10.99.255.0/24          ecmp-A16
+    REST add interface to vns                       X                               X192                    leaf0-a         ethernet33          -1
+    REST add static routes                          system                          10.99.255.0/24          {"next-hop-group": "ecmp-A1", "tenant": "External"}
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "ecmp-A1"}
+    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0       leaf0-a
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    Should Not Be True                              ${ecmpIndex} == 0
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    sleep                                           1
+
+    ${stream1}=                                     L3 add                          name=stream1            flow=c->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.251.192.101            src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.251.192.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           12
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000    
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    power down switch                               s5
+    sleep                                           5
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    power up switch                                 s5
+    sleep                                           300
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000       
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1     10000
+
+Powercycle single leaf switch with one nexthop part of ecmp
+    REST delete interface from vns                  Z                               Z192                    leaf2-a         ethernet33          -1   
+    REST delete static routes                       External                        10.99.255.0/24          ecmp-A16
+    #REST add interface to vns                       External                        External-Host           leaf0-a         ethernet33          -1
+    REST add interface to vns                       X                               X192                    leaf0-a         ethernet33          -1
+    REST add static routes                          system                          10.99.255.0/24          {"next-hop-group": "ecmp-A1", "tenant": "External"}
+    REST add static routes                          External                        10.99.255.0/24          {"next-hop-group": "ecmp-A1"}
+    ${result} =                                     REST get l3 cidr route info     10.99.255.0             255.255.255.0       leaf0-a
+    Should Not Be Empty                             ${result}
+    ${ecmpIndex} =                                  Set Variable                    ${result['ecmp-index']}
+    Should Not Be True                              ${ecmpIndex} == 0
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 2
+    sleep                                           1
+    ${stream1}=                                     L3 add                          name=stream1            flow=c->a               frame_rate=100000           frame_size=128             frame_cnt=10000000000
+    ...                                             src_ip=10.251.192.101           src_cnt=100             src_ip_step=0.0.0.1     src_gw=10.251.192.1          src_gw_step=0.0.0.0
+    ...                                             dst_ip=10.99.255.101            dst_cnt=100             dst_ip_step=0.0.0.1     dst_gw=10.99.255.1          dst_gw_step=0.0.0.0
+    sleep                                           1             
+    start traffic                                   ${stream1}
+    sleep                                           10
+    stop traffic                                    ${stream1}
+    sleep                                           1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           12
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000       
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1
+    REST clear fabric interface stats
+    sleep                                           1
+    start traffic                                   ${stream1}
+    sleep                                           5
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-1} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    sleep                                           5
+    power down switch                               s3
+    sleep                                           45
+    ${count} =                                      REST ecmp nexthop count         ${ecmpIndex}
+    Should Be True                                  ${count} == 1   
+    power up switch                                 s3
+    sleep                                           120
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet17
+    ${tx_17_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf1-a                     ethernet19
+    ${tx_19_ucast_cnt1A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet17
+    ${tx_17_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-a                     ethernet19
+    ${tx_19_ucast_cnt2A-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet17
+    ${tx_17_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    ${result} =                                     REST get fabric interface stats         leaf2-b                     ethernet19
+    ${tx_19_ucast_cnt2B-2} =                        Set Variable                            ${result[0]['interface'][0]['counter']['tx-unicast-packet']}
+    stop traffic                                    ${stream1}
+    ${diffA1} =                                     evaluate                                ${tx_17_ucast_cnt1A-2} - ${tx_17_ucast_cnt1A-1}
+    ${diffA2} =                                     evaluate                                ${tx_19_ucast_cnt1A-2} - ${tx_19_ucast_cnt1A-1}
+    ${diffA3} =                                     evaluate                                ${tx_17_ucast_cnt2A-2} - ${tx_17_ucast_cnt2A-1}
+    ${diffA4} =                                     evaluate                                ${tx_19_ucast_cnt2A-2} - ${tx_19_ucast_cnt2A-1}
+    ${diffA5} =                                     evaluate                                ${tx_17_ucast_cnt2B-2} - ${tx_17_ucast_cnt2B-1}
+    ${diffA6} =                                     evaluate                                ${tx_19_ucast_cnt2B-2} - ${tx_19_ucast_cnt2B-1}
+    Should Be True                                  ${diffA1} > 100000 or ${diffA2} > 100000 and ${diffA3} > 100000 or ${diffA4} > 100000 and ${diffA5} > 100000 or ${diffA6} > 100000     
+    verify results                                  transmitted_frames                      received_valid_frames           ${stream1}              stream1     2000000
+        
 Add and delete config changes
     ${value} =                                  REST enable endpoint flap protection
     Log                                         ${value}
@@ -3171,9 +3389,13 @@ initialize host
     BASH init intf                              h2-rack2                                bond0
     BASH stop service                           h1-rack0                        isc-dhcp-server
 
+
+
+
+
 setup topology
     base test setup
-	initialize host
+#	initialize host
 	REST add tenant								system
 	REST add tenant                             External
 	REST add tenant 							X
@@ -3454,17 +3676,112 @@ setup topology
     REST add static routes                          External                    10.251.0.0/16       {"tenant": "system"}
     REST add static routes                          External                    10.252.0.0/16       {"tenant": "system"}
     REST add static routes                          External                    10.253.0.0/16       {"tenant": "system"}
-    CLI arista enable disable interface        s11                             port-channel 1           disable=${False}    
-    CLI arista enable disable interface        s11                             port-channel 2           disable=${False}    
-    CLI arista enable disable interface        s11                             port-channel 3           disable=${False}    
-    CLI arista enable disable interface        s11                             port-channel 4           disable=${False}    
-    CLI arista enable disable interface        s11                             port-channel 5           disable=${False}    
-    CLI arista enable disable interface        s11                             ethernet 1               disable=${False}    
-    CLI arista enable disable interface        s11                             ethernet 2               disable=${False}   
+    
+    CLI arista add portchannel                  s11                             1        1 2 
+    CLI arista add portchannel                  s11                             2        3 4 
+    CLI arista add portchannel                  s11                             3        5 7
+    CLI arista add portchannel                  s11                             4        6 8 
+    CLI arista add portchannel                  s11                             5        9 10 11 12
+    CLI arista add portchannel                  s11                             1000     47 48
+    CLI arista add ip address                   s11                             10.99.1.1   24     port-channel1
+    CLI arista add ip address                   s11                             10.99.2.1   24     port-channel2
+    CLI arista add ip address                   s11                             10.99.3.1   24     port-channel3
+    CLI arista add ip address                   s11                             10.99.4.1   24     port-channel4
+    CLI arista add ip address                   s11                             10.99.5.1   24     port-channel5
+    CLI arista add ip address                   s11                             10.255.255.1    24  port-channel1000
+    CLI arista add ip address                   s11                             10.99.13.1  24    Ethernet13
+    CLI arista add ip address                   s11                             10.99.14.1  24    Ethernet14
+    CLI arista add ip address                   s11                             10.99.15.1  24    Ethernet15
+    CLI arista add ip address                   s11                             10.99.16.1  24    Ethernet16
+    CLI arista add ip address                   s11                             10.99.0.1   24     Ethernet18
+    CLI arista add ip address                   s11                             10.99.21.1  24    Ethernet21
+    CLI arista add ip address                   s11                             10.99.22.1  24    Ethernet22
+    CLI arista add ip address                   s11                             10.99.23.1  24    Ethernet23
+    CLI arista add ip address                   s11                             10.99.24.1  24    Ethernet24
+    CLI arista add ip address                   s11                             10.99.25.1  24    Ethernet25
+    CLI arista add ip address                   s11                             10.99.26.1  24    Ethernet26
+    CLI arista add ip address                   s11                             10.99.27.1  24    Ethernet27
+    CLI arista add ip address                   s11                             10.99.28.1  24    Ethernet28
+    CLI arista add ip address                   s11                             10.99.29.1  24    Ethernet29
+    CLI arista add ip address                   s11                             10.99.30.1  24    Ethernet30
+    CLI arista add ip address                   s11                             10.99.255.1     24   Ethernet33
+    CLI arista add vlan                         s11                             120              Vlan120        Ethernet17      mode="access"
+#    CLI arista add vlan                         s11                            10               Ethernet41      mode="access"
+#    CLI arista add vlan                         s11                            10               Ethernet42      mode="access"  
+    CLI arista add vlan ip address              s11                             10.99.99.2      24          Vlan120
+    CLI arista add vrrp                         s11                             vlan120         120         10.99.99.1      
+    CLI arista change vrrp priority             s11                             vlan120         120     200
+    CLI arista add route                        s11                             10.250.0.0/16   10.99.1.2
+    CLI arista add route                        s11                             10.251.0.0/16   10.99.1.2
+    CLI arista add route                        s11                             10.252.0.0/16   10.99.1.2
+    CLI arista add route                        s11                             10.253.0.0/16   10.99.1.2
+    CLI arista add route                        s11                             10.254.99.0/24  10.99.1.2
+    CLI arista add route                        s11                             10.98.0.0/24    10.255.255.2
+    CLI arista add route                        s11                             20.0.0.0/8      10.99.1.2
+    CLI arista enable disable interface         s11                              port-channel 1           disable=${False}    
+    CLI arista enable disable interface         s11                              port-channel 2           disable=${False}    
+    CLI arista enable disable interface         s11                              port-channel 3           disable=${False}    
+    CLI arista enable disable interface         s11                              port-channel 4           disable=${False}    
+    CLI arista enable disable interface         s11                              port-channel 5           disable=${False}    
+    CLI arista enable disable interface         s11                              ethernet 1               disable=${False}    
+    CLI arista enable disable interface         s11                              ethernet 2               disable=${False}   
+    
+    CLI arista add portchannel                  s12                             1        1 2 
+    CLI arista add portchannel                  s12                             2        3 4 
+    CLI arista add portchannel                  s12                             3        5 7
+    CLI arista add portchannel                  s12                             4        6 8 
+    CLI arista add portchannel                  s12                             5        9 10 11 12
+    CLI arista add portchannel                  s12                             1000     47 48
+    CLI arista add ip address                   s12                             10.98.1.1   24     port-channel1
+    CLI arista add ip address                   s12                             10.98.2.1   24     port-channel2
+    CLI arista add ip address                   s12                             10.98.3.1   24     port-channel3
+    CLI arista add ip address                   s12                             10.98.4.1   24     port-channel4
+    CLI arista add ip address                   s12                             10.98.5.1   24     port-channel5
+    CLI arista add ip address                   s12                             10.255.255.2    24  port-channel1000
+    CLI arista add ip address                   s12                             10.98.13.1  24    Ethernet13
+    CLI arista add ip address                   s12                             10.98.14.1  24    Ethernet14
+    CLI arista add ip address                   s12                             10.98.15.1  24    Ethernet15
+    CLI arista add ip address                   s12                             10.98.16.1  24    Ethernet16
+    CLI arista add ip address                   s12                             10.98.0.1   24     Ethernet18
+    CLI arista add ip address                   s12                             10.98.21.1  24    Ethernet21
+    CLI arista add ip address                   s12                             10.98.22.1  24    Ethernet22
+    CLI arista add ip address                   s12                             10.98.23.1  24    Ethernet23
+    CLI arista add ip address                   s12                             10.98.24.1  24    Ethernet24
+    CLI arista add ip address                   s12                             10.98.25.1  24    Ethernet25
+    CLI arista add ip address                   s12                             10.98.26.1  24    Ethernet26
+    CLI arista add ip address                   s12                             10.98.27.1  24    Ethernet27
+    CLI arista add ip address                   s12                             10.98.28.1  24    Ethernet28
+    CLI arista add ip address                   s12                             10.98.29.1  24    Ethernet29
+    CLI arista add ip address                   s12                             10.98.30.1  24    Ethernet30
+    CLI arista add ip address                   s12                             10.98.255.1     24   Ethernet33
+    CLI arista add vlan                         s12                             120              Vlan120        Ethernet17      mode="access"
+#    CLI arista add vlan                         s12                            10               Ethernet41      mode="access"
+#    CLI arista add vlan                         s12                            10               Ethernet42      mode="access"  
+    CLI arista add vlan ip address              s12                             10.99.99.3      24          Vlan120
+    CLI arista add vrrp                         s12                             vlan120         120         10.99.99.1      
+    CLI arista change vrrp priority             s12                             vlan120         120     100
+    CLI arista add route                        s12                             10.250.0.0/16   10.98.1.2
+    CLI arista add route                        s12                             10.251.0.0/16   10.98.1.2
+    CLI arista add route                        s12                             10.252.0.0/16   10.98.1.2
+    CLI arista add route                        s12                             10.253.0.0/16   10.98.1.2
+    CLI arista add route                        s12                             10.254.99.0/24  10.98.1.2
+    CLI arista add route                        s12                             10.99.255.0/24  10.255.255.1
+    CLI arista add route                        s12                             20.0.0.0/8      10.98.1.2
+    CLI arista enable disable interface         s12                              port-channel 1           disable=${False}    
+    CLI arista enable disable interface         s12                              port-channel 2           disable=${False}    
+    CLI arista enable disable interface         s12                              port-channel 3           disable=${False}    
+    CLI arista enable disable interface         s12                              port-channel 4           disable=${False}    
+    CLI arista enable disable interface         s12                              port-channel 5           disable=${False}    
+    CLI arista enable disable interface         s12                              ethernet 1               disable=${False}    
+    CLI arista enable disable interface         s12                              ethernet 2               disable=${False}       
+    CLI arista enable ip routing                  s11
+    CLI arista enable ip routing                  s12
+     
+        
   	
 teardown topology
 	delete traffic
-    initialize host
+#    initialize host
     base test teardown
 
 T5 base suite setup
@@ -3625,8 +3942,8 @@ T5 base suite teardown
     REST delete tenant                         Z
     REST delete tenant                         External
     REST delete tenant                         system
-    BASH restart networking service            h1-rack0            timeout=60
-    bash_restart_networking_service            h1-rack1            timeout=60
+#    BASH restart networking service            h1-rack0            timeout=60
+#    bash_restart_networking_service            h1-rack1            timeout=60
     CLI arista enable disable interface        s11                             port-channel 1           disable=${False}    
     CLI arista enable disable interface        s11                             port-channel 2           disable=${False}    
     CLI arista enable disable interface        s11                             port-channel 3           disable=${False}    
@@ -3634,7 +3951,88 @@ T5 base suite teardown
     CLI arista enable disable interface        s11                             port-channel 5           disable=${False}    
     CLI arista enable disable interface        s11                             ethernet 1               disable=${False}    
     CLI arista enable disable interface        s11                             ethernet 2               disable=${False} 
-    sleep                                      60   
+    CLI arista delete portchannel                   s11                             1        1 2 
+    CLI arista delete portchannel                   s11                             2        3 4 
+    CLI arista delete portchannel                   s11                             3        5 7
+    CLI arista delete portchannel                   s11                             4        6 8 
+    CLI arista delete portchannel                   s11                             5        9 10 11 12
+    CLI arista delete portchannel                   s11                             1000     47 48
+    CLI arista delete ip address                    s11                             10.99.1.1       24     port-channel1
+    CLI arista delete ip address                    s11                             10.99.2.1       24     port-channel2
+    CLI arista delete ip address                    s11                             10.99.3.1       24     port-channel3
+    CLI arista delete ip address                    s11                             10.99.4.1       24     port-channel4
+    CLI arista delete ip address                    s11                             10.99.5.1       24     port-channel5
+    CLI arista delete ip address                    s11                             10.255.255.1    24  port-channel1000
+    CLI arista delete ip address                    s11                             10.99.13.1      24    Ethernet13
+    CLI arista delete ip address                    s11                             10.99.14.1      24    Ethernet14
+    CLI arista delete ip address                    s11                             10.99.15.1      24    Ethernet15
+    CLI arista delete ip address                    s11                             10.99.16.1      24    Ethernet16
+    CLI arista delete ip address                    s11                             10.99.0.1       24     Ethernet18
+    CLI arista delete ip address                    s11                             10.99.21.1      24    Ethernet21
+    CLI arista delete ip address                    s11                             10.99.22.1      24    Ethernet22
+    CLI arista delete ip address                    s11                             10.99.23.1      24    Ethernet23
+    CLI arista delete ip address                    s11                             10.99.24.1      24    Ethernet24
+    CLI arista delete ip address                    s11                             10.99.25.1      24    Ethernet25
+    CLI arista delete ip address                    s11                             10.99.26.1      24    Ethernet26
+    CLI arista delete ip address                    s11                             10.99.27.1      24    Ethernet27
+    CLI arista delete ip address                    s11                             10.99.28.1      24    Ethernet28
+    CLI arista delete ip address                    s11                             10.99.29.1      24    Ethernet29
+    CLI arista delete ip address                    s11                             10.99.30.1      24    Ethernet30
+    CLI arista delete ip address                    s11                             10.99.255.1     24   Ethernet33
+    CLI arista delete vlan                          s11                             120              Vlan120    Ethernet17      mode="access"
+#    CLI arista delete vlan                         s11                             10               Ethernet41      mode="access"
+#    CLI arista delete vlan                         s11                             10               Ethernet42      mode="access"  
+    CLI arista delete vlan ip address               s11                             10.99.99.2      24          Vlan120
+    CLI arista delete vrrp                         s11                             vlan120         120         10.99.99.1      
+    CLI arista delete route                         s11                             10.250.0.0/16   10.99.1.2
+    CLI arista delete route                         s11                             10.251.0.0/16   10.99.1.2
+    CLI arista delete route                         s11                             10.252.0.0/16   10.99.1.2
+    CLI arista delete route                         s11                             10.253.0.0/16   10.99.1.2
+    CLI arista delete route                         s11                             10.254.99.0/24  10.99.1.2
+    CLI arista delete route                         s11                             10.98.0.0/24    10.255.255.2
+    CLI arista delete route                         s11                             20.0.0.0/8      10.99.1.2
+    CLI arista delete portchannel                   s12                             1        1 2 
+    CLI arista delete portchannel                   s12                             2        3 4 
+    CLI arista delete portchannel                   s12                             3        5 7
+    CLI arista delete portchannel                   s12                             4        6 8 
+    CLI arista delete portchannel                   s12                             5        9 10 11 12
+    CLI arista delete portchannel                   s12                             1000     47 48
+    CLI arista delete ip address                    s12                             10.98.1.1       24      port-channel1
+    CLI arista delete ip address                    s12                             10.98.2.1       24      port-channel2
+    CLI arista delete ip address                    s12                             10.98.3.1       24      port-channel3
+    CLI arista delete ip address                    s12                             10.98.4.1       24      port-channel4
+    CLI arista delete ip address                    s12                             10.98.5.1       24      port-channel5
+    CLI arista delete ip address                    s12                             10.255.255.2    24      port-channel1000
+    CLI arista delete ip address                    s12                             10.98.13.1      24      Ethernet13
+    CLI arista delete ip address                    s12                             10.98.14.1      24      Ethernet14
+    CLI arista delete ip address                    s12                             10.98.15.1      24      Ethernet15
+    CLI arista delete ip address                    s12                             10.98.16.1      24      Ethernet16
+    CLI arista delete ip address                    s12                             10.98.0.1       24      Ethernet18
+    CLI arista delete ip address                    s12                             10.98.21.1      24      Ethernet21
+    CLI arista delete ip address                    s12                             10.98.22.1      24      Ethernet22
+    CLI arista delete ip address                    s12                             10.98.23.1      24      Ethernet23
+    CLI arista delete ip address                    s12                             10.98.24.1      24      Ethernet24
+    CLI arista delete ip address                    s12                             10.98.25.1      24      Ethernet25
+    CLI arista delete ip address                    s12                             10.98.26.1      24      Ethernet26
+    CLI arista delete ip address                    s12                             10.98.27.1      24      Ethernet27
+    CLI arista delete ip address                    s12                             10.98.28.1      24      Ethernet28
+    CLI arista delete ip address                    s12                             10.98.29.1      24      Ethernet29
+    CLI arista delete ip address                    s12                             10.98.30.1      24      Ethernet30
+    CLI arista delete ip address                    s12                             10.98.255.1     24      Ethernet33
+    CLI arista delete vlan                          s12                             120             Vlan120     Ethernet17      mode="access"
+    CLI arista delete vlan ip address               s12                             10.99.99.3      24          Vlan120
+    CLI arista delete vrrp                         s12                             vlan120         120         10.99.99.1      
+
+    CLI arista delete route                         s12                             10.250.0.0/16   10.98.1.2
+    CLI arista delete route                         s12                             10.251.0.0/16   10.98.1.2
+    CLI arista delete route                         s12                             10.252.0.0/16   10.98.1.2
+    CLI arista delete route                         s12                             10.253.0.0/16   10.98.1.2
+    CLI arista delete route                         s12                             10.254.99.0/24  10.98.1.2
+    CLI arista delete route                         s12                             10.99.255.0/24  10.255.255.1
+    CLI arista delete route                         s12                             20.0.0.0/8      10.98.1.2    
+    CLI arista disable ip routing                  s11
+    CLI arista disable ip routing                  s12    
+    sleep                                           10   
     base suite teardown 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}  ${range}=5
