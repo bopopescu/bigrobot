@@ -1753,7 +1753,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         helpers.log("no Match")
         return {}
         
-    def rest_verify_policy_stats(self, tenant, seq, frame_cnt):
+    def rest_verify_policy_stats(self, tenant, seq, frame_cnt, flag=False):
         ''' Function to verify policy rule counter
         Input: tenant name, policy seq number and packets tx
         Output: policy counter
@@ -1764,15 +1764,22 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         url = '/api/v1/data/controller/applications/bcf/info/statistic/policy-counter[policy/seq="%s"][tenant-name="%s"]' % (seq, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]['policy'][0]['seq'] == seq:
-                    if (int(data[0]['policy'][0]['packet']) == frame_cnt):
-                        helpers.log("Pass: Policy Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
-                        return True
-                    else:
-                        helpers.test_failure("Policy counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
-                        return False
+        helpers.log("Printing len of data: %d and flag:%s" % (len(data), flag))
+        if (len(data) != 0 and flag is False):
+            helpers.log("In len.data not ZERO and FLAG is FALSE")
+            if data[0]["tenant-name"] == tenant and data[0]['policy'][0]['seq'] == seq:
+                if (int(data[0]['policy'][0]['packet']) == frame_cnt):
+                    helpers.log("Pass: Policy Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                    return True
+                else:
+                    helpers.test_failure("Policy counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
+                    return False
+            else:
+                helpers.log("Given tenant name and policy seq number does not match the config")
         else:
-            helpers.log("Given tenant name and policy seq number does not match the config")
+            helpers.log("In len.data eq ZERO and FLAG is TRUE")
+            return True
+        
 
     def rest_clear_policy_stats(self, tenant, seq):
         ''' Function to clear policy counters
@@ -1789,6 +1796,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         Input: tenant name
         Output: policy log counter
         '''
+        return_null = 0
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/info/policy-log/counter[tenant="%s"]' % (tenant)
@@ -1796,8 +1804,11 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         data = c.rest.content()
         if data[0]["tenant"] == tenant:
             log_cnt = data[0]['value']['packet']
-            helpers.log("Pass: Policy log Counters value %d" % log_cnt)
-            return log_cnt
+            if (log_cnt):
+                helpers.log("Pass: Policy log Counters value %d" % log_cnt)
+                return log_cnt
+            else:
+                return return_null
                     
         else:
             helpers.log("Given tenant name did not match the config")
