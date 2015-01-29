@@ -628,7 +628,10 @@ T51.1 Show logging syslog last master
 T51.2 Show logging syslog last slave
     ${node}  Set Variable  slave
     ${threshold}  Set Variable  20
-    Config  master  no ntp time-zone
+    Cli Run  slave  exit
+    Cli Run  slave  enable
+    Cli Run  slave  show run
+    Cli Run  master  no ntp time-zone
     Sleep  3
     ${result1}  Cli Get Number Of Logs In Last  ${node}  5hour
     Config  master  ntp time-zone America/New_York
