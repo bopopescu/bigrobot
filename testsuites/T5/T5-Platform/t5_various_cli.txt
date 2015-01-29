@@ -736,7 +736,7 @@ Teardown
 	Cli Run  master  exit
 	Cli Run  master  enable
 	Cli Run  master  config
-	Cli Run  master  reauth admin adminadmin
-	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
+	Run Keyword and Ignore Error  Cli Run  master  reauth admin adminadmin
+	Run Keyword and Ignore Error  Cli  master  enable; config; no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  snapshot://startup-config  running-config
 	Base Test Teardown
