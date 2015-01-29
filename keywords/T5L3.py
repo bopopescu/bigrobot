@@ -1496,10 +1496,16 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         if (next_hop is not None and action == "next-hop" ):
             if (ip_proto is None):
                 if (srcdata is not None and dstdata is not None):
-                    if (segment is not None and log is not None):
-                        helpers.test_log("next hop is not none, ip proto is none and action is next-hop")
-                        data = {"src":srcdata, "log":log, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                    if (segment is not None):
+                        if(log is not None):
+                            helpers.test_log("next hop is not none, ip proto is none, policy-log enabled and action is next-hop")
+                            data = {"src":srcdata, "log":log, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                        else:
+                            helpers.test_log("next hop is not none, ip proto is none, policy-log not enabled and action is next-hop")
+                            data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop, "segment-interface":segment}
+                            
                     else:
+                        helpers.test_log("next hop is none, ip proto is none and action is next-hop")
                         data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
 
                     try:
