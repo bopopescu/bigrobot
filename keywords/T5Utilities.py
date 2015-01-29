@@ -987,6 +987,31 @@ class T5Utilities(object):
                 helpers.test_failure(c.cli_content(), soft_error)
                 return False
 
+    def cli_get_number_of_logs_in_last(self, node, period):
+        """
+        Run "show logging syslog last <>" and returns number of entries
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | period | Time period |
+
+        Return Value:
+        - Number of logs, or -1 in case of error
+        """
+        helpers.test_log("Running command: show logging syslog last"
+                         "%s on node %s" % (period, node))
+        t = test.Test()
+        c = t.controller(node)
+        content = c.config("show logging syslog last %s | wc -l"
+                           % period)["content"]
+        helpers.log(c.cli_content())
+        if "Error" in c.cli_content():
+            helpers.log("Error in command")
+            return -1
+        else:
+            output = helpers.strip_cli_output(content)
+            return int(output)
+
 
     def cli_get_session_hash(self):
 	''' Function that returns hash value of session id'''
