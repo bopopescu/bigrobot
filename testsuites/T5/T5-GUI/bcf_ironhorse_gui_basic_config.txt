@@ -6,6 +6,7 @@ Suite Teardown  	config suite teardown
 Force Tags          T5  GUI  BCF  Feature  IronHorse
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library				keywords/T5Utilities.py
 Library        		SeleniumLibrary
 Resource        	bcf_resource.txt
 Library       		String
@@ -156,9 +157,55 @@ T9.7 Delete TACACS Host
 T9.8 Delete All TACACS Hosts
 	Delete All TACACS Hosts	
 	 
+#### Configure AAA Accounting
+T10.1 Accounting Configuration local+remote
+    Cli Run  master  exit;enable;config
+	Configure Accounting  Yes  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group tacacs+
+T10.2 Accounting Configuration local only
+	Configure Accounting  Yes  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+T10.3 Accounting Configuration remote only
+	Configure Accounting  No  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop group tacacs+
+T10.4 Accounting Configuration none
+	Configure Accounting  No  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting
+	...  flag=False
 
+#### Configure AAA Authentication
+T11.1 Authentication Configuration Local TACACS
+    Cli Run  master  exit;enable;config
+	Configure Authentication  Local  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local group tacacs+
+T11.2 Authentication Configuration TACACS Local
+	Configure Authentication  TACACS  Local
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default group tacacs+ local
+T11.3 Authentication Configuration Local
+	Configure Authentication  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local
+T11.4 Authentication Configuration Remote then None
+	Configure Authentication  TACACS  None
+	Configure Authentication  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication
+	...  flag=False
 
-				
 * Keyword
 config suite setup
     base suite setup
