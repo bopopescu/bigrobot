@@ -65,9 +65,9 @@ ${long}   50
 ${verylong}    90 
 ${upgradetime}    600 
 #${image}     bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/3545/archive/*.pkg
-${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
-${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
-${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
  
 ${qcowimage}   bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
 ${bigtapimage}   bsn@10.8.28.6:/home/bsn/controller-upgrade-bigtap-3.0.0-SNAPSHOT.pkg
@@ -108,7 +108,7 @@ UPGRADE HOST PING SET UP
    	sleep  5
    	${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
    	Should Be True  ${loss} < 50	
-	[Tags]    sanity   run_ping_test
+	[Tags]    sanity   run_ping_test  daily-sanity
 IMAGE: T1.1 verify image download and various related show command in master
 	log  get image from external server 
  		copy_pkg_from_server    ${image}   master	 
@@ -176,7 +176,7 @@ IMAGE: T1.3 verify only 1 image can be stored in system
 		${num}  ${_}=	   cli_check_image     master
 		Should Be Equal As Integers     ${num}    1      	   	
     			 	
-	[Tags] 	sanity  feature  upgrade_ztn    tested
+	[Tags] 	sanity  feature  upgrade_ztn    tested   daily-sanity
 
 IMAGE: T1.4 verify delete image in master
 	log  copy image if there is no image in system
@@ -186,7 +186,7 @@ IMAGE: T1.4 verify delete image in master
 		${num}  ${_}=	   cli_check_image    master
 		Should Be Equal As Integers     ${num}    -1      	   	
     			 	
-	[Tags] 	sanity  feature  upgrade_ztn     tested
+	[Tags] 	sanity  feature  upgrade_ztn     tested  daily-sanity
 
 IMAGE: T1.4 verify delete image in slave
 	log  copy image if there is no image in system
@@ -262,13 +262,13 @@ STAGE: T2.4 verify image stage when there is same image in the partition
 UPGRADE: T11.1 Verify upgrade (controller - upgrade, switch - upgrade )   	
  		Verify Dual nodes upgrade 	  ${image1}
 		
- 	[Tags] 	sanity  feature  upgrade_ztn    tested     run  
+ 	[Tags] 	sanity  feature  upgrade_ztn    tested     daily-sanity  
  	
     
 UPGRADE: T11.2 Verify upgrade (controller - upgrade, switch - no need) 
 	Run Keyword if   '${image1}' != '${image2}' 		Verify Dual nodes upgrade 	  ${image2}
  		
- 	[Tags] 	sanity  feature  upgrade_ztn     tested    
+ 	[Tags] 	sanity  feature  upgrade_ztn     tested    daily-sanity
    
 
 UPGRADE: T11.3 Verify upgrade with same image
