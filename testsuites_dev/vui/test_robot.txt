@@ -334,12 +334,21 @@ Test BigRobot params argument
 
 
 Test evaluation
+    [Tags]           skipped
     ${status}        set variable    10
     ${status}        evaluate    ${status} + 1
     log              new status = ${status}
 
 
+Test environment variable
+    #[Tags]           skipped
+    ${BIGROBOT_PATH} =    Get Environment Variable    BIGROBOT_PATH
+    ${PROFILE} =          Set Variable                ${BIGROBOT_PATH}/data/browser/regression_firefox_profile
+    Log                   Start Selenium Server -trustAllSSLCertificates -firefoxProfileTemplate ${PROFILE}
+
+######################################################################################
 * Keywords
+######################################################################################
 Count me
     ${temp}=         expr   ${KW_COUNTER} + 1
     set global variable   ${KW_COUNTER}   ${temp}
