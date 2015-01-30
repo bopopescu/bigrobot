@@ -66,6 +66,7 @@ add fabric switch
   ${leaf2a_dpid}=  get_switch_mac_topo  s5 
   rest add dpid  leaf2-a  ${leaf2a_dpid}
   rest add fabric role  leaf2-a  leaf
+  sleep  45
   Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back
   
 delete fabric switch  
