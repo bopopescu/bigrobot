@@ -6,6 +6,7 @@ Suite Teardown  	config suite teardown
 Force Tags          T5  GUI  BCF  Feature  IronHorse
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library				keywords/T5Utilities.py
 Library        		SeleniumLibrary
 Resource        	bcf_resource.txt
 Library       		String
@@ -155,13 +156,149 @@ T9.7 Delete TACACS Host
  	Delete TACACS Host			2.3.1.0	
 T9.8 Delete All TACACS Hosts
 	Delete All TACACS Hosts	
+
+T9.9 Default TACACS Settings - timeout
+	Go To Tacacs Page
+	Configure TACACS Default Settings  10  ${EMPTY}  No
+	#Page Should Contain  10
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 10
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key
+	...  flag=False
+
+T9.10 Default TACACS Settings - secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  ${EMPTY}  foo-secret  No
+	#Page Should Contain  30
+	#Page Should Contain  foo-secret
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 foo-secret
+
+T9.11 Default TACACS Settings - default timeout and secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  30  secret  No
+	#Page Should Contain  30
+	#Page Should Contain  foo-secret
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 secret
+
+T9.12 Default TACACS Settings - timeout and secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  5  secret1234  No
+	#Page Should Contain  5
+	#Page Should Contain  secret1234
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 5
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 secret1234
+
+T9.13 Default TACACS Settings - timeout and encryped secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  15  secret  Yes
+	#Page Should Contain  15
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 15
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7
+
+T9.14 Default TACACS Settings edit
+	Go To Tacacs Page
+	Configure TACACS Default Settings  10  secret-foo  No
+	#Page Should Contain  10
+	#Page Should Contain  secret-foo
+	#Configure TACACS Default Settings  20  ${EMPTY}  No
+	#Page Should Contain  20
+	#Page Should Not Contain  secret-foo
+	#Configure TACACS Default Settings  30  secret-foo  Yes
+	#Page Should Contain  30
+	#Page Should Not Contain  secret-foo
+	#Configure TACACS Default Settings  20  secret-foo  Yes
+	#Page Should Contain  20
+	#Page Should Not Contain  secret-foo
+	[Tags]  BVS-2739
+
+T9.15 Default TACACS Settings delete
+	Go To Tacacs Page
+	Configure TACACS Default Settings  ${EMPTY}  ${EMPTY}  Yes
+	#Page Should Contain  30
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key
+	...  flag=False
 	 
+#### Configure AAA Accounting
+T10.1 Accounting Configuration local+remote
+	Configure Accounting  Yes  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group tacacs+
+T10.2 Accounting Configuration local only
+	Configure Accounting  Yes  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+T10.3 Accounting Configuration remote only
+	Configure Accounting  No  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop group tacacs+
+T10.4 Accounting Configuration none
+	Configure Accounting  No  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting
+	...  flag=False
 
+#### Configure AAA Authentication
+T11.1 Authentication Configuration Local TACACS
+	Configure Authentication  Local  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local group tacacs+
+T11.2 Authentication Configuration TACACS Local
+	Configure Authentication  TACACS  Local
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default group tacacs+ local
+T11.3 Authentication Configuration Local
+	Configure Authentication  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local
+T11.4 Authentication Configuration Remote then None
+	Configure Authentication  TACACS  None
+	Configure Authentication  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication
+	...  flag=False
 
-				
 * Keyword
 config suite setup
     base suite setup
+    Config  master  show running-conifg
+    Config  slave  show running-config
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs

@@ -2,7 +2,7 @@
 Documentation    T5 upgrade Test Suite
 Suite Setup      Upgrade Suite Setup
 Suite Teardown   Upgrade suite teardown
-Test Setup       Upgrade base test setup
+#Test Setup       Upgrade base test setup
 Test Teardown    Upgrade base test teardown
 Force Tags       T5   Ironhorse   ha   upgrade
 Library			 OperatingSystem
@@ -19,7 +19,8 @@ Library	         keywords/T5.py
 Library          keywords/T5L3.py
 Library	         keywords/Controller.py
 Library	         keywords/SwitchLight.py
-Resource		 testsuites_dev/mingtao/t5_upgrade_ztn_resource.txt 
+Resource		 testsuites/T5/T5-Upgrade/t5_upgrade_ztn_resource.txt 
+Resource		 testsuites/T5/t5_physical_variables.txt
 
 # document: https://bigswitch.atlassian.net/wiki/display/BSC/T6+Upgrade section: 6.4
 # The purpose of this test suite is to verify ztn function with upgrade.
@@ -60,20 +61,20 @@ Resource		 testsuites_dev/mingtao/t5_upgrade_ztn_resource.txt
 
 ${short}  1
 ${medium}  10
-${long}   30
+${long}   50
 ${verylong}    90 
 ${upgradetime}    600 
 #${image}     bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/3545/archive/*.pkg
-${image}      bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
-${image1}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
-${image2}     bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
  
-${qcowimage}   bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
+${qcowimage}   bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
 ${bigtapimage}   bsn@10.8.28.6:/home/bsn/controller-upgrade-bigtap-3.0.0-SNAPSHOT.pkg
 
 ${config}   scp://root@10.8.28.6:/home/mingtao/config_basic
-${h2ip}     192.168.0.30
-${h1ip}  	192.168.0.31
+${h2ip}     192.168.4.21
+${h1ip}  	192.168.4.20
 ${File}     script.log
 ${vip}      10.9.16.55
  
@@ -86,6 +87,28 @@ ${vip}      10.9.16.55
 
 ###### dual nodes controller upgrade  
  
+UPGRADE HOST PING SET UP
+	set fabric switches
+	sleep  25
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+	Set host int variables
+	add host port groups
+	#Currently Regression Host H1 & H2 Bond interfaces are configured on Vlan 10
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0
+    bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+    
+    REST add tenant  A 
+    REST add vns  A  A
+   	REST add portgroup to vns  A  A  p1  10 
+    REST add portgroup to vns  A  A  p2  10 
+   	sleep  5
+   	${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
+   	Should Be True  ${loss} < 50	
+	[Tags]    sanity   run_ping_test  daily-sanity
 IMAGE: T1.1 verify image download and various related show command in master
 	log  get image from external server 
  		copy_pkg_from_server    ${image}   master	 
@@ -153,7 +176,7 @@ IMAGE: T1.3 verify only 1 image can be stored in system
 		${num}  ${_}=	   cli_check_image     master
 		Should Be Equal As Integers     ${num}    1      	   	
     			 	
-	[Tags] 	sanity  feature  upgrade_ztn    tested
+	[Tags] 	sanity  feature  upgrade_ztn    tested   daily-sanity
 
 IMAGE: T1.4 verify delete image in master
 	log  copy image if there is no image in system
@@ -163,7 +186,7 @@ IMAGE: T1.4 verify delete image in master
 		${num}  ${_}=	   cli_check_image    master
 		Should Be Equal As Integers     ${num}    -1      	   	
     			 	
-	[Tags] 	sanity  feature  upgrade_ztn     tested
+	[Tags] 	sanity  feature  upgrade_ztn     tested  daily-sanity
 
 IMAGE: T1.4 verify delete image in slave
 	log  copy image if there is no image in system
@@ -239,13 +262,13 @@ STAGE: T2.4 verify image stage when there is same image in the partition
 UPGRADE: T11.1 Verify upgrade (controller - upgrade, switch - upgrade )   	
  		Verify Dual nodes upgrade 	  ${image1}
 		
- 	[Tags] 	sanity  feature  upgrade_ztn    tested     run  
+ 	[Tags] 	sanity  feature  upgrade_ztn    tested     daily-sanity  
  	
     
 UPGRADE: T11.2 Verify upgrade (controller - upgrade, switch - no need) 
 	Run Keyword if   '${image1}' != '${image2}' 		Verify Dual nodes upgrade 	  ${image2}
  		
- 	[Tags] 	sanity  feature  upgrade_ztn     tested    
+ 	[Tags] 	sanity  feature  upgrade_ztn     tested    daily-sanity
    
 
 UPGRADE: T11.3 Verify upgrade with same image
@@ -920,7 +943,7 @@ MIS: T114 switch reboot options in master (switch should use image cash locally)
  	log  step 5 - reboot switches left/right and very switch connect back with correct image and config
   	   
    	log  step 6 - check traffic loss
-		Verify Ping is successful    h1     ${h2ip}   h1     ${h2ip} 		
+		Verify Ping is successful    h1     ${h2_tag_ip}		
  
  		      
 	[Tags] 	sanity     feature  upgrade_ztn    
@@ -960,7 +983,7 @@ MIS: T115 switch reboot options in slave (switch should use image cash locally)
 		Verify All Switch Running Config 
 
 	log  step 6 - check traffic loss
- 		Verify Ping is successful    h1     ${h2ip}   h1     ${h2ip} 		
+ 		Verify Ping is successful    h1     ${h2_tag_ip}		
  		      
 	[Tags] 	sanity     feature  upgrade_ztn     
  

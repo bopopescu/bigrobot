@@ -716,19 +716,8 @@ class SwitchLight(object):
             input1 = "interface ma1 ip-address dhcp"
             if input1 in run_config:
                 pass_count = pass_count + 1
-            input2 = "dns-domain " + str(dns_domain)
-            if input2 in run_config:
-                pass_count = pass_count + 1
-            input3 = "dns-server " + str(dns_server)
-            if input3 in run_config:
-                pass_count = pass_count + 1
             s1.enable('show interface ma1 detail')
             show_command = s1.cli_content()
-            # output_1 = string.split(show_command, '\n')
-            # output_2 = string.split(output_1[3], ': ')
-            # output_3 = string.split(output_2[1], '/')
-            # switch_ip = output_3[0]
-            # switch_mask = output_3[1]
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
                 pass_count = pass_count + 1
@@ -737,7 +726,10 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
                 pass_count = pass_count + 1
-            if pass_count == 6:
+            input5 = str(s1.ip()) + "/" + str(subnet)
+            if input5 in show_command:
+                pass_count = pass_count + 1
+            if pass_count == 5:
                 return True
             else:
                 return False
@@ -965,8 +957,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1099,8 +1092,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1141,8 +1135,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1256,8 +1251,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             try:
                 helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (console_ip, console_port))
                 tn = telnetlib.Telnet(console_ip, console_port)
@@ -1266,21 +1262,26 @@ class SwitchLight(object):
                 tn.read_until("Password: ", 3)
                 tn.write(password + "\r\n")
                 tn.read_until('')
+                helpers.log("now here 1")
+                tn.write("\r\n enable \r\n")
+                tn.write("\r\n configure \r\n")
+                tn.write("\r\n dns-domain " + str(dns_domain) + " \r\n")
+                tn.write("\r\n dns-server " + str(dns_server) + " \r\n")
+                helpers.log("now here 2")
+                tn.write("exit" + "\r\n")
+                tn.write("exit" + "\r\n")
+                helpers.log("now here 3")
+                tn.close()
             except:
                 helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
                 return False
             else:
-                tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
-                tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
-                tn.write("exit" + "\r\n")
-                tn.write("exit" + "\r\n")
-                tn.close()
                 return True
         except:
             helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_delete_dns_server_domain(self, node, dns_server, dns_domain):
+    def cli_delete_dns_server_domain(self, node, dns_server='10.3.0.4', dns_domain='qa.bigswitch.com'):
         '''
         Objective:
         - Delete DNS configuration on switch.
@@ -1301,8 +1302,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1411,8 +1413,9 @@ class SwitchLight(object):
             - False on configuration failure
         '''
         t = test.Test()
-        console_ip = t.params(node, "console_ip")
-        console_port = t.params(node, "console_port")
+        console = t.params(node, "console")
+        console_ip = console['ip']
+        console_port = console['port']
         tn = telnetlib.Telnet(console_ip, console_port)
         tn.set_debuglevel(10)
         tn.read_until("login:", 10)
@@ -1448,8 +1451,9 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
             helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
             tn = telnetlib.Telnet(console_ip, console_port)

@@ -299,13 +299,129 @@ T7.5 Clear switch configuration from fabric page
 	Clear Switch Configuration From Fabric Page  LeafSwitch_2
 	Clear Switch Configuration From Fabric Page  LeafSwitch_1
 	Clear Switch Configuration From Fabric Page  LeafSwitch_0
-	#Wait Until All Switches Disconnected
 
+T8.1 Shutdown and Startup Switch Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet6
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.2 Shutdown and Startup Switch Interface From Switches Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.3 Set And Unset Breakout Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet5
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.4 Set And Unset Breakout Interface From Switches Page
+	${switch}  Set Variable  spine1
+	${interface}  Set Variable  ethernet4
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.5 Set And Unset Autoneg Interface From Interfaces Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
+
+T8.6 Set And Unset Autoneg Interface From Switches Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet8
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
+
+T9.1 Controller Reload
+	${node}  Set Variable  slave
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	Sleep  30
+
+T9.2 Controller Reload
+	${old_master_ip}  Set Variable  ${SERVER}
+	${node}  Set Variable  master
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	${master_ip}=            get node ip   master
+	Should Not Be Equal As Strings  ${old_master_ip}  ${master_ip}
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Valid Login  admin  adminadmin
 
 *** Keyword ***
 GUI ZTN Suite Setup
 	Base Suite Setup
-	Set Selenium Timeout  20
 	${master_ip}=            get node ip   master
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs
