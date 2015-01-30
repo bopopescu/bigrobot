@@ -221,7 +221,7 @@ TC35: Verify SNMP OID ifOperStatus of PortChannel across 10G Interface
     verify snmp attribute  s1  ifOperStatus.1061  up
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  full  feature  10GLink  portchannel  runthis
+    [Tags]  full  feature  10GLink  portchannel   
         
 TC36: Verify SNMP OID ifSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
@@ -366,11 +366,14 @@ verify config
     Should Contain   ${snmp_output}   enabled
 
 snmp test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     
 snmp test teardown
-    stop syslog monitor 
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 snmp suite teardown
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
