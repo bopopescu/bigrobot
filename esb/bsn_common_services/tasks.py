@@ -18,30 +18,29 @@ class UpgradeCommands(object):
         return x + y
 
     @app.task(filter=task_method)
-    def cli_copy_upgrade_pkg(self,params,**kwargs):
+    def cli_copy_upgrade_pkg(self, params, **kwargs):
         def run():
             helpers.log("Task: cli_copy_upgrade_pkg")
-            test.Test()             
+            test.Test()
             t5 = T5Platform()
-            result= t5.copy_pkg_from_server(**kwargs)        
+            result = t5.copy_pkg_from_server(**kwargs)
             return result
         return task_execute(params, run)
-    
-    @app.task(filter=task_method)    
-    def cli_stage_upgrade_pkg(self,params,**kwargs):
+
+    @app.task(filter=task_method)
+    def cli_stage_upgrade_pkg(self, params, **kwargs):
         def run():
-            test.Test()             
+            test.Test()
             t5 = T5Platform()
-            result= t5.cli_upgrade_stage(**kwargs)
-            return result 
+            result = t5.cli_upgrade_stage(**kwargs)
+            return result
         return task_execute(params, run)
-      
-    @app.task(filter=task_method)    
-    def cli_launch_upgrade_pkg(self,params,**kwargs):
+
+    @app.task(filter=task_method)
+    def cli_launch_upgrade_pkg(self, params, **kwargs):
         def run():
-            test.Test()             
+            test.Test()
             t5 = T5Platform()
-            result= t5.cli_upgrade_launch_HA(**kwargs)
-            return result        
+            result = t5.cli_upgrade_launch_HA(**kwargs)
+            return result
         return task_execute(params, run)
-    
