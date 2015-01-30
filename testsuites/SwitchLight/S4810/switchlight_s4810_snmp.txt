@@ -15,7 +15,7 @@ Library             OperatingSystem.py
 Library             String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.1
+${switchlight_version}      Switch Light OS SWL-BT-
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
