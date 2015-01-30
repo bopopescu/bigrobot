@@ -356,11 +356,14 @@ snmp suite setup
     Sleep   30             
 
 snmp test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
     
 snmp test teardown
-    stop syslog monitor  
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
 
 verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
     ${snmp_key} =     snmp cmd   ${switch}   snmpget    ${snmp_community_1}   ${attribute}  
