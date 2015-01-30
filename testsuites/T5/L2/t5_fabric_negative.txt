@@ -20,7 +20,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity
 	bigrobot test ztn  False
 	base suite setup   
 	fabric infra suite setup
@@ -38,7 +38,7 @@ Setup Three Rack Dual Leaf Topology
 	Set host int variables
 
 verify static endpoints with port-group
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p6 
@@ -64,7 +64,7 @@ verify static endpoints with port-group
     rest delete tenant  t1 
 
 restart ofad to verify the fabric link
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity
 	rest verify fabric link common
 	reconnect_switch_ips  s5
 	bash execute command  leaf2-a  service ofad restart  190
@@ -80,7 +80,7 @@ restart ofad to verify the fabric link
 	rest verify fabric link common    
 
 Test to check all the cidr routes are created in spine and leaf switches
-	[Tags]  L2  IronHorse     
+	[Tags]  L2  IronHorse    daily-sanity   
 	rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -152,7 +152,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest delete tenant  t1               
      
 shut/no shut the switch with traffic forward
-	[Tags]  L2  IronHorse     
+	[Tags]  L2  IronHorse   daily-sanity   
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
