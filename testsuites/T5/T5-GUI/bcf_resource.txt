@@ -32,6 +32,7 @@ ${TACACS TITLE}				TACACS
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
+${AAA TITLE}				AAA
 ${SIGNOUT TITLE}  			Login
 
 
@@ -514,6 +515,25 @@ ${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
 ${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
 ${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
+### AAA Page
+${ACCOUNING LINK}						xpath=//div[@id='link_accounting']
+${AUTHENTICATION LINK}					xpath=//div[@id='link_authentication']
+${ACCOUNTING BLOCK}						xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Accounting Statistics Destinations')]/parent::div
+${ACCOUNTING LOCAL ROW}					${ACCOUNTING BLOCK}/child::div[1]
+${ACCOUNTING REMOTE ROW}				${ACCOUNTING BLOCK}/child::div[3]
+${ACCOUNTING LOCAL KNOB}				${ACCOUNTING LOCAL ROW}/descendant::div[@class='knob_icon']
+${ACCOUNTING REMOTE KNOB}				${ACCOUNTING REMOTE ROW}/descendant::div[@class='knob_icon']
+${AUTHENTICATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]/parent::div
+${AUTHENTICATION FIRST SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][1]
+${AUTHENTICATION SECOND SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][2]
+${AUTHENTICATION FIRST SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
+${AUTHENTICATION SECOND SOURCE LIST}	xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][2]
+${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}   /descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}   /descendant::input[@class='dijitReset dijitInputInner']
+${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
+${AUTHENTICATION SETTINGS POPUP}		xpath=//div[@title='Authentication Settings']
+${AUTHENTICATION SAVE BUTTON}			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
@@ -534,6 +554,7 @@ Set URLs
 	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
 	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
+	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
 
@@ -682,7 +703,13 @@ Go To Logging Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOGGING TITLE}
     Sleep  1
-    
+
+Go To AAA Page
+	Go To  ${AAA URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${AAA TITLE}
+    Sleep  1
+
 Go To Security Users Page
 	Go To  ${USERS URL}
     Wait Until Page Loaded 
@@ -2589,6 +2616,57 @@ Configure NTP Server
 	Verify Element Invisible  ${ADD NTP SERVER POPUP}
 	Page Should Contain  ${server}
 
+
+Configure Authentication
+	[Arguments]  ${first}  ${second}
+	Go To AAA Page
+	Verify Element Visible  ${AUTHENTICATION LINK}
+	Click Element  ${AUTHENTICATION LINK}  and don't wait
+	Verify Element Visible  ${AUTHENTICATION BLOCK}
+
+	Select From List And Verify
+    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHENTICATION FIRST SOURCE LIST}
+    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${first}
+
+	Run Keyword Unless  '${second}' == '${EMPTY}'
+	...  Select From List And Verify
+    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHENTICATION SECOND SOURCE LIST}
+    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${second}
+
+    Verify Element Visible  ${AUTHENTICATION SAVE BUTTON}
+    Click Element  ${AUTHENTICATION SAVE BUTTON}  and don't wait
+    Verify Element Visible  ${AUTHENTICATION SETTINGS POPUP}
+	Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+	Page Should Not Contain  ${AUTHENTICATION SETTINGS POPUP}
+
+Configure Accounting
+	[Arguments]  ${local}  ${remote}
+	Go To AAA Page
+	Verify Element Visible  ${ACCOUNING LINK}
+	Click Element  ${ACCOUNING LINK}  and don't wait
+	Verify Element Visible  ${ACCOUNTING BLOCK}
+	Verify Element Visible  ${ACCOUNTING LOCAL KNOB}
+	Highlight Element  ${ACCOUNTING LOCAL KNOB}
+	Verify Element Visible  ${ACCOUNTING REMOTE KNOB}
+	Highlight Element  ${ACCOUNTING REMOTE KNOB}
+
+	Assign ID to Element   ${ACCOUNTING LOCAL ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${local}')]  LOCAL
+    Drag And Drop   ${ACCOUNTING LOCAL KNOB}  target=LOCAL
+
+    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
+    Run Keyword If  '${popup_count}' > '0'
+    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+	Assign ID to Element   ${ACCOUNTING REMOTE ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${remote}')]  REMOTE
+    Drag And Drop   ${ACCOUNTING REMOTE KNOB}  target=REMOTE
+
+    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
+    Run Keyword If  '${popup_count}' > '0'
+    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
 
 Physical GUI Suite Setup
 	${tmp}  params  node=c1  key=ip
