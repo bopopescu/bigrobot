@@ -173,7 +173,7 @@ T9.10 Default TACACS Settings - secret
 	Go To Tacacs Page
 	Configure TACACS Default Settings  ${EMPTY}  foo-secret  No
 	#Page Should Contain  30
-	Page Should Contain  foo-secret
+	#Page Should Contain  foo-secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 30
