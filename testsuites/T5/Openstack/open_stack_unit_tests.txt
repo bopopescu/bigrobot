@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation    Basic Open Stack Unit Test leveraging from Khanze's platform tests
 Force Tags       T5 
+Suite Setup      base suite setup
 Test Teardown    base test teardown
 Library		 OperatingSystem
 Library	 	 String
