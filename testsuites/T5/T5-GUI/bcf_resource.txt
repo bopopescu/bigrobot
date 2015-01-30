@@ -46,6 +46,7 @@ ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
 ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+${GENERIC YES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -2318,6 +2319,21 @@ Failover From Fabric Page
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs
     Valid Login  admin  adminadmin
+
+Reload Controller From Fabric Page
+	[Arguments]  ${node}
+	${cube}=  Set Variable If
+	...  '${node}' == 'master'  ${ACTIVE CONTROLLER CUBE}
+	...  '${node}' == 'slave'  ${STANDBY CONTROLLER CUBE}
+	Go To Fabric Page
+	Verify Element Visible  ${cube}
+	Click Element  ${cube}  and don't wait
+	Verify Element Visible  ${CONTROLLER RELOAD BUTTON}
+	Click Element  ${CONTROLLER RELOAD BUTTON}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC YES BUTTON}
+	Click Element  ${GENERIC YES BUTTON}  and don't wait
+	Sleep  150
 
 Reboot All Connected Switches From Fabric Page
 	Go To Fabric Page
