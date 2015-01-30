@@ -15,4 +15,4 @@ s1:
     console:
         ip:  10.1.8.97
         protocol: telnet
-        port: 6007
+        port: 6013
