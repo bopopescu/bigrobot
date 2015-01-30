@@ -1762,7 +1762,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         helpers.log("no Match")
         return {}
 
-    def rest_verify_policy_stats(self, tenant, seq, frame_cnt, flag=False):
+    def rest_verify_policy_stats(self, tenant, seq, frame_cnt, flag=False, delta=2):
         ''' Function to verify policy rule counter
         Input: tenant name, policy seq number and packets tx
         Output: policy counter
@@ -1776,8 +1776,9 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         helpers.log("Printing len of data: %d and flag:%s" % (len(data), flag))
         if (len(data) != 0 and flag is False):
             helpers.log("In len.data not ZERO and FLAG is FALSE")
+            hw_pkt_cnt = int(data[0]['policy'][0]['packet'])
             if data[0]["tenant-name"] == tenant and data[0]['policy'][0]['seq'] == seq:
-                if (int(data[0]['policy'][0]['packet']) == frame_cnt):
+                if (hw_pkt_cnt >= (frame_cnt - delta) and hw_pkt_cnt <= (frame_cnt + delta)):
                     helpers.log("Pass: Policy Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]['policy'][0]['packet'])))
                     return True
                 else:
