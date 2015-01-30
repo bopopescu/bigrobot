@@ -775,8 +775,11 @@ environment suite setup
     Sleep   30       
 
 environment test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     
 environment test teardown
-    stop syslog monitor   
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
