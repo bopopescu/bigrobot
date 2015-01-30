@@ -1,0 +1,2514 @@
+-*** Settings ***
+Documentation  A resource file containing the application specific keywords
+...            that create our own domain specific language. This resource
+...            implements keywords for testing HTML version of the test
+...            application.
+Library       	String
+Library        	SeleniumLibrary
+
+
+
+*** Variables ***
+${BROWSER}       				GoogleChrome
+${DELAY}         				0
+${LOG IN TITLE}    				Login
+${VALID USER}    				admin
+${VALID PASSWD}  				adminadmin
+
+${DASHBOARD TITLE}  		Dashboard
+${SWITCHES TITLE}    		Switches
+${INTERFACES TITLE}			Interfaces
+${PORT GROUPS TITLE}		Port Groups
+${TENANTS TITLE}			Tenants
+${ENDPOINTS TITLE}			Endpoints
+${FABRIC SUMMARY TITLE}		Summary
+${TEST PATH TITLE}    		Test Path
+${SUPPORT BUNDLES TITLE}	Support
+${MONITOR SESSIONS TITLE}	Monitor Session
+${FABRIC SETTINGS TITLE}	Fabric Settings
+${CLOCK TITLE}				Big 
+${SNMP TITLE}				SNMP
+${TACACS TITLE}				TACACS
+${LOGGING TITLE}			Logging
+${USERS TITLE}				Users
+${TOPOLOGY TITLE}			Topology
+${SIGNOUT TITLE}  			Login
+
+
+${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
+${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
+${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
+${CONFIRM DELTE POPUP}			xpath=//div[@title='Confirm']
+${PROCEED DELTE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
+${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
+
+${TIMEOUT}						10 sec
+${PERIOD}						3 sec
+
+### Menu
+${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
+#${TENANTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Tenants')]
+#${ENDPOINTS MENU}			  	xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
+${VISIBILITY MENU}		  		xpath=//a[@class='nav' and contains(text(), 'Visibility')]
+${SETTINGS MENU}				xpath=//a[@class='nav' and contains(text(), 'Settings')]
+${SECURITY MENU}				xpath=//a[@class='nav' and contains(text(), 'Security')]
+${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
+${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
+${INTERFACES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Interfaces')]
+${PORT GROUPS LABEL}			xpath=//div[@class='nav_menu_item' and contains(text(), 'Port Groups')]
+${TENANTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Tenants')]
+${ENDPOINTS LABEL}				xpath=//a[@class='nav' and contains(text(), 'Endpoints')]
+${FABRIC SUMMARY LABEL}			xpath=//div[@class='nav_menu_item' and contains(text(), 'Fabric Summary')]
+${TEST PATH LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Test Path')]
+${SUPPORT BUNDLES LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Support Bundles')]
+${MONITOR SESSIONS LABEL}		xpath=//div[@class='nav_menu_item' and contains(text(), 'Monitor Sessions')]	
+${CLOCK LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Clock')]
+${LOGGING LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Logging')]
+${USERS LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Users')]
+${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
+
+
+
+### Main Landing Page
+${CONTROLLER INFO PANE}  		xpath=//div[@data-dojo-attach-point='metadataNode']
+${INVENTORY PANE}				xpath=//div[@data-dojo-attach-point='inventoryNode']
+${CONTROLLER STATS PANE}		xpath=//div[@data-dojo-attach-point='statsNode']
+${CONTROLLER SEGMENTS PANE}  	xpath=//div[@id='bcf_widgets_dashboard_SegmentUsage_0']
+${CONTROLLER TENANTS PANE}		xpath=//div[@id='bcf_widgets_dashboard_TenantUsage_0']
+${CONTROLLER INTERFACES PANE}	xpath=//div[@id='bcf_widgets_dashboard_InterfaceUsage_0']
+${CONFIGURE SWITCHING MODE BUTTON}	xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
+${MATCH MODE EDIT POPUP}		xpath=//div[@title='Configure Switching Mode']/span[1]
+
+
+### Tenants Page
+
+${ADD TENANT PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${CREATE TENANT POPUP}			xpath=//div[@title='Create Tenant']
+${TENANT NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TENANT DESCRIPTION FIELD}		xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
+${SAVE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${PROCEED DELTE TENANTS BUTTON}				xpath=//span[@id='dijit_form_Button_5']
+${SYSTEM TENANT INTERFACE ENABLE BUTTON}	xpath=//td[@class='label' and contains(text(), 'System Tenant Interface')]/parent::tr/descendant::div[@class='icon_node configure']
+${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
+${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}		xpath=//td[@class='label' and contains(text(), 'Applied Policy List')]/parent::tr/descendant::div[@class='icon_node configure']		
+${APPLY INBOUND POLICY POPUP}						xpath=//div[@title='Apply Inbound Policy']
+${APPLY INBOUND POLICY DROPDOWN BUTTON}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[1]/input
+${APPLY INBOUND POLICY LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
+${APPLY INBOUND POLICY FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Inbound Policy')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[3]/input[1]
+${APPLY INBOUND POLICY SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+### Tenant System Page
+${TENANT INTERFACES PLUS BUTTON} 		xpath=//h3[contains(text(), 'Tenant Interfaces')]/parent::div/descendant::div[@class='icon_node plus']
+${CREATE TENANT INTERFACE POPUP}		xpath=//div[@title='Create Tenant Interface']
+${SELECT TENANT DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[1]/input
+${SELECT TENANT LIST}					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${SELECT TENANT FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]
+${SAVE TENANT INTERFACE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
+#### Switch Page
+
+${ADD SWITCH PLUS BUTTON}		xpath=//div[@class='icon_node plus']
+${PROVISION SWITCH POPUP}		xpath=//div[@title='Provision Switch']
+${SWITCH MAC ADDRESS FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SWITCH NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${NONE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input		
+${SPINE ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
+${LEAF ROLE RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
+${LEAF GROUP NAME FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input	
+${SAVE SWITCH CONFIG BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+${CONFIGURE SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Configure')]
+${CONFIGURE SWITCH POPUP}					xpath=//div[@title='Configure Switch']	
+${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]		
+${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Clear Configuration')]
+#${CLEAR SWITCH CONFIG MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'De-provision ...')]
+${CLEAR SWITCH CONFIG POPUP}				xpath=//div[@title='Confirm']
+#${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${CLEAR SWITCH CONFIG SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+${REBOOT SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Reboot')]
+${SHUTDOWN SWITCH MENU ITEM}				xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Shutdown')]
+${START SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Start')]
+${RESET CONNECTION SWITCH MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Reset Connection')]
+${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}	xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Split From Leaf Group')]
+${BEACON SWITCH MENU ITEM}					xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Beacon')]
+${CONFIRM SWITCH ACTION POPUP}				xpath=//div[@title='Confirm']
+${SPLIT LEAF GROUP POPUP}					xpath=//div[@title='Split Leaf Group']
+${CONFIRM SWITCH SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+
+
+#### Port Groups Page
+
+${ADD PORT GROUP PLUS BUTTON}			xpath=//div[@class='icon_node plus']
+${CREATE PORT GROUP POPUP}				xpath=//div[@title='Create Port Group']
+${PORT GROUP NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${PORT GROUP MODE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mode')]/parent::h2/parent::div/following-sibling::div/div[1]/input		
+${PORT GROUP MODE LIST} 				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Static')]/parent::div 
+${PORT GROUP MODE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PORT GROUP LEAF GROUP DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${PORT GROUP LEAF GROUP LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup'] 
+${PORT GROUP LEAF GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${PROCEED DELTE PORT GROUPS BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+
+
+### Logical Segments Page
+
+${SYSTEM TENANT INTERFACE ENABLE POPUP}		xpath=//div[@title='System Tenant Interface']
+${SYSTEM TENANT INTERFACE SUBMIT BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+${LOGICAL SEGMENTS PLUS BUTTON}				xpath=//h2[contains(text(), 'Logical Segments')]/parent::div[@data-dojo-attach-point='segmentsBlock']/descendant::div[@class='icon_node plus']			
+${CREATE LOGICAL SEGMENT POPUP}				xpath=//div[@title='Create Segment']
+${LOGICAL SEGMENT NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input					
+#${PORT GROUPS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Port Groups')]
+${ADD SEGMENT PORT GROUP PLUS BUTTON}		xpath=//div[@id='segment_port_groups_section']/descendant::div[@class='icon_node plus']
+${PORT GROUP MEMBERSHIP RULE POPUP}			xpath=//div[@title='Create Port Group Membership Rule']
+#${SEGMENT PORT GROUP NAME FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]	
+#${SEGMENT PORT GROUP DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[1]/input
+${SEGMENT PORT GROUP DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[1]/input
+${SEGMENT PORT GROUP LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
+#${SEGMENT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[3]/input[1]
+${SEGMENT PORT GROUP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[3]/input[1]		
+${SEGMENT RULE DESCRIPTION FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rule Description')]/parent::h2/parent::div/parent::div/descendant::textarea[@id='dijit_form_SimpleTextarea_0']
+${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+#${SWITCH INTERFACES STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Switch Interfaces')]
+${ADD SWITCH INTERFACE PLUS BUTTON}			xpath=//div[@id='segment_switch_ports_section']/descendant::div[@class='icon_node plus']	
+${SWITCH INTERFACE MEMBERSHIP RULE POPUP}	xpath=//div[@title='Create Switch Port Membership Rule']
+${SEGMENT SWITCH NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${SEGMENT SWITCH NAME DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
+${SEGMENT SWITCH LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+#${SEGMENT SWITCH NAME FIELD}				xpath=//input[@id='dijit_form_FilteringSelect_1']
+#${SWITCH INTERFACE FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_1']
+${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input[1]
+${SEGMENT SWITCH INTERFACE LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${SEGMENT SWITCH INTERFACE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
+${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_5_label']
+#${ENDPOINTS STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), '4. Endpoints')]
+${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
+${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
+${SEGMENT ENDPOINT NAME FIELD}				xpath=//div[@title='Create Endpoint']/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${ATTACHMENT TYPE DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[1]/input	
+${ATTACHMENT TYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
+${ATTACHMENT TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]			
+${ENDPOINT PORT GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[1]/input
+${ENDPOINT PORT GROUP LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
+${ENDPOINT PORT GROUP FIELD}				xpath=//div[@data-dojo-attach-point='blockPortGroupAttachment']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port Group')]/parent::h2/parent::div/following-sibling::div[1]/div/div[2]/div[1]/div/div[3]/input[1]
+${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'MAC Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
+${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
+${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
+
+${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
+${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
+
+${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
+${ENTER IPV4 ADDRESS POPUP}					xpath=//div[@title='Enter IPv4 Address/Mask Pair(s)']
+${IP ADDRESS TEXT FIELD}					xpath=//div[@data-dojo-attach-point='messageMultipleAddress']/following-sibling::div/textarea
+${APPEND IP ADDRESSES BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+#${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
+${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${LOGICAL SEGMENT DETAIL MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Detail')]
+${SAVE LOGICAL SEGMENT BUTTON} 				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+## Logical Segment Interface page
+
+${LOGICAL SEGMENT INTERFACE PLUS BUTTON}		xpath=//h2[contains(text(), 'Logical Segment Interfaces')]/parent::div/descendant::div[@class='icon_node plus']		
+${CREATE LOGICAL SEGMENT INTERFACE POPUP}		xpath=//div[@title='Create Logical Segment Interface']
+${LOGICAL SEGMENT DROPDOWN BUTTON}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logical Segment')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div[1]/div/div[1]/input
+${LOGICAL SEGMENT LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup'] 
+${LOGICAL SEGMENT FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logical Segment')]/parent::h2/parent::div/following-sibling::div/div[1]/div[2]/div[1]/div[1]/div[3]/input[1]
+${STATUS LIST TYPE KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Status')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${SEGMENT GATEWAY IP ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Address (Segment Gateway)')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${SEGMENT GATEWAY MASK FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Address (Segment Gateway)')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${IP ADDRESS TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Public')]/parent::h2/parent::div/parent::div/parent::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${DHCP RELAY STEP BUTTON}						xpath=//div[@class='step_text' and contains(text(), '2. DHCP Relay')]
+${DHCP RELAY TYPE KNOB}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]/parent::h2/parent::div/parent::div/parent::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${DHCP RELAY SERVER IP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server IP')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SAVE SEGMENT INTERFACE BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+## Next Hop group page
+${NEXT HOP GROUP PLUS BUTTON}						xpath=//h2[contains(text(), 'Next Hop Groups')]/parent::div[@data-dojo-attach-point='nextHopGroupBlock']/descendant::div[@class='icon_node plus']
+${CREATE NEXT HOP GROUP POPUP}						xpath=//div[@title='Create Next Hop Group']
+${NEXT HOP GROUP NAME FIELD}						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_NextHopGroup')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${SAVE NEXT HOP GROUP BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
+##### Logical Router Route Page
+
+${LOGICAL ROUTER ROUTE PLUS BUTTON}				xpath=//div[contains(text(), 'Destination Subnet')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']
+${CREATE ROUTE POPUP}							xpath=//div[@title='Create Route']	
+${LOGICAL ROUTER ROUTE DESTINATION SUBNET FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination Subnet')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${LOGICAL ROUTER ROUTE MASK FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination Subnet')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${LOGICAL ROUTER NEXT HOP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div/div/div[1]/input	
+${LOGICAL ROUTER NEXT HOP LIST}					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
+${LOGICAL ROUTER NEXT HOP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[1]/div/div[3]/input[1]	
+${LOGICAL ROUTER NEXT HOP GROUP DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[1]/input
+${LOGICAL ROUTER NEXT HOP GROUP LIST}			xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${LOGICAL ROUTER NEXT HOP GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div/div[3]/input[1]
+${SAVE LOGICAL ROUTER ROUTE BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
+##### Logical Router Policy List Page
+
+${LOGICAL ROUTER POLICY LIST PLUS BUTTON}		xpath=//div[contains(text(), 'Total Rules')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']	
+${CREATE POLICY LIST POPUP}						xpath=//div[@title='Create Policy List']				
+${POLICY LIST NAME FIELD} 						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_PolicyList')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${POLICY LIST SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+### Policy Rule Page
+
+
+${LOGICAL ROUTER POLICY EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${LOGICAL ROUTER EDIT POLICY POPUP}					xpath=//div[@title='Edit Policy List']
+${LOGICAL ROUTER POLICY RULE PLUS BUTTON}			xpath=//div[contains(text(), 'Sequence')]/parent::div/parent::th/parent::tr/parent::thead/parent::table/preceding-sibling::table/descendant::div[@class='icon_node plus']
+${CREATE POLICY LIST RULE POPUP}					xpath=//div[@title='Create Policy List Rule']
+${ACTION PERMIT RADIO BUTTON}						xpath=//div[contains(text(), 'Permit')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${ACTION DENY RADIO BUTTON}							xpath=//div[contains(text(), 'Deny')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${ACTION NEXT HOP RADIO BUTTON}						xpath=//div[contains(text(), 'Next Hop')]/parent::h2/parent::div/parent::div/preceding-sibling::div/descendant::input
+${POLICY LIST NEXT HOP DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div[starts-with(@id, 'bcf_widgets_formDialog_component_NextHop')]/div/div[1]/div/div[1]/input 
+${POLICY LIST NEXT HOP LIST}  						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'System Tenant')]/parent::div  
+${POLICY LIST NEXT HOP FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Next Hop')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/div/div[3]/input[1]
+${POLICY RULE NEXT HOP GROUP DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='blockNextHopNextHop']/descendant::input[contains(@class, 'dijitArrowButtonInner')]
+${POLICY RULE NEXT HOP GROUP LIST} 					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'ng-1')]/parent::div 			  
+${POLICY RULE NEXT HOP GROUP FIELD}					xpath=//div[@data-dojo-attach-point='blockNextHopNextHop']/descendant::input[contains(@class, 'dijitInputInner')]
+${POLICY LIST PROTOCOL NUMBER FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Protocol')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[3]/input[1]
+${POLICY RULE LOG MATCHING PACKETS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Matching Packets')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
+${POLICY LIST RULE SOURCE STEP BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Source')]
+${POLICY LIST SOURCE MATCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${POLICY LIST SOURCE MATCH LIST}					xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${POLICY LIST SOURCE MATCH FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY LIST RULE SOURCE IP FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input		
+${POLICY LIST RULE SOURCE IP PREFIX FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${POLICY RULE SOURCE TENANT DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	
+${POLICY RULE SOURCE TENANT LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_6_popup']   
+${POLICY RULE SOURCE TENANT FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]
+${POLICY LIST RULE SOURCE L4 PORT FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY RULE LOGICAL SEGMENT INTERFACE CHECKBOX}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source Interface')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${POLICY RULE LOGICAL SEGMENT INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[1]/input	  
+${POLICY RULE LOGICAL SEGMENT INTERFACE LIST} 		xpath=//div[@id='dijit_form_FilteringSelect_9_popup']  
+${POLICY RULE LOGICAL SEGMENT INTERFACE FIELD}		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[3]/input[1]	
+${POLICY LIST RULE DESTINATION STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Destination')]	
+${POLICY LIST DESTINATION MATCH DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input 
+${POLICY LIST DESTINATION MATCH LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_11_popup']		
+${POLICY LIST DESTINATION MATCH FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${POLICY LIST RULE DESTINATION IP FIELD}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${POLICY LIST RULE DESTINATION IP PREFIX FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
+${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	 
+${POLICY RULE DESTINATION TENANT LIST}				xpath=//div[@id='dijit_form_FilteringSelect_12_popup']     
+${POLICY RULE DESTINATION TENANT FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]		
+${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+#### Support Bundle Page
+
+${SUPPORT BUNDLES PLUS BUTTON}						xpath=//div[@id='support_content']/descendant::div[@class='icon_node plus']
+${GENERATE SUPPORT BUNDLE POPUP}					xpath=//div[@title='Generate Support Bundle']	
+${GENERATE SUPPORT BUNDLE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Generate')]
+${PROCEED DELTE BUTTON}								xpath=//span[contains(@id, 'dijit_form_Button_') and contains(text(), 'Proceed')]
+
+#### Logging
+${LOGGING LEVELS STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Levels')]
+${CREATE LOG LEVEL PLUS BUTTON}			xpath=//div[@id='logging_config_levels']/descendant::div[@class='icon_node plus']
+${CREATE LOG LEVEL POPUP}				xpath=//div[@title='Create Log Level']
+${LEVEL LOGGER FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Logger')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${LOG LEVEL DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Level')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${LOG LEVEL LIST}						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Warn')]/parent::div
+${LOG LEVEL FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Level')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${LOGGING LEVELS EDIT MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT LOG LEVEL POPUP}					xpath=//div[@title='Edit Log Level']
+${LOGGING LEVELS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE ALL LOG LEVELS MINUS BUTTON}	xpath=//div[@id='logging_config_levels']/descendant::div[@class='icon_node minus']
+${REMOTE SERVER STEP BUTTON}			xpath=//div[@class='sidebar_section_body']/div[contains(text(), 'Remote Logging')]
+${ADD REMOTE SERVER PLUS BUTTON}		xpath=//div[@id='logging_config_remotes']/descendant::div[@class='icon_node plus']
+${CREATE REMOTE SERVER POPUP}			xpath=//div[@title='Create Remote Server']
+${REMOTE SERVER IP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input	
+${REMOTE SERVER PORT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${REMOTE SERVER EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT REMOTE SERVER POPUP}				xpath=//div[@title='Edit Remote Server']
+${REMOTE SERVER DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE ALL REMOTE SERVERS MINUS BUTTON}		xpath=//div[@id='logging_config_remotes']/descendant::div[@class='icon_node minus']
+${LOGGING LEVEL CHECKBOX ALL}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
+${LOGGING REMOTE CHECKBOX ALL}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]
+${LOGGING LEVEL CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+${LOGGING REMOTE CHECKBOX ALL SELECTED}			xpath=//div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+#${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${DELETE LOGGING REMOTE PROCEED BUTTON}			xpath=//span[@id='dijit_form_Button_17_label']
+
+
+#### Monitor Sessions
+
+
+${CREATE MONITOR SESSION PLUS BUTTON}				xpath=//div[@id='monitor_session_content']/descendant::div[@class='icon_node plus']
+${CREATE MONITOR SESSION POPUP}						xpath=//div[@title='Create Monitor Session']
+${MONITOR SESSION ID FIELD}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'ID')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${MONITOR SESSION ACTIVE KNOB}						xpath=//div[@class='knob_icon']
+${MONITOR SESSION SWITCH DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${MONITOR SESSION SWITCH LIST} 						xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${MONITOR SESSION SWITCH FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${MONITOR SESSION EDIT MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT MONITOR SESSION POPUP}						xpath=//div[@title='Edit Monitor Session']
+${MONITOR SESSION DIRECTION DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[5]/div[2]/div/div[1]/input  
+${MONITOR SESSION DIRECTION LIST} 					xpath=//div[contains(@id, 'dijit_form_FilteringSelect_1_popup')]/parent::div   
+${MONITOR SESSION DIRECTION FIELD}  				xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[5]/div[2]/div/div[3]/input[1]
+${MONITOR SESSION TENANT DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[6]/div[2]/div[1]/div/div[1]/input 	
+${MONITOR SESSION TENANT LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect_2_popup')]/parent::div	
+${MONITOR SESSION TENANT FIELD}						xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[6]/div[2]/div[1]/div/div[3]/input[1]
+${MONITOR SESSION SEGMENT DROPDOWN BUTTON} 			xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[6]/div[2]/div[2]/div/div[1]/input 	
+${MONITOR SESSION SEGMENT LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect_3_popup')]/parent::div	
+${MONITOR SESSION SEGMENT FIELD}					xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName' and contains(text(), 'ethernet1')]/parent::tr/td[6]/div[2]/div[2]/div/div[3]/input[1]
+${MONITOR SESSION DELETE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE CONFIRM MONITOR SESSION POPUP}				xpath=//div[@title='Confirm']
+	
+${MATCH CRITERIA CONTROL BUTTON}					xpath=//th[contains(text(), 'Match Criteria')]/parent::tr/parent::thead/following-sibling::tbody/tr[1]/td[7]/descendant::div[@class='icon_node configure']
+#${MATCH CRITERIA CONTROL BUTTON}					xpath=//td[@class='label' and contains(text(), 'Ethertype')]/ancestor::div[@data-dojo-attach-point='summaryMatch']/preceding-sibling::div[@class='bsn_button_group top']/descendant::div[@class='icon_node configure']
+${MONITOR SESSION MATCH CRITERIA POPUP}				xpath=//div[@title='Match Criteria']
+${MATCH CRITERIA ETHERTYPE DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Ethertype')]/parent::h2/parent::div/following-sibling::div/div/div[1]/div/div[1]/input
+${MATCH CRITERIA ETHERTYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'IPv4 - 0x800 (2048)')]/parent::div		
+${MATCH CRITERIA ETHERTYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Ethertype')]/parent::h2/parent::div/following-sibling::div/div/div[1]/div/div[3]/input[1]
+${MATCH CRITERIA IP PROTOCOL DROPDOWN BUTTON} 	    xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Protocol')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${MATCH CRITERIA IP PROTOCOL LIST}  				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'ICMP')]/parent::div
+${MATCH CRITERIA IP PROTOCOL FIELD} 				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Protocol')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${MATCH CRITERIA SOURCE MAC FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source MAC')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${MATCH CRITERIA SOURCE IP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source IP')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${MATCH CRITERIA SOURCE MAC MASK PREFIX FIELD}		xpath=//input[@id='dijit_form_NumberSpinner_4']	
+${MATCH CRITERIA DESTINATION MAC FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination MAC')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${MATCH CRITERIA DESTINATION IP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination IP')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
+${MATCH CRITERIA DESTINATION MAC MASK PREFIX FIELD}  xpath=//input[@id='dijit_form_NumberSpinner_5']
+${MATCH CRITERIA SUBMIT BUTTON}						xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+#### Users Page
+
+${MAIN PLUS BUTTON}				xpath=//div[@id='users_table']/descendant::div[@class='icon_node plus']
+${CREATE USER POPUP}			xpath=//div[@title='Create User']
+${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
+${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
+${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${INCORRECT PASSWORD ICON} 		xpath=//div[@class='status_icon_text_right' and contains(text(), 'Confirmed')]/parent::div/following-sibling::div/div[1]
+${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon_text_right' and contains(text(), 'Confirmed')]
+${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
+${SAVE BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Groups')]
+${GROUP ASSOCIATE PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
+${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
+${APPEND GROUP BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+
+#### SNMP Page
+
+${CONFIGURE SNMP BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[1]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP POPUP}				xpath=//div[@title='Configure SNMP']
+${CONFIGURE SNMP CONTACT FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Contact')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP LOCATION FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Location')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIGURE SNMP COMMUNITY FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Community')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Traps')]/parent::h2/parent::div/following-sibling::div/div[3]/div/div/div[@class='knob_icon']		
+${SNMP HOSTS STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), 'Hosts')]
+${ADD SNMP TRAP HOST PLUS BUTTON}	xpath=//div[@data-dojo-attach-point='hostsNode']/descendant::div[@class='icon_node plus']
+${SNMP TRAP HOST SERVER FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${SNMP TRAP HOST UDP PORT FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'UDP Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${SNMP TRAP HOST APPEND BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${CONFIGURE SNMP SUBMIT BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+${CONFIGURE SNMP TRAPS BUTTON}			xpath=//div[@id='snmp_content']/div[1]/div[2]/descendant::div[@class='icon_node configure']
+${CONFIGURE SNMP TRAPS POPUP}			xpath=//div[@title='Configure SNMP Traps']
+${POWER SUPPLY KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${POWER SUPPLY TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${FAN STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${FAN STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${LINK STATUS KNOB}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${LINK STATUS TRAP FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[2]/div/div[2]/div[1]/div[1]/div[3]/input[1]
+${AUTH FAILURE KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[3]/div/descendant::div[@class='knob_icon']
+${SNMP TRAPS THRESHOLDS STEP BUTTON}	xpath=//div[@class='step_text' and contains(text(), 'Thresholds')]
+${CPU THRESHOLDS KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${CPU THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${MEMORY THRESHOLDS KNOB}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${MEMORY THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${L2 FLOW TABLE THRESHOLDS KNOB}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${L2 FLOW THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${TCAM FLOW THRESHOLDS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
+${TCAM THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+
+#### TACACS Page
+
+${ADD TACACS HOST PLUS BUTTON}				xpath=//div[@id='tacacs_hosts_table']/descendant::div[@class='icon_node plus']
+${CREATE TACACS SERVER POPUP}				xpath=//div[@title='Create TACACS Server']
+${TACACS SERVER ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER TIMEOUT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Timeout')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${TACACS SERVER SECRET FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Secret')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TACACS SERVER SECRET ENCRYPTION BUTTON}	xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node lock']
+${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
+${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
+
+
+#### Advanced Query
+${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div
+${FILTER QUERY BUTTON}						xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Filter')]
+${FILTER QUERY CLEAR BUTTON}				xpath=//div[@class='bsn_button_group bottom']/div[1]
+${ADVANCED QUERY BUILDER BUTTON}			xpath=//div[@class='bsn_button_group bottom']/div[2]
+${ADVANCED QUERY BUILDER POPUP}				xpath=//div[@title='Refine Filter']
+${ADVANCED QUERY LINE}						xpath=//div[@class='builder_row']
+${ADD QUERY LINE BUTTON SUFFIX}				/descendant::div[@class='icon_node plus']
+${DEL QUERY LINE BUTTON SUFFIX}				/descendant::div[@class='icon_node minus']
+${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}			/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${COMPARISON COLUMN DROPDOWN FIELD SUFFIX} 	 		/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']
+${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE} 	${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}/following-sibling::input[@type='hidden']
+${COMPARISON COLUMN DROPDOWN LIST}					xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='inputsNode']/descendant::div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+
+${COMPARISON FUNCTION AREA SUFFIX}					/descendant::div[@data-dojo-attach-point='inputsNode']/div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]
+${COMPARISON FUNCTION SUFFIX}						${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'compare_select')]
+${COMPARISON FUNCTION SUFFIX VALUE}					${COMPARISON FUNCTION SUFFIX}/descendant::input[@type='hidden']
+${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}		${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX} 		${COMPARISON FUNCTION SUFFIX}/descendant::input[@class='dijitReset dijitInputInner']
+
+${COMPARISON VALUE SUFFIX}					${COMPARISON FUNCTION SUFFIX}/following-sibling::div/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input
+${CLOSE AND FILTER BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close & Filter')]
+${CLOSE AND NOT FILTER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close') and not(contains(text(), 'Filter'))]
+
+
+
+### Fabric Page
+${REBOOT ALL CONNECTED SWITCHES BUTTON}		xpath=//div[@data-dojo-attach-point='actionBlockRebootSwitches']/descendant::div[@class='bsn_control_button enabled']
+${CONFIRM SWITCH REBOOTS POPUP}				xpath=//div[@title='Confirm Switch Reboots']
+${REBOOTING SWITCHES POPUP}					xpath=//div[@title='Rebooting Switches']
+${PROCEED WITH SWITCH REBOOTS BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${SWITCH ICON PREFIX}						xpath=//div[@id='bcf_widgets_graphical_Fabric_nodeDisplays_
+${SWITCH SIDE PANEL}						xpath=//div[@id='bcf_widgets_graphical_Fabric_content_Switch_0']
+${SWITCH VISUALIZE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShow']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH CONFIGURE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockEdit']/descendant::div[@class='enabled bsn_control_button']
+#${SWITCH DELETE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockDelete']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH CLEAR CONFIGURATION BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockClear']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH SPLIT FROM LEAF GROUP BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockSplit']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH RESET CONNECTION BUTTON}			${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReset']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH REBOOT BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReboot']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH SHUTDOWN BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockStop']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH START BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockStart']/descendant::div[@class='enabled bsn_control_button']
+${SWITCH BEACON BUTTON}						${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockBeacon']/descendant::div[@class='enabled bsn_control_button']
+
+${ACTIVE CONTROLLER CUBE}					xpath=//div[@class='front_role' and contains(text(), 'Active')]
+${STANDBY CONTROLLER CUBE}					xpath=//div[@class='front_role' and contains(text(), 'Standby')]
+${CONTROLLER SIDE PANEL}					xpath=//div[@id='bcf_widgets_graphical_Fabric_content_ClusterNode_0']
+${CONTROLLER FAILOVER BUTTON}				${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockFailover' and not(contains(@class, 'display_none'))]/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER REMOVE BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockRemove' and not(contains(@class, 'display_none'))]/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER SHUTDOWN BUTTON}				${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShutdown']/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER REBOOT BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReboot']/descendant::div[@class='enabled bsn_control_button']
+${CONTROLLER RELOAD BUTTON}					${CONTROLLER SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReload']/descendant::div[@class='enabled bsn_control_button']
+${CONFIRM CONTROLLER FAILOVER POPUP}		xpath=//div[@title='Confirm Failover']
+${PROCEED WITH CONTROLLER FAILOVER BUTTON}	xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+
+### Clock Page
+${ADD NTP SERVER BUTTON}				xpath=//div[@class='icon_node plus']
+${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
+${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
+${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+*** Keywords ***
+Set URLs
+	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
+	Set Suite Variable     	${WELCOME URL}  			https://${SERVER}/
+	Set Suite Variable     	${ERROR URL}     			https://${SERVER}/login
+	Set Suite Variable     	${SWITCHES URL}   			https://${SERVER}/controller/switches
+	Set Suite Variable     	${INTERFACES URL} 			https://${SERVER}/controller/interfaces
+	Set Suite Variable     	${PORT GROUPS URL}    		https://${SERVER}/bcf/port_groups
+	Set Suite Variable     	${TOPOLOGY URL}  			https://${SERVER}/bcf/fabric
+	Set Suite Variable     	${TENANTS URL}  			https://${SERVER}/bcf/tenants
+	Set Suite Variable     	${ENDPOINTS URL}  			https://${SERVER}/bcf/endpoints
+	Set Suite Variable     	${FABRIC SUMMARY URL}  		https://${SERVER}/bcf/summary
+	Set Suite Variable     	${TEST PATH URL} 			https://${SERVER}/bcf/test_path
+	Set Suite Variable     	${SUPPORT BUNDLES URL}	  	https://${SERVER}/bcf/support
+	Set Suite Variable     	${MONITOR SESSIONS URL}  	https://${SERVER}/bcf/monitor_session
+	Set Suite Variable     	${FABRIC SETTINGS URL}  	https://${SERVER}/bcf/fabric_settings
+	Set Suite Variable     	${CLOCK URL}				https://${SERVER}/bcf/clock
+	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
+	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
+	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
+	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
+	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+
+Valid Login
+    [Arguments]  ${username}  ${password}
+    Go To Login Page
+    Input Username    ${username}
+    Input Password    ${password}
+    Submit Credentials
+    Welcome Page Should Be Open
+
+Login With Invalid Credentials Should Fail
+    [Arguments]  ${username}  ${password}
+    Go To Login Page
+    Input Username  ${username}
+    Input Password  ${password}
+    Submit Credentials
+    Login Should Have Failed
+
+Open Browser To Login Page
+    Open Browser  ${LOGIN URL}  ${BROWSER}
+    Maximize Browser Window
+    Set Selenium Speed  ${DELAY}
+    Title Should Contain  ${LOG IN TITLE}
+    Sleep  1
+
+Go To Login Page
+    Go To  ${LOGIN URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${LOG IN TITLE}
+	Sleep  1
+	
+Go To Landing Page
+    Go To  ${WELCOME URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${DASHBOARD TITLE}
+    Sleep  1
+	
+Go To Controller Switches Page
+    Go To  ${SWITCHES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SWITCHES TITLE}
+    Sleep  1
+    
+Go To Controller Interfaces Page
+    Go To  ${INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${INTERFACES TITLE}
+    Sleep  1
+    
+Go To Port Groups Page
+    Go To  ${PORT GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${PORT GROUPS TITLE}
+    Sleep  1
+
+Go To Topology Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
+Go To Fabric Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
+Go To Tenants Page
+    Go To  ${TENANTS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TENANTS TITLE}
+    Sleep  1
+
+Go To Specific Tenant Page
+	[Arguments]  ${tenant}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Sleep  1
+
+Go To Tenant Segment Page
+	[Arguments]  ${tenant}  ${segment}
+    Go To  ${WELCOME URL}bcf/tenant/${tenant}/segment/${segment}
+    Wait Until Page Loaded
+    Title Should Contain  ${tenant}
+    Title Should Contain  ${segment}
+    Sleep  1
+
+Go To Endpoints Page
+    Go To  ${ENDPOINTS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${ENDPOINTS TITLE}
+    Sleep  1
+
+Go To Fabric Summary Page
+    Go To  ${FABRIC SUMMARY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${FABRIC SUMMARY TITLE}
+    Sleep  1
+
+Go To Test Path Page
+    Go To  ${TEST PATH URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TEST PATH TITLE}
+    Sleep  1
+ 
+Go To Support Bundles Page
+	Go To  ${SUPPORT BUNDLES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SUPPORT BUNDLES TITLE}
+    Sleep  1
+ 
+Go To Monitor Sessions Page
+  	Go To  ${MONITOR SESSIONS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${MONITOR SESSIONS TITLE}
+    Sleep  1
+    
+Go To Fabric Settings Page  
+	Go To  ${FABRIC SETTINGS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${FABRIC SETTINGS TITLE}
+    Sleep  1
+      
+Go To Clock Page 
+	Go To  ${CLOCK URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${CLOCK TITLE}
+    Sleep  1
+
+Go To SNMP Page
+	Go To  ${SNMP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SNMP TITLE}
+    Sleep  1
+    
+Go To Tacacs Page
+	Go To  ${TACACS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TACACS TITLE}
+    Sleep  1
+	    
+Go To Logging Page  
+	Go To  ${LOGGING URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${LOGGING TITLE}
+    Sleep  1
+    
+Go To Security Users Page
+	Go To  ${USERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${USERS TITLE}
+    Sleep  1 
+
+Go To Signout Page
+	Go To  ${SIGNOUT URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SIGNOUT TITLE}
+    Sleep  1
+    
+Delete All Tenants
+	Go To Tenants Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+    
+Delete All Port Groups
+	Go To Port Groups Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Support Bundles
+	Go To Support Bundles Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
+Delete All Users
+	Go To Security Users Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Logging Levels
+	Go To Logging Page
+	Verify Element Visible  ${LOGGING LEVEL CHECKBOX ALL}
+	Click Element  ${LOGGING LEVEL CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='logging_config_levels']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	Verify Element Visible  ${LOGGING LEVEL CHECKBOX ALL SELECTED}
+	Click Element  ${DELETE ALL LOG LEVELS MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	
+Delete All Remote Servers
+	Go To Logging Page
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+    Verify Element Visible  ${LOGGING REMOTE CHECKBOX ALL}
+	Click Element  ${LOGGING REMOTE CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='logging_config_remotes']/descendant::div[contains(@id, 'bsn_widgets_form_TriStateCheckBox')]/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	Verify Element Visible  ${LOGGING REMOTE CHECKBOX ALL SELECTED}
+	Click Element  ${DELETE ALL REMOTE SERVERS MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
+Delete All TACACS Hosts
+	Go To TACACS Page
+    Delete All
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+	    
+Delete All
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	#Show All
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #unselecting
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #selecting again
+	Verify Element Visible  ${CHECKBOX ALL SELECTED}
+	Verify Element Visible  ${MAIN MINUS BUTTON}
+	Click Element  ${MAIN MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	
+	
+	
+Select Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
+	Run Keyword If  '${selected count}' == '0'
+	...  Click Element  ${unselected}  and don't wait
+	Verify Checkbox Selected  ${selected}
+
+
+Unselect Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
+	Run Keyword If  '${unselected count}' == '0'
+	...  Click Element  ${selected}  and don't wait
+	Verify Checkbox Unselected  ${unselected}
+
+
+Verify Checkbox Selected
+	[Arguments]  ${selected}
+	Verify Element Visible  ${selected}
+	${selected count}  Get Matching Xpath Count Tokenize  ${selected}
+	Run Keyword If  '${selected count}' == '0'  Fail
+
+
+Verify Checkbox Unselected
+	[Arguments]  ${unselected}
+	Verify Element Visible  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize  ${unselected}
+	Run Keyword If  '${unselected count}' == '0'	Fail
+
+
+Get Matching Xpath Count Tokenize 
+	[Arguments]  ${string}
+	${string xpath}  Fetch From Right  ${string}  xpath=
+	${string count}  Get Matching Xpath Count  ${string xpath}
+	[Return]   ${string count}
+
+
+Show All
+	Verify Element Visible  ${SHOW ALL BUTTON}
+	Click Element  ${SHOW ALL BUTTON}  and don't wait
+
+
+Input Username  [Arguments]  ${username}
+    Input Text  username  ${username}
+
+
+Input Password  [Arguments]  ${password}
+    Input Text  password  ${password}
+
+
+Submit Credentials
+	Mouse Over  xpath=//span[@id='submit_button']
+    Click Element   xpath=//span[@id='submit_button_label']
+
+
+Welcome Page Should Be Open
+    Location Should Be  ${WELCOME URL}
+    Title Should Contain  ${DASHBOARD TITLE}
+
+
+Login Should Have Failed
+    Location Should Be  ${ERROR URL}
+    Title Should Contain  ${LOG IN TITLE}
+   
+Input Text And Verify
+	[Arguments]  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${field}
+	Input Text  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select From List And Verify
+	[Arguments]  ${button}  ${list}  ${field}  ${text}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${button}
+	Verify Page Contains Element  ${button}
+	Mouse Down  ${button}
+	Mouse Up  ${button} 
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${list}
+	Verify Page Contains Element  ${list}
+	${element}  Catenate  SEPARATOR=  ${list}  /descendant::div[contains(text(), '  ${text}  ')]
+	Mouse Down  ${element}
+	Mouse Up  ${element}
+	#Mouse Down  ${list}
+	#Mouse Up  ${list}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select Checkbox And Verify
+	[Arguments]  ${attachment_point}  ${text}
+    ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
+    Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait  
+	#Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
+	Checkbox Should Be Selected	  ${checkbox}
+
+
+Verify Element Visible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${element}
+
+
+Verify Element Invisible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Not Be Visible  ${element}
+
+
+Verify Page Contains Text
+	[Arguments]  ${text}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain  ${text}
+	Wait Until Page Contains  ${text}  ${TIMEOUT}
+
+
+Verify Page Contains Element
+	[Arguments]  ${element}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain Element  ${element}
+	Wait Until Page Contains Element  ${element}  ${TIMEOUT}
+
+
+Verify Page Does Not Contain Element
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Not Contain Element  ${element}
+
+
+Check Element
+    [Arguments]  ${element}
+    Wait Until Page Contains Element  ${element}
+	Highlight Element  ${element}
+	Get Text  ${element}
+	Sleep  2
+
+Check Hover
+    [Arguments]  ${menu}  ${label}  ${dst}  ${title}
+    Wait Until Page Contains Element  ${menu}
+	Highlight Element  ${menu}
+	Mouse Over  ${menu}
+	#Mouse Down On Link  ${menu}
+	#Mouse Up 	${menu}
+	Sleep  1
+	Wait Until Page Contains Element   ${label}
+	#Wait Until Keyword Succeeds  1 min  1 sec  Element Should Be Visible   ${label}
+	Click Element  ${label}
+	Location Should Be  ${dst}
+	Title Should Contain  ${title}
+
+Generate Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
+    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
+    [Return]  ${xpath}
+
+	
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content nowrap' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}	
+
+Generate Action Menu Xpath Tenants
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(),'  ${text}  ')]/parent::div/parent::a/parent::td/preceding-sibling::td/div[1]/div[@class='aux_row_control']
+    [Return]  ${xpath}
+    
+Generate Action Menu Xpath Policy
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+Generate Action Menu Xpath Logical Segments
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+
+Generate Action Menu Xpath Logging
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+Generate Src Interface Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '  ${text}  ')]/parent::tr/td[3]/div/input
+    [Return]  ${xpath}
+    
+Generate Dst Interface Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '  ${text}  ')]/parent::tr/td[4]/div/input
+    [Return]  ${xpath}
+    
+Generate Monitor Session Direction Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '  ${text}  ')]/parent::tr/td[4]/div/input
+    [Return]  ${xpath}
+    	
+Create Tenant
+	[Arguments]  ${tenant-name}  ${description}
+	Go To Tenants Page
+	
+	Verify Page Contains Element  ${ADD TENANT PLUS BUTTON}
+	Click Element  ${ADD TENANT PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT POPUP}
+	
+	Input Text And Verify  ${TENANT NAME FIELD}  ${tenant-name}
+	Click Element  ${TENANT DESCRIPTION FIELD}  and don't wait
+	
+	Run Keyword Unless  '${description}' == '${EMPTY}'
+	...		Input Text And Verify   ${TENANT DESCRIPTION FIELD}  ${description}
+	
+	Verify Page Contains Element  ${SAVE BUTTON}
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE TENANT POPUP}
+	Enable System Tenant Interface  ${tenant-name} 
+	
+Show Controller Stats
+	[Arguments]  ${state}
+	
+	Go To Landing Page
+	
+	Run Keyword If  '${state}'=='STANDBY'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Standby')]  Standby
+
+    Run Keyword If  '${state}'=='STANDBY'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Standby
+    
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Active')]  Active
+
+    Run Keyword If  '${state}'=='ACTIVE'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=Active
+	
+	
+Provision Switch
+	[Arguments]  ${mac-address}  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	Verify Page Contains Element  ${ADD SWITCH PLUS BUTTON}
+	Click Element  ${ADD SWITCH PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${PROVISION SWITCH POPUP}
+	
+	Input Text And Verify  ${SWITCH MAC ADDRESS FIELD}  ${mac-address}
+	Input Text And Verify  ${SWITCH NAME FIELD}  ${name}
+	
+	#Verify Element Visible  ${FABRIC ROLE RADIO BUTTON}
+
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${PROVISION SWITCH POPUP}
+	
+	
+Change Switch Config
+	[Arguments]  ${name}  ${role}  ${leaf-group}
+	
+	Go to Controller Switches Page
+	
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH MENU ITEM}
+	Click Element  ${CONFIGURE SWITCH MENU ITEM}  and don't wait
+	Verify Element Visible  ${CONFIGURE SWITCH POPUP}
+	
+    ${radio_button}  Set Variable If  '${role}'=='None'   ${NONE ROLE RADIO BUTTON}
+    ${radio_button}  Set Variable If  '${role}'=='Spine'  ${SPINE ROLE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='Leaf'   ${LEAF ROLE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword If  '${role}'=='Leaf'
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${leaf-group}
+	
+	Run Keyword If  '${role}'=='Leaf' and '${leaf-group}'=='${EMPTY}' 
+    ...		Input Text And Verify  ${LEAF GROUP NAME FIELD}  ${EMPTY}
+    
+	Click Element  ${SWITCH NAME FIELD}  and don't wait
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CONFIGURE SWITCH POPUP}
+	
+Clear Switch Config
+	[Arguments]  ${name}
+	
+	Go to Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG MENU ITEM}
+	Click Element  ${CLEAR SWITCH CONFIG MENU ITEM}  and don't wait
+	Verify Element Visible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	Sleep  1
+	
+	Verify Page Contains Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}
+	Click Element  ${CLEAR SWITCH CONFIG SUBMIT BUTTON}  and don't wait
+	
+	#Verify Element Invisible  ${CLEAR SWITCH CONFIG POPUP}
+	
+	
+Create Port Group
+	[Arguments]  ${name}  ${mode}  ${leaf-group}
+	
+	Go to Port Groups Page
+	
+	Verify Page Contains Element  ${ADD PORT GROUP PLUS BUTTON}
+	Click Element  ${ADD PORT GROUP PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE PORT GROUP POPUP}
+	
+	Input Text And Verify  ${PORT GROUP NAME FIELD}  ${name}
+	
+	Select From List And Verify  
+    ... 	${PORT GROUP MODE DROPDOWN BUTTON}
+    ...		${PORT GROUP MODE LIST}  
+    ... 	${PORT GROUP MODE FIELD}
+    ... 	${mode}
+    
+    Select From List And Verify  
+    ... 	${PORT GROUP LEAF GROUP DROPDOWN BUTTON}
+    ...		${PORT GROUP LEAF GROUP LIST}  
+    ... 	${PORT GROUP LEAF GROUP FIELD}
+    ... 	${leaf-group}
+    
+    Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
+	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
+	
+Enable System Tenant Interface
+	[Arguments]  ${tenant-name}
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${SYSTEM TENANT INTERFACE ENABLE BUTTON}
+	Click Element  ${SYSTEM TENANT INTERFACE ENABLE BUTTON}  and don't wait
+	
+	Verify Element Visible  ${SYSTEM TENANT INTERFACE ENABLE POPUP}
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Yes')]  Enable
+
+    Drag And Drop   ${LIST TYPE KNOB}  target=Enable
+    
+    Verify Page Contains Element  ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}
+	Click Element  ${SYSTEM TENANT INTERFACE SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${SYSTEM TENANT INTERFACE ENABLE POPUP}
+
+Configure Tenant Interface for System Tenant
+	[Arguments]  ${tenant-name}
+	Go To Specific Tenant Page  system
+	Verify Element Visible  ${TENANT INTERFACES PLUS BUTTON}
+	Click Element  ${TENANT INTERFACES PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${CREATE TENANT INTERFACE POPUP}
+
+	Select From List And Verify
+    ... 	${SELECT TENANT DROPDOWN BUTTON}
+    ...		${SELECT TENANT LIST}
+    ... 	${SELECT TENANT FIELD}
+    ... 	${tenant-name}
+
+	Click Element  ${CREATE TENANT INTERFACE POPUP}  and don't wait
+	Verify Element Visible  ${SAVE TENANT INTERFACE BUTTON}
+	Click Element  ${SAVE TENANT INTERFACE BUTTON}  and don't wait
+	Verify Element Invisible  ${CREATE TENANT INTERFACE POPUP}
+
+
+	
+Create Logical Segments
+	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${LOGICAL SEGMENTS PLUS BUTTON}
+	Click Element  ${LOGICAL SEGMENTS PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE LOGICAL SEGMENT POPUP}
+	Input Text And Verify  ${LOGICAL SEGMENT NAME FIELD}  ${ls-name}
+	Click Element  ${CREATE LOGICAL SEGMENT POPUP}   and don't wait
+	
+	#Verify Page Contains Element  ${PORT GROUPS STEP BUTTON}
+	#Click Element  ${PORT GROUPS STEP BUTTON}  and don't wait
+	Click Element  ${SAVE LOGICAL SEGMENT BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE LOGICAL SEGMENT POPUP}
+	
+	${action_menu_policy}  Generate Action Menu Xpath Logical Segments  div[@data-dojo-attach-point='segmentsNode']  ${ls-name}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${LOGICAL SEGMENT DETAIL MENU ITEM}
+    Click Element  ${LOGICAL SEGMENT DETAIL MENU ITEM}  and don't wait
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${port-group}' == '${EMPTY}'
+	...  Append Port-Group Membership Rule To Segment  ${port-group}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${switch-name}' == '${EMPTY}'
+	...  Append Switch-Port Membership Rule To Segment  ${switch-name}  ${interface}
+
+	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
+	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+
+
+
+Append Port-Group Membership Rule To Segment
+	[Arguments]  ${port-group}
+	Verify Element Visible  ${ADD SEGMENT PORT GROUP PLUS BUTTON}
+	Click Element   ${ADD SEGMENT PORT GROUP PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${PORT GROUP MEMBERSHIP RULE POPUP}
+	#Click Element   ${SEGMENT PORT GROUP NAME FIELD}   and don't wait
+	#Input Text And Verify  ${SEGMENT PORT GROUP NAME FIELD}  ${port-group}
+    Sleep  1
+	Select From List And Verify  
+    ... 	${SEGMENT PORT GROUP DROPDOWN BUTTON}
+    ...		${SEGMENT PORT GROUP LIST}  
+    ... 	${SEGMENT PORT GROUP FIELD}
+    ... 	${port-group}
+    
+    Sleep  1
+    
+	Click Element  ${SEGMENT RULE DESCRIPTION FIELD}  and don't wait
+	
+	Verify Element Visible  ${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}
+	Click Element  ${APPEND PORT GROUP MEMBERSHIP RULE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${PORT GROUP MEMBERSHIP RULE POPUP}
+	
+
+Append Switch-Port Membership Rule To Segment
+	[Arguments]  ${switch-name}  ${interface}
+	Verify Element Visible  ${ADD SWITCH INTERFACE PLUS BUTTON}
+	Click Element   ${ADD SWITCH INTERFACE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
+	
+	Select From List And Verify  
+    ... 	${SEGMENT SWITCH NAME DROPDOWN BUTTON}
+    ...		${SEGMENT SWITCH LIST}  
+    ... 	${SEGMENT SWITCH NAME FIELD}
+    ... 	${switch-name}
+
+    
+    Select From List And Verify  
+    ... 	${SEGMENT SWITCH INTERFACE DROPDOWN BUTTON}
+    ...		${SEGMENT SWITCH INTERFACE LIST}  
+    ... 	${SEGMENT SWITCH INTERFACE FIELD}
+    ... 	${interface}
+    
+    Highlight Element  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
+    Click Element  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}  and don't wait
+	
+	Verify Element Visible  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}
+	Sleep  10
+	Highlight Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}
+	Click Element  ${SEGMENT SWITCH NAME FIELD}  and don't wait
+	Click Element  ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  and don't wait
+	
+	Verify Element Invisible  ${SWITCH INTERFACE MEMBERSHIP RULE POPUP}
+
+
+Append Endpoint to Segment
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
+	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${SEGMENT ENDPOINT POPUP}
+	
+	Input Text And Verify  ${SEGMENT ENDPOINT NAME FIELD}  ${endpoint-name}
+	
+	Select From List And Verify  
+    ... 	${ATTACHMENT TYPE DROPDOWN BUTTON}
+    ...		${ATTACHMENT TYPE LIST}  
+    ... 	${ATTACHMENT TYPE FIELD}
+    ... 	${attachment-type}
+    
+    Highlight Element  ${ENDPOINT PORT GROUP DROPDOWN BUTTON}
+    Run Keyword Unless  '${endp-port-group}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT PORT GROUP DROPDOWN BUTTON}  ${ENDPOINT PORT GROUP LIST}    ${ENDPOINT PORT GROUP FIELD}  ${endp-port-group}
+	
+	Run Keyword Unless  '${endpoint-switch}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT SWITCH DROPDOWN BUTTON}  ${ENDPOINT SWITCH LIST}    ${ENDPOINT SWITCH FIELD}  ${endpoint-switch}
+	
+	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
+    
+	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
+	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
+	
+	Run Keyword Unless  '${ip-addr}' == '${EMPTY}'
+	...		Add IP Address to Endpoint  ${ip-addr}
+	
+	Verify Element Visible  ${APPEND IP ADDRESSES BUTTON}
+	Click Element  ${APPEND IP ADDRESSES BUTTON}  and don't wait
+
+    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
+	
+	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
+	
+	
+Add IP Address to Endpoint
+	[Arguments]  ${ip-addr}
+	
+	Click Element   ${ADD IP ADDRESS PLUS BUTTON}  and don't wait
+	Verify Element Visible  ${ENTER IPV4 ADDRESS POPUP}
+	Input Text And Verify   ${IP ADDRESS TEXT FIELD}  ${ip-addr}
+	#Highlight Element  ${APPEND IP ADDRESSES BUTTON} 
+	Click Element   ${ENTER IPV4 ADDRESS POPUP}  and don't wait 
+	
+    
+Create Logical Segment Interface
+	[Arguments]  ${tenant-name}  ${ls-name}  ${status}  ${ip-addr}   ${mask}   ${addr-type}   ${dhcp-relay}   ${server-ip}   
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Highlight Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
+	Verify Element Visible  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}
+	Click Element  ${LOGICAL SEGMENT INTERFACE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
+	Select From List And Verify  
+    ... 	${LOGICAL SEGMENT DROPDOWN BUTTON}
+    ...		${LOGICAL SEGMENT LIST}  
+    ... 	${LOGICAL SEGMENT FIELD}
+    ... 	${ls-name}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Shutdown')]  Status_Shutdown
+    Run Keyword If  '${status}' == 'Shutdown'
+    ...			Drag And Drop   ${STATUS LIST TYPE KNOB}  target=Status_Shutdown
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Active')]  Status_Active
+	Run Keyword If  '${status}' == 'Active'
+    ...			Drag And Drop   ${STATUS LIST TYPE KNOB}  target=Status_Active
+    
+    Input Text And Verify   ${SEGMENT GATEWAY IP ADDRESS FIELD}  ${ip-addr}
+    Input Text And Verify   ${SEGMENT GATEWAY MASK FIELD}  ${mask}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Public')]  Public
+    Run Keyword If  '${addr-type}' == 'Public'
+    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Public
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Private')]  Private
+	Run Keyword If  '${addr-type}' == 'Private'
+    ...			Drag And Drop   ${IP ADDRESS TYPE KNOB}  target=Private
+	
+	Verify Page Contains Element  ${DHCP RELAY STEP BUTTON}
+	Click Element  ${DHCP RELAY STEP BUTTON}  and don't wait
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Disabled')]  Disabled
+    Run Keyword If  '${dhcp-relay}' == 'Disabled'
+    ...			Drag And Drop   ${DHCP RELAY TYPE KNOB}  target=Disabled
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enabled
+    Run Keyword If  '${dhcp-relay}' == 'Enabled'
+    ...			Drag And Drop   ${DHCP RELAY TYPE KNOB}  target=Enabled
+    
+    Run Keyword Unless  '${server-ip} ' == '${EMPTY}'
+	...		Input Text And Verify   ${DHCP RELAY SERVER IP FIELD}  ${server-ip} 
+	
+	Click Element  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}   and don't wait
+	
+	Click Element  ${SAVE SEGMENT INTERFACE BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
+	
+	
+Create Next Hop Group
+	[Arguments]  ${tenant-name}  ${nhg-name}  ${ip}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${NEXT HOP GROUP PLUS BUTTON}
+	Click Element  ${NEXT HOP GROUP PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE NEXT HOP GROUP POPUP}
+	
+	Input Text And Verify   ${NEXT HOP GROUP NAME FIELD}  ${nhg-name}
+	
+	Add IP Address to Endpoint  ${ip}
+
+	Verify Element Visible  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}
+	Click Element  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}  and don't wait
+
+    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
+	
+	Click Element  ${SAVE NEXT HOP GROUP BUTTON}   and don't wait
+	Verify Element Invisible  ${CREATE NEXT HOP GROUP POPUP}
+	
+	
+Create Logical Router Routes
+	[Arguments]  ${tenant-name}	 ${dst-subnet}  ${mask}  ${next-hop}  ${next-hop-group-name}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${LOGICAL ROUTER ROUTE PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER ROUTE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE ROUTE POPUP}
+	
+	Input Text And Verify   ${LOGICAL ROUTER ROUTE DESTINATION SUBNET FIELD}  ${dst-subnet}
+	Input Text And Verify   ${LOGICAL ROUTER ROUTE MASK FIELD}  ${mask}
+	
+	Select From List And Verify  
+    ... 	${LOGICAL ROUTER NEXT HOP DROPDOWN BUTTON}
+    ...		${LOGICAL ROUTER NEXT HOP LIST}  
+    ... 	${LOGICAL ROUTER NEXT HOP FIELD}
+    ... 	${next-hop}
+	
+	Run Keyword If  '${next-hop}' == 'Next Hop Group'
+	...		Select From List And Verify   ${LOGICAL ROUTER NEXT HOP GROUP DROPDOWN BUTTON}  ${LOGICAL ROUTER NEXT HOP GROUP LIST}    ${LOGICAL ROUTER NEXT HOP GROUP FIELD}  ${next-hop-group-name}
+    
+	Highlight Element  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	Click Element  ${SAVE LOGICAL ROUTER ROUTE BUTTON}   and don't wait
+	#Mouse Down  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	#Mouse Up  ${SAVE LOGICAL ROUTER ROUTE BUTTON}
+	Verify Element Invisible  ${CREATE ROUTE POPUP}
+	
+	
+Create Policy List
+	[Arguments]  ${tenant-name}	 ${policy-name}	
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	
+	Verify Element Visible  ${LOGICAL ROUTER POLICY LIST PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY LIST PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE POLICY LIST POPUP}
+	
+	Input Text And Verify   ${POLICY LIST NAME FIELD}  ${policy-name}
+	Click Element  ${CREATE POLICY LIST POPUP}  and don't wait
+	Verify Element Visible  ${POLICY LIST SAVE BUTTON}
+	Click Element  ${POLICY LIST SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE POLICY LIST POPUP}
+	
+	
+Create Policy Rules
+	[Arguments]  ${tenant-name}	 ${policy-name}  ${action}  ${protocol-number}  ${log-packets}  ${src-match}  ${src-ip}  ${src-mask}  ${src-tenant}  ${src-l4-port}  ${log-seg-if}  ${dst-match}  ${dst-ip}	${dst-mask}  ${dst-tenant}  ${dst-l4-port}	
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@data-dojo-attach-point='policyListNode']  ${policy-name}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${LOGICAL ROUTER POLICY EDIT MENU ITEM}
+    Click Element  ${LOGICAL ROUTER POLICY EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${LOGICAL ROUTER EDIT POLICY POPUP}
+    
+    Verify Element Visible  ${LOGICAL ROUTER POLICY RULE PLUS BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY RULE PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE POLICY LIST RULE POPUP}
+	
+	${radio_button}  Set Variable  ${ACTION PERMIT RADIO BUTTON}
+	
+	${radio_button}  Set Variable If  '${action}'=='Permit'   		${ACTION PERMIT RADIO BUTTON}	${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Deny'  			${ACTION DENY RADIO BUTTON}  	${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Next-Hop-Sys'   ${ACTION NEXT HOP RADIO BUTTON}   ${radio_button}
+    ${radio_button}  Set Variable If  '${action}'=='Next-Hop-NHG'   ${ACTION NEXT HOP RADIO BUTTON}   ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+    
+    Run Keyword If  '${action}' == 'Next-Hop-Sys'
+	...		Select From List And Verify   ${POLICY LIST NEXT HOP DROPDOWN BUTTON}  ${POLICY LIST NEXT HOP LIST}    ${POLICY LIST NEXT HOP FIELD}   System Tenant
+    
+    
+    Run Keyword If  '${action}' == 'Next-Hop-NHG'
+	...		Select From List And Verify   ${POLICY LIST NEXT HOP DROPDOWN BUTTON}  ${POLICY LIST NEXT HOP LIST}    ${POLICY LIST NEXT HOP FIELD}  Next Hop Group
+    
+    Run Keyword If  '${action}' == 'Next-Hop-NHG'
+	...		Select From List And Verify   ${POLICY RULE NEXT HOP GROUP DROPDOWN BUTTON}  ${POLICY RULE NEXT HOP GROUP LIST}    ${POLICY RULE NEXT HOP GROUP FIELD}  ng-1
+    
+    Run Keyword Unless  '${protocol-number}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST PROTOCOL NUMBER FIELD}  ${protocol-number} 
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'No')]  No
+    Run Keyword If  '${log-packets}' == 'No'
+    ...			Drag And Drop   ${POLICY RULE LOG MATCHING PACKETS KNOB}  target=No
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Yes')]  Yes
+    Run Keyword If  '${log-packets}' == 'Yes'
+    ...			Drag And Drop   ${POLICY RULE LOG MATCHING PACKETS KNOB}  target=Yes
+    
+    
+    Verify Page Contains Element  ${POLICY LIST RULE SOURCE STEP BUTTON}
+	Click Element  ${POLICY LIST RULE SOURCE STEP BUTTON}  and don't wait
+	
+	Select From List And Verify   ${POLICY LIST SOURCE MATCH DROPDOWN BUTTON}  ${POLICY LIST SOURCE MATCH LIST}    ${POLICY LIST SOURCE MATCH FIELD}  ${src-match}
+	
+	Run Keyword If  '${src-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE SOURCE IP FIELD}  ${src-ip}
+	
+	Run Keyword If  '${src-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE SOURCE IP PREFIX FIELD}  ${src-mask}
+	
+	Run Keyword If  '${src-match}' == 'Tenant'
+	...			Select From List And Verify   ${POLICY RULE SOURCE TENANT DROPDOWN BUTTON}  ${POLICY RULE SOURCE TENANT LIST}    ${POLICY RULE SOURCE TENANT FIELD}  ${src-tenant}
+	
+	Run Keyword Unless  '${src-l4-port}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST RULE SOURCE L4 PORT FIELD}  ${src-l4-port} 
+    
+	Run Keyword Unless  '${log-seg-if}' == '${EMPTY}'
+	...		Click Element  ${POLICY RULE LOGICAL SEGMENT INTERFACE CHECKBOX}  and don't wait
+	
+	Run Keyword Unless  '${log-seg-if}' == '${EMPTY}'
+	...		Select From List And Verify   ${POLICY RULE LOGICAL SEGMENT INTERFACE DROPDOWN BUTTON}  ${POLICY RULE LOGICAL SEGMENT INTERFACE LIST}    ${POLICY RULE LOGICAL SEGMENT INTERFACE FIELD}  ${log-seg-if}
+	
+    Verify Page Contains Element  ${POLICY LIST RULE DESTINATION STEP BUTTON}
+	Click Element  ${POLICY LIST RULE DESTINATION STEP BUTTON}  and don't wait
+	
+	
+	Select From List And Verify   ${POLICY LIST DESTINATION MATCH DROPDOWN BUTTON}  ${POLICY LIST DESTINATION MATCH LIST}    ${POLICY LIST DESTINATION MATCH FIELD}  ${dst-match}
+	
+	Run Keyword If  '${dst-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE DESTINATION IP FIELD}  ${dst-ip}
+	
+	Run Keyword If  '${dst-match}' == 'IP Prefix'
+	...			Input Text And Verify   ${POLICY LIST RULE DESTINATION IP PREFIX FIELD}  ${dst-mask}
+	
+	Run Keyword If  '${dst-match}' == 'Tenant'
+	...			Select From List And Verify   ${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON}  ${POLICY RULE DESTINATION TENANT LIST}    ${POLICY RULE DESTINATION TENANT FIELD}  ${dst-tenant}
+	
+	Run Keyword Unless  '${dst-l4-port}' == '${EMPTY}'
+	...		Input Text And Verify   ${POLICY LIST RULE DESTINATION L4 PORT FIELD}  ${dst-l4-port} 
+    
+	Highlight Element  ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}
+	Click Element  ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}   and don't wait
+	
+	Verify Element Invisible  ${CREATE POLICY LIST RULE POPUP}
+	
+	Highlight Element  ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}
+	Click Element  ${LOGICAL ROUTER EDIT POLICY SAVE BUTTON}   and don't wait
+	
+	Verify Element Invisible  ${LOGICAL ROUTER EDIT POLICY POPUP}
+	Sleep  2
+	
+	
+Apply Policy List
+	[Arguments]  ${tenant-name}	 ${policy-name}
+	
+	Go To Tenants Page
+	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+	   	
+	Verify Element Visible  ${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}
+	Click Element  ${LOGICAL ROUTER APPLIED POLICY LIST BUTTON}  and don't wait
+	
+	Verify Element Visible  ${APPLY INBOUND POLICY POPUP}
+	
+	Select From List And Verify   
+	...		${APPLY INBOUND POLICY DROPDOWN BUTTON}  
+	...		${APPLY INBOUND POLICY LIST}    
+	...		${APPLY INBOUND POLICY FIELD}  
+	...		${policy-name}
+	
+	Click Element  ${APPLY INBOUND POLICY SUBMIT BUTTON}   and don't wait
+	Verify Element Invisible  ${APPLY INBOUND POLICY POPUP}
+	
+Generate Support Bundle
+
+	Go To Support Bundles Page
+	   	
+	Verify Element Visible  ${SUPPORT BUNDLES PLUS BUTTON}
+	Click Element  ${SUPPORT BUNDLES PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+	
+	Click Element  ${GENERATE SUPPORT BUNDLE BUTTON}   and don't wait
+	Sleep  180
+	
+	Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
+	
+
+Create Logging Level
+	[Arguments]  ${logger}	 ${log-level}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait
+	   	
+	Verify Element Visible  ${CREATE LOG LEVEL PLUS BUTTON}
+	Click Element  ${CREATE LOG LEVEL PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE LOG LEVEL POPUP}
+	
+	Input Text And Verify   ${LEVEL LOGGER FIELD}  ${logger}
+	
+	Select From List And Verify   
+	...		${LOG LEVEL DROPDOWN BUTTON}  
+	...		${LOG LEVEL LIST}    
+	...		${LOG LEVEL FIELD}  
+	...		${log-level}
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE LOG LEVEL POPUP}
+	
+Edit Logging Level Info
+	[Arguments]  ${logger}	 ${log-level}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait
+	   	
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${logger}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${LOGGING LEVELS EDIT MENU ITEM}
+    Click Element  ${LOGGING LEVELS EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT LOG LEVEL POPUP}
+	
+	Input Text And Verify   ${LEVEL LOGGER FIELD}  ${logger}
+	
+	Select From List And Verify   
+	...		${LOG LEVEL DROPDOWN BUTTON}  
+	...		${LOG LEVEL LIST}    
+	...		${LOG LEVEL FIELD}  
+	...		${log-level}
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${EDIT LOG LEVEL POPUP}
+	
+Delete Logging Level
+	[Arguments]  ${logger}
+	
+	Go To Logging Page	
+	
+	Verify Element Visible  ${LOGGING LEVELS STEP BUTTON}
+	Click Element  ${LOGGING LEVELS STEP BUTTON}  and don't wait 
+		
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${logger}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${LOGGING LEVELS DELETE MENU ITEM}
+    Click Element  ${LOGGING LEVELS DELETE MENU ITEM}  and don't wait
+
+    #Verify Element Visible  ${CONFIRM DELTE POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	#Verify Element Invisible  ${CONFIRM DELTE POPUP}
+		
+	
+Configure Remote Server
+	[Arguments]  ${server}	${port}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+	   	
+	Verify Element Visible  ${ADD REMOTE SERVER PLUS BUTTON}
+	Click Element  ${ADD REMOTE SERVER PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE REMOTE SERVER POPUP}
+	
+	Input Text And Verify   ${REMOTE SERVER IP FIELD}  ${server}
+	Input Text And Verify   ${REMOTE SERVER PORT FIELD}  ${port}
+	Click Element  ${CREATE REMOTE SERVER POPUP}  and don't wait
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE REMOTE SERVER POPUP}
+	
+Edit Remote Server Info
+	[Arguments]  ${server}	${port}
+	
+	Go To Logging Page
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait
+	
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${server}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${REMOTE SERVER EDIT MENU ITEM}
+    Click Element  ${REMOTE SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT REMOTE SERVER POPUP}
+	
+	Input Text And Verify   ${REMOTE SERVER IP FIELD}  ${server}
+	Input Text And Verify   ${REMOTE SERVER PORT FIELD}  ${port}
+	Click Element  ${EDIT REMOTE SERVER POPUP}  and don't wait
+	
+	Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${EDIT REMOTE SERVER POPUP}
+	
+Delete Remote Server
+	[Arguments]  ${server}
+	
+	Verify Element Visible  ${REMOTE SERVER STEP BUTTON}
+	Click Element  ${REMOTE SERVER STEP BUTTON}  and don't wait	 
+		
+	${action_menu_logging}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${server}
+    Verify Element Visible  ${action_menu_logging}
+    Click Element  ${action_menu_logging}  and don't wait
+    
+    Verify Element Visible  ${REMOTE SERVER DELETE MENU ITEM}
+    Click Element  ${REMOTE SERVER DELETE MENU ITEM}  and don't wait
+
+    #Verify Element Visible  ${CONFIRM DELTE POPUP}
+    Highlight Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}
+    
+    Click Element  ${CONFIRM DELTE POPUP}  and don't wait
+    
+    Verify Element Visible   ${DELETE LOGGING REMOTE PROCEED BUTTON}
+	Click Element  ${DELETE LOGGING REMOTE PROCEED BUTTON}  and don't wait
+	#Verify Element Invisible  ${CONFIRM DELTE POPUP}
+	
+Create Monitor Session
+	[Arguments]  ${id}  ${switch}  ${src-if}  ${dst-if}  
+	
+	Go To Monitor Sessions Page
+	
+	Verify Element Visible  ${CREATE MONITOR SESSION PLUS BUTTON}
+	Click Element  ${CREATE MONITOR SESSION PLUS BUTTON}  and don't wait
+	
+	Verify Element Visible  ${CREATE MONITOR SESSION POPUP}
+	
+	Input Text And Verify   ${MONITOR SESSION ID FIELD}  ${id}
+	
+	Run Keyword Unless  '${switch}' == '${EMPTY}'
+	...   Select From List And Verify  ${MONITOR SESSION SWITCH DROPDOWN BUTTON}  ${MONITOR SESSION SWITCH LIST}  ${MONITOR SESSION SWITCH FIELD}  ${switch} 	
+	
+	${src-if-checkbox}  Generate Src Interface Checkbox Xpath  div[@data-dojo-attach-point='blockInterfaces']  ${src-if}
+    Verify Element Visible  ${src-if-checkbox}
+    Run Keyword Unless  '${src-if}' == '${EMPTY}'
+    ...		Click Element  ${src-if-checkbox}  and don't wait
+    
+    
+	${dst-if-checkbox}  Generate Dst Interface Checkbox Xpath  div[@data-dojo-attach-point='blockInterfaces']  ${dst-if}
+    Verify Element Visible  ${dst-if-checkbox}
+    Run Keyword Unless  '${dst-if}' == '${EMPTY}'
+    ...		Click Element  ${dst-if-checkbox}  and don't wait
+    
+    Verify Element Visible   ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CREATE MONITOR SESSION POPUP}
+	
+Edit Monitor Session
+	[Arguments]  ${id}  ${active}  ${direction}  ${tenant}  ${segment}  ${ethertype}  ${ip-protocol}  ${src-mac}  ${src-ip}  ${dst-mac}  ${dst-ip}
+	
+	Go To Monitor Sessions Page
+	
+	${action_menu_monitor_session}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${id}
+    Verify Element Visible  ${action_menu_monitor_session}
+    Click Element  ${action_menu_monitor_session}  and don't wait
+    
+    Verify Element Visible  ${MONITOR SESSION EDIT MENU ITEM}
+    Click Element  ${MONITOR SESSION EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT MONITOR SESSION POPUP}
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Yes')]  Yes
+    Run Keyword If  '${active}' == 'Yes'
+    ...			Drag And Drop   ${MONITOR SESSION ACTIVE KNOB}  target=Yes
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'No')]  No
+    Run Keyword If  '${active}' == 'No'
+    ...			Drag And Drop   ${MONITOR SESSION ACTIVE KNOB}  target=No
+    
+    
+    #${MONITOR SESSION DIRECTION DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '${src-if}')]/parent::tr/td[5]/div[2]/div/div[1]/input
+   # ${MONITOR SESSION DIRECTION LIST}				xpath=//div[contains(@id, 'dijit_form_FilteringSelect_1_popup') and contains(text(), 'Both')]/parent::div				
+   # ${MONITOR SESSION DIRECTION FIELD}				xpath=//div[@data-dojo-attach-point='blockInterfaces']/descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '${src-if}')]/parent::tr/td[5]/div[2]/div/div[3]/input[1]
+     
+    Select From List And Verify   
+	...		${MONITOR SESSION DIRECTION DROPDOWN BUTTON}	  
+	...		${MONITOR SESSION DIRECTION LIST} 				   
+	...		${MONITOR SESSION DIRECTION FIELD}  			
+	...		${direction}
+		
+	Run Keyword Unless  '${tenant}' == '${EMPTY}'
+	...   Select From List And Verify  ${MONITOR SESSION TENANT DROPDOWN BUTTON}  ${MONITOR SESSION TENANT LIST}  ${MONITOR SESSION TENANT FIELD}  ${tenant}
+		
+	Run Keyword Unless  '${tenant}' == '${EMPTY}'
+	...   Select From List And Verify  ${MONITOR SESSION SEGMENT DROPDOWN BUTTON}  ${MONITOR SESSION SEGMENT LIST}  ${MONITOR SESSION SEGMENT FIELD}  ${segment}
+	
+	Run Keyword If  '${direction}' == 'Ingress'
+	...			Configure Monitor Session Match Criteria	${ethertype}  ${ip-protocol}  ${src-mac}  ${src-ip}  ${dst-mac}  ${dst-ip}
+	
+	Verify Element Visible   ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${EDIT MONITOR SESSION POPUP}
+	
+	
+Configure Monitor Session Match Criteria
+	[Arguments]  ${ethertype}  ${ip-protocol}  ${src-mac}  ${src-ip}  ${dst-mac}  ${dst-ip}
+	
+	Click Element  ${MATCH CRITERIA CONTROL BUTTON}  and don't wait
+	
+	Verify Element Visible  ${MONITOR SESSION MATCH CRITERIA POPUP}
+	
+	Run Keyword Unless  '${ethertype}' == '${EMPTY}'
+	...   Select From List And Verify  ${MATCH CRITERIA ETHERTYPE DROPDOWN BUTTON}  ${MATCH CRITERIA ETHERTYPE LIST}  ${MATCH CRITERIA ETHERTYPE FIELD}  ${ethertype}
+		
+	Run Keyword Unless  '${ip-protocol}' == '${EMPTY}'
+	...   Select From List And Verify  ${MATCH CRITERIA IP PROTOCOL DROPDOWN BUTTON}  ${MATCH CRITERIA IP PROTOCOL LIST}  ${MATCH CRITERIA IP PROTOCOL FIELD}  ${ip-protocol}
+	
+	Run Keyword Unless  '${src-mac}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA SOURCE MAC FIELD}  ${src-mac}
+	
+	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA SOURCE IP FIELD}  ${src-ip}
+	
+	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA SOURCE MAC MASK PREFIX FIELD}  22
+	
+	Run Keyword Unless  '${dst-mac}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA DESTINATION MAC FIELD}    ${dst-mac}
+	
+	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA DESTINATION IP FIELD}  ${dst-ip}
+	
+	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	...		Input Text And Verify   ${MATCH CRITERIA DESTINATION MAC MASK PREFIX FIELD}  22
+	
+	
+	Verify Element Visible   ${MATCH CRITERIA SUBMIT BUTTON}
+	Highlight Element  ${MATCH CRITERIA SUBMIT BUTTON}
+	
+    Click Element  ${MATCH CRITERIA SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${MONITOR SESSION MATCH CRITERIA POPUP}
+	
+Delete Monitor Session 
+	[Arguments]  ${id}
+	
+	Go To Monitor Sessions Page
+	
+	${action_menu_monitor_session}  Generate Action Menu Xpath Logging  table[@data-dojo-attach-point='tableNode']  ${id}
+    Verify Element Visible  ${action_menu_monitor_session}
+    Click Element  ${action_menu_monitor_session}  and don't wait
+    
+    Verify Element Visible  ${MONITOR SESSION DELETE MENU ITEM}
+    Click Element  ${MONITOR SESSION DELETE MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${DELETE CONFIRM MONITOR SESSION POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Highlight Element  ${PROCEED DELTE BUTTON}
+	
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	
+	#Verify Element Invisible  ${DELETE CONFIRM MONITOR SESSION POPUP}
+    
+Configure User
+	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
+
+    Go To Security Users Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE USER POPUP}
+
+    #${random_username}  Generate Random Name  User  5
+    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+
+    Input Text And Verify  ${USERNAME FIELD}  ${username}    
+    Input Text And Verify  ${PASSWORD FIELD}  ${password}    
+    Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${conf_password}    
+    Input Text And Verify  ${FULL NAME FIELD}  ${full_name}
+
+    Run Keyword Unless  '${password}'=='${conf_password}'  
+    ...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
+    Run Keyword Unless  '${password}'=='${conf_password}'
+    ...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}
+
+    Run Keyword Unless  '${password}'=='${EMPTY}'  
+    ...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
+
+    Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
+
+    Run Keyword Unless  '${group}'=='${EMPTY}'  
+    ...		Associate Group  ${group}
+
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE USER POPUP}
+    Verify Page Contains Text   ${username}
+
+
+Associate Group
+	[Arguments]  ${group}
+	Click Element  ${GROUPS BUTTON}  and don't wait
+	Verify Page Contains Element  ${GROUP ASSOCIATE PLUS BUTTON}
+
+	Click Element  ${GROUP ASSOCIATE PLUS BUTTON}  and don't wait
+	Verify Page Contains Element  ${MANAGE GROUPS POPUP} 
+
+	#${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_Dialog_1']  ${group}
+	${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${group}
+	#${checkbox}  div[@id="bsn_widgets_form_CheckBox_4"]
+	Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait
+	Checkbox Should Be Selected	  ${checkbox}
+
+	Click Element  ${APPEND GROUP BUTTON}  and don't wait
+	Verify Element Invisible  ${MANAGE GROUPS POPUP}
+	
+Configure SNMP
+	[Arguments]  ${contact}  ${location}  ${community}  ${traps}  ${server}  ${port}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP BUTTON}
+    Click Element  ${CONFIGURE SNMP BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP POPUP}
+    
+    Run Keyword Unless  '${contact}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP CONTACT FIELD}  ${contact}
+	
+	Run Keyword Unless  '${location}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP LOCATION FIELD}  ${location}
+	
+	Run Keyword Unless  '${community}' == '${EMPTY}'
+	...		Input Text And Verify   ${CONFIGURE SNMP COMMUNITY FIELD}    ${community}
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Disabled')]  Disabled
+    Run Keyword If  '${traps}' == 'Disabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Disabled
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'Enabled')]  Enabled
+    Run Keyword If  '${traps}' == 'Enabled'
+    ...			Drag And Drop   ${SNMP TRAP KNOB}  target=Enabled
+	
+	Verify Element Visible  ${SNMP HOSTS STEP BUTTON}
+	Click Element  ${SNMP HOSTS STEP BUTTON}  and don't wait
+	
+	Verify Element Visible  ${ADD SNMP TRAP HOST PLUS BUTTON}
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${ADD SNMP TRAP HOST PLUS BUTTON}   and don't wait
+    
+    Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST SERVER FIELD}  ${server}
+	
+	Run Keyword Unless  '${port}' == '${EMPTY}'
+	...		Input Text And Verify   ${SNMP TRAP HOST UDP PORT FIELD}  ${port}
+	
+	Run Keyword Unless  '${server}' == '${EMPTY}'
+	...		Click Element  ${SNMP TRAP HOST APPEND BUTTON}   and don't wait
+	
+	Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+	Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+	
+	Verify Element Invisible  ${CONFIGURE SNMP POPUP}
+	
+Configure SNMP Traps
+	[Arguments]  ${power}  ${fan}  ${link}  ${auth-fail}  ${cpu-threshold}  ${memory-threshold}	 ${full-match-tcam-threshold}
+	
+	Go To SNMP Page
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS BUTTON}
+    Click Element  ${CONFIGURE SNMP TRAPS BUTTON}   and don't wait
+    Verify Element Visible  ${CONFIGURE SNMP TRAPS POPUP}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Power
+    Run Keyword If  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=No Power
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Power Supply Unit Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Power
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Drag And Drop   ${POWER SUPPLY KNOB}  target=Power
+    
+    Run Keyword Unless  '${power}' == '${EMPTY}'
+    ...			Input Text And Verify   ${POWER SUPPLY TRAP FIELD}  ${power}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Fan
+    Run Keyword If  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=No Fan
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Fan Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Fan
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Drag And Drop   ${FAN STATUS KNOB}  target=Fan
+    
+    Run Keyword Unless  '${fan}' == '${EMPTY}'
+    ...			Input Text And Verify   ${FAN STATUS TRAP FIELD}  ${fan}
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Link
+    Run Keyword If  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=No Link
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Link Status')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap within')]  Link
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Drag And Drop   ${LINK STATUS KNOB}  target=Link
+    
+    Run Keyword Unless  '${link}' == '${EMPTY}'
+    ...			Input Text And Verify   ${LINK STATUS TRAP FIELD}  ${link}
+    
+    
+    Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Auth
+    Run Keyword If  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=No Auth
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Authentication Failure')]/parent::h2/parent::div/following-sibling::div[1]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Send trap')]  Auth
+    Run Keyword Unless  '${auth-fail}' == '${EMPTY}'
+    ...			Drag And Drop   ${AUTH FAILURE KNOB}  target=Auth
+    
+    
+	Verify Element Visible  ${SNMP TRAPS THRESHOLDS STEP BUTTON}
+	Click Element  ${SNMP TRAPS THRESHOLDS STEP BUTTON}  and don't wait
+	
+   
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No CPU
+    Run Keyword If  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=No CPU
+	
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  CPU
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${CPU THRESHOLDS KNOB}  target=CPU
+    
+    Run Keyword Unless  '${cpu-threshold}' == '${EMPTY}'
+    ...			Input Text And Verify   ${CPU THRESHOLD PERCENTAGE FIELD}  ${cpu-threshold}
+    
+    
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No Memory
+   Run Keyword If  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=No Memory
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  Memory
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${MEMORY THRESHOLDS KNOB}  target=Memory
+    
+   Run Keyword Unless  '${memory-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${MEMORY THRESHOLD PERCENTAGE FIELD}  ${memory-threshold}
+   
+    
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[1]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  No TCAM 
+   Run Keyword If  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=No TCAM
+	
+   Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[5]/div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '')]  TCAM
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+    ...			Drag And Drop   ${TCAM FLOW THRESHOLDS KNOB}  target=TCAM
+    
+   Run Keyword Unless  '${full-match-tcam-threshold}' == '${EMPTY}'
+   ...			Input Text And Verify   ${TCAM THRESHOLD PERCENTAGE FIELD}  ${full-match-tcam-threshold}
+   
+   Click Element  ${CONFIGURE SNMP TRAPS POPUP}   and don't wait
+   
+   Verify Element Visible  ${CONFIGURE SNMP SUBMIT BUTTON}
+   Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
+   
+   Verify Element Invisible  ${CONFIGURE SNMP TRAPS POPUP}
+   
+   
+Add TACACS Host
+	[Arguments]  ${server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	Verify Element Visible  ${ADD TACACS HOST PLUS BUTTON}
+    Click Element  ${ADD TACACS HOST PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${CREATE TACACS SERVER POPUP}
+    
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+       
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${CREATE TACACS SERVER POPUP}
+    
+    
+Edit TACACS Host
+	[Arguments]  ${server}  ${new-server}  ${timeout}  ${secret}  ${encryption}
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER EDIT MENU ITEM}
+    Click Element  ${TACACS SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT TACACS SERVER POPUP}
+	   
+    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
+    
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+    
+    
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    Verify Element Invisible  ${EDIT TACACS SERVER POPUP}
+    
+  
+Delete TACACS Host
+	[Arguments]  ${server} 
+	
+	Go To Tacacs Page
+	
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+    Verify Element Visible  ${action_menu_tacacs_server}
+    Click Element  ${action_menu_tacacs_server}  and don't wait
+    
+    Verify Element Visible  ${TACACS SERVER DELETE MENU ITEM}
+    Click Element  ${TACACS SERVER DELETE MENU ITEM}  and don't wait
+    
+    Verify Element Visible  ${DELETE CONFIRM TACACS HOST POPUP}
+    
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Highlight Element  ${PROCEED DELTE BUTTON}
+	
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+
+
+
+Check Advanced Query Builder
+	[Arguments]  ${page}  ${columns}
+	${length}=  Get Length  ${columns}
+	Log  ${length}
+	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
+	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
+	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
+	Verify Element Visible  ${FILTER QUERY CLEAR BUTTON}
+	Click Element  ${FILTER QUERY CLEAR BUTTON}  and don't wait
+
+	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
+	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
+
+	:FOR  ${index}  IN RANGE  1  ${length + 1}
+	\	Log  ${index}
+	\	Select From List And Verify
+	\	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
+	\	...  ${COMPARISON COLUMN DROPDOWN LIST}[${index}]
+	\	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}
+	\	...  @{columns}[${index - 1}]
+	\	Verify Element Visible  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION AREA SUFFIX}
+	\	Verify Element Visible  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}
+	\	Click Element  ${ADVANCED QUERY LINE}[${index}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+	Log  ${length}
+	Click Element  ${ADVANCED QUERY LINE}[${length + 1}]${DEL QUERY LINE BUTTON SUFFIX}  and don't wait
+
+	Verify Element Visible  ${CLOSE AND NOT FILTER BUTTON}
+	Click Element  ${CLOSE AND NOT FILTER BUTTON}  and don't wait
+
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Open Advanced Query Builder
+	[Arguments]  ${page}
+	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
+	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
+	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
+	Clear Filtering Query
+	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
+	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
+
+Clear Filtering Query
+	Click Element  ${FILTER QUERY CLEAR BUTTON}  and don't wait
+
+Close And Filter Advanced Query Builder
+	Verify Element Visible  ${CLOSE AND FILTER BUTTON}
+	Click Element  ${CLOSE AND FILTER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Close And Not Filter Advanced Query Builder
+	Verify Element Visible  ${CLOSE AND NOT FILTER BUTTON}
+	Click Element  ${CLOSE AND NOT FILTER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
+
+Add Second Filter Query or Use First Empty
+	Highlight Element  ${ADVANCED QUERY LINE}[1]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE}
+	${selected column}  Get Value  ${ADVANCED QUERY LINE}[1]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE}
+	Log  ${selected column}
+	Run Keyword Unless  '${selected column}' == '${EMPTY}'
+	...  Click Element  ${ADVANCED QUERY LINE}[1]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+
+Add Filter Query
+	[Arguments]  ${column}  ${comparison}  ${value}
+	${configured}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	Log  ${configured}
+	Run Keyword If  '${configured}' == '1'
+	...  Add Second Filter Query or Use First Empty
+	Run Keyword Unless  '${configured}' == '1'
+	...  Click Element  ${ADVANCED QUERY LINE}[${configured}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
+	${index}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	Log  ${index}
+	${column_index}=  Evaluate  int((2 * ${index}) - 1)
+	Select From List And Verify
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
+	...  ${COMPARISON COLUMN DROPDOWN LIST}[${column_index}]
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}
+	...  ${column}
+
+	Click Element  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}  and don't wait
+
+	${function_index}=  Evaluate  int(2 * ${index})
+	Select From List And Verify
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}
+	...  ${COMPARISON COLUMN DROPDOWN LIST}[${function_index}]
+	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX}
+	...  ${comparison}
+
+
+	Run Keyword Unless  '${value}' == '${EMPTY}'
+	...  Input Text And Verify  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}  ${value}
+	Click Element  ${ADVANCED QUERY BUILDER POPUP}  and don't wait
+
+Verify Filtering Result
+	[Arguments]  ${value}  ${flag}
+	Run Keyword If  '${flag}' == 'True'
+	...  Page Should Contain  ${value}
+	Run Keyword If  '${flag}' == 'False'
+	...  Page Should Not Contain  ${value}
+
+Verify Interface Filtering Result
+	[Arguments]  ${value}  ${flag}
+	${matches}=  Get Matching Xpath Count  //tbody[@class='main']/descendant::tr[contains(@id, 'bsn_widgets_FunctionalTableBodyRow_') and not(contains(@style, 'display: none'))]/descendant::div[@class='content' and contains(text(), '${value}')]
+	Run Keyword If  '${flag}' == 'True'
+	...  Should Be True  ${matches} > 0
+	Run Keyword If  '${flag}' == 'False'
+	...  Should Be True  ${matches} == 0
+
+Failover From Fabric Page
+	Go To Fabric Page
+	Verify Element Visible  ${STANDBY CONTROLLER CUBE}
+	Click Element  ${STANDBY CONTROLLER CUBE}  and don't wait
+	Verify Element Visible  ${CONTROLLER FAILOVER BUTTON}
+	Click Element  ${CONTROLLER FAILOVER BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM CONTROLLER FAILOVER POPUP}
+	Verify Element Visible  ${PROCEED WITH CONTROLLER FAILOVER BUTTON}
+	Click Element  ${PROCEED WITH CONTROLLER FAILOVER BUTTON}  and don't wait
+	Sleep  30
+	${master_ip}=            get node ip   master
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Valid Login  admin  adminadmin
+
+Reboot All Connected Switches From Fabric Page
+	Go To Fabric Page
+	Verify Element Visible  ${REBOOT ALL CONNECTED SWITCHES BUTTON}
+	Click Element  ${REBOOT ALL CONNECTED SWITCHES BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM SWITCH REBOOTS POPUP}
+	Verify Element Visible  ${PROCEED WITH SWITCH REBOOTS BUTTON}
+	Click Element  ${PROCEED WITH SWITCH REBOOTS BUTTON}  and don't wait
+	Sleep  30
+	Verify Element Invisible  ${CONFIRM SWITCH REBOOTS POPUP}
+	Verify Element Invisible  ${REBOOTING SWITCHES POPUP}
+
+Reboot Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH REBOOT BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH REBOOT BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Reset Switch Connection From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH RESET CONNECTION BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH RESET CONNECTION BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Split From Leaf Group From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH SPLIT FROM LEAF GROUP BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH SPLIT FROM LEAF GROUP BUTTON}  and don't wait
+    Verify Element Visible  ${SPLIT LEAF GROUP POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Beacon Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH BEACON BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH BEACON BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Shutdown Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH SHUTDOWN BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH SHUTDOWN BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Start Switch From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH START BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH START BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Clear Switch Configuration From Fabric Page
+	[Arguments]  ${switch_id}
+	Go To Fabric Page
+	Verify Element Visible  ${SWITCH ICON PREFIX}${switch_id}']
+	Click Element  ${SWITCH ICON PREFIX}${switch_id}']  and don't wait
+
+	Verify Element Visible  ${SWITCH CLEAR CONFIGURATION BUTTON}
+	Sleep  5
+	Click Element  ${SWITCH CLEAR CONFIGURATION BUTTON}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+
+Reboot Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${REBOOT SWITCH MENU ITEM}
+    Click Element  ${REBOOT SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+
+Shutdown Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${SHUTDOWN SWITCH MENU ITEM}
+    Click Element  ${SHUTDOWN SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Start Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    
+    Verify Element Visible  ${START SWITCH MENU ITEM}
+    Click Element  ${START SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Clear Switch Configuration From Switches Page
+	[Arguments]  ${name}
+	Clear Switch Config  ${name}
+
+Reset Switch Connection From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${RESET CONNECTION SWITCH MENU ITEM}
+    Click Element  ${RESET CONNECTION SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Split From Leaf Group From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}
+    Click Element  ${SPLIT FROM LEAF GROUP SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${SPLIT LEAF GROUP POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Beacon Switch From Switches Page
+	[Arguments]  ${name}
+	Go To Controller Switches Page
+	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BEACON SWITCH MENU ITEM}
+    Click Element  ${BEACON SWITCH MENU ITEM}  and don't wait
+    Verify Element Visible  ${CONFIRM SWITCH ACTION POPUP}
+    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
+    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
+
+Configure NTP Server
+	[Arguments]  ${server}
+	Go To Clock Page
+	Verify Element Visible  ${ADD NTP SERVER BUTTON}
+	Click Element  ${ADD NTP SERVER BUTTON}  and don't wait
+	Verify Element Visible  ${ADD NTP SERVER POPUP}
+	Verify Element Visible  ${INPUT NTP SERVER FILED}
+	Input Text And Verify  ${INPUT NTP SERVER FILED}  ${server}
+	Click Element  ${ADD NTP SERVER POPUP}  and don't wait
+	Verify Element Visible  ${SAVE NTP SERVER BUTTON}
+	Click Element  ${SAVE NTP SERVER BUTTON}  and don't wait
+	Verify Element Invisible  ${ADD NTP SERVER POPUP}
+	Page Should Contain  ${server}
+
+
+Physical GUI Suite Setup
+	${tmp}  params  node=c1  key=ip
+	Set Suite Variable  ${c1_ip}  ${tmp}
+	${tmp}  params  node=c2  key=ip
+	Set Suite Variable  ${c2_ip}  ${tmp}
+
+	${tmp}  params  node=s1  key=mac
+	Set Suite Variable  ${s1_mac}  ${tmp}
+	${tmp}  params  node=s2  key=mac
+	Set Suite Variable  ${s2_mac}  ${tmp}
+	${tmp}  params  node=s3  key=mac
+	Set Suite Variable  ${s3_mac}  ${tmp}
+	${tmp}  params  node=s4  key=mac
+	Set Suite Variable  ${s4_mac}  ${tmp}
+	${tmp}  params  node=s5  key=mac
+	Set Suite Variable  ${s5_mac}  ${tmp}
+
+	${tmp}  params  node=s1  key=alias
+	Set Suite Variable  ${s1_alias}  ${tmp}
+	${tmp}  params  node=s2  key=alias
+	Set Suite Variable  ${s2_alias}  ${tmp}
+	${tmp}  params  node=s3  key=alias
+	Set Suite Variable  ${s3_alias}  ${tmp}
+	${tmp}  params  node=s4  key=alias
+	Set Suite Variable  ${s4_alias}  ${tmp}
+	${tmp}  params  node=s5  key=alias
+	Set Suite Variable  ${s5_alias}  ${tmp}
+
+	Set Suite Variable  ${s1_dpid}  00:00:${s1_mac}
+	Set Suite Variable  ${s2_dpid}  00:00:${s2_mac}
+	Set Suite Variable  ${s3_dpid}  00:00:${s3_mac}
+	Set Suite Variable  ${s4_dpid}  00:00:${s4_mac}
+	Set Suite Variable  ${s5_dpid}  00:00:${s5_mac}
+
+    Provision Switch			${s1_mac}		${s1_alias}			Spine		${EMPTY}
+    Provision Switch			${s2_mac}		${s2_alias}			Leaf		rack0
+    Provision Switch			${s3_mac}		${s3_alias}			Leaf		rack0
+    Provision Switch			${s4_mac}		${s4_alias}			Leaf		rack1
+    Provision Switch			${s5_mac}		${s5_alias}			Spine		${EMPTY}
