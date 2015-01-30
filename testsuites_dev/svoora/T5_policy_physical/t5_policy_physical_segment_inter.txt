@@ -524,6 +524,7 @@ T14 Interface sement-interface redirect(next-hop) policy src-ip to dest-ip clear
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    rest clear policy stats  ${tenantX}  10
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
@@ -557,6 +558,7 @@ T15 Interface sement-interface redirect(next-hop) policy src-ip to dest-ip polic
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    rest clear policy stats  ${tenantX}  10
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
@@ -589,6 +591,7 @@ T16 Negitive testing-Remove/add tenant config
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    rest clear policy stats  ${tenantX}  10
 	sleep				   5
     start traffic  ${stream}
     sleep                  5

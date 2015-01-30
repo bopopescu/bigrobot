@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              platform test setup
 Test Teardown           platform test teardown
-Force Tags              BigTap  SwitchLight  accton-as4600  switch-platform 
+Force Tags              BigTap  SwitchLight  dell-s4810  switch-platform 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -63,7 +63,7 @@ TC006: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
     [Tags]  sanity  feature     
  
-TC007: Shutdown a 1G interface and verify interface state is down
+TC007: Shutdown a 10G interface and verify interface state is down
     shut interface  s1  ethernet1
     Sleep  5
     ${ret_value_1}=  cli show interface state  s1  ethernet1  admin_down=${True}
@@ -74,7 +74,7 @@ TC007: Shutdown a 1G interface and verify interface state is down
     Should Contain  ${ret_value_1}  up     
     [Tags]  sanity  ha  robustness
  
-TC008: Shutdown a 10G interface and verify interface state is down
+TC008: Shutdown a 40G interface and verify interface state is down
     shut interface  s1  etherne49
     Sleep  5
     ${ret_value_1}=  cli show interface state  s1  etherne49  admin_down=${True}
@@ -99,12 +99,12 @@ TC010: Verify ma1 ip address configuration via dhcp
     delete static ip  s1  ${netmask}  ${gateway}
     delete dns  s1  ${dns_server}  ${dns_domain}
     Sleep  5
-    cli add dhcp ip  10.1.8.97  6001
+    ${console}=  params  s1  console
+    ${switch_ip}=  params  s1  ip
+    cli add dhcp ip  ${console['ip']}  ${console['port']}
     Sleep  60
     ${ret_value_1}=  cli verify dhcp ip dns  s1  ${netmask}  ${dns_server}  ${dns_domain}
     Should Be True  ${ret_value_1}
-    ${console}=  params  s1  console
-    ${switch_ip}=  params  s1  ip
     cli delete dhcp ip  ${console['ip']}  ${console['port']}  ${switch_ip}  ${netmask}  ${gateway}
     sleep  5
     add static ip  s1  ${netmask}  ${gateway}
@@ -225,8 +225,8 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
 platform test setup
     ${result1}=  write version to file
     Should be true  ${result1}
-    ${result2}=  start syslog monitor
-    Should be true  ${result2}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     
 platform test teardown
     configure dns domain  s1  ${dns_server}  ${dns_domain}
