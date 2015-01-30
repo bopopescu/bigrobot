@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              platform test setup
 Test Teardown           platform test teardown
-Force Tags              BigTap  SwitchLight  accton-as5710  switch-platform 
+Force Tags              BigTap  SwitchLight  quanta-lb9  switch-platform 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -15,7 +15,7 @@ Library                 OperatingSystem.py
 Library                 String.py             
 
 * Variable
-${switchlight_version}  SwitchLight
+${switchlight_version}  Switch Light OS SWL-BT-
 ${netmask}              23
 ${gateway}              10.9.18.1
 ${dns_server}           10.3.0.4
@@ -63,7 +63,7 @@ TC006: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
     [Tags]  sanity  feature     
  
-TC007: Shutdown a 10G interface and verify interface state is down
+TC007: Shutdown a 1G interface and verify interface state is down
     shut interface  s1  ethernet1
     Sleep  5
     ${ret_value_1}=  cli show interface state  s1  ethernet1  admin_down=${True}
@@ -74,7 +74,7 @@ TC007: Shutdown a 10G interface and verify interface state is down
     Should Contain  ${ret_value_1}  up     
     [Tags]  sanity  ha  robustness
  
-TC008: Shutdown a 40G interface and verify interface state is down
+TC008: Shutdown a 10G interface and verify interface state is down
     shut interface  s1  etherne49
     Sleep  5
     ${ret_value_1}=  cli show interface state  s1  etherne49  admin_down=${True}

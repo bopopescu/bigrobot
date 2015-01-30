@@ -396,10 +396,32 @@ T8.6 Set And Unset Autoneg Interface From Switches Page
 	...  autoneg
 	...  flag=False
 
+T9.1 Controller Reload
+	${node}  Set Variable  slave
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	Sleep  30
+
+T9.2 Controller Reload
+	${old_master_ip}  Set Variable  ${SERVER}
+	${node}  Set Variable  master
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	${master_ip}=            get node ip   master
+	Should Not Be Equal As Strings  ${old_master_ip}  ${master_ip}
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Valid Login  admin  adminadmin
+
 *** Keyword ***
 GUI ZTN Suite Setup
 	Base Suite Setup
-	Set Selenium Timeout  20
 	${master_ip}=            get node ip   master
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs

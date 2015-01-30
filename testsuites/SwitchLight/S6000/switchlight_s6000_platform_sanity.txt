@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              platform test setup
 Test Teardown           platform test teardown
-Force Tags              BigTap  SwitchLight  accton-as5710  switch-platform 
+Force Tags              BigTap  SwitchLight  Dell-S6000  switch-platform 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -62,30 +62,19 @@ TC005: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.co
 TC006: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
     [Tags]  sanity  feature     
- 
-TC007: Shutdown a 10G interface and verify interface state is down
-    shut interface  s1  ethernet1
+
+TC007: Shutdown a 40G interface and verify interface state is down
+    shut interface  s1  etherne13
     Sleep  5
-    ${ret_value_1}=  cli show interface state  s1  ethernet1  admin_down=${True}
+    ${ret_value_1}=  cli show interface state  s1  etherne13  admin_down=${True}
     Should Contain  ${ret_value_1}  down     
-    unshut interface  s1  ethernet1
+    unshut interface  s1  etherne13
     Sleep  30
-    ${ret_value_1}=  cli show interface state  s1  ethernet1
-    Should Contain  ${ret_value_1}  up     
-    [Tags]  sanity  ha  robustness
- 
-TC008: Shutdown a 40G interface and verify interface state is down
-    shut interface  s1  etherne49
-    Sleep  5
-    ${ret_value_1}=  cli show interface state  s1  etherne49  admin_down=${True}
-    Should Contain  ${ret_value_1}  down     
-    unshut interface  s1  etherne49
-    Sleep  30
-    ${ret_value_1}=  cli show interface state  s1  etherne49
+    ${ret_value_1}=  cli show interface state  s1  etherne13
     Should Contain  ${ret_value_1}  up     
     [Tags]  sanity  ha  robustness
 
-TC009: Verify ma1 ip address configuration via static config
+TC008: Verify ma1 ip address configuration via static config
     delete static ip  s1  ${netmask}  ${gateway}
     delete dns  s1  ${dns_server}  ${dns_domain}
     Sleep  5
@@ -95,7 +84,7 @@ TC009: Verify ma1 ip address configuration via static config
     verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
     [Tags]  sanity  feature  runthis
 
-TC010: Verify ma1 ip address configuration via dhcp
+TC009: Verify ma1 ip address configuration via dhcp
     delete static ip  s1  ${netmask}  ${gateway}
     delete dns  s1  ${dns_server}  ${dns_domain}
     Sleep  5
@@ -111,14 +100,14 @@ TC010: Verify ma1 ip address configuration via dhcp
     add dns  s1  ${dns_server}  ${dns_domain}
     [Tags]  sanity  feature  
 
-TC011: Verify ntp
+TC010: Verify ntp
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
     [Tags]  sanity  feature     
 
-TC012: Verify ntp server after process ntp restart
+TC011: Verify ntp server after process ntp restart
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
@@ -127,7 +116,7 @@ TC012: Verify ntp server after process ntp restart
     verify ntp server  s1  time-c.nist.gov    
     [Tags]  sanity  feature
 
-TC013: Verify DPID on switch is same as being reported to Controller
+TC012: Verify DPID on switch is same as being reported to Controller
     ${controller_dpid}=  rest return switch dpid from ip  s1
     ${switch_dpid}=      cli show switch dpid  s1
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
@@ -225,8 +214,8 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
 platform test setup
     ${result1}=  write version to file
     Should be true  ${result1}
-    ${result}=  start syslog monitor
-    Should be true  ${result}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
     
 platform test teardown
     configure dns domain  s1  ${dns_server}  ${dns_domain}
