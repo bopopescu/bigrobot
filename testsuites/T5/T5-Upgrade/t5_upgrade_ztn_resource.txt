@@ -545,8 +545,8 @@ Upgrade launch negative    [Arguments]   ${node}   ${message}
 
 
 Verify active partition changed after upgrade    [Arguments]   ${node}   ${old}
-	${c1activepartition}=  get_boot_partition   ${node}   active
-	Run Keyword if   '${c1activepartition}' == '${old}'	   Return From Keyword      False 
+	${activepartition}=  get_boot_partition   ${node}   active
+	Run Keyword if   '${activepartition}' == '${old}'	   Return From Keyword      False 
 	...  ELSE   Return From Keyword     True
 	
  		 

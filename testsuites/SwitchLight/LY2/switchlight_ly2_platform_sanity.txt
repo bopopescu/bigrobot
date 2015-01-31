@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              platform test setup
 Test Teardown           platform test teardown
-Force Tags              BigTap  SwitchLight  accton-as5710  switch-platform 
+Force Tags              BigTap  SwitchLight  quanta-ly2  switch-platform 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py

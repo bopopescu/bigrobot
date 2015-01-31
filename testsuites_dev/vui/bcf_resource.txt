@@ -32,7 +32,6 @@ ${TACACS TITLE}				TACACS
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
-${AAA TITLE}				AAA
 ${SIGNOUT TITLE}  			Login
 
 
@@ -44,9 +43,6 @@ ${PROCEED DELTE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and co
 ${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
-${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
-${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
-${GENERIC YES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -144,11 +140,7 @@ ${CONFIRM SWITCH ACTION POPUP}				xpath=//div[@title='Confirm']
 ${SPLIT LEAF GROUP POPUP}					xpath=//div[@title='Split Leaf Group']
 ${CONFIRM SWITCH SUBMIT BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 
-#### Interfaces Page
-${SHUTDOWN INTERFACE ACTION MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Shutdown')]
-${STARTUP INTERFACE ACTION MENU ITEM}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Startup')]
-${SHUTDOWN INTERFACE POPUP}					xpath=//div[@title='Confirm Interface Shutdown']
-${STARTUP INTERFACE POPUP}					xpath=//div[@title='Confirm Interface Start Up']
+
 
 #### Port Groups Page
 
@@ -454,11 +446,10 @@ ${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') an
 ${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
 ${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
-${TACACS DEFAULT SETTINGS BUTTON}			xpath=//div[@id='tacacs_default_settings']/descendant::div[@class='icon_node configure']
-${DEFAULT TACACS SETTINGS POPUP}			xpath=//div[@title='Configure TACACS Defaults']
+
 
 #### Advanced Query
-${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div/input
+${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div
 ${FILTER QUERY BUTTON}						xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Filter')]
 ${FILTER QUERY CLEAR BUTTON}				xpath=//div[@class='bsn_button_group bottom']/div[1]
 ${ADVANCED QUERY BUILDER BUTTON}			xpath=//div[@class='bsn_button_group bottom']/div[2]
@@ -470,6 +461,9 @@ ${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}			/descendant::div[@data-dojo-attach
 ${COMPARISON COLUMN DROPDOWN FIELD SUFFIX} 	 		/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']
 ${COMPARISON COLUMN DROPDOWN FIELD SUFFIX VALUE} 	${COMPARISON COLUMN DROPDOWN FIELD SUFFIX}/following-sibling::input[@type='hidden']
 ${COMPARISON COLUMN DROPDOWN LIST}					xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::input[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='dijitReset dijitInputInner']/following-sibling::input[@type='hidden']
+#//div[@class='builder_row'][1]/descendant::div[@data-dojo-attach-point='inputsNode']/descendant::div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
 
 ${COMPARISON FUNCTION AREA SUFFIX}					/descendant::div[@data-dojo-attach-point='inputsNode']/div[contains(@data-dojo-attach-point, 'ColumnArea') and not(contains(@style, 'display: none'))]
 ${COMPARISON FUNCTION SUFFIX}						${COMPARISON FUNCTION AREA SUFFIX}/descendant::div[contains(@class, 'compare_select')]
@@ -492,6 +486,7 @@ ${SWITCH ICON PREFIX}						xpath=//div[@id='bcf_widgets_graphical_Fabric_nodeDis
 ${SWITCH SIDE PANEL}						xpath=//div[@id='bcf_widgets_graphical_Fabric_content_Switch_0']
 ${SWITCH VISUALIZE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockShow']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH CONFIGURE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockEdit']/descendant::div[@class='enabled bsn_control_button']
+#${SWITCH DELETE BUTTON}					${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockDelete']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH CLEAR CONFIGURATION BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockClear']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH SPLIT FROM LEAF GROUP BUTTON}		${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockSplit']/descendant::div[@class='enabled bsn_control_button']
 ${SWITCH RESET CONNECTION BUTTON}			${SWITCH SIDE PANEL}/descendant::div[@data-dojo-attach-point='actionBlockReset']/descendant::div[@class='enabled bsn_control_button']
@@ -517,25 +512,6 @@ ${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
 ${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
 ${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
-### AAA Page
-${ACCOUNING LINK}						xpath=//div[@id='link_accounting']
-${AUTHENTICATION LINK}					xpath=//div[@id='link_authentication']
-${ACCOUNTING BLOCK}						xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Accounting Statistics Destinations')]/parent::div
-${ACCOUNTING LOCAL ROW}					${ACCOUNTING BLOCK}/child::div[1]
-${ACCOUNTING REMOTE ROW}				${ACCOUNTING BLOCK}/child::div[3]
-${ACCOUNTING LOCAL KNOB}				${ACCOUNTING LOCAL ROW}/descendant::div[@class='knob_icon']
-${ACCOUNTING REMOTE KNOB}				${ACCOUNTING REMOTE ROW}/descendant::div[@class='knob_icon']
-${AUTHENTICATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]/parent::div
-${AUTHENTICATION FIRST SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][1]
-${AUTHENTICATION SECOND SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][2]
-${AUTHENTICATION FIRST SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
-${AUTHENTICATION SECOND SOURCE LIST}	xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][2]
-${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}   /descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
-${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}   /descendant::input[@class='dijitReset dijitInputInner']
-${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
-${AUTHENTICATION SETTINGS POPUP}		xpath=//div[@title='Authentication Settings']
-${AUTHENTICATION SAVE BUTTON}			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
-
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
@@ -556,7 +532,6 @@ Set URLs
 	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
 	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
-	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
 
@@ -705,13 +680,7 @@ Go To Logging Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOGGING TITLE}
     Sleep  1
-
-Go To AAA Page
-	Go To  ${AAA URL}
-    Wait Until Page Loaded
-    Title Should Contain  ${AAA TITLE}
-    Sleep  1
-
+    
 Go To Security Users Page
 	Go To  ${USERS URL}
     Wait Until Page Loaded 
@@ -979,11 +948,6 @@ Generate Action Menu Xpath Logging
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
-
-Generate Action Menu Xpath Interface
-	[Arguments]  ${attachment_point}  ${switch}  ${interface}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${interface}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='content'  and (text()= '  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
-    [Return]  ${xpath}
     
 Generate Src Interface Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
@@ -999,13 +963,7 @@ Generate Monitor Session Direction Xpath
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::td[@data-dojo-attach-point='cellInterfaceName'  and contains(text(), '  ${text}  ')]/parent::tr/td[4]/div/input
     [Return]  ${xpath}
-
-Generate Action Menu Action Item Xpath
-	[Arguments]  ${action}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), '  ${action}  ')]
-    [Return]  ${xpath}
-
-
+    	
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
 	Go To Tenants Page
@@ -1334,8 +1292,7 @@ Append Endpoint to Segment
     Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
 	
 	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
-
-
+	
 	
 Add IP Address to Endpoint
 	[Arguments]  ${ip-addr}
@@ -2112,7 +2069,7 @@ Configure SNMP Traps
    
    
 Add TACACS Host
-	[Arguments]  ${server}  ${tac_timeout}  ${secret}  ${encryption}
+	[Arguments]  ${server}  ${timeout}  ${secret}  ${encryption}
 	
 	Go To Tacacs Page
 	
@@ -2123,8 +2080,8 @@ Add TACACS Host
     
     Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
     
-    Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
        
     Run Keyword Unless  '${secret}' == '${EMPTY}'
     ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
@@ -2141,7 +2098,7 @@ Add TACACS Host
     
     
 Edit TACACS Host
-	[Arguments]  ${server}  ${new-server}  ${tac_timeout}  ${secret}  ${encryption}
+	[Arguments]  ${server}  ${new-server}  ${timeout}  ${secret}  ${encryption}
 	
 	Go To Tacacs Page
 	
@@ -2156,8 +2113,8 @@ Edit TACACS Host
 	   
     Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
     
-    Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+    Run Keyword Unless  '${timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
     
     
     Run Keyword Unless  '${secret}' == '${EMPTY}'
@@ -2191,35 +2148,7 @@ Delete TACACS Host
 	
     Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 
-Configure TACACS Default Settings
-	[Arguments]  ${tac_timeout}  ${secret}  ${encryption}
-	Verify Element Visible  ${TACACS DEFAULT SETTINGS BUTTON}
-    Click Element  ${TACACS DEFAULT SETTINGS BUTTON}   and don't wait
 
-    Verify Element Visible  ${DEFAULT TACACS SETTINGS POPUP}
-
-    Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
-
-    Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
-
-    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
-
-    Run Keyword If  '${encryption}' == 'Yes'
-    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
-
-    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
-    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-
-    Verify Element Invisible  ${DEFAULT TACACS SETTINGS POPUP}
-
-
-Add Simple Filtering Query
-	[Arguments]  ${query}
-	Clear Filtering Query
-	Verify Element Visible  ${FILTER QUERY FIELD}
-	Input Text And Verify  ${FILTER QUERY FIELD}  ${query}
-	Verify Element Visible  ${FILTER QUERY BUTTON}
-	Click Element  ${FILTER QUERY BUTTON}  and don't wait
 
 
 Check Advanced Query Builder
@@ -2342,21 +2271,6 @@ Failover From Fabric Page
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs
     Valid Login  admin  adminadmin
-
-Reload Controller From Fabric Page
-	[Arguments]  ${node}
-	${cube}=  Set Variable If
-	...  '${node}' == 'master'  ${ACTIVE CONTROLLER CUBE}
-	...  '${node}' == 'slave'  ${STANDBY CONTROLLER CUBE}
-	Go To Fabric Page
-	Verify Element Visible  ${cube}
-	Click Element  ${cube}  and don't wait
-	Verify Element Visible  ${CONTROLLER RELOAD BUTTON}
-	Click Element  ${CONTROLLER RELOAD BUTTON}  and don't wait
-	Verify Element Visible  ${GENERIC CONFIRM POPUP}
-	Verify Element Visible  ${GENERIC YES BUTTON}
-	Click Element  ${GENERIC YES BUTTON}  and don't wait
-	Sleep  150
 
 Reboot All Connected Switches From Fabric Page
 	Go To Fabric Page
@@ -2544,103 +2458,6 @@ Beacon Switch From Switches Page
     Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
     Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
 
-Shutdown Interface From Interfaces Page
-	[Arguments]  ${switch}  ${interface}
-	Go To Controller Interfaces Page
-	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
-	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
-	Verify Element Visible  ${action_menu}
-	Click Element  ${action_menu}  and don't wait
-	Verify Element Visible  ${SHUTDOWN INTERFACE ACTION MENU ITEM}
-	Click Element  ${SHUTDOWN INTERFACE ACTION MENU ITEM}  and don't wait
-	Verify Element Visible  ${SHUTDOWN INTERFACE POPUP}
-    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
-    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
-
-Startup Interface From Interfaces Page
-	[Arguments]  ${switch}  ${interface}
-	Go To Controller Interfaces Page
-	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
-	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
-	Verify Element Visible  ${action_menu}
-	Click Element  ${action_menu}  and don't wait
-	Verify Element Visible  ${STARTUP INTERFACE ACTION MENU ITEM}
-	Click Element  ${STARTUP INTERFACE ACTION MENU ITEM}  and don't wait
-	Verify Element Visible  ${STARTUP INTERFACE POPUP}
-    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
-    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
-
-Execute Interface Action From Interfaces Page
-	[Arguments]  ${switch}  ${interface}  ${action}
-	Go To Controller Interfaces Page
-	Add Simple Filtering Query  switch_alias:==${switch} name:==${interface}
-	${action_menu}  Generate Action Menu Xpath Interface  div[@id='interfaces_table']  ${switch}  ${interface}
-	Verify Element Visible  ${action_menu}
-	Click Element  ${action_menu}  and don't wait
-	${action_menu_item}  Generate Action Menu Action Item Xpath  ${action}
-	Verify Element Visible  ${action_menu_item}
-	Click Element  ${action_menu_item}  and don't wait
-	#Verify Element Visible  ${GENERIC CONFIRM POPUP}
-    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
-    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-    Page Should Not Contain  ${GENERIC CONFIRM POPUP}
-
-Shutdown Interface From Switches Page
-	[Arguments]  ${switch}  ${interface}
-	Go To Controller Switches Page
-	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
-	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
-	Verify Element Visible  ${expand_row_button}
-	Click Element  ${expand_row_button}  and don't wait
-	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
-	Verify Element Visible  ${auxilary_row}
-	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
-	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
-	Click Element  ${interface_action_menu}  and don't wait
-	Verify Element Visible  ${SHUTDOWN INTERFACE ACTION MENU ITEM}
-	Click Element  ${SHUTDOWN INTERFACE ACTION MENU ITEM}  and don't wait
-	Verify Element Visible  ${SHUTDOWN INTERFACE POPUP}
-    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
-    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
-
-Startup Interface From Switches Page
-	[Arguments]  ${switch}  ${interface}
-	Go To Controller Switches Page
-	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
-	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
-	Verify Element Visible  ${expand_row_button}
-	Click Element  ${expand_row_button}  and don't wait
-	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
-	Verify Element Visible  ${auxilary_row}
-	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
-	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
-	Click Element  ${interface_action_menu}  and don't wait
-	Verify Element Visible  ${STARTUP INTERFACE ACTION MENU ITEM}
-	Click Element  ${STARTUP INTERFACE ACTION MENU ITEM}  and don't wait
-	Verify Element Visible  ${STARTUP INTERFACE POPUP}
-    Verify Element Visible  ${CONFIRM SWITCH SUBMIT BUTTON}
-    Click Element  ${CONFIRM SWITCH SUBMIT BUTTON}  and don't wait
-
-Execute Interface Action From Switches Page
-	[Arguments]  ${switch}  ${interface}  ${action}
-	Go To Controller Switches Page
-	${action_menu}  Generate Action Menu Xpath Switch  div[@id='switches_table']  ${switch}
-	${expand_row_button}  Set Variable  ${action_menu}/parent::div/parent::td/following-sibling::td[1]/descendant::div[@class='expand']
-	Verify Element Visible  ${expand_row_button}
-	Click Element  ${expand_row_button}  and don't wait
-	${auxilary_row}  Set Variable  ${action_menu}/parent::div/parent::td/parent::tr/following-sibling::tr[1]
-	Verify Element Visible  ${auxilary_row}
-	${interfaces_subtable}  Set Variable  ${auxilary_row}/descendant::div[@data-dojo-attach-point='ifcTableNode']
-	${interface_action_menu}  Set Variable  ${interfaces_subtable}/descendant::div[@class='content' and (text()='${interface}')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
-	Click Element  ${interface_action_menu}  and don't wait
-	${action_menu_item}  Generate Action Menu Action Item Xpath  ${action}
-	Verify Element Visible  ${action_menu_item}
-	Click Element  ${action_menu_item}  and don't wait
-	#Verify Element Visible  ${GENERIC CONFIRM POPUP}
-    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
-    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-    Page Should Not Contain  ${GENERIC CONFIRM POPUP}
-
 Configure NTP Server
 	[Arguments]  ${server}
 	Go To Clock Page
@@ -2655,57 +2472,6 @@ Configure NTP Server
 	Verify Element Invisible  ${ADD NTP SERVER POPUP}
 	Page Should Contain  ${server}
 
-
-Configure Authentication
-	[Arguments]  ${first}  ${second}
-	Go To AAA Page
-	Verify Element Visible  ${AUTHENTICATION LINK}
-	Click Element  ${AUTHENTICATION LINK}  and don't wait
-	Verify Element Visible  ${AUTHENTICATION BLOCK}
-
-	Select From List And Verify
-    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
-    ...	 ${AUTHENTICATION FIRST SOURCE LIST}
-    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
-    ...  ${first}
-
-	Run Keyword Unless  '${second}' == '${EMPTY}'
-	...  Select From List And Verify
-    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
-    ...	 ${AUTHENTICATION SECOND SOURCE LIST}
-    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
-    ...  ${second}
-
-    Verify Element Visible  ${AUTHENTICATION SAVE BUTTON}
-    Click Element  ${AUTHENTICATION SAVE BUTTON}  and don't wait
-    Verify Element Visible  ${AUTHENTICATION SETTINGS POPUP}
-	Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-	Page Should Not Contain  ${AUTHENTICATION SETTINGS POPUP}
-
-Configure Accounting
-	[Arguments]  ${local}  ${remote}
-	Go To AAA Page
-	Verify Element Visible  ${ACCOUNING LINK}
-	Click Element  ${ACCOUNING LINK}  and don't wait
-	Verify Element Visible  ${ACCOUNTING BLOCK}
-	Verify Element Visible  ${ACCOUNTING LOCAL KNOB}
-	Highlight Element  ${ACCOUNTING LOCAL KNOB}
-	Verify Element Visible  ${ACCOUNTING REMOTE KNOB}
-	Highlight Element  ${ACCOUNTING REMOTE KNOB}
-
-	Assign ID to Element   ${ACCOUNTING LOCAL ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${local}')]  LOCAL
-    Drag And Drop   ${ACCOUNTING LOCAL KNOB}  target=LOCAL
-
-    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
-    Run Keyword If  '${popup_count}' > '0'
-    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-
-	Assign ID to Element   ${ACCOUNTING REMOTE ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${remote}')]  REMOTE
-    Drag And Drop   ${ACCOUNTING REMOTE KNOB}  target=REMOTE
-
-    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
-    Run Keyword If  '${popup_count}' > '0'
-    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
 
 Physical GUI Suite Setup
 	${tmp}  params  node=c1  key=ip
