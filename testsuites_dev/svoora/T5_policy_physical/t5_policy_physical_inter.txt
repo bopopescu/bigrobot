@@ -2844,7 +2844,7 @@ T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
 
 
 T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
-    [Tags]  feature  T95
+    [Tags]  feature  T95   nhg
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -2883,7 +2883,7 @@ T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
 
     
 T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
-    [Tags]  feature  T96
+    [Tags]  feature  T96    nhg
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -2922,7 +2922,7 @@ T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
 
 ######  **  ANY **  ########    
 T97 policy add/remove redirect(next-hop) from src-ip to any
-    [Tags]  feature  T97
+    [Tags]  feature  T97   nhg
     #${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -2959,7 +2959,7 @@ T97 policy add/remove redirect(next-hop) from src-ip to any
     delete traffic
     
 T98 policy add/remove redirect(next-hop) from src-tenant to dest-ip
-    [Tags]  feature  T98
+    [Tags]  feature  T98    nhg
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${src_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -2998,7 +2998,7 @@ T98 policy add/remove redirect(next-hop) from src-tenant to dest-ip
 
     
 T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
-    [Tags]  feature  T99
+    [Tags]  feature  T99    nhg
     ${src_dict}=  Create Dictionary  tenant  ${tenantY}
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -3038,7 +3038,7 @@ T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
     
 
 T100 policy add/remove redirect(next-hop) from src-tenant to dest-vns
-    [Tags]  feature   T100
+    [Tags]  feature   T100   nhg
     ${src_dict}=  Create Dictionary  tenant  ${tenantY}
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -3079,14 +3079,14 @@ T100 policy add/remove redirect(next-hop) from src-tenant to dest-vns
     
 ######  **  ANY need more investigation  **  ########   
 T101 policy add/remove redirect(next-hop) from src-tenant to any
-    [Tags]  feature
+    [Tags]  feature    T101   nhg
     ${src_dict}=  Create Dictionary  tenant  ${tenantY}
     #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3123,7 +3123,7 @@ T101 policy add/remove redirect(next-hop) from src-tenant to any
 
 
 T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
-    [Tags]  feature  T102
+    [Tags]  feature  T102    nhg
     ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -3163,7 +3163,7 @@ T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
 
 
 T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
-    [Tags]  smoke  feature
+    [Tags]  smoke  feature    T103   nhg
     
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
@@ -3203,7 +3203,7 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
     delete traffic
 
 T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
-    [Tags]  smoke  feature
+    [Tags]  smoke  feature    T104    nhg
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -3246,14 +3246,14 @@ T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
 
 ######  **  ANY need more investigation  **  ########   
 T105 policy add/remove redirect(next-hop) from src-vns to any
-    [Tags]  feature
+    [Tags]  feature    T105    nhg
     #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3287,14 +3287,14 @@ T105 policy add/remove redirect(next-hop) from src-vns to any
 
 ######  **  ANY need more investigation  **  ########   
 T106 policy add/remove redirect(next-hop) from any to dest-ip
-    [Tags]  feature
+    [Tags]  feature    T106   nhg
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3328,14 +3328,14 @@ T106 policy add/remove redirect(next-hop) from any to dest-ip
 
 ######  **  ANY need more investigation  **  ########   
 T107 policy add/remove redirect(next-hop) from any to dest-tenant
-    [Tags]  feature
+    [Tags]  feature    nhg    T107
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   dstdata=${dst_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3370,7 +3370,7 @@ T107 policy add/remove redirect(next-hop) from any to dest-tenant
     
 ######  **  ANY need more investigation  **  ########   
 T108 policy add/remove redirect(next-hop) from any to dest-vns
-    [Tags]  feature
+    [Tags]  feature    T108    nhg
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     
@@ -3378,7 +3378,7 @@ T108 policy add/remove redirect(next-hop) from any to dest-vns
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3414,7 +3414,7 @@ T108 policy add/remove redirect(next-hop) from any to dest-vns
     
 ######  **  ANY need more investigation  **  ########   
 T109 policy add/remove redirect(next-hop) from any to any
-    [Tags]  feature
+    [Tags]  feature    nhg    T109
     #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     
@@ -3422,7 +3422,7 @@ T109 policy add/remove redirect(next-hop) from any to any
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3458,7 +3458,7 @@ T109 policy add/remove redirect(next-hop) from any to any
 ##-------------------------------------##
 
 T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
-    [Tags]  feature
+    [Tags]  feature  nhg   T110
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     
@@ -3501,7 +3501,7 @@ T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
     
 
 T111 policy add/remove redirect(next-hop) from src-ip-port to dest-vns
-    [Tags]  smoke  feature
+    [Tags]  smoke  feature  T111  nhg
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     
@@ -3544,7 +3544,7 @@ T111 policy add/remove redirect(next-hop) from src-ip-port to dest-vns
     
 
 T112 policy add/remove redirect(next-hop) from src-ip-port to dest-tenant
-    [Tags]  smoke  feature
+    [Tags]  smoke  feature  T112  nhg
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     
@@ -3587,7 +3587,7 @@ T112 policy add/remove redirect(next-hop) from src-ip-port to dest-tenant
     
 ######  **  ANY need more investigation  **  ########   
 T113 policy add/remove redirect(next-hop) from src-ip-port to any
-    [Tags]  feature
+    [Tags]  feature  T113  nhg
     #${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     
@@ -3595,7 +3595,7 @@ T113 policy add/remove redirect(next-hop) from src-ip-port to any
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
@@ -3629,7 +3629,7 @@ T113 policy add/remove redirect(next-hop) from src-ip-port to any
 ######  **  ANY need more investigation  **  ########   
 
 T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
-    [Tags]  smoke  feature
+    [Tags]  smoke  feature  T114  nhg
     ${src_dict}=  Create Dictionary  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     
@@ -3672,7 +3672,7 @@ T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
 
 
 T115 policy add/remove redirect(next-hop) from src-vns to dest-ip-port
-    [Tags]  smoke  feature  T96
+    [Tags]  smoke  feature  nhg  T115
     ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -3712,13 +3712,13 @@ T115 policy add/remove redirect(next-hop) from src-vns to dest-ip-port
 
 ######  **  ANY need more investigation  **  ########   
 T116 policy add/remove redirect(next-hop) from any to dest-ip-port
-    [Tags]  feature
+    [Tags]  feature  nhg  T116
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   dstdata=${dst_dict}  next-hop=${next_hop}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     #pause      FREEZZEEEE!
