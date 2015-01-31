@@ -39,6 +39,8 @@ s1:
     spine1_int0: ethernet31
     h1_int0: ethernet48
     h2_int0: ethernet47
+    h2_int1: ethernet28
+    h1_int1: ethernet25
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -86,7 +88,9 @@ s3:
     leaf1b_int1: ethernet39
     spine0_int0: ethernet32
     h3_int0: ethernet1
-    h4_int0: ethernet2    
+    h4_int0: ethernet2
+    h3_int1: ethernet25
+    h4_int1: ethernet26 
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -221,18 +225,26 @@ h3:
   ip: 10.9.16.11
   user: root
   password: bsn
+  interfaces:
+    h3_eth1_mac: d4:ae:52:c9:c8:e9
 h4:
   ip: 10.9.16.12
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:81:a0
 h5:
   ip: 10.9.16.15
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:80:fc  
 h6:
   ip: 10.9.16.16
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:7d:b0
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
