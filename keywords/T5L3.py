@@ -1804,12 +1804,15 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         helpers.log("Printing len of data: %d and switch name:%s" % (len(data), switch))
         if (len(data) != 0):
             for i in range (0, len(data)):
+                helpers.log("printing ICAP table from switch:%s and given IP :%s" % (data[i]['dst-ip'], matchip))
                 if data[i]["dst-ip"] == matchip:
                     helpers.log("Match found in ICAP table")
                     return True
-                else:
-                    helpers.log("Match not found in ICAP table")
-                    return False
+        else:
+            helpers.log("Match not found in ICAP table")
+            return False
+
+        return False
 
 
     def rest_clear_policy_stats(self, tenant, seq):
