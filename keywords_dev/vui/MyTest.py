@@ -790,6 +790,50 @@ vui@Vuis-MacBook-Pro$
 
         return True
 
+    def test_bsn_common_services(self):
+        from bsn_common_services import tasks as tasks
+        t = test.Test()
+        task = tasks.UpgradeCommands()
+
+        res1 = task.add.delay(99, 99)
+        res2 = task.add.delay(101, 101)
+        results = []
+        results.append(res1)
+        results.append(res2)
+
+        is_pending = True
+        iterations = 0
+        max_tries = 10
+        while is_pending and iterations <= max_tries:
+            is_pending = False
+            iterations += 1
+            helpers.sleep(3)
+            for res in results:
+                task_id = res.task_id
+                if res.ready() == True:
+                    helpers.log("****** %d.READY     - task_id(%s)"
+                                % (iterations, res.task_id))
+                else:
+                    helpers.log("****** %d.NOT-READY - task_id(%s)"
+                                % (iterations, res.task_id))
+                    is_pending = True
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
+
+        helpers.log("*** Parallel tasks completed")
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)  # display URL of task output
+
+        #
+        # Check task output
+        #
+        for res in results:
+            task_id = res.task_id
+            output = res.get()
+            helpers.log("task_id: %s, result: %s" % (res.task_id, output))
+
     def test_vui_esb(self, nodes):
         # from bsn_services import sample_method_tasks as tasks
         from vui_services import tasks as tasks

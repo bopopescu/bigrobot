@@ -57,7 +57,7 @@ ${ixia3}                        ethernet18
 #leaf0a
 ${ixia4}                        ethernet17 
 #leaf1a
-${ixia7}                        ethernet17 
+${ixia7}                        ethernet18 
 #leaf1a
 ${ixia6}                        ethernet17 
 #leaf1b

@@ -478,6 +478,8 @@ ${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}		${COMPARISON FUNCTION AREA SUFFIX
 ${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX} 		${COMPARISON FUNCTION SUFFIX}/descendant::input[@class='dijitReset dijitInputInner']
 
 ${COMPARISON VALUE SUFFIX}					${COMPARISON FUNCTION SUFFIX}/following-sibling::div/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input
+${COMPARISON NOT CHECKBOX SUFFIX}			/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='inline_block bottom not_node']/div[1]/input
+
 ${CLOSE AND FILTER BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close & Filter')]
 ${CLOSE AND NOT FILTER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close') and not(contains(text(), 'Filter'))]
 
@@ -559,6 +561,7 @@ Set URLs
 	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+	Set Suite Variable		${LOGOUT URL}				https://${SERVER}/logout
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -566,6 +569,8 @@ Valid Login
     Input Username    ${username}
     Input Password    ${password}
     Submit Credentials
+    Sleep  5
+    Wait Until Page Loaded
     Welcome Page Should Be Open
 
 Login With Invalid Credentials Should Fail
@@ -723,6 +728,12 @@ Go To Signout Page
     Wait Until Page Loaded 
     Title Should Contain  ${SIGNOUT TITLE}
     Sleep  1
+
+Logout
+	Go To  ${LOGOUT URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${LOGIN TITLE}
+    Sleep  1
     
 Delete All Tenants
 	Go To Tenants Page
@@ -800,18 +811,22 @@ Delete All
 	
 	
 Select Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
 	Run Keyword If  '${selected count}' == '0'
-	...  Click Element  ${unselected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Selected  ${selected}
 
 
 Unselect Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
 	Run Keyword If  '${unselected count}' == '0'
-	...  Click Element  ${selected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Unselected  ${unselected}
 
 
@@ -855,7 +870,7 @@ Submit Credentials
 
 
 Welcome Page Should Be Open
-    Location Should Be  ${WELCOME URL}
+    #Location Should Be  ${WELCOME URL}
     Title Should Contain  ${DASHBOARD TITLE}
 
 
@@ -2254,11 +2269,11 @@ Check Advanced Query Builder
 	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
 
 Open Advanced Query Builder
-	[Arguments]  ${page}
+	[Arguments]  ${page}  ${clear}=clear
 	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
 	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
 	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
-	Clear Filtering Query
+	Run Keyword If  '${clear}' == 'clear'  Clear Filtering Query
 	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
 	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
 
@@ -2283,16 +2298,27 @@ Add Second Filter Query or Use First Empty
 	...  Click Element  ${ADVANCED QUERY LINE}[1]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
 
 Add Filter Query
-	[Arguments]  ${column}  ${comparison}  ${value}
+	[Arguments]  ${column}  ${comparison}  ${value}  ${flag}=positive  ${position}=0
 	${configured}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
 	Log  ${configured}
-	Run Keyword If  '${configured}' == '1'
+	Run Keyword If  '${configured}' == '1' and '${position}' == '0'
 	...  Add Second Filter Query or Use First Empty
-	Run Keyword Unless  '${configured}' == '1'
+	...  ELSE IF  '${position}' == '0'
 	...  Click Element  ${ADVANCED QUERY LINE}[${configured}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
-	${index}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+
+	${count}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	${index}  Set Variable If  '${position}' == '0'
+	...  ${count}
+	...  ${position}
 	Log  ${index}
 	${column_index}=  Evaluate  int((2 * ${index}) - 1)
+
+	Run Keyword If  '${flag}' == 'negative'
+	...  Select Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
+	Run Keyword If  '${flag}' == 'positive'
+	...  Unselect Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
 	Select From List And Verify
 	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
 	...  ${COMPARISON COLUMN DROPDOWN LIST}[${column_index}]
@@ -2312,6 +2338,13 @@ Add Filter Query
 	Run Keyword Unless  '${value}' == '${EMPTY}'
 	...  Input Text And Verify  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}  ${value}
 	Click Element  ${ADVANCED QUERY BUILDER POPUP}  and don't wait
+
+
+Delete Filter Query
+	[Arguments]  ${position}
+	Click Element  ${ADVANCED QUERY LINE}[${position}]${DEL QUERY LINE BUTTON SUFFIX}  and don't wait
+
+
 
 Verify Filtering Result
 	[Arguments]  ${value}  ${flag}

@@ -59,15 +59,19 @@ T3.1 Local Only
 T3.2 Remote Only
 	Valid Login  admin  adminadmin
 	Configure Authentication  TACACS  None
-	Go To Login Page
-	Valid Login  remote  remote
+	Logout
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Sleep  30
 	Login With Invalid Credentials Should Fail  admin  adminadmin
+	Valid Login  remote  remote
+	Logout
 	Valid Login  admin  Password1
 	Configure Authentication  TACACS  Local
 	Valid Login  admin  adminadmin
 
 T3.3 Local Then Remote
-	Valid Login  admin  adminadmin
+	Valid Login  admin  Password1
 	Configure Authentication  Local  TACACS
 	Valid Login  remote  remote
 	Valid Login  admin  adminadmin
