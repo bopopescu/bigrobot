@@ -3014,7 +3014,7 @@ T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
     should be true  ${result}
     ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
-    pause     FREEZZEEEE!!
+    #pause     FREEZZEEEE!!
     clear stats
     sleep                  5
     start traffic  ${stream}
@@ -3054,7 +3054,7 @@ T100 policy add/remove redirect(next-hop) from src-tenant to dest-vns
     should be true  ${result}
     ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
-    pause     FREEZZEEEE!!
+    #pause     FREEZZEEEE!!
     clear stats
     sleep                  5
     start traffic  ${stream}
@@ -3095,7 +3095,7 @@ T101 policy add/remove redirect(next-hop) from src-tenant to any
     should be true  ${result}
     ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
-    pause     FREEZZEEEE!!
+    #pause     FREEZZEEEE!!
     clear stats
     sleep                  5
     start traffic  ${stream}
@@ -3124,7 +3124,7 @@ T101 policy add/remove redirect(next-hop) from src-tenant to any
 
 T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
     [Tags]  feature  T102    nhg
-    ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
@@ -3144,8 +3144,6 @@ T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3166,7 +3164,7 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
     [Tags]  smoke  feature    T103   nhg
     
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
-    ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
@@ -3185,8 +3183,6 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3205,7 +3201,7 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
 T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
     [Tags]  smoke  feature    T104    nhg
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
-    ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
@@ -3224,8 +3220,6 @@ T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3248,7 +3242,7 @@ T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
 T105 policy add/remove redirect(next-hop) from src-vns to any
     [Tags]  feature    T105    nhg
     #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
-    ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
@@ -3267,8 +3261,6 @@ T105 policy add/remove redirect(next-hop) from src-vns to any
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3308,8 +3300,6 @@ T106 policy add/remove redirect(next-hop) from any to dest-ip
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3349,8 +3339,6 @@ T107 policy add/remove redirect(next-hop) from any to dest-tenant
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3392,8 +3380,6 @@ T108 policy add/remove redirect(next-hop) from any to dest-vns
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
@@ -3436,8 +3422,6 @@ T109 policy add/remove redirect(next-hop) from any to any
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
-    ${returnVal}=  cli verify cluster slave reboot
-    Should Be True  ${returnVal}
     stop traffic   ${stream}
     verify results   c   b
     delete traffic
