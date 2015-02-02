@@ -3268,6 +3268,9 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         if name is None:
             params = t.topology_params_nodes()
             for key in params:
+                if not helpers.is_switch(key):
+                    helpers.log("Skip Remove no_auto_relaod for key: %s" % key)
+                    continue
                 con = t.dev_console(key)
                 helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
                 con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
