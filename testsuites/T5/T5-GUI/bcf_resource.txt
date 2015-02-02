@@ -561,6 +561,7 @@ Set URLs
 	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+	Set Suite Variable		${LOGOUT URL}				https://${SERVER}/logout
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -568,6 +569,8 @@ Valid Login
     Input Username    ${username}
     Input Password    ${password}
     Submit Credentials
+    Sleep  5
+    Wait Until Page Loaded
     Welcome Page Should Be Open
 
 Login With Invalid Credentials Should Fail
@@ -725,6 +728,12 @@ Go To Signout Page
     Wait Until Page Loaded 
     Title Should Contain  ${SIGNOUT TITLE}
     Sleep  1
+
+Logout
+	Go To  ${LOGOUT URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${LOGIN TITLE}
+    Sleep  1
     
 Delete All Tenants
 	Go To Tenants Page
@@ -861,7 +870,7 @@ Submit Credentials
 
 
 Welcome Page Should Be Open
-    Location Should Be  ${WELCOME URL}
+    #Location Should Be  ${WELCOME URL}
     Title Should Contain  ${DASHBOARD TITLE}
 
 
