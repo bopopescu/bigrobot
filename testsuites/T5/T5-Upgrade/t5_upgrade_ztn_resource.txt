@@ -129,6 +129,8 @@ Verify switch are booted with correct image
 		${switches}=  rest_get_suspended_switch 
  		Should Be Empty   ${switches} 
 		sleep  ${long} 		
+		${result}=  rest_show_fabric_status
+		Should be True   ${result}		
  		${switches}=  get_all_switch_nodes  
 		log   switches are ${switches}
  		: FOR    ${sw}   IN   @{switches}   
