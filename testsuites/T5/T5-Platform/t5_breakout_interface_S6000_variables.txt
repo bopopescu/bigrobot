@@ -18,6 +18,7 @@ ${leaf1a_intf2}  	ethernet9
 ${leaf1a_intf3}  	ethernet10
 ${leaf1a_intf4}  	ethernet11
 
+## This link does not have breakout cable inserted
 ${leaf1b_intf5}  	ethernet10
 ${leaf1b_intf6}  	ethernet10/1
 ${leaf1b_intf7}  	ethernet10/2

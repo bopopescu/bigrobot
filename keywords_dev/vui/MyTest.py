@@ -795,8 +795,8 @@ vui@Vuis-MacBook-Pro$
         t = test.Test()
         task = tasks.UpgradeCommands()
 
-        res1 = task.add.delay(99 + 99)
-        res2 = task.add.delay(101 + 101)
+        res1 = task.add.delay(99, 99)
+        res2 = task.add.delay(101, 101)
         results = []
         results.append(res1)
         results.append(res2)
