@@ -15,6 +15,7 @@ class UpgradeCommands(object):
         """
         A very simple task which adds 2 numbers.
         """
+        helpers.log("I am here: x=%s y=%s" % (x, y))
         return x + y
 
     @app.task(filter=task_method)
