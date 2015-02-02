@@ -238,7 +238,7 @@ T2.2.1 Add Tenant Filter positive
 	Add Filter Query  VRF ID  					equals			1
 	Add Filter Query  Default Route  			ends with		test
 	Add Filter Query  Applied Policy List		starts with		test
-	Add Filter Query  System Tenant Interface  	True			${EMPTY}
+	Add Filter Query  System Tenant Interface  	False			${EMPTY}
 	Add Filter Query  Total Tenant Interfaces  	equals			1
 	Add Filter Query  Total Segment Interfaces 	greater than 	1
 	Add Filter Query  Total Segments  			less than		1
@@ -248,6 +248,7 @@ T2.2.1 Add Tenant Filter positive
 	Close And Filter Advanced Query Builder
 	Open Advanced Query Builder  Tenants  edit
 	Close And Filter Advanced Query Builder
+	[Tags]  BVS-2746
 
 T2.2.2 Add Tenant Filter negative
 	Open Advanced Query Builder  Tenants
@@ -448,6 +449,7 @@ T3.2.1 Add Interface Filter positive
 	Close And Filter Advanced Query Builder
 	Open Advanced Query Builder  Interfaces  edit
 	Close And Filter Advanced Query Builder
+	[Tags]  BVS-2746
 
 T3.2.2 Add Interface Filter negative
 	Open Advanced Query Builder  Interfaces
@@ -468,6 +470,7 @@ T3.2.2 Add Interface Filter negative
 	Close And Filter Advanced Query Builder
 	Open Advanced Query Builder  Interfaces  edit
 	Close And Filter Advanced Query Builder
+	[Tags]  BVS-2746
 
 T3.2.3 Edit Interface Filter
 	Open Advanced Query Builder  Interfaces
