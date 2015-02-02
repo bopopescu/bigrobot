@@ -32,7 +32,7 @@ T1.1 Check Endpoints Advanced Query Builder
 	Check Advanced Query Builder  Endpoints  ${ENDPOINT COMPARISON COLUMNS}
 	[Tags]  GUI-16
 
-T1.2 Add Endpoint Filter
+T1.2.1 Add Endpoint Filter positive
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Any  				contains  		test
 	Add Filter Query  VLAN  			greater than  	1
@@ -46,6 +46,75 @@ T1.2 Add Endpoint Filter
 	Add Filter Query  Switch  			contains  		test
 	Add Filter Query  Interface  		contains  		test
 	Add Filter Query  Port Group  		contains  		test
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Close And Filter Advanced Query Builder
+
+T1.2.2 Add Endpoint Filter negative
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  				contains  		test  negative
+	Add Filter Query  VLAN  			greater than  	1  negative
+	Add Filter Query  Tenant  			starts with  	test  negative
+	Add Filter Query  Segment  			ends with  		test  negative
+	Add Filter Query  Name  			contains  		test  negative
+	Add Filter Query  Attachment State	contains  		test  negative
+	Add Filter Query  Description  		contains  		test  negative
+	Add Filter Query  IP Addresses  	contains  		1  negative
+	Add Filter Query  MAC Address  		contains  		test  negative
+	Add Filter Query  Switch  			contains  		test  negative
+	Add Filter Query  Interface  		contains  		test  negative
+	Add Filter Query  Port Group  		contains  		test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Close And Filter Advanced Query Builder
+
+T1.2.3 Edit Endpoint Filter
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  				contains  		test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  VLAN  			greater than  	1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Tenant  			starts with  	test1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Segment  			ends with  		test2  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Name  			contains  		test3  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Attachment State	contains  		test4  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Description  		contains  		test5  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  IP Addresses  	contains  		2  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  MAC Address  		contains  		test6  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Switch  			contains  		test7  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Interface  		contains  		test8  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Port Group  		contains  		test9  negative  1
+	Close And Filter Advanced Query Builder
+
+T1.2.4 Delete Endpoint Filter
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  				contains  		test  negative
+	Add Filter Query  VLAN  			greater than  	1  negative
+	Add Filter Query  Tenant  			starts with  	test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Endpoints  edit
+	Delete Filter Query  1
+	Delete Filter Query  1
 	Close And Filter Advanced Query Builder
 
 #T1.3 Verify Endpoint Filtering
@@ -160,7 +229,7 @@ T2.1 Check Tenants Advanced Query Builder
 	Check Advanced Query Builder  Tenants  ${TENANT COMPARISON COLUMNS}
 	[Tags]  GUI-16
 
-T2.2 Add Tenant Filter
+T2.2.1 Add Tenant Filter positive
 	Open Advanced Query Builder  Tenants
 	Add Filter Query  Any						contains		test
 	Add Filter Query  Name  					contains		test
@@ -176,6 +245,83 @@ T2.2 Add Tenant Filter
 	Add Filter Query  Total Routes  			equals			1
 	Add Filter Query  Total Next Hop Groups		greater than	1
 	Add Filter Query  Total Policy Lists		less than		1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Close And Filter Advanced Query Builder
+
+T2.2.2 Add Tenant Filter negative
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Any						contains		test  negative
+	Add Filter Query  Name  					contains		test  negative
+	Add Filter Query  Description  				starts with		test  negative
+	Add Filter Query  Router MAC Address  		ends with		test  negative
+	Add Filter Query  VRF ID  					equals			1  negative
+	Add Filter Query  Default Route  			ends with		test  negative
+	Add Filter Query  Applied Policy List		starts with		test  negative
+	Add Filter Query  System Tenant Interface  	True			${EMPTY}  negative
+	Add Filter Query  Total Tenant Interfaces  	equals			1  negative
+	Add Filter Query  Total Segment Interfaces 	greater than 	1  negative
+	Add Filter Query  Total Segments  			less than		1  negative
+	Add Filter Query  Total Routes  			equals			1  negative
+	Add Filter Query  Total Next Hop Groups		greater than	1  negative
+	Add Filter Query  Total Policy Lists		less than		1  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Close And Filter Advanced Query Builder
+
+T2.2.3 Edit Tenant Filter
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Any						contains		test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Name  					contains		test1  positive  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Description  				starts with		test2  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Router MAC Address  		ends with		test3  positive  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  VRF ID  					equals			1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Default Route  			ends with		test4  positive  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Applied Policy List		starts with		test5  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  System Tenant Interface  	True			${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Tenant Interfaces  	equals			1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Segment Interfaces 	greater than 	2  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Segments  			less than		3  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Routes  			equals			4  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Next Hop Groups		greater than	5  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Add Filter Query  Total Policy Lists		less than		6  negative  1
+	Close And Filter Advanced Query Builder
+
+T2.2.4 Delete Tenant Filter negative
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Any						contains		test  negative
+	Add Filter Query  Name  					contains		test1  positive
+	Add Filter Query  Description  				starts with		test2  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Tenants  edit
+	Delete Filter Query  3
+	Delete Filter Query  2
 	Close And Filter Advanced Query Builder
 
 #T2.3 Verify Tenant Filtering
@@ -283,7 +429,7 @@ T3.1 Check Interfaces Advanced Query Builder
 	Check Advanced Query Builder  Interfaces  ${INTERFACE COMPARISON COLUMNS}
 	[Tags]  GUI-16
 
-T3.2 Add Interface Filter
+T3.2.1 Add Interface Filter positive
 	Open Advanced Query Builder  Interfaces
 	Add Filter Query  Any						contains				test
 	Add Filter Query  Switch  					is						test
@@ -299,6 +445,87 @@ T3.2 Add Interface Filter
 	Add Filter Query  Port Group  				is						test
 	Add Filter Query  Breakout					Null or unspecified  	${EMPTY}
 	Add Filter Query  Auto-Negotiation			Null or unspecified  	${EMPTY}
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Close And Filter Advanced Query Builder
+
+T3.2.2 Add Interface Filter negative
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any						contains				test  negative
+	Add Filter Query  Switch  					is						test  negative
+	Add Filter Query  Switch MAC  				starts with				test  negative
+	Add Filter Query  Interface Name  			ends with				test  negative
+	Add Filter Query  Status  					True					${EMPTY}  negative
+	Add Filter Query  Admin Status  			False					${EMPTY}  negative
+	Add Filter Query  Link Status				Null or unspecified  	${EMPTY}  negative
+	Add Filter Query  Hardware Address  		is						test  negative
+	Add Filter Query  Number  					equals					1  negative
+	Add Filter Query  Spine Switch 				True					${EMPTY}  negative
+	Add Filter Query  Leaf Switch  				False					${EMPTY}  negative
+	Add Filter Query  Port Group  				is						test  negative
+	Add Filter Query  Breakout					Null or unspecified  	${EMPTY}  negative
+	Add Filter Query  Auto-Negotiation			Null or unspecified  	${EMPTY}  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Close And Filter Advanced Query Builder
+
+T3.2.3 Edit Interface Filter
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any						contains				test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Switch  					is						test1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Switch MAC  				starts with				test2  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Interface Name  			ends with				test3  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Status  					True					${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Admin Status  			False					${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Link Status				Null or unspecified  	${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Hardware Address  		is						test4  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Number  					equals					1  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Spine Switch 				True					${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Leaf Switch  				False					${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Port Group  				is						test5  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Breakout					Null or unspecified  	${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Add Filter Query  Auto-Negotiation			Null or unspecified  	${EMPTY}  negative  1
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Close And Filter Advanced Query Builder
+
+T3.2.4 Delete Interface Filter
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any						contains				test  negative
+	Add Filter Query  Switch  					is						test  negative
+	Add Filter Query  Switch MAC  				starts with				test  negative
+	Add Filter Query  Interface Name  			ends with				test  negative
+	Close And Filter Advanced Query Builder
+	Open Advanced Query Builder  Interfaces  edit
+	Delete Filter Query  2
+	Delete Filter Query  2
+	Delete Filter Query  2
 	Close And Filter Advanced Query Builder
 
 #T3.3 Verify Interfaces Filtering
@@ -470,7 +697,7 @@ Filtering Suite Setup
 	Create Tenant  tenant-a  tenant-a
 	Create Tenant  tenant-b  tenant-b
 	Create Logical Segments	 tenant-a  segment-a  ${EMPTY}	leaf0-a  ethernet1  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
-	Create Logical Segments	 tenant-b  segment-b  ${EMPTY}	leaf1-a  ethernet1  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+	Create Logical Segments	 tenant-b  segment-b  ${EMPTY}	leaf0-b  ethernet1  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
 	Create Logical Segment Interface  tenant-a  segment-a  Active  100.100.1.1  24  Public  Disabled  ${EMPTY}
 	Create Logical Segment Interface  tenant-b  segment-b  Active  100.100.2.1  24  Public  Disabled  ${EMPTY}
 	Create Logical Router Routes  tenant-a  100.100.2.0	 24	 System Tenant  ${EMPTY}
