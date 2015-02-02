@@ -10,7 +10,8 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
 	     	
 	log  step 1 - copy the image and check image present and not same as current
-		Log time to console   before copy image
+		 
+		Log time    ${File}   before copy image		
 		copy_pkg_from_server   ${upgradeimage}  
 		Log time    ${File}   after copy image
 		${num}  ${image}=	   cli_check_image 
@@ -18,7 +19,7 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		Upgrade show command    master
   		
 	log  step 2 - stage the image and check switch image and manifest file in right location
-		Log time to console   before stage image
+		Log time    ${File}    before stage image
 		${result}= 	cli_upgrade_stage   c1
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
@@ -62,7 +63,7 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		Return From Keyword   True
 
 Copy image  [Arguments]    ${upgradeimage}    ${node}=master
-		Log time to console   before copy image
+		Log time    ${File}    before copy image
 		copy_pkg_from_server   ${upgradeimage}    ${node}
 		Log time    ${File}   after copy image
 		${num}  ${image}=	   cli_check_image    ${node}
@@ -77,7 +78,7 @@ Copy image if no image exist   [Arguments]    ${node}
 		
 
 Stage image    [Arguments]    ${node}=master
-		Log time to console   before stage image
+		Log time    ${File}   before stage image
 		${result}= 	cli_upgrade_stage   ${node}
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
@@ -122,7 +123,8 @@ add host port groups
 
 Verify switch are booted with correct image
   		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back 
- 		Log time   ${File}   all switches connected back	
+ 		Log time   ${File}   all switches connected back
+ 		Log time   ${File}   after upgrade launch	
  		enable   master  show switch	 
 		${switches}=  rest_get_suspended_switch 
  		Should Be Empty   ${switches} 
@@ -418,7 +420,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
 	     	
 	log  step 1 - copy the image and check image present and not same as current
-		Log time to console   before copy image
+		Log time    ${File}   before copy image
 		
 		upgrade_copy_image_HA_parallel     nodes=@{nodes}   image=${upgradeimage} 	     		  
 		Log time    ${File}   after copy image
@@ -429,7 +431,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		 
   		
 	log  step 2 - stage the image and check switch image and manifest file in right location
-		Log time to console   before stage image
+		Log time    ${File}   before stage image
 		${result}= 	 upgrade_statge_image_HA_parallel     nodes=@{nodes}   
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 	
@@ -479,7 +481,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		Return From Keyword   True
 
 Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage} 
-		Log time to console   before copy image
+		Log time    ${File}   before copy image
 		upgrade_copy_image_HA_parallel     nodes=@{nodes}   image=${upgradeimage} 	     		  
 		Log time    ${File}   after copy image
  		: FOR    ${node}   IN   @{nodes}   
@@ -488,7 +490,7 @@ Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage}
 		\  Upgrade show command    ${node}
 
 Dual node stage image  [Arguments]    ${nodes}
- 		Log time to console   before stage image
+ 		Log time    ${File}   before stage image
 		${result}= 	 upgrade_statge_image_HA_parallel     nodes=@{nodes}   
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 	
