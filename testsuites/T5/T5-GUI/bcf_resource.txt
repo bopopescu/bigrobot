@@ -46,7 +46,8 @@ ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
 ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
-${GENERIC YES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+${GENERIC YES BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+${GENERIC PROCEED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -518,6 +519,11 @@ ${ADD NTP SERVER BUTTON}				xpath=//div[@class='icon_node plus']
 ${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
 ${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
 ${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${SYNC TO NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Sync NTP to Server')]
+${DELETE NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Delete')]
+${DELETE NTP SERVER BUTTON}				xpath=//div[@class='icon_node minus']
+
+
 
 ### AAA Page
 ${ACCOUNING LINK}						xpath=//div[@id='link_accounting']
@@ -999,6 +1005,11 @@ Generate Action Menu Xpath Interface
 	[Arguments]  ${attachment_point}  ${switch}  ${interface}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${interface}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='content'  and (text()= '  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+
+Generate Action Menu Xpath NTP Server
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
     
 Generate Src Interface Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
@@ -1020,6 +1031,10 @@ Generate Action Menu Action Item Xpath
     ${xpath}  Catenate  SEPARATOR=  xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), '  ${action}  ')]
     [Return]  ${xpath}
 
+Generate NTP Server Checkbox Xpath
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::input[@type='checkbox']
+    [Return]  ${xpath}
 
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
@@ -2687,6 +2702,36 @@ Configure NTP Server
 	Click Element  ${SAVE NTP SERVER BUTTON}  and don't wait
 	Verify Element Invisible  ${ADD NTP SERVER POPUP}
 	Page Should Contain  ${server}
+
+Sync To NTP Server
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${SYNC TO NTP SERVER MENU ITEM}
+	Click Element  ${SYNC TO NTP SERVER MENU ITEM}  and don't wait
+
+Delete NTP Server Using Action Menu
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${DELETE NTP SERVER MENU ITEM}
+	Click Element  ${DELETE NTP SERVER MENU ITEM}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
+
+Delete NTP Server Using Minus Button
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${server checkbox}  Generate NTP Server Checkbox Xpath  ${server}
+	Select Checkbox  ${server checkbox}
+	Verify Element Visible  ${DELETE NTP SERVER BUTTON}
+	Click Element  ${DELETE NTP SERVER BUTTON}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
 
 
 Configure Authentication
