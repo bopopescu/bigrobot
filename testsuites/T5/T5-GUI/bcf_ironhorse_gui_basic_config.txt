@@ -294,6 +294,53 @@ T11.4 Authentication Configuration Remote then None
 	...  aaa authentication
 	...  flag=False
 
+T12.1 Sync to bigswitch NTP server
+	Go To Clock Page
+	Sync To NTP Server  0.bigswitch.pool.ntp.org
+	Sleep  15
+	[Tags]  NTP
+
+T12.2 Configure NTP Server and delete with action menu
+	Go To Clock Page
+	Configure NTP Server  1.1.1.1
+	Configure NTP Server  2.2.2.2
+	Configure NTP Server  3.3.3.3
+	Configure NTP Server  4.4.4.4
+	Configure NTP Server  5.5.5.5
+	Configure NTP Server  6.6.6.6
+	Sync To NTP Server  6.6.6.6
+	Sleep  15
+	Delete NTP Server Using Action Menu  6.6.6.6
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  5.5.5.5
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  4.4.4.4
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  3.3.3.3
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  2.2.2.2
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  1.1.1.1
+	[Tags]  NTP
+
+T12.3 Configure NTP Server and delete with minus button
+	Go To Clock Page
+	Configure NTP Server  1.1.1.1
+	Configure NTP Server  2.2.2.2
+	Configure NTP Server  3.3.3.3
+	Configure NTP Server  4.4.4.4
+	Configure NTP Server  5.5.5.5
+	Configure NTP Server  6.6.6.6
+	Sync To NTP Server  6.6.6.6
+	Sleep  15
+	Delete NTP Server Using Minus Button  6.6.6.6
+	Delete NTP Server Using Minus Button  5.5.5.5
+	Delete NTP Server Using Minus Button  4.4.4.4
+	Delete NTP Server Using Minus Button  3.3.3.3
+	Delete NTP Server Using Minus Button  2.2.2.2
+	Delete NTP Server Using Minus Button  1.1.1.1
+	[Tags]  NTP  BVS-2705
+
 * Keyword
 config suite setup
     base suite setup
