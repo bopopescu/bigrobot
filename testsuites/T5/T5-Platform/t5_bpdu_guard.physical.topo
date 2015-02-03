@@ -31,7 +31,7 @@ s1:
   set_session_ssh: false
   set_init_ping: false
  
-s7:
+s3:
   alias:  leaf2-a
   mac: 70:72:cf:ab:3a:58
   fabric-role: leaf
