@@ -355,7 +355,7 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
       
 T5 switch platform test setup
    fabric infra suite setup
-   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  2
    #base test setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
