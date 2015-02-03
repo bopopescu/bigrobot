@@ -210,6 +210,7 @@ ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode'
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
 ${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
+${ENDPOINT VLAN FIELD}						xpath=//div[@data-dojo-attach-point='blockVlan']/descendant::input[@class='dijitReset dijitInputInner']
 
 ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
@@ -1230,7 +1231,7 @@ Configure Tenant Interface for System Tenant
 
 	
 Create Logical Segments
-	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 
 	Go To Tenants Page
 	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
@@ -1266,7 +1267,7 @@ Create Logical Segments
 
 	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
 	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
-	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}
 
 
 
@@ -1328,7 +1329,7 @@ Append Switch-Port Membership Rule To Segment
 
 
 Append Endpoint to Segment
-	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
 	
@@ -1351,6 +1352,9 @@ Append Endpoint to Segment
 	
 	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
+
+	Run Keyword Unless  '${vlan}' == 'None'
+	...		Input Text And Verify   ${ENDPOINT VLAN FIELD}  ${vlan}
     
 	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
 	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
