@@ -99,8 +99,8 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 	rest remove policy on tenant				${tenantX}		${tenant2_polname}
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
-    should not be true  ${result}
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
     
     clear stats
     start traffic  ${stream}
@@ -311,8 +311,8 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
-    should not be true  ${result}
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
