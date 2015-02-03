@@ -6640,4 +6640,22 @@ class T5Platform(object):
             helpers.log("IP's didn't get cleared properly. Returning false")
             return False
 
+    def rest_show_fabric_status(self):
+        '''Return True is overall-status is OK  
+            Return False if overall-status is NOT OK
+            
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'      
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]['overall-status'] == "NOT OK":
+            helpers.log("ERROR:  fabric status is NOT OK  \n  %s"  % data  )
+            c.enable("show fabric error")
+            return False
+        else:
+            helpers.log("USR INFO:  fabric status is OK  \n  %s"  % data  ) 
+            return True
+
  
