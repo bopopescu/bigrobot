@@ -76,7 +76,7 @@ Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 64
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
         
-    [Tags]  switch-platform  L3  traffic  feature             
+    [Tags]  switch-platform  L3  traffic  feature    daily-sanity         
 
 Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256 
     ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -137,7 +137,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature   
+    [Tags]  switch-platform  L3  traffic  feature   daily-sanity
 
 Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 64 
     ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -186,7 +186,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 
 Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512 
@@ -262,7 +262,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 25% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature  
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 50% pktsize 9216 
     ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -286,7 +286,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature 
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 #Process restart L3 Traffic linerate 100% pktsize 1518
 #    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
