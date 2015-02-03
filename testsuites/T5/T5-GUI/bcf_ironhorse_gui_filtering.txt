@@ -134,10 +134,16 @@ T1.3.1 Any
 	Verify Filtering Result  endpoint-3  False
 T1.3.2 VLAN
 	Open Advanced Query Builder  Endpoints
-	Add Filter Query  VLAN  greater than  11
+	Add Filter Query  VLAN  greater than  202
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  VLAN  greater than  202  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
 	Verify Filtering Result  endpoint-3  False
 T1.3.3 Tenant
 	Open Advanced Query Builder  Endpoints
@@ -146,6 +152,12 @@ T1.3.3 Tenant
 	Verify Filtering Result  endpoint-1  True
 	Verify Filtering Result  endpoint-2  True
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Tenant  starts with  tenant-  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
 T1.3.4 Segment
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Segment  ends with  -2
@@ -153,6 +165,12 @@ T1.3.4 Segment
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Segment  ends with  -2  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
 T1.3.5 Name
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Name  is  endpoint-1
@@ -160,6 +178,12 @@ T1.3.5 Name
 	Verify Filtering Result  endpoint-1  True
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  False
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Name  is  endpoint-1  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
 T1.3.6 Attachment State
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Attachment State  contains  Down
@@ -167,6 +191,12 @@ T1.3.6 Attachment State
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  True
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Attachment State  contains  Down  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
 T1.3.7 Description
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Description  contains  endpoint
@@ -718,15 +748,15 @@ Filtering Suite Setup
 	
 	Create Logical Segments	 tenant-a  segment-1  ${EMPTY}	${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
 	Go To Tenant Segment Page  tenant-a  segment-1
-	Append Endpoint to Segment  endpoint-1  None  ${EMPTY}   ${EMPTY}   ${EMPTY}   22:11:11:11:11:11  111.111.111.111	
+	Append Endpoint to Segment  endpoint-1  None  ${EMPTY}   ${EMPTY}   ${EMPTY}   22:11:11:11:11:11  111.111.111.111
 
 	Create Logical Segments	 tenant-b  segment-1  ${EMPTY}	${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
 	Create Logical Segments	 tenant-b  segment-2  ${EMPTY}	${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
 	Create Port Group  pg1  Static  rack0
 	Go To Tenant Segment Page  tenant-b  segment-1
-	Append Endpoint to Segment  endpoint-2  Port Group  pg1   ${EMPTY}   ${EMPTY}   22:22:22:22:22:22  222.222.222.222	
+	Append Endpoint to Segment  endpoint-2  Port Group  pg1   ${EMPTY}   ${EMPTY}   22:22:22:22:22:22  222.222.222.222  200
 	Go To Tenant Segment Page  tenant-b  segment-2
-	Append Endpoint to Segment  endpoint-3  Switch Port   ${EMPTY}   leaf1-a  ethernet2   32:33:33:33:33:33  33.33.33.33
+	Append Endpoint to Segment  endpoint-3  Switch Port   ${EMPTY}   leaf1-a  ethernet2   32:33:33:33:33:33  33.33.33.33  300
 		
 	${status}=  Wait Until All Switches Connected And Return Status
     Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
