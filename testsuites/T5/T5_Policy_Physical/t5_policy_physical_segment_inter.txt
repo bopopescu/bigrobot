@@ -174,7 +174,7 @@ T4 Interface sement-interface add/remove permit policy src-ip to dest-ip
 
 
 T5 Interface sement-interface add/remove deny policy src-ip to dest-ip
-	[Tags]  feature  daily-sanity
+	[Tags]  feature 
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}	
@@ -426,7 +426,7 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 
 
 T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) policy src-ip-port to tenant
-    [Tags]  feature  ha  daily-sanity
+    [Tags]  feature  ha  
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
