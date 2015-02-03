@@ -134,17 +134,17 @@ T1.3.1 Any
 	Verify Filtering Result  endpoint-3  False
 T1.3.2 VLAN
 	Open Advanced Query Builder  Endpoints
-	Add Filter Query  VLAN  greater than  11
+	Add Filter Query  VLAN  greater than  202
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
-	Verify Filtering Result  endpoint-3  False
+	Verify Filtering Result  endpoint-3  True
 	Open Advanced Query Builder  Endpoints  edit
-	Add Filter Query  VLAN  greater than  11  negative  1
+	Add Filter Query  VLAN  greater than  202  negative  1
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  endpoint-1  True
 	Verify Filtering Result  endpoint-2  True
-	Verify Filtering Result  endpoint-3  True
+	Verify Filtering Result  endpoint-3  False
 T1.3.3 Tenant
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Tenant  starts with  tenant-
