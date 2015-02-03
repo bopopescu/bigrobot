@@ -10,7 +10,8 @@ ESB service startup instruction:
 - Log into deployment server
 - Start a 'screen' session
 - cd /home/bsn/workspace/bigrobot/esb/bsn_common_services
-- ./start_services.sh
+- Start the service daemon:
+    $ ./start_services.sh
 - Leave the session running inside 'screen'. You can close the terminal window.
 
 - To connect to a running 'screen' session, log into qa-esb-services1 and type
@@ -19,8 +20,9 @@ ESB service startup instruction:
 
 
 Service implementation details:
-- The file tasks.py contains the task implementations. We can define multiple classes
-  as a way to group together similar actions (e.g., UpgradeCommands class).
+- The file tasks.py contains the task implementations. We can define multiple
+  classes as a way to group together similar actions (e.g., UpgradeCommands
+  class).
 - To use these tasks, do the following in your keyword file:
 
         from bsn_common_services import tasks as tasks
@@ -31,3 +33,12 @@ Service implementation details:
         res2 = task.cli_stage_upgrade_pkg.delay(t.params(), node=node)
         ...
 
+Updating services:
+- Whenever changes are made to the services (bigrobot/esb/bsn_common_services),
+  you need to redeploy the service.
+- Log into the deployment server (as described in the section above) and kill
+  the service daemon - press Control-C.
+- Update the branch using 'git update'
+    $ git update
+- Restart the service daemon:
+    $ ./start_services.sh
