@@ -139,6 +139,12 @@ T1.3.2 VLAN
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  False
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  VLAN  greater than  11  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
 T1.3.3 Tenant
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Tenant  starts with  tenant-
@@ -146,6 +152,12 @@ T1.3.3 Tenant
 	Verify Filtering Result  endpoint-1  True
 	Verify Filtering Result  endpoint-2  True
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Tenant  starts with  tenant-  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
 T1.3.4 Segment
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Segment  ends with  -2
@@ -153,6 +165,12 @@ T1.3.4 Segment
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Segment  ends with  -2  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
 T1.3.5 Name
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Name  is  endpoint-1
@@ -160,6 +178,12 @@ T1.3.5 Name
 	Verify Filtering Result  endpoint-1  True
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  False
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Name  is  endpoint-1  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
 T1.3.6 Attachment State
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Attachment State  contains  Down
@@ -167,6 +191,12 @@ T1.3.6 Attachment State
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  True
 	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints  edit
+	Add Filter Query  Attachment State  contains  Down  negative  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
 T1.3.7 Description
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  Description  contains  endpoint
