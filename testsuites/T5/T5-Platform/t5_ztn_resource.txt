@@ -369,27 +369,27 @@ Power Cycle All Switches
 	Wait Until All Switches Connected
 
 Power Down All Switches
-	Power Down Switch  s1
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s1
 	Sleep  5
-	Power Down Switch  s2
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s2
 	Sleep  5
-	Power Down Switch  s3
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s3
 	Sleep  5
-	Power Down Switch  s4
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s4
 	Sleep  5
-	Power Down Switch  s5
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s5
 	Sleep  5
 
 Power Up All Switches
-	Power Up Switch  s1
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s1
 	Sleep  5
-	Power Up Switch  s2
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s2
 	Sleep  5
-	Power Up Switch  s3
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s3
 	Sleep  5
-	Power Up Switch  s4
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s4
 	Sleep  5
-	Power Up Switch  s5
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s5
 	Sleep  5
 
 Wait Until All Switches Connected
