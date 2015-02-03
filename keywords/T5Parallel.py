@@ -2,9 +2,6 @@ import re
 import autobot.helpers as helpers
 import autobot.test as test
 
-from arun_services import tasks as tasks
-
-
 class T5Parallel(object):
 
     def __init__(self):
@@ -70,7 +67,7 @@ class T5Parallel(object):
         Output:
         Author: Mingtao
         '''
-
+        from bsn_common_services import tasks as tasks
         helpers.log("***Entering==> upgrade_copy_image_HA_parallel   \n")
         t = test.Test()
 
@@ -104,7 +101,7 @@ class T5Parallel(object):
         Output:
         Author: Mingtao
         '''
-
+        from bsn_common_services import tasks as tasks
         helpers.log("***Entering==> upgrade_statge_image_HA_parallel \n")
         t = test.Test()
 
@@ -137,7 +134,7 @@ class T5Parallel(object):
         Output:
         Author: Mingtao
         '''
-
+        from bsn_common_services import tasks as tasks
         helpers.log("***Entering==> upgrade_launch_image_HA_parallel   \n")
         t = test.Test()
 
