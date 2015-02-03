@@ -9,6 +9,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 Library  keywords/SwitchLight.py
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 * Variable
 ${switchlight_version}  Switch Light OS
@@ -190,6 +191,7 @@ Restart process SNMPD and verify SNMP Stats
     
 * Keywords  
 snmp suite setup
+	fabric infra suite setup
 	reconnect switch ips  s1
     base suite setup   
     ${oneGlb9_name}=  get_switch_int_topo  s1  ixia1_int0
