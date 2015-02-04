@@ -50,22 +50,22 @@ bring up host bond0 interface
 	sleep  2
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	sanity  feature
+	[Tags]	sanity  feature  daily-sanity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 
 Verify HA Cluster Formation
-   [Tags]  sanity  feature
+   [Tags]  sanity  feature  daily-sanity
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  sanity  feature 
+	[Tags]  sanity  feature  daily-sanity
 	Verify cluster election take leader
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
 Verify Cluster Election Re-run
-	[Tags]  feature  
+	[Tags]  feature   daily-sanity
 	Verify cluster election rerun 
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
