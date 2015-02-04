@@ -20,12 +20,12 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  feature  IronHorse   
+	[Tags]  L2  feature  daily-sanity  IronHorse   
     rest verify fabric switch all
 	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common 	
 
 Static endpoint age test
-	[Tags]  L2  feature  IronHorse 
+	[Tags]  L2  feature  daily-sanity  IronHorse 
 	rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -44,7 +44,7 @@ Static endpoint age test
 	rest delete tenant  internal
 	
 static endpoint membership rule change test
-    [Tags]  L2  feature  IronHorse  skipped
+    [Tags]  L2  feature  daily-sanity  IronHorse  skipped
 # Need to add IXIA VLAN ID support with IXIA L3 add 
     rest add tenant  internal
 	rest add vns  internal  v1
