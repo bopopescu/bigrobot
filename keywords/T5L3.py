@@ -1814,6 +1814,33 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
 
         return False
 
+    def rest_verify_fwd_ecmp_grp_icap_table(self, switch, matchip, zero=False):
+        ''' Function to verify ecmp group id should not be zero in fwding icap table
+        Input: switch name, matchip
+        Output: return true if ecmp grp id more than zero in the fwding icap table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/icap-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("Printing len of data: %d and switch name:%s and zero :%s" % (len(data), switch, zero))
+        if (len(data) != 0 and zero == False):
+            for i in range (0, len(data)):
+                helpers.log("printing ICAP table from switch:%s and given IP :%s" % (data[i]['dst-ip'], matchip))
+                if data[i]["dst-ip"] == matchip and int(data[i]["ecmp-group-id"]) > 0:
+                    helpers.log("Match found in ICAP table and ecmp group id is SET")
+                    return True
+        elif (len(data) != 0 and zero == 'True'):
+            for i in range (0, len(data)):
+                helpers.log("printing ICAP table from switch:%s and given IP :%s" % (data[i]['dst-ip'], matchip))
+                if data[i]["dst-ip"] == matchip and int(data[i]["ecmp-group-id"]) == 0:
+                    helpers.log("Match found in ICAP table and ecmp group id is NOT SET, which is correct")
+                    return True
+
+        return False
+
 
     def rest_clear_policy_stats(self, tenant, seq):
         ''' Function to clear policy counters
