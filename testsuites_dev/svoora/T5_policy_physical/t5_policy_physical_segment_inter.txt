@@ -832,7 +832,7 @@ T17 Interface sement-interface add/remove redirect(ecmp) policy src-ip to dest-i
     should not be true  ${result}
     ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
     should be true  ${result}
-    pause    FREEEEZEE!!!
+    #pause    FREEEEZEE!!!
     clear stats
     start traffic  ${stream}
     sleep                  5
@@ -1047,7 +1047,7 @@ T22 Interface sement-interface add/remove redirect(ecmp) policy src-ip-port to t
     should be true  ${result}
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
-    pause      FREEEZ!
+    #pause      FREEEZ!
     clear stats
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should be true  ${result}
